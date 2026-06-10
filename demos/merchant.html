@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Quán Ngon Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--momo:#a50064;--pink:#f95396;--ink:#202124;--muted:#667085;--line:#e7e8ec}
+    *{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:var(--ink);font-family:"Be Vietnam Pro",sans-serif;letter-spacing:0}
+    .app{min-height:100vh;display:grid;grid-template-columns:240px 1fr 270px;gap:12px;padding:12px}.panel,.stage{background:#fff;border:1px solid var(--line);border-radius:10px}.panel{padding:18px}.panel h2{font-size:13px;margin:0 0 16px}.label{font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;margin:18px 0 8px}.filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{border:1px solid var(--line);background:#fff;border-radius:5px;padding:7px 8px;font:inherit;font-size:8px}.filters button.active{background:#fff0f7;color:var(--momo);border-color:#e6a3c8}
+    .map{height:180px;margin-top:10px;border-radius:7px;background:url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=80') center/cover;position:relative;overflow:hidden}.map:after{content:'Vị trí hiện tại';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:7px 9px;border-radius:5px;font-size:8px;font-weight:700;box-shadow:0 5px 18px #0002}
+    .stage{display:flex;flex-direction:column;align-items:center;padding:18px;background:#fafafa}.stage-header{width:100%;max-width:410px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.brand{font-weight:800;font-size:18px}.brand span{color:var(--pink)}.location{font-size:8px;color:var(--muted);background:#fff;border:1px solid var(--line);padding:7px 9px;border-radius:5px}
+    .card{width:100%;max-width:410px;height:465px;border-radius:12px;overflow:hidden;position:relative;background:#222;box-shadow:0 15px 35px #10182828}.card img{width:100%;height:100%;object-fit:cover}.overlay{position:absolute;inset:0;background:linear-gradient(to top,#111 0%,#111b 28%,transparent 65%)}.content{position:absolute;left:0;right:0;bottom:0;padding:18px;color:#fff}.top-badges{position:absolute;left:14px;right:14px;top:14px;display:flex;justify-content:space-between}.badge{background:#fff;color:var(--momo);font-size:8px;font-weight:800;padding:6px 8px;border-radius:5px}.open{background:#ecfdf3;color:#067647}.content h1{font-size:21px;margin:0 0 4px}.type{font-size:9px;color:#ddd}.stats{display:flex;gap:13px;font-size:9px;margin:11px 0}.deal{background:#ffffff17;border:1px solid #ffffff2e;padding:10px;border-radius:7px;font-size:9px}.deal b{color:#ff8fc4}
+    .actions{display:flex;gap:14px;margin-top:16px}.actions button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:19px}.actions .save{background:var(--momo);color:#fff;border-color:var(--momo)}
+    .saved-empty{font-size:9px;line-height:1.6;color:var(--muted);padding:15px;background:#fafafa;border-radius:7px}.saved-item{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--line)}.saved-item img{width:46px;height:46px;border-radius:6px;object-fit:cover}.saved-item b,.saved-item small{display:block}.saved-item b{font-size:9px}.saved-item small{font-size:7px;color:var(--muted);margin-top:4px}
+    @media(max-width:900px){.app{grid-template-columns:1fr}.panel{display:none}.stage{min-height:100vh}.card{height:500px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel"><h2>Bộ lọc khám phá</h2><div class="label">Danh mục</div><div class="filters"><button class="active">Tất cả</button><button>Bún / Phở</button><button>Cơm</button><button>Ăn vặt</button></div><div class="label">Khoảng cách</div><div class="filters"><button class="active">Tất cả</button><button>&lt; 500m</button><button>&lt; 1km</button></div><div class="label">Khu vực hiện tại</div><div class="map"></div></aside>
+    <main class="stage">
+      <div class="stage-header"><div class="brand">Quán<span>Ngon</span></div><div class="location">Quận 1, TP.HCM</div></div>
+      <article class="card" id="card"></article>
+      <div class="actions"><button id="skip" aria-label="Bỏ qua">×</button><button class="save" id="save" aria-label="Lưu quán">♥</button></div>
+    </main>
+    <aside class="panel"><h2>Quán đã lưu <span id="savedCount">(0)</span></h2><div id="saved"><div class="saved-empty">Nhấn nút trái tim để lưu quán. Danh sách này có thể kết nối sang deal, chỉ đường hoặc thanh toán MoMo.</div></div></aside>
+  </div>
+  <script>
+    const restaurants=[
+      {name:'Bếp Mẹ Ỉn',type:'Món Việt · Cơm nhà',rating:'4.8',distance:'350m',price:'80K - 180K',deal:'Giảm 20% khi thanh toán MoMo',address:'Lê Thánh Tôn, Quận 1',image:'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=900&q=85'},
+      {name:'Phở Chào',type:'Phở · Món Việt',rating:'4.7',distance:'620m',price:'55K - 95K',deal:'Hoàn 30.000đ qua MoMo',address:'Nguyễn Thị Minh Khai, Quận 1',image:'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=900&q=85'},
+      {name:'The Pizza Company',type:'Pizza · Đồ Âu',rating:'4.6',distance:'900m',price:'120K - 350K',deal:'Voucher 50.000đ trên MoMo',address:'Nguyễn Huệ, Quận 1',image:'https://images.unsplash.com/photo-1579751626657-72bc17010498?w=900&q=85'},
+      {name:'Chè Mâm Khánh Vy',type:'Chè · Ăn vặt',rating:'4.9',distance:'1.2km',price:'25K - 60K',deal:'Tích điểm x2 với MoMo',address:'Sư Vạn Hạnh, Quận 10',image:'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=900&q=85'}
+    ];
+    let index=0;const savedItems=[];
+    function render(){const item=restaurants[index%restaurants.length];card.innerHTML=`<img src="${item.image}" alt="${item.name}"><div class="overlay"></div><div class="top-badges"><span class="badge">ĐƯỢC YÊU THÍCH</span><span class="badge open">ĐANG MỞ</span></div><div class="content"><h1>${item.name}</h1><div class="type">${item.type}</div><div class="stats"><span>★ ${item.rating}</span><span>⌖ ${item.distance}</span><span>₫ ${item.price}</span></div><div class="deal"><b>Ưu đãi MoMo</b><br>${item.deal}</div><div class="type" style="margin-top:9px">${item.address}</div></div>`}
+    function next(){index=(index+1)%restaurants.length;render()}
+    skip.onclick=next;save.onclick=()=>{const item=restaurants[index%restaurants.length];if(!savedItems.some(x=>x.name===item.name))savedItems.push(item);savedCount.textContent=`(${savedItems.length})`;saved.innerHTML=savedItems.map(x=>`<div class="saved-item"><img src="${x.image}" alt=""><span><b>${x.name}</b><small>${x.distance} · ${x.deal}</small></span></div>`).join('');next()};render();
+  </script>
+</body>
+</html>
