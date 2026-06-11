@@ -14,6 +14,7 @@ const TOOLS = [
     id: 'vay-nhanh', name: 'Vay Nhanh', category: 'Credit', abbr: 'VN',
     intent: 'Transactional intent', panel: 'generic',
     description: 'Tính số tiền trả hàng tháng theo khoản vay, lãi suất và kỳ hạn.',
+    formula: 'Trả/tháng = <b>P × r(1+r)ⁿ ÷ [(1+r)ⁿ−1]</b><br><em>P = số tiền vay &nbsp;·&nbsp; r = lãi suất/tháng &nbsp;·&nbsp; n = số kỳ thanh toán</em>',
     resultLabel: 'ƯỚC TÍNH TRẢ MỖI THÁNG',
     fields: [
       { id: 'loanAmount',   label: 'Số tiền vay',      type: 'money',  min: 1000000, max: 500000000, step: 500000, value: 20000000, chips: [5000000, 20000000, 50000000] },
@@ -39,6 +40,7 @@ const TOOLS = [
     id: 'tra-gop', name: 'Trả Góp', category: 'Credit', abbr: 'TG',
     intent: 'Commercial intent', panel: 'generic',
     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.',
+    formula: 'Vốn gốc = <b>Giá × (100% − Trả trước%)</b><br>Trả/tháng = <b>Vốn gốc ÷ n + Vốn gốc × Lãi suất/12</b><br><em>Áp dụng phương pháp lãi phẳng (flat rate)</em>',
     resultLabel: 'TRẢ MỖI THÁNG ƯỚC TÍNH',
     fields: [
       { id: 'productPrice',    label: 'Giá sản phẩm',   type: 'money',  min: 1000000, max: 500000000, step: 100000, value: 15000000, chips: [5000000, 15000000, 50000000] },
@@ -66,6 +68,7 @@ const TOOLS = [
     id: 'bao-hiem-o-to', name: 'BH Ô Tô', category: 'Insurance', abbr: 'BH',
     intent: 'Commercial intent', panel: 'generic',
     description: 'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí.',
+    formula: 'Phí BH/năm = <b>Giá trị xe × Tỷ lệ phí (%)</b><br><em>Tỷ lệ phí tham chiếu theo Thông tư 04/2021/TT-BTC: xe con đến 6 chỗ từ 1,56% – 2,10%</em>',
     resultLabel: 'PHÍ BẢO HIỂM NĂM',
     fields: [
       { id: 'carValue',      label: 'Giá trị xe',            type: 'money',  min: 100000000, max: 5000000000, step: 10000000, value: 500000000, chips: [200000000, 500000000, 1000000000] },
@@ -88,6 +91,7 @@ const TOOLS = [
     id: 'bhxh', name: 'BHXH', category: 'Insurance', abbr: 'XH',
     intent: 'Transactional intent', panel: 'generic',
     description: 'Tính mức đóng BHXH tự nguyện qua MoMo: 22% mức lương làm căn cứ, trừ hỗ trợ Nhà nước 66.000đ/tháng.',
+    formula: 'Phí thực đóng = <b>22% × Lương căn cứ − 66.000đ</b><br><em>66.000đ = hỗ trợ Nhà nước cố định cho mức lương căn cứ tối thiểu (theo Nghị định 134/2015/NĐ-CP)</em>',
     resultLabel: 'THỰC ĐÓNG QUA MOMO/THÁNG',
     fields: [
       { id: 'salary',  label: 'Mức lương làm căn cứ đóng', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 5000000, chips: [2000000, 5000000, 10000000] },
@@ -117,6 +121,7 @@ const TOOLS = [
     id: 'luong-huu', name: 'Lương Hưu', category: 'Insurance', abbr: 'LH',
     intent: 'Informational intent', panel: 'generic',
     description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương làm căn cứ.',
+    formula: 'Lương hưu = <b>Tỷ lệ hưởng × Mức bình quân lương/tháng</b><br>Nữ ≥15 năm: 45% → +2%/năm &nbsp;|&nbsp; Nam ≥20 năm: 45% → +2%/năm<br>Nam 15–19 năm: 40% → +1%/năm &nbsp;|&nbsp; <em>Tối đa 75%</em>',
     resultLabel: 'LƯƠNG HƯU ƯỚC TÍNH/THÁNG',
     fields: [
       { id: 'lhGender', label: 'Giới tính', type: 'select', options: [
@@ -159,6 +164,7 @@ const TOOLS = [
     id: 'tiet-kiem', name: 'Tiết Kiệm', category: 'Savings', abbr: 'TK',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',
+    formula: 'Lãi = <b>Gốc × Lãi suất/năm × Kỳ hạn (tháng) ÷ 12</b><br>Tổng nhận = <b>Gốc + Lãi</b> &nbsp;|&nbsp; <em>Áp dụng lãi đơn cuối kỳ (không ghép lãi)</em>',
     resultLabel: 'NHẬN KHI ĐÁO HẠN',
     fields: [
       { id: 'principal', label: 'Số tiền gửi',    type: 'money',  min: 1000000, max: 2000000000, step: 1000000, value: 50000000, chips: [10000000, 50000000, 200000000] },
@@ -182,6 +188,7 @@ const TOOLS = [
     id: 'thue-tncn', name: 'Thuế TNCN', category: 'Tax', abbr: 'TC',
     intent: 'Informational intent', panel: 'generic',
     description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến, chiết khấu gia cảnh và người phụ thuộc.',
+    formula: 'Thu nhập chịu thuế = <b>Lương gross − BHXH/BHYT/BHTN − 11 triệu − NTT × 4,4 triệu</b><br>Thuế = <b>Thu nhập chịu thuế × Biểu lũy tiến 7 bậc (5% → 35%)</b>',
     resultLabel: 'THUẾ TNCN MỖI THÁNG',
     fields: [
       { id: 'grossSalary', label: 'Lương gross/tháng',    type: 'money',  min: 5000000, max: 200000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000] },
@@ -214,6 +221,7 @@ const TOOLS = [
     id: 'chung-chi-quy', name: 'Chứng Chỉ Quỹ', category: 'Investment', abbr: 'CCQ',
     intent: 'Informational intent', panel: 'generic',
     description: 'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',
+    formula: 'FV = <b>PMT × [(1 + r)ⁿ − 1] ÷ r</b><br><em>PMT = số tiền đầu tư định kỳ/tháng &nbsp;·&nbsp; r = lợi suất/tháng &nbsp;·&nbsp; n = số tháng</em>',
     resultLabel: 'GIÁ TRỊ SAU ĐẦU TƯ',
     fields: [
       { id: 'monthly',      label: 'Đầu tư định kỳ/tháng', type: 'money',  min: 100000, max: 50000000, step: 100000, value: 2000000, chips: [1000000, 2000000, 5000000] },
@@ -244,6 +252,7 @@ const TOOLS = [
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Planning', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',
+    formula: 'Quỹ cần có = <b>Chi tiêu/tháng × Số tháng an toàn</b><br>Còn thiếu = <b>Quỹ cần có − Tiết kiệm hiện có</b>',
     resultLabel: 'QUỸ DỰ PHÒNG CẦN CÓ',
     fields: [
       { id: 'monthlyExpense', label: 'Chi tiêu hàng tháng',         type: 'money',  min: 1000000, max: 100000000, step: 500000, value: 12000000, chips: [5000000, 12000000, 20000000] },
@@ -306,6 +315,11 @@ function renderGenericPanel(tool) {
   document.getElementById('genericTitle').textContent       = tool.name;
   document.getElementById('genericDescription').textContent = tool.description;
   document.getElementById('genericIntent').textContent      = tool.intent;
+  const formulaEl = document.getElementById('genericFormula');
+  if (formulaEl) {
+    if (tool.formula) { formulaEl.innerHTML = tool.formula; formulaEl.style.display = ''; }
+    else formulaEl.style.display = 'none';
+  }
 
   const container = document.getElementById('genericFields');
   container.innerHTML = tool.fields.map(f => {
