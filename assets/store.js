@@ -175,7 +175,6 @@ function renderWorkspace() {
 
 function buildProtoView(proto) {
   const cat = CAT_COLOR[proto.category] || {};
-  const mat = MAT_COLOR[proto.maturity] || {};
 
   return `
   <div class="ws-topbar">
@@ -195,42 +194,7 @@ function buildProtoView(proto) {
     </div>
   </div>
 
-  <div class="ws-overview">
-    <div class="ws-overview-left">
-      <span class="ws-mat-tag" style="background:${mat.bg};color:${mat.text}">${proto.maturity}</span>
-      <h1 class="ws-title">${proto.name}</h1>
-      <p class="ws-desc">${proto.description}</p>
-    </div>
-    <dl class="ws-metrics">
-      <div><dt>JTBD</dt><dd>${proto.jtbd}</dd></div>
-      <div><dt>North Star</dt><dd>${proto.northStar}</dd></div>
-      <div><dt>Growth Loop</dt><dd>${proto.loop}</dd></div>
-    </dl>
-  </div>
-
-  <div class="ws-notes">
-    <article>
-      <span>Hypothesis</span>
-      <p>${proto.hypothesis}</p>
-    </article>
-    <article>
-      <span>Business Value</span>
-      <p>${proto.value}</p>
-    </article>
-    <article>
-      <span>Validation Gate</span>
-      <p>${proto.gate}</p>
-    </article>
-  </div>
-
-  <div class="ws-preview">
-    <div class="ws-preview-head">
-      <div>
-        <span class="preview-eyebrow">Preview</span>
-        <h2 class="preview-h2">Live prototype</h2>
-      </div>
-      <span class="ready-pill"><i></i>Sẵn sàng xem</span>
-    </div>
+  <div class="ws-preview expanded">
     <div class="preview-stage">
       <div class="browser-frame" id="browserFrame">
         <div class="browser-bar">
