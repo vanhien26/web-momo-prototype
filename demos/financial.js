@@ -16,7 +16,7 @@ const TOOLS = [
     description: 'Tính số tiền trả hàng tháng theo khoản vay, lãi suất và kỳ hạn.',
     resultLabel: 'ƯỚC TÍNH TRẢ MỖI THÁNG',
     fields: [
-      { id: 'loanAmount',   label: 'Số tiền vay',      type: 'range',  min: 1000000, max: 100000000, step: 1000000, value: 20000000, unit: 'đ' },
+      { id: 'loanAmount',   label: 'Số tiền vay',      type: 'money',  min: 1000000, max: 500000000, step: 500000, value: 20000000, chips: [5000000, 20000000, 50000000] },
       { id: 'interestRate', label: 'Lãi suất/năm',     type: 'range',  min: 6, max: 60, step: 0.5, value: 24, unit: '%' },
       { id: 'loanTerm',     label: 'Kỳ hạn',           type: 'select', options: [
         {value:3,label:'3 tháng'},{value:6,label:'6 tháng'},
@@ -41,7 +41,7 @@ const TOOLS = [
     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.',
     resultLabel: 'TRẢ MỖI THÁNG ƯỚC TÍNH',
     fields: [
-      { id: 'productPrice',    label: 'Giá sản phẩm',   type: 'range',  min: 1000000, max: 200000000, step: 500000, value: 15000000, unit: 'đ' },
+      { id: 'productPrice',    label: 'Giá sản phẩm',   type: 'money',  min: 1000000, max: 500000000, step: 100000, value: 15000000, chips: [5000000, 15000000, 50000000] },
       { id: 'downPaymentPct',  label: 'Trả trước',       type: 'range',  min: 0, max: 50, step: 5, value: 20, unit: '%' },
       { id: 'installmentTerm', label: 'Kỳ hạn trả góp', type: 'select', options: [
         {value:3,label:'3 tháng (0%)'},{value:6,label:'6 tháng (0%)'},
@@ -68,7 +68,7 @@ const TOOLS = [
     description: 'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí.',
     resultLabel: 'PHÍ BẢO HIỂM NĂM',
     fields: [
-      { id: 'carValue',      label: 'Giá trị xe',            type: 'range',  min: 200000000, max: 3000000000, step: 50000000, value: 500000000, unit: 'đ' },
+      { id: 'carValue',      label: 'Giá trị xe',            type: 'money',  min: 100000000, max: 5000000000, step: 10000000, value: 500000000, chips: [200000000, 500000000, 1000000000] },
       { id: 'insuranceRate', label: 'Tỷ lệ phí bảo hiểm',   type: 'select', options: [
         {value:0.55,label:'0.55% - Xe con ≤9 chỗ'},
         {value:0.8, label:'0.80% - Xe tải ≤2 tấn'},
@@ -86,24 +86,73 @@ const TOOLS = [
   },
   {
     id: 'bhxh', name: 'BHXH', category: 'Insurance', abbr: 'XH',
-    intent: 'Informational intent', panel: 'generic',
-    description: 'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.',
-    resultLabel: 'ĐÓNG BHXH MỖI THÁNG',
+    intent: 'Transactional intent', panel: 'generic',
+    description: 'Tính mức đóng BHXH tự nguyện qua MoMo: 22% mức lương làm căn cứ, trừ hỗ trợ Nhà nước 66.000đ/tháng.',
+    resultLabel: 'THỰC ĐÓNG QUA MOMO/THÁNG',
     fields: [
-      { id: 'salary',  label: 'Mức lương đóng BHXH', type: 'range',  min: 1800000, max: 50000000, step: 200000, value: 10000000, unit: 'đ' },
-      { id: 'months',  label: 'Số tháng tham gia',   type: 'range',  min: 12, max: 360, step: 12, value: 120, unit: ' tháng' },
+      { id: 'salary',  label: 'Mức lương làm căn cứ đóng', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 5000000, chips: [2000000, 5000000, 10000000] },
+      { id: 'months',  label: 'Số tháng tham gia',         type: 'range', min: 12, max: 360, step: 12, value: 120, unit: ' tháng' },
     ],
     compute(v) {
-      const empRate = 0.105; // 8% BHXH + 1.5% BHYT + 1% BHTN
-      const erRate  = 0.215; // 17.5% + 3% + 1%
-      const ec = v.salary * empRate, rc = v.salary * erRate;
-      const yrs = v.months / 12;
-      const pension = Math.min(yrs / 30, 1) * v.salary * 0.75;
-      return { result: fmt(ec), details: [
-        { label: 'Doanh nghiệp đóng thêm', value: fmt(rc) },
-        { label: 'Tổng đóng sau ' + yrs.toFixed(0) + ' năm', value: fmtM((ec + rc) * v.months) },
+      const gross   = v.salary * 0.22;
+      const subsidy = 66000;
+      const net     = Math.max(0, gross - subsidy);
+      const yrs     = v.months / 12;
+      const totalPaid = net * v.months;
+      const rateYrs = Math.min(yrs, 20) * 0.015 + Math.max(0, yrs - 20) * 0.02;
+      const pension = Math.min(rateYrs, 0.75) * v.salary;
+      const insight = net < gross * 0.1
+        ? 'Mức hỗ trợ 66.000đ gần bằng toàn bộ phí — thu nhập căn cứ thấp nhất.'
+        : `Tiết kiệm ${fmt(subsidy)}/tháng nhờ hỗ trợ Nhà nước. Tổng tiết kiệm ${fmtM(subsidy * v.months)} sau ${yrs.toFixed(0)} năm.`;
+      return { result: fmt(net), details: [
+        { label: '22% lương căn cứ', value: fmt(gross) },
+        { label: 'Hỗ trợ Nhà nước', value: '- ' + fmt(subsidy) },
+        { label: 'Đóng hàng năm', value: fmtM(net * 12) },
+        { label: 'Tổng thực đóng ' + yrs.toFixed(0) + ' năm', value: fmtM(totalPaid) },
         { label: 'Lương hưu ước tính', value: fmt(pension) + '/tháng' },
-      ]};
+      ], insight};
+    },
+  },
+  {
+    id: 'luong-huu', name: 'Lương Hưu', category: 'Insurance', abbr: 'LH',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương làm căn cứ.',
+    resultLabel: 'LƯƠNG HƯU ƯỚC TÍNH/THÁNG',
+    fields: [
+      { id: 'lhGender', label: 'Giới tính', type: 'select', options: [
+        {value:0,label:'Lao động nữ'},{value:1,label:'Lao động nam'},
+      ], value: 0 },
+      { id: 'lhYears',  label: 'Số năm đóng BHXH',           type: 'range', min: 1,       max: 40,       step: 1,      value: 20,        unit: ' năm' },
+      { id: 'lhSalary', label: 'Mức bình quân lương căn cứ', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
+    ],
+    compute(v) {
+      const yrs = v.lhYears;
+      let rate;
+      if (v.lhGender === 0) {
+        // Nữ: 45% tại 15 năm, +2%/năm thêm, tối đa 75%
+        rate = yrs < 15 ? 0 : Math.min(0.45 + (yrs - 15) * 0.02, 0.75);
+      } else {
+        // Nam: 15–19 năm: 40% + 1%/năm; ≥20 năm: 45% + 2%/năm, tối đa 75%
+        if      (yrs < 15) rate = 0;
+        else if (yrs < 20) rate = 0.40 + (yrs - 15) * 0.01;
+        else               rate = Math.min(0.45 + (yrs - 20) * 0.02, 0.75);
+      }
+      const pension  = rate * v.lhSalary;
+      const ratePct  = (rate * 100).toFixed(0);
+      let insight;
+      if (rate === 0) {
+        insight = `Chưa đủ điều kiện. Cần đóng thêm ${15 - yrs} năm nữa để đạt mức tối thiểu 15 năm.`;
+      } else if (rate >= 0.75) {
+        insight = `Đã đạt tỷ lệ hưởng tối đa 75%. Đóng thêm không tăng lương hưu.`;
+      } else {
+        const max = v.lhSalary * 0.75;
+        insight = `Tỷ lệ ${ratePct}%. Mức tối đa 75% = ${fmtM(max)}/tháng — còn chênh ${fmtM(max - pension)}.`;
+      }
+      return { result: rate > 0 ? fmt(pension) : 'Chưa đủ ĐK', details: [
+        { label: 'Tỷ lệ hưởng',              value: ratePct + '%' },
+        { label: 'Mức bình quân lương căn cứ', value: fmt(v.lhSalary) + '/tháng' },
+        { label: 'Lương hưu/năm ước tính',   value: rate > 0 ? fmtM(pension * 12) : '-' },
+      ], insight };
     },
   },
   {
@@ -112,7 +161,7 @@ const TOOLS = [
     description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',
     resultLabel: 'NHẬN KHI ĐÁO HẠN',
     fields: [
-      { id: 'principal', label: 'Số tiền gửi',    type: 'range',  min: 1000000, max: 500000000, step: 1000000, value: 50000000, unit: 'đ' },
+      { id: 'principal', label: 'Số tiền gửi',    type: 'money',  min: 1000000, max: 2000000000, step: 1000000, value: 50000000, chips: [10000000, 50000000, 200000000] },
       { id: 'rate',      label: 'Lãi suất/năm',  type: 'range',  min: 2, max: 8, step: 0.1, value: 5.5, unit: '%' },
       { id: 'term',      label: 'Kỳ hạn',         type: 'select', options: [
         {value:1,label:'1 tháng'},{value:3,label:'3 tháng'},
@@ -135,7 +184,7 @@ const TOOLS = [
     description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến, chiết khấu gia cảnh và người phụ thuộc.',
     resultLabel: 'THUẾ TNCN MỖI THÁNG',
     fields: [
-      { id: 'grossSalary', label: 'Lương gross/tháng',    type: 'range',  min: 5000000, max: 100000000, step: 500000, value: 20000000, unit: 'đ' },
+      { id: 'grossSalary', label: 'Lương gross/tháng',    type: 'money',  min: 5000000, max: 200000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000] },
       { id: 'dependents',  label: 'Số người phụ thuộc',  type: 'select', options: [
         {value:0,label:'0 người'},{value:1,label:'1 người'},
         {value:2,label:'2 người'},{value:3,label:'3 người'},
@@ -167,7 +216,7 @@ const TOOLS = [
     description: 'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',
     resultLabel: 'GIÁ TRỊ SAU ĐẦU TƯ',
     fields: [
-      { id: 'monthly',      label: 'Đầu tư định kỳ/tháng', type: 'range',  min: 500000, max: 20000000, step: 500000, value: 2000000, unit: 'đ' },
+      { id: 'monthly',      label: 'Đầu tư định kỳ/tháng', type: 'money',  min: 100000, max: 50000000, step: 100000, value: 2000000, chips: [1000000, 2000000, 5000000] },
       { id: 'annualReturn', label: 'Lợi suất kỳ vọng/năm', type: 'range',  min: 5, max: 20, step: 0.5, value: 12, unit: '%' },
       { id: 'years',        label: 'Thời gian đầu tư',      type: 'select', options: [
         {value:3,label:'3 năm'},{value:5,label:'5 năm'},
@@ -197,12 +246,12 @@ const TOOLS = [
     description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',
     resultLabel: 'QUỸ DỰ PHÒNG CẦN CÓ',
     fields: [
-      { id: 'monthlyExpense', label: 'Chi tiêu hàng tháng',         type: 'range',  min: 3000000, max: 50000000, step: 500000, value: 12000000, unit: 'đ' },
+      { id: 'monthlyExpense', label: 'Chi tiêu hàng tháng',         type: 'money',  min: 1000000, max: 100000000, step: 500000, value: 12000000, chips: [5000000, 12000000, 20000000] },
       { id: 'safeMonths',     label: 'Số tháng an toàn mục tiêu',   type: 'select', options: [
         {value:3,label:'3 tháng'},{value:6,label:'6 tháng (khuyến nghị)'},
         {value:9,label:'9 tháng'},{value:12,label:'12 tháng'},
       ], value: 6 },
-      { id: 'currentSavings', label: 'Tiết kiệm hiện có',           type: 'range',  min: 0, max: 200000000, step: 1000000, value: 10000000, unit: 'đ' },
+      { id: 'currentSavings', label: 'Tiết kiệm hiện có',           type: 'money',  min: 0, max: 500000000, step: 1000000, value: 10000000, chips: [0, 10000000, 50000000] },
     ],
     compute(v) {
       const target = v.monthlyExpense * v.safeMonths;
@@ -260,6 +309,18 @@ function renderGenericPanel(tool) {
 
   const container = document.getElementById('genericFields');
   container.innerHTML = tool.fields.map(f => {
+    if (f.type === 'money') {
+      return `<div class="field-group" data-field="${f.id}">
+        <label class="field-label" for="${f.id}">${f.label}</label>
+        <div class="money-input-row">
+          <input type="number" id="${f.id}" value="${f.value}" min="${f.min || 0}" max="${f.max || ''}" step="${f.step || 1000000}">
+          <span class="unit-tag">đ</span>
+        </div>
+        <div class="money-chips">
+          ${(f.chips || []).map(c => `<button type="button" class="chip-btn${c === f.value ? ' active' : ''}" data-val="${c}">${fmtChip(c)}</button>`).join('')}
+        </div>
+      </div>`;
+    }
     if (f.type === 'range') {
       return `<div class="field-group">
         <label class="field-label" for="${f.id}">${f.label}
@@ -276,12 +337,27 @@ function renderGenericPanel(tool) {
   }).join('');
 
   tool.fields.forEach(f => {
-    document.getElementById(f.id).addEventListener('input', () => {
+    const el = document.getElementById(f.id);
+    el.addEventListener('input', () => {
       if (f.type === 'range') {
-        document.getElementById(f.id + 'Val').textContent = fmtField(f, document.getElementById(f.id).value);
+        document.getElementById(f.id + 'Val').textContent = fmtField(f, el.value);
+      } else if (f.type === 'money') {
+        document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
+          btn.classList.toggle('active', +btn.dataset.val === +el.value);
+        });
       }
       computeGeneric(tool);
     });
+    if (f.type === 'money') {
+      document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          el.value = btn.dataset.val;
+          document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          computeGeneric(tool);
+        });
+      });
+    }
   });
 
   computeGeneric(tool);
@@ -291,6 +367,12 @@ function fmtField(f, val) {
   if (f.unit === 'đ') return fmtM(+val);
   if (f.unit === '%') return (+val).toFixed(1) + '%';
   return val + (f.unit || '');
+}
+function fmtChip(val) {
+  if (val === 0) return '0đ';
+  if (val >= 1e9) return (val / 1e9 % 1 === 0 ? val / 1e9 : +(val / 1e9).toFixed(1)) + ' tỷ';
+  if (val >= 1e6) return (val / 1e6 % 1 === 0 ? val / 1e6 : +(val / 1e6).toFixed(1)) + ' tr';
+  return fmtM(val);
 }
 
 function computeGeneric(tool) {
@@ -302,6 +384,11 @@ function computeGeneric(tool) {
   document.getElementById('resultDetails').innerHTML  = res.details.map(d =>
     `<div class="result-row"><span>${d.label}</span><strong>${d.value}</strong></div>`
   ).join('');
+  const insightEl = document.getElementById('resultInsight');
+  if (insightEl) {
+    if (res.insight) { insightEl.textContent = res.insight; insightEl.style.display = ''; }
+    else insightEl.style.display = 'none';
+  }
 }
 
 // ─── Gold Panel
