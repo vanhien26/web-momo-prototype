@@ -614,4 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderGenericPanel(TOOLS[0]);
   initGoldPanel();
   initStockPanel();
+  const hash = location.hash.slice(1);
+  if (hash) {
+    const tool = TOOLS.find(t => t.id === hash);
+    if (tool) selectTool(tool.id);
+  }
 });
