@@ -82,6 +82,10 @@ document.querySelectorAll('.prototype-link').forEach(button => {
   button.addEventListener('click', () => selectDemo(button.dataset.demo));
 });
 
+// Auto-select demo from ?demo= URL param
+const urlDemo = new URLSearchParams(location.search).get('demo');
+if (urlDemo && demos[urlDemo]) selectDemo(urlDemo);
+
 document.querySelectorAll('.viewport-button').forEach(button => {
   button.addEventListener('click', () => {
     document.querySelectorAll('.viewport-button').forEach(item => item.classList.remove('active'));
