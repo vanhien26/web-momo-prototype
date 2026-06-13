@@ -324,6 +324,12 @@ const TOOLS = [
     id: 'stock', name: 'Tập Đầu Tư CK',      category: 'Investment', abbr: 'CK',  panel: 'stock',
   },
   {
+    id: 'lai-suat', name: 'Lãi Suất Ngân Hàng', category: 'Savings', abbr: 'LS', panel: 'bank-rate',
+  },
+  {
+    id: 'ty-gia',   name: 'Tỷ Giá',              category: 'FX',      abbr: 'FX', panel: 'fx',
+  },
+  {
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Planning', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',
@@ -379,11 +385,15 @@ function selectTool(id) {
   document.getElementById('genericPanel').hidden = tool.panel !== 'generic';
   document.getElementById('goldPanel').hidden    = tool.panel !== 'gold';
   document.getElementById('stockPanel').hidden   = tool.panel !== 'stock';
-  document.getElementById('cicPanel').hidden     = tool.panel !== 'cic';
-  if (tool.panel === 'generic') renderGenericPanel(tool);
-  if (tool.panel === 'gold')    computeGold();
-  if (tool.panel === 'stock')   renderStockTable();
-  if (tool.panel === 'cic')     renderCicPanel();
+  document.getElementById('cicPanel').hidden      = tool.panel !== 'cic';
+  document.getElementById('bankRatePanel').hidden = tool.panel !== 'bank-rate';
+  document.getElementById('fxPanel').hidden       = tool.panel !== 'fx';
+  if (tool.panel === 'generic')   renderGenericPanel(tool);
+  if (tool.panel === 'gold')      computeGold();
+  if (tool.panel === 'stock')     renderStockTable();
+  if (tool.panel === 'cic')       renderCicPanel();
+  if (tool.panel === 'bank-rate') computeBankRate();
+  if (tool.panel === 'fx')        computeFx();
 }
 
 // ─── Generic Panel
@@ -892,12 +902,174 @@ function renderCicPanel() {
 }
 
 // ─── Init
+// ─── Bank Rate Panel
+const BANK_RATES = [
+  { id: 'vcb',  name: 'Vietcombank', abbr: 'VCB', color: '#005c2f', rates: { 1: 1.6, 3: 2.0, 6: 3.0, 12: 4.7 } },
+  { id: 'bidv', name: 'BIDV',        abbr: 'BID', color: '#1a56db', rates: { 1: 1.7, 3: 2.2, 6: 3.3, 12: 4.8 } },
+  { id: 'vtb',  name: 'Vietinbank',  abbr: 'CTG', color: '#b91c1c', rates: { 1: 1.7, 3: 2.2, 6: 3.3, 12: 4.8 } },
+  { id: 'tcb',  name: 'Techcombank', abbr: 'TCB', color: '#c2410c', rates: { 1: 2.3, 3: 3.0, 6: 4.5, 12: 5.2 } },
+  { id: 'mb',   name: 'MB Bank',     abbr: 'MB',  color: '#1d4ed8', rates: { 1: 2.1, 3: 2.7, 6: 4.0, 12: 5.0 } },
+  { id: 'acb',  name: 'ACB',         abbr: 'ACB', color: '#0891b2', rates: { 1: 2.1, 3: 2.7, 6: 4.0, 12: 5.2 } },
+];
+
+let bankTerm = 6;
+
+function initBankRatePanel() {
+  document.querySelectorAll('#bankTermControl button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#bankTermControl button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      bankTerm = +btn.dataset.term;
+      computeBankRate();
+    });
+  });
+  document.querySelectorAll('[data-deposit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-deposit]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('bankDeposit').value = btn.dataset.deposit;
+      computeBankRate();
+    });
+  });
+  document.getElementById('bankDeposit').addEventListener('input', computeBankRate);
+  computeBankRate();
+}
+
+function computeBankRate() {
+  const principal = +document.getElementById('bankDeposit').value || 100000000;
+  const term = bankTerm;
+  const sorted = [...BANK_RATES].sort((a, b) => b.rates[term] - a.rates[term]);
+  const maxRate = sorted[0].rates[term];
+  document.getElementById('bankRateTable').innerHTML =
+    `<div class="bank-rate-header"><span>Ngân hàng</span><span>Lãi suất/năm</span><span>Thực nhận (sau thuế)</span></div>` +
+    sorted.map((b, i) => {
+      const rate = b.rates[term];
+      const interest = principal * rate / 100 / 12 * term;
+      const net = interest * 0.95;
+      const isBest = i === 0;
+      return `<div class="bank-rate-row${isBest ? ' best' : ''}">
+        <div class="bank-name">
+          <span class="bank-abbr" style="background:${b.color}">${b.abbr}</span>
+          <span>${b.name}</span>
+          ${isBest ? '<span class="best-badge">Cao nhất</span>' : ''}
+        </div>
+        <div class="bank-rate-pct">${rate.toFixed(1)}%
+          <div class="rate-bar"><div class="rate-fill" style="width:${(rate / maxRate * 100).toFixed(0)}%"></div></div>
+        </div>
+        <div class="bank-net">${fmtM(principal + net)}</div>
+      </div>`;
+    }).join('');
+}
+
+// ─── FX Panel
+const FX_RATES = [
+  { code: 'USD', name: 'Đô la Mỹ',          flag: '🇺🇸', buy: 25250, sell: 25570, ref: 25050, per: 1 },
+  { code: 'EUR', name: 'Euro',               flag: '🇪🇺', buy: 27100, sell: 27800, ref: 27380, per: 1 },
+  { code: 'JPY', name: 'Yên Nhật (100¥)',   flag: '🇯🇵', buy: 16200, sell: 17200, ref: 16850, per: 100 },
+  { code: 'CNY', name: 'Nhân dân tệ',       flag: '🇨🇳', buy:  3450, sell:  3580, ref:  3520, per: 1 },
+  { code: 'KRW', name: 'Won HQ (100₩)',      flag: '🇰🇷', buy:  1750, sell:  1880, ref:  1820, per: 100 },
+  { code: 'SGD', name: 'Đô la Singapore',   flag: '🇸🇬', buy: 18800, sell: 19400, ref: 19100, per: 1 },
+];
+
+let fxDir = 'from-vnd';
+let fxCode = 'USD';
+
+function initFxPanel() {
+  document.getElementById('fxRateGrid').innerHTML = FX_RATES.map(r =>
+    `<div class="gold-price-card fx-card" data-code="${r.code}" style="cursor:pointer">
+      <span>${r.flag} ${r.code}</span>
+      <strong>${new Intl.NumberFormat('vi-VN').format(r.sell / r.per)}</strong>
+      <em>Mua: ${new Intl.NumberFormat('vi-VN').format(r.buy / r.per)} đ</em>
+    </div>`
+  ).join('');
+  document.querySelectorAll('.fx-card').forEach(card => {
+    card.addEventListener('click', () => {
+      fxCode = card.dataset.code;
+      document.getElementById('fxCurrency').value = fxCode;
+      if (fxDir === 'to-vnd') document.getElementById('fxAmountUnit').textContent = fxCode;
+      computeFx();
+    });
+  });
+
+  document.getElementById('fxCurrency').innerHTML = FX_RATES.map(r =>
+    `<option value="${r.code}">${r.flag} ${r.name}</option>`
+  ).join('');
+  document.getElementById('fxCurrency').addEventListener('change', e => {
+    fxCode = e.target.value;
+    if (fxDir === 'to-vnd') document.getElementById('fxAmountUnit').textContent = fxCode;
+    computeFx();
+  });
+
+  document.querySelectorAll('#fxDirection button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#fxDirection button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      fxDir = btn.dataset.dir;
+      document.getElementById('fxAmountUnit').textContent = fxDir === 'from-vnd' ? 'VNĐ' : fxCode;
+      const qv = document.querySelectorAll('[data-fx]');
+      if (fxDir === 'from-vnd') {
+        qv.forEach((b, i) => { b.dataset.fx = [5000000, 10000000, 50000000][i]; b.textContent = ['5 triệu', '10 triệu', '50 triệu'][i]; });
+        document.getElementById('fxAmount').value = 10000000;
+      } else {
+        qv.forEach((b, i) => { b.dataset.fx = [100, 500, 1000][i]; b.textContent = ['100', '500', '1,000'][i]; });
+        document.getElementById('fxAmount').value = 100;
+      }
+      document.querySelectorAll('[data-fx]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-fx]')[1].classList.add('active');
+      computeFx();
+    });
+  });
+
+  document.querySelectorAll('[data-fx]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-fx]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('fxAmount').value = btn.dataset.fx;
+      computeFx();
+    });
+  });
+
+  document.getElementById('fxAmount').addEventListener('input', computeFx);
+  computeFx();
+}
+
+function computeFx() {
+  const amount = +document.getElementById('fxAmount').value || 0;
+  const fx = FX_RATES.find(r => r.code === fxCode) || FX_RATES[0];
+  const buyPer1  = fx.buy  / fx.per;
+  const sellPer1 = fx.sell / fx.per;
+  const refPer1  = fx.ref  / fx.per;
+  const fmtR = n => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(n);
+
+  let label, value, insight;
+  if (fxDir === 'from-vnd') {
+    const got = amount / sellPer1;
+    label   = `NHẬN ĐƯỢC (${fx.code})`;
+    value   = fmtR(got) + ' ' + fx.code;
+    insight = `Đổi ${fmtM(amount)} → ${fmtR(got)} ${fx.code} (tỷ giá bán ${fmtR(sellPer1)} đ/${fx.per > 1 ? fx.per + ' ' : ''}${fx.code}). Spread ${fmtR((fx.sell - fx.buy) / fx.per)} đ so với tham chiếu ${fmtR(refPer1)} đ.`;
+  } else {
+    const got = amount * buyPer1;
+    label   = 'NHẬN ĐƯỢC (VNĐ)';
+    value   = fmtM(got);
+    insight = `Đổi ${fmtR(amount)} ${fx.code} → ${fmtM(got)} (tỷ giá mua ${fmtR(buyPer1)} đ/${fx.per > 1 ? fx.per + ' ' : ''}${fx.code}). Spread ${fmtR((fx.sell - fx.buy) / fx.per)} đ.`;
+  }
+  document.getElementById('fxResultLabel').textContent = label;
+  document.getElementById('fxResultValue').textContent = value;
+  document.getElementById('fxBuyRate').textContent  = fmtR(buyPer1)  + ' đ';
+  document.getElementById('fxSellRate').textContent = fmtR(sellPer1) + ' đ';
+  document.getElementById('fxSpread').textContent   = fmtR((fx.sell - fx.buy) / fx.per) + ' đ';
+  document.getElementById('fxRef').textContent      = fmtR(refPer1)  + ' đ';
+  document.getElementById('fxInsight').textContent  = insight;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
   renderGenericPanel(TOOLS[0]);
   initGoldPanel();
   initStockPanel();
   initCicPanel();
+  initBankRatePanel();
+  initFxPanel();
   const hash = location.hash.slice(1);
   if (hash) {
     const tool = TOOLS.find(t => t.id === hash);

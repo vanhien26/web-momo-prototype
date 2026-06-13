@@ -17,7 +17,7 @@
       <a href="../index.html" target="_top">← Store</a>
       <a href="#tools">Công cụ</a>
       <a href="#method">Phương pháp</a>
-      <span class="status"><i></i>13 utilities live</span>
+      <span class="status"><i></i>15 utilities live</span>
     </nav>
   </header>
 
@@ -28,8 +28,8 @@
         <strong class="hero-name">Financial Utilities Lab</strong>
       </div>
       <div class="hero-pills">
-        <span><b>13</b> utilities</span>
-        <span><b>4</b> nhóm</span>
+        <span><b>15</b> utilities</span>
+        <span><b>7</b> nhóm</span>
         <span><b>3</b> bước</span>
       </div>
     </section>
@@ -249,6 +249,91 @@
             </div>
           </div>
         </section>
+
+        <section class="tool-panel bank-rate-panel" id="bankRatePanel" hidden>
+          <div class="panel-heading market-heading">
+            <div>
+              <span class="panel-kicker">SAVINGS / DEPOSIT</span>
+              <h2>Lãi suất ngân hàng</h2>
+              <p>So sánh lãi suất tiền gửi từ 6 ngân hàng lớn. Tính lợi tức thực nhận theo số tiền và kỳ hạn chọn.</p>
+            </div>
+            <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
+          </div>
+
+          <div class="market-workspace" style="align-items:flex-start">
+            <div class="control-section">
+              <div class="section-label"><span>01</span><strong>Số tiền gửi</strong></div>
+              <label class="input-label" for="bankDeposit" style="margin-top:8px">Số tiền</label>
+              <div class="money-input" style="margin-top:4px">
+                <input id="bankDeposit" type="number" min="1000000" step="1000000" value="100000000">
+                <span>VNĐ</span>
+              </div>
+              <div class="quick-values" style="margin-top:8px">
+                <button type="button" data-deposit="50000000">50 triệu</button>
+                <button type="button" data-deposit="100000000" class="active">100 triệu</button>
+                <button type="button" data-deposit="500000000">500 triệu</button>
+              </div>
+              <div class="section-label" style="margin-top:20px"><span>02</span><strong>Kỳ hạn</strong></div>
+              <div class="segmented-control" id="bankTermControl" style="margin-top:8px">
+                <button type="button" data-term="1">1 tháng</button>
+                <button type="button" data-term="3">3 tháng</button>
+                <button type="button" data-term="6" class="active">6 tháng</button>
+                <button type="button" data-term="12">12 tháng</button>
+              </div>
+            </div>
+            <div id="bankRateTable" class="bank-rate-table"></div>
+          </div>
+          <p class="source-note">Lãi suất tham chiếu từ bảng công bố chính thức trên website từng ngân hàng tháng 6/2026. Thuế TNCN 5% trên lãi đã được khấu trừ trong cột "Thực nhận".</p>
+        </section>
+
+        <section class="tool-panel fx-panel" id="fxPanel" hidden>
+          <div class="panel-heading market-heading">
+            <div>
+              <span class="panel-kicker">FOREIGN EXCHANGE</span>
+              <h2>Tỷ giá đổi tiền</h2>
+              <p>Quy đổi VND và ngoại tệ phổ biến theo tỷ giá mua bán tham chiếu. Xem spread và số tiền thực nhận.</p>
+            </div>
+            <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
+          </div>
+
+          <div class="gold-price-grid" id="fxRateGrid" style="grid-template-columns:repeat(6,1fr)"></div>
+
+          <div class="market-workspace">
+            <div class="control-section">
+              <div class="section-label"><span>01</span><strong>Chiều đổi</strong></div>
+              <div class="segmented-control" id="fxDirection" style="margin-top:8px">
+                <button type="button" data-dir="from-vnd" class="active">VNĐ → Ngoại tệ</button>
+                <button type="button" data-dir="to-vnd">Ngoại tệ → VNĐ</button>
+              </div>
+              <label class="input-label" for="fxAmount" style="margin-top:14px">Số tiền</label>
+              <div class="money-input" style="margin-top:4px">
+                <input id="fxAmount" type="number" min="0" step="1000000" value="10000000">
+                <span id="fxAmountUnit">VNĐ</span>
+              </div>
+              <div class="quick-values" id="fxQuickValues" style="margin-top:8px">
+                <button type="button" data-fx="5000000">5 triệu</button>
+                <button type="button" data-fx="10000000" class="active">10 triệu</button>
+                <button type="button" data-fx="50000000">50 triệu</button>
+              </div>
+              <label class="input-label" for="fxCurrency" style="margin-top:14px">Ngoại tệ</label>
+              <select id="fxCurrency" style="margin-top:4px;width:100%;padding:8px;border:1px solid var(--line);border-radius:7px"></select>
+            </div>
+
+            <div class="gold-result">
+              <span id="fxResultLabel">NHẬN ĐƯỢC (THEO TỶ GIÁ BÁN)</span>
+              <strong id="fxResultValue" style="font-size:22px">--</strong>
+              <div class="gold-result-grid" style="margin-top:12px">
+                <div><small>Tỷ giá mua</small><b id="fxBuyRate">--</b></div>
+                <div><small>Tỷ giá bán</small><b id="fxSellRate">--</b></div>
+                <div><small>Spread mua-bán</small><b id="fxSpread">--</b></div>
+                <div><small>Tỷ giá tham chiếu</small><b id="fxRef">--</b></div>
+              </div>
+              <div class="insight-box" id="fxInsight" style="margin-top:12px"></div>
+            </div>
+          </div>
+          <p class="source-note">Tỷ giá tham chiếu theo bảng giá Vietcombank tháng 6/2026. Prototype không kết nối dữ liệu thời gian thực. Tỷ giá thực tế tại thời điểm giao dịch có thể khác.</p>
+        </section>
+
       </div>
     </section>
 
@@ -260,6 +345,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js"></script>
+  <script src="financial.js?v=2"></script>
 </body>
 </html>
