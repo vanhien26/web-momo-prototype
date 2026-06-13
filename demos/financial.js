@@ -1,3 +1,10 @@
+// ─── Analytics stubs (swap for real gtag/GA4 calls in production)
+window.dataLayer = window.dataLayer || [];
+function momo_track(event, params) {
+  console.log('[momo_track]', event, params);
+  window.dataLayer.push({ event, ...params });
+}
+
 // ─── Formatters
 const fmt  = n => new Intl.NumberFormat('vi-VN').format(Math.round(n)) + ' đ';
 const fmtM = n => {
@@ -6,6 +13,47 @@ const fmtM = n => {
   if (abs >= 1e9) return sign + new Intl.NumberFormat('vi-VN', {maximumFractionDigits:1}).format(abs/1e9) + ' tỷ';
   if (abs >= 1e6) return sign + new Intl.NumberFormat('vi-VN', {maximumFractionDigits:1}).format(abs/1e6) + ' triệu';
   return fmt(n);
+};
+
+// ─── CIC Data
+const CIC_BANDS = [
+  { hang:1,  min:821, max:900, label:'Xuất sắc',      desc:'Ưu tiên vay với điều kiện tốt nhất, lãi suất thấp nhất.',   color:'#027a48' },
+  { hang:2,  min:761, max:820, label:'Rất tốt',        desc:'Dễ dàng vay vốn, lãi suất cạnh tranh.',                     color:'#12b76a' },
+  { hang:3,  min:701, max:760, label:'Tốt',            desc:'Vay được ở hầu hết tổ chức tín dụng.',                      color:'#65a30d' },
+  { hang:4,  min:621, max:700, label:'Khá',            desc:'Vay được nhưng một số hồ sơ cần thêm tài sản đảm bảo.',    color:'#ca8a04' },
+  { hang:5,  min:541, max:620, label:'Tín dụng tốt',  desc:'Một số tổ chức tín dụng có thể xét duyệt với điều kiện.',  color:'#d97706' },
+  { hang:6,  min:481, max:540, label:'Trung bình',     desc:'Khó vay, thường bị yêu cầu thêm tài sản đảm bảo.',         color:'#ea580c' },
+  { hang:7,  min:421, max:480, label:'Dưới TB',        desc:'Hầu hết hồ sơ vay bị từ chối.',                            color:'#dc2626' },
+  { hang:8,  min:361, max:420, label:'Kém',            desc:'Rất khó vay, cần cải thiện điểm trước.',                   color:'#b91c1c' },
+  { hang:9,  min:321, max:360, label:'Rất kém',        desc:'Không thể vay thông thường. Cần xử lý nợ.',                color:'#991b1b' },
+  { hang:10, min:300, max:320, label:'Cực kém',        desc:'Nợ xấu hiện hữu. Cần xử lý triệt để trước khi cải thiện.',color:'#7f1d1d' },
+];
+
+const CIC_BEHAVIORS = {
+  A: { label:'Lịch sử thanh toán', sub:'~35% ảnh hưởng', scenarios:[
+    { id:'a1', label:'Đúng hạn liên tục',        delta:+35,  rec:'Giữ chuỗi trả đúng hạn mỗi tháng - điểm sẽ tăng đều và rất chắc.' },
+    { id:'a2', label:'Quá hạn dưới 6 tháng',     delta:-45,  rec:'Quá hạn ngắn gây ảnh hưởng mạnh. Thanh toán ngay để dừng mức giảm điểm.' },
+    { id:'a3', label:'Quá hạn trên 6 tháng',     delta:-110, rec:'Quá hạn dài là tác động nặng nhất. Cần xử lý nợ xấu trước khi cải thiện điểm.' },
+  ]},
+  B: { label:'Tổng dư nợ so', sub:'~30% ảnh hưởng', scenarios:[
+    { id:'b1', label:'Dưới 30% hạn mức',         delta:+20,  rec:'Tỷ lệ sử dụng thấp là tín hiệu tốt. Giữ dưới 30% để tối ưu điểm.' },
+    { id:'b2', label:'30-70% hạn mức',            delta:+5,   rec:'Tỷ lệ trung bình. Giảm xuống dưới 30% để cải thiện điểm thêm.' },
+    { id:'b3', label:'Trên 70% hạn mức',          delta:-25,  rec:'Sử dụng quá nhiều hạn mức là dấu hiệu rủi ro. Trả bớt nợ hoặc yêu cầu tăng hạn mức.' },
+  ]},
+  C: { label:'Số lượng tín dụng', sub:'~15% ảnh hưởng', scenarios:[
+    { id:'c1', label:'Không mở thêm tài khoản',      delta:+5,  rec:'Ổn định danh mục tín dụng là lựa chọn tốt nếu đang quản lý tốt.' },
+    { id:'c2', label:'Mở 1-2 tài khoản mới',         delta:-10, rec:'Mỗi đơn xin tín dụng mới tạo hard inquiry, giảm điểm tạm thời 3-6 tháng.' },
+    { id:'c3', label:'Mở nhiều tài khoản cùng lúc',  delta:-30, rec:'Mở nhiều tài khoản cùng lúc là dấu hiệu rủi ro cao với các tổ chức cho vay.' },
+  ]},
+  D: { label:'Độ dài tín dụng', sub:'~10% ảnh hưởng', scenarios:[
+    { id:'d1', label:'Giữ nguyên tài khoản cũ', delta:+10, rec:'Tài khoản cũ tạo lịch sử dài - đừng đóng thẻ cũ dù không dùng thường xuyên.' },
+    { id:'d2', label:'Đóng tài khoản cũ',        delta:-15, rec:'Đóng tài khoản cũ rút ngắn lịch sử tín dụng. Cân nhắc kỹ trước khi đóng thẻ.' },
+  ]},
+  E: { label:'Chất lượng quan hệ', sub:'~10% ảnh hưởng', scenarios:[
+    { id:'e1', label:'Kết hợp vay + thẻ tín dụng', delta:+15, rec:'Có cả vay tiêu dùng và thẻ tín dụng cho thấy bạn quản lý nhiều loại tín dụng tốt.' },
+    { id:'e2', label:'Chỉ dùng thẻ tín dụng',       delta:+5,  rec:'Tốt, nhưng đa dạng hóa thêm loại tín dụng có thể cải thiện điểm thêm.' },
+    { id:'e3', label:'Chưa có tín dụng chính thức', delta:0,   rec:'Chưa có lịch sử tín dụng. Bắt đầu với thẻ tín dụng để xây dựng điểm từ đầu.' },
+  ]},
 };
 
 // ─── Tool Catalog
@@ -63,6 +111,33 @@ const TOOLS = [
         { label: 'Chi phí tài chính', value: fmt(total - price) },
       ]};
     },
+  },
+  {
+    id: 'cic-score', name: 'CIC Score', category: 'Credit', abbr: 'CIC',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Tra cứu hạng tín dụng CIC theo điểm số và xem điều kiện vay vốn tương ứng.',
+    formula: '<b>5 yếu tố ảnh hưởng điểm CIC:</b><br>Lịch sử thanh toán (35%) &nbsp;·&nbsp; Tổng dư nợ (30%) &nbsp;·&nbsp; Số lượng tín dụng (15%) &nbsp;·&nbsp; Độ dài lịch sử (10%) &nbsp;·&nbsp; Chất lượng quan hệ (10%)',
+    resultLabel: 'XẾP HẠNG TÍN DỤNG',
+    fields: [
+      { id: 'cicScore', label: 'Điểm CIC của bạn', type: 'range', min: 300, max: 900, step: 10, value: 570, unit: ' điểm' },
+    ],
+    compute(v) {
+      const band = CIC_BANDS.find(b => v.cicScore >= b.min && v.cicScore <= b.max) || CIC_BANDS[CIC_BANDS.length - 1];
+      const prospect = band.hang <= 2 ? 'Dễ vay, lãi suất ưu đãi tốt nhất'
+        : band.hang <= 4 ? 'Vay được với điều kiện thuận lợi'
+        : band.hang === 5 ? 'Một số tổ chức tín dụng có thể xét duyệt'
+        : band.hang <= 7 ? 'Khó vay, thường cần tài sản đảm bảo'
+        : 'Hầu hết tổ chức tín dụng từ chối';
+      return { result: `Hạng ${band.hang} - ${band.label}`, details: [
+        { label: 'Điểm số', value: v.cicScore + ' / 900' },
+        { label: 'Khoảng điểm Hạng ' + band.hang, value: band.min + ' - ' + band.max },
+        { label: 'Triển vọng vay vốn', value: prospect },
+      ], insight: band.desc };
+    },
+  },
+  {
+    id: 'cic-stimulator', name: 'CIC Stimulator', category: 'Credit', abbr: 'SIM',
+    panel: 'cic',
   },
   {
     id: 'bao-hiem-o-to', name: 'BH Ô Tô', category: 'Insurance', abbr: 'BH',
@@ -304,9 +379,11 @@ function selectTool(id) {
   document.getElementById('genericPanel').hidden = tool.panel !== 'generic';
   document.getElementById('goldPanel').hidden    = tool.panel !== 'gold';
   document.getElementById('stockPanel').hidden   = tool.panel !== 'stock';
+  document.getElementById('cicPanel').hidden     = tool.panel !== 'cic';
   if (tool.panel === 'generic') renderGenericPanel(tool);
   if (tool.panel === 'gold')    computeGold();
   if (tool.panel === 'stock')   renderStockTable();
+  if (tool.panel === 'cic')     renderCicPanel();
 }
 
 // ─── Generic Panel
@@ -403,6 +480,7 @@ function computeGeneric(tool) {
     if (res.insight) { insightEl.textContent = res.insight; insightEl.style.display = ''; }
     else insightEl.style.display = 'none';
   }
+  momo_track('tool_calculate', { tool_id: tool.id, tool_name: tool.name, tool_category: tool.category });
 }
 
 // ─── Gold Panel
@@ -709,12 +787,117 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
+// ─── CIC Stimulator Panel
+let cicScore = 631;
+let cicGroup = 'A';
+let cicScenarioId = null;
+
+function getBand(score) {
+  return CIC_BANDS.find(b => score >= b.min && score <= b.max) || CIC_BANDS[CIC_BANDS.length - 1];
+}
+
+function initCicPanel() {
+  const groupGrid = document.getElementById('cicGroupGrid');
+  groupGrid.innerHTML = Object.entries(CIC_BEHAVIORS).map(([key, g]) =>
+    `<button class="cic-group-btn${key === cicGroup ? ' active' : ''}" data-group="${key}">
+      <strong>${key}</strong><span>${g.label}</span><em>${g.sub}</em>
+    </button>`
+  ).join('');
+
+  groupGrid.addEventListener('click', e => {
+    const btn = e.target.closest('.cic-group-btn');
+    if (!btn) return;
+    cicGroup = btn.dataset.group;
+    cicScenarioId = null;
+    groupGrid.querySelectorAll('.cic-group-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderCicScenarios();
+    computeCic();
+  });
+
+  document.getElementById('cicScenarios').addEventListener('click', e => {
+    const btn = e.target.closest('.cic-scenario-btn');
+    if (!btn) return;
+    cicScenarioId = btn.dataset.id;
+    document.querySelectorAll('#cicScenarios .cic-scenario-btn').forEach(b => b.classList.toggle('active', b === btn));
+    computeCic();
+  });
+
+  document.getElementById('cicCurrentScore').addEventListener('input', e => {
+    cicScore = +e.target.value;
+    updateCicScoreBadge();
+    computeCic();
+  });
+
+  renderCicScenarios();
+  updateCicScoreBadge();
+  computeCic();
+}
+
+function updateCicScoreBadge() {
+  const band = getBand(cicScore);
+  document.getElementById('cicScoreNum').textContent  = cicScore;
+  document.getElementById('cicScoreHang').textContent = `Hạng ${band.hang} · ${band.label}`;
+  const badge = document.getElementById('cicScoreBadge');
+  badge.style.borderColor = band.color;
+  badge.style.color = band.color;
+  const pct = Math.round((cicScore - 300) / 600 * 100);
+  const thumb = document.getElementById('cicGaugeThumb');
+  if (thumb) thumb.style.left = pct + '%';
+}
+
+function renderCicScenarios() {
+  const group = CIC_BEHAVIORS[cicGroup];
+  document.getElementById('cicScenarios').innerHTML = group.scenarios.map(s =>
+    `<button class="cic-scenario-btn${s.id === cicScenarioId ? ' active' : ''}" data-id="${s.id}">
+      <span class="scenario-label">${s.label}</span>
+      <span class="scenario-delta ${s.delta > 0 ? 'pos' : s.delta < 0 ? 'neg' : 'neu'}">${s.delta > 0 ? '+' : ''}${s.delta}</span>
+    </button>`
+  ).join('');
+}
+
+function computeCic() {
+  const beforeBand = getBand(cicScore);
+  const beforeEl = document.getElementById('cicBeforeVal');
+  beforeEl.textContent = cicScore;
+  beforeEl.style.color = beforeBand.color;
+  document.getElementById('cicBeforeHang').textContent = `Hạng ${beforeBand.hang} · ${beforeBand.label}`;
+
+  const group    = CIC_BEHAVIORS[cicGroup];
+  const scenario = cicScenarioId ? group.scenarios.find(s => s.id === cicScenarioId) : null;
+  const after    = scenario ? Math.min(900, Math.max(300, cicScore + scenario.delta)) : cicScore;
+  const afterBand = getBand(after);
+
+  const afterEl = document.getElementById('cicAfterVal');
+  afterEl.textContent = after;
+  afterEl.style.color = afterBand.color;
+  document.getElementById('cicAfterHang').textContent = `Hạng ${afterBand.hang} · ${afterBand.label}`;
+
+  const d = scenario ? scenario.delta : 0;
+  const deltaEl = document.getElementById('cicDelta');
+  deltaEl.textContent = scenario ? (d > 0 ? '▲ +' + d : d < 0 ? '▼ ' + d : '= 0') : '→';
+  deltaEl.className   = 'cic-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'neu');
+
+  const recEl = document.getElementById('cicRecommendation');
+  recEl.textContent = scenario ? scenario.rec : 'Chọn một hành vi ở bước 2 để xem xu hướng biến động điểm.';
+  recEl.className   = 'cic-rec' + (scenario ? ' active' : '');
+}
+
+function renderCicPanel() {
+  document.querySelectorAll('#cicGroupGrid .cic-group-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.group === cicGroup)
+  );
+  renderCicScenarios();
+  updateCicScoreBadge();
+  computeCic();
+}
+
 // ─── Init
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
   renderGenericPanel(TOOLS[0]);
   initGoldPanel();
   initStockPanel();
+  initCicPanel();
   const hash = location.hash.slice(1);
   if (hash) {
     const tool = TOOLS.find(t => t.id === hash);

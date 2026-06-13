@@ -9,7 +9,7 @@
     :root{--momo:#a50064;--pink:#f95396;--ink:#202124;--muted:#667085;--line:#e7e8ec}
     *{box-sizing:border-box}body{margin:0;background:#f2f4f7;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;letter-spacing:0}
     .app{min-height:100vh;display:grid;grid-template-columns:240px 1fr 270px;gap:12px;padding:12px}.panel,.stage{background:#fff;border:1px solid var(--line);border-radius:10px}.panel{padding:18px}.panel h2{font-size:13px;margin:0 0 16px}.label{font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;margin:18px 0 8px}.filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{border:1px solid var(--line);background:#fff;border-radius:5px;padding:7px 8px;font:inherit;font-size:8px}.filters button.active{background:#fff0f7;color:var(--momo);border-color:#e6a3c8}
-    .map{height:180px;margin-top:10px;border-radius:7px;background:url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=80') center/cover;position:relative;overflow:hidden}.map:after{content:'Vị trí hiện tại';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:7px 9px;border-radius:5px;font-size:8px;font-weight:700;box-shadow:0 5px 18px #0002}
+    .map{height:180px;margin-top:10px;border-radius:7px;background:linear-gradient(135deg,#e8f4fd 0%,#d4edda 30%,#e8f4fd 60%,#fce4ec 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}.map-grid{position:absolute;inset:0;background-image:linear-gradient(#ccc 1px,transparent 1px),linear-gradient(90deg,#ccc 1px,transparent 1px);background-size:24px 24px;opacity:.18}.map-road-h{position:absolute;top:50%;left:0;right:0;height:8px;background:#d9d9d9;transform:translateY(-50%)}.map-road-v{position:absolute;left:40%;top:0;bottom:0;width:8px;background:#d9d9d9}.map-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-70%);font-size:26px;line-height:1;filter:drop-shadow(0 2px 4px #0004)}.map-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:#fff;padding:5px 10px;border-radius:5px;font-size:8px;font-weight:700;box-shadow:0 2px 8px #0002;white-space:nowrap}
     .stage{display:flex;flex-direction:column;align-items:center;padding:18px;background:#fafafa}.stage-header{width:100%;max-width:410px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.brand{font-weight:800;font-size:18px}.brand span{color:var(--pink)}.location{font-size:8px;color:var(--muted);background:#fff;border:1px solid var(--line);padding:7px 9px;border-radius:5px}
     .card{width:100%;max-width:410px;height:465px;border-radius:12px;overflow:hidden;position:relative;background:#222;box-shadow:0 15px 35px #10182828;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}.card.dragging{cursor:grabbing}
     .card-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.card-bg-emoji{font-size:130px;opacity:.22;filter:blur(3px);pointer-events:none;line-height:1}
@@ -21,7 +21,7 @@
 </head>
 <body>
   <div class="app">
-    <aside class="panel"><h2>Bộ lọc khám phá</h2><div class="label">Danh mục</div><div class="filters"><button class="active">Tất cả</button><button>Bún / Phở</button><button>Cơm</button><button>Ăn vặt</button></div><div class="label">Khoảng cách</div><div class="filters"><button class="active">Tất cả</button><button>&lt; 500m</button><button>&lt; 1km</button></div><div class="label">Khu vực hiện tại</div><div class="map"></div></aside>
+    <aside class="panel"><h2>Bộ lọc khám phá</h2><div class="label">Danh mục</div><div class="filters"><button class="active">Tất cả</button><button>Bún / Phở</button><button>Cơm</button><button>Ăn vặt</button></div><div class="label">Khoảng cách</div><div class="filters"><button class="active">Tất cả</button><button>&lt; 500m</button><button>&lt; 1km</button></div><div class="label">Khu vực hiện tại</div><div class="map"><div class="map-grid"></div><div class="map-road-h"></div><div class="map-road-v"></div><div class="map-pin">📍</div><div class="map-label">Quận 1, TP.HCM</div></div></aside>
     <main class="stage">
       <div class="stage-header"><div style="display:flex;align-items:center;gap:14px;"><a href="../index.html" target="_top" style="font-size:10px;font-weight:700;color:#667085;text-decoration:none;">← Store</a><div class="brand">Quán<span>Ngon</span></div></div><div class="location">Quận 1, TP.HCM</div></div>
       <article class="card" id="card"></article>
@@ -30,6 +30,13 @@
     <aside class="panel"><h2>Quán đã lưu <span id="savedCount">(0)</span></h2><div id="saved"><div class="saved-empty">Nhấn nút trái tim để lưu quán. Danh sách này có thể kết nối sang deal, chỉ đường hoặc thanh toán MoMo.</div></div></aside>
   </div>
   <script>
+    // Analytics stubs
+    window.dataLayer = window.dataLayer || [];
+    function momo_track(event, params) {
+      console.log('[momo_track]', event, params);
+      window.dataLayer.push({ event, ...params });
+    }
+
     const restaurants=[
       {name:'Bếp Mẹ Ỉn',type:'Món Việt · Cơm nhà',rating:'4.8',distance:'350m',price:'80K - 180K',deal:'Giảm 20% khi thanh toán MoMo',address:'Lê Thánh Tôn, Quận 1',
        bg:'linear-gradient(160deg,#5C2E0E 0%,#8B4A1A 30%,#C4783C 60%,#7A3E15 100%)',thumb:'linear-gradient(135deg,#8B4A1A,#C4783C)',emoji:'🍛'},
@@ -43,8 +50,9 @@
     let index=0;const savedItems=[];
     function render(){const item=restaurants[index%restaurants.length];card.innerHTML=`<div class="card-bg" style="background:${item.bg}"><span class="card-bg-emoji">${item.emoji}</span></div><div class="overlay"></div><div class="swipe-overlay like">♥ LƯU</div><div class="swipe-overlay skip">× BỎ</div><div class="top-badges"><span class="badge">ĐƯỢC YÊU THÍCH</span><span class="badge open">ĐANG MỞ</span></div><div class="content"><h1>${item.name}</h1><div class="type">${item.type}</div><div class="stats"><span>★ ${item.rating}</span><span>⌖ ${item.distance}</span><span>₫ ${item.price}</span></div><div class="deal"><b>Ưu đãi MoMo</b><br>${item.deal}</div><div class="type" style="margin-top:9px">${item.address}</div></div>`}
     function next(){index=(index+1)%restaurants.length;render()}
-    function saveAndNext(){const item=restaurants[index%restaurants.length];if(!savedItems.some(x=>x.name===item.name))savedItems.push(item);savedCount.textContent=`(${savedItems.length})`;saved.innerHTML=savedItems.map(x=>`<div class="saved-item"><div style="width:46px;height:46px;border-radius:6px;background:${x.bg};display:flex;align-items:center;justify-content:center;flex:none;font-size:22px">${x.emoji}</div><span><b>${x.name}</b><small>${x.distance} · ${x.deal}</small></span></div>`).join('');next()}
-    skip.onclick=next;save.onclick=saveAndNext;
+    function saveAndNext(){const item=restaurants[index%restaurants.length];if(!savedItems.some(x=>x.name===item.name))savedItems.push(item);savedCount.textContent=`(${savedItems.length})`;saved.innerHTML=savedItems.map(x=>`<div class="saved-item"><div style="width:46px;height:46px;border-radius:6px;background:${x.bg};display:flex;align-items:center;justify-content:center;flex:none;font-size:22px">${x.emoji}</div><span><b>${x.name}</b><small>${x.distance} · ${x.deal}</small></span></div>`).join('');momo_track('merchant_saved',{merchant_name:item.name,merchant_category:item.type,swipe_depth:index+1});next()}
+    function skipAndNext(){momo_track('merchant_skipped',{merchant_name:restaurants[index%restaurants.length].name,swipe_depth:index+1});next()}
+    skip.onclick=skipAndNext;save.onclick=saveAndNext;
 
     // Swipe gesture
     let dragStartX=0,dragStartY=0,dragging=false,dragDx=0;

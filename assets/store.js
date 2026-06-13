@@ -18,9 +18,11 @@ const PROTOTYPES = [
     tools: [
       { id: 'vay-nhanh',       name: 'Vay Nhanh Calculator',      category: 'Credit',     description: 'Ước tính số tiền trả hằng tháng theo số tiền vay, lãi suất và kỳ hạn.',               jtbd: 'Biết trước gánh nặng tài chính trước khi vay' },
       { id: 'tra-gop',         name: 'Trả Góp Simulator',         category: 'Credit',     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.', jtbd: 'So sánh gói trả góp để chọn phương án tối ưu' },
+      { id: 'cic-score',       name: 'CIC Score Checker',         category: 'Credit',     description: 'Mô phỏng điểm tín dụng CIC theo các yếu tố thanh toán, sử dụng hạn mức và lịch sử.', jtbd: 'Biết điểm CIC hiện tại và cách cải thiện' },
+      { id: 'cic-stimulator',  name: 'CIC Score Simulator',       category: 'Credit',     description: 'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.',        jtbd: 'Lên kế hoạch cải thiện điểm CIC trước khi vay' },
       { id: 'bao-hiem-o-to',   name: 'Bảo Hiểm Ô Tô Quote',      category: 'Insurance',  description: 'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí.',                          jtbd: 'Ước tính phí bảo hiểm trước khi quyết định mua' },
       { id: 'bhxh',            name: 'BHXH Simulator',            category: 'Insurance',  description: 'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.',                  jtbd: 'Hiểu quyền lợi BHXH để quyết định đóng tự nguyện' },
-      { id: 'luong-huu',      name: 'Lương Hưu Planner',         category: 'Insurance',  description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.', jtbd: 'Biết trước lương hưu để lập kế hoạch nghỉ hưu' },
+      { id: 'luong-huu',       name: 'Lương Hưu Planner',         category: 'Insurance',  description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.', jtbd: 'Biết trước lương hưu để lập kế hoạch nghỉ hưu' },
       { id: 'tiet-kiem',       name: 'Tiết Kiệm Simulator',       category: 'Savings',    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',                 jtbd: 'Biết trước lợi tức để chọn kỳ hạn tiết kiệm phù hợp' },
       { id: 'thue-tncn',       name: 'Thuế TNCN Calculator',      category: 'Tax',        description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến, chiết khấu gia cảnh.',           jtbd: 'Tính nhanh thuế TNCN để lập kế hoạch tài chính' },
       { id: 'chung-chi-quy',   name: 'Chứng Chỉ Quỹ Explorer',   category: 'Investment', description: 'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',        jtbd: 'Hiểu tốc độ tăng trưởng đầu tư định kỳ trước khi bắt đầu' },
@@ -43,6 +45,26 @@ const PROTOTYPES = [
     gate: 'Đo swipe depth, save rate, deal engagement và payment initiation từ merchant đã lưu.',
     src: 'demos/merchant.html',
     address: 'prototype.momo.vn/quan-ngon',
+  },
+  {
+    id: 'planning-tools',
+    name: 'Life Planning Tools',
+    category: 'PLG / SEO',
+    maturity: 'Interactive',
+    description: 'Bộ công cụ lập kế hoạch tài chính cá nhân dài hạn: tự do tài chính, đám cưới, học phí. Mỗi tool là một standalone page tối ưu SEO.',
+    jtbd: 'Lên kế hoạch tài chính cho mục tiêu lớn',
+    northStar: 'Goal completion rate',
+    loop: 'Search → Plan → Save',
+    hypothesis: 'Life planning tools thu hút long-tail search intent có conversion cao hơn generic financial content.',
+    value: 'Tạo SEO surface cho các mục tiêu tài chính dài hạn, mở rộng phễu Web-to-App ngoài Credit và Insurance.',
+    gate: 'Đo tool completion, CTA CTR, organic traffic theo từng goal keyword.',
+    src: 'tools/tu-do-tai-chinh.html',
+    address: 'prototype.momo.vn/life-planning',
+    tools: [
+      { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính (FIRE)',    category: 'Planning', description: 'Ước tính số tiền cần có để đạt FIRE theo quy tắc 4% an toàn rút vốn.',        jtbd: 'Biết mình cần bao nhiêu để nghỉ hưu sớm', src: 'tools/tu-do-tai-chinh.html' },
+      { id: 'de-danh-dam-cuoi', name: 'Kế Hoạch Đám Cưới',        category: 'Planning', description: 'Tính số tiền cần để dành mỗi tháng cho kế hoạch cưới theo ngân sách và thời hạn.', jtbd: 'Lên kế hoạch tích lũy cho đám cưới không thiếu hụt', src: 'tools/de-danh-dam-cuoi.html' },
+      { id: 'hoc-phi',          name: 'Kế Hoạch Học Phí',          category: 'Planning', description: 'Ước tính số tiền cần chuẩn bị cho học phí tương lai theo lộ trình tích lũy.',    jtbd: 'Tính trước chi phí học phí để chuẩn bị đủ vốn', src: 'tools/hoc-phi.html' },
+    ],
   },
   {
     id: 'worldcup',
@@ -211,7 +233,7 @@ function buildProtoView(proto) {
 
 function buildToolView(proto, tool) {
   const tc  = CAT_COLOR[tool.category]  || {};
-  const src = `demos/financial.html#${tool.id}`;
+  const src = tool.src || `demos/financial.html#${tool.id}`;
 
   return `
   <div class="ws-topbar">
@@ -242,7 +264,7 @@ function buildToolView(proto, tool) {
       <div class="browser-frame" id="browserFrame">
         <div class="browser-bar">
           <div class="browser-dots"><i></i><i></i><i></i></div>
-          <div class="address-pill">🔒 prototype.momo.vn/financial-utilities#${tool.id}</div>
+          <div class="address-pill">🔒 ${proto.address}#${tool.id}</div>
           <button class="reload-btn" id="reloadBtn">↺</button>
         </div>
         <iframe id="demoFrame" src="${src}" title="${tool.name}"></iframe>
