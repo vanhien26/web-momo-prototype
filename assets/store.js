@@ -67,6 +67,21 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'ads-manager',
+    name: 'Ads Placement Manager',
+    category: 'Monetization',
+    maturity: 'Interactive',
+    description: 'Mô phỏng quy trình tạo chiến dịch quảng cáo trên MoMo Web: setup campaign, chọn vị trí, visualize real-time trên Desktop và Mobile.',
+    jtbd: 'Chọn đúng vị trí, ước tính reach trước khi chạy',
+    northStar: 'Placement selection completion',
+    loop: 'Setup → Place → Preview → Publish',
+    hypothesis: 'Visual placement preview giúp advertiser chọn vị trí tự tin hơn và giảm trial-and-error so với bảng giá thuần.',
+    value: 'Tạo bề mặt self-serve cho ads booking trên Web Platform, giảm effort sales và tăng inventory utilization.',
+    gate: 'Đo placement selection rate, preview interaction depth, campaign publish intent.',
+    src: 'demos/ads.html',
+    address: 'prototype.momo.vn/ads-manager',
+  },
+  {
     id: 'worldcup',
     name: 'World Cup 2026 Predictor',
     category: 'Engagement',
@@ -87,6 +102,7 @@ const PROTOTYPES = [
 
 const CAT_COLOR = {
   'PLG / SEO':  { bg: '#fff0f7', text: '#a50064' },
+  'Monetization':{ bg: '#fff7ed', text: '#c2410c' },
   'Discovery':  { bg: '#fffbeb', text: '#b45309' },
   'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
   'Credit':     { bg: '#eff6ff', text: '#1d4ed8' },
