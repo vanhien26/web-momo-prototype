@@ -1,12 +1,12 @@
 const demos = {
   financial: {
-    name: 'Financial Utilities',
-    title: 'Financial Utilities Lab',
+    name: 'Money Lab',
+    title: 'Money Lab',
     type: 'PLG / SEO',
     maturity: 'Interactive prototype',
     src: 'demos/financial.html',
     address: 'prototype.momo.vn/financial-utilities',
-    description: 'Biến search intent tài chính thành trải nghiệm tính toán hữu ích, sau đó dẫn người dùng đến hành động phù hợp trong hệ sinh thái MoMo.',
+    description: 'Workspace gọn cho quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.',
     jtbd: 'Tính nhanh, hiểu rõ, hành động ngay',
     northStar: 'Qualified tool completion',
     loop: 'Search → Utility → App',

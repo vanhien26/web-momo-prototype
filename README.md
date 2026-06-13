@@ -2,7 +2,7 @@
 
 Static prototype showcase for Web Platform product concepts:
 
-- Financial Utilities Lab
+- Money Lab
 - Merchant Discovery
 - World Cup 2026 Predictor
 

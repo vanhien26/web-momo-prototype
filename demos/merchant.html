@@ -4,71 +4,757 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <title>Quán Ngon Finder</title>
+  <title>MoMo Deals</title>
   <style>
-    :root{--momo:#a50064;--pink:#f95396;--ink:#202124;--muted:#667085;--line:#e7e8ec}
-    *{box-sizing:border-box}body{margin:0;background:#f2f4f7;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;letter-spacing:0}
-    .app{min-height:100vh;display:grid;grid-template-columns:240px 1fr 270px;gap:12px;padding:12px}.panel,.stage{background:#fff;border:1px solid var(--line);border-radius:10px}.panel{padding:18px}.panel h2{font-size:13px;margin:0 0 16px}.label{font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;margin:18px 0 8px}.filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{border:1px solid var(--line);background:#fff;border-radius:5px;padding:7px 8px;font:inherit;font-size:8px}.filters button.active{background:#fff0f7;color:var(--momo);border-color:#e6a3c8}
-    .map{height:180px;margin-top:10px;border-radius:7px;background:linear-gradient(135deg,#e8f4fd 0%,#d4edda 30%,#e8f4fd 60%,#fce4ec 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}.map-grid{position:absolute;inset:0;background-image:linear-gradient(#ccc 1px,transparent 1px),linear-gradient(90deg,#ccc 1px,transparent 1px);background-size:24px 24px;opacity:.18}.map-road-h{position:absolute;top:50%;left:0;right:0;height:8px;background:#d9d9d9;transform:translateY(-50%)}.map-road-v{position:absolute;left:40%;top:0;bottom:0;width:8px;background:#d9d9d9}.map-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-70%);font-size:26px;line-height:1;filter:drop-shadow(0 2px 4px #0004)}.map-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:#fff;padding:5px 10px;border-radius:5px;font-size:8px;font-weight:700;box-shadow:0 2px 8px #0002;white-space:nowrap}
-    .stage{display:flex;flex-direction:column;align-items:center;padding:18px;background:#fafafa}.stage-header{width:100%;max-width:410px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.brand{font-weight:800;font-size:18px}.brand span{color:var(--pink)}.location{font-size:8px;color:var(--muted);background:#fff;border:1px solid var(--line);padding:7px 9px;border-radius:5px}
-    .card{width:100%;max-width:410px;height:465px;border-radius:12px;overflow:hidden;position:relative;background:#222;box-shadow:0 15px 35px #10182828;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}.card.dragging{cursor:grabbing}
-    .card-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.card-bg-emoji{font-size:130px;opacity:.22;filter:blur(3px);pointer-events:none;line-height:1}
-    .swipe-overlay{position:absolute;top:22px;padding:8px 18px;border-radius:7px;font-size:15px;font-weight:800;opacity:0;pointer-events:none;z-index:10;border:3px solid;letter-spacing:.04em}.swipe-overlay.like{left:16px;color:#22c55e;border-color:#22c55e;transform:rotate(-12deg)}.swipe-overlay.skip{right:16px;color:#ef4444;border-color:#ef4444;transform:rotate(12deg)}.overlay{position:absolute;inset:0;background:linear-gradient(to top,#111 0%,#111b 28%,transparent 65%)}.content{position:absolute;left:0;right:0;bottom:0;padding:18px;color:#fff}.top-badges{position:absolute;left:14px;right:14px;top:14px;display:flex;justify-content:space-between}.badge{background:#fff;color:var(--momo);font-size:8px;font-weight:800;padding:6px 8px;border-radius:5px}.open{background:#ecfdf3;color:#067647}.content h1{font-size:21px;margin:0 0 4px}.type{font-size:9px;color:#ddd}.stats{display:flex;gap:13px;font-size:9px;margin:11px 0}.deal{background:#ffffff17;border:1px solid #ffffff2e;padding:10px;border-radius:7px;font-size:9px}.deal b{color:#ff8fc4}
-    .actions{display:flex;gap:14px;margin-top:16px}.actions button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:19px}.actions .save{background:var(--momo);color:#fff;border-color:var(--momo)}
-    .saved-empty{font-size:9px;line-height:1.6;color:var(--muted);padding:15px;background:#fafafa;border-radius:7px}.saved-item{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid var(--line)}.saved-item img{width:46px;height:46px;border-radius:6px;object-fit:cover}.saved-item b,.saved-item small{display:block}.saved-item b{font-size:9px}.saved-item small{font-size:7px;color:var(--muted);margin-top:4px}
-    @media(max-width:900px){.app{grid-template-columns:1fr}.panel{display:none}.stage{min-height:100vh}.card{height:500px}}
+    :root{--momo:#a50064;--pink:#f95396;--ink:#202124;--muted:#667085;--line:#e7e8ec;--bg:#f2f4f7;--white:#fff}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+
+    /* ── Layout ── */
+    .app{min-height:100vh;display:grid;grid-template-columns:232px 1fr 272px;gap:12px;padding:12px}
+    .panel{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px}
+    .panel h2{font-size:12px;margin:0 0 12px;font-weight:700;color:var(--ink)}
+    .stage{background:#fafafa;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;align-items:center;padding:16px}
+
+    /* ── Left panel ── */
+    .flabel{font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 7px}
+    .flabel:first-of-type{margin-top:0}
+    .fgroup{display:flex;gap:5px;flex-wrap:wrap}
+    .fchip{border:1px solid var(--line);background:var(--white);border-radius:20px;padding:5px 9px;font:inherit;font-size:10px;cursor:pointer;color:var(--muted);transition:all .15s;line-height:1}
+    .fchip.on{background:#fff0f7;color:var(--momo);border-color:#e6a3c8;font-weight:700}
+    .fchip:hover:not(.on){border-color:#bbb}
+
+    /* Stats strip */
+    .stats-strip{background:linear-gradient(135deg,#fff0f7,#fce4f0);border:1px solid #f5c0db;border-radius:8px;padding:12px;margin-top:4px}
+    .stats-strip-title{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--momo);margin-bottom:8px}
+    .stat-row{display:flex;justify-content:space-between;margin-bottom:5px}
+    .stat-row:last-child{margin:0}
+    .stat-label{font-size:9px;color:var(--muted)}
+    .stat-val{font-size:9px;font-weight:700;color:var(--ink)}
+
+    /* Deal type legend */
+    .deal-legend{margin-top:6px}
+    .legend-item{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:9px;color:var(--muted)}
+    .legend-dot{width:8px;height:8px;border-radius:50%;flex:none}
+
+    /* ── Stage header ── */
+    .stage-header{width:100%;max-width:420px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .brand{font-weight:800;font-size:17px;letter-spacing:-.02em}
+    .brand span{color:var(--pink)}
+    .brand sub{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:0;vertical-align:middle;margin-left:4px}
+    .loc-pill{font-size:9px;color:var(--muted);background:var(--white);border:1px solid var(--line);padding:5px 10px;border-radius:20px}
+
+    /* Deal type tabs */
+    .deal-tabs{width:100%;max-width:420px;display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
+    .deal-tabs::-webkit-scrollbar{display:none}
+    .dtab{border:1.5px solid var(--line);background:var(--white);border-radius:20px;padding:6px 12px;font:inherit;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:5px}
+    .dtab.on{border-color:var(--momo);background:#fff0f7;color:var(--momo)}
+    .dtab .count{background:var(--line);color:var(--muted);font-size:8px;padding:1px 5px;border-radius:10px;font-weight:700}
+    .dtab.on .count{background:var(--momo);color:#fff}
+
+    /* ── Card stack ── */
+    .card-stack{width:100%;max-width:420px;position:relative;height:480px;margin-bottom:6px}
+    .card-behind2{position:absolute;left:50%;top:16px;transform:translateX(-50%) scale(.87);width:100%;height:460px;border-radius:16px;background:#d8d8d8}
+    .card-behind{position:absolute;left:50%;top:8px;transform:translateX(-50%) scale(.94);width:100%;height:470px;border-radius:16px;background:#e4e4e4;box-shadow:0 6px 20px #0001}
+    .card{width:100%;height:470px;border-radius:16px;overflow:hidden;position:absolute;left:50%;top:0;transform:translateX(-50%);background:#1a1a1a;box-shadow:0 14px 40px #10182830;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+    .card.dragging{cursor:grabbing}
+
+    /* Card layout: top photo + bottom deal panel */
+    .card-photo{position:absolute;top:0;left:0;right:0;height:52%;overflow:hidden}
+    .card-photo img{width:100%;height:100%;object-fit:cover}
+    .card-photo-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px}
+    .photo-grad{position:absolute;inset:0;background:linear-gradient(to bottom,#0004 0%,transparent 40%,#1a1a1a 100%)}
+
+    /* Deal panel (bottom 55% - slight overlap) */
+    .deal-panel{position:absolute;bottom:0;left:0;right:0;height:55%;background:#1a1a1a;padding:16px 18px 18px;display:flex;flex-direction:column}
+    .deal-panel-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+    .deal-hero{flex:1}
+    .deal-type-badge{display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:5px;margin-bottom:6px}
+    .deal-amount{font-size:28px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.02em;margin-bottom:2px}
+    .deal-amount span{font-size:13px;font-weight:600;opacity:.8}
+    .deal-cond{font-size:9px;color:rgba(255,255,255,.55);margin-bottom:0}
+
+    .card-dist-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 8px;font-size:9px;color:rgba(255,255,255,.75);font-weight:600;white-space:nowrap;flex:none;margin-left:8px;margin-top:2px}
+
+    .divider{height:1px;background:rgba(255,255,255,.08);margin:0 0 10px}
+
+    .merchant-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .merchant-logo{width:36px;height:36px;border-radius:8px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.12)}
+    .merchant-logo img{width:100%;height:100%;object-fit:cover}
+    .merchant-name{font-size:14px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:2px}
+    .merchant-cat{font-size:9px;color:rgba(255,255,255,.5)}
+
+    .card-meta-row{display:flex;align-items:center;gap:8px;font-size:8px;color:rgba(255,255,255,.45)}
+    .cmr-dot{width:2px;height:2px;border-radius:50%;background:rgba(255,255,255,.3)}
+
+    .expiry-strip{margin-top:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between}
+    .expiry-label{font-size:8px;color:rgba(255,255,255,.4)}
+    .expiry-val{font-size:8px;font-weight:700;color:#ff8fc4}
+
+    /* Badges on photo */
+    .photo-badges{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;z-index:2}
+    .cat-badge{background:rgba(255,255,255,.9);backdrop-filter:blur(6px);font-size:8px;font-weight:700;padding:4px 8px;border-radius:5px;color:var(--ink)}
+    .status-badge{background:rgba(255,255,255,.9);backdrop-filter:blur(6px);font-size:8px;font-weight:700;padding:4px 8px;border-radius:5px}
+    .status-badge.open{color:#067647}
+    .status-badge.closed{color:#ef4444}
+
+    /* Swipe hints */
+    .hint{position:absolute;top:60px;padding:7px 13px;border-radius:8px;font-size:13px;font-weight:800;opacity:0;pointer-events:none;z-index:20;border:3px solid;letter-spacing:.04em}
+    .hint.like{left:13px;color:#22c55e;border-color:#22c55e;transform:rotate(-12deg)}
+    .hint.skip{right:13px;color:#ef4444;border-color:#ef4444;transform:rotate(12deg)}
+
+    /* counter */
+    .card-counter{position:absolute;top:12px;right:12px;font-size:8px;color:rgba(255,255,255,.5);font-weight:700;z-index:10;background:rgba(0,0,0,.3);padding:3px 7px;border-radius:10px;display:none}
+
+    /* ── Actions ── */
+    .actions{display:flex;gap:14px;align-items:center;margin:8px 0 3px}
+    .act{width:50px;height:50px;border-radius:50%;border:1.5px solid var(--line);background:var(--white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 2px 6px #0001}
+    .act:hover{transform:scale(1.09)}
+    .act.skip:hover{border-color:#ef4444;color:#ef4444}
+    .act.save{background:var(--momo);color:#fff;border-color:var(--momo);width:58px;height:58px;font-size:21px}
+    .act.save:hover{background:#8a0052}
+    .act.info:hover{border-color:var(--momo);color:var(--momo)}
+    .act-tip{font-size:8px;color:var(--muted);text-align:center}
+
+    /* Progress dots */
+    .pdots{display:flex;gap:5px;margin-top:4px}
+    .pdots span{width:5px;height:5px;border-radius:50%;background:var(--line);transition:all .18s}
+    .pdots span.done{background:#ccc}
+    .pdots span.cur{background:var(--momo);width:14px;border-radius:3px}
+
+    /* ── Saved panel ── */
+    .saved-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+    .saved-top h2{margin:0}
+    .saved-total{font-size:9px;color:var(--muted)}
+
+    .saved-empty{font-size:9px;line-height:1.7;color:var(--muted);padding:14px;background:#fafafa;border-radius:8px;text-align:center}
+    .saved-empty-icon{font-size:26px;margin-bottom:7px}
+
+    .saved-item{padding:10px 0;border-bottom:1px solid var(--line)}
+    .saved-item:last-child{border:none}
+    .saved-row1{display:flex;gap:9px;align-items:flex-start;margin-bottom:7px}
+    .saved-thumb{width:44px;height:44px;border-radius:7px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .saved-thumb img{width:100%;height:100%;object-fit:cover}
+    .saved-name{font-size:10px;font-weight:700;margin-bottom:1px;line-height:1.3}
+    .saved-cat{font-size:8px;color:var(--muted);margin-bottom:3px}
+
+    /* Deal highlight in saved */
+    .saved-deal-hl{display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:4px 7px;font-size:9px;font-weight:700;margin-bottom:7px}
+
+    .saved-cta{display:flex;gap:5px}
+    .saved-cta button{font-size:8px;padding:5px 9px;border-radius:5px;border:none;cursor:pointer;font-weight:700;transition:opacity .15s}
+    .saved-cta button:hover{opacity:.85}
+    .btn-pay{background:var(--momo);color:#fff}
+    .btn-nav{background:#f2f4f7;color:var(--muted);border:1px solid var(--line) !important}
+
+    .saved-summary{margin-top:12px;padding:10px;background:#fff0f7;border-radius:8px;border:1px solid #f5c0db}
+    .saved-summary-title{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--momo);margin-bottom:6px}
+    .saved-saving{font-size:18px;font-weight:800;color:var(--momo);margin-bottom:1px}
+    .saved-saving-sub{font-size:8px;color:#c060a0}
+
+    /* ── Detail drawer ── */
+    .drawer-wrap{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:0;transition:opacity .2s}
+    .drawer-wrap.open{pointer-events:auto;opacity:1}
+    .drawer-bd{position:absolute;inset:0;background:#0005}
+    .drawer-sheet{position:absolute;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:460px;background:var(--white);border-radius:16px 16px 0 0;padding:20px;max-height:90vh;overflow-y:auto;transition:transform .28s cubic-bezier(.32,.72,0,1)}
+    .drawer-wrap.open .drawer-sheet{transform:translateX(-50%) translateY(0)}
+    .drawer-handle{width:36px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 16px}
+
+    .drawer-deal-hero{text-align:center;padding:16px;border-radius:10px;margin-bottom:16px}
+    .drawer-deal-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;opacity:.85}
+    .drawer-deal-big{font-size:36px;font-weight:800;line-height:1;margin-bottom:4px}
+    .drawer-deal-cond{font-size:10px;opacity:.75}
+
+    .drawer-merchant{display:flex;gap:12px;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+    .drawer-logo{width:56px;height:56px;border-radius:10px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid var(--line)}
+    .drawer-logo img{width:100%;height:100%;object-fit:cover}
+    .drawer-mname{font-size:16px;font-weight:800;margin-bottom:3px}
+    .drawer-mcat{font-size:10px;color:var(--muted);margin-bottom:6px}
+    .drawer-mstats{display:flex;gap:12px;font-size:10px}
+
+    .drawer-sec{margin-bottom:14px}
+    .drawer-sec-title{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:7px}
+    .drawer-cond-list{list-style:none;padding:0;margin:0}
+    .drawer-cond-list li{font-size:10px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px}
+    .drawer-cond-list li:last-child{border:none}
+    .drawer-cond-list li::before{content:'•';color:var(--momo);font-size:14px;flex:none}
+
+    .drawer-cta{display:flex;gap:8px;margin-top:16px}
+    .drawer-cta button{flex:1;padding:13px;border-radius:9px;border:none;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+    .d-pay{background:var(--momo);color:#fff}
+    .d-save{background:#fff0f7;color:var(--momo);border:1px solid #e6a3c8 !important}
+    .d-close{background:#f2f4f7;color:var(--muted)}
+
+    /* Deal type colors */
+    .dt-cashback{background:#fff0f7;color:#a50064}
+    .dt-voucher{background:#eff6ff;color:#1d4ed8}
+    .dt-point{background:#f0fdf4;color:#15803d}
+    .dt-free{background:#fffbeb;color:#b45309}
+
+    @media(max-width:900px){.app{grid-template-columns:1fr}.panel{display:none}.stage{min-height:100vh}}
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="panel"><h2>Bộ lọc khám phá</h2><div class="label">Danh mục</div><div class="filters"><button class="active">Tất cả</button><button>Bún / Phở</button><button>Cơm</button><button>Ăn vặt</button></div><div class="label">Khoảng cách</div><div class="filters"><button class="active">Tất cả</button><button>&lt; 500m</button><button>&lt; 1km</button></div><div class="label">Khu vực hiện tại</div><div class="map"><div class="map-grid"></div><div class="map-road-h"></div><div class="map-road-v"></div><div class="map-pin">📍</div><div class="map-label">Quận 1, TP.HCM</div></div></aside>
-    <main class="stage">
-      <div class="stage-header"><div style="display:flex;align-items:center;gap:14px;"><a href="../index.html" target="_top" style="font-size:10px;font-weight:700;color:#667085;text-decoration:none;">← Store</a><div class="brand">Quán<span>Ngon</span></div></div><div class="location">Quận 1, TP.HCM</div></div>
+<div class="app">
+
+  <!-- Left: Filters -->
+  <aside class="panel">
+    <h2>Khám phá deal</h2>
+
+    <div class="flabel">Loại ưu đãi</div>
+    <div class="fgroup" id="fDeal">
+      <button class="fchip on" data-v="all">Tất cả</button>
+      <button class="fchip" data-v="cashback">💸 Hoàn tiền</button>
+      <button class="fchip" data-v="voucher">🎟️ Voucher</button>
+      <button class="fchip" data-v="point">⭐ Tích điểm</button>
+      <button class="fchip" data-v="free">🎁 Miễn phí</button>
+    </div>
+
+    <div class="flabel">Danh mục</div>
+    <div class="fgroup" id="fCat">
+      <button class="fchip on" data-v="all">Tất cả</button>
+      <button class="fchip" data-v="Ăn uống">🍜 Ăn uống</button>
+      <button class="fchip" data-v="Siêu thị">🛒 Siêu thị</button>
+      <button class="fchip" data-v="Mua sắm">🛍️ Mua sắm</button>
+      <button class="fchip" data-v="Sức khỏe">💊 Sức khỏe</button>
+      <button class="fchip" data-v="Giải trí">🎬 Giải trí</button>
+      <button class="fchip" data-v="Di chuyển">⛽ Di chuyển</button>
+      <button class="fchip" data-v="CVS">🏪 Tiện lợi</button>
+    </div>
+
+    <div class="flabel">Khoảng cách</div>
+    <div class="fgroup" id="fDist">
+      <button class="fchip on" data-v="all">Tất cả</button>
+      <button class="fchip" data-v="500">&lt; 500m</button>
+      <button class="fchip" data-v="1000">&lt; 1km</button>
+      <button class="fchip" data-v="2000">&lt; 2km</button>
+    </div>
+
+    <div class="flabel">Tổng quan</div>
+    <div class="stats-strip">
+      <div class="stats-strip-title">Deal đang hoạt động</div>
+      <div class="stat-row"><span class="stat-label">Merchant gần bạn</span><span class="stat-val" id="statNearby">0</span></div>
+      <div class="stat-row"><span class="stat-label">Tổng tiết kiệm tối đa</span><span class="stat-val" id="statSaving">0đ</span></div>
+      <div class="stat-row"><span class="stat-label">Hết hạn hôm nay</span><span class="stat-val" id="statExpiring" style="color:#ef4444">0 deal</span></div>
+    </div>
+
+    <div class="flabel">Màu sắc deal</div>
+    <div class="deal-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#a50064"></div>Hoàn tiền - MoMo trả lại tiền</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Voucher - Giảm giá tại quầy</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#15803d"></div>Tích điểm - Đổi quà sau</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div>Miễn phí - Nhận không cần thêm tiền</div>
+    </div>
+  </aside>
+
+  <!-- Center: Swipe -->
+  <main class="stage">
+    <div class="stage-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="../index.html" target="_top" style="font-size:10px;font-weight:700;color:#667085;text-decoration:none">← Store</a>
+        <div class="brand">MoMo<span>Deals</span><sub>Ưu đãi gần bạn</sub></div>
+      </div>
+      <div class="loc-pill">📍 Quận 1, TP.HCM</div>
+    </div>
+
+    <!-- Deal type quick tabs -->
+    <div class="deal-tabs" id="dealTabs">
+      <button class="dtab on" data-v="all">Tất cả <span class="count" id="tab-all">0</span></button>
+      <button class="dtab" data-v="cashback">💸 Hoàn tiền <span class="count" id="tab-cashback">0</span></button>
+      <button class="dtab" data-v="voucher">🎟️ Voucher <span class="count" id="tab-voucher">0</span></button>
+      <button class="dtab" data-v="point">⭐ Tích điểm <span class="count" id="tab-point">0</span></button>
+      <button class="dtab" data-v="free">🎁 Miễn phí <span class="count" id="tab-free">0</span></button>
+    </div>
+
+    <div class="card-stack">
+      <div class="card-behind2" id="cb2"></div>
+      <div class="card-behind" id="cb1"></div>
       <article class="card" id="card"></article>
-      <div class="actions"><button id="skip" aria-label="Bỏ qua">×</button><button class="save" id="save" aria-label="Lưu quán">♥</button></div>
-    </main>
-    <aside class="panel"><h2>Quán đã lưu <span id="savedCount">(0)</span></h2><div id="saved"><div class="saved-empty">Nhấn nút trái tim để lưu quán. Danh sách này có thể kết nối sang deal, chỉ đường hoặc thanh toán MoMo.</div></div></aside>
-  </div>
-  <script>
-    // Analytics stubs
-    window.dataLayer = window.dataLayer || [];
-    function momo_track(event, params) {
-      console.log('[momo_track]', event, params);
-      window.dataLayer.push({ event, ...params });
+    </div>
+
+    <div class="pdots" id="pdots"></div>
+    <div class="actions">
+      <button class="act skip" id="btnSkip" title="Bỏ qua">✕</button>
+      <button class="act save" id="btnSave" title="Lưu deal">♥</button>
+      <button class="act info" id="btnInfo" title="Xem chi tiết">ⓘ</button>
+    </div>
+    <div class="act-tip">Vuốt trái bỏ qua · Vuốt phải lưu deal</div>
+  </main>
+
+  <!-- Right: Saved -->
+  <aside class="panel">
+    <div class="saved-top">
+      <h2>Deal đã lưu</h2>
+      <span class="saved-total" id="savedTotal">0 deal</span>
+    </div>
+    <div id="savedList">
+      <div class="saved-empty">
+        <div class="saved-empty-icon">💰</div>
+        Vuốt phải để lưu deal gần bạn. Danh sách này tính tổng tiết kiệm và kết nối thẳng đến thanh toán MoMo.
+      </div>
+    </div>
+    <div id="savedSummary" style="display:none" class="saved-summary">
+      <div class="saved-summary-title">Ước tính tiết kiệm</div>
+      <div class="saved-saving" id="savingAmt">0đ</div>
+      <div class="saved-saving-sub">nếu dùng tất cả deal đã lưu</div>
+    </div>
+  </aside>
+</div>
+
+<!-- Detail drawer -->
+<div class="drawer-wrap" id="drawer">
+  <div class="drawer-bd" id="drawerBd"></div>
+  <div class="drawer-sheet" id="drawerSheet"></div>
+</div>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function track(e,p){console.log('[momo_track]',e,p);window.dataLayer.push({event:e,...p})}
+
+  const DEALS = [
+    {
+      id:'bep-me-in', merchant:'Bếp Mẹ Ỉn', cat:'Ăn uống', subcat:'Nhà hàng',
+      dealType:'cashback', dealLabel:'HOÀN TIỀN',
+      dealAmount:'20%', dealAmountFull:'Hoàn 20%', dealAmountEst:50000,
+      dealCond:'Tối đa 50.000đ/lần', dealDetail:'Thanh toán MoMo từ 80.000đ',
+      expiry:'30/6/2026', expiryUrgent:false,
+      distM:350, open:true, price:'80K-180K', address:'Lê Thánh Tôn, Q1',
+      img:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#5C2E0E,#C4783C)', emoji:'🍛',
+      conditions:['Áp dụng khi thanh toán MoMo','Tối đa 50.000đ/giao dịch','Không giới hạn số lần','Hết hạn 30/6/2026'],
+    },
+    {
+      id:'coopmart', merchant:'Co.opmart', cat:'Siêu thị', subcat:'Siêu thị',
+      dealType:'cashback', dealLabel:'HOÀN TIỀN',
+      dealAmount:'50K', dealAmountFull:'Hoàn 50.000đ', dealAmountEst:50000,
+      dealCond:'Đơn từ 300.000đ', dealDetail:'Thanh toán MoMo tại quầy',
+      expiry:'Hôm nay', expiryUrgent:true,
+      distM:410, open:true, price:'—', address:'Nguyễn Đình Chiểu, Q3',
+      img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#005B20,#00A651)', emoji:'🛒',
+      conditions:['Áp dụng tại quầy thanh toán MoMo','Tối thiểu 300.000đ/đơn','1 lần/ngày/tài khoản','Hết hạn HÔM NAY'],
+    },
+    {
+      id:'cgv', merchant:'CGV Cinemas', cat:'Giải trí', subcat:'Rạp chiếu phim',
+      dealType:'voucher', dealLabel:'VOUCHER',
+      dealAmount:'25K', dealAmountFull:'Giảm 25.000đ/vé', dealAmountEst:50000,
+      dealCond:'Mua 2 vé trở lên', dealDetail:'Chọn xuất chiếu qua MoMo',
+      expiry:'15/7/2026', expiryUrgent:false,
+      distM:680, open:true, price:'90K-150K/vé', address:'Vincom Center, Q1',
+      img:'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#1a0030,#6B21A8)', emoji:'🎬',
+      conditions:['Mua tối thiểu 2 vé','Đặt vé qua MoMo app','Áp dụng mọi xuất chiếu','Hết hạn 15/7/2026'],
+    },
+    {
+      id:'pharmacity', merchant:'Pharmacity', cat:'Sức khỏe', subcat:'Nhà thuốc',
+      dealType:'cashback', dealLabel:'HOÀN TIỀN',
+      dealAmount:'30K', dealAmountFull:'Hoàn 30.000đ', dealAmountEst:30000,
+      dealCond:'Đơn từ 150.000đ', dealDetail:'Lần đầu thanh toán MoMo',
+      expiry:'31/7/2026', expiryUrgent:false,
+      distM:520, open:true, price:'—', address:'Lê Lợi, Q1',
+      img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#0F4C81,#1976D2)', emoji:'💊',
+      conditions:['Chỉ áp dụng lần đầu thanh toán MoMo tại Pharmacity','Tối thiểu 150.000đ/đơn','Không kết hợp KM khác'],
+    },
+    {
+      id:'tgdd', merchant:'Thế Giới Di Động', cat:'Mua sắm', subcat:'Điện máy',
+      dealType:'cashback', dealLabel:'HOÀN TIỀN',
+      dealAmount:'100K', dealAmountFull:'Hoàn 100.000đ', dealAmountEst:100000,
+      dealCond:'Đơn từ 2.000.000đ', dealDetail:'Thanh toán MoMo tại cửa hàng',
+      expiry:'30/6/2026', expiryUrgent:false,
+      distM:920, open:true, price:'—', address:'Nguyễn Trãi, Q1',
+      img:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#003366,#0055A4)', emoji:'📱',
+      conditions:['Đơn tối thiểu 2.000.000đ','Thanh toán MoMo tại quầy','Tối đa 100.000đ/giao dịch','Hết hạn 30/6/2026'],
+    },
+    {
+      id:'petrolimex', merchant:'Petrolimex', cat:'Di chuyển', subcat:'Xăng dầu',
+      dealType:'point', dealLabel:'TÍCH ĐIỂM',
+      dealAmount:'2x', dealAmountFull:'Điểm x2', dealAmountEst:0,
+      dealCond:'Mọi lần đổ xăng', dealDetail:'Thanh toán MoMo, tích điểm đổi quà',
+      expiry:'31/12/2026', expiryUrgent:false,
+      distM:750, open:true, price:'—', address:'Điện Biên Phủ, Q3',
+      img:'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#7C0000,#CC0000)', emoji:'⛽',
+      conditions:['Áp dụng khi thanh toán MoMo','2 điểm/1.000đ (thay vì 1 điểm)','Không giới hạn số lần','Đổi quà từ 500 điểm'],
+    },
+    {
+      id:'circle-k', merchant:'Circle K', cat:'CVS', subcat:'Tiện lợi',
+      dealType:'free', dealLabel:'MIỄN PHÍ',
+      dealAmount:'Tặng ngay', dealAmountFull:'Tặng 1 lon nước', dealAmountEst:15000,
+      dealCond:'Mua bất kỳ sản phẩm', dealDetail:'Check-in MoMo tại cửa hàng',
+      expiry:'Hôm nay', expiryUrgent:true,
+      distM:200, open:true, price:'—', address:'Nguyễn Huệ, Q1',
+      img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#7B1113,#C41E3A)', emoji:'🏪',
+      conditions:['Check-in MoMo tại cửa hàng','Nhận 1 lon nước miễn phí','1 lần/ngày','Hết hạn HÔM NAY'],
+    },
+    {
+      id:'the-coffee-house', merchant:'The Coffee House', cat:'Ăn uống', subcat:'Cà phê',
+      dealType:'voucher', dealLabel:'VOUCHER',
+      dealAmount:'1 Miễn Phí', dealAmountFull:'Mua 2 tặng 1', dealAmountEst:55000,
+      dealCond:'Mua 2 ly cùng size', dealDetail:'Thanh toán toàn bộ qua MoMo',
+      expiry:'15/7/2026', expiryUrgent:false,
+      distM:280, open:true, price:'45K-90K', address:'Đồng Khởi, Q1',
+      img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#1a0a00,#6F4E37)', emoji:'☕',
+      conditions:['Mua 2 ly cùng size','Thanh toán MoMo','Ly miễn phí size nhỏ hơn hoặc bằng','Không áp dụng cuối tuần'],
+    },
+    {
+      id:'guardian', merchant:'Guardian', cat:'Sức khỏe', subcat:'Làm đẹp',
+      dealType:'point', dealLabel:'TÍCH ĐIỂM',
+      dealAmount:'3x', dealAmountFull:'Điểm x3', dealAmountEst:0,
+      dealCond:'Mua sản phẩm skincare', dealDetail:'Thanh toán MoMo tại Guardian',
+      expiry:'31/7/2026', expiryUrgent:false,
+      distM:600, open:true, price:'—', address:'Vincom Center, Q1',
+      img:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#3D1A5A,#7B2D8B)', emoji:'💄',
+      conditions:['Chỉ áp dụng danh mục Skincare','Thanh toán MoMo tại quầy','3 điểm/1.000đ','Đổi quà từ 300 điểm'],
+    },
+    {
+      id:'grab', merchant:'GrabCar', cat:'Di chuyển', subcat:'Taxi',
+      dealType:'cashback', dealLabel:'HOÀN TIỀN',
+      dealAmount:'15%', dealAmountFull:'Hoàn 15%', dealAmountEst:30000,
+      dealCond:'Tối đa 30.000đ/chuyến', dealDetail:'Thanh toán MoMo trên Grab',
+      expiry:'30/6/2026', expiryUrgent:false,
+      distM:0, open:true, price:'—', address:'Toàn quốc',
+      img:'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#00B14F,#007A36)', emoji:'🚗',
+      conditions:['Chọn thanh toán MoMo trên Grab','15% hoàn về ví MoMo','Tối đa 30.000đ/chuyến','2 lần/ngày'],
+    },
+    {
+      id:'fahasa', merchant:'Fahasa', cat:'Mua sắm', subcat:'Sách',
+      dealType:'voucher', dealLabel:'VOUCHER',
+      dealAmount:'10%', dealAmountFull:'Giảm 10%', dealAmountEst:30000,
+      dealCond:'Đơn từ 200.000đ', dealDetail:'Áp dụng toàn bộ sản phẩm',
+      expiry:'31/7/2026', expiryUrgent:false,
+      distM:850, open:true, price:'—', address:'Nguyễn Huệ, Q1',
+      img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#1C3A6E,#2E5CB8)', emoji:'📚',
+      conditions:['Đơn tối thiểu 200.000đ','Thanh toán MoMo tại quầy hoặc online','Giảm tối đa 50.000đ','Hết hạn 31/7/2026'],
+    },
+    {
+      id:'minimart', merchant:'Vinmart+', cat:'CVS', subcat:'Minimart',
+      dealType:'free', dealLabel:'MIỄN PHÍ',
+      dealAmount:'Giao miễn phí', dealAmountFull:'Ship 0đ lần đầu', dealAmountEst:25000,
+      dealCond:'Đơn đầu qua MoMo', dealDetail:'Đặt hàng online, giao tận nơi',
+      expiry:'30/6/2026', expiryUrgent:false,
+      distM:320, open:true, price:'—', address:'Lý Tự Trọng, Q1',
+      img:'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=480&h=260&fit=crop',
+      thumb:'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=80&h=80&fit=crop',
+      bg:'linear-gradient(135deg,#004D1C,#00882E)', emoji:'🏬',
+      conditions:['Chỉ đơn đầu tiên đặt qua MoMo','Giao trong vòng 2km','Miễn phí ship, không giới hạn giá trị đơn','Hết hạn 30/6/2026'],
+    },
+  ];
+
+  const DEAL_TYPE_COLORS = {
+    cashback:{bg:'#fff0f7',text:'#a50064',heroBg:'#a50064',heroText:'#fff'},
+    voucher:{bg:'#eff6ff',text:'#1d4ed8',heroBg:'#1d4ed8',heroText:'#fff'},
+    point:{bg:'#f0fdf4',text:'#15803d',heroBg:'#15803d',heroText:'#fff'},
+    free:{bg:'#fffbeb',text:'#b45309',heroBg:'#b45309',heroText:'#fff'},
+  };
+
+  function fmtDist(m){return m===0?'Toàn quốc':m>=1000?(m/1000).toFixed(1)+'km':m+'m'}
+  function fmtEst(v){return v>=1000?v.toLocaleString('vi-VN')+'đ':'—'}
+
+  let deck=[...DEALS], idx=0;
+  const saved=[];
+  let fDeal='all', fCat='all', fDist='all', fTabDeal='all';
+
+  function applyFilters(){
+    const dealF=fTabDeal!=='all'?fTabDeal:fDeal;
+    deck=DEALS.filter(d=>{
+      if(dealF!=='all'&&d.dealType!==dealF) return false;
+      if(fCat!=='all'&&d.cat!==fCat) return false;
+      if(fDist!=='all'&&d.distM>0&&d.distM>+fDist) return false;
+      return true;
+    });
+    idx=0;
+    updateTabCounts();
+    updateStats();
+    renderDots();
+    renderCard();
+  }
+
+  function updateTabCounts(){
+    ['all','cashback','voucher','point','free'].forEach(t=>{
+      const n=t==='all'?DEALS.length:DEALS.filter(d=>d.dealType===t).length;
+      const el=document.getElementById('tab-'+t);
+      if(el) el.textContent=n;
+    });
+    document.getElementById('statNearby').textContent=DEALS.filter(d=>d.distM<=2000||d.distM===0).length;
+  }
+
+  function updateStats(){
+    const expiring=DEALS.filter(d=>d.expiryUrgent).length;
+    const saving=saved.reduce((a,d)=>a+d.dealAmountEst,0);
+    document.getElementById('statExpiring').textContent=expiring+' deal';
+    document.getElementById('statSaving').textContent=saving>0?saving.toLocaleString('vi-VN')+'đ':'Chưa lưu';
+  }
+
+  function cur(){return deck[idx%Math.max(deck.length,1)]}
+
+  function renderDots(){
+    document.getElementById('pdots').innerHTML=deck.map((_,i)=>{
+      const c=i<idx?'done':i===idx?'cur':'';
+      return`<span class="${c}"></span>`;
+    }).join('');
+  }
+
+  function renderCard(){
+    const card=document.getElementById('card');
+    if(!deck.length){
+      card.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#fff;text-align:center;padding:30px;background:#1a1a1a"><div style="font-size:44px;margin-bottom:14px">🔍</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Không có deal phù hợp</div><div style="font-size:10px;opacity:.5">Thử thay đổi bộ lọc</div></div>`;
+      document.getElementById('cb1').style.background='#e4e4e4';
+      document.getElementById('cb2').style.background='#d8d8d8';
+      return;
     }
+    const d=cur();
+    const c=DEAL_TYPE_COLORS[d.dealType];
+    const n1=deck[(idx+1)%deck.length];
+    const n2=deck[(idx+2)%deck.length];
+    document.getElementById('cb1').style.background=n1?n1.bg:'#e4e4e4';
+    document.getElementById('cb2').style.background=n2?n2.bg:'#d8d8d8';
 
-    const restaurants=[
-      {name:'Bếp Mẹ Ỉn',type:'Món Việt · Cơm nhà',rating:'4.8',distance:'350m',price:'80K - 180K',deal:'Giảm 20% khi thanh toán MoMo',address:'Lê Thánh Tôn, Quận 1',
-       bg:'linear-gradient(160deg,#5C2E0E 0%,#8B4A1A 30%,#C4783C 60%,#7A3E15 100%)',thumb:'linear-gradient(135deg,#8B4A1A,#C4783C)',emoji:'🍛'},
-      {name:'Phở Chào',type:'Phở · Món Việt',rating:'4.7',distance:'620m',price:'55K - 95K',deal:'Hoàn 30.000đ qua MoMo',address:'Nguyễn Thị Minh Khai, Quận 1',
-       bg:'linear-gradient(160deg,#6A4000 0%,#A86B00 30%,#D4A830 60%,#8A5500 100%)',thumb:'linear-gradient(135deg,#A86B00,#D4A830)',emoji:'🍜'},
-      {name:'The Pizza Company',type:'Pizza · Đồ Âu',rating:'4.6',distance:'900m',price:'120K - 350K',deal:'Voucher 50.000đ trên MoMo',address:'Nguyễn Huệ, Quận 1',
-       bg:'linear-gradient(160deg,#7A0E00 0%,#B52200 30%,#E84500 60%,#9C1A00 100%)',thumb:'linear-gradient(135deg,#B52200,#E84500)',emoji:'🍕'},
-      {name:'Chè Mâm Khánh Vy',type:'Chè · Ăn vặt',rating:'4.9',distance:'1.2km',price:'25K - 60K',deal:'Tích điểm x2 với MoMo',address:'Sư Vạn Hạnh, Quận 10',
-       bg:'linear-gradient(160deg,#3A0D5C 0%,#6B2A9B 30%,#A650CC 60%,#551580 100%)',thumb:'linear-gradient(135deg,#6B2A9B,#A650CC)',emoji:'🍡'}
-    ];
-    let index=0;const savedItems=[];
-    function render(){const item=restaurants[index%restaurants.length];card.innerHTML=`<div class="card-bg" style="background:${item.bg}"><span class="card-bg-emoji">${item.emoji}</span></div><div class="overlay"></div><div class="swipe-overlay like">♥ LƯU</div><div class="swipe-overlay skip">× BỎ</div><div class="top-badges"><span class="badge">ĐƯỢC YÊU THÍCH</span><span class="badge open">ĐANG MỞ</span></div><div class="content"><h1>${item.name}</h1><div class="type">${item.type}</div><div class="stats"><span>★ ${item.rating}</span><span>⌖ ${item.distance}</span><span>₫ ${item.price}</span></div><div class="deal"><b>Ưu đãi MoMo</b><br>${item.deal}</div><div class="type" style="margin-top:9px">${item.address}</div></div>`}
-    function next(){index=(index+1)%restaurants.length;render()}
-    function saveAndNext(){const item=restaurants[index%restaurants.length];if(!savedItems.some(x=>x.name===item.name))savedItems.push(item);savedCount.textContent=`(${savedItems.length})`;saved.innerHTML=savedItems.map(x=>`<div class="saved-item"><div style="width:46px;height:46px;border-radius:6px;background:${x.bg};display:flex;align-items:center;justify-content:center;flex:none;font-size:22px">${x.emoji}</div><span><b>${x.name}</b><small>${x.distance} · ${x.deal}</small></span></div>`).join('');momo_track('merchant_saved',{merchant_name:item.name,merchant_category:item.type,swipe_depth:index+1});next()}
-    function skipAndNext(){momo_track('merchant_skipped',{merchant_name:restaurants[index%restaurants.length].name,swipe_depth:index+1});next()}
-    skip.onclick=skipAndNext;save.onclick=saveAndNext;
+    card.innerHTML=`
+      <div class="card-photo">
+        <img src="${d.img}" alt="${d.merchant}" onerror="this.style.display='none'">
+        <div class="card-photo-fallback" style="background:${d.bg}">${d.emoji}</div>
+        <div class="photo-grad"></div>
+        <div class="photo-badges">
+          <span class="cat-badge">${d.cat} · ${d.subcat}</span>
+          <span class="status-badge ${d.open?'open':'closed'}">${d.open?'ĐANG MỞ':'ĐÓNG CỬA'}</span>
+        </div>
+      </div>
+      <div class="hint like">♥ LƯU</div>
+      <div class="hint skip">✕ BỎ</div>
+      <div class="deal-panel">
+        <div class="deal-panel-top">
+          <div class="deal-hero">
+            <div class="deal-type-badge dt-${d.dealType}">${d.dealLabel}</div>
+            <div class="deal-amount">${d.dealAmount} <span>${d.dealAmountFull}</span></div>
+            <div class="deal-cond">${d.dealCond}</div>
+          </div>
+          <div class="card-dist-pill">📍 ${fmtDist(d.distM)}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="merchant-row">
+          <div class="merchant-logo" style="background:${d.bg}">
+            <img src="${d.thumb}" alt="${d.merchant}" onerror="this.style.display='none';this.parentNode.innerHTML='${d.emoji}'">
+          </div>
+          <div>
+            <div class="merchant-name">${d.merchant}</div>
+            <div class="merchant-cat">${d.dealDetail}</div>
+          </div>
+        </div>
+        <div class="card-meta-row">
+          <span>${d.address}</span>
+          ${d.price!=='—'?`<span class="cmr-dot"></span><span>${d.price}</span>`:''}
+        </div>
+        <div class="expiry-strip">
+          <span class="expiry-label">Hết hạn</span>
+          <span class="expiry-val" style="${d.expiryUrgent?'color:#ef4444':''}">${d.expiry}${d.expiryUrgent?' ⚡':''}</span>
+        </div>
+      </div>
+      <div class="card-counter">${idx+1}/${deck.length}</div>`;
+  }
 
-    // Swipe gesture
-    let dragStartX=0,dragStartY=0,dragging=false,dragDx=0;
-    const THRESHOLD=75;
-    function overlays(){return{like:card.querySelector('.swipe-overlay.like'),skip:card.querySelector('.swipe-overlay.skip')}}
-    function onDragStart(x,y){dragStartX=x;dragStartY=y;dragging=true;dragDx=0;card.style.transition='none';card.classList.add('dragging')}
-    function onDragMove(x,y){if(!dragging)return;dragDx=x-dragStartX;card.style.transform=`translateX(${dragDx}px) rotate(${dragDx*0.07}deg)`;const o=overlays();if(o.like)o.like.style.opacity=Math.min(1,Math.max(0,dragDx/THRESHOLD));if(o.skip)o.skip.style.opacity=Math.min(1,Math.max(0,-dragDx/THRESHOLD))}
-    function animateOut(dir,cb){card.style.transition='transform .25s ease,opacity .25s';card.style.transform=dir>0?'translateX(110%) rotate(18deg)':'translateX(-110%) rotate(-18deg)';card.style.opacity='0';setTimeout(()=>{card.style.transition='none';card.style.transform='';card.style.opacity='';cb()},260)}
-    function onDragEnd(){if(!dragging)return;dragging=false;card.classList.remove('dragging');if(dragDx>THRESHOLD){animateOut(1,saveAndNext)}else if(dragDx<-THRESHOLD){animateOut(-1,next)}else{card.style.transition='transform .3s ease';card.style.transform='';setTimeout(()=>card.style.transition='',300);const o=overlays();if(o.like)o.like.style.opacity='0';if(o.skip)o.skip.style.opacity='0'}}
-    card.addEventListener('touchstart',e=>onDragStart(e.touches[0].clientX,e.touches[0].clientY),{passive:true});
-    card.addEventListener('touchmove',e=>{e.preventDefault();onDragMove(e.touches[0].clientX,e.touches[0].clientY)},{passive:false});
-    card.addEventListener('touchend',onDragEnd);card.addEventListener('touchcancel',onDragEnd);
-    card.addEventListener('mousedown',e=>{onDragStart(e.clientX,e.clientY);e.preventDefault()});
-    document.addEventListener('mousemove',e=>{if(dragging)onDragMove(e.clientX,e.clientY)});
-    document.addEventListener('mouseup',()=>{if(dragging)onDragEnd()});
-    render();
-  </script>
+  function renderSaved(){
+    document.getElementById('savedTotal').textContent=saved.length+' deal';
+    const el=document.getElementById('savedList');
+    const sum=document.getElementById('savedSummary');
+    const total=saved.reduce((a,d)=>a+d.dealAmountEst,0);
+
+    if(!saved.length){
+      el.innerHTML=`<div class="saved-empty"><div class="saved-empty-icon">💰</div>Vuốt phải để lưu deal gần bạn. Danh sách này tính tổng tiết kiệm và kết nối thẳng đến thanh toán MoMo.</div>`;
+      sum.style.display='none';
+      return;
+    }
+    const c=DEAL_TYPE_COLORS;
+    el.innerHTML=saved.map(d=>`
+      <div class="saved-item">
+        <div class="saved-row1">
+          <div class="saved-thumb" style="background:${d.bg}">
+            <img src="${d.thumb}" alt="${d.merchant}" onerror="this.style.display='none';this.parentNode.textContent='${d.emoji}'">
+          </div>
+          <div>
+            <div class="saved-name">${d.merchant}</div>
+            <div class="saved-cat">${d.cat} · ${fmtDist(d.distM)}</div>
+          </div>
+        </div>
+        <div class="saved-deal-hl dt-${d.dealType}">
+          ${d.dealAmountFull}${d.dealAmountEst>0?' · Tiết kiệm ~'+fmtEst(d.dealAmountEst):''}
+        </div>
+        <div class="saved-cta">
+          <button class="btn-pay" onclick="doPay('${d.id}','${d.merchant}')">💳 Thanh toán MoMo</button>
+          ${d.distM>0?`<button class="btn-nav" onclick="doNav('${d.merchant}')">🗺️ Chỉ đường</button>`:''}
+        </div>
+      </div>`).join('');
+
+    if(total>0){
+      sum.style.display='block';
+      document.getElementById('savingAmt').textContent='~'+total.toLocaleString('vi-VN')+'đ';
+    }
+    document.getElementById('statSaving').textContent=total>0?total.toLocaleString('vi-VN')+'đ':'Đã lưu '+saved.length+' deal';
+  }
+
+  function doPay(id,name){
+    track('deal_pay_click',{merchant_id:id,merchant_name:name});
+    alert(`Mở MoMo → Thanh toán tại ${name}\n\n(deeplink: momo://merchant?id=${id})`);
+  }
+  function doNav(name){
+    track('merchant_navigate',{merchant_name:name});
+    alert(`Mở Google Maps → Chỉ đường đến ${name}`);
+  }
+
+  function openDetail(){
+    if(!deck.length) return;
+    const d=cur();
+    const tc=DEAL_TYPE_COLORS[d.dealType];
+    document.getElementById('drawerSheet').innerHTML=`
+      <div class="drawer-handle"></div>
+      <div class="drawer-deal-hero" style="background:${tc.heroBg};color:${tc.heroText}">
+        <div class="drawer-deal-label">${d.dealLabel}</div>
+        <div class="drawer-deal-big">${d.dealAmount}</div>
+        <div class="drawer-deal-cond">${d.dealAmountFull} · ${d.dealCond}</div>
+      </div>
+      <div class="drawer-merchant">
+        <div class="drawer-logo" style="background:${d.bg}">
+          <img src="${d.thumb}" alt="${d.merchant}" onerror="this.style.display='none';this.parentNode.textContent='${d.emoji}'">
+        </div>
+        <div>
+          <div class="drawer-mname">${d.merchant}</div>
+          <div class="drawer-mcat">${d.cat} · ${d.subcat} · ${d.address}</div>
+          <div class="drawer-mstats">
+            <span>📍 ${fmtDist(d.distM)}</span>
+            ${d.price!=='—'?`<span>₫ ${d.price}</span>`:''}
+            <span>${d.open?'🟢 Đang mở':'🔴 Đóng cửa'}</span>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-sec">
+        <div class="drawer-sec-title">Điều kiện áp dụng</div>
+        <ul class="drawer-cond-list">${d.conditions.map(c=>`<li>${c}</li>`).join('')}</ul>
+      </div>
+      <div class="drawer-sec">
+        <div class="drawer-sec-title">Hết hạn</div>
+        <p style="font-size:11px;color:${d.expiryUrgent?'#ef4444':'var(--ink)'};font-weight:${d.expiryUrgent?700:400};margin:0">${d.expiry}${d.expiryUrgent?' ⚡ Sắp hết hạn!':''}</p>
+      </div>
+      <div class="drawer-cta">
+        <button class="d-pay" onclick="doPay('${d.id}','${d.merchant}')">💳 Thanh toán ngay</button>
+        <button class="d-save" onclick="saveFromDrawer()">♥ Lưu deal</button>
+        <button class="d-close" onclick="closeDetail()">✕</button>
+      </div>`;
+    document.getElementById('drawer').classList.add('open');
+    track('deal_detail_open',{merchant_id:d.id,deal_type:d.dealType});
+  }
+  function closeDetail(){document.getElementById('drawer').classList.remove('open')}
+  function saveFromDrawer(){closeDetail();doSave()}
+  document.getElementById('drawerBd').addEventListener('click',closeDetail);
+
+  // Swipe
+  const card=document.getElementById('card');
+  let x0=0,dragging=false,dx=0;
+  const THR=80;
+  function getHints(){return{like:card.querySelector('.hint.like'),skip:card.querySelector('.hint.skip')}}
+  function dragStart(x){x0=x;dragging=true;dx=0;card.style.transition='none';card.classList.add('dragging')}
+  function dragMove(x){
+    if(!dragging)return;dx=x-x0;
+    card.style.transform=`translateX(calc(-50% + ${dx}px)) rotate(${dx*.05}deg)`;
+    const h=getHints();
+    if(h.like)h.like.style.opacity=Math.min(1,Math.max(0,dx/THR));
+    if(h.skip)h.skip.style.opacity=Math.min(1,Math.max(0,-dx/THR));
+  }
+  function animOut(dir,cb){
+    card.style.transition='transform .28s ease,opacity .28s';
+    card.style.transform=dir>0?'translateX(110%) rotate(20deg)':'translateX(-110%) rotate(-20deg)';
+    card.style.opacity='0';
+    setTimeout(()=>{card.style.transition='none';card.style.transform='translateX(-50%)';card.style.opacity='';cb()},290);
+  }
+  function goNext(){idx=(idx+1)%Math.max(deck.length,1);renderCard();renderDots()}
+  function doSave(){
+    if(!deck.length)return;
+    const d=cur();
+    track('deal_saved',{merchant_id:d.id,deal_type:d.dealType,deal_est:d.dealAmountEst});
+    if(!saved.some(x=>x.id===d.id)){saved.push(d);renderSaved()}
+    animOut(1,goNext);
+  }
+  function doSkip(){
+    if(!deck.length)return;
+    track('deal_skipped',{merchant_id:cur().id,deal_type:cur().dealType});
+    animOut(-1,goNext);
+  }
+  function dragEnd(){
+    if(!dragging)return;dragging=false;card.classList.remove('dragging');
+    if(dx>THR)doSave();
+    else if(dx<-THR)doSkip();
+    else{
+      card.style.transition='transform .3s ease';card.style.transform='translateX(-50%)';
+      setTimeout(()=>card.style.transition='none',310);
+      const h=getHints();if(h.like)h.like.style.opacity='0';if(h.skip)h.skip.style.opacity='0';
+    }
+  }
+  card.addEventListener('touchstart',e=>dragStart(e.touches[0].clientX),{passive:true});
+  card.addEventListener('touchmove',e=>{e.preventDefault();dragMove(e.touches[0].clientX)},{passive:false});
+  card.addEventListener('touchend',dragEnd);card.addEventListener('touchcancel',dragEnd);
+  card.addEventListener('mousedown',e=>{dragStart(e.clientX);e.preventDefault()});
+  document.addEventListener('mousemove',e=>{if(dragging)dragMove(e.clientX)});
+  document.addEventListener('mouseup',()=>{if(dragging)dragEnd()});
+
+  // Buttons
+  document.getElementById('btnSkip').addEventListener('click',doSkip);
+  document.getElementById('btnSave').addEventListener('click',doSave);
+  document.getElementById('btnInfo').addEventListener('click',openDetail);
+
+  // Filter wiring
+  function wireFilter(elId,key){
+    document.getElementById(elId).querySelectorAll('.fchip').forEach(b=>{
+      b.addEventListener('click',()=>{
+        document.getElementById(elId).querySelectorAll('.fchip').forEach(x=>x.classList.remove('on'));
+        b.classList.add('on');
+        if(key==='deal')fDeal=b.dataset.v;
+        if(key==='cat')fCat=b.dataset.v;
+        if(key==='dist')fDist=b.dataset.v;
+        applyFilters();
+      });
+    });
+  }
+  wireFilter('fDeal','deal');
+  wireFilter('fCat','cat');
+  wireFilter('fDist','dist');
+
+  // Tab deal type
+  document.getElementById('dealTabs').querySelectorAll('.dtab').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.getElementById('dealTabs').querySelectorAll('.dtab').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      fTabDeal=b.dataset.v;
+      // Sync left panel
+      document.getElementById('fDeal').querySelectorAll('.fchip').forEach(x=>{
+        x.classList.toggle('on',x.dataset.v===fTabDeal);
+      });
+      fDeal=fTabDeal;
+      applyFilters();
+    });
+  });
+
+  // Init
+  updateTabCounts();
+  updateStats();
+  renderDots();
+  renderCard();
+  renderSaved();
+</script>
 </body>
 </html>

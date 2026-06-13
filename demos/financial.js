@@ -364,13 +364,21 @@ function renderSidebar() {
   const categories = [...new Set(TOOLS.map(t => t.category))];
   let html = '';
   categories.forEach(cat => {
-    html += `<div class="category-group-label">${cat}</div>`;
-    TOOLS.filter(t => t.category === cat).forEach(t => {
-      html += `<button class="tool-item${t.id === currentToolId ? ' active' : ''}" data-id="${t.id}">
-        <span class="tool-icon">${t.abbr}</span>
-        <span class="tool-item-label"><strong>${t.name}</strong><span>${t.category}</span></span>
-      </button>`;
-    });
+    const items = TOOLS.filter(t => t.category === cat);
+    html += `<section class="tool-group">
+      <div class="tool-group-head">
+        <span>${cat}</span>
+        <strong>${items.length} tools</strong>
+      </div>
+      <div class="tool-group-items">
+        ${items.map(t => `
+          <button class="tool-item${t.id === currentToolId ? ' active' : ''}" data-id="${t.id}">
+            <span class="tool-icon">${t.abbr}</span>
+            <span class="tool-item-label"><strong>${t.name}</strong><span>${t.category}</span></span>
+          </button>
+        `).join('')}
+      </div>
+    </section>`;
   });
   document.getElementById('toolList').innerHTML = html;
   document.querySelectorAll('.tool-item').forEach(btn => {
