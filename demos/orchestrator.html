@@ -196,6 +196,54 @@ html,body{height:100%;background:var(--bg);color:var(--text);
 .btn-send:disabled{opacity:.4;cursor:not-allowed}
 .chat-hint{font-size:9px;color:var(--muted);margin-top:6px;text-align:center}
 
+/* ─── Queued node (will activate soon) ───────────────────── */
+.node.queued{
+  opacity:.85;border-color:#3a3a5a;border-style:dashed;
+  box-shadow:0 0 0 1px #3a3a5a30;
+  transition:border-color .2s,opacity .2s;
+}
+
+/* ─── Canvas stream glow (right edge → chat) ─────────────── */
+.stream-glow{
+  position:absolute;right:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(to bottom,transparent 10%,var(--green) 50%,transparent 90%);
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.stream-glow.on{opacity:1;animation:glow-pulse 1.2s ease-in-out infinite}
+@keyframes glow-pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* ─── Agent attribution badges ────────────────────────────── */
+.atag{
+  display:inline-block;font-size:8px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.05em;padding:1px 6px;border-radius:3px;margin-right:5px;
+  vertical-align:middle;
+}
+.atag-r{background:#0a2e50;color:var(--blue);border:1px solid #1a4870}
+.atag-b{background:#1a0a3a;color:var(--purple);border:1px solid #3a1a6a}
+.atag-c{background:#1a0010;color:#ffd0ee;border:1px solid #4a0030}
+.atag-v{background:#2a0a0a;color:var(--red);border:1px solid #5a1a1a}
+.atag-a{background:#0a1a0a;color:var(--green);border:1px solid #1a3a1a}
+
+/* ─── Response meta footer ────────────────────────────────── */
+.resp-meta{
+  margin-top:12px;padding-top:10px;border-top:1px solid #2a2a3a;
+  font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:4px;
+}
+.resp-meta-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.resp-meta-icon{opacity:.6}
+.resp-meta-val{color:var(--muted2);font-weight:600}
+
+/* ─── Follow-up chips ─────────────────────────────────────── */
+.followups{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.fu-label{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.fu-chips{display:flex;flex-direction:column;gap:4px}
+.fu-chip{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:7px;
+  padding:6px 10px;text-align:left;color:var(--muted2);cursor:pointer;
+  font-size:11px;transition:border-color .15s,color .15s;font-family:inherit;
+}
+.fu-chip:hover{border-color:var(--momo);color:var(--text)}
+
 /* ─── Responsive ──────────────────────────────────────────── */
 @media(max-width:800px){
   .canvas-wrap{display:none}
@@ -237,6 +285,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);
       <div class="ch-icon">⬡</div>
       <div class="ch-text">Nhập câu lệnh vào chat<br>để xem workflow hoạt động</div>
     </div>
+    <div class="stream-glow" id="streamGlow"></div>
   </div>
 
   <!-- Chat -->
@@ -294,34 +343,40 @@ const PRESETS = {
     agents: ['research','content','assembler'],
     ragSrc: ['GSC Data','GA4 Events','Keyword DB','Competitor'],
     tokens: 12847, ttft: '0.8s', total: '14.2s', ragHits: 41,
+    agentLabel: 'Research Agent · Content Writer · Assembler',
+    followUps: [
+      'Phân tích CWV chi tiết 3 trang INP > 200ms',
+      'Tạo content plan Q3 cho Credit + Insurance',
+      'So sánh SoV MoMo vs. VPBank vs. MBBank',
+    ],
     statusSteps: ['Phân tích yêu cầu...','Research Agent đang thu thập...','Content Writer đang soạn...','Truy vấn RAG knowledge base...','Assembler đang tổng hợp...'],
     out: `# Báo Cáo Hiệu Suất SEO — Q2 2026
 Web Platform MoMo  |  Kỳ: Tháng 4–6/2026
 
-## Executive Summary
-Organic traffic Q2 đạt **3.42M sessions** (+23% QoQ so với Q1: 2.78M). Keyword coverage mở rộng thêm 1,240 từ khoá mới. CWV compliance đạt 78% URL.
+[R] ## Executive Summary
+Organic traffic Q2 đạt **{3.42}M sessions** (+{23}% QoQ so với Q1: {2.78}M). Keyword coverage mở rộng thêm {1240} từ khoá mới. CWV compliance đạt {78}% URL.
 
-## Traffic Performance
+[R] ## Traffic Performance
 
-Organic Sessions: 3.42M (+23% QoQ)
-New Users Web-to-App: 124,000 (+18%)
-Avg. Session Duration: 2m 14s  |  Bounce Rate: 58.3% (-4.2pp)
+Organic Sessions: {3.42}M (+{23}% QoQ)
+New Users Web-to-App: {124000} (+{18}%)
+Avg. Session Duration: 2m {14}s  |  Bounce Rate: {58.3}% (-{4.2}pp)
 
-## Top Use Cases
+[R] ## Top Use Cases
 
-Vay Nhanh:   842,000 sessions (+67% YoY, Top 3)
-BH xe máy:   341,000 sessions (+29% YoY, Top 1)
-Tiết Kiệm:   218,000 sessions (+12% YoY, Top 5)
-Phạt Nguội:   87,000 sessions (Launch)
+Vay Nhanh:   {842000} sessions (+{67}% YoY, Top 3)
+BH xe máy:   {341000} sessions (+{29}% YoY, Top 1)
+Tiết Kiệm:   {218000} sessions (+{12}% YoY, Top 5)
+Phạt Nguội:   {87000} sessions (Launch)
 
-## Keyword Opportunities Q3
+[C] ## Keyword Opportunities Q3
 
 1. "cic score momo" — 96K/tháng, SoV: 0% → Target: Top 3
 2. "bảo hiểm ô tô" — 74K/tháng, SoV: 0% → Target: Top 5
 3. "bhxh tự nguyện 2026" — 38K/tháng, Gap cao
 4. "tra cứu phạt nguội" — 1.5M/tháng, P0 priority
 
-## Đề Xuất Q3
+[C] ## Đề Xuất Q3
 
 → Schema FAQ/HowTo cho 8 Hub còn thiếu
 → Named Author policy để unlock YMYL ranking
@@ -333,40 +388,46 @@ Phạt Nguội:   87,000 sessions (Launch)
     agents: ['research','brief','assembler'],
     ragSrc: ['Keyword DB','Competitor','User Intent','SERP Data'],
     tokens: 8432, ttft: '0.6s', total: '9.8s', ragHits: 34,
+    agentLabel: 'Research Agent · Brief Writer · Assembler',
+    followUps: [
+      'Viết H1 + meta description cho trang Vay Nhanh',
+      'Tạo FAQ schema 10 câu cho use case vay tiền',
+      'So sánh content structure MoMo vs. VPBank vs. TPBank',
+    ],
     statusSteps: ['Phân tích yêu cầu...','Research Agent đang thu thập...','Brief Writer đang outline...','Truy vấn RAG knowledge base...','Assembler đang tổng hợp...'],
     out: `# Content Brief: Trang Hub "Vay Nhanh"
 Inbound Team  |  Review: Văn Hiến  |  Deadline: T7/2026
 
-## Search Intent
+[R] ## Search Intent
 
-Primary: Transactional (62%) — cân nhắc vay ngay
-Secondary: Informational (28%) — so sánh điều kiện
-Navigational: 10% — tìm trực tiếp MoMo
+Primary: Transactional ({62}%) — cân nhắc vay ngay
+Secondary: Informational ({28}%) — so sánh điều kiện
+Navigational: {10}% — tìm trực tiếp MoMo
 
-## Seed Keywords
+[R] ## Seed Keywords
 
-"vay nhanh" — 890K/tháng, KD 55, Top 8
-"vay tiền nhanh online" — 320K/tháng, KD 48, Top 12
-"vay nhanh momo" — 180K/tháng, KD 22, Top 3
-"điều kiện vay nhanh" — 64K/tháng, KD 30, Top 6
+"vay nhanh" — {890}K/tháng, KD 55, Top 8
+"vay tiền nhanh online" — {320}K/tháng, KD 48, Top 12
+"vay nhanh momo" — {180}K/tháng, KD 22, Top 3
+"điều kiện vay nhanh" — {64}K/tháng, KD 30, Top 6
 
-## Content Architecture
+[B] ## Content Architecture
 
 Hero: H1 "Vay Nhanh MoMo — Nhận Tiền Trong 5 Phút"
 → CTA: [Vay ngay] / [Kiểm tra hạn mức]
 
-## Section 1: Lãi Suất & Hạn Mức
+[B] ## Section 1: Lãi Suất & Hạn Mức
 → Bảng so sánh MoMo vs. VPBank vs. TPBank
 → Widget tính lãi embed  /  Schema: FAQPage + Product
 
-## Section 2: Điều Kiện Vay
+[B] ## Section 2: Điều Kiện Vay
 → Checklist 5 điều kiện đủ tiêu chuẩn
 → Hướng dẫn 3 bước đăng ký  /  Schema: HowTo
 
-## Section 3: Trust Signals
+[B] ## Section 3: Trust Signals
 → 2.5M+ lượt vay / Schema: Review aggregate
 
-## Tracking Spec
+[A] ## Tracking Spec
 
 tool_calculate → tool_id: vay-nhanh
 cta_click → cta_location
@@ -377,9 +438,20 @@ scroll_depth → 25/50/75/100%`,
     agents: ['research','content','video','assembler'],
     ragSrc: ['User Research','Brand Guidelines','BHXH Data','Script DB'],
     tokens: 6218, ttft: '0.5s', total: '11.4s', ragHits: 28,
+    agentLabel: 'Research Agent · Content Writer · Video Script · Assembler',
+    followUps: [
+      'Tạo script phiên bản 30s cho story Instagram',
+      'Viết caption TikTok + hashtag cho video BHXH',
+      'Lên kế hoạch A/B test hook Scene 01',
+    ],
     statusSteps: ['Phân tích yêu cầu...','Research Agent đang thu thập...','Content Writer đang viết...','Video Script đang format scene...','Truy vấn RAG knowledge base...','Assembler đang tổng hợp...'],
     out: `🎬 VIDEO SCRIPT — BHXH Tự Nguyện (60s)
 Draft 1  |  Vertical 9:16  |  TikTok/Reels
+
+[R] ## Research Notes
+Target: Freelancer {25}-{40}t. Pain point: không có lương hưu, lo lắng tương lai.
+
+[V] ## Scenes
 
 [SCENE 01 — 0:00–0:08]  HOOK
 Visual: Freelancer trẻ nhìn điện thoại, lo lắng
@@ -411,30 +483,36 @@ Note: Cần clearance data BHXH trước khi publish.`,
     agents: ['research','brief','assembler'],
     ragSrc: ['Keyword DB','Competitor','SERP Data','SoV Tracker'],
     tokens: 7930, ttft: '0.7s', total: '10.1s', ragHits: 37,
+    agentLabel: 'Research Agent · Brief Writer · Assembler',
+    followUps: [
+      'Tạo content architecture cho Hub Phạt Nguội',
+      'So sánh SERP page 1 của csgt.vn và momo.vn',
+      'Estimate traffic nếu đạt Top 3 "tra cứu phạt nguội"',
+    ],
     statusSteps: ['Phân tích yêu cầu...','Research Agent đang thu thập...','Brief Writer đang phân tích...','Truy vấn RAG knowledge base...','Assembler đang tổng hợp...'],
     out: `# Keyword Gap Analysis — Phạt Nguội
 P0 (CEO Mandate)  |  Target: Live T5/2026
 
-## Market Overview
+[R] ## Market Overview
 
-Total Search Volume: 1.5M+ queries/tháng
+Total Search Volume: {1.5}M+ queries/tháng
 Current MoMo SoV: 0% (chưa có trang)
-Market Leader: csgt.vn (Est. 35% SoV)
+Market Leader: csgt.vn (Est. {35}% SoV)
 
-## Cluster 1: Tra Cứu (HIGH PRIORITY)
+[R] ## Cluster 1: Tra Cứu (HIGH PRIORITY)
 
-"tra cứu phạt nguội" — 590K/tháng, KD 42
-"phạt nguội online" — 280K/tháng, KD 38
-"kiểm tra phạt nguội xe máy" — 145K/tháng, KD 35
-"phạt nguội biển số" — 98K/tháng, KD 40
+"tra cứu phạt nguội" — {590}K/tháng, KD 42
+"phạt nguội online" — {280}K/tháng, KD 38
+"kiểm tra phạt nguội xe máy" — {145}K/tháng, KD 35
+"phạt nguội biển số" — {98}K/tháng, KD 40
 
-## Cluster 2: Nộp Phạt (HIGH PRIORITY)
+[R] ## Cluster 2: Nộp Phạt (HIGH PRIORITY)
 
-"nộp phạt nguội online" — 210K/tháng, KD 45
-"thanh toán phạt nguội" — 89K/tháng, KD 38
-"nộp phạt nguội qua momo" — 28K/tháng, KD 20
+"nộp phạt nguội online" — {210}K/tháng, KD 45
+"thanh toán phạt nguội" — {89}K/tháng, KD 38
+"nộp phạt nguội qua momo" — {28}K/tháng, KD 20
 
-## Content Architecture
+[B] ## Content Architecture
 
 → Hub: momo.vn/phat-nguoi
 → Spoke 1: /tra-cuu — widget tra cứu biển số
@@ -639,8 +717,11 @@ async function runFlow(pre, userText) {
   // Orchestrator
   await nodeAct('orchestrator', 900); nextStatus();
 
-  // Agents in parallel
+  // Mark upcoming agents as queued
   const agentIds = pre.agents.filter(a => ['research','brief','content','video'].includes(a));
+  agentIds.forEach(a => nodeQueue(a));
+
+  // Agents in parallel (queued → active as each fires)
   await Promise.all(agentIds.map(async (a, i) => {
     await sleep(i * 160);
     await connAct('orchestrator', a);
@@ -671,25 +752,63 @@ async function runFlow(pre, userText) {
   thinkingEl = null;
 
   const msgEl = addMsg('ai', '');
-  streamResponse(pre.out, msgEl._bubble);
+  const glow = document.getElementById('streamGlow');
+  glow.classList.add('on');
 
-  setStatusPill('done', 'Done');
-  await sleep(2000);
-  setStatusPill('', 'Ready');
-  running = false;
+  streamResponse(pre, msgEl._bubble, () => {
+    glow.classList.remove('on');
+    setStatusPill('done', 'Done');
+    setTimeout(() => { setStatusPill('', 'Ready'); running = false; }, 2000);
+  });
 }
 
-function streamResponse(text, bubble) {
+function streamResponse(pre, bubble, onDone) {
+  const variedOut = applyVariation(pre.out);
   bubble.innerHTML = '<span class="cursor"></span>';
   let i = 0;
 
   (function type() {
-    if (i >= text.length) {
-      bubble.innerHTML = renderOut(text);
+    if (i >= variedOut.length) {
+      bubble.innerHTML = renderOut(variedOut);
+
+      bubble.insertAdjacentHTML('beforeend', `
+        <div class="resp-meta">
+          <div class="resp-meta-row">
+            <span class="resp-meta-icon">⚙</span>
+            <span>${pre.agentLabel}</span>
+          </div>
+          <div class="resp-meta-row">
+            <span class="resp-meta-icon">◈</span>
+            <span class="resp-meta-val">${pre.tokens.toLocaleString()} tokens</span>
+            &nbsp;·&nbsp;TTFT ${pre.ttft}
+            &nbsp;·&nbsp;Total ${pre.total}
+            &nbsp;·&nbsp;<span class="resp-meta-val">${pre.ragHits} RAG hits</span>
+          </div>
+        </div>`);
+
+      if (pre.followUps && pre.followUps.length) {
+        const chips = pre.followUps.map(q =>
+          `<button class="fu-chip" data-text="${q.replace(/"/g,'&quot;')}">${escHtml(q)}</button>`
+        ).join('');
+        bubble.insertAdjacentHTML('beforeend', `
+          <div class="followups">
+            <div class="fu-label">Hỏi tiếp:</div>
+            <div class="fu-chips">${chips}</div>
+          </div>`);
+        bubble.querySelectorAll('.fu-chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (running) return;
+            document.getElementById('chatInput').value = btn.dataset.text;
+            submitChat();
+          });
+        });
+      }
+
       document.getElementById('chatMsgs').scrollTop = 99999;
+      if (onDone) onDone();
       return;
     }
-    const chunk = text.slice(i, i + 8);
+    const chunk = variedOut.slice(i, i + 8);
     i += 8;
     const cur = bubble.querySelector('.cursor');
     if (cur) cur.before(document.createTextNode(chunk));
@@ -699,10 +818,19 @@ function streamResponse(text, bubble) {
 }
 
 function renderOut(raw) {
+  const BADGE = { R:'Research', B:'Brief', C:'Content', V:'Video', A:'Assembler' };
+  const CLS   = { R:'r', B:'b', C:'c', V:'v', A:'a' };
   const e = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   return e
-    .replace(/^# (.+)$/gm,'<span class="oh1">$1</span>')
-    .replace(/^## (.+)$/gm,'<span class="oh2">$1</span>')
+    .replace(/^\[([RBCVA])\] (.*)$/gm, (_, tag, rest) => {
+      const badge = `<span class="atag atag-${CLS[tag]}">${BADGE[tag]}</span> `;
+      const hRest = rest
+        .replace(/^## (.+)$/, '<span class="oh2">$1</span>')
+        .replace(/^# (.+)$/,  '<span class="oh1">$1</span>');
+      return badge + hRest;
+    })
+    .replace(/^# (.+)$/gm,  '<span class="oh1">$1</span>')
+    .replace(/^## (.+)$/gm, '<span class="oh2">$1</span>')
     .replace(/^### (.+)$/gm,'<span class="oh3">$1</span>')
     .replace(/\*\*(.+?)\*\*/g,'<span class="obold">$1</span>')
     .replace(/→/g,'<span class="oarrow">→</span>');
@@ -782,10 +910,16 @@ function drawConns() {
 
 // ─── Node/conn animation ──────────────────────────────────────────────────────
 
+function nodeQueue(id) {
+  const el = nodeEls[id];
+  if (!el) return;
+  el.className = el.className.replace(/\bidle\b|\bdone\b|\bactive\b|\bqueued\b/g,'').trim() + ' queued';
+}
+
 async function nodeAct(id, dur, markDone = true) {
   const el = nodeEls[id];
   if (!el) return;
-  el.className = el.className.replace(/\bidle\b|\bdone\b/g,'').trim() + ' active';
+  el.className = el.className.replace(/\bidle\b|\bdone\b|\bqueued\b/g,'').trim() + ' active';
   const st = document.getElementById('ns-' + id);
   if (st) st.textContent = '◉ Processing...';
   const pf = document.getElementById('pf-' + id);
@@ -821,7 +955,7 @@ function resetCanvas() {
   NODES.forEach(n => {
     const el = nodeEls[n.id];
     if (!el) return;
-    el.className = el.className.replace(/\bactive\b|\bdone\b/g,'').trim();
+    el.className = el.className.replace(/\bactive\b|\bdone\b|\bqueued\b/g,'').trim();
     if (!el.className.includes('idle')) el.className += ' idle';
     const st = document.getElementById('ns-' + n.id);
     if (st) st.textContent = '';
@@ -837,6 +971,22 @@ function resetCanvas() {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── Number variation ─────────────────────────────────────────────────────────
+
+function vary(val, pctRange = 8) {
+  const f = 1 + (Math.random() * 2 - 1) * pctRange / 100;
+  const n = parseFloat(val) * f;
+  // Preserve format: if original has decimal, keep 1dp; if large int, round to nearest 10
+  if (String(val).includes('.')) return n.toFixed(1);
+  if (n >= 10000) return String(Math.round(n / 10) * 10);
+  if (n >= 100)   return String(Math.round(n));
+  return String(Math.round(n * 10) / 10);
+}
+
+function applyVariation(text) {
+  return text.replace(/\{([\d.]+)\}/g, (_, num) => vary(num));
+}
 </script>
 </body>
 </html>
