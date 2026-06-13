@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GenAI Orchestrator — MoMo</title>
+<style>
+:root{
+  --bg:#0b0b0f;--surface:#111118;--surface2:#18181f;--border:#222230;--border2:#2e2e40;
+  --momo:#a50064;--momo2:#d4006e;--momo-glow:rgba(165,0,100,.28);
+  --text:#e0e0ec;--muted:#5a5a72;--muted2:#888899;
+  --green:#22c55e;--blue:#60a5fa;--amber:#fbbf24;--purple:#a78bfa;--red:#f87171;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;overflow:hidden}
+
+/* ─── Topbar ─────────────────────────────────────────────── */
+.topbar{
+  height:46px;display:flex;align-items:center;gap:12px;
+  padding:0 14px;border-bottom:1px solid var(--border);background:var(--surface);
+  position:relative;z-index:10;
+}
+.nav-back{color:var(--muted2);text-decoration:none;font-size:11px;
+  padding:4px 8px;border-radius:5px;white-space:nowrap}
+.nav-back:hover{color:var(--text);background:var(--surface2)}
+.tb-sep{width:1px;height:20px;background:var(--border2);flex:none}
+.tb-brand{display:flex;align-items:center;gap:8px}
+.brand-mark{width:26px;height:26px;border-radius:6px;background:var(--momo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:900;color:#fff;line-height:1.1;text-align:center;flex:none}
+.tb-title{font-size:13px;font-weight:700}
+.tb-sub{font-size:10px;color:var(--muted2)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.model-pill{display:flex;align-items:center;gap:6px;background:var(--surface2);
+  border:1px solid var(--border2);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700}
+.model-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink-dot 2s ease-in-out infinite}
+@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:.5}}
+.btn-run{background:var(--momo);color:#fff;border:none;border-radius:6px;
+  padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:background .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-run:hover:not(:disabled){background:var(--momo2)}
+.btn-run:disabled{opacity:.5;cursor:not-allowed}
+.btn-run .spin{width:12px;height:12px;border:2px solid #ffffff30;border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;display:none;flex:none}
+.btn-run.running .run-lbl{display:none}
+.btn-run.running .spin{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── Layout ─────────────────────────────────────────────── */
+.app{display:flex;height:calc(100vh - 46px)}
+
+/* ─── Left panel ─────────────────────────────────────────── */
+.left{
+  width:272px;flex:none;border-right:1px solid var(--border);
+  background:var(--surface);display:flex;flex-direction:column;overflow-y:auto;
+}
+.ps{padding:14px;border-bottom:1px solid var(--border)}
+.pl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);margin-bottom:8px}
+.prompt-area{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:7px;padding:9px 10px;font:inherit;font-size:12px;
+  color:var(--text);resize:vertical;min-height:82px;outline:none;line-height:1.5;
+}
+.prompt-area:focus{border-color:var(--momo)}
+.preset-grid{display:flex;flex-direction:column;gap:5px}
+.pre-btn{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:7px;
+  padding:8px 10px;text-align:left;color:var(--text);cursor:pointer;
+  font-size:11px;line-height:1.4;transition:border-color .15s,background .15s;
+}
+.pre-btn:hover{border-color:var(--momo);background:#1a001540}
+.pre-btn.on{border-color:var(--momo);background:#1a001540}
+.pre-tag{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.agent-list{display:flex;flex-direction:column;gap:4px}
+.ag{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;
+  border-radius:6px;font-size:11px;transition:background .2s;
+}
+.ag-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);flex:none;transition:all .3s}
+.ag.active{background:#1a001520}
+.ag.active .ag-dot{background:var(--momo);box-shadow:0 0 5px var(--momo);animation:dot-pulse .9s infinite}
+.ag.done{background:#0e1f1020}
+.ag.done .ag-dot{background:var(--green)}
+@keyframes dot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.ag-name{font-weight:600}
+.ag-role{font-size:9px;color:var(--muted2);margin-top:1px}
+.ag-st{margin-left:auto;font-size:9px;color:var(--muted);white-space:nowrap}
+.ag.active .ag-st{color:var(--momo)}
+.ag.done  .ag-st{color:var(--green)}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.stat-item span{display:block;font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.stat-item strong{font-size:14px;font-weight:800;color:var(--text)}
+.token-big{font-size:24px;font-weight:800;color:var(--momo);font-variant-numeric:tabular-nums;line-height:1}
+.token-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ─── Canvas ──────────────────────────────────────────────── */
+.canvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg)}
+.canvas-bg-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:40px 40px;opacity:.35;pointer-events:none;
+}
+.canvas-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.nodes-layer{position:absolute;inset:0}
+
+/* ─── Nodes ───────────────────────────────────────────────── */
+.node{
+  position:absolute;transform:translateX(-50%);
+  border-radius:10px;border:1px solid var(--border2);background:var(--surface);
+  padding:10px 14px;transition:border-color .35s,box-shadow .35s,opacity .3s;
+  min-width:130px;max-width:240px;
+}
+.node.idle{opacity:.55}
+.node.active{border-color:var(--momo);box-shadow:0 0 0 2px var(--momo-glow),0 0 18px var(--momo-glow);opacity:1}
+.node.done{border-color:#22c55e50;opacity:1}
+.n-type{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px}
+.n-title{font-size:12px;font-weight:700}
+.n-sub{font-size:10px;color:var(--muted2);margin-top:2px;line-height:1.4}
+.n-status{font-size:9px;font-weight:700;margin-top:5px;min-height:13px}
+.node.active .n-status{color:var(--momo)}
+.node.done  .n-status{color:var(--green)}
+.n-progress{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-top:6px}
+.n-prog-fill{height:100%;background:var(--momo);border-radius:1px;width:0;transition:width .3s}
+.node.done .n-prog-fill{background:var(--green);width:100% !important}
+
+/* ─── Node variants ───────────────────────────────────────── */
+.node-input{min-width:210px;background:#0e0010;border-color:#3a1060}
+.node-input.active{border-color:#9c4dcc;box-shadow:0 0 0 2px #9c4dcc40,0 0 18px #9c4dcc25}
+.node-orch{min-width:190px}
+.node-rag{min-width:340px;background:#050e1a;border-color:#0f2540}
+.node-rag.active{border-color:var(--blue);box-shadow:0 0 0 2px #60a5fa30,0 0 18px #60a5fa20}
+.node-output{min-width:200px;background:#050f08;border-color:#0e2518}
+.node-output.active{border-color:var(--green);box-shadow:0 0 0 2px #22c55e30,0 0 18px #22c55e20}
+.node-assem{min-width:160px}
+
+.rag-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.rtag{
+  font-size:9px;font-weight:700;background:#071828;border:1px solid #0e2540;
+  border-radius:4px;padding:2px 7px;color:var(--blue);
+  transition:background .2s,border-color .2s;
+}
+.rtag.lit{background:#0a2e50;border-color:var(--blue);animation:rtag-pulse .8s infinite}
+@keyframes rtag-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ─── Canvas hint ─────────────────────────────────────────── */
+.canvas-hint{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;color:var(--muted);pointer-events:none;
+}
+.ch-icon{font-size:48px;margin-bottom:14px;opacity:.2}
+.ch-text{font-size:12px;line-height:1.7}
+.ch-text strong{color:var(--muted2)}
+
+/* ─── Output panel ────────────────────────────────────────── */
+.out-panel{
+  position:absolute;bottom:0;left:0;right:0;height:0;overflow:hidden;
+  background:var(--surface);border-top:1px solid var(--border);
+  transition:height .3s ease;display:flex;flex-direction:column;z-index:5;
+}
+.out-panel.open{height:260px}
+.out-top{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
+  border-bottom:1px solid var(--border);flex:none;
+}
+.out-title{font-size:12px;font-weight:700;flex:1}
+.out-badge{font-size:9px;font-weight:700;background:#0e2518;border:1px solid #22c55e40;
+  border-radius:4px;padding:2px 8px;color:var(--green)}
+.out-tabs{display:flex;gap:3px}
+.otab{font-size:10px;padding:3px 9px;border-radius:5px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted2);cursor:pointer}
+.otab.on{background:var(--momo);border-color:var(--momo);color:#fff}
+.btn-close-out{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px}
+.btn-close-out:hover{color:var(--text)}
+.out-body{flex:1;overflow-y:auto;padding:14px}
+.out-txt{font-size:12px;line-height:1.75;color:var(--text);white-space:pre-wrap;font-family:'SF Mono','Fira Code',monospace}
+.out-txt .oh1{display:block;font-size:14px;font-weight:800;color:var(--momo2);margin:2px 0 10px}
+.out-txt .oh2{display:block;font-size:12px;font-weight:700;color:var(--blue);margin:10px 0 3px}
+.out-txt .obold{font-weight:700}
+.out-txt .oarrow{color:var(--momo)}
+.cursor{display:inline-block;width:2px;height:13px;background:var(--momo);
+  vertical-align:middle;animation:blink-c .7s step-end infinite}
+@keyframes blink-c{50%{opacity:0}}
+
+/* ─── SVG connections ─────────────────────────────────────── */
+.cpath{fill:none;stroke-width:1.5;stroke-dasharray:5 4}
+.cp-idle{stroke:#1e1e28}
+.cp-active{stroke:var(--momo);animation:dash-flow 1s linear infinite}
+.cp-rag{stroke:var(--blue)}
+.cp-rag-active{stroke:var(--blue);animation:dash-flow 1.1s linear infinite}
+.cp-out{stroke:var(--green)}
+.cp-out-active{animation:dash-flow 1s linear infinite}
+@keyframes dash-flow{to{stroke-dashoffset:-9}}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media(max-width:700px){
+  .left{display:none}
+  .canvas-hint .ch-text::after{content:'\A\A← Dùng màn hình lớn để xem đầy đủ';white-space:pre}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── Topbar ─────────────────────────────────────────────────── -->
+<div class="topbar">
+  <a class="nav-back" href="../index.html" target="_top">← Store</a>
+  <div class="tb-sep"></div>
+  <div class="tb-brand">
+    <div class="brand-mark">mo<br>mo</div>
+    <div>
+      <div class="tb-title">GenAI Orchestrator</div>
+      <div class="tb-sub">Content · Report · Video Workflow</div>
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="model-pill"><span class="model-dot"></span>claude-opus-4 · GPT-4o fallback</div>
+    <button class="btn-run" id="btnRun">
+      <span class="run-lbl">▶ Run Workflow</span>
+      <div class="spin"></div>
+    </button>
+  </div>
+</div>
+
+<!-- ─── Main ───────────────────────────────────────────────────── -->
+<div class="app">
+
+  <!-- Left panel -->
+  <div class="left">
+
+    <div class="ps">
+      <div class="pl">Prompt</div>
+      <textarea class="prompt-area" id="promptArea">Tạo báo cáo hiệu suất SEO Q2 2026 cho Web Platform MoMo: phân tích traffic, keyword ranking và đề xuất cải thiện.</textarea>
+    </div>
+
+    <div class="ps">
+      <div class="pl">Preset Workflows</div>
+      <div class="preset-grid">
+        <button class="pre-btn on" data-p="seo-report">
+          <div class="pre-tag" style="color:var(--purple)">Report</div>
+          SEO Performance Q2 2026
+        </button>
+        <button class="pre-btn" data-p="content-brief">
+          <div class="pre-tag" style="color:var(--blue)">Brief</div>
+          Content Brief: Vay Nhanh Hub
+        </button>
+        <button class="pre-btn" data-p="video-script">
+          <div class="pre-tag" style="color:var(--red)">Video</div>
+          Script 60s: BHXH Tự Nguyện
+        </button>
+        <button class="pre-btn" data-p="kw-research">
+          <div class="pre-tag" style="color:var(--green)">Research</div>
+          Keyword Gap: Phạt Nguội
+        </button>
+      </div>
+    </div>
+
+    <div class="ps">
+      <div class="pl">Agents</div>
+      <div class="agent-list" id="agentList">
+        <div class="ag idle" data-a="orchestrator">
+          <div class="ag-dot"></div>
+          <div><div class="ag-name">Orchestrator</div><div class="ag-role">Task router · Model dispatcher</div></div>
+          <div class="ag-st">Idle</div>
+        </div>
+        <div class="ag idle" data-a="research">
+          <div class="ag-dot"></div>
+          <div><div class="ag-name">Research Agent</div><div class="ag-role">Web search · GSC · Keywords</div></div>
+          <div class="ag-st">Idle</div>
+        </div>
+        <div class="ag idle" data-a="brief">
+          <div class="ag-dot"></div>
+          <div><div class="ag-name">Brief Writer</div><div class="ag-role">Outline · Strategy · Spec</div></div>
+          <div class="ag-st">Idle</div>
+        </div>
+        <div class="ag idle" data-a="content">
+          <div class="ag-dot"></div>
+          <div><div class="ag-name">Content Writer</div><div class="ag-role">SEO copy · Localize · Edit</div></div>
+          <div class="ag-st">Idle</div>
+        </div>
+        <div class="ag idle" data-a="video">
+          <div class="ag-dot"></div>
+          <div><div class="ag-name">Video Script</div><div class="ag-role">Scene · VO · Timing</div></div>
+          <div class="ag-st">Idle</div>
+        </div>
+        <div class="ag idle" data-a="assembler">
+          <div class="ag-dot"></div>
+          <div><div class="ag-name">Assembler</div><div class="ag-role">Merge · Format · Validate</div></div>
+          <div class="ag-st">Idle</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ps">
+      <div class="pl">Usage</div>
+      <div class="token-big" id="tokenBig">0</div>
+      <div class="token-lbl">tokens consumed</div>
+      <div class="stat-row" style="margin-top:10px">
+        <div class="stat-item"><span>TTFT</span><strong id="stTtft">--</strong></div>
+        <div class="stat-item"><span>Total</span><strong id="stTotal">--</strong></div>
+        <div class="stat-item"><span>Agents</span><strong id="stAgents">--</strong></div>
+        <div class="stat-item"><span>RAG hits</span><strong id="stRag">--</strong></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas-wrap" id="canvasWrap">
+    <div class="canvas-bg-grid"></div>
+    <svg class="canvas-svg" id="cvSvg"></svg>
+    <div class="nodes-layer" id="nodesLayer"></div>
+
+    <div class="canvas-hint" id="cvHint">
+      <div class="ch-icon">⬡</div>
+      <div class="ch-text">Chọn preset và nhấn <strong>Run Workflow</strong><br>để xem orchestrator phân tác vụ cho agents.<br><br>Output sẽ stream trực tiếp lên canvas.</div>
+    </div>
+
+    <!-- Output panel -->
+    <div class="out-panel" id="outPanel">
+      <div class="out-top">
+        <div class="out-title" id="outTitle">Output</div>
+        <div class="out-badge" id="outBadge">✓ Generated</div>
+        <div class="out-tabs">
+          <button class="otab on">Draft</button>
+          <button class="otab">Reasoning</button>
+          <button class="otab">Sources</button>
+        </div>
+        <button class="btn-close-out" id="btnCloseOut">×</button>
+      </div>
+      <div class="out-body">
+        <div class="out-txt" id="outTxt"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Presets ──────────────────────────────────────────────────────────────────
+
+const PRESETS = {
+  'seo-report': {
+    prompt: 'Tạo báo cáo hiệu suất SEO Q2 2026 cho Web Platform MoMo: phân tích traffic, keyword ranking và đề xuất cải thiện.',
+    agents: ['research','content','assembler'],
+    ragSrc: ['GSC Data','GA4 Events','Keyword DB','Competitor'],
+    outTitle: 'SEO Performance Report Q2 2026',
+    tokens: 12847, ttft: '0.8s', total: '14.2s', ragHits: 41,
+    out: `# Báo Cáo Hiệu Suất SEO — Q2 2026
+Web Platform MoMo  |  Kỳ: Tháng 4–6/2026
+
+## Executive Summary
+Organic traffic Q2 đạt **3.42M sessions** (+23% QoQ so với Q1: 2.78M). Keyword coverage mở rộng thêm 1,240 từ khoá mới trong kỳ. CWV compliance đạt 78% URL.
+
+## Traffic Performance
+
+**Organic Sessions:**   3.42M  (+23% QoQ)
+**New Users via Web-to-App:** 124,000  (+18% QoQ)
+**Avg. Session Duration:**    2m 14s
+**Bounce Rate:**              58.3%  (-4.2pp)
+
+## Top Use Cases
+
+| Use Case       | Sessions  | YoY    | Rank   |
+|----------------|-----------|--------|--------|
+| Vay Nhanh      | 842,000   | +67%   | Top 3  |
+| BH xe máy      | 341,000   | +29%   | Top 1  |
+| Tiết Kiệm      | 218,000   | +12%   | Top 5  |
+| Phạt Nguội     | 87,000    | N/A    | Launch |
+
+## Keyword Opportunities — Q3 Target
+
+1. **"cic score momo"** — Vol: 96K/tháng, SoV: 0% → Target: Top 3
+2. **"bảo hiểm ô tô"** — Vol: 74K/tháng, SoV: 0% → Target: Top 5
+3. **"bhxh tự nguyện 2026"** — Vol: 38K/tháng, Gap: High
+4. **"tra cứu phạt nguội"** — Vol: 1.5M/tháng, P0 priority
+
+## Đề Xuất Q3
+
+→ Triển khai Schema FAQ/HowTo cho 8 trang Hub còn thiếu
+→ Bổ sung Named Author policy để unlock YMYL ranking
+→ Fix CWV: 3 trang INP > 200ms cần xử lý trước tháng 7
+→ Submit Sitemap bổ sung 340 URL sau khi off Zero-Traffic batch 2`,
+  },
+
+  'content-brief': {
+    prompt: 'Tạo content brief chi tiết cho trang Hub "Vay Nhanh" trên MoMo: intent, outline và tracking spec.',
+    agents: ['research','brief','assembler'],
+    ragSrc: ['Keyword DB','Competitor','User Intent','SERP Data'],
+    outTitle: 'Content Brief: Vay Nhanh Hub',
+    tokens: 8432, ttft: '0.6s', total: '9.8s', ragHits: 34,
+    out: `# Content Brief: Trang Hub "Vay Nhanh"
+Người thực hiện: Inbound  |  Review: Văn Hiến  |  Deadline: T7/2026
+
+## Search Intent Analysis
+
+**Primary Intent:**    Transactional (62%) — cân nhắc vay ngay
+**Secondary Intent:**  Informational (28%) — so sánh điều kiện, lãi suất
+**Navigational:**      10% — tìm trực tiếp MoMo Vay Nhanh
+
+## Seed Keywords
+
+| Keyword                    | Vol/tháng | KD  | Rank hiện tại |
+|----------------------------|-----------|-----|---------------|
+| "vay nhanh"                | 890K      | 55  | Top 8         |
+| "vay tiền nhanh online"    | 320K      | 48  | Top 12        |
+| "vay nhanh momo"           | 180K      | 22  | Top 3         |
+| "điều kiện vay nhanh"      | 64K       | 30  | Top 6         |
+
+## Content Architecture
+
+**Hero Section:** H1 "Vay Nhanh MoMo — Nhận Tiền Trong 5 Phút"
+→ CTA primary: [Vay ngay trên App]  /  CTA secondary: [Kiểm tra hạn mức]
+
+**Section 1: Lãi Suất & Hạn Mức** (Transactional)
+→ Bảng so sánh MoMo vs. VPBank vs. TPBank
+→ Widget tính lãi embed  /  Schema: FAQPage + Product
+
+**Section 2: Điều Kiện Vay** (Informational)
+→ Checklist 5 điều kiện  /  Hướng dẫn 3 bước đăng ký
+→ Schema: HowTo
+
+**Section 3: Trust Signals**
+→ 2.5M+ lượt vay thành công  /  Schema: Review aggregate
+
+## Tracking Spec
+
+| Event           | Trigger              | GA4 Parameter              |
+|-----------------|----------------------|----------------------------|
+| tool_calculate  | Dùng loan calculator | tool_id: vay-nhanh         |
+| cta_click       | Click CTA vay ngay   | cta_location               |
+| scroll_depth    | 25/50/75/100%        | page: vay-nhanh-hub        |`,
+  },
+
+  'video-script': {
+    prompt: 'Script video 60 giây chiến dịch BHXH Tự Nguyện trên MoMo. Target: freelancer và lao động tự do 25–40 tuổi.',
+    agents: ['research','content','video','assembler'],
+    ragSrc: ['User Research','Brand Guidelines','BHXH Data','Script DB'],
+    outTitle: 'Video Script: BHXH Tự Nguyện (60s)',
+    tokens: 6218, ttft: '0.5s', total: '11.4s', ragHits: 28,
+    out: `🎬 VIDEO SCRIPT — BHXH Tự Nguyện qua MoMo (60s)
+Phiên bản: Draft 1  |  Format: Vertical 9:16  |  Platform: TikTok/Reels
+
+─────────────────────────────────────────────
+
+[SCENE 01 — 0:00–0:08]  HOOK
+Visual: Freelancer trẻ (25t) nhìn điện thoại, vẻ lo lắng
+VO: "Làm tự do 5 năm... nhưng mình chưa có lương hưu."
+Text: "Bạn có biết?"  |  Âm nhạc: Lo-fi, nhẹ nhàng
+
+[SCENE 02 — 0:08–0:20]  PROBLEM
+Visual: Infographic đơn giản — timeline đến tuổi 60
+VO: "Không đóng BHXH hôm nay là để trống tương lai."
+Stats: "1 trong 3 người Việt không có lương hưu"
+
+[SCENE 03 — 0:20–0:38]  SOLUTION
+Visual: Mở app MoMo, vào mục BHXH Tự Nguyện
+VO: "Với MoMo, đóng BHXH chỉ từ 300.000đ/tháng."
+Demo: 3 bước — chọn mức lương → chọn tháng → thanh toán
+Text: "Nhà nước hỗ trợ thêm 66.000đ/tháng"
+
+[SCENE 04 — 0:38–0:52]  PROOF
+Visual: Split screen — đóng vs. không đóng lúc 60 tuổi
+VO: "Đóng 20 năm = lương hưu 4.5 triệu/tháng. Mãi mãi."
+Animation: Số tiền tăng dần  /  Color: MoMo Pink
+
+[SCENE 05 — 0:52–1:00]  CTA
+Visual: App screen — nút "Đóng BHXH ngay"
+VO: "Đầu tư cho tương lai — bắt đầu từ hôm nay trên MoMo."
+Text: "MoMo — Giữ Tiền Cho Tương Lai"
+
+─────────────────────────────────────────────
+Note: Cần clearance data BHXH trước khi publish. A/B test hook Scene 01.`,
+  },
+
+  'kw-research': {
+    prompt: 'Phân tích keyword gap cho use case Phạt Nguội trên MoMo. Tìm từ khoá cơ hội, phân tích competitor và đề xuất content strategy.',
+    agents: ['research','brief','assembler'],
+    ragSrc: ['Keyword DB','Competitor','SERP Data','SoV Tracker'],
+    outTitle: 'Keyword Gap Analysis: Phạt Nguội',
+    tokens: 7930, ttft: '0.7s', total: '10.1s', ragHits: 37,
+    out: `# Keyword Gap Analysis — Phạt Nguội
+Use Case Priority: P0 (CEO Mandate)  |  Target: Live T5/2026
+
+## Market Overview
+
+**Total Search Volume:** 1.5M+ queries/tháng (Việt Nam)
+**Current MoMo SoV:**   0% (chưa có trang)
+**Market Leader:**       csgt.vn (Est. 35% SoV)
+
+## Keyword Clusters
+
+### Cluster 1: Tra Cứu (Transactional) — HIGH PRIORITY
+
+| Keyword                          | Vol/tháng | KD |
+|----------------------------------|-----------|----|
+| "tra cứu phạt nguội"             | 590K      | 42 |
+| "phạt nguội online"              | 280K      | 38 |
+| "kiểm tra phạt nguội xe máy"    | 145K      | 35 |
+| "phạt nguội biển số"             | 98K       | 40 |
+
+### Cluster 2: Thông Tin (Informational)
+
+| Keyword                          | Vol/tháng | KD |
+|----------------------------------|-----------|----|
+| "phạt nguội là gì"               | 67K       | 18 |
+| "bao lâu thì có phạt nguội"      | 45K       | 22 |
+
+### Cluster 3: Nộp Phạt (Transactional) — HIGH PRIORITY
+
+| Keyword                          | Vol/tháng | KD |
+|----------------------------------|-----------|----|
+| "nộp phạt nguội online"          | 210K      | 45 |
+| "thanh toán phạt nguội"          | 89K       | 38 |
+| "nộp phạt nguội qua momo"        | 28K       | 20 |
+
+## Content Architecture
+
+→ **Hub:**    momo.vn/phat-nguoi
+→ **Spoke 1:** /tra-cuu — widget tra cứu theo biển số
+→ **Spoke 2:** /nop-phat — hướng dẫn nộp qua MoMo
+→ **Spoke 3:** /phat-nguoi-la-gi — informational FAQ
+
+**Schema:** SoftwareApplication + FAQPage + HowTo
+**Priority:** Launch Hub trước T5/2026, Spokes sau 30 ngày`,
+  },
+};
+
+// ─── Node definitions ─────────────────────────────────────────────────────────
+
+const NODES = [
+  { id:'input',       lx:.50, ty:.05, type:'INPUT',        title:'Prompt Input',      sub:'User instruction',             cls:'node-input' },
+  { id:'orchestrator',lx:.50, ty:.19, type:'ORCHESTRATOR', title:'Orchestrator',      sub:'claude-opus-4 · Task Router',  cls:'node-orch' },
+  { id:'research',    lx:.15, ty:.38, type:'AGENT',        title:'Research Agent',    sub:'Web · GSC · Ahrefs' },
+  { id:'brief',       lx:.36, ty:.38, type:'AGENT',        title:'Brief Writer',      sub:'Outline · Strategy' },
+  { id:'content',     lx:.57, ty:.38, type:'AGENT',        title:'Content Writer',    sub:'SEO · Copy · Edit' },
+  { id:'video',       lx:.79, ty:.38, type:'AGENT',        title:'Video Script',      sub:'Scene · VO · Timing' },
+  { id:'rag',         lx:.50, ty:.56, type:'KNOWLEDGE BASE',title:'RAG / Knowledge Base', sub:'MoMo Docs · GSC · Keyword DB · Competitor', cls:'node-rag' },
+  { id:'assembler',   lx:.50, ty:.72, type:'ASSEMBLER',    title:'Assembler',         sub:'Merge · Format · Validate',    cls:'node-assem' },
+  { id:'output',      lx:.50, ty:.87, type:'OUTPUT',       title:'Output',            sub:'Final draft — ready to review',cls:'node-output' },
+];
+
+const CONNS = [
+  { f:'input',       t:'orchestrator', cls:'' },
+  { f:'orchestrator',t:'research',     cls:'' },
+  { f:'orchestrator',t:'brief',        cls:'' },
+  { f:'orchestrator',t:'content',      cls:'' },
+  { f:'orchestrator',t:'video',        cls:'' },
+  { f:'research',    t:'rag',          cls:'cp-rag' },
+  { f:'brief',       t:'rag',          cls:'cp-rag' },
+  { f:'content',     t:'rag',          cls:'cp-rag' },
+  { f:'video',       t:'rag',          cls:'cp-rag' },
+  { f:'rag',         t:'assembler',    cls:'cp-rag' },
+  { f:'assembler',   t:'output',       cls:'cp-out' },
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+
+let activePre = 'seo-report';
+let nodeEls = {};
+let connEls = {};
+let running = false;
+let tokInt = null;
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildNodes();
+  window.addEventListener('resize', () => { posNodes(); rafConns(); });
+
+  document.querySelectorAll('.pre-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.pre-btn').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      activePre = b.dataset.p;
+      document.getElementById('promptArea').value = PRESETS[activePre].prompt;
+      resetAll();
+    });
+  });
+
+  document.getElementById('btnRun').addEventListener('click', runFlow);
+  document.getElementById('btnCloseOut').addEventListener('click', () =>
+    document.getElementById('outPanel').classList.remove('open'));
+
+  document.querySelectorAll('.otab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.otab').forEach(x => x.classList.remove('on'));
+      t.classList.add('on');
+    });
+  });
+});
+
+// ─── Build nodes ──────────────────────────────────────────────────────────────
+
+function buildNodes() {
+  const layer = document.getElementById('nodesLayer');
+  layer.innerHTML = '';
+  nodeEls = {};
+
+  NODES.forEach(n => {
+    const el = document.createElement('div');
+    el.className = `node idle ${n.cls || ''}`;
+    el.id = 'nd-' + n.id;
+    el.innerHTML = `
+      <div class="n-type">${n.type}</div>
+      <div class="n-title">${n.title}</div>
+      <div class="n-sub">${n.sub}</div>
+      ${n.id === 'rag' ? '<div class="rag-tags" id="rag-tags"></div>' : ''}
+      <div class="n-progress"><div class="n-prog-fill" id="pf-${n.id}"></div></div>
+      <div class="n-status" id="ns-${n.id}"></div>
+    `;
+    layer.appendChild(el);
+    nodeEls[n.id] = el;
+  });
+
+  // Populate RAG tags
+  ['GSC Data','GA4 Events','Keyword DB','Competitor','User Intent','Brand Guidelines','SERP Data','SoV Tracker','Script DB'].forEach(s => {
+    const t = document.createElement('span');
+    t.className = 'rtag';
+    t.dataset.src = s;
+    t.textContent = s;
+    document.getElementById('rag-tags').appendChild(t);
+  });
+
+  posNodes();
+  rafConns();
+}
+
+function posNodes() {
+  const w = document.getElementById('canvasWrap');
+  const W = w.clientWidth;
+  const H = w.clientHeight;
+  NODES.forEach(n => {
+    const el = nodeEls[n.id];
+    el.style.left = (n.lx * W) + 'px';
+    el.style.top  = (n.ty * H) + 'px';
+  });
+}
+
+function rafConns() {
+  requestAnimationFrame(() => requestAnimationFrame(drawConns));
+}
+
+// ─── Connections ──────────────────────────────────────────────────────────────
+
+function drawConns() {
+  const svg = document.getElementById('cvSvg');
+  svg.innerHTML = '';
+  connEls = {};
+
+  const wRect = document.getElementById('canvasWrap').getBoundingClientRect();
+
+  CONNS.forEach(c => {
+    const fEl = nodeEls[c.f];
+    const tEl = nodeEls[c.t];
+    if (!fEl || !tEl) return;
+
+    const fR = fEl.getBoundingClientRect();
+    const tR = tEl.getBoundingClientRect();
+
+    const x1 = fR.left + fR.width  / 2 - wRect.left;
+    const y1 = fR.bottom - wRect.top;
+    const x2 = tR.left + tR.width  / 2 - wRect.left;
+    const y2 = tR.top  - wRect.top;
+    const mid = (y1 + y2) / 2;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M${x1},${y1} C${x1},${mid} ${x2},${mid} ${x2},${y2}`);
+    path.setAttribute('class', `cpath cp-idle ${c.cls || ''}`);
+    path.id = `cp-${c.f}-${c.t}`;
+    svg.appendChild(path);
+    connEls[`${c.f}::${c.t}`] = path;
+  });
+}
+
+// ─── Run ──────────────────────────────────────────────────────────────────────
+
+async function runFlow() {
+  if (running) return;
+  running = true;
+
+  const pre = PRESETS[activePre];
+  const btn = document.getElementById('btnRun');
+  btn.classList.add('running');
+  btn.disabled = true;
+
+  resetAll();
+  document.getElementById('cvHint').style.display = 'none';
+
+  // Token counter
+  let tok = 0;
+  const target = pre.tokens;
+  tokInt = setInterval(() => {
+    tok = Math.min(tok + Math.floor(Math.random() * 90 + 50), target);
+    document.getElementById('tokenBig').textContent = tok.toLocaleString('vi-VN');
+    if (tok >= target) clearInterval(tokInt);
+  }, 220);
+
+  document.getElementById('stTtft').textContent   = pre.ttft;
+  document.getElementById('stTotal').textContent  = pre.total;
+  document.getElementById('stRag').textContent    = pre.ragHits;
+  document.getElementById('stAgents').textContent = pre.agents.length;
+
+  // Sequence
+  await nodeAct('input', 700);
+  await connAct('input','orchestrator');
+
+  await nodeAct('orchestrator', 1100);
+
+  const agentIds = pre.agents.filter(a => ['research','brief','content','video'].includes(a));
+  await Promise.all(agentIds.map(async (a, i) => {
+    await sleep(i * 180);
+    await connAct('orchestrator', a);
+    await nodeAct(a, 1300 + Math.random() * 700);
+  }));
+
+  // Activate RAG sources
+  document.querySelectorAll('.rtag').forEach(t => {
+    if (pre.ragSrc.includes(t.dataset.src)) t.classList.add('lit');
+  });
+  agentIds.forEach(a => connAct(a, 'rag'));
+  await nodeAct('rag', 1300);
+  document.querySelectorAll('.rtag').forEach(t => t.classList.remove('lit'));
+
+  await connAct('rag','assembler');
+  await nodeAct('assembler', 800);
+
+  await connAct('assembler','output');
+  await nodeAct('output', 500, false);
+
+  await sleep(180);
+  showOut(pre);
+
+  btn.classList.remove('running');
+  btn.disabled = false;
+  running = false;
+}
+
+async function nodeAct(id, dur, markDone = true) {
+  const el = nodeEls[id];
+  if (!el) return;
+  el.className = el.className.replace(/\bidle\b|\bdone\b/g,'').trim() + ' active';
+  setAgSt(id, 'active');
+
+  const st = document.getElementById('ns-' + id);
+  if (st) st.textContent = '◉ Processing...';
+
+  const pf = document.getElementById('pf-' + id);
+  if (pf) {
+    pf.style.transition = 'none';
+    pf.style.width = '0';
+    await sleep(20);
+    pf.style.transition = `width ${dur * .88}ms ease`;
+    pf.style.width = '88%';
+  }
+
+  await sleep(dur);
+
+  if (markDone) {
+    el.className = el.className.replace(/\bactive\b/,'').trim() + ' done';
+    if (st) st.textContent = '✓ Done';
+    if (pf) { pf.style.width = '100%'; }
+    setAgSt(id, 'done');
+  }
+}
+
+async function connAct(f, t) {
+  const el = connEls[`${f}::${t}`];
+  if (!el) return;
+  const cls = el.getAttribute('class') || '';
+  if (cls.includes('cp-rag')) {
+    el.setAttribute('class', 'cpath cp-rag cp-rag-active');
+  } else if (cls.includes('cp-out')) {
+    el.setAttribute('class', 'cpath cp-out cp-out-active');
+  } else {
+    el.setAttribute('class', 'cpath cp-idle cp-active');
+  }
+  await sleep(380);
+}
+
+function setAgSt(id, state) {
+  const item = document.querySelector(`[data-a="${id}"]`);
+  if (!item) return;
+  item.className = 'ag ' + state;
+  const s = item.querySelector('.ag-st');
+  if (s) s.textContent = state === 'active' ? 'Processing...' : state === 'done' ? 'Done ✓' : 'Idle';
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── Output ───────────────────────────────────────────────────────────────────
+
+function showOut(pre) {
+  const panel = document.getElementById('outPanel');
+  panel.classList.add('open');
+  document.getElementById('outTitle').textContent = pre.outTitle;
+
+  const el = document.getElementById('outTxt');
+  el.innerHTML = '<span class="cursor"></span>';
+
+  const text = pre.out;
+  let i = 0;
+
+  (function type() {
+    if (i >= text.length) {
+      el.innerHTML = renderOut(text);
+      return;
+    }
+    const chunk = text.slice(i, i + 10);
+    i += 10;
+    const cur = el.querySelector('.cursor');
+    if (cur) cur.before(document.createTextNode(chunk));
+    setTimeout(type, 16);
+  })();
+}
+
+function renderOut(raw) {
+  const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return esc
+    .replace(/^# (.+)$/gm, '<span class="oh1">$1</span>')
+    .replace(/^## (.+)$/gm, '<span class="oh2">$1</span>')
+    .replace(/^### (.+)$/gm, '<span class="oh2" style="color:var(--amber)">$1</span>')
+    .replace(/\*\*(.+?)\*\*/g, '<span class="obold">$1</span>')
+    .replace(/→/g, '<span class="oarrow">→</span>');
+}
+
+// ─── Reset ────────────────────────────────────────────────────────────────────
+
+function resetAll() {
+  if (tokInt) clearInterval(tokInt);
+  document.getElementById('tokenBig').textContent = '0';
+  ['stTtft','stTotal','stRag','stAgents'].forEach(id => {
+    document.getElementById(id).textContent = '--';
+  });
+  document.getElementById('outPanel').classList.remove('open');
+  document.querySelectorAll('.rtag').forEach(t => t.classList.remove('lit'));
+
+  NODES.forEach(n => {
+    const el = nodeEls[n.id];
+    if (!el) return;
+    el.className = el.className.replace(/\bactive\b|\bdone\b/g,'').trim();
+    if (!el.className.includes('idle')) el.className += ' idle';
+    const st = document.getElementById('ns-' + n.id);
+    if (st) st.textContent = '';
+    const pf = document.getElementById('pf-' + n.id);
+    if (pf) { pf.style.transition = 'none'; pf.style.width = '0'; pf.style.background = 'var(--momo)'; }
+  });
+
+  Object.values(connEls).forEach(el => {
+    const cls = el.getAttribute('class') || '';
+    const hasRag = cls.includes('cp-rag');
+    const hasOut = cls.includes('cp-out');
+    el.setAttribute('class', `cpath cp-idle${hasRag ? ' cp-rag' : hasOut ? ' cp-out' : ''}`);
+  });
+
+  document.querySelectorAll('.ag').forEach(a => {
+    a.className = 'ag idle';
+    const s = a.querySelector('.ag-st');
+    if (s) s.textContent = 'Idle';
+  });
+}
+</script>
+</body>
+</html>

@@ -98,6 +98,21 @@ const PROTOTYPES = [
     src: 'demos/world-cup.html',
     address: 'prototype.momo.vn/world-cup-2026',
   },
+  {
+    id: 'orchestrator',
+    name: 'GenAI Orchestrator',
+    category: 'Agentic',
+    maturity: 'Concept',
+    description: 'Canvas workflow mô phỏng orchestrator nhận prompt, phân việc cho AI agents (Research/Brief/Content Writer/Video Script), truy vấn RAG knowledge base và stream output.',
+    jtbd: 'Hiểu cách AI orchestrator phân tác vụ và tạo output có cấu trúc',
+    northStar: 'Workflow completion rate',
+    loop: 'Prompt → Dispatch → RAG → Assemble → Output',
+    hypothesis: 'Visual canvas workflow giúp team và stakeholder tin tưởng vào hệ thống AI content — thấy được luồng xử lý thay vì chỉ thấy input/output.',
+    value: 'Tạo bề mặt pitch cho GenAI Content/Report/Video platform, làm nền tảng BRD handoff cho Trọng build production version.',
+    gate: 'Đo preset selections, workflow completions, output panel engagement và open-in-tab rate.',
+    src: 'demos/orchestrator.html',
+    address: 'prototype.momo.vn/genai-orchestrator',
+  },
 ];
 
 // ─── Color maps ───────────────────────────────────────────────────────────────
@@ -114,6 +129,7 @@ const CAT_COLOR = {
   'Investment': { bg: '#faf5ff', text: '#7c3aed' },
   'Planning':   { bg: '#f8fafc', text: '#475569' },
   'FX':         { bg: '#f0f9ff', text: '#0369a1' },
+  'Agentic':    { bg: '#f5f3ff', text: '#6d28d9' },
 };
 
 const MAT_COLOR = {
