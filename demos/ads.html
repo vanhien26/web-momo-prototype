@@ -125,6 +125,8 @@
     .az-label{font-size:9px;font-weight:800;color:#98a2b3;text-transform:uppercase;letter-spacing:.5px;text-align:center}
     .ad-zone.active .az-label{color:var(--momo)}
     .az-dim{font-size:8px;color:#c0c7d0}.ad-zone.active .az-dim{color:#e8a1c8}
+    @keyframes zone-flash{0%{box-shadow:0 0 0 0 rgba(165,0,100,.5)}60%{box-shadow:0 0 0 8px rgba(165,0,100,0)}100%{box-shadow:0 0 0 0 rgba(165,0,100,0)}}
+    .ad-zone.flash{animation:zone-flash .55s ease-out}
 
     /* Desktop zones */
     .zone-leaderboard{height:50px;border-radius:0;border-left:none;border-right:none;border-top:none}
@@ -464,11 +466,30 @@ function renderPlacements() {
   });
 }
 
+function setDevice(dev) {
+  device = dev;
+  document.querySelectorAll('.dev-btn').forEach(b => b.classList.toggle('active', b.dataset.device === dev));
+  document.getElementById('vizDesktop').style.display = dev === 'desktop' ? '' : 'none';
+  document.getElementById('vizMobile').style.display  = dev === 'mobile'  ? '' : 'none';
+}
+
 function toggle(id) {
-  selected.has(id) ? selected.delete(id) : selected.add(id);
+  const adding = !selected.has(id);
+  adding ? selected.add(id) : selected.delete(id);
+
+  // Auto-switch viz to matching device so user sees the highlight
+  const p = PLACEMENTS.find(x => x.id === id);
+  if (p && adding) setDevice(p.device);
+
   renderPlacements();
   updateViz();
   updateMetrics();
+
+  // Flash the zone to confirm selection
+  if (adding && p) {
+    const zone = document.querySelector(`[data-zone="${p.zone}"]`);
+    if (zone) { zone.classList.remove('flash'); void zone.offsetWidth; zone.classList.add('flash'); }
+  }
 }
 
 function updateViz() {
@@ -549,12 +570,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.querySelectorAll('.btype-btn').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('.btype-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); }));
   document.getElementById('campBudget').addEventListener('input', updateMetrics);
 
-  document.querySelectorAll('.dev-btn').forEach(b=>b.addEventListener('click',()=>{
-    device = b.dataset.device;
-    document.querySelectorAll('.dev-btn').forEach(x=>x.classList.toggle('active',x===b));
-    document.getElementById('vizDesktop').style.display = device==='desktop' ? '' : 'none';
-    document.getElementById('vizMobile').style.display  = device==='mobile'  ? '' : 'none';
-  }));
+  document.querySelectorAll('.dev-btn').forEach(b=>b.addEventListener('click',()=>setDevice(b.dataset.device)));
 
   document.querySelectorAll('[data-zone]').forEach(z=>{
     z.addEventListener('click', ()=>{ const p=PLACEMENTS.find(x=>x.zone===z.dataset.zone); if(p) toggle(p.id); });
