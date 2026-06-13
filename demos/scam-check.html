@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Scam Check</title>
+  <style>
+    :root{
+      --momo:#a50064;--momo2:#d82d8b;--momo-light:#fff0f7;--momo-ring:#a5006420;
+      --ink:#1d2939;--sub:#475467;--muted:#98a2b3;--line:#e4e7ec;--bg:#f2f4f7;--white:#fff;
+      --green:#027a48;--green-bg:#d1fadf;
+      --blue:#1d4ed8;--blue-bg:#eff6ff;
+      --amber:#b45309;--amber-bg:#fef3c7;
+      --red:#b42318;--red-bg:#fee4e2;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;min-height:100vh}
+    .topbar{height:56px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px #0000000a}
+    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);flex-shrink:0}
+    .brand-mark{width:30px;height:30px;background:var(--momo);border-radius:7px;display:grid;place-items:center;font-size:8px;font-weight:900;color:#fff;line-height:1.2;text-align:center}
+    .brand strong{font-size:13px}
+    .topbar-back{font-size:12px;color:var(--muted);text-decoration:none;flex-shrink:0}
+    .topbar-back:hover{color:var(--momo)}
+    .shell{max-width:1220px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(380px,.9fr);gap:16px}
+    .hero,.panel{background:var(--white);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 36px #0f172a08}
+    .hero{padding:24px}
+    .eyebrow{display:inline-flex;align-items:center;padding:6px 12px;border-radius:99px;background:#fff7ed;color:#b45309;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .hero h1{font-size:42px;line-height:1.02;letter-spacing:-.03em;margin:14px 0 12px;max-width:12ch}
+    .hero p{font-size:18px;line-height:1.65;color:var(--sub);max-width:60ch}
+    .hero-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+    .stat{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fafbfc}
+    .stat strong{display:block;font-size:28px;line-height:1;color:var(--momo);margin-bottom:6px}
+    .stat span{font-size:13px;color:var(--sub)}
+    .section{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .section-head h2{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .section-head small{color:var(--muted)}
+    .chip-row{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{border:1.5px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;background:#fff;color:var(--sub);cursor:pointer;transition:.15s;font-family:inherit}
+    .chip.active,.chip:hover{border-color:var(--momo);background:var(--momo-light);color:var(--momo)}
+    .lookup-card{margin-top:16px;border:1px solid var(--line);border-radius:18px;padding:18px;background:linear-gradient(180deg,#fff, #fcfdff)}
+    .lookup-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .lookup-input{width:100%;min-height:124px;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;font:inherit;font-size:15px;outline:none;background:#fff;color:var(--ink);resize:vertical;line-height:1.55}
+    .lookup-input:focus{border-color:var(--momo);box-shadow:0 0 0 4px var(--momo-ring)}
+    .lookup-row{display:flex;gap:10px;margin-top:10px}
+    .lookup-btn{border:none;border-radius:14px;padding:0 18px;background:var(--momo);color:#fff;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+    .lookup-btn:hover{background:var(--momo2)}
+    .hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
+    .scenario-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+    .scenario-item{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:.15s;background:#fff}
+    .scenario-item:hover,.scenario-item.active{border-color:var(--momo);box-shadow:0 10px 24px #a500640d}
+    .scenario-item strong{display:block;font-size:14px;margin-bottom:3px}
+    .scenario-item small{display:block;font-size:12px;color:var(--muted)}
+    .scenario-score{font-size:18px;font-weight:900;color:var(--momo)}
+    .panel{padding:18px}
+    .score-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .score-ring{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--red) 0 var(--score),#eef2f6 var(--score) 100%);padding:10px;flex:none}
+    .score-ring > div{width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center}
+    .score-ring strong{font-size:24px;line-height:1}
+    .score-ring span{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+    .score-copy h2{font-size:28px;line-height:1.05;letter-spacing:-.03em;margin-bottom:8px}
+    .score-copy p{color:var(--sub);line-height:1.6}
+    .badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+    .badge.red{background:var(--red-bg);color:var(--red)}
+    .badge.green{background:var(--green-bg);color:var(--green)}
+    .badge.amber{background:var(--amber-bg);color:var(--amber)}
+    .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+    .info-card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}
+    .info-card span{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+    .info-card strong{font-size:20px;line-height:1.1}
+    .info-card p{margin-top:6px;color:var(--sub);line-height:1.5;font-size:13px}
+    .flag-list{margin-top:16px;display:grid;gap:10px}
+    .flag-item{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+    .flag-item b{display:block;font-size:13px;margin-bottom:4px}
+    .flag-item p{color:var(--sub);line-height:1.5;font-size:13px}
+    .actions{display:flex;gap:10px;margin-top:16px}
+    .cta{flex:1;border:none;border-radius:14px;padding:14px 16px;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+    .cta.primary{background:var(--momo);color:#fff}
+    .cta.ghost{background:#fff;border:1.5px solid var(--momo);color:var(--momo)}
+    .cta:hover{filter:brightness(.98)}
+    .timeline{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+    .timeline h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px}
+    .timeline-list{display:grid;gap:10px}
+    .timeline-item{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+    .timeline-item span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--momo-light);color:var(--momo);font-weight:900;flex:none}
+    .timeline-item p{color:var(--sub);line-height:1.55;font-size:13px;margin-top:3px}
+    .footer-note{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.55}
+    @media(max-width:960px){.shell{grid-template-columns:1fr}.hero h1{font-size:34px;max-width:none}.hero-grid,.info-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:680px){.topbar{padding:0 14px}.shell{padding:14px}.hero,.panel{border-radius:16px}.hero h1{font-size:30px}.hero p{font-size:16px}.hero-grid,.info-grid,.lookup-row{grid-template-columns:1fr;display:grid}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="../index.html" target="_top" aria-label="Về Prototype Store">
+      <span class="brand-mark">mo<br>mo</span>
+      <span><strong>Scam Check</strong><small>Trust & safety prototype</small></span>
+    </a>
+    <a class="topbar-back" href="../index.html" target="_top">← Store</a>
+  </div>
+
+  <main class="shell">
+    <section class="hero">
+      <span class="eyebrow">Safety lookup</span>
+      <h1>Tra cứu rủi ro trước khi chuyển tiền</h1>
+      <p>Prototype này là lớp kiểm tra an toàn cho số điện thoại, tài khoản, link và QR. Mục tiêu không phải khẳng định đúng sai tuyệt đối, mà là cảnh báo nhanh để người dùng dừng lại, xác minh và tránh lừa đảo.</p>
+
+      <div class="hero-grid">
+        <div class="stat"><strong>4</strong><span>signal types</span></div>
+        <div class="stat"><strong>1</strong><span>score before action</span></div>
+        <div class="stat"><strong>0</strong><span>blind transfers</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Chọn tình huống</h2>
+          <small>Lookup theo rủi ro</small>
+        </div>
+        <div class="chip-row" id="scenarioChips"></div>
+      </div>
+
+      <div class="lookup-card">
+        <div class="lookup-label">Dán dữ liệu cần kiểm tra</div>
+        <textarea id="queryInput" class="lookup-input" placeholder="Dán số điện thoại, số tài khoản, link, nội dung chuyển khoản hoặc QR text..."></textarea>
+        <div class="lookup-row">
+          <button id="checkBtn" class="lookup-btn" type="button">Kiểm tra rủi ro</button>
+          <button id="fillBtn" class="lookup-btn" type="button" style="background:#fff;color:var(--momo);border:1.5px solid var(--momo)">Điền mẫu</button>
+        </div>
+        <p class="hint">Thử gõ `http://verify-momo.help`, `0941234567`, `MB 0123456789` hoặc `QR chuyển tiền gấp` để đổi profile. Dữ liệu là mô phỏng cho nghiên cứu UX.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Risk scenarios</h2>
+          <small>Ví dụ lookup đầu vào</small>
+        </div>
+        <div class="scenario-grid" id="scenarioList"></div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="score-head">
+        <div class="score-copy">
+          <span id="riskBadge" class="badge red">High risk</span>
+          <h2 id="riskTitle">Link rút tiền giả</h2>
+          <p id="riskDesc">Dấu hiệu đáng ngờ xuất hiện trên URL, ngôn ngữ thúc giục và mẫu chuyển hướng không rõ nguồn.</p>
+        </div>
+        <div class="score-ring" id="scoreRing" style="--score:84%">
+          <div>
+            <strong id="scoreValue">84</strong>
+            <span>score</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <span>Signal type</span>
+          <strong id="signalType">Link</strong>
+          <p id="signalHint">URL ngắn, cầu chuyển tiền, và tên miền lạ.</p>
+        </div>
+        <div class="info-card">
+          <span>Recommended action</span>
+          <strong id="actionType">Dừng giao dịch</strong>
+          <p id="actionHint">Xác minh kênh chính thức trước khi tiếp tục.</p>
+        </div>
+      </div>
+
+      <div class="flag-list" id="flagList"></div>
+
+      <div class="actions">
+        <button class="cta primary" type="button">Chặn và báo cáo</button>
+        <button class="cta ghost" type="button">Lưu cảnh báo</button>
+      </div>
+
+      <div class="timeline">
+        <h3>Lookup details</h3>
+        <div class="timeline-list" id="detailList"></div>
+      </div>
+
+      <p class="footer-note">Prototype chỉ mô phỏng lớp cảnh báo. Nó không thay thế xác minh chính thức, nhưng giúp team định nghĩa được tín hiệu, thứ tự cảnh báo và điểm dừng trước khi user chuyển tiền.</p>
+    </aside>
+  </main>
+
+  <script>
+    const scenarios = [
+      {
+        id: 'link',
+        title: 'Link rút tiền giả',
+        type: 'Link',
+        score: 84,
+        badge: 'red',
+        desc: 'Tên miền lạ, kêu gọi rút tiền nhanh và chuyển hướng sang trang không rõ nguồn.',
+        hint: 'Cảnh báo cao với link ngắn hoặc domain không xác thực.',
+        action: 'Dừng giao dịch',
+        actionHint: 'Không bấm tiếp, xác minh từ kênh chính thức.',
+        flags: ['Tên miền lạ', 'Ngôn ngữ thúc giục', 'Yêu cầu đăng nhập lại'],
+        detail: ['Mẫu thường gặp: link ngắn, giả trang khuyến mãi', 'Rủi ro: lấy OTP hoặc thông tin đăng nhập', 'Hành động: không mở link, kiểm tra nguồn gửi'],
+        sample: 'http://verify-momo.help/rut-tien'
+      },
+      {
+        id: 'phone',
+        title: 'Số điện thoại lạ',
+        type: 'Phone',
+        score: 77,
+        badge: 'amber',
+        desc: 'Số lạ tự xưng hỗ trợ giao dịch, thường yêu cầu chuyển tiền hoặc đọc mã OTP.',
+        hint: 'Cần cảnh giác với cuộc gọi / nhắn tin tự xưng CSKH.',
+        action: 'Xác minh danh tính',
+        actionHint: 'Gọi lại qua hotline chính thức trước khi làm gì thêm.',
+        flags: ['Số mới', 'Yêu cầu OTP', 'Gấp gáp'],
+        detail: ['Mẫu thường gặp: giả mạo CSKH, shipper, ngân hàng', 'Rủi ro: social engineering', 'Hành động: không đọc OTP, không chuyển tiền'],
+        sample: '0941234567'
+      },
+      {
+        id: 'account',
+        title: 'Tài khoản nhận tiền bất thường',
+        type: 'Account',
+        score: 68,
+        badge: 'amber',
+        desc: 'Tên tài khoản và nội dung chuyển khoản không khớp, có dấu hiệu gom tiền từ nhiều nạn nhân.',
+        hint: 'Cần xem thêm lịch sử và mối liên hệ với người nhận.',
+        action: 'Kiểm tra kỹ',
+        actionHint: 'Xác minh tên người nhận và mục đích chuyển tiền.',
+        flags: ['Tên không khớp', 'Nhiều biến thể số tài khoản', 'Nội dung mập mờ'],
+        detail: ['Mẫu thường gặp: mua bán online, giữ cọc', 'Rủi ro: lừa chuyển khoản', 'Hành động: đối chiếu danh tính trước khi trả'],
+        sample: 'MB 0123456789'
+      },
+      {
+        id: 'qr',
+        title: 'QR chuyển tiền gấp',
+        type: 'QR',
+        score: 62,
+        badge: 'green',
+        desc: 'QR trông hợp lệ nhưng đi cùng lời nhắn thúc ép chuyển nhanh hoặc tự nhận là người quen.',
+        hint: 'Không đủ để kết luận, nhưng cần kiểm tra thêm ngữ cảnh.',
+        action: 'Xác nhận ngữ cảnh',
+        actionHint: 'Hỏi lại người gửi và đối chiếu trước khi quét.',
+        flags: ['Lời nhắn thúc giục', 'Thiếu bối cảnh', 'Đổi tài khoản nhiều lần'],
+        detail: ['Mẫu thường gặp: QR đặt cọc, QR chuyển gấp', 'Rủi ro: lừa đảo social engineering', 'Hành động: xác minh người nhận trước'],
+        sample: 'QR chuyển tiền gấp'
+      }
+    ];
+
+    const scenarioChips = document.getElementById('scenarioChips');
+    const scenarioList = document.getElementById('scenarioList');
+    const detailList = document.getElementById('detailList');
+    const flagList = document.getElementById('flagList');
+    const queryInput = document.getElementById('queryInput');
+    const checkBtn = document.getElementById('checkBtn');
+    const fillBtn = document.getElementById('fillBtn');
+
+    let activeId = 'link';
+
+    function scoreStyle(score) {
+      const pct = Math.max(0, Math.min(100, score));
+      return `${pct}%`;
+    }
+
+    function renderChips() {
+      scenarioChips.innerHTML = scenarios.map(item => `
+        <button class="chip${item.id === activeId ? ' active' : ''}" type="button" data-id="${item.id}">${item.title}</button>
+      `).join('');
+      scenarioChips.querySelectorAll('.chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeId = btn.dataset.id;
+          queryInput.value = scenarios.find(item => item.id === activeId).sample;
+          updateView();
+        });
+      });
+    }
+
+    function renderScenarios() {
+      scenarioList.innerHTML = scenarios.map(item => `
+        <button class="scenario-item${item.id === activeId ? ' active' : ''}" type="button" data-id="${item.id}">
+          <div>
+            <strong>${item.title}</strong>
+            <small>${item.type} · ${item.sample}</small>
+          </div>
+          <div class="scenario-score">${item.score}</div>
+        </button>
+      `).join('');
+      scenarioList.querySelectorAll('.scenario-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeId = btn.dataset.id;
+          queryInput.value = scenarios.find(item => item.id === activeId).sample;
+          updateView();
+        });
+      });
+    }
+
+    function renderLists(item) {
+      flagList.innerHTML = item.flags.map(flag => `
+        <div class="flag-item">
+          <b>${flag}</b>
+          <p>${item.desc}</p>
+        </div>
+      `).join('');
+      detailList.innerHTML = item.detail.map((line, index) => `
+        <div class="timeline-item">
+          <span>${String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <strong>${line}</strong>
+            <p>${item.actionHint}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function detectScenario(text) {
+      const value = text.trim().toLowerCase();
+      if (!value) return scenarios.find(item => item.id === activeId) || scenarios[0];
+      if (value.includes('http') || value.includes('link') || value.includes('bit.ly') || value.includes('verify')) return scenarios[0];
+      if (value.includes('qr')) return scenarios[3];
+      if (/\b(09|03|07|08|05)\d{8}\b/.test(value) || /\b\d{10,11}\b/.test(value)) return scenarios[1];
+      if (value.includes('mb ') || value.includes('stk') || value.includes('tài khoản') || value.includes('account')) return scenarios[2];
+      return scenarios.find(item => item.id === activeId) || scenarios[0];
+    }
+
+    function updateView() {
+      const item = detectScenario(queryInput.value) || scenarios[0];
+      activeId = item.id;
+      renderChips();
+      renderScenarios();
+      renderLists(item);
+      document.documentElement.style.setProperty('--score', `${item.score}%`);
+      document.getElementById('scoreRing').style.setProperty('--score', `${item.score}%`);
+      document.getElementById('scoreValue').textContent = item.score;
+      document.getElementById('riskBadge').textContent = item.score >= 80 ? 'High risk' : item.score >= 70 ? 'Watch list' : 'Needs verification';
+      document.getElementById('riskBadge').className = `badge ${item.badge}`;
+      document.getElementById('riskTitle').textContent = item.title;
+      document.getElementById('riskDesc').textContent = item.desc;
+      document.getElementById('signalType').textContent = item.type;
+      document.getElementById('signalHint').textContent = item.hint;
+      document.getElementById('actionType').textContent = item.action;
+      document.getElementById('actionHint').textContent = item.actionHint;
+    }
+
+    checkBtn.addEventListener('click', updateView);
+    fillBtn.addEventListener('click', () => {
+      const item = scenarios.find(s => s.id === activeId) || scenarios[0];
+      queryInput.value = item.sample;
+      updateView();
+    });
+    queryInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) updateView();
+    });
+    queryInput.addEventListener('input', () => {
+      if (!queryInput.value.trim()) updateView();
+    });
+
+    queryInput.value = scenarios[0].sample;
+    updateView();
+  </script>
+</body>
+</html>

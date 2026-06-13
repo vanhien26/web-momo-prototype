@@ -14,6 +14,36 @@ const demos = {
     value: 'Mở rộng organic acquisition cho Credit, Insurance và Personal Finance với asset có khả năng tái sử dụng.',
     gate: 'Đo completion rate, CTA CTR, Web-to-App conversion và chất lượng traffic theo từng utility.'
   },
+  bill: {
+    name: 'Bill Lookup',
+    title: 'Bill Lookup',
+    type: 'Lookup',
+    maturity: 'Lookup prototype',
+    src: 'demos/bill-lookup.html',
+    address: 'prototype.momo.vn/bill-lookup',
+    description: 'Tra cứu hóa đơn điện, nước, internet và di động theo mã khách hàng hoặc số hợp đồng, rồi đi thẳng tới bước thanh toán.',
+    jtbd: 'Biết cần trả gì, khi nào đến hạn, và trả ngay',
+    northStar: 'Bill lookup completion',
+    loop: 'Lookup → Verify → Pay',
+    hypothesis: 'Bill lookup surface giảm friction cho thanh toán định kỳ và tạo intent rõ trước khi chuyển đổi.',
+    value: 'Mở bề mặt cho utilities, recurring payment và nhắc hạn thanh toán.',
+    gate: 'Đo lookup success, pay CTA, reminder opt-in và repeat usage.'
+  },
+  scam: {
+    name: 'Scam Check',
+    title: 'Scam Check',
+    type: 'Lookup',
+    maturity: 'Trust & Safety prototype',
+    src: 'demos/scam-check.html',
+    address: 'prototype.momo.vn/scam-check',
+    description: 'Tra cứu số điện thoại, tài khoản, link hoặc QR để phát hiện tín hiệu lừa đảo trước khi chuyển tiền.',
+    jtbd: 'Biết có nên tin trước khi bấm chuyển',
+    northStar: 'Risk check completion',
+    loop: 'Paste → Score → Warn',
+    hypothesis: 'Safety lookup surface giúp giảm gian lận và tăng niềm tin cho thanh toán số.',
+    value: 'Tạo lớp bảo vệ cho P2P, QR, chuyển khoản và social payment.',
+    gate: 'Đo risk-check completion, warning CTR, abort rate và report intent.'
+  },
   merchant: {
     name: 'Merchant Discovery',
     title: 'Quán Ngon Finder',
@@ -43,6 +73,21 @@ const demos = {
     hypothesis: 'Data storytelling trực quan giúp MoMo sở hữu seasonal search demand và tạo lý do quay lại trong suốt giải đấu.',
     value: 'Tạo engagement surface có khả năng gắn prediction game, voucher, mini app và campaign activation.',
     gate: 'Đo team views, comparison depth, returning users và campaign CTA conversion.'
+  },
+  metro: {
+    name: 'Mua Vé Metro',
+    title: 'Mua Vé Metro HCM',
+    type: 'Transit',
+    maturity: 'Flow prototype',
+    src: 'demos/metro-ticket.html',
+    address: 'prototype.momo.vn/metro-ticket',
+    description: 'Prototype luồng mua vé Metro Hồ Chí Minh: chọn tuyến, chọn vé, thanh toán và nhận QR để vào cổng.',
+    jtbd: 'Mua vé nhanh trước khi lên tàu',
+    northStar: 'Ticket purchase completion',
+    loop: 'Search route → Buy ticket → Scan QR',
+    hypothesis: 'Một luồng mua vé rõ ràng giúp Dev thấy ngay cấu trúc màn hình cần dựng cho transit payment.',
+    value: 'Làm rõ các module cần có cho transit purchase: route select, ticket select, payment và ticket wallet.',
+    gate: 'Đo completion rate, payment success state và QR ticket handoff.'
   }
 };
 

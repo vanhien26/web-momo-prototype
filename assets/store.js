@@ -4,7 +4,7 @@ const PROTOTYPES = [
   {
     id: 'financial',
     name: 'Financial Utilities Lab',
-    category: 'PLG / SEO',
+    category: 'Widget',
     maturity: 'Interactive',
     description: 'Biến search intent tài chính thành trải nghiệm tính toán hữu ích, dẫn người dùng đến hành động phù hợp trong hệ sinh thái MoMo.',
     jtbd: 'Tính nhanh, hiểu rõ, hành động ngay',
@@ -35,8 +35,8 @@ const PROTOTYPES = [
   },
   {
     id: 'merchant',
-    name: 'MoMo Deals',
-    category: 'Discovery',
+    name: 'MoMo Deal',
+    category: 'Platform',
     maturity: 'Interaction',
     description: 'Deal-first merchant discovery: khám phá ưu đãi cross-category (Ăn uống, Siêu thị, Giải trí, Sức khỏe, Di chuyển...) từ 300K merchant qua swipe UI. Deal là hero, merchant là context.',
     jtbd: 'Tìm và lưu deal gần tôi nhanh nhất, không cần biết mình muốn gì',
@@ -51,7 +51,7 @@ const PROTOTYPES = [
   {
     id: 'planning-tools',
     name: 'Life Planning Tools',
-    category: 'PLG / SEO',
+    category: 'Widget',
     maturity: 'Interactive',
     description: 'Bộ công cụ lập kế hoạch tài chính cá nhân dài hạn: tự do tài chính, đám cưới, học phí. Mỗi tool là một standalone page tối ưu SEO.',
     jtbd: 'Lên kế hoạch tài chính cho mục tiêu lớn',
@@ -71,7 +71,7 @@ const PROTOTYPES = [
   {
     id: 'ads-manager',
     name: 'Ads Placement Manager',
-    category: 'Monetization',
+    category: 'MoSpark',
     maturity: 'Interactive',
     description: 'Mô phỏng quy trình tạo chiến dịch quảng cáo trên MoMo Web: setup campaign, chọn vị trí, visualize real-time trên Desktop và Mobile.',
     jtbd: 'Chọn đúng vị trí, ước tính reach trước khi chạy',
@@ -84,80 +84,33 @@ const PROTOTYPES = [
     address: 'prototype.momo.vn/ads-manager',
   },
   {
-    id: 'onboarding',
-    name: 'User Onboarding — Giới thiệu & Đăng ký',
-    category: 'Growth',
-    maturity: 'Interactive',
-    description: 'Luồng onboarding 6 màn hướng dẫn người dùng mới hiểu MoMo: feature tour, social proof, download CTA và đăng ký số điện thoại với OTP.',
-    jtbd: 'Hiểu MoMo làm được gì và bắt đầu ngay không mất công',
-    northStar: 'Activation rate (register started)',
-    loop: 'Discover → Educate → Register → Activate',
-    hypothesis: 'Feature tour có visual rõ ràng + social proof giúp tăng tỷ lệ người mới hoàn thành đăng ký so với landing page dạng text truyền thống.',
-    value: 'Tăng top-of-funnel conversion cho kênh web/paid, giảm churn ngay từ bước đầu tiên.',
-    gate: 'Đo slide completion rate, CTA click rate, register started và OTP verify rate.',
-    src: 'demos/onboarding.html',
-    address: 'prototype.momo.vn/welcome',
-  },
-  {
-    id: 'platform-components',
-    name: 'Platform Components',
+    id: 'momo-services',
+    name: 'MoMo Services',
     category: 'Platform',
     maturity: 'Reference',
-    description: 'Components nền tảng dùng làm reference cho Web Platform build: analytics dashboard, unified search và eKYC flow.',
-    jtbd: 'Demo UI pattern và interaction standard cho team build production',
-    northStar: 'Component adoption rate',
-    loop: 'Design → Reference → Spec → Build',
-    hypothesis: 'Prototype rõ ràng giúp Dev và PO align nhanh hơn so với mô tả text trong BRD.',
-    value: 'Rút ngắn thời gian handoff design → dev, giảm revision cycle.',
-    gate: 'Đo demo session time, Dev reference count và spec adoption rate.',
-    src: 'demos/dashboard.html',
-    address: 'prototype.momo.vn/platform',
+    description: 'Landing cho người chưa có MoMo: đọc thông tin dịch vụ, xem use case quan trọng, rồi đi tiếp tới download và quà cho user mới.',
+    jtbd: 'Hiểu MoMo làm gì trước khi cài app',
+    northStar: 'Landing to install intent',
+    loop: 'Read → Explore → Download → Claim gift',
+    hypothesis: 'Một landing thiên về brand love và use case sẽ giúp user mới hiểu giá trị MoMo nhanh hơn so với danh sách tính năng rời rạc.',
+    value: 'Tạo trang đích cho các dịch vụ cốt lõi như Loan, Pay Later và Thanh toán số.',
+    gate: 'Đo scroll depth, use case click, download CTA và gift CTA.',
+    src: 'demos/search.html',
+    address: 'prototype.momo.vn/services',
     tools: [
       {
-        id: 'dashboard',
-        name: 'Analytics Dashboard',
-        category: 'Platform',
-        description: 'Dashboard phân tích vận hành: KPI cards, line chart, donut, bar chart acquisition, heatmap, funnel và top services table.',
-        jtbd: 'Reference cho internal analytics UI',
-        src: 'demos/dashboard.html',
-      },
-      {
-        id: 'search',
         name: 'Search & Discovery',
-        category: 'Platform',
-        description: 'Search với autocomplete, highlight từ khoá, filter sidebar, sort và pagination.',
-        jtbd: 'Reference cho unified search component',
+        category: 'Discovery',
+        description: 'Trang tìm dịch vụ MoMo với autocomplete, category chips, highlight use case và filter để user chưa cài app dễ khám phá.',
+        jtbd: 'Tìm đúng dịch vụ và use case của MoMo nhanh',
         src: 'demos/search.html',
-      },
-      {
-        id: 'ekyc',
-        name: 'eKYC Flow',
-        category: 'Identity',
-        description: 'Luồng xác minh danh tính 4 bước: thông tin cá nhân → CCCD → selfie → review.',
-        jtbd: 'Reference cho KYC step-by-step UI',
-        src: 'demos/kyc.html',
       },
     ],
   },
   {
-    id: 'notification-center',
-    name: 'Notification Center',
-    category: 'Platform',
-    maturity: 'Interactive',
-    description: 'Component thông báo đầy đủ: bell icon + badge counter + dropdown + trang danh sách + settings. 5 loại thông báo: giao dịch, ưu đãi, hệ thống, xã hội, tài chính.',
-    jtbd: 'Không bỏ sót thông báo quan trọng, kiểm soát được loại nào muốn nhận',
-    northStar: 'Notification open rate',
-    loop: 'Receive → Open → Act → Return',
-    hypothesis: 'Nhóm thông báo theo loại và cho phép filter giúp người dùng tìm thấy thông tin cần thiết nhanh hơn và giảm notification fatigue.',
-    value: 'Tăng engagement với các sự kiện quan trọng (giao dịch, ưu đãi hết hạn), giảm churn từ missed opportunities.',
-    gate: 'Đo open rate, CTA click rate per type, settings change rate và unsubscribe rate.',
-    src: 'demos/notification-center.html',
-    address: 'prototype.momo.vn/notifications',
-  },
-  {
     id: 'worldcup',
     name: 'World Cup 2026 Predictor',
-    category: 'Engagement',
+    category: 'Widget',
     maturity: 'Data experience',
     description: 'Trải nghiệm dữ liệu thể thao dễ hiểu cho đại chúng, dùng sự kiện mùa vụ để tạo traffic, repeat visit và bề mặt activation.',
     jtbd: 'So sánh cơ hội đội tuyển yêu thích',
@@ -170,9 +123,54 @@ const PROTOTYPES = [
     address: 'prototype.momo.vn/world-cup-2026',
   },
   {
+    id: 'metro',
+    name: 'Mua Vé Metro HCM',
+    category: 'Widget',
+    maturity: 'Flow prototype',
+    description: 'Prototype luồng mua vé Metro Hồ Chí Minh: chọn tuyến, chọn vé, thanh toán và nhận QR để vào cổng.',
+    jtbd: 'Mua vé nhanh trước khi lên tàu',
+    northStar: 'Ticket purchase completion',
+    loop: 'Search route -> Buy ticket -> Scan QR',
+    hypothesis: 'Một luồng mua vé rõ ràng giúp Dev thấy ngay cấu trúc màn hình cần dựng cho transit payment.',
+    value: 'Làm rõ các module cần có cho transit purchase: route select, ticket select, payment và ticket wallet.',
+    gate: 'Đo completion rate, payment success state và QR ticket handoff.',
+    src: 'demos/metro-ticket.html',
+    address: 'prototype.momo.vn/metro-ticket',
+  },
+  {
+    id: 'bill-lookup',
+    name: 'Bill Lookup',
+    category: 'Widget',
+    maturity: 'Lookup',
+    description: 'Tra cứu hóa đơn điện, nước, internet và di động theo mã khách hàng hoặc số hợp đồng, rồi đi thẳng tới bước thanh toán.',
+    jtbd: 'Biết cần trả gì, khi nào đến hạn, và trả ngay',
+    northStar: 'Bill lookup completion',
+    loop: 'Lookup → Verify → Pay',
+    hypothesis: 'Bill lookup surface giảm friction cho thanh toán định kỳ và tạo intent rõ trước khi chuyển đổi.',
+    value: 'Mở bề mặt cho utilities, recurring payment và nhắc hạn thanh toán.',
+    gate: 'Đo lookup success, pay CTA, reminder opt-in và repeat usage.',
+    src: 'demos/bill-lookup.html',
+    address: 'prototype.momo.vn/bill-lookup',
+  },
+  {
+    id: 'scam-check',
+    name: 'Scam Check',
+    category: 'Widget',
+    maturity: 'Lookup',
+    description: 'Tra cứu số điện thoại, tài khoản, link hoặc QR để phát hiện tín hiệu lừa đảo trước khi chuyển tiền.',
+    jtbd: 'Biết có nên tin trước khi bấm chuyển',
+    northStar: 'Risk check completion',
+    loop: 'Paste → Score → Warn',
+    hypothesis: 'Safety lookup surface giúp giảm gian lận và tăng niềm tin cho thanh toán số.',
+    value: 'Tạo lớp bảo vệ cho P2P, QR, chuyển khoản và social payment.',
+    gate: 'Đo risk-check completion, warning CTR, abort rate và report intent.',
+    src: 'demos/scam-check.html',
+    address: 'prototype.momo.vn/scam-check',
+  },
+  {
     id: 'orchestrator',
     name: 'GenAI Orchestrator',
-    category: 'Agentic',
+    category: 'MoSpark',
     maturity: 'Concept',
     description: 'Canvas workflow mô phỏng orchestrator nhận prompt, phân việc cho AI agents (Research/Brief/Content Writer/Video Script), truy vấn RAG knowledge base và stream output.',
     jtbd: 'Hiểu cách AI orchestrator phân tác vụ và tạo output có cấu trúc',
@@ -189,10 +187,9 @@ const PROTOTYPES = [
 // ─── Color maps ───────────────────────────────────────────────────────────────
 
 const CAT_COLOR = {
-  'PLG / SEO':  { bg: '#fff0f7', text: '#a50064' },
-  'Monetization':{ bg: '#fff7ed', text: '#c2410c' },
-  'Discovery':  { bg: '#fffbeb', text: '#b45309' },
-  'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
+  'MoSpark':    { bg: '#fff0f7', text: '#a50064' },
+  'Widget':     { bg: '#eff6ff', text: '#1d4ed8' },
+  'Platform':   { bg: '#f0f9ff', text: '#0369a1' },
   'Credit':     { bg: '#eff6ff', text: '#1d4ed8' },
   'Insurance':  { bg: '#f0fdf4', text: '#15803d' },
   'Savings':    { bg: '#ecfeff', text: '#0e7490' },
@@ -203,8 +200,38 @@ const CAT_COLOR = {
   'Agentic':    { bg: '#f5f3ff', text: '#6d28d9' },
   'Identity':   { bg: '#fdf2f8', text: '#9d174d' },
   'Growth':     { bg: '#f0fdf4', text: '#166534' },
-  'Identity':   { bg: '#fdf2f8', text: '#9d174d' },
-  'Platform':   { bg: '#f0f9ff', text: '#0369a1' },
+  'Monetization':{ bg: '#fff7ed', text: '#c2410c' },
+  'Discovery':  { bg: '#fffbeb', text: '#b45309' },
+  'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
+  'Transit':    { bg: '#eef2ff', text: '#4338ca' },
+};
+
+const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
+const GROUP_ITEM_ORDER = {
+  MoSpark: ['orchestrator', 'ads-manager'],
+  Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
+  Platform: ['merchant', 'momo-services'],
+};
+
+const GROUP_SUMMARY = {
+  MoSpark: {
+    eyebrow: 'MoSpark',
+    title: 'GenAI / Ads',
+    description: 'Nhóm prototype cho hệ sinh thái tạo nội dung và monetization surfaces.',
+    examples: 'GenAI Orchestrator · Ads Placement Manager',
+  },
+  Widget: {
+    eyebrow: 'Widget',
+    title: 'Financial / Planning / Transit',
+    description: 'Nhóm tool và lookup ngắn để Dev implement nhanh, rõ input, output và trạng thái an toàn.',
+    examples: 'Financial · Bill lookup · Scam check · Life planning · Metro',
+  },
+  Platform: {
+    eyebrow: 'Platform',
+    title: 'MoMo Services',
+    description: 'Nhóm điều hướng vào các surface dịch vụ và discovery của MoMo.',
+    examples: 'MoMo Deal · Search & Discovery',
+  },
 };
 
 const MAT_COLOR = {
@@ -213,11 +240,142 @@ const MAT_COLOR = {
   'Data experience':{ bg: '#eff6ff', text: '#1d4ed8' },
 };
 
+const MOSPARK_SOURCE_URL = 'https://mospark-intro.vercel.app/';
+
+const MOSPARK_PAIN_POINTS = [
+  {
+    code: 'P-01',
+    title: 'Phụ thuộc Dev cho mọi thứ',
+    text: 'Một landing campaign có thể kéo dài 1-2 tuần chờ sprint, khiến ý tưởng tăng trưởng bị chậm ngay từ khâu thử nghiệm.',
+  },
+  {
+    code: 'P-02',
+    title: 'Content không chuẩn hóa',
+    text: 'Nội dung do AI hoặc thủ công tạo ra cần quality gate rõ ràng trước khi publish, nếu không chất lượng sẽ trôi về phía thấp nhất.',
+  },
+  {
+    code: 'P-03',
+    title: 'Không đo được đến cùng',
+    text: 'Pageview là chưa đủ. Cần nhìn được đóng góp đến New User, MAU và Transaction theo từng use case.',
+  },
+];
+
+const MOSPARK_STACK = [
+  {
+    title: 'Landing Page Builder',
+    text: 'BU/PM tự dựng landing bằng AI, chọn template theo use case và preview mobile trước khi publish.',
+  },
+  {
+    title: 'Product Growth',
+    text: 'Inventory, content plan, GenAI content và performance chạy trong một vòng lặp khép kín.',
+  },
+  {
+    title: 'Ads / Widget Management',
+    text: 'Phân phối đúng surface theo ngữ cảnh trang, không hardcode và không chờ Dev chỉnh tay.',
+  },
+  {
+    title: 'Chatbot',
+    text: 'Giải đáp người dùng ngay trong hành trình trên web để giảm friction trước khi họ rời đi.',
+  },
+  {
+    title: 'Full Funnel Tracking',
+    text: 'Đo từ Out-App đến Open/Download App rồi tới giao dịch cuối cùng, theo từng use case.',
+  },
+];
+
+const MOSPARK_GROWTH_STEPS = [
+  {
+    index: '01',
+    title: 'SEO/GEO Inventory',
+    text: 'Nhìn thị trường tìm kiếm theo từng use case để biết cơ hội lớn ở đâu, MoMo đang đứng ở đâu và gap nằm ở đâu.',
+    tag: 'market data',
+  },
+  {
+    index: '02',
+    title: 'Content Plan',
+    text: 'Chuyển inventory thành kế hoạch nội dung, xác định cụm chủ đề và ưu tiên sản xuất theo cơ hội thật.',
+    tag: 'plan',
+  },
+  {
+    index: '03',
+    title: 'GenAI Content',
+    text: 'AI sản xuất nội dung theo plan đã duyệt, trong business context và qua quality gate trước khi publish.',
+    tag: 'production',
+  },
+  {
+    index: '04',
+    title: 'Content / AI Performance',
+    text: 'Đo hiệu suất từng bài trên Google và AI Search rồi đẩy dữ liệu quay ngược về inventory cho chu kỳ sau.',
+    tag: 'measure',
+  },
+];
+
+const MOSPARK_PLACEMENTS = [
+  {
+    title: 'Native Widget',
+    text: 'Widget nhúng trực tiếp vào nội dung, cho trải nghiệm tự nhiên và chuyển đổi Web-to-App cao nhất.',
+    level: 'rất thấp',
+  },
+  {
+    title: 'Balloon',
+    text: 'Biểu tượng nổi nhẹ trên mọi trang, giữ thông điệp hiện diện mà không cắt ngang hành trình đọc.',
+    level: 'thấp',
+  },
+  {
+    title: 'Inline Banner',
+    text: 'Banner đặt giữa bài viết hoặc tin tức, phù hợp hơn cho mục tiêu awareness.',
+    level: 'trung bình',
+  },
+  {
+    title: 'Popup',
+    text: 'Chỉ dùng cho landing promotion và cần guardrail rõ ràng để bảo vệ trải nghiệm.',
+    level: 'cao',
+  },
+];
+
+const MOSPARK_TRACKING = [
+  {
+    label: 'Out-App',
+    text: 'Người dùng đến từ Search, AI Search, Social và các kênh ngoài App.',
+    stage: 'Acquisition',
+  },
+  {
+    label: 'Web - momo.vn',
+    text: 'Tương tác với landing page, nội dung, công cụ và widget.',
+    stage: 'Engagement',
+  },
+  {
+    label: 'Open App / Download App',
+    text: 'Chuyển đổi Web-to-App qua deep link - mở app hoặc cài đặt mới.',
+    stage: 'Conversion',
+  },
+  {
+    label: 'Make Transaction',
+    text: 'Giao dịch theo từng use case của MoMo, là business outcome cuối cùng.',
+    stage: 'Outcome',
+  },
+];
+
+const MOSPARK_AUDIENCE = [
+  {
+    title: 'BU / PM',
+    text: 'Có mục tiêu MAU, MEU, New User trên Web và tự chủ landing, content plan, Ads/Widget, cũng như dữ liệu thị trường.',
+  },
+  {
+    title: 'Content Team',
+    text: 'Sản xuất nội dung trên một pipeline duy nhất, có AI hỗ trợ và quality gate bảo vệ.',
+  },
+  {
+    title: 'Growth / Web Product',
+    text: 'Nhìn toàn cảnh market, đo hiệu suất content/AI và full funnel Web-to-App để trả lời ROI theo use case.',
+  },
+];
+
 // ─── State ────────────────────────────────────────────────────────────────────
 
-let activeProtoId = PROTOTYPES[0].id;
+let activeProtoId = null;
 let activeToolId  = null;
-const expanded    = new Set([PROTOTYPES[0].id]);
+const expanded    = new Set();
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
@@ -225,33 +383,54 @@ function renderNav() {
   const nav = document.getElementById('protoNav');
   if (!nav) return;
 
-  nav.innerHTML = PROTOTYPES.map((p, i) => {
-    const isActive   = activeProtoId === p.id && !activeToolId;
-    const isExpanded = expanded.has(p.id);
+  nav.innerHTML = GROUP_ORDER.map(groupName => {
+    const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
+    const groupItems = PROTOTYPES
+      .filter(p => p.category === groupName)
+      .slice()
+      .sort((a, b) => {
+        const ia = desiredOrder.indexOf(a.id);
+        const ib = desiredOrder.indexOf(b.id);
+        if (ia === -1 && ib === -1) return 0;
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      });
+    if (!groupItems.length) return '';
 
-    const toolsHtml = p.tools ? `
-      <div class="tool-nav-list${isExpanded ? '' : ' hidden'}" id="tnl-${p.id}">
-        ${p.tools.map(t => {
-          const tc = CAT_COLOR[t.category] || CAT_COLOR['Planning'];
-          const isTA = activeProtoId === p.id && activeToolId === t.id;
-          return `<button class="tool-nav-btn${isTA ? ' active' : ''}" data-proto="${p.id}" data-tool="${t.id}">
-            <span class="tool-nav-cat" style="color:${tc.text}">${t.category}</span>
-            <span class="tool-nav-lbl">${t.name}</span>
-          </button>`;
-        }).join('')}
-      </div>` : '';
+    const itemsHtml = groupItems.map((p, i) => {
+      const isActive   = activeProtoId === p.id && !activeToolId;
+      const isExpanded = expanded.has(p.id);
 
-    return `<div class="proto-nav-group">
-      <button class="proto-nav-btn${isActive ? ' active' : ''}" data-id="${p.id}">
-        <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
-        <span class="proto-nav-label">
-          <strong>${p.name}</strong>
-          <small>${p.category}</small>
-        </span>
-        ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
-      </button>
-      ${toolsHtml}
-    </div>`;
+      const toolsHtml = p.tools ? `
+        <div class="tool-nav-list${isExpanded ? '' : ' hidden'}" id="tnl-${p.id}">
+          ${p.tools.map(t => {
+            const tc = CAT_COLOR[t.category] || CAT_COLOR['Planning'];
+            const isTA = activeProtoId === p.id && activeToolId === t.id;
+            return `<button class="tool-nav-btn${isTA ? ' active' : ''}" data-proto="${p.id}" data-tool="${t.id}">
+              <span class="tool-nav-cat" style="color:${tc.text}">${t.category}</span>
+              <span class="tool-nav-lbl">${t.name}</span>
+            </button>`;
+          }).join('')}
+        </div>` : '';
+
+      return `<div class="proto-nav-group">
+        <button class="proto-nav-btn${isActive ? ' active' : ''}" data-id="${p.id}">
+          <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
+          <span class="proto-nav-label">
+            <strong>${p.name}</strong>
+            <small>${p.category}</small>
+          </span>
+          ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
+        </button>
+        ${toolsHtml}
+      </div>`;
+    }).join('');
+
+    return `<section class="proto-nav-section">
+      <p class="nav-section-label">${groupName}</p>
+      ${itemsHtml}
+    </section>`;
   }).join('');
 
   nav.querySelectorAll('.proto-nav-btn').forEach(btn => {
@@ -268,6 +447,83 @@ function renderNav() {
   nav.querySelectorAll('.tool-nav-btn').forEach(btn => {
     btn.addEventListener('click', () => selectTool(btn.dataset.proto, btn.dataset.tool));
   });
+}
+
+function getGroupCount(groupName) {
+  return PROTOTYPES.filter(proto => proto.category === groupName).length;
+}
+
+const GROUP_PRIMARY = {
+  MoSpark: 'orchestrator',
+  Widget: 'financial',
+  Platform: 'momo-services',
+};
+
+function buildHomeHero() {
+  return `
+    <section class="home-hero">
+      <div class="home-hero-copy">
+        <span class="home-kicker">Prototype home</span>
+        <h1>Trang chủ prototype cho đội Dev</h1>
+        <p>
+          Đây là trang điều hướng nội bộ. Chọn một nhóm để mở demo tương ứng, không phải landing
+          content hay page kể chuyện.
+        </p>
+        <div class="home-highlights">
+          <div>
+            <strong>3</strong>
+            <span>project groups</span>
+          </div>
+          <div>
+            <strong>${PROTOTYPES.length}</strong>
+            <span>prototype surfaces</span>
+          </div>
+          <div>
+            <strong>1</strong>
+            <span>shared shell</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-group-grid">
+        ${GROUP_ORDER.map(groupName => {
+          const info = GROUP_SUMMARY[groupName];
+          const count = getGroupCount(groupName);
+          const primaryId = GROUP_PRIMARY[groupName];
+          return `
+            <article class="home-group-card">
+              <div class="home-group-card-top">
+                <span>${info.eyebrow}</span>
+                <b>${count} project${count > 1 ? 's' : ''}</b>
+              </div>
+              <h2>${info.title}</h2>
+              <p>${info.description}</p>
+              <small>${info.examples}</small>
+              <button class="home-open-btn" type="button" data-open-proto="${primaryId}">Open ${info.eyebrow}</button>
+            </article>
+          `;
+        }).join('')}
+      </div>
+    </section>
+  `;
+}
+
+function buildHomeView() {
+  return `
+    <div class="ws-topbar ws-topbar-home">
+      <div class="ws-breadcrumb">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <span class="ws-cat-tag ws-cat-home">Home</span>
+        <span class="ws-bc-sep">/</span>
+        <span class="ws-bc-cur">Project groups</span>
+      </div>
+      <div class="ws-topbar-right">
+        <span class="home-hint">Chọn nhóm để mở demo window</span>
+      </div>
+    </div>
+
+    ${buildHomeHero()}
+  `;
 }
 
 // ─── Selection ────────────────────────────────────────────────────────────────
@@ -294,6 +550,12 @@ function renderWorkspace() {
   const ws = document.getElementById('protoWorkspace');
   if (!ws) return;
 
+  if (!activeProtoId) {
+    ws.innerHTML = buildHomeView();
+    wireHome(ws);
+    return;
+  }
+
   const proto = PROTOTYPES.find(p => p.id === activeProtoId);
   if (!proto) return;
 
@@ -313,6 +575,7 @@ function buildProtoView(proto) {
   <div class="ws-topbar">
     <div class="ws-breadcrumb">
       <button class="menu-toggle" id="menuToggle">☰</button>
+      <button class="ws-back-btn" id="backHomeBtn">← Home</button>
       <span class="ws-cat-tag" style="background:${cat.bg};color:${cat.text}">${proto.category}</span>
       <span class="ws-bc-sep">/</span>
       <span class="ws-bc-cur">${proto.name}</span>
@@ -406,6 +669,24 @@ function wireWs(ws, proto, tool) {
   if (back) back.addEventListener('click', () => selectProto(back.dataset.proto));
 
   // Mobile menu toggle
+  const mt = ws.querySelector('#menuToggle');
+  if (mt) mt.addEventListener('click', openSidebar);
+
+  const homeBtn = ws.querySelector('#backHomeBtn');
+  if (homeBtn) homeBtn.addEventListener('click', () => {
+    activeProtoId = null;
+    activeToolId = null;
+    renderNav();
+    renderWorkspace();
+    closeSidebar();
+  });
+}
+
+function wireHome(ws) {
+  ws.querySelectorAll('[data-open-proto]').forEach(btn => {
+    btn.addEventListener('click', () => selectProto(btn.dataset.openProto));
+  });
+
   const mt = ws.querySelector('#menuToggle');
   if (mt) mt.addEventListener('click', openSidebar);
 }
