@@ -84,6 +84,21 @@ const PROTOTYPES = [
     address: 'prototype.momo.vn/ads-manager',
   },
   {
+    id: 'kyc',
+    name: 'eKYC — Xác minh danh tính',
+    category: 'Identity',
+    maturity: 'Interactive',
+    description: 'Prototype luồng xác minh danh tính 4 bước: thông tin cá nhân → upload CCCD → selfie → review. Mô phỏng OCR auto-fill, liveness check và processing animation.',
+    jtbd: 'Nâng cấp tài khoản nhanh, dễ hiểu, không cần ra quầy',
+    northStar: 'KYC completion rate',
+    loop: 'Fill → Upload → Selfie → Submit',
+    hypothesis: 'Luồng KYC được thiết kế rõ ràng từng bước giúp giảm drop-off và tăng completion rate so với form dài truyền thống.',
+    value: 'Tăng tỷ lệ tài khoản Tier 2, mở khoá giới hạn giao dịch cao hơn và giảm chi phí onboarding offline.',
+    gate: 'Đo step drop-off rate, OCR auto-fill adoption, liveness check pass rate và time-to-complete.',
+    src: 'demos/kyc.html',
+    address: 'prototype.momo.vn/ekyc',
+  },
+  {
     id: 'worldcup',
     name: 'World Cup 2026 Predictor',
     category: 'Engagement',
@@ -130,6 +145,7 @@ const CAT_COLOR = {
   'Planning':   { bg: '#f8fafc', text: '#475569' },
   'FX':         { bg: '#f0f9ff', text: '#0369a1' },
   'Agentic':    { bg: '#f5f3ff', text: '#6d28d9' },
+  'Identity':   { bg: '#fdf2f8', text: '#9d174d' },
 };
 
 const MAT_COLOR = {
