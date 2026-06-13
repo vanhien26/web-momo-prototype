@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MoMo Chatbot</title>
+  <style>
+    :root{
+      --bg:#0b0b0f;--surface:#111118;--surface2:#181821;--surface3:#20202a;--border:#232332;--border2:#2f3044;
+      --momo:#a50064;--momo2:#d4006e;--momo-glow:rgba(165,0,100,.24);
+      --text:#f0f0f7;--muted:#9292aa;--muted2:#6f7085;--green:#22c55e;--blue:#60a5fa;--amber:#fbbf24;--red:#f87171;
+      --chip:#14141d;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+    button,input,textarea{font:inherit}
+    .topbar{height:48px;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);position:relative;z-index:10}
+    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)}
+    .brand-mark{width:26px;height:26px;border-radius:7px;background:var(--momo);display:grid;place-items:center;font-size:8px;font-weight:900;line-height:1.1;text-align:center}
+    .brand strong{font-size:13px}
+    .brand small{display:block;font-size:10px;color:var(--muted)}
+    .back{font-size:11px;color:var(--muted);text-decoration:none;margin-left:6px}
+    .back:hover{color:var(--text)}
+    .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
+    .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #22c55e20}
+
+    .app{height:calc(100vh - 48px);display:grid;grid-template-columns:260px minmax(0,1.3fr) 340px}
+    .panel{border-right:1px solid var(--border);background:linear-gradient(180deg,var(--surface),#0e0e14)}
+    .panel:last-child{border-right:none}
+
+    .left{padding:16px;display:flex;flex-direction:column;gap:14px}
+    .section-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .intent-list{display:grid;gap:8px}
+    .intent{border:1px solid var(--border2);background:var(--chip);border-radius:14px;padding:12px;text-align:left;color:var(--text);cursor:pointer;transition:.15s}
+    .intent:hover,.intent.active{border-color:var(--momo);box-shadow:0 0 0 1px var(--momo-glow);transform:translateY(-1px)}
+    .intent strong{display:block;font-size:13px;margin-bottom:4px}
+    .intent p{font-size:11px;color:var(--muted);line-height:1.45}
+    .pill-row{display:flex;flex-wrap:wrap;gap:6px}
+    .pill{border:1px solid var(--border2);background:var(--surface2);color:var(--muted);border-radius:999px;padding:6px 10px;font-size:11px;cursor:pointer}
+    .pill.active,.pill:hover{border-color:var(--momo);color:#fff;background:linear-gradient(135deg,var(--momo),#7c1155)}
+    .insight-card{border:1px solid var(--border2);background:linear-gradient(180deg,#181821,#111118);border-radius:18px;padding:14px}
+    .insight-card h3{font-size:14px;margin-bottom:8px}
+    .insight-card p{font-size:12px;color:var(--muted);line-height:1.6}
+    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .metric{border:1px solid var(--border2);background:#12121a;border-radius:12px;padding:10px}
+    .metric span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+    .metric strong{font-size:18px}
+
+    .center{display:flex;flex-direction:column;min-width:0}
+    .hero{padding:18px 18px 14px;border-bottom:1px solid var(--border);background:radial-gradient(circle at top left,#261126 0,#111118 44%,#0e0e14 100%)}
+    .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+    .hero-copy{max-width:680px}
+    .kicker{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;background:#ffe4f2;color:#a50064;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .hero h1{font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:12px 0 10px}
+    .hero p{font-size:14px;line-height:1.65;color:var(--muted);max-width:56ch}
+    .hero-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+    .hero-card{border:1px solid var(--border2);background:rgba(17,17,24,.92);border-radius:14px;padding:12px}
+    .hero-card span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+    .hero-card strong{font-size:18px}
+    .hero-card p{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}
+
+    .chat-wrap{flex:1;display:grid;grid-template-rows:1fr auto;border-top:1px solid var(--border);min-height:0}
+    .chat{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,#0f0f16,#0b0b0f)}
+    .chat::-webkit-scrollbar{width:4px}
+    .chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+    .msg{display:flex;gap:8px;align-items:flex-start}
+    .msg.user{flex-direction:row-reverse}
+    .avatar{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex:none;font-size:12px;font-weight:900}
+    .avatar.bot{background:linear-gradient(135deg,var(--momo),#7c1155);color:#fff}
+    .avatar.user{background:var(--surface2);border:1px solid var(--border2);color:var(--muted)}
+    .bubble{max-width:min(80ch,82%);border:1px solid var(--border2);background:var(--surface);border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.6;color:var(--text)}
+    .msg.user .bubble{background:#181320;border-color:#3d2140}
+    .bubble .title{display:block;font-size:11px;color:#ffcae2;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+    .bubble ul{margin:8px 0 0 18px}
+    .bubble li{margin:2px 0}
+    .time{font-size:9px;color:var(--muted2);margin-top:2px}
+    .typing{display:flex;gap:4px;align-items:center;padding:6px 0}
+    .typing span{width:6px;height:6px;border-radius:50%;background:var(--muted2);animation:bounce 1s infinite ease-in-out}
+    .typing span:nth-child(2){animation-delay:.15s}
+    .typing span:nth-child(3){animation-delay:.3s}
+    @keyframes bounce{0%,80%,100%{transform:scale(1);opacity:.45}40%{transform:scale(1.4);opacity:1}}
+    .suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 14px}
+    .suggestion{border:1px solid var(--border2);background:var(--surface2);border-radius:999px;padding:7px 12px;font-size:11px;color:var(--text);cursor:pointer}
+    .suggestion:hover{border-color:var(--momo)}
+    .composer{padding:12px 14px;border-top:1px solid var(--border);background:#0f0f15}
+    .composer-wrap{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--border2);background:var(--surface);border-radius:14px;padding:10px}
+    .input{flex:1;min-height:22px;max-height:110px;resize:none;border:none;outline:none;background:transparent;color:var(--text);font:inherit;font-size:13px;line-height:1.5}
+    .input::placeholder{color:var(--muted2)}
+    .send{width:34px;height:34px;border:none;border-radius:10px;background:var(--momo);color:#fff;cursor:pointer}
+    .send:hover{background:var(--momo2)}
+    .hint{font-size:9px;color:var(--muted);text-align:center;margin-top:6px}
+
+    .right{padding:16px;display:flex;flex-direction:column;gap:14px}
+    .box{border:1px solid var(--border2);border-radius:18px;background:linear-gradient(180deg,#161620,#101015);padding:14px}
+    .box h3{font-size:13px;margin-bottom:8px}
+    .box p{font-size:12px;color:var(--muted);line-height:1.55}
+    .handoff-list{display:grid;gap:8px;margin-top:10px}
+    .handoff{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border2);border-radius:14px;background:#12121a;padding:10px}
+    .handoff b{display:block;font-size:12px;margin-bottom:2px}
+    .handoff span{font-size:11px;color:var(--muted);line-height:1.45}
+    .badge-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid var(--border2);background:#14141d;color:#ddd}
+    .badge.blue{color:var(--blue);border-color:#274869}
+    .badge.green{color:var(--green);border-color:#20593a}
+    .badge.amber{color:var(--amber);border-color:#7a5720}
+    .badge.red{color:var(--red);border-color:#6c2828}
+    .flow{display:grid;gap:8px;margin-top:10px}
+    .step{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border2);border-radius:12px;padding:10px;background:#12121a}
+    .step i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#231326;color:#ffcae2;font-style:normal;font-weight:900;flex:none}
+    .step strong{display:block;font-size:12px;margin-bottom:2px}
+    .step p{font-size:11px;color:var(--muted);line-height:1.45}
+    @media(max-width:1100px){
+      html,body{overflow:auto}
+      .app{grid-template-columns:1fr;height:auto;min-height:calc(100vh - 48px)}
+      .panel{border-right:none;border-bottom:1px solid var(--border)}
+      .panel:last-child{border-bottom:none}
+      .hero-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html" target="_top">
+      <span class="brand-mark">mo<br>mo</span>
+      <span><strong>MoMo Chatbot</strong><small>MoSpark concept prototype</small></span>
+    </a>
+    <a class="back" href="../index.html" target="_top">← Store</a>
+    <div class="status"><span class="dot"></span><span>Live assistant preview</span></div>
+  </header>
+
+  <main class="app">
+    <aside class="panel left">
+      <div>
+        <div class="section-title">Intents</div>
+        <div class="intent-list" id="intentList"></div>
+      </div>
+
+      <div>
+        <div class="section-title">Quick prompts</div>
+        <div class="pill-row" id="pillRow"></div>
+      </div>
+
+      <div class="insight-card">
+        <h3>What this prototype proves</h3>
+        <p>Chatbot này không nhằm thay thế support. Mục tiêu là xem MoMo Web có thể giữ người dùng lại bằng hội thoại, gợi ý dịch vụ đúng ngữ cảnh, và handoff sang CTA hay không.</p>
+        <div class="metric-grid">
+          <div class="metric"><span>Target</span><strong>Help + handoff</strong></div>
+          <div class="metric"><span>Mode</span><strong>Web assistant</strong></div>
+          <div class="metric"><span>Scope</span><strong>MoMo services</strong></div>
+          <div class="metric"><span>Output</span><strong>Actionable</strong></div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel center">
+      <div class="hero">
+        <div class="hero-top">
+          <div class="hero-copy">
+            <span class="kicker">MoSpark / Chatbot</span>
+            <h1>Trợ lý hội thoại để trả lời, gợi ý và dẫn tiếp</h1>
+            <p>Chatbot này giúp user hỏi nhanh về dịch vụ MoMo, hiểu use case phù hợp, rồi đi tiếp tới bước mở app, đọc thông tin hoặc thực hiện CTA cần thiết. Trọng tâm là giảm friction cho user chưa rõ mình cần gì.</p>
+          </div>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-card">
+            <span>Primary use</span>
+            <strong>Answer + Guide</strong>
+            <p>Trả lời câu hỏi, giải thích dịch vụ, và đưa ra next step phù hợp.</p>
+          </div>
+          <div class="hero-card">
+            <span>Safety</span>
+            <strong>Guardrails</strong>
+            <p>Không suy diễn giao dịch thật, luôn handoff sang surface đúng khi cần.</p>
+          </div>
+          <div class="hero-card">
+            <span>Success metric</span>
+            <strong>Helpful handoff</strong>
+            <p>Đo câu trả lời hữu ích, số follow-up, và click CTA tiếp theo.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-wrap">
+        <div class="chat" id="chat"></div>
+        <div class="suggestions" id="suggestions"></div>
+        <div class="composer">
+          <div class="composer-wrap">
+            <textarea id="input" class="input" placeholder="Hỏi MoMo về Loan, Pay Later, thanh toán số, quà CHAOMOMO..."></textarea>
+            <button class="send" id="sendBtn" type="button">➤</button>
+          </div>
+          <div class="hint">Enter để gửi, Shift+Enter để xuống dòng. Câu trả lời là mô phỏng cho prototype.</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel right">
+      <div class="box">
+        <h3>Handoff map</h3>
+        <p>Chatbot nên dừng ở chỗ có thể dẫn người dùng sang đúng surface: services, bill lookup, scam check, download hoặc gift CTA.</p>
+        <div class="handoff-list">
+          <div class="handoff"><b>MoMo Services</b><span>Giới thiệu dịch vụ và use case quan trọng cho user chưa cài app.</span></div>
+          <div class="handoff"><b>Bill Lookup</b><span>Tra cứu và thanh toán hóa đơn định kỳ khi user hỏi về bill.</span></div>
+          <div class="handoff"><b>Scam Check</b><span>Cảnh báo khi user hỏi về số điện thoại, tài khoản hoặc link lạ.</span></div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Response modes</h3>
+        <div class="badge-row">
+          <span class="badge blue">Explain</span>
+          <span class="badge green">Recommend</span>
+          <span class="badge amber">Handoff</span>
+          <span class="badge red">Warn</span>
+        </div>
+        <div class="flow">
+          <div class="step"><i>01</i><div><strong>Understand</strong><p>Nhận intent từ câu hỏi ngắn hoặc câu dài của user.</p></div></div>
+          <div class="step"><i>02</i><div><strong>Respond</strong><p>Trả lời bằng ngôn ngữ ngắn, rõ và có CTA tiếp theo.</p></div></div>
+          <div class="step"><i>03</i><div><strong>Handoff</strong><p>Nếu cần, chuyển sang dịch vụ / lookup / download phù hợp.</p></div></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const intents = [
+      {
+        key: 'services',
+        title: 'Giải thích dịch vụ',
+        desc: 'Người dùng hỏi MoMo làm gì, có gì mới, nên bắt đầu từ đâu.',
+        prompt: 'MoMo có gì cho người chưa cài app?'
+      },
+      {
+        key: 'loan',
+        title: 'Loan / Pay Later',
+        desc: 'Gợi ý use case tài chính phù hợp, trả lời ngắn gọn theo mục tiêu.',
+        prompt: 'Tôi muốn vay hoặc trả sau thì MoMo hỗ trợ gì?'
+      },
+      {
+        key: 'bill',
+        title: 'Bill payment',
+        desc: 'Dẫn người dùng tới bill lookup hoặc thanh toán định kỳ.',
+        prompt: 'Tôi muốn tra cứu hóa đơn điện nước thì làm sao?'
+      },
+      {
+        key: 'safety',
+        title: 'An toàn / Scam',
+        desc: 'Cảnh báo link, số điện thoại, tài khoản, QR đáng ngờ.',
+        prompt: 'Số tài khoản này có an toàn không?'
+      },
+      {
+        key: 'gift',
+        title: 'Quà cho user mới',
+        desc: 'Giải thích CHAOMOMO và CTA tải app cho user mới.',
+        prompt: 'Cách nhận quà CHAOMOMO như thế nào?'
+      }
+    ];
+
+    const quickPrompts = [
+      'MoMo có gì cho người chưa cài app?',
+      'Tôi muốn vay hoặc trả sau thì sao?',
+      'Tôi muốn tra cứu hóa đơn điện nước',
+      'Số tài khoản này có an toàn không?',
+      'Cách nhận quà CHAOMOMO'
+    ];
+
+    const responses = {
+      services: {
+        title: 'MoMo dành cho người chưa cài app',
+        text: [
+          'MoMo có thể giới thiệu nhanh các dịch vụ cốt lõi như thanh toán số, Pay Later, Loan và các tiện ích thường dùng.',
+          'Nếu bạn đang xem trên web, nên đi theo luồng: đọc thông tin -> xem use case -> tải app -> nhận quà cho user mới.'
+        ],
+        ctas: ['Xem dịch vụ', 'Tải app', 'Nhận quà CHAOMOMO']
+      },
+      loan: {
+        title: 'Loan / Pay Later',
+        text: [
+          'Nếu mục tiêu là mua trước trả sau, chatbot nên giải thích điều kiện cơ bản, cách xem hạn mức và bước tiếp theo trong app.',
+          'Nếu user hỏi nhiều hơn về số tiền hoặc kỳ hạn, nên handoff sang surface tài chính hoặc form kiểm tra điều kiện.'
+        ],
+        ctas: ['Xem Pay Later', 'Tính nhanh khả năng vay', 'Hỏi thêm điều kiện']
+      },
+      bill: {
+        title: 'Bill payment',
+        text: [
+          'Người dùng có thể tra hóa đơn theo mã khách hàng, số hợp đồng hoặc số điện thoại rồi thanh toán ngay.',
+          'Mục tiêu của chatbot là đẩy người dùng sang Bill Lookup để xem số tiền, hạn thanh toán và bật nhắc hạn.'
+        ],
+        ctas: ['Mở Bill Lookup', 'Bật nhắc hạn', 'Thanh toán ngay']
+      },
+      safety: {
+        title: 'Safety warning',
+        text: [
+          'Nếu có link lạ, số điện thoại lạ hoặc QR thúc giục chuyển tiền, chatbot nên dừng lại và cảnh báo.',
+          'Câu trả lời phải ngắn, rõ, không phán đoán thay người dùng nhưng đủ để họ dừng và xác minh.'
+        ],
+        ctas: ['Mở Scam Check', 'Xác minh lại', 'Báo cáo rủi ro']
+      },
+      gift: {
+        title: 'CHAOMOMO',
+        text: [
+          'Chatbot nên giải thích quà cho user mới theo cách rất ngắn: tải app, hoàn tất bước đầu và nhận quà.',
+          'Đây là điểm chốt chuyển đổi tự nhiên sau khi user đã hiểu MoMo làm gì.'
+        ],
+        ctas: ['Tải app', 'Xem quà', 'Xem dịch vụ trước']
+      }
+    };
+
+    const intentList = document.getElementById('intentList');
+    const pillRow = document.getElementById('pillRow');
+    const chat = document.getElementById('chat');
+    const suggestions = document.getElementById('suggestions');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+
+    let activeIntent = 'services';
+    let chatLog = [
+      { role: 'bot', text: 'Tôi là MoMo Chatbot. Hỏi tôi về dịch vụ, bill, an toàn giao dịch hoặc quà CHAOMOMO.' }
+    ];
+
+    function now() {
+      const d = new Date();
+      return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function guessIntent(text) {
+      const q = text.toLowerCase();
+      if (/(bill|hóa đơn|điện|nước|internet|di động)/.test(q)) return 'bill';
+      if (/(scam|lừa|lừa đảo|an toàn|cảnh báo|link|otp|qr|tài khoản|số điện thoại)/.test(q)) return 'safety';
+      if (/(loan|vay|pay later|trả sau|hạn mức|credit)/.test(q)) return 'loan';
+      if (/(quà|chaomomo|tải app|download|người chưa cài|chưa có momo)/.test(q)) return 'gift';
+      return 'services';
+    }
+
+    function renderIntents() {
+      intentList.innerHTML = intents.map(item => `
+        <button class="intent${item.key === activeIntent ? ' active' : ''}" data-key="${item.key}">
+          <strong>${item.title}</strong>
+          <p>${item.desc}</p>
+        </button>
+      `).join('');
+      intentList.querySelectorAll('.intent').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeIntent = btn.dataset.key;
+          input.value = intents.find(item => item.key === activeIntent).prompt;
+          renderAll();
+        });
+      });
+    }
+
+    function renderPills() {
+      pillRow.innerHTML = quickPrompts.map(prompt => `
+        <button class="pill${input.value.trim() === prompt ? ' active' : ''}" type="button" data-prompt="${prompt}">${prompt}</button>
+      `).join('');
+      pillRow.querySelectorAll('.pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          input.value = btn.dataset.prompt;
+          activeIntent = guessIntent(input.value);
+          renderAll();
+          sendMessage();
+        });
+      });
+    }
+
+    function renderChat() {
+      chat.innerHTML = chatLog.map(msg => {
+        const isUser = msg.role === 'user';
+        return `
+          <div class="msg ${isUser ? 'user' : 'bot'}">
+            <div class="avatar ${isUser ? 'user' : 'bot'}">${isUser ? 'UI' : 'AI'}</div>
+            <div>
+              <div class="bubble">
+                ${msg.title ? `<span class="title">${msg.title}</span>` : ''}
+                ${msg.text.map(line => `<div>${line}</div>`).join('')}
+                ${msg.ctas ? `<ul>${msg.ctas.map(cta => `<li>${cta}</li>`).join('')}</ul>` : ''}
+              </div>
+              <div class="time">${msg.time}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function addBotReply(intentKey) {
+      const reply = responses[intentKey] || responses.services;
+      chatLog.push({
+        role: 'bot',
+        title: reply.title,
+        text: reply.text,
+        ctas: reply.ctas,
+        time: now()
+      });
+    }
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+      const intentKey = guessIntent(text);
+      activeIntent = intentKey;
+      chatLog.push({ role: 'user', text: [text], time: now() });
+      addBotReply(intentKey);
+      input.value = '';
+      renderAll();
+    }
+
+    function renderAll() {
+      renderIntents();
+      renderPills();
+      renderChat();
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    input.value = intents[0].prompt;
+    activeIntent = guessIntent(input.value);
+    renderAll();
+  </script>
+</body>
+</html>

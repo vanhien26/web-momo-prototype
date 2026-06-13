@@ -44,6 +44,21 @@ const demos = {
     value: 'Tạo lớp bảo vệ cho P2P, QR, chuyển khoản và social payment.',
     gate: 'Đo risk-check completion, warning CTR, abort rate và report intent.'
   },
+  chatbot: {
+    name: 'MoMo Chatbot',
+    title: 'MoMo Chatbot',
+    type: 'Conversational AI',
+    maturity: 'Concept prototype',
+    src: 'demos/chatbot.html',
+    address: 'prototype.momo.vn/chatbot',
+    description: 'Trợ lý hội thoại cho MoMo Web: trả lời câu hỏi về dịch vụ, gợi ý use case phù hợp và hướng user tới hành động tiếp theo.',
+    jtbd: 'Hỏi nhanh, hiểu ngay, đi tiếp đúng bước',
+    northStar: 'Helpful answer completion',
+    loop: 'Ask → Guide → Handoff',
+    hypothesis: 'Chatbot theo ngữ cảnh giúp giảm friction khi user chưa biết dịch vụ nào phù hợp và tạo đường dẫn tự nhiên sang web-to-app.',
+    value: 'Tạo lớp hỗ trợ hội thoại cho MoMo Services, Pay Later, Loan và các use case quan trọng.',
+    gate: 'Đo answer accept rate, follow-up question depth, CTA click và handoff to service.'
+  },
   merchant: {
     name: 'Merchant Discovery',
     title: 'Quán Ngon Finder',
