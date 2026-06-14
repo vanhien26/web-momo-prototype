@@ -198,6 +198,36 @@ const PROTOTYPES = [
     address: 'prototype.momo.vn/scam-check',
   },
   {
+    id: 'blog-category',
+    name: 'MoSpark Blog Category',
+    category: 'MoSpark',
+    maturity: 'Listing',
+    description: 'Blog category listing với 8 danh mục Use Case MoMo, featured article, article grid 2-col, category filter tabs với live count và inline contextual ad.',
+    jtbd: 'Khám phá nội dung theo chủ đề, tìm bài phù hợp nhanh',
+    northStar: 'Article click-through rate',
+    loop: 'Browse → Filter → Read → Convert',
+    hypothesis: 'Category listing có filter theo use case giúp user tìm đúng nội dung nhanh hơn và tăng engagement depth trong content hub MoSpark.',
+    value: 'Tạo bề mặt điều hướng nội dung theo 8 danh mục MoMo, tăng internal linking và time-on-site.',
+    gate: 'Đo category filter usage, article CTR, scroll depth và CTA conversion từ listing sang bài viết.',
+    src: 'demos/blog-category.html',
+    address: 'prototype.momo.vn/mospark-blog',
+  },
+  {
+    id: 'blog',
+    name: 'MoSpark Blog Article',
+    category: 'MoSpark',
+    maturity: 'Article',
+    description: 'Full-width blog article với quiz tương tác, floating TOC, inline ads (Universal + Contextual), static aggregate rating và progressive reading experience.',
+    jtbd: 'Đọc bài chuyên sâu, kiểm tra kiến thức và chuyển đổi sang dịch vụ MoMo',
+    northStar: 'Article completion + CTA conversion',
+    loop: 'Read → Quiz → Convert',
+    hypothesis: 'Blog article tích hợp quiz và contextual ads theo đúng chủ đề tăng engagement và conversion so với bài viết thuần.',
+    value: 'Tạo bề mặt nội dung chiều sâu cho SEO/GEO, quiz tăng time-on-page, contextual ad phục vụ monetization.',
+    gate: 'Đo scroll depth, quiz completion, CTA CTR từ inline ad và fixed bar, Web-to-App conversion.',
+    src: 'demos/blog.html',
+    address: 'prototype.momo.vn/mospark-blog/phạt-nguội',
+  },
+  {
     id: 'orchestrator',
     name: 'GenAI Orchestrator',
     category: 'MoSpark',
@@ -238,7 +268,7 @@ const CAT_COLOR = {
 
 const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'seo-geo-score', 'chatbot', 'ads-manager'],
+  MoSpark: ['orchestrator', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
   Platform: ['merchant', 'momo-services'],
 };
@@ -248,7 +278,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'MoSpark',
     title: 'GenAI / Content / Chatbot / Ads',
     description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
-    examples: 'GenAI Orchestrator · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager',
+    examples: 'GenAI Orchestrator · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager · Blog Category · Blog Article',
   },
   Widget: {
     eyebrow: 'Widget',
