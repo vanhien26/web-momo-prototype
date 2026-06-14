@@ -129,30 +129,6 @@ const PROTOTYPES = [
     address: 'prototype.momo.vn/search',
   },
   {
-    id: 'momo-services',
-    name: 'MoMo Services',
-    category: 'Platform',
-    maturity: 'Reference',
-    description: 'Landing cho người chưa có MoMo: đọc thông tin dịch vụ, xem use case quan trọng, rồi đi tiếp tới download và quà cho user mới.',
-    jtbd: 'Hiểu MoMo làm gì trước khi cài app',
-    northStar: 'Landing to install intent',
-    loop: 'Read → Explore → Download → Claim gift',
-    hypothesis: 'Một landing thiên về brand love và use case sẽ giúp user mới hiểu giá trị MoMo nhanh hơn so với danh sách tính năng rời rạc.',
-    value: 'Tạo trang đích cho các dịch vụ cốt lõi như Loan, Pay Later và Thanh toán số.',
-    gate: 'Đo scroll depth, use case click, download CTA và gift CTA.',
-    src: 'demos/search.html',
-    address: 'prototype.momo.vn/services',
-    tools: [
-      {
-        name: 'Search & Discovery',
-        category: 'Discovery',
-        description: 'Trang tìm dịch vụ MoMo với autocomplete, category chips, highlight use case và filter để user chưa cài app dễ khám phá.',
-        jtbd: 'Tìm đúng dịch vụ và use case của MoMo nhanh',
-        src: 'demos/search.html',
-      },
-    ],
-  },
-  {
     id: 'worldcup',
     name: 'World Cup 2026 Predictor',
     category: 'Widget',
@@ -285,7 +261,7 @@ const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
-  Platform: ['universal-search', 'merchant', 'momo-services'],
+  Platform: ['universal-search', 'merchant'],
 };
 
 const GROUP_SUMMARY = {
@@ -305,7 +281,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'Platform',
     title: 'MoMo Services',
     description: 'Nhóm điều hướng vào các surface dịch vụ và discovery của MoMo.',
-    examples: 'Universal Search · MoMo Deal · MoMo Services',
+    examples: 'Universal Search · MoMo Deal',
   },
 };
 
