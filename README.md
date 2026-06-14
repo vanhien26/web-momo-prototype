@@ -6,6 +6,7 @@ Static prototype showcase for Web Platform product concepts:
 - Bill Lookup
 - Scam Check
 - MoMo Chatbot
+- SEO / GEO Score
 - Merchant Discovery
 - World Cup 2026 Predictor
 - Mua Vé Metro HCM

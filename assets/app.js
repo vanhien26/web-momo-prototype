@@ -59,6 +59,21 @@ const demos = {
     value: 'Tạo lớp hỗ trợ hội thoại cho MoMo Services, Pay Later, Loan và các use case quan trọng.',
     gate: 'Đo answer accept rate, follow-up question depth, CTA click và handoff to service.'
   },
+  seoGeoScore: {
+    name: 'SEO / GEO Score',
+    title: 'SEO / GEO Score',
+    type: 'Content Quality',
+    maturity: 'Interactive prototype',
+    src: 'demos/seo-geo-score.html',
+    address: 'prototype.momo.vn/seo-geo-score',
+    description: 'Blog publisher với pre-publish gate, chấm điểm SEO và GEO theo 20 tiêu chí trước khi cho xuất bản.',
+    jtbd: 'Xuất bản bài viết đạt chuẩn SEO và AI search từ lần đầu',
+    northStar: 'Publish gate pass rate',
+    loop: 'Write → Score → Fix → Publish',
+    hypothesis: 'Quality gate trước xuất bản giúp nâng chất lượng nội dung trung bình và giảm effort tối ưu lại sau khi bài đã live.',
+    value: 'Tạo tiêu chuẩn nội dung đo được cho MoMo Blog trên Google và AI search.',
+    gate: 'Đo first-pass rate, số lần submit lại, phân phối điểm SEO/GEO và nhóm tiêu chí thường fail.'
+  },
   merchant: {
     name: 'Merchant Discovery',
     title: 'Quán Ngon Finder',

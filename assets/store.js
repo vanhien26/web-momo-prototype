@@ -238,7 +238,7 @@ const CAT_COLOR = {
 
 const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'chatbot', 'ads-manager'],
+  MoSpark: ['orchestrator', 'seo-geo-score', 'chatbot', 'ads-manager'],
   Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
   Platform: ['merchant', 'momo-services'],
 };
@@ -246,9 +246,9 @@ const GROUP_ITEM_ORDER = {
 const GROUP_SUMMARY = {
   MoSpark: {
     eyebrow: 'MoSpark',
-    title: 'GenAI / Chatbot / Ads',
-    description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, hội thoại và monetization surfaces.',
-    examples: 'GenAI Orchestrator · MoMo Chatbot · Ads Placement Manager',
+    title: 'GenAI / Content / Chatbot / Ads',
+    description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
+    examples: 'GenAI Orchestrator · SEO / GEO Score · MoMo Chatbot · Ads Placement Manager',
   },
   Widget: {
     eyebrow: 'Widget',
