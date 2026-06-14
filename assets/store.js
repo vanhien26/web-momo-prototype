@@ -38,13 +38,13 @@ const PROTOTYPES = [
     name: 'MoMo Deal',
     category: 'Platform',
     maturity: 'Interaction',
-    description: 'Deal-first merchant discovery: khám phá ưu đãi cross-category (Ăn uống, Siêu thị, Giải trí, Sức khỏe, Di chuyển...) từ 300K merchant qua swipe UI. Deal là hero, merchant là context.',
-    jtbd: 'Tìm và lưu deal gần tôi nhanh nhất, không cần biết mình muốn gì',
-    northStar: 'Saved deal → payment initiation rate',
-    loop: 'Discover deal → Save → Pay',
-    hypothesis: 'Deal-first framing tạo ra differentiation rõ ràng vs Google Maps/Grab — MoMo là nơi duy nhất khám phá ưu đãi cross-category từ 300K merchant trong một surface.',
-    value: 'Tăng deal engagement, merchant payment volume và tạo preference signal có giá trị cho personalization.',
-    gate: 'Đo swipe-to-save rate, deal type distribution, saved deal → payment initiation và tiết kiệm ước tính per session.',
+    description: 'Merchant network đa ngành của MoMo: khám phá nơi ăn uống, mua sắm, sức khỏe, giải trí và di chuyển; xem dịch vụ, chi nhánh, ưu đãi, phương thức thanh toán rồi đi tới hành động phù hợp.',
+    jtbd: 'Tìm merchant phù hợp, biết có gì và dùng dịch vụ ngay',
+    northStar: 'Qualified merchant action rate',
+    loop: 'Discover → Evaluate merchant → Use service → Pay',
+    hypothesis: 'Trang merchant có cấu trúc theo loại hình giúp MoMo chuyển từ danh sách deal sang lớp discovery và transaction cho toàn bộ mạng lưới chấp nhận thanh toán.',
+    value: 'Tăng khả năng khám phá merchant, sử dụng dịch vụ, redemption ưu đãi và payment volume trên nhiều ngành hàng.',
+    gate: 'Đo merchant detail view, service CTA, direction, save, deal eligibility check và payment initiation theo loại hình merchant.',
     src: 'demos/merchant.html',
     address: 'prototype.momo.vn/momo-deals',
   },
@@ -85,18 +85,18 @@ const PROTOTYPES = [
   },
   {
     id: 'chatbot',
-    name: 'MoMo Chatbot',
+    name: 'MoMo Project Assistant',
     category: 'MoSpark',
-    maturity: 'Concept',
-    description: 'Trợ lý hội thoại cho MoMo Web: trả lời câu hỏi về dịch vụ, gợi ý use case phù hợp và hướng user tới hành động tiếp theo.',
-    jtbd: 'Hỏi nhanh, hiểu ngay, đi tiếp đúng bước',
-    northStar: 'Helpful answer completion',
-    loop: 'Ask → Guide → Handoff',
-    hypothesis: 'Chatbot theo ngữ cảnh giúp giảm friction khi user chưa biết dịch vụ nào phù hợp và tạo đường dẫn tự nhiên sang web-to-app.',
-    value: 'Tạo lớp hỗ trợ hội thoại cho MoMo Services, Pay Later, Loan và các use case quan trọng.',
-    gate: 'Đo answer accept rate, follow-up question depth, CTA click và handoff to service.',
+    maturity: 'Architecture prototype',
+    description: 'Chatbot nhúng cho từng Mini Web hoặc Microsite, trả lời câu hỏi mở từ RAG của đúng project và chuyển sang Typebot khi cần chạy kịch bản có trạng thái.',
+    jtbd: 'Hỏi bất kỳ điều gì về project đang xem và nhận câu trả lời có nguồn',
+    northStar: 'Grounded answer success rate',
+    loop: 'Question → Project RAG → Answer / Typebot flow',
+    hypothesis: 'Project-scoped RAG có citation giúp user hiểu sản phẩm ngay tại trang, còn Typebot giữ các flow xác định và an toàn hơn cho dữ liệu có cấu trúc.',
+    value: 'Một embed component dùng lại cho nhiều Mini Web và Microsite, nhưng cô lập knowledge, analytics và guardrail theo từng project.',
+    gate: 'Đo grounded answer rate, citation coverage, low-confidence fallback, Typebot completion và assisted CTA.',
     src: 'demos/chatbot.html',
-    address: 'prototype.momo.vn/chatbot',
+    address: 'prototype.momo.vn/project-assistant',
   },
   {
     id: 'seo-geo-score',
@@ -248,7 +248,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'MoSpark',
     title: 'GenAI / Content / Chatbot / Ads',
     description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
-    examples: 'GenAI Orchestrator · SEO/GEO Project Hub · MoMo Chatbot · Ads Placement Manager',
+    examples: 'GenAI Orchestrator · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager',
   },
   Widget: {
     eyebrow: 'Widget',
@@ -600,6 +600,7 @@ function renderWorkspace() {
 
 function buildProtoView(proto) {
   const cat = CAT_COLOR[proto.category] || {};
+  const preview = previewSrc(proto.src);
 
   return `
   <div class="ws-topbar">
@@ -628,7 +629,7 @@ function buildProtoView(proto) {
           <div class="address-pill">🔒 ${proto.address}</div>
           <button class="reload-btn" id="reloadBtn">↺</button>
         </div>
-        <iframe id="demoFrame" src="${proto.src}" title="${proto.name}"></iframe>
+        <iframe id="demoFrame" src="${preview}" data-src="${proto.src}" title="${proto.name}"></iframe>
       </div>
     </div>
   </div>`;
@@ -637,6 +638,7 @@ function buildProtoView(proto) {
 function buildToolView(proto, tool) {
   const tc  = CAT_COLOR[tool.category]  || {};
   const src = tool.src || `demos/financial.html#${tool.id}`;
+  const preview = previewSrc(src);
 
   return `
   <div class="ws-topbar">
@@ -670,7 +672,7 @@ function buildToolView(proto, tool) {
           <div class="address-pill">🔒 ${proto.address}#${tool.id}</div>
           <button class="reload-btn" id="reloadBtn">↺</button>
         </div>
-        <iframe id="demoFrame" src="${src}" title="${tool.name}"></iframe>
+        <iframe id="demoFrame" src="${preview}" data-src="${src}" title="${tool.name}"></iframe>
       </div>
     </div>
   </div>`;
@@ -681,7 +683,7 @@ function wireWs(ws, proto, tool) {
   const rb = ws.querySelector('#reloadBtn');
   if (rb) rb.addEventListener('click', () => {
     const f = ws.querySelector('#demoFrame');
-    if (f) f.src = f.src;
+    if (f) f.src = previewSrc(f.dataset.src || f.src);
   });
 
   // Viewport
@@ -710,6 +712,12 @@ function wireWs(ws, proto, tool) {
     renderWorkspace();
     closeSidebar();
   });
+}
+
+function previewSrc(src) {
+  const [path, hash = ''] = src.split('#');
+  const separator = path.includes('?') ? '&' : '?';
+  return `${path}${separator}_preview=${Date.now()}${hash ? `#${hash}` : ''}`;
 }
 
 function wireHome(ws) {

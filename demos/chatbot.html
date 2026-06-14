@@ -3,424 +3,536 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MoMo Chatbot</title>
+  <title>MoMo Project Assistant</title>
   <style>
     :root{
-      --bg:#0b0b0f;--surface:#111118;--surface2:#181821;--surface3:#20202a;--border:#232332;--border2:#2f3044;
-      --momo:#a50064;--momo2:#d4006e;--momo-glow:rgba(165,0,100,.24);
-      --text:#f0f0f7;--muted:#9292aa;--muted2:#6f7085;--green:#22c55e;--blue:#60a5fa;--amber:#fbbf24;--red:#f87171;
-      --chip:#14141d;
+      --ink:#182033;--muted:#667085;--line:#e6e8ee;--soft:#f5f6f8;--paper:#fff;
+      --momo:#a50064;--momo-2:#d82d87;--pink:#fff0f7;--green:#087a55;--green-soft:#e9f8f1;
+      --blue:#175cd3;--blue-soft:#eff6ff;--amber:#b54708;--amber-soft:#fff7e8;
+      --shadow:0 24px 70px rgba(27,32,50,.15);--shadow-soft:0 8px 24px rgba(27,32,50,.08);
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
-    button,input,textarea{font:inherit}
-    .topbar{height:48px;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);position:relative;z-index:10}
-    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)}
-    .brand-mark{width:26px;height:26px;border-radius:7px;background:var(--momo);display:grid;place-items:center;font-size:8px;font-weight:900;line-height:1.1;text-align:center}
-    .brand strong{font-size:13px}
-    .brand small{display:block;font-size:10px;color:var(--muted)}
-    .back{font-size:11px;color:var(--muted);text-decoration:none;margin-left:6px}
-    .back:hover{color:var(--text)}
-    .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
-    .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #22c55e20}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:"Be Vietnam Pro","Avenir Next",Avenir,sans-serif;color:var(--ink);background:#eef0f4}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .shell{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 330px}
+    .stage{min-width:0;padding:20px;display:flex;align-items:center;justify-content:center;background:
+      radial-gradient(circle at 18% 10%,rgba(216,45,135,.12),transparent 28%),
+      linear-gradient(145deg,#f8f8fb 0%,#eceef3 100%)}
+    .browser{width:min(1100px,100%);height:min(760px,calc(100vh - 40px));min-height:620px;background:var(--paper);border:1px solid #dfe2e9;border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+    .browser-bar{height:48px;padding:0 16px;display:flex;align-items:center;gap:12px;background:#fafafa;border-bottom:1px solid var(--line)}
+    .dots{display:flex;gap:6px}.dots i{width:9px;height:9px;border-radius:50%;background:#d0d3da}.dots i:first-child{background:#ff6b6b}.dots i:nth-child(2){background:#ffc857}.dots i:nth-child(3){background:#46ca79}
+    .address{flex:1;max-width:590px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 12px;font-size:11px;color:#697386;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .site{height:calc(100% - 48px);overflow:auto;background:#fff}
+    .site-head{height:66px;padding:0 5%;display:flex;align-items:center;border-bottom:1px solid #f0f1f4;position:sticky;top:0;background:rgba(255,255,255,.96);z-index:5}
+    .logo{width:40px;height:40px;border-radius:12px;background:var(--momo);display:grid;place-items:center;color:#fff;font-size:11px;font-weight:900;line-height:.9;text-align:center}
+    .site-nav{display:flex;gap:24px;margin-left:34px;font-size:12px;font-weight:700;color:#51596a}
+    .site-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .site-actions button{border:0;border-radius:999px;padding:10px 15px;font-size:11px;font-weight:800}
+    .ghost{background:#f5f6f8;color:#344054}.primary{background:var(--momo);color:#fff}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center;padding:56px 7% 48px;background:
+      radial-gradient(circle at 86% 24%,rgba(216,45,135,.17),transparent 28%),
+      linear-gradient(135deg,#fff 0%,#fff8fc 100%)}
+    .eyebrow{display:inline-flex;padding:7px 10px;border-radius:999px;background:var(--pink);color:var(--momo);font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    h1{font-size:clamp(34px,4vw,58px);line-height:1.06;letter-spacing:-.045em;margin:16px 0;color:#171d2b}
+    .lead{font-size:15px;line-height:1.75;color:var(--muted);max-width:590px}
+    .cta-row{display:flex;gap:10px;margin-top:24px}
+    .cta-row button{border:0;border-radius:12px;padding:13px 18px;font-size:12px;font-weight:800}
+    .hero-visual{min-height:330px;border-radius:30px;padding:22px;background:linear-gradient(145deg,#b4006d,#65013f);color:#fff;position:relative;overflow:hidden;box-shadow:0 25px 50px rgba(165,0,100,.24)}
+    .hero-visual:before,.hero-visual:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.22)}
+    .hero-visual:before{width:260px;height:260px;right:-50px;top:-80px}.hero-visual:after{width:190px;height:190px;left:-70px;bottom:-80px}
+    .visual-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.7}
+    .amount{font-size:50px;font-weight:900;letter-spacing:-.05em;margin:26px 0 3px}
+    .visual-card{position:absolute;left:22px;right:22px;bottom:22px;padding:16px;border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px)}
+    .visual-card strong{display:block;font-size:14px;margin-bottom:5px}.visual-card span{font-size:11px;opacity:.75;line-height:1.5}
+    .benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:28px 7% 70px}
+    .benefit{border:1px solid var(--line);border-radius:18px;padding:17px;background:#fff}
+    .benefit i{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--pink);color:var(--momo);font-style:normal;font-weight:900;font-size:12px}
+    .benefit strong{display:block;margin:12px 0 5px;font-size:13px}.benefit span{font-size:11px;line-height:1.55;color:var(--muted)}
 
-    .app{height:calc(100vh - 48px);display:grid;grid-template-columns:260px minmax(0,1.3fr) 340px}
-    .panel{border-right:1px solid var(--border);background:linear-gradient(180deg,var(--surface),#0e0e14)}
-    .panel:last-child{border-right:none}
+    .launcher{position:absolute;right:22px;bottom:22px;display:flex;align-items:center;gap:10px;border:0;border-radius:18px;padding:10px 14px 10px 10px;background:#fff;box-shadow:0 12px 38px rgba(31,38,56,.24);color:var(--ink);z-index:15}
+    .launcher-mark{width:38px;height:38px;border-radius:12px;background:var(--momo);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:900}
+    .launcher-copy{text-align:left}.launcher-copy strong{display:block;font-size:12px}.launcher-copy span{font-size:9px;color:var(--muted)}
+    .online{width:8px;height:8px;border-radius:50%;background:#22b573;box-shadow:0 0 0 3px #ddf7eb}
 
-    .left{padding:16px;display:flex;flex-direction:column;gap:14px}
-    .section-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-    .intent-list{display:grid;gap:8px}
-    .intent{border:1px solid var(--border2);background:var(--chip);border-radius:14px;padding:12px;text-align:left;color:var(--text);cursor:pointer;transition:.15s}
-    .intent:hover,.intent.active{border-color:var(--momo);box-shadow:0 0 0 1px var(--momo-glow);transform:translateY(-1px)}
-    .intent strong{display:block;font-size:13px;margin-bottom:4px}
-    .intent p{font-size:11px;color:var(--muted);line-height:1.45}
-    .pill-row{display:flex;flex-wrap:wrap;gap:6px}
-    .pill{border:1px solid var(--border2);background:var(--surface2);color:var(--muted);border-radius:999px;padding:6px 10px;font-size:11px;cursor:pointer}
-    .pill.active,.pill:hover{border-color:var(--momo);color:#fff;background:linear-gradient(135deg,var(--momo),#7c1155)}
-    .insight-card{border:1px solid var(--border2);background:linear-gradient(180deg,#181821,#111118);border-radius:18px;padding:14px}
-    .insight-card h3{font-size:14px;margin-bottom:8px}
-    .insight-card p{font-size:12px;color:var(--muted);line-height:1.6}
-    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-    .metric{border:1px solid var(--border2);background:#12121a;border-radius:12px;padding:10px}
-    .metric span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
-    .metric strong{font-size:18px}
+    .chatbot{position:absolute;right:18px;bottom:18px;width:390px;height:590px;max-height:calc(100% - 36px);border:1px solid #dfe2e8;border-radius:22px;background:#fff;box-shadow:0 28px 70px rgba(17,24,39,.24);overflow:hidden;z-index:20;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;transform-origin:bottom right;transition:.2s ease}
+    .chatbot.closed{opacity:0;pointer-events:none;transform:translateY(14px) scale(.96)}
+    .chat-head{padding:14px 15px;background:linear-gradient(135deg,#8b0055,#bd0b76);color:#fff;display:flex;align-items:center;gap:10px}
+    .bot-logo{width:36px;height:36px;border-radius:12px;background:#fff;color:var(--momo);display:grid;place-items:center;font-size:10px;font-weight:900;line-height:.9;text-align:center}
+    .bot-title{min-width:0}.bot-title strong{display:block;font-size:13px}.bot-title span{display:block;font-size:9px;opacity:.76;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .close{margin-left:auto;width:30px;height:30px;border:0;border-radius:9px;background:rgba(255,255,255,.12);color:#fff;font-size:17px}
+    .context{padding:10px 12px;border-bottom:1px solid var(--line);background:#fff;display:flex;align-items:center;gap:8px}
+    .context label{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    .context select{min-width:0;flex:1;border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:#f9fafb;color:#344054;font-size:10px;font-weight:700}
+    .sync{display:flex;align-items:center;gap:5px;color:var(--green);font-size:9px;font-weight:800;white-space:nowrap}
+    .sync i{width:6px;height:6px;border-radius:50%;background:#22b573}
+    .messages{padding:14px 12px;overflow:auto;background:#f7f8fa;display:flex;flex-direction:column;gap:11px}
+    .message{display:flex;gap:7px;align-items:flex-start}
+    .message.user{justify-content:flex-end}
+    .mini-avatar{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;background:var(--momo);color:#fff;font-size:8px;font-weight:900;flex:none}
+    .bubble{max-width:86%;border:1px solid #e2e4e9;background:#fff;border-radius:5px 14px 14px 14px;padding:10px 11px;font-size:10.5px;line-height:1.55;color:#344054;box-shadow:0 2px 6px rgba(20,29,48,.04)}
+    .user .bubble{background:#a50064;color:#fff;border-color:#a50064;border-radius:14px 5px 14px 14px}
+    .route{display:flex;align-items:center;gap:5px;margin-bottom:7px;color:var(--blue);font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+    .route.typebot{color:var(--amber)}
+    .answer-title{font-size:11px;font-weight:900;color:#20283a;margin-bottom:4px}
+    .source-list{margin-top:8px;padding-top:7px;border-top:1px solid #eceef2;display:grid;gap:4px}
+    .source{display:flex;gap:5px;align-items:flex-start;color:#667085;font-size:8.5px;line-height:1.35}
+    .source b{color:var(--blue);white-space:nowrap}
+    .confidence{display:inline-flex;margin-top:7px;padding:3px 6px;border-radius:999px;background:var(--green-soft);color:var(--green);font-size:8px;font-weight:900}
+    .actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+    .action{border:1px solid #efb8d5;border-radius:8px;padding:6px 8px;background:#fff5fa;color:var(--momo);font-size:8.5px;font-weight:800}
+    .suggestions{padding:0 12px 8px;background:#f7f8fa;display:flex;gap:6px;overflow-x:auto}
+    .suggestion{flex:none;border:1px solid #dfe2e8;border-radius:999px;padding:6px 9px;background:#fff;color:#475467;font-size:8.5px}
+    .composer{padding:10px;border-top:1px solid var(--line);background:#fff}
+    .composer-box{display:flex;align-items:center;gap:7px;border:1px solid #d7dbe3;border-radius:12px;padding:6px 6px 6px 10px}
+    .composer input{min-width:0;flex:1;border:0;outline:0;font-size:10px;color:#344054}.composer input::placeholder{color:#98a2b3}
+    .send{width:31px;height:31px;border:0;border-radius:9px;background:var(--momo);color:#fff}
+    .disclaimer{text-align:center;font-size:7.5px;color:#98a2b3;margin-top:6px}
 
-    .center{display:flex;flex-direction:column;min-width:0}
-    .hero{padding:18px 18px 14px;border-bottom:1px solid var(--border);background:radial-gradient(circle at top left,#261126 0,#111118 44%,#0e0e14 100%)}
-    .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-    .hero-copy{max-width:680px}
-    .kicker{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;background:#ffe4f2;color:#a50064;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
-    .hero h1{font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:12px 0 10px}
-    .hero p{font-size:14px;line-height:1.65;color:var(--muted);max-width:56ch}
-    .hero-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-    .hero-card{border:1px solid var(--border2);background:rgba(17,17,24,.92);border-radius:14px;padding:12px}
-    .hero-card span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-    .hero-card strong{font-size:18px}
-    .hero-card p{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}
-
-    .chat-wrap{flex:1;display:grid;grid-template-rows:1fr auto;border-top:1px solid var(--border);min-height:0}
-    .chat{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,#0f0f16,#0b0b0f)}
-    .chat::-webkit-scrollbar{width:4px}
-    .chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-    .msg{display:flex;gap:8px;align-items:flex-start}
-    .msg.user{flex-direction:row-reverse}
-    .avatar{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex:none;font-size:12px;font-weight:900}
-    .avatar.bot{background:linear-gradient(135deg,var(--momo),#7c1155);color:#fff}
-    .avatar.user{background:var(--surface2);border:1px solid var(--border2);color:var(--muted)}
-    .bubble{max-width:min(80ch,82%);border:1px solid var(--border2);background:var(--surface);border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.6;color:var(--text)}
-    .msg.user .bubble{background:#181320;border-color:#3d2140}
-    .bubble .title{display:block;font-size:11px;color:#ffcae2;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
-    .bubble ul{margin:8px 0 0 18px}
-    .bubble li{margin:2px 0}
-    .time{font-size:9px;color:var(--muted2);margin-top:2px}
-    .typing{display:flex;gap:4px;align-items:center;padding:6px 0}
-    .typing span{width:6px;height:6px;border-radius:50%;background:var(--muted2);animation:bounce 1s infinite ease-in-out}
-    .typing span:nth-child(2){animation-delay:.15s}
-    .typing span:nth-child(3){animation-delay:.3s}
-    @keyframes bounce{0%,80%,100%{transform:scale(1);opacity:.45}40%{transform:scale(1.4);opacity:1}}
-    .suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 14px}
-    .suggestion{border:1px solid var(--border2);background:var(--surface2);border-radius:999px;padding:7px 12px;font-size:11px;color:var(--text);cursor:pointer}
-    .suggestion:hover{border-color:var(--momo)}
-    .composer{padding:12px 14px;border-top:1px solid var(--border);background:#0f0f15}
-    .composer-wrap{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--border2);background:var(--surface);border-radius:14px;padding:10px}
-    .input{flex:1;min-height:22px;max-height:110px;resize:none;border:none;outline:none;background:transparent;color:var(--text);font:inherit;font-size:13px;line-height:1.5}
-    .input::placeholder{color:var(--muted2)}
-    .send{width:34px;height:34px;border:none;border-radius:10px;background:var(--momo);color:#fff;cursor:pointer}
-    .send:hover{background:var(--momo2)}
-    .hint{font-size:9px;color:var(--muted);text-align:center;margin-top:6px}
-
-    .right{padding:16px;display:flex;flex-direction:column;gap:14px}
-    .box{border:1px solid var(--border2);border-radius:18px;background:linear-gradient(180deg,#161620,#101015);padding:14px}
-    .box h3{font-size:13px;margin-bottom:8px}
-    .box p{font-size:12px;color:var(--muted);line-height:1.55}
-    .handoff-list{display:grid;gap:8px;margin-top:10px}
-    .handoff{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border2);border-radius:14px;background:#12121a;padding:10px}
-    .handoff b{display:block;font-size:12px;margin-bottom:2px}
-    .handoff span{font-size:11px;color:var(--muted);line-height:1.45}
-    .badge-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-    .badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:4px 8px;border-radius:999px;border:1px solid var(--border2);background:#14141d;color:#ddd}
-    .badge.blue{color:var(--blue);border-color:#274869}
-    .badge.green{color:var(--green);border-color:#20593a}
-    .badge.amber{color:var(--amber);border-color:#7a5720}
-    .badge.red{color:var(--red);border-color:#6c2828}
-    .flow{display:grid;gap:8px;margin-top:10px}
-    .step{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border2);border-radius:12px;padding:10px;background:#12121a}
-    .step i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#231326;color:#ffcae2;font-style:normal;font-weight:900;flex:none}
-    .step strong{display:block;font-size:12px;margin-bottom:2px}
-    .step p{font-size:11px;color:var(--muted);line-height:1.45}
-    @media(max-width:1100px){
-      html,body{overflow:auto}
-      .app{grid-template-columns:1fr;height:auto;min-height:calc(100vh - 48px)}
-      .panel{border-right:none;border-bottom:1px solid var(--border)}
-      .panel:last-child{border-bottom:none}
-      .hero-grid{grid-template-columns:1fr}
+    .spec{background:#121722;color:#eef2f7;padding:22px 20px;overflow:auto;border-left:1px solid #242b39}
+    .spec-head{padding-bottom:18px;border-bottom:1px solid #293142}
+    .spec .eyebrow{background:#321326;color:#ff8bc8}
+    .spec h2{font-size:23px;letter-spacing:-.035em;margin:12px 0 8px}
+    .spec-head p{font-size:11px;line-height:1.65;color:#9ca7ba;margin:0}
+    .spec-section{padding:17px 0;border-bottom:1px solid #293142}
+    .spec-title{font-size:9px;color:#7f8ba0;text-transform:uppercase;letter-spacing:.09em;font-weight:900;margin-bottom:10px}
+    .pipeline{display:grid;gap:7px}
+    .pipe{padding:10px;border:1px solid #30394a;border-radius:12px;background:#181e2a;display:grid;grid-template-columns:27px 1fr;gap:8px}
+    .pipe i{width:27px;height:27px;border-radius:8px;background:#282f3d;display:grid;place-items:center;color:#ff8bc8;font-style:normal;font-size:9px;font-weight:900}
+    .pipe strong{font-size:10px;display:block;margin-bottom:2px}.pipe span{display:block;font-size:8.5px;line-height:1.4;color:#95a0b4}
+    .manifest{display:grid;gap:7px}
+    .manifest-row{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:10px;background:#181e2a;border:1px solid #2c3443}
+    .manifest-row b{font-size:9px;flex:1}.manifest-row span{font-size:8px;color:#8f9aae}.manifest-row i{width:7px;height:7px;border-radius:50%;background:#29c982}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .mini-card{padding:10px;border-radius:11px;border:1px solid #30394a;background:#181e2a}
+    .mini-card span{display:block;font-size:8px;color:#8e99ac;text-transform:uppercase;letter-spacing:.07em}.mini-card strong{display:block;font-size:17px;margin-top:4px}
+    .decision{display:flex;gap:7px;margin-bottom:7px}.decision b{min-width:50px;font-size:8px;padding:5px 6px;border-radius:7px;text-align:center}.decision span{font-size:8.5px;color:#9ca7ba;line-height:1.45}
+    .decision.rag b{background:#14365f;color:#7bb4ff}.decision.flow b{background:#4b3212;color:#ffbf69}.decision.handoff b{background:#3c2030;color:#ff8bc8}
+    .footnote{font-size:8.5px;line-height:1.55;color:#778398;margin-top:12px}
+    @media(max-width:1050px){
+      .shell{grid-template-columns:1fr}.spec{border-left:0;border-top:1px solid #242b39}.browser{height:720px}.stage{padding:14px}
+    }
+    @media(max-width:650px){
+      .browser{height:760px;min-height:0;border-radius:0}.stage{padding:0}.site-nav,.site-actions .ghost{display:none}.hero{grid-template-columns:1fr;padding:35px 7%}.hero-visual{display:none}.benefits{grid-template-columns:1fr}.chatbot{inset:8px;width:auto;height:auto;max-height:none}.launcher{right:12px;bottom:12px}
+      .chatbot{position:fixed;z-index:100}
+      .launcher{position:fixed;z-index:90}
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="../index.html" target="_top">
-      <span class="brand-mark">mo<br>mo</span>
-      <span><strong>MoMo Chatbot</strong><small>MoSpark concept prototype</small></span>
-    </a>
-    <a class="back" href="../index.html" target="_top">← Store</a>
-    <div class="status"><span class="dot"></span><span>Live assistant preview</span></div>
-  </header>
-
-  <main class="app">
-    <aside class="panel left">
-      <div>
-        <div class="section-title">Intents</div>
-        <div class="intent-list" id="intentList"></div>
-      </div>
-
-      <div>
-        <div class="section-title">Quick prompts</div>
-        <div class="pill-row" id="pillRow"></div>
-      </div>
-
-      <div class="insight-card">
-        <h3>What this prototype proves</h3>
-        <p>Chatbot này không nhằm thay thế support. Mục tiêu là xem MoMo Web có thể giữ người dùng lại bằng hội thoại, gợi ý dịch vụ đúng ngữ cảnh, và handoff sang CTA hay không.</p>
-        <div class="metric-grid">
-          <div class="metric"><span>Target</span><strong>Help + handoff</strong></div>
-          <div class="metric"><span>Mode</span><strong>Web assistant</strong></div>
-          <div class="metric"><span>Scope</span><strong>MoMo services</strong></div>
-          <div class="metric"><span>Output</span><strong>Actionable</strong></div>
+  <main class="shell">
+    <section class="stage">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="address" id="address">https://momo.vn/vay-nhanh</div>
         </div>
-      </div>
-    </aside>
+        <div class="site">
+          <header class="site-head">
+            <div class="logo">mo<br>mo</div>
+            <nav class="site-nav"><span>Sản phẩm</span><span>Điều kiện</span><span>Câu hỏi thường gặp</span></nav>
+            <div class="site-actions"><button class="ghost" id="headerAction">Tính khoản vay</button><button class="primary">Mở MoMo</button></div>
+          </header>
+          <section class="hero">
+            <div>
+              <span class="eyebrow" id="siteEyebrow">Tài chính và tín dụng</span>
+              <h1 id="siteTitle">Vay nhanh trong ngày qua MoMo</h1>
+              <p class="lead" id="siteLead">Tìm hiểu điều kiện, hồ sơ, cách tính lãi và quy trình đăng ký khoản vay ngay trên ứng dụng MoMo.</p>
+              <div class="cta-row"><button class="primary" id="primaryCta">Vay ngay trên MoMo</button><button class="ghost" id="secondaryCta">Tính lãi vay</button></div>
+            </div>
+            <div class="hero-visual">
+              <span class="visual-label" id="visualLabel">Hạn mức tham khảo</span>
+              <div class="amount" id="visualValue">30 triệu</div>
+              <span class="visual-label" id="visualSub">Đăng ký hoàn toàn trên ứng dụng</span>
+              <div class="visual-card"><strong>Trợ lý đang đọc nội dung trang này</strong><span>Hỏi bất kỳ điều gì về sản phẩm, điều kiện, quy trình và chính sách của dự án.</span></div>
+            </div>
+          </section>
+          <section class="benefits">
+            <div class="benefit"><i>01</i><strong id="benefitTitle1">Không thế chấp</strong><span id="benefitText1">Khoản vay tiêu dùng theo điều kiện của đối tác cung cấp.</span></div>
+            <div class="benefit"><i>02</i><strong id="benefitTitle2">Đăng ký online</strong><span id="benefitText2">Thực hiện các bước đăng ký và theo dõi trên ứng dụng MoMo.</span></div>
+            <div class="benefit"><i>03</i><strong id="benefitTitle3">Thông tin rõ ràng</strong><span id="benefitText3">Kiểm tra lãi suất, kỳ hạn và nghĩa vụ thanh toán trước khi xác nhận.</span></div>
+          </section>
+        </div>
 
-    <section class="panel center">
-      <div class="hero">
-        <div class="hero-top">
-          <div class="hero-copy">
-            <span class="kicker">MoSpark / Chatbot</span>
-            <h1>Trợ lý hội thoại để trả lời, gợi ý và dẫn tiếp</h1>
-            <p>Chatbot này giúp user hỏi nhanh về dịch vụ MoMo, hiểu use case phù hợp, rồi đi tiếp tới bước mở app, đọc thông tin hoặc thực hiện CTA cần thiết. Trọng tâm là giảm friction cho user chưa rõ mình cần gì.</p>
-          </div>
-        </div>
-        <div class="hero-grid">
-          <div class="hero-card">
-            <span>Primary use</span>
-            <strong>Answer + Guide</strong>
-            <p>Trả lời câu hỏi, giải thích dịch vụ, và đưa ra next step phù hợp.</p>
-          </div>
-          <div class="hero-card">
-            <span>Safety</span>
-            <strong>Guardrails</strong>
-            <p>Không suy diễn giao dịch thật, luôn handoff sang surface đúng khi cần.</p>
-          </div>
-          <div class="hero-card">
-            <span>Success metric</span>
-            <strong>Helpful handoff</strong>
-            <p>Đo câu trả lời hữu ích, số follow-up, và click CTA tiếp theo.</p>
-          </div>
-        </div>
-      </div>
+        <button class="launcher" id="launcher" type="button">
+          <span class="launcher-mark">AI</span>
+          <span class="launcher-copy"><strong>Hỏi về Vay Nhanh</strong><span>Trả lời từ nội dung dự án</span></span>
+          <span class="online"></span>
+        </button>
 
-      <div class="chat-wrap">
-        <div class="chat" id="chat"></div>
-        <div class="suggestions" id="suggestions"></div>
-        <div class="composer">
-          <div class="composer-wrap">
-            <textarea id="input" class="input" placeholder="Hỏi MoMo về Loan, Pay Later, thanh toán số, quà CHAOMOMO..."></textarea>
-            <button class="send" id="sendBtn" type="button">➤</button>
+        <section class="chatbot" id="chatbot" aria-label="MoMo Project Assistant">
+          <header class="chat-head">
+            <div class="bot-logo">mo<br>mo</div>
+            <div class="bot-title"><strong>Trợ lý dự án MoMo</strong><span id="botContext">Đang dùng knowledge của Vay Nhanh</span></div>
+            <button class="close" id="closeChat" type="button" aria-label="Đóng chatbot">×</button>
+          </header>
+          <div class="context">
+            <label for="projectSelect">Project</label>
+            <select id="projectSelect">
+              <option value="vay-nhanh">Vay Nhanh</option>
+              <option value="phat-nguoi">Phạt Nguội</option>
+              <option value="vi-tra-sau">Ví Trả Sau</option>
+              <option value="bhyt">Bảo hiểm Y tế</option>
+            </select>
+            <span class="sync"><i></i>Synced</span>
           </div>
-          <div class="hint">Enter để gửi, Shift+Enter để xuống dòng. Câu trả lời là mô phỏng cho prototype.</div>
-        </div>
+          <div class="messages" id="messages"></div>
+          <div>
+            <div class="suggestions" id="suggestions"></div>
+            <div class="composer">
+              <div class="composer-box">
+                <input id="chatInput" type="text" autocomplete="off" placeholder="Hỏi bất kỳ điều gì về dự án này">
+                <button class="send" id="sendButton" type="button">↑</button>
+              </div>
+              <div class="disclaimer">AI có thể sai. Thông tin quan trọng cần được xác nhận trên nguồn chính thức.</div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
-    <aside class="panel right">
-      <div class="box">
-        <h3>Handoff map</h3>
-        <p>Chatbot nên dừng ở chỗ có thể dẫn người dùng sang đúng surface: services, bill lookup, scam check, download hoặc gift CTA.</p>
-        <div class="handoff-list">
-          <div class="handoff"><b>MoMo Services</b><span>Giới thiệu dịch vụ và use case quan trọng cho user chưa cài app.</span></div>
-          <div class="handoff"><b>Bill Lookup</b><span>Tra cứu và thanh toán hóa đơn định kỳ khi user hỏi về bill.</span></div>
-          <div class="handoff"><b>Scam Check</b><span>Cảnh báo khi user hỏi về số điện thoại, tài khoản hoặc link lạ.</span></div>
-        </div>
+    <aside class="spec">
+      <div class="spec-head">
+        <span class="eyebrow">Dev handoff</span>
+        <h2>Embedded RAG + Typebot</h2>
+        <p>Chatbot là một component nhúng theo project, không phải chatbot MoMo tổng quát. Mỗi Mini Web hoặc Microsite truyền đúng context và knowledge scope khi khởi tạo.</p>
       </div>
 
-      <div class="box">
-        <h3>Response modes</h3>
-        <div class="badge-row">
-          <span class="badge blue">Explain</span>
-          <span class="badge green">Recommend</span>
-          <span class="badge amber">Handoff</span>
-          <span class="badge red">Warn</span>
+      <section class="spec-section">
+        <div class="spec-title">Runtime pipeline</div>
+        <div class="pipeline">
+          <div class="pipe"><i>01</i><div><strong>Embed SDK</strong><span>Nhận project_id, page_url, locale và campaign context.</span></div></div>
+          <div class="pipe"><i>02</i><div><strong>Intent router</strong><span>Phân biệt câu hỏi mở, flow có trạng thái và trường hợp cần handoff.</span></div></div>
+          <div class="pipe"><i>03</i><div><strong>Project RAG</strong><span>Retrieve đúng namespace, tạo câu trả lời kèm citation và confidence.</span></div></div>
+          <div class="pipe"><i>04</i><div><strong>Typebot</strong><span>Chạy kịch bản xác định như eligibility, lead form, CTA và escalation.</span></div></div>
         </div>
-        <div class="flow">
-          <div class="step"><i>01</i><div><strong>Understand</strong><p>Nhận intent từ câu hỏi ngắn hoặc câu dài của user.</p></div></div>
-          <div class="step"><i>02</i><div><strong>Respond</strong><p>Trả lời bằng ngôn ngữ ngắn, rõ và có CTA tiếp theo.</p></div></div>
-          <div class="step"><i>03</i><div><strong>Handoff</strong><p>Nếu cần, chuyển sang dịch vụ / lookup / download phù hợp.</p></div></div>
+      </section>
+
+      <section class="spec-section">
+        <div class="spec-title">Knowledge manifest</div>
+        <div class="manifest" id="manifest"></div>
+      </section>
+
+      <section class="spec-section">
+        <div class="spec-title">Routing contract</div>
+        <div class="decision rag"><b>RAG</b><span>Giải thích sản phẩm, điều kiện, phí, chính sách, FAQ và nội dung trên project.</span></div>
+        <div class="decision flow"><b>Typebot</b><span>Thu thập dữ liệu, hỏi tuần tự, kiểm tra điều kiện, chuyển CTA hoặc mở app.</span></div>
+        <div class="decision handoff"><b>Handoff</b><span>Confidence thấp, thiếu nguồn, khiếu nại, dữ liệu cá nhân hoặc yêu cầu giao dịch thật.</span></div>
+      </section>
+
+      <section class="spec-section">
+        <div class="spec-title">Quality gate</div>
+        <div class="split">
+          <div class="mini-card"><span>Citation</span><strong>100%</strong></div>
+          <div class="mini-card"><span>Min confidence</span><strong>0.72</strong></div>
+          <div class="mini-card"><span>Project scope</span><strong>Strict</strong></div>
+          <div class="mini-card"><span>PII logging</span><strong>Off</strong></div>
         </div>
-      </div>
+        <p class="footnote">Prototype dùng dữ liệu mô phỏng từ Business Context và RAG source đang có trong repo. Production cần knowledge ingestion, versioning, permission và evaluation dataset riêng.</p>
+      </section>
     </aside>
   </main>
 
   <script>
-    const intents = [
-      {
-        key: 'services',
-        title: 'Giải thích dịch vụ',
-        desc: 'Người dùng hỏi MoMo làm gì, có gì mới, nên bắt đầu từ đâu.',
-        prompt: 'MoMo có gì cho người chưa cài app?'
-      },
-      {
-        key: 'loan',
-        title: 'Loan / Pay Later',
-        desc: 'Gợi ý use case tài chính phù hợp, trả lời ngắn gọn theo mục tiêu.',
-        prompt: 'Tôi muốn vay hoặc trả sau thì MoMo hỗ trợ gì?'
-      },
-      {
-        key: 'bill',
-        title: 'Bill payment',
-        desc: 'Dẫn người dùng tới bill lookup hoặc thanh toán định kỳ.',
-        prompt: 'Tôi muốn tra cứu hóa đơn điện nước thì làm sao?'
-      },
-      {
-        key: 'safety',
-        title: 'An toàn / Scam',
-        desc: 'Cảnh báo link, số điện thoại, tài khoản, QR đáng ngờ.',
-        prompt: 'Số tài khoản này có an toàn không?'
-      },
-      {
-        key: 'gift',
-        title: 'Quà cho user mới',
-        desc: 'Giải thích CHAOMOMO và CTA tải app cho user mới.',
-        prompt: 'Cách nhận quà CHAOMOMO như thế nào?'
-      }
-    ];
-
-    const quickPrompts = [
-      'MoMo có gì cho người chưa cài app?',
-      'Tôi muốn vay hoặc trả sau thì sao?',
-      'Tôi muốn tra cứu hóa đơn điện nước',
-      'Số tài khoản này có an toàn không?',
-      'Cách nhận quà CHAOMOMO'
-    ];
-
-    const responses = {
-      services: {
-        title: 'MoMo dành cho người chưa cài app',
-        text: [
-          'MoMo có thể giới thiệu nhanh các dịch vụ cốt lõi như thanh toán số, Pay Later, Loan và các tiện ích thường dùng.',
-          'Nếu bạn đang xem trên web, nên đi theo luồng: đọc thông tin -> xem use case -> tải app -> nhận quà cho user mới.'
+    const projects = {
+      'vay-nhanh': {
+        name: 'Vay Nhanh',
+        url: 'https://momo.vn/vay-nhanh',
+        eyebrow: 'Tài chính và tín dụng',
+        title: 'Vay nhanh trong ngày qua MoMo',
+        lead: 'Tìm hiểu điều kiện, hồ sơ, cách tính lãi và quy trình đăng ký khoản vay ngay trên ứng dụng MoMo.',
+        primary: 'Vay ngay trên MoMo',
+        secondary: 'Tính lãi vay',
+        headerAction: 'Tính khoản vay',
+        visual: ['Hạn mức tham khảo', '30 triệu', 'Đăng ký hoàn toàn trên ứng dụng'],
+        benefits: [
+          ['Không thế chấp', 'Khoản vay tiêu dùng theo điều kiện của đối tác cung cấp.'],
+          ['Đăng ký online', 'Thực hiện các bước đăng ký và theo dõi trên ứng dụng MoMo.'],
+          ['Thông tin rõ ràng', 'Kiểm tra lãi suất, kỳ hạn và nghĩa vụ thanh toán trước khi xác nhận.']
         ],
-        ctas: ['Xem dịch vụ', 'Tải app', 'Nhận quà CHAOMOMO']
-      },
-      loan: {
-        title: 'Loan / Pay Later',
-        text: [
-          'Nếu mục tiêu là mua trước trả sau, chatbot nên giải thích điều kiện cơ bản, cách xem hạn mức và bước tiếp theo trong app.',
-          'Nếu user hỏi nhiều hơn về số tiền hoặc kỳ hạn, nên handoff sang surface tài chính hoặc form kiểm tra điều kiện.'
+        suggestions: ['Cần giấy tờ gì?', 'Lãi suất được tính sao?', 'Tôi muốn đăng ký vay'],
+        manifest: [
+          ['Business Context', '12 fields'],
+          ['Product pages', '18 pages'],
+          ['FAQ và policy', '42 entries'],
+          ['Legal disclaimer', 'v3.2']
         ],
-        ctas: ['Xem Pay Later', 'Tính nhanh khả năng vay', 'Hỏi thêm điều kiện']
+        answers: {
+          default: {
+            title: 'Thông tin về Vay Nhanh',
+            text: 'Vay Nhanh là khoản vay tiêu dùng không cần tài sản thế chấp, thực hiện qua ứng dụng MoMo. Điều kiện, hạn mức và lãi suất cụ thể phụ thuộc kết quả xét duyệt của đối tác cung cấp.',
+            sources: ['Business Context: Vay Nhanh', 'momo.vn/vay-nhanh/cau-hoi-thuong-gap'],
+            confidence: '0.91'
+          },
+          condition: {
+            title: 'Hồ sơ và điều kiện',
+            text: 'Bạn cần thông tin định danh hợp lệ và đáp ứng tiêu chí xét duyệt của đối tác. Không nên hứa “duyệt chắc chắn” vì kết quả còn phụ thuộc hồ sơ và đánh giá tín dụng.',
+            sources: ['FAQ: Điều kiện đăng ký', 'Legal disclaimer v3.2'],
+            confidence: '0.94'
+          },
+          rate: {
+            title: 'Cách xác định lãi suất',
+            text: 'Lãi suất và tổng chi phí phải được hiển thị trước khi bạn xác nhận. Mức thực tế phụ thuộc hạn mức, kỳ hạn và kết quả xét duyệt. Hãy kiểm tra tổng tiền phải trả, không chỉ số tiền trả mỗi tháng.',
+            sources: ['Policy: Lãi suất và phí', 'Business Context: Legal disclaimer'],
+            confidence: '0.89'
+          },
+          flow: {
+            title: 'Bắt đầu kiểm tra điều kiện',
+            text: 'Tôi sẽ chuyển sang kịch bản Typebot để hỏi tuần tự, không gửi dữ liệu nhạy cảm vào RAG. Bước đầu tiên: bạn đã có ứng dụng MoMo chưa?',
+            actions: ['Đã có MoMo', 'Chưa có MoMo'],
+            typebot: true
+          }
+        }
       },
-      bill: {
-        title: 'Bill payment',
-        text: [
-          'Người dùng có thể tra hóa đơn theo mã khách hàng, số hợp đồng hoặc số điện thoại rồi thanh toán ngay.',
-          'Mục tiêu của chatbot là đẩy người dùng sang Bill Lookup để xem số tiền, hạn thanh toán và bật nhắc hạn.'
+      'phat-nguoi': {
+        name: 'Phạt Nguội',
+        url: 'https://momo.vn/phat-nguoi',
+        eyebrow: 'Dịch vụ công và tiện ích',
+        title: 'Tra cứu phạt nguội theo biển số xe',
+        lead: 'Kiểm tra thông tin vi phạm giao thông, đọc hướng dẫn xử lý và đi tiếp tới kênh nộp phạt phù hợp.',
+        primary: 'Tra cứu phạt nguội',
+        secondary: 'Xem hướng dẫn',
+        headerAction: 'Hướng dẫn tra cứu',
+        visual: ['Nguồn dữ liệu', 'CSGT', 'Đối chiếu thông tin chính thức'],
+        benefits: [
+          ['Tra theo biển số', 'Chọn loại phương tiện và nhập đúng biển số cần kiểm tra.'],
+          ['Đọc kết quả rõ ràng', 'Hiểu trạng thái vi phạm, thời điểm và hướng xử lý tiếp theo.'],
+          ['Bảo vệ dữ liệu', 'Thông tin phương tiện chỉ nhập trong flow tra cứu bảo mật.']
         ],
-        ctas: ['Mở Bill Lookup', 'Bật nhắc hạn', 'Thanh toán ngay']
+        suggestions: ['Bao lâu có kết quả?', 'Nguồn dữ liệu ở đâu?', 'Tôi muốn tra biển số'],
+        manifest: [
+          ['Business Context', '12 fields'],
+          ['Hướng dẫn tra cứu', '9 pages'],
+          ['FAQ giao thông', '31 entries'],
+          ['Legal disclaimer', 'v2.8']
+        ],
+        answers: {
+          default: {
+            title: 'Tra cứu Phạt Nguội',
+            text: 'Microsite hướng dẫn tra cứu vi phạm theo biển số và cách xử lý tiếp theo. Kết quả trên web chỉ nên dùng để tham khảo, thông tin chính thức cần đối chiếu với nguồn của cơ quan có thẩm quyền.',
+            sources: ['Business Context: Phạt Nguội', 'Legal disclaimer v2.8'],
+            confidence: '0.93'
+          },
+          condition: {
+            title: 'Thông tin cần chuẩn bị',
+            text: 'Để tra cứu, bạn cần loại phương tiện và biển số xe. Không gửi số giấy tờ cá nhân qua phần hỏi đáp mở; flow nhập dữ liệu sẽ chạy riêng bằng Typebot.',
+            sources: ['Hướng dẫn tra cứu biển số', 'Privacy rule: PII handling'],
+            confidence: '0.96'
+          },
+          rate: {
+            title: 'Thời gian cập nhật kết quả',
+            text: 'Thời gian cập nhật phụ thuộc nguồn dữ liệu của cơ quan quản lý. Chatbot không nên cam kết real-time nếu nguồn chính thức chưa xác nhận SLA.',
+            sources: ['FAQ: Thời gian cập nhật', 'Business Context: Trust signals'],
+            confidence: '0.84'
+          },
+          flow: {
+            title: 'Mở flow tra cứu',
+            text: 'Tôi sẽ chuyển sang Typebot để thu thập loại phương tiện và biển số trong flow riêng. Dữ liệu này không được đưa vào prompt RAG.',
+            actions: ['Xe máy', 'Ô tô'],
+            typebot: true
+          }
+        }
       },
-      safety: {
-        title: 'Safety warning',
-        text: [
-          'Nếu có link lạ, số điện thoại lạ hoặc QR thúc giục chuyển tiền, chatbot nên dừng lại và cảnh báo.',
-          'Câu trả lời phải ngắn, rõ, không phán đoán thay người dùng nhưng đủ để họ dừng và xác minh.'
+      'vi-tra-sau': {
+        name: 'Ví Trả Sau',
+        url: 'https://momo.vn/vi-tra-sau',
+        eyebrow: 'Mua trước trả sau',
+        title: 'Linh hoạt chi tiêu với Ví Trả Sau',
+        lead: 'Tìm hiểu cách hoạt động, điều kiện kích hoạt, kỳ thanh toán và các lưu ý khi dùng sản phẩm tín dụng.',
+        primary: 'Kích hoạt Ví Trả Sau',
+        secondary: 'Xem cách hoạt động',
+        headerAction: 'Cách hoạt động',
+        visual: ['Thời gian xét duyệt', '30 giây', 'Kết quả tùy điều kiện tài khoản'],
+        benefits: [
+          ['Chi tiêu linh hoạt', 'Thanh toán trước và hoàn trả theo kỳ theo điều khoản hiện hành.'],
+          ['Kích hoạt trên MoMo', 'Kiểm tra khả năng sử dụng và hạn mức trong flow chính thức.'],
+          ['Theo dõi kỳ hạn', 'Xem ngày đến hạn, phí và toàn bộ nghĩa vụ thanh toán.']
         ],
-        ctas: ['Mở Scam Check', 'Xác minh lại', 'Báo cáo rủi ro']
+        suggestions: ['Ví Trả Sau là gì?', 'Trả trễ có sao không?', 'Tôi muốn kích hoạt'],
+        manifest: [
+          ['Business Context', '12 fields'],
+          ['Product pages', '15 pages'],
+          ['FAQ và policy', '36 entries'],
+          ['Legal disclaimer', 'v4.1']
+        ],
+        answers: {
+          default: {
+            title: 'Ví Trả Sau hoạt động thế nào',
+            text: 'Ví Trả Sau là sản phẩm tín dụng tiêu dùng cho phép thanh toán trước và hoàn trả theo kỳ. Hạn mức, phí và khả năng kích hoạt tùy thuộc kết quả xét duyệt.',
+            sources: ['Business Context: Ví Trả Sau', 'FAQ: Cách hoạt động'],
+            confidence: '0.95'
+          },
+          condition: {
+            title: 'Điều kiện kích hoạt',
+            text: 'Bạn cần có tài khoản MoMo đáp ứng điều kiện của đối tác. Kết quả được xác định trong flow chính thức, chatbot không thể tự phê duyệt hoặc cam kết hạn mức.',
+            sources: ['FAQ: Điều kiện kích hoạt', 'Policy: Credit eligibility'],
+            confidence: '0.92'
+          },
+          rate: {
+            title: 'Lưu ý khi thanh toán trễ',
+            text: 'Thanh toán trễ có thể phát sinh phí hoặc ảnh hưởng lịch sử tín dụng theo điều khoản hiện hành. Hãy kiểm tra ngày đến hạn và toàn bộ chi phí trên hợp đồng trước khi dùng.',
+            sources: ['Policy: Thanh toán và phí', 'Legal disclaimer v4.1'],
+            confidence: '0.97'
+          },
+          flow: {
+            title: 'Bắt đầu flow kích hoạt',
+            text: 'Tôi sẽ mở Typebot để kiểm tra trạng thái tài khoản và hướng dẫn từng bước. Không nhập OTP hoặc mật khẩu trong hội thoại.',
+            actions: ['Mở MoMo', 'Xem điều kiện trước'],
+            typebot: true
+          }
+        }
       },
-      gift: {
-        title: 'CHAOMOMO',
-        text: [
-          'Chatbot nên giải thích quà cho user mới theo cách rất ngắn: tải app, hoàn tất bước đầu và nhận quà.',
-          'Đây là điểm chốt chuyển đổi tự nhiên sau khi user đã hiểu MoMo làm gì.'
+      bhyt: {
+        name: 'Bảo hiểm Y tế',
+        url: 'https://momo.vn/bao-hiem-y-te',
+        eyebrow: 'Bảo hiểm công nghệ',
+        title: 'Tìm hiểu và gia hạn BHYT trực tuyến',
+        lead: 'Đọc quyền lợi, đối tượng tham gia, mức đóng tham khảo và quy trình thực hiện trên ứng dụng MoMo.',
+        primary: 'Mua hoặc gia hạn BHYT',
+        secondary: 'Xem quyền lợi',
+        headerAction: 'Xem mức đóng',
+        visual: ['Thời gian bảo vệ', '12 tháng', 'Quyền lợi theo quy định hiện hành'],
+        benefits: [
+          ['Thông tin quyền lợi', 'Tìm hiểu phạm vi, mức hưởng và các trường hợp áp dụng.'],
+          ['Thực hiện trực tuyến', 'Đi theo flow mua hoặc gia hạn phù hợp trên MoMo.'],
+          ['Nguồn pháp lý', 'Câu trả lời quan trọng luôn dẫn tới quy định và nguồn tham chiếu.']
         ],
-        ctas: ['Tải app', 'Xem quà', 'Xem dịch vụ trước']
+        suggestions: ['Ai có thể tham gia?', 'Quyền lợi gồm gì?', 'Tôi muốn gia hạn'],
+        manifest: [
+          ['Business Context', '12 fields'],
+          ['Product pages', '11 pages'],
+          ['FAQ quyền lợi', '28 entries'],
+          ['Legal references', '6 docs']
+        ],
+        answers: {
+          default: {
+            title: 'BHYT qua MoMo',
+            text: 'Microsite cung cấp thông tin về BHYT tự nguyện và luồng mua hoặc gia hạn trên MoMo. Quyền lợi thực tế áp dụng theo quy định BHYT và trạng thái hồ sơ của người tham gia.',
+            sources: ['Business Context: BHYT', 'FAQ: Tổng quan sản phẩm'],
+            confidence: '0.93'
+          },
+          condition: {
+            title: 'Đối tượng tham gia',
+            text: 'Người không thuộc nhóm BHYT bắt buộc có thể tìm hiểu hình thức tham gia phù hợp. Trường hợp cụ thể cần đối chiếu quy định hiện hành và thông tin từ cơ quan BHXH.',
+            sources: ['FAQ: Đối tượng tham gia', 'Legal references: Luật BHYT'],
+            confidence: '0.88'
+          },
+          rate: {
+            title: 'Quyền lợi và mức hưởng',
+            text: 'Mức hưởng phụ thuộc nhóm đối tượng, tuyến khám chữa bệnh và quy định tại thời điểm sử dụng. Chatbot cần dẫn nguồn thay vì đưa một mức áp dụng cho mọi trường hợp.',
+            sources: ['FAQ: Mức hưởng BHYT', 'Legal references: Quyền lợi'],
+            confidence: '0.90'
+          },
+          flow: {
+            title: 'Bắt đầu flow gia hạn',
+            text: 'Tôi sẽ chuyển sang Typebot để hỏi trạng thái thẻ và hướng dẫn theo từng bước. Mã BHYT chỉ nên nhập trong form bảo mật của flow, không nhập ở chat mở.',
+            actions: ['Gia hạn thẻ', 'Mua cho người mới'],
+            typebot: true
+          }
+        }
       }
     };
 
-    const intentList = document.getElementById('intentList');
-    const pillRow = document.getElementById('pillRow');
-    const chat = document.getElementById('chat');
+    const projectSelect = document.getElementById('projectSelect');
+    const chatbot = document.getElementById('chatbot');
+    const launcher = document.getElementById('launcher');
+    const messages = document.getElementById('messages');
     const suggestions = document.getElementById('suggestions');
-    const input = document.getElementById('input');
-    const sendBtn = document.getElementById('sendBtn');
+    const input = document.getElementById('chatInput');
+    const manifest = document.getElementById('manifest');
 
-    let activeIntent = 'services';
-    let chatLog = [
-      { role: 'bot', text: 'Tôi là MoMo Chatbot. Hỏi tôi về dịch vụ, bill, an toàn giao dịch hoặc quà CHAOMOMO.' }
-    ];
-
-    function now() {
-      const d = new Date();
-      return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function guessIntent(text) {
+    function routeQuestion(text) {
       const q = text.toLowerCase();
-      if (/(bill|hóa đơn|điện|nước|internet|di động)/.test(q)) return 'bill';
-      if (/(scam|lừa|lừa đảo|an toàn|cảnh báo|link|otp|qr|tài khoản|số điện thoại)/.test(q)) return 'safety';
-      if (/(loan|vay|pay later|trả sau|hạn mức|credit)/.test(q)) return 'loan';
-      if (/(quà|chaomomo|tải app|download|người chưa cài|chưa có momo)/.test(q)) return 'gift';
-      return 'services';
+      if (/(đăng ký|kích hoạt|gia hạn|tra biển|tra cứu|bắt đầu|mở momo|thực hiện)/.test(q)) return 'flow';
+      if (/(điều kiện|giấy tờ|hồ sơ|ai có thể|đối tượng)/.test(q)) return 'condition';
+      if (/(lãi|phí|trả trễ|bao lâu|quyền lợi|mức hưởng|cập nhật)/.test(q)) return 'rate';
+      return 'default';
     }
 
-    function renderIntents() {
-      intentList.innerHTML = intents.map(item => `
-        <button class="intent${item.key === activeIntent ? ' active' : ''}" data-key="${item.key}">
-          <strong>${item.title}</strong>
-          <p>${item.desc}</p>
-        </button>
-      `).join('');
-      intentList.querySelectorAll('.intent').forEach(btn => {
-        btn.addEventListener('click', () => {
-          activeIntent = btn.dataset.key;
-          input.value = intents.find(item => item.key === activeIntent).prompt;
-          renderAll();
-        });
-      });
-    }
-
-    function renderPills() {
-      pillRow.innerHTML = quickPrompts.map(prompt => `
-        <button class="pill${input.value.trim() === prompt ? ' active' : ''}" type="button" data-prompt="${prompt}">${prompt}</button>
-      `).join('');
-      pillRow.querySelectorAll('.pill').forEach(btn => {
-        btn.addEventListener('click', () => {
-          input.value = btn.dataset.prompt;
-          activeIntent = guessIntent(input.value);
-          renderAll();
-          sendMessage();
-        });
-      });
-    }
-
-    function renderChat() {
-      chat.innerHTML = chatLog.map(msg => {
-        const isUser = msg.role === 'user';
-        return `
-          <div class="msg ${isUser ? 'user' : 'bot'}">
-            <div class="avatar ${isUser ? 'user' : 'bot'}">${isUser ? 'UI' : 'AI'}</div>
-            <div>
-              <div class="bubble">
-                ${msg.title ? `<span class="title">${msg.title}</span>` : ''}
-                ${msg.text.map(line => `<div>${line}</div>`).join('')}
-                ${msg.ctas ? `<ul>${msg.ctas.map(cta => `<li>${cta}</li>`).join('')}</ul>` : ''}
-              </div>
-              <div class="time">${msg.time}</div>
-            </div>
+    function botMessage(answer) {
+      const route = answer.typebot ? 'Typebot scenario' : 'Project RAG';
+      const sourceMarkup = answer.sources ? `
+        <div class="source-list">
+          ${answer.sources.map((source, index) => `<div class="source"><b>[${index + 1}]</b><span>${source}</span></div>`).join('')}
+        </div>
+        <span class="confidence">Confidence ${answer.confidence}</span>
+      ` : '';
+      const actions = answer.actions ? `<div class="actions">${answer.actions.map(action => `<button class="action" type="button">${action}</button>`).join('')}</div>` : '';
+      return `
+        <div class="message">
+          <div class="mini-avatar">AI</div>
+          <div class="bubble">
+            <div class="route${answer.typebot ? ' typebot' : ''}">${route}</div>
+            <div class="answer-title">${answer.title}</div>
+            <div>${answer.text}</div>
+            ${sourceMarkup}
+            ${actions}
           </div>
-        `;
-      }).join('');
-      chat.scrollTop = chat.scrollHeight;
+        </div>
+      `;
     }
 
-    function addBotReply(intentKey) {
-      const reply = responses[intentKey] || responses.services;
-      chatLog.push({
-        role: 'bot',
-        title: reply.title,
-        text: reply.text,
-        ctas: reply.ctas,
-        time: now()
+    function userMessage(text) {
+      return `<div class="message user"><div class="bubble">${text}</div></div>`;
+    }
+
+    function renderProject() {
+      const project = projects[projectSelect.value];
+      document.getElementById('address').textContent = project.url;
+      document.getElementById('siteEyebrow').textContent = project.eyebrow;
+      document.getElementById('siteTitle').textContent = project.title;
+      document.getElementById('siteLead').textContent = project.lead;
+      document.getElementById('primaryCta').textContent = project.primary;
+      document.getElementById('secondaryCta').textContent = project.secondary;
+      document.getElementById('headerAction').textContent = project.headerAction;
+      document.getElementById('visualLabel').textContent = project.visual[0];
+      document.getElementById('visualValue').textContent = project.visual[1];
+      document.getElementById('visualSub').textContent = project.visual[2];
+      project.benefits.forEach((benefit, index) => {
+        document.getElementById(`benefitTitle${index + 1}`).textContent = benefit[0];
+        document.getElementById(`benefitText${index + 1}`).textContent = benefit[1];
+      });
+      document.getElementById('botContext').textContent = `Đang dùng knowledge của ${project.name}`;
+      launcher.querySelector('strong').textContent = `Hỏi về ${project.name}`;
+      suggestions.innerHTML = project.suggestions.map(item => `<button class="suggestion" type="button">${item}</button>`).join('');
+      manifest.innerHTML = project.manifest.map(item => `
+        <div class="manifest-row"><i></i><b>${item[0]}</b><span>${item[1]}</span></div>
+      `).join('');
+      messages.innerHTML = botMessage({
+        title: `Tôi đang đọc dự án ${project.name}`,
+        text: 'Bạn có thể hỏi tự do về nội dung, điều kiện, chính sách hoặc quy trình. Câu trả lời mở dùng RAG; tác vụ có nhiều bước sẽ chuyển sang Typebot.',
+        sources: [`Project namespace: ${projectSelect.value}`, 'Current page context'],
+        confidence: '1.00'
+      });
+      bindSuggestions();
+    }
+
+    function bindSuggestions() {
+      suggestions.querySelectorAll('.suggestion').forEach(button => {
+        button.addEventListener('click', () => send(button.textContent));
       });
     }
 
-    function sendMessage() {
-      const text = input.value.trim();
+    function send(value) {
+      const text = (value || input.value).trim();
       if (!text) return;
-      const intentKey = guessIntent(text);
-      activeIntent = intentKey;
-      chatLog.push({ role: 'user', text: [text], time: now() });
-      addBotReply(intentKey);
+      const project = projects[projectSelect.value];
+      const route = routeQuestion(text);
+      messages.insertAdjacentHTML('beforeend', userMessage(text));
+      messages.insertAdjacentHTML('beforeend', botMessage(project.answers[route]));
       input.value = '';
-      renderAll();
+      messages.scrollTop = messages.scrollHeight;
     }
 
-    function renderAll() {
-      renderIntents();
-      renderPills();
-      renderChat();
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
+    projectSelect.addEventListener('change', renderProject);
+    document.getElementById('sendButton').addEventListener('click', () => send());
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Enter') send();
     });
+    document.getElementById('closeChat').addEventListener('click', () => chatbot.classList.add('closed'));
+    launcher.addEventListener('click', () => chatbot.classList.remove('closed'));
 
-    input.value = intents[0].prompt;
-    activeIntent = guessIntent(input.value);
-    renderAll();
+    renderProject();
   </script>
 </body>
 </html>

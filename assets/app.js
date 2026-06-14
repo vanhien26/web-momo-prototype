@@ -45,19 +45,19 @@ const demos = {
     gate: 'Đo risk-check completion, warning CTR, abort rate và report intent.'
   },
   chatbot: {
-    name: 'MoMo Chatbot',
-    title: 'MoMo Chatbot',
-    type: 'Conversational AI',
-    maturity: 'Concept prototype',
+    name: 'MoMo Project Assistant',
+    title: 'MoMo Project Assistant',
+    type: 'Embedded RAG + Typebot',
+    maturity: 'Architecture prototype',
     src: 'demos/chatbot.html',
-    address: 'prototype.momo.vn/chatbot',
-    description: 'Trợ lý hội thoại cho MoMo Web: trả lời câu hỏi về dịch vụ, gợi ý use case phù hợp và hướng user tới hành động tiếp theo.',
-    jtbd: 'Hỏi nhanh, hiểu ngay, đi tiếp đúng bước',
-    northStar: 'Helpful answer completion',
-    loop: 'Ask → Guide → Handoff',
-    hypothesis: 'Chatbot theo ngữ cảnh giúp giảm friction khi user chưa biết dịch vụ nào phù hợp và tạo đường dẫn tự nhiên sang web-to-app.',
-    value: 'Tạo lớp hỗ trợ hội thoại cho MoMo Services, Pay Later, Loan và các use case quan trọng.',
-    gate: 'Đo answer accept rate, follow-up question depth, CTA click và handoff to service.'
+    address: 'prototype.momo.vn/project-assistant',
+    description: 'Chatbot nhúng cho từng Mini Web hoặc Microsite, trả lời câu hỏi mở từ RAG của đúng project và chuyển sang Typebot khi cần chạy kịch bản có trạng thái.',
+    jtbd: 'Hỏi bất kỳ điều gì về project đang xem và nhận câu trả lời có nguồn',
+    northStar: 'Grounded answer success rate',
+    loop: 'Question → Project RAG → Answer / Typebot flow',
+    hypothesis: 'Project-scoped RAG có citation giúp user hiểu sản phẩm ngay tại trang, còn Typebot giữ các flow xác định và an toàn hơn cho dữ liệu có cấu trúc.',
+    value: 'Một embed component dùng lại cho nhiều Mini Web và Microsite, nhưng cô lập knowledge, analytics và guardrail theo từng project.',
+    gate: 'Đo grounded answer rate, citation coverage, low-confidence fallback, Typebot completion và assisted CTA.'
   },
   seoGeoScore: {
     name: 'SEO / GEO Score',
@@ -75,19 +75,19 @@ const demos = {
     gate: 'Đo first-pass rate, số lần submit lại, phân phối điểm SEO/GEO và nhóm tiêu chí thường fail.'
   },
   merchant: {
-    name: 'Merchant Discovery',
-    title: 'Quán Ngon Finder',
-    type: 'Local Discovery',
+    name: 'MoMo Deal',
+    title: 'MoMo Merchant Network',
+    type: 'Merchant Discovery',
     maturity: 'Interaction prototype',
     src: 'demos/merchant.html',
-    address: 'prototype.momo.vn/quan-ngon',
-    description: 'Khám phá merchant theo vị trí bằng interaction dạng swipe, kết hợp ưu đãi MoMo để rút ngắn hành trình từ discovery đến transaction.',
-    jtbd: 'Chọn nhanh quán phù hợp ở gần',
-    northStar: 'Saved merchant intent',
-    loop: 'Discover → Save → Pay',
-    hypothesis: 'Interaction thiên về lựa chọn giúp giảm cognitive load và tạo tín hiệu preference rõ hơn danh sách truyền thống.',
-    value: 'Tăng merchant exposure, deal discovery và khả năng chuyển đổi sang thanh toán tại điểm bán.',
-    gate: 'Đo swipe depth, save rate, deal engagement và payment initiation từ merchant đã lưu.'
+    address: 'prototype.momo.vn/momo-deals',
+    description: 'Merchant network đa ngành của MoMo: khám phá nơi ăn uống, mua sắm, sức khỏe, giải trí và di chuyển; xem dịch vụ, chi nhánh, ưu đãi và phương thức thanh toán.',
+    jtbd: 'Tìm merchant phù hợp, biết có gì và dùng dịch vụ ngay',
+    northStar: 'Qualified merchant action rate',
+    loop: 'Discover → Evaluate merchant → Use service → Pay',
+    hypothesis: 'Trang merchant có cấu trúc theo loại hình giúp MoMo chuyển từ danh sách deal sang lớp discovery và transaction cho toàn bộ mạng lưới chấp nhận thanh toán.',
+    value: 'Tăng khả năng khám phá merchant, sử dụng dịch vụ, redemption ưu đãi và payment volume trên nhiều ngành hàng.',
+    gate: 'Đo merchant detail view, service CTA, direction, save, deal eligibility check và payment initiation theo loại hình merchant.'
   },
   worldcup: {
     name: 'World Cup Predictor',

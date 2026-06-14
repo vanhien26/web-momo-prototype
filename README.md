@@ -5,7 +5,7 @@ Static prototype showcase for Web Platform product concepts:
 - Money Lab
 - Bill Lookup
 - Scam Check
-- MoMo Chatbot
+- MoMo Project Assistant
 - SEO / GEO Score
 - Merchant Discovery
 - World Cup 2026 Predictor
