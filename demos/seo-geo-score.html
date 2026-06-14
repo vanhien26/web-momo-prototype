@@ -1,894 +1,1073 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SEO / GEO Score — MoSpark Blog Publisher</title>
-  <style>
-    :root{
-      --pink-50:#fff0f7;--pink-100:#ffe4f2;--pink-600:#a50064;--pink-700:#7a004b;
-      --grey-50:#fafafa;--grey-100:#f2f4f7;--grey-200:#e4e7ec;--grey-300:#d0d5dd;
-      --grey-500:#667085;--grey-700:#344054;--grey-800:#1d2939;
-      --green-50:#f0fdf4;--green-500:#22c55e;--green-600:#16a34a;
-      --amber-50:#fffbeb;--amber-500:#f59e0b;--amber-600:#d97706;
-      --red-50:#fff1f2;--red-500:#ef4444;--red-600:#dc2626;
-      --violet-500:#7c3aed;--sky-500:#0284c7;
-      --momo:var(--pink-600);--soft:var(--pink-50);--ink:var(--grey-800);
-      --muted:var(--grey-500);--line:var(--grey-200);
-      --elevation:rgba(0,0,0,.02) 0 0 5px,rgba(0,0,0,.06) 0 2px 10px,rgba(0,0,0,.3) 0 0 1px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--grey-100);color:var(--ink)}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEO/GEO Project Hub — MoSpark</title>
+<style>
+:root{
+  --pink-50:#fff0f7;--pink-100:#ffe4f2;--pink-600:#a50064;--pink-700:#7a004b;
+  --grey-50:#fafafa;--grey-100:#f2f4f7;--grey-200:#e4e7ec;--grey-300:#d0d5dd;
+  --grey-400:#98a2b3;--grey-500:#667085;--grey-700:#344054;--grey-800:#1d2939;
+  --green-50:#f0fdf4;--green-500:#22c55e;--green-600:#16a34a;
+  --amber-50:#fffbeb;--amber-500:#f59e0b;--amber-600:#d97706;
+  --red-50:#fff1f2;--red-500:#ef4444;--red-600:#dc2626;
+  --blue-50:#eff6ff;--blue-500:#3b82f6;--blue-600:#2563eb;
+  --momo:var(--pink-600);--soft:var(--pink-50);--ink:var(--grey-800);
+  --muted:var(--grey-500);--line:var(--grey-200);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--grey-100);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-    /* ── Header ──────────────────────────────────────────── */
-    header{height:54px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100}
-    .brand{display:flex;align-items:center;gap:10px}
-    .mark{width:32px;height:32px;border-radius:7px;background:var(--momo);color:#fff;display:grid;place-items:center;font-size:9px;font-weight:800;line-height:.8;text-align:center}
-    .brand-info b{display:block;font-size:12px}.brand-info small{display:block;font-size:9px;color:var(--muted)}
-    .header-tag{font-size:9px;font-weight:800;color:var(--momo);background:var(--soft);padding:5px 9px;border-radius:4px;letter-spacing:.4px}
+/* HEADER */
+header{height:52px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:10}
+.h-left{display:flex;align-items:center;gap:10px}
+.h-back{font-size:10px;font-weight:700;color:var(--muted);text-decoration:none}
+.h-back:hover{color:var(--ink)}
+.h-divider{width:1px;height:18px;background:var(--line)}
+.h-logo{width:28px;height:28px;border-radius:6px;background:var(--momo);color:#fff;display:grid;place-items:center;font-size:7px;font-weight:900;line-height:1.1;text-align:center}
+.h-brand-name{font-size:12px;font-weight:800}
+.h-brand-sub{font-size:9px;color:var(--muted)}
+.h-tag{font-size:9px;font-weight:800;color:var(--momo);background:var(--soft);padding:4px 9px;border-radius:4px;letter-spacing:.4px}
+.h-user{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--grey-700)}
+.h-avatar{width:26px;height:26px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:10px;font-weight:800;color:var(--momo);border:1.5px solid var(--pink-100)}
 
-    /* ── Screen system ───────────────────────────────────── */
-    .screen{display:none}
-    .screen.active{display:block}
-    #screen-scoring.active,#screen-success.active{display:flex}
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden}
 
-    /* ══════════════════════════════════════════════════════
-       SCREEN 1: EDITOR
-    ══════════════════════════════════════════════════════ */
-    .fail-banner{background:var(--red-50);border:1.5px solid #fecaca;padding:10px 20px;font-size:11px;color:var(--red-600);display:none}
-    .fail-banner.show{display:flex;align-items:center;gap:10px}
-    .fail-banner b{font-weight:700;white-space:nowrap}
+/* LEFT PANEL */
+.panel-left{width:292px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.pl-head{padding:12px 14px;border-bottom:1px solid var(--line)}
+.pl-head h2{font-size:11px;font-weight:800;margin-bottom:8px}
+.pl-search{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:7px;padding:6px 10px;background:var(--grey-50);margin-bottom:8px}
+.pl-search span{font-size:12px;color:var(--muted)}
+.pl-search input{border:none;background:transparent;font:inherit;font-size:11px;outline:none;flex:1;color:var(--ink)}
+.pillar-filters{display:flex;gap:4px;flex-wrap:wrap}
+.pf{font-size:9px;font-weight:700;padding:3px 7px;border-radius:5px;border:1.5px solid var(--line);background:#fff;color:var(--grey-700);cursor:pointer;transition:all .12s}
+.pf.active{background:var(--momo);border-color:var(--momo);color:#fff}
 
-    .editor-wrap{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 54px)}
-    .editor-main{padding:20px;display:flex;flex-direction:column;gap:10px;background:var(--grey-100)}
+.project-list{flex:1;overflow-y:auto;padding:8px}
+.pi{border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all .15s;background:#fff}
+.pi:hover{border-color:var(--pink-100);background:var(--soft)}
+.pi.sel{border-color:var(--momo);background:var(--soft)}
+.pi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.pi-name{font-size:12px;font-weight:700}
+.pi-badges{display:flex;gap:3px}
+.badge{font-size:8px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.2px}
+.b-p0{background:#fef2f2;color:#dc2626}
+.b-cao{background:var(--soft);color:var(--momo)}
+.b-mid{background:var(--amber-50);color:var(--amber-600)}
+.b-low{background:var(--grey-100);color:var(--grey-500)}
+.b-leader{background:var(--green-50);color:var(--green-600)}
+.b-coming{background:var(--blue-50);color:var(--blue-600)}
+.pi-vol{font-size:9px;color:var(--muted);margin-bottom:5px}
+.pi-vol b{color:var(--grey-700)}
+.sov-row{display:flex;align-items:center;gap:6px}
+.sov-track{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden;position:relative}
+.sov-fill{height:100%;border-radius:4px;transition:width .4s}
+.sov-fill.f-low{background:var(--red-500)}
+.sov-fill.f-mid{background:var(--amber-500)}
+.sov-fill.f-high{background:var(--green-500)}
+.sov-fill.f-leader{background:var(--green-600)}
+.sov-lbl{font-size:9px;font-weight:700;white-space:nowrap}
+.sov-lbl.f-low{color:var(--red-600)}.sov-lbl.f-mid{color:var(--amber-600)}.sov-lbl.f-high,.sov-lbl.f-leader{color:var(--green-600)}
+.sov-na{font-size:9px;color:var(--grey-400)}
+.pi-stats{display:flex;gap:8px;margin-top:5px}
+.pi-stat{font-size:9px;color:var(--muted)}.pi-stat b{color:var(--grey-700)}
 
-    .title-row{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;transition:border-color .15s}
-    .title-row:focus-within{border-color:var(--momo)}
-    .title-row label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted);white-space:nowrap;letter-spacing:.4px}
-    .title-row input{border:none;outline:none;font:inherit;font-size:16px;font-weight:700;color:var(--ink);flex:1;background:transparent}
-    .char-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;background:var(--grey-100);color:var(--muted);white-space:nowrap;transition:all .15s}
-    .char-pill.good{background:var(--green-50);color:var(--green-600)}
-    .char-pill.bad{background:var(--red-50);color:var(--red-600)}
+.pl-foot{padding:10px 14px;border-top:1px solid var(--line)}
+.btn-new-proj{width:100%;display:flex;align-items:center;justify-content:center;gap:5px;border:1.5px dashed var(--line);border-radius:7px;padding:8px;background:transparent;font:inherit;font-size:11px;font-weight:600;color:var(--grey-400);cursor:pointer;transition:all .15s}
+.btn-new-proj:hover{border-color:var(--momo);color:var(--momo);background:var(--soft)}
 
-    .slug-row{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:7px 14px;transition:border-color .15s}
-    .slug-row:focus-within{border-color:var(--momo)}
-    .slug-prefix{font-size:11px;color:var(--muted);white-space:nowrap}
-    .slug-row input{border:none;outline:none;font:inherit;font-size:11px;color:var(--momo);font-weight:600;flex:1;background:transparent}
+/* RIGHT PANEL */
+.panel-right{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-    .content-wrap{flex:1;position:relative}
-    .content-wrap textarea{width:100%;min-height:440px;height:100%;resize:vertical;border:1.5px solid var(--line);border-radius:8px;padding:14px;font:inherit;font-size:12.5px;line-height:1.75;outline:none;background:#fff;color:var(--ink);transition:border-color .15s}
-    .content-wrap textarea:focus{border-color:var(--momo)}
-    .wc-hint{font-size:9px;color:var(--muted);padding:5px 2px 0;display:flex;align-items:center;gap:6px}
-    .wc-val{font-weight:700}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;color:var(--muted)}
+.empty-icon{font-size:44px;margin-bottom:12px}
+.empty-state h3{font-size:14px;font-weight:700;color:var(--grey-700);margin-bottom:6px}
+.empty-state p{font-size:11px;text-align:center;line-height:1.6;max-width:300px}
 
-    /* Error highlight */
-    .input-error{border-color:var(--red-500)!important;background:var(--red-50)!important}
-    textarea.input-error{background:var(--red-50)!important}
+.project-detail{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-    /* Sidebar */
-    .editor-sidebar{background:#fff;border-left:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto}
-    .sbar-section{padding:14px 16px;border-bottom:1px solid var(--line)}
-    .sbar-label{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted);letter-spacing:.4px;margin-bottom:10px}
-    .field{margin-bottom:9px}
-    .field>label{display:block;font-size:10px;font-weight:600;color:var(--grey-700);margin-bottom:3px}
-    .field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:6px;padding:7px 10px;font:inherit;font-size:11px;outline:none;color:var(--ink);transition:border-color .15s}
-    .field input:focus,.field textarea:focus{border-color:var(--momo)}
-    .field textarea{resize:vertical;min-height:64px;line-height:1.5}
-    .field .sub{font-size:9px;color:var(--muted);margin-top:3px}
-    .meta-count{font-size:9px;margin-top:3px;transition:color .15s}
+/* DETAIL HEADER */
+.detail-head{padding:14px 20px;background:#fff;border-bottom:1px solid var(--line);flex-shrink:0}
+.dh-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.dh-pillar{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin-bottom:2px}
+.dh-title{font-size:18px;font-weight:800}
+.dh-actions{display:flex;gap:6px;flex-shrink:0;margin-left:12px}
+.btn-sm{font:inherit;font-size:10px;font-weight:700;padding:6px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:4px;border:1.5px solid var(--line);background:#fff;color:var(--grey-700);transition:all .15s;white-space:nowrap}
+.btn-sm:hover{background:var(--grey-50)}
+.btn-sm.primary{background:var(--momo);border-color:var(--momo);color:#fff}
+.btn-sm.primary:hover{background:var(--pink-700)}
+.dh-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.meta-chip{display:flex;align-items:center;gap:5px;font-size:10px}
+.mc-lbl{color:var(--muted)}
+.mc-val{font-weight:700;color:var(--grey-700)}
+.mc-mono{font-family:monospace;font-size:10px;color:var(--momo);font-weight:600}
+.mc-div{width:1px;height:14px;background:var(--line)}
+.sov-chip{display:flex;align-items:center;gap:6px}
+.sov-chip-bar{width:80px;height:5px;background:var(--line);border-radius:4px;overflow:hidden}
+.sov-chip-fill{height:100%;border-radius:4px}
 
-    .check-list{display:flex;flex-direction:column;gap:7px}
-    .check-item{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:var(--grey-700)}
-    .check-item input[type=checkbox]{width:14px;height:14px;accent-color:var(--momo);cursor:pointer;flex-shrink:0}
+/* TABS */
+.detail-tabs{display:flex;padding:0 20px;background:#fff;border-bottom:1px solid var(--line);flex-shrink:0}
+.tab-btn{padding:10px 14px;font:inherit;font-size:11px;font-weight:600;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn.active{color:var(--momo);border-bottom-color:var(--momo)}
+.tc{font-size:8px;font-weight:800;background:var(--grey-100);color:var(--grey-500);padding:1px 5px;border-radius:8px;margin-left:4px}
+.tab-btn.active .tc{background:var(--soft);color:var(--momo)}
 
-    .sbar-footer{padding:14px 16px;display:flex;flex-direction:column;gap:8px;margin-top:auto;border-top:1px solid var(--line)}
-    .btn-demo{background:#fff;border:1.5px solid var(--line);border-radius:7px;padding:9px;font:inherit;font-size:11px;font-weight:600;color:var(--grey-700);cursor:pointer;width:100%}
-    .btn-demo:hover{background:var(--grey-50)}
-    .btn-publish{background:var(--momo);color:#fff;border:none;border-radius:7px;padding:11px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px}
-    .btn-publish:hover{background:var(--pink-700)}
+.tab-body{flex:1;overflow-y:auto;padding:16px 20px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 
-    /* ══════════════════════════════════════════════════════
-       SCREEN 2: SCORING
-    ══════════════════════════════════════════════════════ */
-    #screen-scoring{min-height:calc(100vh - 54px);flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;background:var(--grey-100)}
-    .scoring-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 32px;max-width:520px;width:100%;box-shadow:var(--elevation)}
-    .scoring-spinner{width:38px;height:38px;border:3px solid var(--line);border-top-color:var(--momo);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .scoring-title{text-align:center;margin-bottom:20px}
-    .scoring-title h2{font-size:16px;margin-bottom:3px}
-    .scoring-title p{font-size:11px;color:var(--muted)}
-    .score-bar-wrap{height:4px;background:var(--line);border-radius:4px;margin-bottom:20px;overflow:hidden}
-    .score-bar-fill{height:100%;background:var(--momo);width:0%;transition:width .25s ease;border-radius:4px}
-    .criteria-scroll{display:flex;flex-direction:column;gap:5px;max-height:360px;overflow-y:auto}
-    .c-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:11px;opacity:0;transform:translateY(3px);transition:opacity .15s,transform .15s}
-    .c-item.in{opacity:1;transform:none}
-    .c-item.s-pass{background:var(--green-50)}.c-item.s-fail{background:var(--red-50)}.c-item.s-partial{background:var(--amber-50)}
-    .c-icon{font-size:13px;flex-shrink:0;width:18px;text-align:center}
-    .c-name{flex:1;color:var(--grey-700)}
-    .c-pts{font-weight:700;font-size:10px;white-space:nowrap}
-    .s-pass .c-pts{color:var(--green-600)}.s-fail .c-pts{color:var(--red-600)}.s-partial .c-pts{color:var(--amber-600)}
+/* TOPICS TAB */
+.funnel-section{margin-bottom:12px}
+.funnel-head{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:7px;cursor:pointer;user-select:none;margin-bottom:5px;transition:filter .15s}
+.funnel-head:hover{filter:brightness(.97)}
+.fh-tofu{background:#eff6ff}
+.fh-mofu{background:#fef3c7}
+.fh-bofu{background:#f0fdf4}
+.fh-lbl{font-size:10px;font-weight:800;flex:1}
+.fh-tofu .fh-lbl{color:var(--blue-600)}
+.fh-mofu .fh-lbl{color:var(--amber-600)}
+.fh-bofu .fh-lbl{color:var(--green-600)}
+.fh-vol{font-size:9px;font-weight:600;color:var(--grey-500)}
+.fh-pct{font-size:8px;color:var(--grey-400);margin-left:2px}
+.fh-chev{font-size:9px;color:var(--grey-400);transition:transform .2s;flex-shrink:0}
+.fh-chev.open{transform:rotate(90deg)}
 
-    /* ══════════════════════════════════════════════════════
-       SCREEN 3: RESULTS
-    ══════════════════════════════════════════════════════ */
-    .results-body{max-width:940px;margin:0 auto;padding:24px 20px 60px}
+.cluster-list{padding-left:10px;display:none}
+.cluster-list.open{display:block}
+.cluster-item{margin-bottom:6px}
+.cluster-head{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:7px;background:#fff;border:1.5px solid var(--line);cursor:pointer;transition:all .15s}
+.cluster-head:hover{border-color:var(--grey-300)}
+.c-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.c-dot-t{background:var(--blue-500)}.c-dot-m{background:var(--amber-500)}.c-dot-b{background:var(--green-500)}
+.c-name{font-size:11px;font-weight:700;flex:1}
+.c-meta{font-size:9px;color:var(--muted)}
+.c-chev{font-size:9px;color:var(--grey-400);transition:transform .2s}
+.c-chev.open{transform:rotate(90deg)}
 
-    .rings-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-    .ring-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 14px;text-align:center;box-shadow:var(--elevation)}
-    .ring-wrap{position:relative;width:96px;height:96px;margin:0 auto 10px}
-    .ring-wrap svg{transform:rotate(-90deg)}
-    .ring-bg{fill:none;stroke:var(--line);stroke-width:8}
-    .ring-val{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
-    .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .ring-center b{font-size:24px;line-height:1}
-    .ring-center small{font-size:9px;color:var(--muted);margin-top:2px}
-    .ring-card h3{font-size:11px;font-weight:700;margin-bottom:3px}
-    .ring-card p{font-size:9px;color:var(--muted)}
-    .score-badge{display:inline-block;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;margin-top:7px}
-    .badge-pass{background:var(--green-50);color:var(--green-600)}
-    .badge-warn{background:var(--amber-50);color:var(--amber-600)}
-    .badge-fail{background:var(--red-50);color:var(--red-600)}
+.kw-list{padding:4px 0 4px 20px;display:none}
+.kw-list.open{display:block}
+.kw-row{display:flex;align-items:center;gap:7px;padding:5px 10px;border-radius:6px;font-size:11px;margin-bottom:2px;cursor:pointer;transition:background .12s}
+.kw-row:hover{background:var(--grey-50)}
+.kw-dot{font-size:11px;width:14px;flex-shrink:0;text-align:center}
+.kw-name{flex:1;color:var(--grey-700)}
+.kw-vol{font-size:9px;color:var(--muted);white-space:nowrap}
+.intent-tag{font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px}
+.it-info{background:var(--blue-50);color:var(--blue-600)}
+.it-comm{background:var(--amber-50);color:var(--amber-600)}
+.it-trans{background:var(--green-50);color:var(--green-600)}
+.kw-btns{display:flex;gap:3px}
+.kw-btn{font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--grey-700);white-space:nowrap;transition:all .1s}
+.kw-btn:hover{border-color:var(--momo);color:var(--momo)}
+.kw-btn.primary{background:var(--momo);color:#fff;border-color:var(--momo)}
+.kw-btn.primary:hover{background:var(--pink-700)}
 
-    .verdict-box{border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px}
-    .verdict-box.v-pass{background:var(--green-50);border:1.5px solid #bbf7d0}
-    .verdict-box.v-fail{background:var(--red-50);border:1.5px solid #fecaca}
-    .v-icon{font-size:22px;flex-shrink:0;line-height:1;padding-top:2px}
-    .verdict-box h2{font-size:14px;margin-bottom:3px}
-    .verdict-box p{font-size:11px;color:var(--grey-700);line-height:1.55}
-    .v-pass h2{color:var(--green-600)}.v-fail h2{color:var(--red-600)}
+.add-cluster-btn{display:flex;align-items:center;gap:5px;padding:8px 12px;border:1.5px dashed var(--line);border-radius:7px;background:transparent;font:inherit;font-size:11px;font-weight:600;color:var(--grey-400);cursor:pointer;width:100%;margin-top:6px;transition:all .15s}
+.add-cluster-btn:hover{border-color:var(--momo);color:var(--momo);background:var(--soft)}
 
-    .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-    .bd-card{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--elevation)}
-    .bd-head{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px}
-    .bd-head h3{font-size:11px;font-weight:800}
-    .bd-total{margin-left:auto;font-size:11px;font-weight:700;color:var(--momo)}
-    .bd-row{display:flex;align-items:center;gap:7px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:10.5px}
-    .bd-row:last-child{border-bottom:none}
-    .bd-row.r-pass{background:#fafafa}.bd-row.r-fail{background:var(--red-50)}.bd-row.r-partial{background:var(--amber-50)}
-    .bd-status{font-size:11px;width:16px;flex-shrink:0;text-align:center}
-    .bd-name{flex:1;color:var(--grey-700)}
-    .bd-pts{font-weight:700;font-size:10px;white-space:nowrap}
-    .r-pass .bd-pts{color:var(--green-600)}.r-fail .bd-pts{color:var(--red-600)}.r-partial .bd-pts{color:var(--amber-600)}
+/* BUSINESS CONTEXT TAB */
+.bc-status-bar{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.bc-prog{flex:1}
+.bc-prog-lbl{font-size:10px;color:var(--muted);margin-bottom:3px}
+.bc-prog-lbl b{color:var(--green-600)}
+.bc-prog-track{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.bc-prog-fill{height:100%;background:var(--green-500);border-radius:4px;transition:width .3s}
+.bc-save{font:inherit;font-size:10px;font-weight:700;padding:6px 14px;background:var(--momo);color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap}
+.bc-save:hover{background:var(--pink-700)}
+.bc-legal{background:var(--amber-50);border:1.5px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:10px;color:var(--amber-600);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bc-full{grid-column:span 2}
+.bc-field{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer;transition:border-color .15s}
+.bc-field:hover{border-color:var(--grey-300)}
+.bc-field.req{border-left:3px solid var(--momo)}
+.bc-field.warn{border-left:3px solid var(--amber-500)}
+.bc-field-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.bc-req-dot{width:5px;height:5px;border-radius:50%;background:var(--momo);display:inline-block}
+.bc-field-val{font-size:11px;color:var(--grey-700);line-height:1.55}
+.bc-field-val.empty{color:var(--grey-300);font-style:italic}
+.bc-tag{display:inline-block;font-size:9px;background:var(--red-50);color:var(--red-600);border-radius:4px;padding:1px 6px;margin:2px 2px 0 0;font-weight:600}
+.bc-check-row{display:flex;align-items:center;gap:7px;margin-top:8px}
+.bc-check-row input{accent-color:var(--momo)}
+.bc-check-lbl{font-size:10px;font-weight:600;color:var(--grey-700)}
 
-    .recs-card{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--elevation);margin-bottom:24px;display:none}
-    .recs-head{padding:10px 14px;border-bottom:1px solid var(--line)}
-    .recs-head h3{font-size:11px;font-weight:800}
-    .rec-row{display:flex;align-items:flex-start;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:11px}
-    .rec-row:last-child{border-bottom:none}
-    .rec-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
-    .dot-crit{background:var(--red-500)}.dot-imp{background:var(--amber-500)}.dot-opt{background:var(--green-500)}
-    .rec-body{flex:1}
-    .rec-body b{display:block;color:var(--ink);font-weight:600;margin-bottom:2px}
-    .rec-body span{color:var(--muted);font-size:10px;line-height:1.5}
-    .rec-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0}
-    .tag-crit{background:var(--red-50);color:var(--red-600)}
-    .tag-imp{background:var(--amber-50);color:var(--amber-600)}
-    .tag-opt{background:var(--green-50);color:var(--green-600)}
+/* KEYWORDS TAB */
+.kwtab-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.kwtab-stats{display:flex;gap:14px}
+.kwst{text-align:center}
+.kwst-val{font-size:20px;font-weight:800}
+.kwst-val.green{color:var(--green-600)}.kwst-val.red{color:var(--red-600)}.kwst-val.blue{color:var(--blue-600)}
+.kwst-lbl{font-size:9px;color:var(--muted)}
+.kwtab-filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.kwf-btn{font:inherit;font-size:10px;font-weight:600;padding:4px 10px;border:1.5px solid var(--line);border-radius:20px;background:#fff;color:var(--grey-500);cursor:pointer;transition:all .12s}
+.kwf-btn.active{border-color:var(--momo);background:var(--soft);color:var(--momo)}
+.kw-table{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kw-thead{display:grid;grid-template-columns:1fr 80px 75px 65px 90px;padding:7px 12px;background:var(--grey-50);border-bottom:1px solid var(--line)}
+.kw-th{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--muted)}
+.kw-trow{display:grid;grid-template-columns:1fr 80px 75px 65px 90px;padding:8px 12px;border-bottom:1px solid var(--line);align-items:center;cursor:pointer;transition:background .12s}
+.kw-trow:last-child{border-bottom:none}
+.kw-trow:hover{background:var(--grey-50)}
+.kw-td{font-size:11px;color:var(--grey-700)}
+.kw-td.pk{font-weight:700;color:var(--ink)}
+.kw-unique{font-size:9px;font-weight:700;color:var(--green-600);display:flex;align-items:center;gap:3px}
+.kw-conflict{font-size:9px;font-weight:700;color:var(--red-600);display:flex;align-items:center;gap:3px}
+.add-kw-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:1.5px dashed var(--line);border-radius:7px;background:transparent;font:inherit;font-size:11px;font-weight:600;color:var(--grey-400);cursor:pointer;width:100%;margin-top:8px;transition:all .15s}
+.add-kw-btn:hover{border-color:var(--momo);color:var(--momo);background:var(--soft)}
 
-    .result-actions{display:flex;gap:10px;justify-content:center}
-    .btn-back{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:11px 22px;font:inherit;font-size:12px;font-weight:600;color:var(--grey-700);cursor:pointer;display:flex;align-items:center;gap:5px}
-    .btn-back:hover{background:var(--grey-50)}
-    .btn-go-publish{background:var(--green-600);color:#fff;border:none;border-radius:8px;padding:11px 26px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:opacity .2s}
-    .btn-go-publish:hover:not(:disabled){background:#15803d}
-    .btn-go-publish:disabled{opacity:.35;cursor:not-allowed}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;padding:24px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h3{font-size:14px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.mf{margin-bottom:10px}
+.mf label{display:block;font-size:10px;font-weight:700;color:var(--grey-700);margin-bottom:4px}
+.mf input,.mf select{width:100%;border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;font:inherit;font-size:11px;outline:none;transition:border-color .15s}
+.mf input:focus,.mf select:focus{border-color:var(--momo)}
+.check-status{padding:9px 12px;border-radius:7px;font-size:11px;margin-bottom:10px;display:none;align-items:center;gap:8px}
+.cs-checking{display:flex;background:var(--blue-50);color:var(--blue-600)}
+.cs-unique{display:flex;background:var(--green-50);color:var(--green-600)}
+.cs-conflict{display:flex;background:var(--red-50);color:var(--red-600)}
+.cs-spin{width:13px;height:13px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.modal-cancel{font:inherit;font-size:11px;font-weight:600;padding:8px 16px;border:1.5px solid var(--line);border-radius:7px;background:#fff;color:var(--grey-700);cursor:pointer}
+.modal-confirm{font:inherit;font-size:11px;font-weight:700;padding:8px 16px;background:var(--momo);color:#fff;border:none;border-radius:7px;cursor:pointer;transition:background .15s}
+.modal-confirm:disabled{opacity:.35;cursor:not-allowed}
+.modal-confirm:not(:disabled):hover{background:var(--pink-700)}
 
-    /* ══════════════════════════════════════════════════════
-       SCREEN 4: SUCCESS
-    ══════════════════════════════════════════════════════ */
-    #screen-success{min-height:calc(100vh - 54px);flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;background:var(--grey-100)}
-    .success-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:40px 32px;max-width:460px;width:100%;text-align:center;box-shadow:var(--elevation)}
-    .success-emoji{font-size:52px;margin-bottom:14px}
-    .success-card h2{font-size:20px;color:var(--green-600);margin-bottom:8px}
-    .success-card p{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:20px}
-    .success-chips{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
-    .success-chip{background:var(--green-50);border:1.5px solid #bbf7d0;border-radius:8px;padding:10px 18px}
-    .success-chip b{display:block;font-size:22px;color:var(--green-600)}
-    .success-chip span{display:block;font-size:9px;color:var(--muted);margin-top:1px}
-    .success-url{font-size:10px;color:var(--muted);margin-bottom:22px;font-family:monospace}
-    .btn-new{background:var(--momo);color:#fff;border:none;border-radius:7px;padding:11px 22px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
-    .btn-new:hover{background:var(--pink-700)}
-
-    /* ── Mobile ──────────────────────────────────────────── */
-    @media(max-width:768px){
-      .editor-wrap{grid-template-columns:1fr}
-      .editor-sidebar{border-left:none;border-top:1px solid var(--line)}
-      .rings-row{grid-template-columns:1fr 1fr}
-      .rings-row .ring-card:last-child{grid-column:span 2}
-      .breakdown-grid{grid-template-columns:1fr}
-      .result-actions{flex-direction:column}
-    }
-  </style>
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;border-radius:8px;padding:10px 16px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:200;transform:translateY(60px);opacity:0;transition:all .25s;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.t-green{background:var(--green-600)}
+.toast.t-red{background:var(--red-600)}
+</style>
 </head>
 <body>
 
 <header>
-  <div style="display:flex;align-items:center;gap:14px">
-    <a href="../index.html" target="_top" style="font-size:10px;font-weight:700;color:#667085;text-decoration:none">← Store</a>
-    <div class="brand">
-      <span class="mark">mo<br>mo</span>
-      <div class="brand-info"><b>Blog Publisher</b><small>SEO / GEO Score Gate</small></div>
+  <div class="h-left">
+    <a href="../index.html" target="_top" class="h-back">← Store</a>
+    <div class="h-divider"></div>
+    <div class="h-logo">mo<br>mo</div>
+    <div>
+      <div class="h-brand-name">MoSpark</div>
+      <div class="h-brand-sub">SEO/GEO Project Hub</div>
     </div>
   </div>
-  <span class="header-tag">MOSPARK · PRE-PUBLISH</span>
+  <span class="h-tag">MOSPARK · PROJECT HUB</span>
+  <div class="h-user">
+    <div class="h-avatar">VH</div>
+    <span>Văn Hiến · Web Product Lead</span>
+  </div>
 </header>
 
-<!-- ══ SCREEN 1: EDITOR ══════════════════════════════════════════════════════ -->
-<div id="screen-editor" class="screen active">
-  <div class="fail-banner" id="fail-banner">
-    <span style="font-size:16px">⚠</span>
-    <div><b>Không thể xuất bản</b> — <span id="fail-msg">Một số tiêu chí SEO/GEO chưa đạt. Các trường được viền đỏ cần chỉnh sửa trước khi thử lại.</span></div>
-  </div>
-  <div class="editor-wrap">
-    <!-- LEFT: main content -->
-    <div class="editor-main">
-      <div>
-        <div class="title-row" id="wrap-title">
-          <label>TIÊU ĐỀ</label>
-          <input id="title" type="text" placeholder="Nhập tiêu đề bài viết..." oninput="onTitle()" maxlength="80">
-          <span class="char-pill" id="title-pill">0</span>
-        </div>
-      </div>
-      <div>
-        <div class="slug-row" id="wrap-slug">
-          <span class="slug-prefix">momo.vn/blog/</span>
-          <input id="slug" type="text" placeholder="url-slug-bai-viet">
-        </div>
-      </div>
-      <div class="content-wrap">
-        <textarea id="content" placeholder="Dán nội dung bài viết vào đây...&#10;&#10;Hỗ trợ Markdown cơ bản:&#10;## Tiêu đề phần H2&#10;### Tiêu đề nhỏ H3&#10;- Bullet point&#10;1. Danh sách số&#10;| Cột 1 | Cột 2 |  ← bảng&#10;[link text](url)" oninput="onContent()"></textarea>
-        <div class="wc-hint"><span class="wc-val" id="wc-val" style="color:var(--muted)">0 từ</span><span id="wc-tip" style="color:var(--muted)">· Khuyến nghị ≥ 1000 từ cho SEO, ≥ 1500 từ cho GEO</span></div>
-      </div>
+<div class="layout">
+
+<!-- LEFT: Project List -->
+<aside class="panel-left">
+  <div class="pl-head">
+    <h2>Dự án SEO/GEO <span style="color:var(--muted);font-weight:400">(8)</span></h2>
+    <div class="pl-search">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Tìm dự án..." oninput="filterProjects()">
     </div>
+    <div class="pillar-filters">
+      <button class="pf active" onclick="setPillar('all',this)">Tất cả</button>
+      <button class="pf" onclick="setPillar('P1',this)">P1 Tài chính</button>
+      <button class="pf" onclick="setPillar('P2',this)">P2 Bảo hiểm</button>
+      <button class="pf" onclick="setPillar('P3',this)">P3 Tiện ích</button>
+      <button class="pf" onclick="setPillar('P4',this)">P4 Đời sống</button>
+    </div>
+  </div>
+  <div class="project-list" id="projectList"></div>
+  <div class="pl-foot">
+    <button class="btn-new-proj" onclick="showToast('Tính năng tạo dự án mới đang được phát triển','t-green')">+ Dự án mới</button>
+  </div>
+</aside>
 
-    <!-- RIGHT: sidebar -->
-    <div class="editor-sidebar">
-      <div class="sbar-section">
-        <div class="sbar-label">Cài đặt SEO</div>
-        <div class="field">
-          <label>Keyword mục tiêu *</label>
-          <input id="keyword" type="text" placeholder="vd: vay tiền nhanh">
-          <div class="sub">Cần xuất hiện trong title, H1 và nội dung (1–3%).</div>
-        </div>
-        <div class="field" id="wrap-meta">
-          <label>Meta Description *</label>
-          <textarea id="meta" placeholder="130–160 ký tự, chứa keyword và call-to-action..." oninput="onMeta()"></textarea>
-          <div class="meta-count" id="meta-count" style="color:var(--muted)">0 / 160 ký tự</div>
-        </div>
-        <div class="field" id="wrap-author">
-          <label>Tác giả</label>
-          <input id="author" type="text" placeholder="Nguyễn Văn A">
-        </div>
-        <div class="field">
-          <label>Ngày xuất bản</label>
-          <input id="pub-date" type="date" value="2026-06-14">
-        </div>
-      </div>
+<!-- RIGHT: Detail -->
+<div class="panel-right" id="panelRight">
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">📊</div>
+    <h3>Chọn một dự án để xem chi tiết</h3>
+    <p>Danh sách bên trái hiển thị tất cả Use Case đang quản lý trên MoSpark, sắp xếp theo Market Volume và SoV.</p>
+  </div>
+  <div class="project-detail" id="projectDetail" style="display:none"></div>
+</div>
 
-      <div class="sbar-section">
-        <div class="sbar-label">Checklist GEO</div>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" id="ck-faq"><span>Có phần FAQ / Hỏi đáp</span></label>
-          <label class="check-item"><input type="checkbox" id="ck-stats"><span>Có số liệu thống kê + nguồn</span></label>
-          <label class="check-item"><input type="checkbox" id="ck-schema"><span>Có JSON-LD Structured Data</span></label>
-          <label class="check-item"><input type="checkbox" id="ck-images"><span>Hình ảnh có alt text mô tả</span></label>
-          <label class="check-item"><input type="checkbox" id="ck-internal"><span>≥ 2 Internal links đến MoMo</span></label>
-          <label class="check-item"><input type="checkbox" id="ck-external"><span>≥ 1 External link uy tín</span></label>
-        </div>
-      </div>
+</div>
 
-      <div style="flex:1"></div>
-
-      <div class="sbar-footer">
-        <button class="btn-demo" onclick="fillDemo()">Điền mẫu thử →</button>
-        <button class="btn-publish" onclick="startPublish()">Xuất bản <span style="font-size:15px">→</span></button>
-      </div>
+<!-- Keyword Add Modal -->
+<div class="modal-overlay" id="kwModal">
+  <div class="modal">
+    <h3>Thêm Primary Keyword</h3>
+    <p class="modal-sub">Hệ thống sẽ kiểm tra tính duy nhất trước khi thêm vào Keyword Registry. 1 keyword = 1 URL, không ngoại lệ.</p>
+    <div class="mf">
+      <label>Primary Keyword *</label>
+      <input id="kwInput" type="text" placeholder="vd: vay tiền online lãi thấp" oninput="onKwInput()">
+    </div>
+    <div class="check-status" id="checkStatus"></div>
+    <div class="mf">
+      <label>Funnel Stage</label>
+      <select id="kwIntent">
+        <option value="tofu">TOFU - Nhận biết (Informational)</option>
+        <option value="mofu">MOFU - Cân nhắc (Commercial)</option>
+        <option value="bofu">BOFU - Chuyển đổi (Transactional)</option>
+      </select>
+    </div>
+    <div class="mf">
+      <label>Gắn vào Cluster</label>
+      <select id="kwCluster" oninput="updateConfirmBtn()"></select>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeKwModal()">Hủy</button>
+      <button class="modal-confirm" id="kwConfirmBtn" disabled onclick="confirmKw()">Thêm vào Registry</button>
     </div>
   </div>
 </div>
 
-<!-- ══ SCREEN 2: SCORING ══════════════════════════════════════════════════════ -->
-<div id="screen-scoring" class="screen">
-  <div class="scoring-card">
-    <div class="scoring-spinner"></div>
-    <div class="scoring-title">
-      <h2>Đang chấm điểm nội dung...</h2>
-      <p>Kiểm tra <span id="score-progress">0</span> / 20 tiêu chí SEO + GEO</p>
-    </div>
-    <div class="score-bar-wrap"><div class="score-bar-fill" id="score-bar"></div></div>
-    <div class="criteria-scroll" id="criteria-scroll"></div>
-  </div>
-</div>
-
-<!-- ══ SCREEN 3: RESULTS ══════════════════════════════════════════════════════ -->
-<div id="screen-results" class="screen">
-  <div class="results-body">
-
-    <!-- Score rings -->
-    <div class="rings-row">
-      <div class="ring-card">
-        <div class="ring-wrap">
-          <svg width="96" height="96" viewBox="0 0 96 96">
-            <circle class="ring-bg" cx="48" cy="48" r="40"/>
-            <circle class="ring-val" id="ring-seo" cx="48" cy="48" r="40" stroke="#a50064" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
-          </svg>
-          <div class="ring-center"><b id="num-seo">0</b><small>/100</small></div>
-        </div>
-        <h3>SEO Score</h3>
-        <p>Traditional Search</p>
-        <div class="score-badge" id="badge-seo">—</div>
-      </div>
-      <div class="ring-card">
-        <div class="ring-wrap">
-          <svg width="96" height="96" viewBox="0 0 96 96">
-            <circle class="ring-bg" cx="48" cy="48" r="40"/>
-            <circle class="ring-val" id="ring-geo" cx="48" cy="48" r="40" stroke="#7c3aed" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
-          </svg>
-          <div class="ring-center"><b id="num-geo">0</b><small>/100</small></div>
-        </div>
-        <h3>GEO Score</h3>
-        <p>AI Search Readiness</p>
-        <div class="score-badge" id="badge-geo">—</div>
-      </div>
-      <div class="ring-card">
-        <div class="ring-wrap">
-          <svg width="96" height="96" viewBox="0 0 96 96">
-            <circle class="ring-bg" cx="48" cy="48" r="40"/>
-            <circle class="ring-val" id="ring-overall" cx="48" cy="48" r="40" stroke="#0284c7" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
-          </svg>
-          <div class="ring-center"><b id="num-overall">0</b><small>/100</small></div>
-        </div>
-        <h3>Overall Score</h3>
-        <p>Điểm tổng hợp</p>
-        <div class="score-badge" id="badge-overall">—</div>
-      </div>
-    </div>
-
-    <!-- Verdict -->
-    <div class="verdict-box" id="verdict">
-      <div class="v-icon" id="v-icon"></div>
-      <div>
-        <h2 id="v-title"></h2>
-        <p id="v-desc"></p>
-      </div>
-    </div>
-
-    <!-- Breakdown -->
-    <div class="breakdown-grid">
-      <div class="bd-card">
-        <div class="bd-head"><span style="font-size:15px">🔍</span><h3>SEO Breakdown</h3><span class="bd-total" id="seo-total-lbl">—/100</span></div>
-        <div id="seo-bd"></div>
-      </div>
-      <div class="bd-card">
-        <div class="bd-head"><span style="font-size:15px">🤖</span><h3>GEO Breakdown</h3><span class="bd-total" id="geo-total-lbl">—/100</span></div>
-        <div id="geo-bd"></div>
-      </div>
-    </div>
-
-    <!-- Recommendations -->
-    <div class="recs-card" id="recs-card">
-      <div class="recs-head"><h3>📋 Khuyến nghị cải thiện</h3></div>
-      <div id="recs-list"></div>
-    </div>
-
-    <!-- Actions -->
-    <div class="result-actions">
-      <button class="btn-back" onclick="backToEditor()">← Chỉnh sửa lại</button>
-      <button class="btn-go-publish" id="btn-go-publish" onclick="doPublish()">✓ Xác nhận xuất bản</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SCREEN 4: SUCCESS ══════════════════════════════════════════════════════ -->
-<div id="screen-success" class="screen">
-  <div class="success-card">
-    <div class="success-emoji">🎉</div>
-    <h2>Bài viết đã được xuất bản!</h2>
-    <p>Nội dung đạt chuẩn SEO và GEO — sẵn sàng được Google index và AI search engine trích dẫn.</p>
-    <div class="success-chips" id="success-chips"></div>
-    <div class="success-url" id="success-url">momo.vn/blog/—</div>
-    <button class="btn-new" onclick="resetAll()">+ Viết bài mới</button>
-  </div>
-</div>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
-// ─── State ────────────────────────────────────────────────────────────────────
-let lastScore = null;
+// ─── DATA ────────────────────────────────────────────────────────────────────
 
-// ─── Live editor updates ──────────────────────────────────────────────────────
-function onTitle() {
-  const v = document.getElementById('title').value;
-  const el = document.getElementById('title-pill');
-  el.textContent = v.length;
-  el.className = 'char-pill' + (v.length >= 40 && v.length <= 60 ? ' good' : v.length > 0 ? ' bad' : '');
-}
-function onMeta() {
-  const v = document.getElementById('meta').value;
-  const el = document.getElementById('meta-count');
-  el.textContent = v.length + ' / 160 ký tự';
-  el.style.color = v.length >= 130 && v.length <= 160 ? 'var(--green-600)' : v.length > 0 ? 'var(--red-600)' : 'var(--muted)';
-}
-function onContent() {
-  const wc = wordCount();
-  const el = document.getElementById('wc-val');
-  const tip = document.getElementById('wc-tip');
-  el.textContent = wc + ' từ';
-  if (wc >= 1500) { el.style.color = 'var(--green-600)'; tip.textContent = '· Tốt cho cả SEO và GEO'; }
-  else if (wc >= 1000) { el.style.color = 'var(--amber-600)'; tip.textContent = '· Đủ cho SEO — cần thêm cho GEO (≥ 1500 từ)'; }
-  else { el.style.color = 'var(--red-600)'; tip.textContent = '· Quá ngắn — khuyến nghị ≥ 1000 từ'; }
-}
-function wordCount() {
-  return document.getElementById('content').value.split(/\s+/).filter(w => w.length > 0).length;
-}
-
-// ─── Demo fill ────────────────────────────────────────────────────────────────
-function fillDemo() {
-  document.getElementById('title').value = 'Vay tiền nhanh online: Hướng dẫn đầy đủ 2026';
-  document.getElementById('slug').value = 'vay-tien-nhanh-online';
-  document.getElementById('keyword').value = 'vay tiền nhanh';
-  document.getElementById('meta').value = 'Tìm hiểu cách vay tiền nhanh online an toàn qua MoMo — giải ngân trong 5 phút, lãi suất minh bạch, không cần thế chấp. Xem ngay!';
-  document.getElementById('author').value = 'Nguyễn Minh Tú';
-  document.getElementById('pub-date').value = '2026-06-14';
-  document.getElementById('content').value =
-`Vay tiền nhanh là hình thức vay tín chấp online cho phép người dùng nhận tiền giải ngân trong vòng 5–30 phút mà không cần thế chấp tài sản. Đây là giải pháp phù hợp khi cần tiền khẩn cấp hoặc chi phí phát sinh đột xuất.
-
-## Vay tiền nhanh qua MoMo là gì?
-
-MoMo Pay Later là tính năng vay tiền nhanh tích hợp trong ứng dụng MoMo, cho phép người dùng vay từ 1–10 triệu đồng với quy trình xét duyệt tự động, không cần gặp mặt hay nộp hồ sơ giấy tờ phức tạp.
-
-Theo thống kê nội bộ MoMo (Q1/2026), hơn 2,3 triệu người dùng đã sử dụng tính năng vay tiền nhanh, với tỷ lệ hài lòng đạt 92%. Tốc độ tăng trưởng người dùng mới đạt 18% so với cùng kỳ năm 2025.
-
-## Điều kiện vay tiền nhanh qua MoMo
-
-Để đủ điều kiện sử dụng MoMo Pay Later, bạn cần đáp ứng:
-
-1. Tài khoản MoMo đã xác thực danh tính (eKYC)
-2. Có lịch sử giao dịch ≥ 3 tháng trên MoMo
-3. Điểm tín dụng CIC ≥ 600 (nếu có hồ sơ CIC)
-4. Độ tuổi từ 18–60 tuổi, công dân Việt Nam
-
-## Các bước vay tiền nhanh trên MoMo
-
-- Bước 1: Mở ứng dụng MoMo → chọn mục "Pay Later"
-- Bước 2: Chọn số tiền cần vay (1–10 triệu) và kỳ hạn (1–6 tháng)
-- Bước 3: Xác nhận thông tin cá nhân và ký hợp đồng điện tử
-- Bước 4: Nhận tiền vào ví MoMo trong 5–30 phút
-
-## So sánh lãi suất vay tiền nhanh 2026
-
-| Nền tảng | Lãi suất/tháng | Hạn mức tối đa | Thời hạn |
-|---|---|---|---|
-| MoMo Pay Later | 1,5–2,5% | 10 triệu | 1–6 tháng |
-| Timo | 1,8–3,0% | 20 triệu | 3–12 tháng |
-| Home Credit | 2,0–3,5% | 50 triệu | 6–36 tháng |
-| VPBank FE Credit | 2,5–4,0% | 70 triệu | 6–48 tháng |
-
-_Nguồn: Tổng hợp từ website chính thức các tổ chức, tháng 6/2026_
-
-## Vay tiền nhanh an toàn — những lưu ý quan trọng
-
-Vay tiền nhanh tiện lợi nhưng người dùng cần lưu ý một số điểm để tránh rủi ro tài chính:
-
-- **Đọc kỹ hợp đồng**: Chú ý lãi suất, phí phạt trả trễ và điều kiện tất toán sớm
-- **Vay trong khả năng chi trả**: Tổng nợ hàng tháng không nên vượt quá 30–40% thu nhập
-- **Tránh vay chồng vay**: Dùng tính năng Tính vay của MoMo để ước tính trước khi quyết định
-- **Trả đúng hạn**: Mỗi khoản trả trễ sẽ ảnh hưởng đến điểm CIC và hạn mức tương lai
-
-## Câu hỏi thường gặp về vay tiền nhanh
-
-**Vay tiền nhanh qua MoMo có an toàn không?**
-Có. MoMo là ví điện tử được cấp phép bởi Ngân hàng Nhà nước Việt Nam (NHNN), giấy phép số 54/GP-NHNN. Mọi giao dịch được mã hóa SSL 256-bit và tuân thủ PCI-DSS Level 1.
-
-**Tôi có thể vay tối đa bao nhiêu?**
-Hạn mức tối đa hiện tại là 10 triệu đồng, tùy thuộc vào điểm tín dụng và lịch sử giao dịch MoMo của bạn. Hạn mức sẽ tăng dần theo quá trình sử dụng tốt.
-
-**Nếu không trả được đúng hạn thì sao?**
-MoMo sẽ tính lãi phạt chậm trả theo hợp đồng. Bạn nên liên hệ hỗ trợ MoMo qua hotline 1900 5454 59 trước khi đến hạn để được tư vấn cơ cấu lại.
-
-**Vay tiền nhanh có ảnh hưởng đến điểm CIC không?**
-Có. Mọi khoản vay đều được báo cáo lên Trung tâm Thông tin Tín dụng (CIC). Trả đúng hạn sẽ cải thiện điểm CIC, trả trễ sẽ làm giảm điểm và khó vay ở các tổ chức khác.
-
-Tìm hiểu thêm về MoMo Pay Later tại trang chủ MoMo hoặc liên hệ hotline 1900 5454 59 để được tư vấn trực tiếp.`;
-  document.getElementById('ck-faq').checked = true;
-  document.getElementById('ck-stats').checked = true;
-  document.getElementById('ck-schema').checked = false;
-  document.getElementById('ck-images').checked = false;
-  document.getElementById('ck-internal').checked = true;
-  document.getElementById('ck-external').checked = false;
-  onTitle(); onMeta(); onContent();
-  // Clear errors if any
-  clearErrors();
-}
-
-// ─── Scoring engine ───────────────────────────────────────────────────────────
-function computeScore() {
-  const title   = document.getElementById('title').value.trim();
-  const slug    = document.getElementById('slug').value.trim();
-  const kw      = document.getElementById('keyword').value.trim().toLowerCase();
-  const meta    = document.getElementById('meta').value.trim();
-  const author  = document.getElementById('author').value.trim();
-  const date    = document.getElementById('pub-date').value;
-  const content = document.getElementById('content').value;
-  const ckFAQ      = document.getElementById('ck-faq').checked;
-  const ckStats    = document.getElementById('ck-stats').checked;
-  const ckSchema   = document.getElementById('ck-schema').checked;
-  const ckImages   = document.getElementById('ck-images').checked;
-  const ckInternal = document.getElementById('ck-internal').checked;
-  const ckExternal = document.getElementById('ck-external').checked;
-
-  const words  = content.split(/\s+/).filter(w => w.length > 0);
-  const wc     = words.length;
-  const cLow   = content.toLowerCase();
-  const kwEsc  = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const kwHits = kw ? (cLow.match(new RegExp(kwEsc, 'g')) || []).length : 0;
-  const density = wc > 0 ? (kwHits / wc) * 100 : 0;
-
-  const hasH2     = /^##\s/m.test(content);
-  const hasList   = /^[\-\*•]\s|^\d+\.\s/m.test(content);
-  const hasTable  = /\|.+\|/.test(content);
-  const hasNums   = /\d+[%,đ]|\d[\d.,]*\s*(triệu|tỷ|nghìn|phần trăm|người)/i.test(content);
-  const hasSource = /nguồn:|_nguồn|theo thống kê|theo.*\d{4}/i.test(content);
-  const hasFAQCt  = ckFAQ || /câu hỏi thường gặp|faq|hỏi đáp/i.test(content);
-  const hasDef    = /là hình thức|là tính năng|được hiểu là|là gì|có nghĩa là/i.test(content);
-  const hasBrand  = (cLow.match(/momo/g) || []).length >= 2;
-  const first200  = content.substring(0, 300).toLowerCase();
-  const directAns = /là|giúp|để|cách|bước|cho phép/.test(first200);
-  const slugWords = slug.split(/[-_]+/).filter(Boolean);
-  const slugOk    = slugWords.length >= 3 && slugWords.length <= 7 && (!kw || slug.replace(/-/g,' ').includes(kw.split(' ')[0]));
-  const titleKw   = kw && title.toLowerCase().includes(kw);
-
-  // ── SEO: 10 criteria × 10 pts ────────────────────────────────────────────
-  const seo = [
-    {
-      name:'Title Tag (40–60 ký tự)', icon:'📝', field:'title',
-      pts: title.length >= 40 && title.length <= 60 ? 10 : title.length >= 30 ? 5 : title.length > 0 ? 2 : 0,
-      max:10, fix:`Tiêu đề hiện ${title.length} ký tự — cần 40–60 ký tự để hiển thị tốt trên Google.`
-    },
-    {
-      name:'Title chứa keyword', icon:'🔑', field:'title',
-      pts: titleKw ? 10 : !kw ? 4 : 0,
-      max:10, fix: kw ? `Tiêu đề chưa chứa keyword "${kw}" — thêm vào tự nhiên.` : 'Chưa nhập keyword mục tiêu.'
-    },
-    {
-      name:'Meta Description (130–160 ký tự)', icon:'📄', field:'meta',
-      pts: meta.length >= 130 && meta.length <= 160 ? 10 : meta.length >= 90 ? 5 : meta.length > 0 ? 2 : 0,
-      max:10, fix:`Meta hiện ${meta.length} ký tự — cần 130–160 ký tự, chứa keyword và call-to-action.`
-    },
-    {
-      name:'Cấu trúc H1 + H2 heading', icon:'📐', field:'content',
-      pts: title && hasH2 ? 10 : title ? 5 : 0,
-      max:10, fix:'Cần có tiêu đề (H1) và ít nhất 1 tiêu đề phần ## (H2) trong nội dung.'
-    },
-    {
-      name:`Keyword density (1–3%)`, icon:'📊', field:'content',
-      pts: kw && density >= 1 && density <= 3 ? 10 : kw && density > 0 ? 5 : !kw ? 4 : 0,
-      max:10, fix: kw ? `"${kw}" xuất hiện ${kwHits} lần (${density.toFixed(1)}%) trong ${wc} từ — cần 1–3%.` : 'Chưa nhập keyword để đo density.'
-    },
-    {
-      name:'Độ dài nội dung (≥ 1000 từ)', icon:'📏', field:'content',
-      pts: wc >= 1500 ? 10 : wc >= 1000 ? 8 : wc >= 700 ? 6 : wc >= 400 ? 3 : wc > 0 ? 1 : 0,
-      max:10, fix:`Hiện ${wc} từ — cần ≥ 1000 từ cho SEO cơ bản, ≥ 1500 từ cho GEO.`
-    },
-    {
-      name:'URL Slug (3–7 từ, chứa keyword)', icon:'🔗', field:'slug',
-      pts: slugOk ? 10 : slug.length > 0 ? 5 : 0,
-      max:10, fix:'Slug cần 3–7 từ cách nhau bằng "-", viết thường, chứa keyword chính (vd: vay-tien-nhanh-online).'
-    },
-    {
-      name:'Internal links đến MoMo', icon:'🔀', field:'ck-internal',
-      pts: ckInternal ? 10 : 0,
-      max:10, fix:'Thêm ≥ 2 liên kết đến các trang MoMo liên quan để tăng crawlability và page authority.'
-    },
-    {
-      name:'External link uy tín', icon:'🌐', field:'ck-external',
-      pts: ckExternal ? 10 : 0,
-      max:10, fix:'Thêm ≥ 1 liên kết đến nguồn ngoài uy tín (NHNN, Bộ Tài chính, báo chính thống) để tăng E-E-A-T.'
-    },
-    {
-      name:'Hình ảnh có alt text', icon:'🖼️', field:'ck-images',
-      pts: ckImages ? 10 : 0,
-      max:10, fix:'Thêm hình ảnh minh họa với alt text chứa keyword — giúp Google Images và tăng CTR.'
-    },
-  ];
-
-  // ── GEO: 10 criteria × 10 pts ────────────────────────────────────────────
-  const geo = [
-    {
-      name:'Direct answer đầu bài', icon:'🎯', field:'content',
-      pts: directAns ? 10 : 4,
-      max:10, fix:'300 ký tự đầu cần trả lời thẳng câu hỏi người dùng — AI search trích đoạn này đầu tiên.'
-    },
-    {
-      name:'Phần FAQ / Hỏi đáp', icon:'❓', field:'ck-faq',
-      pts: hasFAQCt ? 10 : 0,
-      max:10, fix:'Thêm mục "Câu hỏi thường gặp" với ≥ 3 Q&A — AI search (Perplexity, SGE) trích dẫn trực tiếp từ đây.'
-    },
-    {
-      name:'E-E-A-T: Tác giả + Ngày', icon:'👤', field:'author',
-      pts: author && date ? 10 : author || date ? 5 : 0,
-      max:10, fix:'Cần tên tác giả rõ ràng và ngày xuất bản — tín hiệu uy tín quan trọng với LLM-based search.'
-    },
-    {
-      name:'Số liệu thống kê + nguồn', icon:'📈', field:'ck-stats',
-      pts: (ckStats || hasNums) && hasSource ? 10 : (ckStats || hasNums) ? 5 : 0,
-      max:10, fix:'Thêm số liệu cụ thể (%, triệu, tỷ...) và ghi rõ "Nguồn:" — AI ưu tiên content có dữ liệu verifiable.'
-    },
-    {
-      name:'Structured Data (JSON-LD)', icon:'🏷️', field:'ck-schema',
-      pts: ckSchema ? 10 : 0,
-      max:10, fix:'Thêm JSON-LD schema type Article, FAQPage hoặc HowTo để AI parser hiểu cấu trúc nội dung chính xác hơn.'
-    },
-    {
-      name:'Định nghĩa thuật ngữ inline', icon:'📖', field:'content',
-      pts: hasDef ? 10 : 0,
-      max:10, fix:'Định nghĩa các thuật ngữ chuyên ngành trong bài (vd: "X là hình thức...") — giúp AI extract entity chính xác.'
-    },
-    {
-      name:'Dạng list và bảng dữ liệu', icon:'📋', field:'content',
-      pts: hasList && hasTable ? 10 : hasList || hasTable ? 6 : 0,
-      max:10, fix:'Dùng bullet list, numbered list và table — định dạng AI dễ parse và hiển thị trong AI snippet nhất.'
-    },
-    {
-      name:'Topic completeness (≥ 1500 từ)', icon:'📚', field:'content',
-      pts: wc >= 1500 ? 10 : wc >= 1000 ? 6 : wc >= 600 ? 3 : wc > 0 ? 1 : 0,
-      max:10, fix:`${wc} từ — cần ≥ 1500 từ để bao phủ topic đủ sâu, tránh bị AI search coi là thin content.`
-    },
-    {
-      name:'Brand trust signals (MoMo)', icon:'🛡️', field:'content',
-      pts: hasBrand ? 10 : 0,
-      max:10, fix:'Đề cập tên thương hiệu MoMo ≥ 2 lần tự nhiên trong bài + thêm thông tin liên hệ/hotline.'
-    },
-    {
-      name:'Ngày xuất bản rõ ràng', icon:'📅', field:'pub-date',
-      pts: date ? 10 : 0,
-      max:10, fix:'Cần ngày xuất bản hoặc cập nhật visible — AI search ưu tiên freshness, cần update khi nội dung thay đổi.'
-    },
-  ];
-
-  const seoTotal = seo.reduce((s, c) => s + c.pts, 0);
-  const geoTotal = geo.reduce((s, c) => s + c.pts, 0);
-  const overall  = Math.round((seoTotal + geoTotal) / 2);
-  return { seo, geo, seoTotal, geoTotal, overall };
-}
-
-// ─── Start publish flow ───────────────────────────────────────────────────────
-function startPublish() {
-  clearErrors();
-  lastScore = computeScore();
-  showScreen('screen-scoring');
-  runScoringAnimation();
-}
-
-// ─── Scoring animation ────────────────────────────────────────────────────────
-function runScoringAnimation() {
-  const { seo, geo } = lastScore;
-  const all = [...seo, ...geo];
-  const labels = [
-    'SEO · Title Tag','SEO · Keyword in Title','SEO · Meta Description',
-    'SEO · Heading Structure','SEO · Keyword Density','SEO · Content Length',
-    'SEO · URL Slug','SEO · Internal Links','SEO · External Links','SEO · Image Alt Text',
-    'GEO · Direct Answer','GEO · FAQ Section','GEO · E-E-A-T Signals',
-    'GEO · Data & Sources','GEO · Structured Data','GEO · Definitions',
-    'GEO · List & Table','GEO · Topic Depth','GEO · Brand Signals','GEO · Freshness',
-  ];
-
-  const scroll = document.getElementById('criteria-scroll');
-  const bar    = document.getElementById('score-bar');
-  const prog   = document.getElementById('score-progress');
-  scroll.innerHTML = '';
-
-  let i = 0;
-  function tick() {
-    if (i >= all.length) { setTimeout(showResults, 500); return; }
-    const c = all[i];
-    const st = c.pts === c.max ? 's-pass' : c.pts === 0 ? 's-fail' : 's-partial';
-    const ic = c.pts === c.max ? '✓' : c.pts === 0 ? '✗' : '~';
-    const div = document.createElement('div');
-    div.className = 'c-item ' + st;
-    div.innerHTML = `<span class="c-icon">${ic}</span><span class="c-name">${labels[i]}</span><span class="c-pts">${c.pts}/${c.max}</span>`;
-    scroll.appendChild(div);
-    requestAnimationFrame(() => div.classList.add('in'));
-    i++;
-    bar.style.width = (i / all.length * 100) + '%';
-    prog.textContent = i;
-    scroll.scrollTop = scroll.scrollHeight;
-    setTimeout(tick, 110);
+const PROJECTS = [
+  {
+    id: 'phat-nguoi', name: 'Phạt Nguội', pillar: 'P3', pillarName: 'Dịch vụ Công & Tiện ích',
+    priority: 'P0', status: 'active',
+    microsite: 'momo.vn/phat-nguoi', blogUrl: 'momo.vn/phat-nguoi/blog/*',
+    vol: 1500000, sov: null, targetSov: 40,
+    topics: 3, clusters: 8, keywords: 22, content: 12,
+    clusters_data: [
+      { id:'ph-tofu-1', name:'Kiến thức phạt nguội', funnel:'tofu', vol:890000, keywords:[
+        {kw:'phạt nguội là gì',vol:245000,intent:'info',unique:true},
+        {kw:'cách tra cứu phạt nguội',vol:380000,intent:'info',unique:true},
+        {kw:'phạt nguội bao lâu cập nhật',vol:265000,intent:'info',unique:true}
+      ]},
+      { id:'ph-mofu-1', name:'So sánh cách tra cứu', funnel:'mofu', vol:310000, keywords:[
+        {kw:'tra phạt nguội online vs trực tiếp',vol:135000,intent:'comm',unique:true},
+        {kw:'app tra cứu phạt nguội uy tín',vol:175000,intent:'comm',unique:true}
+      ]},
+      { id:'ph-bofu-1', name:'Tra cứu ngay', funnel:'bofu', vol:300000, keywords:[
+        {kw:'tra phạt nguội MoMo',vol:185000,intent:'trans',unique:true},
+        {kw:'kiểm tra phạt nguội biển số xe',vol:115000,intent:'trans',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Tra Cứu Phạt Nguội - MoMo',
+      shortDesc: 'Tra cứu vi phạm giao thông (phạt nguội) theo biển số xe, nộp phạt trực tuyến qua MoMo.',
+      valueProp: 'Tra nhanh biển số, biết ngay vi phạm, nộp phạt ngay trong App - không cần đến cơ quan.',
+      targetPersona: 'Chủ phương tiện 20-50 tuổi, có xe máy hoặc ô tô, lo ngại bị phạt mà không biết.',
+      usps: 'Tra cứu 24/7 · Kết nối trực tiếp CSGT · Nộp phạt online qua MoMo · Cập nhật real-time',
+      differentiation: 'Duy nhất kết nối API CSGT real-time. Khác hoàn toàn với tra cứu tĩnh trên các trang báo.',
+      trustSignals: 'Hợp tác chính thức với Cục CSGT, được cấp phép Bộ Công An, dữ liệu real-time.',
+      legalDisclaimer: 'Dữ liệu từ hệ thống CSGT chính thức. Kết quả chỉ mang tính tham khảo, thông tin chính thức theo CSGT.',
+      blacklistTerms: 'xóa phạt nguội, bỏ qua phạt nguội, không cần nộp phạt',
+      primaryCta: 'Tra cứu phạt nguội ngay',
+      secondaryCta: 'Nộp phạt trực tuyến qua MoMo',
+      onelink: 'onelink.momo.vn/phat-nguoi',
+      author: 'Đội ngũ MoMo · Xác thực CSGT',
+      pmConfirmed: true, legalConfirmed: true
+    }
+  },
+  {
+    id: 'vay-nhanh', name: 'Vay Nhanh', pillar: 'P1', pillarName: 'Tài chính & Tín dụng',
+    priority: 'CAO', status: 'active',
+    microsite: 'momo.vn/vay-nhanh', blogUrl: 'momo.vn/vay-nhanh/blog/*',
+    vol: 4375800, sov: 6, targetSov: 40,
+    topics: 3, clusters: 6, keywords: 14, content: 8,
+    clusters_data: [
+      { id:'vn-tofu-1', name:'Kiến thức vay cơ bản', funnel:'tofu', vol:245000, keywords:[
+        {kw:'vay tiền online là gì',vol:22100,intent:'info',unique:true},
+        {kw:'vay tín chấp là gì',vol:18400,intent:'info',unique:true},
+        {kw:'lãi suất vay tiêu dùng 2026',vol:76000,intent:'info',unique:true},
+        {kw:'cách tính lãi vay giảm dần',vol:52300,intent:'info',unique:true},
+        {kw:'vay online có an toàn không',vol:76200,intent:'info',unique:true}
+      ]},
+      { id:'vn-tofu-2', name:'So sánh nơi vay', funnel:'tofu', vol:310000, keywords:[
+        {kw:'app vay tiền uy tín 2026',vol:124000,intent:'comm',unique:true},
+        {kw:'vay tiền ngân hàng hay app',vol:56000,intent:'comm',unique:true},
+        {kw:'vay nhanh lãi suất thấp nhất',vol:130000,intent:'comm',unique:true}
+      ]},
+      { id:'vn-mofu-1', name:'Điều kiện & hồ sơ', funnel:'mofu', vol:380000, keywords:[
+        {kw:'điều kiện vay nhanh MoMo',vol:48000,intent:'comm',unique:true},
+        {kw:'vay MoMo cần giấy tờ gì',vol:243000,intent:'comm',unique:true},
+        {kw:'hồ sơ vay tiêu dùng cần gì',vol:89000,intent:'comm',unique:true}
+      ]},
+      { id:'vn-mofu-2', name:'Tính toán & mô phỏng', funnel:'mofu', vol:280000, keywords:[
+        {kw:'tính lãi vay 10 triệu 12 tháng',vol:67000,intent:'comm',unique:true},
+        {kw:'vay 20 triệu trả bao nhiêu mỗi tháng',vol:213000,intent:'comm',unique:true}
+      ]},
+      { id:'vn-bofu-1', name:'Vay ngay', funnel:'bofu', vol:565200, keywords:[
+        {kw:'vay nhanh MoMo',vol:320000,intent:'trans',unique:true},
+        {kw:'đăng ký vay tiền MoMo',vol:245200,intent:'trans',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Vay Nhanh - Vay tiền mặt qua MoMo',
+      shortDesc: 'Vay tiêu dùng không tài sản thế chấp, giải ngân trong ngày qua ví MoMo.',
+      valueProp: 'Vay nhanh trong ngày, lãi suất cạnh tranh, không cần tài sản thế chấp, tự động xét duyệt theo điểm CIC.',
+      targetPersona: 'Người 22-40 tuổi, có việc làm ổn định, cần vốn ngắn hạn 1-30 triệu, ưa tiện lợi digital.',
+      usps: 'Giải ngân 24/7 · Không giấy tờ phức tạp · Xét duyệt theo điểm CIC · Không phí ẩn · Hoàn toàn qua App',
+      differentiation: 'Nhanh hơn ngân hàng truyền thống (ngay trong ngày vs 1-3 ngày). Đáng tin hơn app vay không tên tuổi.',
+      trustSignals: 'MoMo ví điện tử #1 VN · 31M+ người dùng · Cấp phép NHNN · Đối tác tổ chức tín dụng uy tín',
+      legalDisclaimer: 'Lãi suất theo quy định NHNN. Không chào mời vay quá khả năng trả nợ. Vay là trách nhiệm tài chính cá nhân.',
+      blacklistTerms: 'vay không cần trả · vay 0% lãi suất mãi · vay đảo nợ · tín chấp không kiểm tra CIC · vay siêu dễ duyệt',
+      primaryCta: 'Vay ngay trên MoMo',
+      secondaryCta: 'Tính lãi vay ngay',
+      onelink: 'onelink.momo.vn/vay-nhanh',
+      author: '⚠ Chưa có - Blocked bởi Named Author Policy',
+      pmConfirmed: true, legalConfirmed: false
+    }
+  },
+  {
+    id: 'bhyt', name: 'BHYT', pillar: 'P2', pillarName: 'Bảo hiểm Công nghệ',
+    priority: 'CAO', status: 'active',
+    microsite: 'momo.vn/bao-hiem-y-te', blogUrl: 'momo.vn/bao-hiem-y-te/blog/*',
+    vol: 1415740, sov: 0, targetSov: 40,
+    topics: 2, clusters: 4, keywords: 9, content: 3,
+    clusters_data: [
+      { id:'bh-tofu-1', name:'Kiến thức BHYT', funnel:'tofu', vol:780000, keywords:[
+        {kw:'bảo hiểm y tế là gì',vol:145000,intent:'info',unique:true},
+        {kw:'quyền lợi BHYT 2026',vol:320000,intent:'info',unique:true},
+        {kw:'mức đóng BHYT tự nguyện',vol:315000,intent:'info',unique:true}
+      ]},
+      { id:'bh-mofu-1', name:'So sánh & tham gia', funnel:'mofu', vol:430000, keywords:[
+        {kw:'mua BHYT tự nguyện ở đâu',vol:187000,intent:'comm',unique:true},
+        {kw:'BHYT tự nguyện MoMo có tốt không',vol:243000,intent:'comm',unique:true}
+      ]},
+      { id:'bh-bofu-1', name:'Đăng ký ngay', funnel:'bofu', vol:205740, keywords:[
+        {kw:'mua BHYT qua MoMo',vol:120000,intent:'trans',unique:true},
+        {kw:'gia hạn BHYT tự nguyện online',vol:85740,intent:'trans',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Bảo Hiểm Y Tế Tự Nguyện qua MoMo',
+      shortDesc: 'Mua và gia hạn BHYT tự nguyện trực tuyến, được hưởng quyền lợi BHYT toàn quốc.',
+      valueProp: 'Mua BHYT tự nguyện ngay trong App MoMo - nhanh 5 phút, bảo vệ sức khỏe cả năm.',
+      targetPersona: 'Người lao động tự do, freelancer, người nội trợ không tham gia BHYT bắt buộc 25-55 tuổi.',
+      usps: 'Mua online 5 phút · Hưởng quyền lợi toàn quốc · Gia hạn tự động · Minh bạch quyền lợi',
+      differentiation: 'Chỉ MoMo tích hợp mua BHYT + thanh toán viện phí + tư vấn sức khỏe trong 1 App.',
+      trustSignals: 'Hợp tác chính thức BHXH Việt Nam · Cấp phép Bộ Y Tế · Hoạt động toàn quốc',
+      legalDisclaimer: 'BHYT theo quy định Luật BHYT 2008 sửa đổi 2014. Quyền lợi theo quy định Bộ Y Tế hiện hành.',
+      blacklistTerms: 'BHYT tư nhân · bảo hiểm không giới hạn · mua BHYT không cần KCB ban đầu',
+      primaryCta: 'Mua BHYT ngay trên MoMo',
+      secondaryCta: 'Tính phí BHYT tự nguyện',
+      onelink: 'onelink.momo.vn/bhyt',
+      author: '⚠ Chưa có - Blocked bởi Named Author Policy',
+      pmConfirmed: true, legalConfirmed: false
+    }
+  },
+  {
+    id: 'cic-score', name: 'CIC Score', pillar: 'P1', pillarName: 'Tài chính & Tín dụng',
+    priority: 'CAO', status: 'active',
+    microsite: 'momo.vn/diem-tin-dung', blogUrl: 'momo.vn/diem-tin-dung/blog/*',
+    vol: 96790, sov: 0, targetSov: 40,
+    topics: 2, clusters: 3, keywords: 7, content: 2,
+    clusters_data: [
+      { id:'cic-tofu-1', name:'Kiến thức điểm tín dụng', funnel:'tofu', vol:52000, keywords:[
+        {kw:'điểm tín dụng CIC là gì',vol:18400,intent:'info',unique:true},
+        {kw:'điểm tín dụng ảnh hưởng gì',vol:14200,intent:'info',unique:true},
+        {kw:'cải thiện điểm CIC như thế nào',vol:19400,intent:'info',unique:true}
+      ]},
+      { id:'cic-mofu-1', name:'Tra cứu & kiểm tra', funnel:'mofu', vol:28000, keywords:[
+        {kw:'tra cứu điểm tín dụng miễn phí',vol:16400,intent:'comm',unique:true},
+        {kw:'xem điểm CIC trên MoMo',vol:11600,intent:'comm',unique:true}
+      ]},
+      { id:'cic-bofu-1', name:'Kiểm tra ngay', funnel:'bofu', vol:16790, keywords:[
+        {kw:'kiểm tra điểm tín dụng MoMo',vol:16790,intent:'trans',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Kiểm Tra Điểm Tín Dụng CIC qua MoMo',
+      shortDesc: 'Tra cứu điểm tín dụng CIC cá nhân, nhận phân tích chi tiết và gợi ý cải thiện.',
+      valueProp: 'Biết điểm CIC của mình trong 1 phút, hiểu rõ sức khỏe tài chính, chuẩn bị tốt hơn trước khi vay.',
+      targetPersona: 'Người 25-45 tuổi có nhu cầu vay hoặc muốn biết điểm tín dụng để quản lý tài chính.',
+      usps: 'Kết quả ngay lập tức · Phân tích chi tiết · Gợi ý cải thiện cụ thể · Miễn phí lần đầu',
+      differentiation: 'MoMo là nơi duy nhất tích hợp CIC checker + Loan calculator + Vay Nhanh trong cùng 1 App.',
+      trustSignals: 'Kết nối trực tiếp CIC - Trung tâm Thông tin Tín dụng Quốc gia Việt Nam · NHNN cấp phép',
+      legalDisclaimer: 'Dữ liệu điểm CIC là thông tin tài chính cá nhân. MoMo không lưu trữ điểm CIC. Kết quả từ CIC chính thức.',
+      blacklistTerms: 'xóa nợ xấu · nâng điểm CIC nhanh · bypass CIC · mua điểm tín dụng',
+      primaryCta: 'Kiểm tra điểm CIC miễn phí',
+      secondaryCta: 'Cải thiện điểm CIC của bạn',
+      onelink: 'onelink.momo.vn/cic-score',
+      author: '⚠ Chưa có - Blocked bởi Named Author Policy',
+      pmConfirmed: false, legalConfirmed: false
+    }
+  },
+  {
+    id: 'vi-tra-sau', name: 'Ví Trả Sau (BNPL)', pillar: 'P1', pillarName: 'Tài chính & Tín dụng',
+    priority: 'LEADER', status: 'active',
+    microsite: 'momo.vn/vi-tra-sau', blogUrl: 'momo.vn/vi-tra-sau/blog/*',
+    vol: 135290, sov: 54, targetSov: 40,
+    topics: 2, clusters: 4, keywords: 11, content: 15,
+    clusters_data: [
+      { id:'vts-tofu-1', name:'Kiến thức BNPL', funnel:'tofu', vol:68000, keywords:[
+        {kw:'ví trả sau là gì',vol:28400,intent:'info',unique:true},
+        {kw:'mua trước trả sau hoạt động thế nào',vol:39600,intent:'info',unique:true}
+      ]},
+      { id:'vts-mofu-1', name:'So sánh BNPL', funnel:'mofu', vol:42000, keywords:[
+        {kw:'MoMo ví trả sau vs kredivo',vol:14000,intent:'comm',unique:true},
+        {kw:'BNPL nào uy tín nhất VN 2026',vol:28000,intent:'comm',unique:true}
+      ]},
+      { id:'vts-bofu-1', name:'Kích hoạt ngay', funnel:'bofu', vol:25290, keywords:[
+        {kw:'kích hoạt ví trả sau MoMo',vol:17890,intent:'trans',unique:true},
+        {kw:'đăng ký mua trước trả sau MoMo',vol:7400,intent:'trans',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Ví Trả Sau - BNPL MoMo',
+      shortDesc: 'Mua hàng trước, trả tiền sau 0 lãi suất trong kỳ ân hạn, phê duyệt tức thì.',
+      valueProp: 'Mua ngay hôm nay, trả sau 0% lãi suất trong 15-45 ngày. Được phê duyệt tự động trong 30 giây.',
+      targetPersona: 'Người 20-35 tuổi, mua sắm online, muốn linh hoạt dòng tiền mà không phải trả lãi.',
+      usps: '0% lãi suất trong kỳ ân hạn · Phê duyệt 30 giây · Dùng được trên 10,000 merchant · Không thế chấp',
+      differentiation: 'SoV 54% - Market Leader. Duy nhất tích hợp sâu hệ sinh thái MoMo 300K+ merchant.',
+      trustSignals: 'Được NHNN cấp phép · 31M+ người dùng MoMo · Đối tác hàng đầu: Shopee, Lazada, CGV',
+      legalDisclaimer: 'Ví trả sau là hình thức tín dụng tiêu dùng. Lãi suất phát sinh nếu trả trễ theo quy định.',
+      blacklistTerms: 'vay không cần trả · nợ xấu vẫn được duyệt · dùng mãi không trả',
+      primaryCta: 'Kích hoạt Ví Trả Sau ngay',
+      secondaryCta: 'Mua ngay, trả sau',
+      onelink: 'onelink.momo.vn/vi-tra-sau',
+      author: 'Chuyên gia Tài chính MoMo',
+      pmConfirmed: true, legalConfirmed: true
+    }
+  },
+  {
+    id: 'bh-xe-may', name: 'BH Xe Máy', pillar: 'P2', pillarName: 'Bảo hiểm Công nghệ',
+    priority: 'CAO', status: 'active',
+    microsite: 'momo.vn/bao-hiem-xe-may', blogUrl: 'momo.vn/bao-hiem-xe-may/blog/*',
+    vol: 58810, sov: 38, targetSov: 40,
+    topics: 2, clusters: 4, keywords: 10, content: 9,
+    clusters_data: [
+      { id:'bxm-tofu-1', name:'Kiến thức BH xe máy', funnel:'tofu', vol:31000, keywords:[
+        {kw:'bảo hiểm xe máy bắt buộc là gì',vol:14200,intent:'info',unique:true},
+        {kw:'phí bảo hiểm xe máy 2026',vol:16800,intent:'info',unique:true}
+      ]},
+      { id:'bxm-bofu-1', name:'Mua BH ngay', funnel:'bofu', vol:27810, keywords:[
+        {kw:'mua bảo hiểm xe máy online',vol:18400,intent:'trans',unique:true},
+        {kw:'gia hạn bảo hiểm xe máy MoMo',vol:9410,intent:'trans',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Bảo Hiểm Xe Máy Bắt Buộc qua MoMo',
+      shortDesc: 'Mua và gia hạn bảo hiểm xe máy bắt buộc trực tuyến, nhận giấy chứng nhận điện tử ngay.',
+      valueProp: 'Mua BH xe máy ngay trong App, không cần ra đại lý, giấy chứng nhận điện tử hợp lệ toàn quốc.',
+      targetPersona: 'Chủ xe máy 18-55 tuổi, cần gia hạn hàng năm, ưa tiện lợi và không muốn mất thời gian.',
+      usps: 'Mua online 2 phút · Giấy CN điện tử ngay · Hợp lệ khi CSGT kiểm tra · Gia hạn nhắc tự động',
+      differentiation: 'SoV 38% - gần Market Leader. Tích hợp nhắc gia hạn + thanh toán cùng lúc trong MoMo.',
+      trustSignals: 'Hợp tác chính thức PJICO, Bảo Việt · Cấp phép Bộ Tài chính · Giấy CN điện tử được CSGT chấp nhận',
+      legalDisclaimer: 'BH xe máy bắt buộc theo Nghị định 03/2021/NĐ-CP. Giấy CN điện tử theo Thông tư 22/2016/TT-BTC.',
+      blacklistTerms: 'không cần bảo hiểm · qua mặt CSGT không có BH · BH giả',
+      primaryCta: 'Mua BH xe máy ngay',
+      secondaryCta: 'Gia hạn bảo hiểm',
+      onelink: 'onelink.momo.vn/bh-xe-may',
+      author: 'Chuyên gia Bảo hiểm MoMo',
+      pmConfirmed: true, legalConfirmed: true
+    }
+  },
+  {
+    id: 'bh-o-to', name: 'BH Ô Tô', pillar: 'P2', pillarName: 'Bảo hiểm Công nghệ',
+    priority: 'CAO', status: 'planning',
+    microsite: 'momo.vn/bao-hiem-o-to', blogUrl: 'momo.vn/bao-hiem-o-to/blog/*',
+    vol: 74000, sov: 0, targetSov: 40,
+    topics: 1, clusters: 2, keywords: 5, content: 0,
+    clusters_data: [
+      { id:'bot-tofu-1', name:'Kiến thức BH ô tô', funnel:'tofu', vol:44000, keywords:[
+        {kw:'bảo hiểm ô tô vật chất là gì',vol:22000,intent:'info',unique:true},
+        {kw:'phí bảo hiểm ô tô bắt buộc 2026',vol:22000,intent:'info',unique:true}
+      ]},
+      { id:'bot-mofu-1', name:'So sánh gói BH', funnel:'mofu', vol:30000, keywords:[
+        {kw:'so sánh bảo hiểm ô tô MoMo vs Bảo Việt',vol:12000,intent:'comm',unique:true},
+        {kw:'tính phí BH ô tô online',vol:18000,intent:'comm',unique:true}
+      ]}
+    ],
+    context: {
+      productName: 'Bảo Hiểm Ô Tô qua MoMo',
+      shortDesc: 'Mua bảo hiểm ô tô bắt buộc và vật chất trực tuyến qua MoMo.',
+      valueProp: '(Chưa xác định - cần PM điền)',
+      targetPersona: 'Chủ ô tô 28-55 tuổi, cần BH bắt buộc + vật chất, muốn so sánh giá nhiều công ty.',
+      usps: '(Chưa xác định - cần input BU)',
+      differentiation: 'SoV 0% - Cơ hội lớn. Cổng so sánh trung lập là differentiator rõ nhất.',
+      trustSignals: '(Chưa xác định - cần xác nhận đối tác BH)',
+      legalDisclaimer: '(Cần Legal review - YMYL content)',
+      blacklistTerms: '(Chưa xác định)',
+      primaryCta: 'Tính phí BH ô tô ngay',
+      secondaryCta: 'So sánh gói bảo hiểm',
+      onelink: '(Chưa có - cần Dev tạo)',
+      author: '⚠ Chưa có - Blocked bởi Named Author Policy',
+      pmConfirmed: false, legalConfirmed: false
+    }
+  },
+  {
+    id: 'bhxh', name: 'BHXH', pillar: 'P2', pillarName: 'Bảo hiểm Công nghệ',
+    priority: 'COMING', status: 'coming',
+    microsite: 'momo.vn/bao-hiem-xa-hoi', blogUrl: 'momo.vn/bao-hiem-xa-hoi/blog/*',
+    vol: 938090, sov: null, targetSov: 40,
+    topics: 0, clusters: 0, keywords: 0, content: 0,
+    clusters_data: [],
+    context: {
+      productName: '', shortDesc: '', valueProp: '', targetPersona: '', usps: '',
+      differentiation: '', trustSignals: '', legalDisclaimer: '', blacklistTerms: '',
+      primaryCta: '', secondaryCta: '', onelink: '', author: '',
+      pmConfirmed: false, legalConfirmed: false
+    }
   }
-  tick();
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let selectedProject = null;
+let activeTab = 'topics';
+let activePillar = 'all';
+let kwCheckTimeout = null;
+let kwCheckState = 'idle'; // idle | checking | unique | conflict
+let openFunnels = {};
+let openClusters = {};
+const EXISTING_KEYWORDS = new Set([
+  'vay nhanh momovay', 'app tài chính', 'ví điện tử momo', 'chuyển tiền online'
+]);
+
+// ─── RENDER PROJECT LIST ──────────────────────────────────────────────────────
+function getSovClass(sov) {
+  if (sov === null) return null;
+  if (sov >= 40) return 'f-leader';
+  if (sov >= 20) return 'f-mid';
+  return 'f-low';
+}
+function fmtVol(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if (n >= 1000) return Math.round(n/1000)+'K';
+  return n.toString();
+}
+function fmtVolFull(n) {
+  return n.toLocaleString('vi-VN');
 }
 
-// ─── Show results ─────────────────────────────────────────────────────────────
-function showResults() {
-  showScreen('screen-results');
-  const { seo, geo, seoTotal, geoTotal, overall } = lastScore;
-
-  // Animate rings
-  setTimeout(() => {
-    animateRing('ring-seo', seoTotal, 251.3);
-    animateRing('ring-geo', geoTotal, 251.3);
-    animateRing('ring-overall', overall, 251.3);
-    countUp('num-seo', seoTotal);
-    countUp('num-geo', geoTotal);
-    countUp('num-overall', overall);
-  }, 80);
-
-  setBadge('badge-seo', seoTotal);
-  setBadge('badge-geo', geoTotal);
-  setBadge('badge-overall', overall);
-
-  document.getElementById('seo-total-lbl').textContent = seoTotal + '/100';
-  document.getElementById('geo-total-lbl').textContent = geoTotal + '/100';
-
-  // Verdict — pass requires SEO ≥ 60 AND GEO ≥ 50
-  const seoPass = seoTotal >= 60, geoPass = geoTotal >= 50;
-  const passed  = seoPass && geoPass;
-  const vEl = document.getElementById('verdict');
-  vEl.className = 'verdict-box ' + (passed ? 'v-pass' : 'v-fail');
-  document.getElementById('v-icon').textContent = passed ? '✅' : '❌';
-  document.getElementById('v-title').textContent = passed
-    ? 'Đạt chuẩn — sẵn sàng xuất bản!'
-    : `Chưa đạt — cần cải thiện${!seoPass && !geoPass ? ' SEO và GEO' : !seoPass ? ' SEO' : ' GEO'}`;
-  document.getElementById('v-desc').textContent = passed
-    ? `SEO ${seoTotal}/100 ✓ · GEO ${geoTotal}/100 ✓ — nội dung đã sẵn sàng được Google index và AI search engine trích dẫn.`
-    : `Ngưỡng xuất bản: SEO ≥ 60 (hiện ${seoTotal}) và GEO ≥ 50 (hiện ${geoTotal}). Xem khuyến nghị bên dưới để biết cần sửa gì.`;
-
-  // Publish button
-  const pbtn = document.getElementById('btn-go-publish');
-  pbtn.disabled = !passed;
-
-  // Breakdowns
-  renderBreakdown('seo-bd', seo);
-  renderBreakdown('geo-bd', geo);
-
-  // Recommendations
-  const recs = [
-    ...seo.map(c => ({...c, dim:'SEO'})),
-    ...geo.map(c => ({...c, dim:'GEO'}))
-  ]
-    .filter(c => c.pts < c.max)
-    .map(c => ({...c, gap: c.max - c.pts, prio: c.pts === 0 ? 'crit' : c.pts < c.max / 2 ? 'imp' : 'opt'}))
-    .sort((a, b) => b.gap - a.gap);
-
-  if (recs.length > 0) {
-    document.getElementById('recs-card').style.display = 'block';
-    document.getElementById('recs-list').innerHTML = recs.map(r => {
-      const dot  = {crit:'dot-crit', imp:'dot-imp', opt:'dot-opt'}[r.prio];
-      const tag  = {crit:'tag-crit', imp:'tag-imp', opt:'tag-opt'}[r.prio];
-      const lbl  = {crit:'Bắt buộc', imp:'Quan trọng', opt:'Tùy chọn'}[r.prio];
-      return `<div class="rec-row">
-        <div class="rec-dot ${dot}"></div>
-        <div class="rec-body"><b>${r.dim}: ${r.name}</b><span>${r.fix}</span></div>
-        <span class="rec-tag ${tag}">${lbl}</span>
-      </div>`;
-    }).join('');
-  } else {
-    document.getElementById('recs-card').style.display = 'none';
-  }
-}
-
-function renderBreakdown(id, criteria) {
-  document.getElementById(id).innerHTML = criteria.map(c => {
-    const st = c.pts === c.max ? 'r-pass' : c.pts === 0 ? 'r-fail' : 'r-partial';
-    const ic = c.pts === c.max ? '✓' : c.pts === 0 ? '✗' : '~';
-    return `<div class="bd-row ${st}">
-      <span class="bd-status">${ic}</span>
-      <span class="bd-name">${c.icon} ${c.name}</span>
-      <span class="bd-pts">${c.pts}/${c.max}</span>
+function renderProjectList() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const list = document.getElementById('projectList');
+  const filtered = PROJECTS.filter(p => {
+    const matchPillar = activePillar === 'all' || p.pillar === activePillar;
+    const matchSearch = !q || p.name.toLowerCase().includes(q);
+    return matchPillar && matchSearch;
+  });
+  list.innerHTML = filtered.map(p => {
+    const sc = getSovClass(p.sov);
+    const sovPct = p.sov !== null ? Math.min(p.sov/p.targetSov*100,100) : 0;
+    const sovLbl = p.sov !== null ? p.sov+'% SoV' : '—';
+    const bClass = p.priority === 'P0' ? 'b-p0' : p.priority === 'LEADER' ? 'b-leader' : p.priority === 'CAO' ? 'b-cao' : p.priority === 'COMING' ? 'b-coming' : 'b-mid';
+    const bLabel = p.priority === 'P0' ? 'P0 URGENT' : p.priority === 'LEADER' ? 'LEADER' : p.priority === 'COMING' ? 'SẮPRA' : p.priority;
+    return `<div class="pi${selectedProject?.id===p.id?' sel':''}" onclick="selectProject('${p.id}')">
+      <div class="pi-top">
+        <div class="pi-name">${p.name}</div>
+        <div class="pi-badges">
+          <span class="badge ${bClass}">${bLabel}</span>
+          <span class="badge b-low">${p.pillar}</span>
+        </div>
+      </div>
+      <div class="pi-vol">Market: <b>${fmtVol(p.vol)}/tháng</b></div>
+      <div class="sov-row">
+        ${p.sov !== null ? `
+          <div class="sov-track"><div class="sov-fill ${sc}" style="width:${sovPct}%"></div></div>
+          <span class="sov-lbl ${sc}">${sovLbl}</span>
+        ` : `<span class="sov-na">SoV: chưa đo</span>`}
+      </div>
+      <div class="pi-stats">
+        <span class="pi-stat"><b>${p.clusters}</b> clusters</span>
+        <span class="pi-stat"><b>${p.keywords}</b> keywords</span>
+        <span class="pi-stat"><b>${p.content}</b> bài</span>
+      </div>
     </div>`;
   }).join('');
 }
 
-// ─── Back to editor ───────────────────────────────────────────────────────────
-function backToEditor() {
-  if (!lastScore) { showScreen('screen-editor'); return; }
-  const { seoTotal, geoTotal, seo, geo } = lastScore;
-  const seoPass = seoTotal >= 60, geoPass = geoTotal >= 50;
+function filterProjects() { renderProjectList(); }
+function setPillar(p, btn) {
+  activePillar = p;
+  document.querySelectorAll('.pf').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProjectList();
+}
 
-  // Highlight failing fields
-  const allCriteria = [...seo, ...geo].filter(c => c.pts < c.max);
-  const failedFields = new Set(allCriteria.map(c => c.field));
+// ─── SELECT PROJECT ───────────────────────────────────────────────────────────
+function selectProject(id) {
+  selectedProject = PROJECTS.find(p => p.id === id);
+  openFunnels = {};
+  openClusters = {};
+  renderProjectList();
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('projectDetail').style.display = 'flex';
+  document.getElementById('projectDetail').style.flexDirection = 'column';
+  renderDetail();
+  setTab('topics');
+}
 
-  ['title','meta','author','slug','content'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('input-error', failedFields.has(id));
+function renderDetail() {
+  const p = selectedProject;
+  const sc = getSovClass(p.sov);
+  const sovPct = p.sov !== null ? Math.min(p.sov/p.targetSov*100,100) : 0;
+  const detail = document.getElementById('projectDetail');
+  detail.innerHTML = `
+    <div class="detail-head">
+      <div class="dh-top">
+        <div>
+          <div class="dh-pillar">${p.pillar} · ${p.pillarName}</div>
+          <div class="dh-title">${p.name}</div>
+        </div>
+        <div class="dh-actions">
+          <button class="btn-sm" onclick="showToast('SEO Inventory → Xem thị trường','')">📊 SoV Dashboard</button>
+          <button class="btn-sm primary" onclick="setTab('keywords');showToast('Chọn keyword rồi nhấn Viết bài →','t-green')">✍ Sản xuất nội dung</button>
+        </div>
+      </div>
+      <div class="dh-meta">
+        <div class="meta-chip"><span class="mc-lbl">Market:</span><span class="mc-val">${fmtVolFull(p.vol)}/tháng</span></div>
+        <div class="mc-div"></div>
+        <div class="meta-chip"><span class="mc-lbl">SoV MoMo:</span>
+          ${p.sov !== null ? `
+          <div class="sov-chip">
+            <div class="sov-chip-bar"><div class="sov-chip-fill ${sc}" style="width:${sovPct}%"></div></div>
+            <span class="sov-lbl ${sc}">${p.sov}% / ${p.targetSov}% target</span>
+          </div>` : '<span class="sov-na">Chưa đo</span>'}
+        </div>
+        <div class="mc-div"></div>
+        <div class="meta-chip"><span class="mc-lbl">Microsite:</span><span class="mc-mono">${p.microsite}</span></div>
+        <div class="mc-div"></div>
+        <div class="meta-chip"><span class="mc-lbl">Blog URL:</span><span class="mc-mono">${p.blogUrl}</span></div>
+      </div>
+    </div>
+    <div class="detail-tabs">
+      <button class="tab-btn active" id="tab-topics-btn" onclick="setTab('topics')">Topic & Cluster <span class="tc" id="tc-topics">${p.clusters}</span></button>
+      <button class="tab-btn" id="tab-context-btn" onclick="setTab('context')">Business Context <span class="tc" id="tc-context">12</span></button>
+      <button class="tab-btn" id="tab-keywords-btn" onclick="setTab('keywords')">Keyword Registry <span class="tc" id="tc-keywords">${p.keywords}</span></button>
+    </div>
+    <div class="tab-body">
+      <div class="tab-panel active" id="tab-topics">${renderTopics()}</div>
+      <div class="tab-panel" id="tab-context">${renderContext()}</div>
+      <div class="tab-panel" id="tab-keywords">${renderKeywords()}</div>
+    </div>
+  `;
+}
+
+function setTab(t) {
+  activeTab = t;
+  ['topics','context','keywords'].forEach(tab => {
+    document.getElementById('tab-'+tab)?.classList.toggle('active', tab===t);
+    document.getElementById('tab-'+tab+'-btn')?.classList.toggle('active', tab===t);
   });
-  // Also visually indicate checkboxes that failed
-  ['ck-faq','ck-stats','ck-schema','ck-images','ck-internal','ck-external'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      const label = el.closest('.check-item');
-      if (label) label.style.color = failedFields.has(id) ? 'var(--red-600)' : '';
+}
+
+// ─── TOPICS TAB ──────────────────────────────────────────────────────────────
+function renderTopics() {
+  const p = selectedProject;
+  if (!p.clusters_data.length) return `<div style="text-align:center;padding:40px;color:var(--muted)">
+    <div style="font-size:36px;margin-bottom:10px">🌱</div>
+    <div style="font-size:13px;font-weight:700;color:var(--grey-700);margin-bottom:6px">Chưa có Topic Cluster</div>
+    <div style="font-size:11px;line-height:1.6">Dự án này mới khởi tạo. Bắt đầu bằng cách thêm cluster TOFU đầu tiên từ dữ liệu SEO Inventory.</div>
+    <button class="add-cluster-btn" style="max-width:280px;margin:16px auto 0" onclick="showToast('Thêm cluster từ SEO Inventory dữ liệu','')">+ Thêm Cluster đầu tiên</button>
+  </div>`;
+
+  const funnelGroups = {
+    tofu: { label: 'TOFU - Nhận biết', cls: 'fh-tofu', dotCls: 'c-dot-t', clusters: [] },
+    mofu: { label: 'MOFU - Cân nhắc', cls: 'fh-mofu', dotCls: 'c-dot-m', clusters: [] },
+    bofu: { label: 'BOFU - Chuyển đổi', cls: 'fh-bofu', dotCls: 'c-dot-b', clusters: [] }
+  };
+  p.clusters_data.forEach(c => funnelGroups[c.funnel].clusters.push(c));
+  Object.keys(funnelGroups).forEach(f => {
+    funnelGroups[f].totalVol = funnelGroups[f].clusters.reduce((s,c)=>s+c.vol,0);
+  });
+  const totalVol = Object.values(funnelGroups).reduce((s,f)=>s+f.totalVol,0);
+
+  return Object.entries(funnelGroups).map(([fk, fg]) => {
+    if (!fg.clusters.length) return '';
+    const pct = totalVol ? Math.round(fg.totalVol/totalVol*100) : 0;
+    const fOpen = openFunnels[fk];
+    return `
+    <div class="funnel-section">
+      <div class="funnel-head ${fg.cls}" onclick="toggleFunnel('${fk}')">
+        <span class="fh-lbl">${fg.label}</span>
+        <span class="fh-vol">${fmtVol(fg.totalVol)}/tháng <span class="fh-pct">(${pct}%)</span></span>
+        <span class="fh-chev${fOpen?' open':''}" id="fchev-${fk}">▶</span>
+      </div>
+      <div class="cluster-list${fOpen?' open':''}" id="flist-${fk}">
+        ${fg.clusters.map(c => {
+          const cOpen = openClusters[c.id];
+          const intentLabel = {'info':'Informational','comm':'Commercial','trans':'Transactional'};
+          const intentCls = {'info':'it-info','comm':'it-comm','trans':'it-trans'};
+          return `
+          <div class="cluster-item">
+            <div class="cluster-head" onclick="toggleCluster('${c.id}')">
+              <div class="c-dot ${fg.dotCls}"></div>
+              <span class="c-name">${c.name}</span>
+              <span class="c-meta">${fmtVol(c.vol)}/tháng · ${c.keywords.length} từ khóa</span>
+              <span class="c-chev${cOpen?' open':''}" id="cchev-${c.id}">▶</span>
+            </div>
+            <div class="kw-list${cOpen?' open':''}" id="clist-${c.id}">
+              ${c.keywords.map(kw => `
+              <div class="kw-row">
+                <span class="kw-dot">${kw.unique?'✅':'🔴'}</span>
+                <span class="kw-name">${kw.kw}</span>
+                <span class="kw-vol">${fmtVol(kw.vol)}/tháng</span>
+                <span class="intent-tag ${intentCls[kw.intent] || 'it-info'}">${kw.intent.toUpperCase()}</span>
+                <div class="kw-btns">
+                  <button class="kw-btn" onclick="showToast('Xem outline cho: ${kw.kw}','')">Outline</button>
+                  <button class="kw-btn primary" onclick="showToast('Mở Blog Editor cho: ${kw.kw}','t-green')">Viết bài</button>
+                </div>
+              </div>`).join('')}
+              <div style="padding:4px 10px 2px">
+                <button class="add-cluster-btn" style="font-size:10px;padding:5px 8px" onclick="openKwModal('${c.id}')">+ Thêm keyword vào cluster</button>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('') + `<button class="add-cluster-btn" onclick="showToast('Thêm cluster mới từ SEO Inventory','')">+ Thêm Cluster</button>`;
+}
+
+function toggleFunnel(fk) {
+  openFunnels[fk] = !openFunnels[fk];
+  document.getElementById('flist-'+fk)?.classList.toggle('open', openFunnels[fk]);
+  const chev = document.getElementById('fchev-'+fk);
+  if (chev) chev.classList.toggle('open', openFunnels[fk]);
+}
+function toggleCluster(id) {
+  openClusters[id] = !openClusters[id];
+  document.getElementById('clist-'+id)?.classList.toggle('open', openClusters[id]);
+  const chev = document.getElementById('cchev-'+id);
+  if (chev) chev.classList.toggle('open', openClusters[id]);
+}
+
+// ─── CONTEXT TAB ─────────────────────────────────────────────────────────────
+function renderContext() {
+  const ctx = selectedProject.context;
+  const filledCount = [ctx.productName,ctx.shortDesc,ctx.valueProp,ctx.targetPersona,ctx.usps,ctx.differentiation,ctx.trustSignals,ctx.legalDisclaimer,ctx.blacklistTerms,ctx.primaryCta,ctx.secondaryCta,ctx.onelink].filter(v=>v&&v.length>5).length;
+  const progressPct = Math.round(filledCount/12*100);
+  const blacklistHtml = ctx.blacklistTerms ? ctx.blacklistTerms.split('·').map(t=>`<span class="bc-tag">${t.trim()}</span>`).join('') : '<span class="bc-field-val empty">Chưa điền</span>';
+  return `
+  <div class="bc-status-bar">
+    <div class="bc-prog">
+      <div class="bc-prog-lbl"><b>${filledCount}/12 fields</b> đã điền · ${progressPct}% hoàn thành</div>
+      <div class="bc-prog-track"><div class="bc-prog-fill" style="width:${progressPct}%"></div></div>
+    </div>
+    <button class="bc-save" onclick="showToast('Business Context đã lưu','t-green')">Lưu Context</button>
+  </div>
+  ${!ctx.legalConfirmed ? `<div class="bc-legal">⚠ <b>YMYL Gate:</b> PM chưa xác nhận trách nhiệm pháp lý. Bắt buộc trước khi GenAI sản xuất nội dung tài chính.</div>` : ''}
+  <div class="bc-grid">
+    <div class="bc-field req bc-full" onclick="editField(this,'productName')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> Tên sản phẩm</div>
+      <div class="bc-field-val">${ctx.productName||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req bc-full" onclick="editField(this,'shortDesc')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> Mô tả ngắn</div>
+      <div class="bc-field-val">${ctx.shortDesc||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req bc-full" onclick="editField(this,'valueProp')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> Value Proposition</div>
+      <div class="bc-field-val">${ctx.valueProp||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req" onclick="editField(this,'targetPersona')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> Target Persona</div>
+      <div class="bc-field-val">${ctx.targetPersona||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req" onclick="editField(this,'usps')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> USPs</div>
+      <div class="bc-field-val">${ctx.usps||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field" onclick="editField(this,'differentiation')">
+      <div class="bc-field-lbl">Khác biệt vs Competitor</div>
+      <div class="bc-field-val">${ctx.differentiation||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field" onclick="editField(this,'trustSignals')">
+      <div class="bc-field-lbl">Trust Signals</div>
+      <div class="bc-field-val">${ctx.trustSignals||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req warn bc-full" onclick="editField(this,'legalDisclaimer')">
+      <div class="bc-field-lbl">⚖ Legal Disclaimer (YMYL bắt buộc)</div>
+      <div class="bc-field-val">${ctx.legalDisclaimer||'<span class="empty">Chưa điền - YMYL gate blocker</span>'}</div>
+    </div>
+    <div class="bc-field" onclick="editField(this,'blacklistTerms')">
+      <div class="bc-field-lbl">Blacklist Terms</div>
+      <div class="bc-field-val">${blacklistHtml}</div>
+    </div>
+    <div class="bc-field" onclick="editField(this,'author')">
+      <div class="bc-field-lbl">Named Author (E-E-A-T)</div>
+      <div class="bc-field-val">${ctx.author||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req" onclick="editField(this,'primaryCta')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> Primary CTA</div>
+      <div class="bc-field-val">${ctx.primaryCta||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field" onclick="editField(this,'secondaryCta')">
+      <div class="bc-field-lbl">Secondary CTA</div>
+      <div class="bc-field-val">${ctx.secondaryCta||'<span class="empty">Chưa điền</span>'}</div>
+    </div>
+    <div class="bc-field req bc-full" onclick="editField(this,'onelink')">
+      <div class="bc-field-lbl"><span class="bc-req-dot"></span> Onelink Deep Link</div>
+      <div class="bc-field-val" style="font-family:monospace">${ctx.onelink||'<span class="empty">Chưa có - cần Dev tạo</span>'}</div>
+    </div>
+    <div class="bc-field bc-full" style="background:var(--grey-50)">
+      <div class="bc-check-row">
+        <input type="checkbox" id="ck-pm" ${ctx.pmConfirmed?'checked':''} onchange="showToast('PM xác nhận đã cập nhật','t-green')">
+        <label class="bc-check-lbl" for="ck-pm">PM/PO đã xác nhận Business Context và chịu trách nhiệm pháp lý cho nội dung tài chính</label>
+      </div>
+      <div class="bc-check-row" style="margin-top:6px">
+        <input type="checkbox" id="ck-legal" ${ctx.legalConfirmed?'checked':''} onchange="showToast('Legal xác nhận đã cập nhật','t-green')">
+        <label class="bc-check-lbl" for="ck-legal">Legal đã review disclaimer và blacklist terms (gate bắt buộc cho YMYL content)</label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function editField(el, field) {
+  const val = selectedProject.context[field] || '';
+  el.innerHTML = `<div class="bc-field-lbl">${el.querySelector('.bc-field-lbl').innerHTML}</div>
+    <textarea class="bc-field-edit" oninput="selectedProject.context['${field}']=this.value" onblur="saveField()" rows="3">${val}</textarea>`;
+  el.classList.add('editing');
+  el.querySelector('textarea').focus();
+}
+function saveField() {
+  setTimeout(() => {
+    document.getElementById('tab-context').innerHTML = renderContext();
+    showToast('Business Context đã lưu', 't-green');
+  }, 100);
+}
+
+// ─── KEYWORDS TAB ─────────────────────────────────────────────────────────────
+function renderKeywords() {
+  const p = selectedProject;
+  const allKws = p.clusters_data.flatMap(c => c.keywords.map(kw => ({
+    ...kw, cluster: c.name, funnel: c.funnel
+  })));
+  const uniqueCount = allKws.filter(k=>k.unique).length;
+  const conflictCount = allKws.filter(k=>!k.unique).length;
+  const intentLabel = {info:'INFO',comm:'COMM',trans:'TRANS'};
+  const intentCls = {info:'it-info',comm:'it-comm',trans:'it-trans'};
+  return `
+  <div class="kwtab-top">
+    <div class="kwtab-stats">
+      <div class="kwst"><div class="kwst-val blue">${allKws.length}</div><div class="kwst-lbl">Tổng keywords</div></div>
+      <div class="kwst"><div class="kwst-val green">${uniqueCount}</div><div class="kwst-lbl">Unique</div></div>
+      <div class="kwst"><div class="kwst-val red">${conflictCount}</div><div class="kwst-lbl">Conflicts</div></div>
+    </div>
+    <button class="btn-sm primary" onclick="openKwModal(null)">+ Thêm keyword</button>
+  </div>
+  <div class="kwtab-filters">
+    <button class="kwf-btn active" onclick="filterKw('all',this)">Tất cả (${allKws.length})</button>
+    <button class="kwf-btn" onclick="filterKw('tofu',this)">TOFU</button>
+    <button class="kwf-btn" onclick="filterKw('mofu',this)">MOFU</button>
+    <button class="kwf-btn" onclick="filterKw('bofu',this)">BOFU</button>
+    ${conflictCount ? `<button class="kwf-btn" onclick="filterKw('conflict',this)" style="color:var(--red-600)">⚠ Conflicts (${conflictCount})</button>` : ''}
+  </div>
+  <div class="kw-table" id="kwTable">
+    <div class="kw-thead">
+      <div class="kw-th">Keyword</div>
+      <div class="kw-th">Volume/tháng</div>
+      <div class="kw-th">Intent</div>
+      <div class="kw-th">Funnel</div>
+      <div class="kw-th">Status</div>
+    </div>
+    ${allKws.map(kw => `
+    <div class="kw-trow" onclick="showToast('Keyword: ${kw.kw}','')">
+      <div class="kw-td pk">${kw.kw}</div>
+      <div class="kw-td">${fmtVol(kw.vol)}</div>
+      <div class="kw-td"><span class="intent-tag ${intentCls[kw.intent]}">${intentLabel[kw.intent]}</span></div>
+      <div class="kw-td"><span style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--muted)">${kw.funnel}</span></div>
+      <div class="kw-td">${kw.unique
+        ? '<span class="kw-unique">✓ Unique</span>'
+        : '<span class="kw-conflict">✕ Conflict</span>'}</div>
+    </div>`).join('')}
+  </div>
+  <button class="add-kw-btn" onclick="openKwModal(null)">+ Thêm Primary Keyword</button>`;
+}
+
+function filterKw(type, btn) {
+  document.querySelectorAll('.kwf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ─── KEYWORD MODAL ────────────────────────────────────────────────────────────
+function openKwModal(clusterId) {
+  const p = selectedProject;
+  const sel = document.getElementById('kwCluster');
+  sel.innerHTML = `<option value="">-- Chọn cluster --</option>` +
+    p.clusters_data.map(c=>`<option value="${c.id}"${clusterId===c.id?' selected':''}>${c.name} (${c.funnel.toUpperCase()})</option>`).join('');
+  document.getElementById('kwInput').value = '';
+  document.getElementById('checkStatus').className = 'check-status';
+  document.getElementById('checkStatus').innerHTML = '';
+  document.getElementById('kwConfirmBtn').disabled = true;
+  kwCheckState = 'idle';
+  document.getElementById('kwModal').classList.add('open');
+  setTimeout(()=>document.getElementById('kwInput').focus(), 50);
+}
+function closeKwModal() {
+  document.getElementById('kwModal').classList.remove('open');
+}
+function onKwInput() {
+  clearTimeout(kwCheckTimeout);
+  const kw = document.getElementById('kwInput').value.trim().toLowerCase();
+  document.getElementById('kwConfirmBtn').disabled = true;
+  if (!kw || kw.length < 3) {
+    document.getElementById('checkStatus').className = 'check-status';
+    return;
+  }
+  document.getElementById('checkStatus').className = 'check-status cs-checking';
+  document.getElementById('checkStatus').innerHTML = '<div class="cs-spin"></div>Đang kiểm tra Keyword Registry...';
+  kwCheckTimeout = setTimeout(() => {
+    const conflict = EXISTING_KEYWORDS.has(kw) ||
+      selectedProject.clusters_data.some(c=>c.keywords.some(k=>k.kw.toLowerCase()===kw));
+    if (conflict) {
+      document.getElementById('checkStatus').className = 'check-status cs-conflict';
+      document.getElementById('checkStatus').innerHTML = '✕ Keyword đã tồn tại trong Registry. 1 keyword = 1 URL — không cho phép trùng.';
+      kwCheckState = 'conflict';
+    } else {
+      document.getElementById('checkStatus').className = 'check-status cs-unique';
+      document.getElementById('checkStatus').innerHTML = '✓ Keyword hợp lệ — chưa có trong Registry. Có thể thêm vào.';
+      kwCheckState = 'unique';
+      document.getElementById('kwConfirmBtn').disabled = false;
     }
-  });
-
-  // Show fail banner
-  const banner = document.getElementById('fail-banner');
-  document.getElementById('fail-msg').textContent =
-    `SEO: ${seoTotal}/100${seoPass ? ' ✓' : ' ✗ (cần ≥ 60)'} · GEO: ${geoTotal}/100${geoPass ? ' ✓' : ' ✗ (cần ≥ 50)'}. Các trường viền đỏ cần được chỉnh sửa.`;
-  banner.classList.add('show');
-
-  showScreen('screen-editor');
-  window.scrollTo(0, 0);
+  }, 800);
+}
+function updateConfirmBtn() {
+  document.getElementById('kwConfirmBtn').disabled = kwCheckState !== 'unique';
+}
+function confirmKw() {
+  const kw = document.getElementById('kwInput').value.trim();
+  const clusterId = document.getElementById('kwCluster').value;
+  const intent = document.getElementById('kwIntent').value.replace('tofu','info').replace('mofu','comm').replace('bofu','trans');
+  const funnel = document.getElementById('kwIntent').value.replace('tofu','tofu').replace('mofu','mofu').replace('bofu','bofu');
+  if (!clusterId) { showToast('Chọn cluster trước khi thêm','t-red'); return; }
+  const cluster = selectedProject.clusters_data.find(c=>c.id===clusterId);
+  if (cluster) {
+    cluster.keywords.push({kw, vol:0, intent, unique:true});
+    selectedProject.keywords++;
+    EXISTING_KEYWORDS.add(kw.toLowerCase());
+  }
+  closeKwModal();
+  renderProjectList();
+  document.getElementById('tab-topics').innerHTML = renderTopics();
+  document.getElementById('tab-keywords').innerHTML = renderKeywords();
+  document.getElementById('tc-keywords').textContent = selectedProject.keywords;
+  showToast(`"${kw}" đã thêm vào Registry`, 't-green');
 }
 
-// ─── Confirm publish ──────────────────────────────────────────────────────────
-function doPublish() {
-  if (!lastScore) return;
-  const { seoTotal, geoTotal } = lastScore;
-  if (seoTotal < 60 || geoTotal < 50) return;
-  document.getElementById('success-chips').innerHTML =
-    `<div class="success-chip"><b>${seoTotal}</b><span>SEO Score</span></div>` +
-    `<div class="success-chip"><b>${geoTotal}</b><span>GEO Score</span></div>`;
-  const slug = document.getElementById('slug').value || 'bai-viet-moi';
-  document.getElementById('success-url').textContent = 'momo.vn/blog/' + slug;
-  showScreen('screen-success');
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, cls='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (cls?' '+cls:'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
-// ─── Reset ────────────────────────────────────────────────────────────────────
-function resetAll() {
-  ['title','slug','keyword','meta','author','content'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.value = ''; el.classList.remove('input-error'); }
-  });
-  document.getElementById('pub-date').value = '2026-06-14';
-  ['ck-faq','ck-stats','ck-schema','ck-images','ck-internal','ck-external'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.checked = false; }
-    const label = el && el.closest('.check-item');
-    if (label) label.style.color = '';
-  });
-  document.getElementById('fail-banner').classList.remove('show');
-  document.getElementById('recs-card').style.display = 'none';
-  document.getElementById('title-pill').textContent = '0';
-  document.getElementById('title-pill').className = 'char-pill';
-  document.getElementById('meta-count').textContent = '0 / 160 ký tự';
-  document.getElementById('meta-count').style.color = 'var(--muted)';
-  document.getElementById('wc-val').textContent = '0 từ';
-  document.getElementById('wc-val').style.color = 'var(--muted)';
-  document.getElementById('wc-tip').textContent = '· Khuyến nghị ≥ 1000 từ cho SEO, ≥ 1500 từ cho GEO';
-  lastScore = null;
-  showScreen('screen-editor');
-}
-
-function clearErrors() {
-  ['title','meta','author','slug','content'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('input-error');
-  });
-  ['ck-faq','ck-stats','ck-schema','ck-images','ck-internal','ck-external'].forEach(id => {
-    const el = document.getElementById(id);
-    const label = el && el.closest('.check-item');
-    if (label) label.style.color = '';
-  });
-}
-
-// ─── Screen switcher ──────────────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-// ─── Ring animation ───────────────────────────────────────────────────────────
-function animateRing(id, score, circ) {
-  document.getElementById(id).style.strokeDashoffset = circ - (score / 100) * circ;
-}
-function countUp(id, target) {
-  const el = document.getElementById(id);
-  const step = Math.max(1, Math.ceil(target / 30));
-  let n = 0;
-  const t = setInterval(() => {
-    n = Math.min(n + step, target);
-    el.textContent = n;
-    if (n >= target) clearInterval(t);
-  }, 28);
-}
-function setBadge(id, score) {
-  const el = document.getElementById(id);
-  if (score >= 80) { el.className = 'score-badge badge-pass'; el.textContent = 'Xuất sắc'; }
-  else if (score >= 60) { el.className = 'score-badge badge-pass'; el.textContent = 'Tốt'; }
-  else if (score >= 40) { el.className = 'score-badge badge-warn'; el.textContent = 'Trung bình'; }
-  else { el.className = 'score-badge badge-fail'; el.textContent = 'Kém'; }
-}
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderProjectList();
+// Auto-open funnels for Vay Nhanh
+openFunnels = { tofu: true, mofu: true, bofu: false };
 </script>
 </body>
 </html>
