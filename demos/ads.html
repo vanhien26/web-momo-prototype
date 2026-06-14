@@ -1,199 +1,263 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MoMo Ads Manager — Prototype</title>
-  <style>
-    :root{--momo:#a50064;--momo-light:#fff0f7;--momo-2:#d82d8b;--ink:#1d2939;--muted:#667085;--line:#e4e7ec;--bg:#f2f4f7;--white:#fff;--green:#027a48;--green-bg:#d1fadf;--amber:#b45309;--amber-bg:#fef3c7;--red:#b42318;--red-bg:#fee4e2;--blue:#1d4ed8;--blue-bg:#eff6ff}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;height:100vh;overflow:hidden}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MoMo Ads Manager — Prototype</title>
+<style>
+:root{--momo:#a50064;--momo-light:#fff0f7;--momo-2:#d82d8b;--ink:#1d2939;--muted:#667085;--line:#e4e7ec;--bg:#f2f4f7;--white:#fff;--green:#027a48;--green-bg:#d1fadf;--amber:#b45309;--amber-bg:#fef3c7;--red:#b42318;--red-bg:#fee4e2;--blue:#1d4ed8;--blue-bg:#eff6ff;--purple:#6d28d9;--purple-bg:#f5f3ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;height:100vh;overflow:hidden}
 
-    .site-header{height:52px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:relative;z-index:20}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
-    .brand-mark{width:32px;height:32px;background:var(--momo);border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900;color:#fff;line-height:1;text-align:center}
-    .brand strong{font-size:13px}.brand small{font-size:10px;color:var(--muted);display:block}
-    .header-right{display:flex;align-items:center;gap:10px}
-    .nav-back{font-size:12px;color:var(--muted);text-decoration:none}.nav-back:hover{color:var(--momo)}
-    .status-pill{font-size:11px;font-weight:700;background:var(--momo-light);color:var(--momo);padding:4px 10px;border-radius:99px}
+.site-header{height:52px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-mark{width:32px;height:32px;background:var(--momo);border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900;color:#fff;line-height:1;text-align:center}
+.brand strong{font-size:13px}.brand small{font-size:10px;color:var(--muted);display:block}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-back{font-size:12px;color:var(--muted);text-decoration:none}.nav-back:hover{color:var(--momo)}
+.status-pill{font-size:11px;font-weight:700;background:var(--momo-light);color:var(--momo);padding:4px 10px;border-radius:99px}
 
-    .ads-shell{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 52px);overflow:hidden}
+.ads-shell{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 52px);overflow:hidden}
+.setup-panel{background:var(--white);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
 
-    .setup-panel{background:var(--white);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.step-tabs{display:flex;border-bottom:1px solid var(--line);padding:0 14px;flex-shrink:0}
+.step-tab{padding:13px 10px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:12px;font-weight:700;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit}
+.step-tab.active{color:var(--momo);border-bottom-color:var(--momo)}
+.step-num{width:18px;height:18px;border-radius:99px;background:var(--line);color:var(--muted);font-size:10px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.step-tab.active .step-num{background:var(--momo);color:#fff}
+.step-tab.done .step-num{background:var(--green);color:#fff}
 
-    .step-tabs{display:flex;border-bottom:1px solid var(--line);padding:0 14px;flex-shrink:0}
-    .step-tab{padding:13px 10px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:12px;font-weight:700;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit}
-    .step-tab.active{color:var(--momo);border-bottom-color:var(--momo)}
-    .step-num{width:18px;height:18px;border-radius:99px;background:var(--line);color:var(--muted);font-size:10px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
-    .step-tab.active .step-num{background:var(--momo);color:#fff}
-    .step-tab.done .step-num{background:#027a48;color:#fff}
+.step-content{display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:14px}
+.step-content.active{display:flex}
 
-    .step-content{display:none;flex:1;overflow-y:auto;padding:18px 16px;flex-direction:column;gap:14px}
-    .step-content.active{display:flex}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:12px;font-weight:700;color:var(--ink)}
+.form-hint{font-size:11px;color:var(--muted)}
+.form-input{border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px;outline:none;font-family:inherit;background:#fff;width:100%;transition:.15s}
+.form-input:focus{border-color:var(--momo);box-shadow:0 0 0 3px #a5006418}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
-    .form-group{display:flex;flex-direction:column;gap:6px}
-    .form-label{font-size:12px;font-weight:700;color:var(--ink)}
-    .form-hint{font-size:11px;color:var(--muted)}
-    .form-input{border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px;outline:none;font-family:inherit;background:#fff;width:100%;transition:.15s}
-    .form-input:focus{border-color:var(--momo);box-shadow:0 0 0 3px #a5006418}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.obj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.obj-btn{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:10px 6px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.15s;font-family:inherit}
+.obj-btn:hover,.obj-btn.active{border-color:var(--momo);background:var(--momo-light)}
+.obj-icon{font-size:18px}.obj-name{font-size:11px;font-weight:700}.obj-desc{font-size:9px;color:var(--muted);line-height:1.4}
 
-    .obj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-    .obj-btn{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:10px 6px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.15s;font-family:inherit}
-    .obj-btn:hover{border-color:var(--momo);background:var(--momo-light)}
-    .obj-btn.active{border-color:var(--momo);background:var(--momo-light)}
-    .obj-icon{font-size:18px}.obj-name{font-size:11px;font-weight:700}.obj-desc{font-size:9px;color:var(--muted);line-height:1.4}
+/* Project cards */
+.project-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.proj-card{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:12px;cursor:pointer;transition:.18s;display:flex;flex-direction:column;gap:5px}
+.proj-card:hover{border-color:var(--momo);background:var(--momo-light)}
+.proj-card.selected{border-color:var(--momo);background:var(--momo-light);box-shadow:0 0 0 3px #a5006418}
+.proj-card-top{display:flex;align-items:center;justify-content:space-between}
+.proj-icon{font-size:18px;line-height:1}
+.proj-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--line);display:grid;place-items:center;flex-shrink:0;transition:.15s;color:transparent}
+.proj-card.selected .proj-check{background:var(--momo);border-color:var(--momo)}
+.proj-check::after{content:'✓';font-size:10px;font-weight:900;color:#fff;display:none}
+.proj-card.selected .proj-check::after{display:block}
+.proj-name{font-size:12px;font-weight:800;color:var(--ink)}
+.proj-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:4px;width:fit-content}
+.proj-stats{font-size:10px;color:var(--muted);display:flex;gap:8px;margin-top:2px}
+.t-entertainment{background:#fef3c7;color:#b45309}
+.t-discovery{background:var(--blue-bg);color:var(--blue)}
+.t-utility{background:var(--purple-bg);color:var(--purple)}
+.t-content{background:var(--green-bg);color:var(--green)}
+.t-homepage{background:var(--momo-light);color:var(--momo)}
 
-    .section-head{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;margin-top:4px}
+/* Placement cards */
+.section-head{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;margin-top:2px}
+.placement-group{display:flex;flex-direction:column;gap:5px}
+.placement-card{border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:.15s;background:#fff}
+.placement-card:hover{border-color:var(--momo);background:#fff9fd}
+.placement-card.selected{border-color:var(--momo);background:var(--momo-light)}
+.placement-card input[type=checkbox]{accent-color:var(--momo);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.placement-info{flex:1;min-width:0}
+.placement-name{font-size:12px;font-weight:700}
+.placement-meta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pbadge{font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px}
+.pb-native{background:var(--blue-bg);color:var(--blue)}
+.pb-banner{background:var(--green-bg);color:var(--green)}
+.pb-popup{background:var(--red-bg);color:var(--red)}
+.pb-float{background:var(--amber-bg);color:var(--amber)}
+.pb-display{background:#f3f4f6;color:#374151}
+.placement-imp{font-size:11px;font-weight:700;color:var(--momo);text-align:right;flex-shrink:0;white-space:nowrap}
+.placement-imp small{display:block;font-weight:500;color:var(--muted);font-size:9px}
+.vr-badge{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;background:#f0fdf4;color:var(--green)}
+.no-pages-note{font-size:11px;color:var(--muted);text-align:center;padding:16px;border:1.5px dashed var(--line);border-radius:8px;background:#f9fafb}
+.pd-note{font-size:11px;color:var(--amber);background:var(--amber-bg);border:1px solid #fde68a;border-radius:7px;padding:8px 10px;margin-bottom:6px}
 
-    /* Page selector */
-    .page-list{display:flex;flex-direction:column;gap:5px}
-    .page-card{border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:.15s;background:#fff}
-    .page-card:hover{border-color:var(--momo);background:#fff9fd}
-    .page-card.selected{border-color:var(--momo);background:var(--momo-light)}
-    .page-card input[type="checkbox"]{accent-color:var(--momo);width:15px;height:15px;flex-shrink:0;cursor:pointer}
-    .page-info{flex:1;min-width:0}
-    .page-name{font-size:12px;font-weight:700}
-    .page-url{font-size:10px;color:var(--muted);margin-top:1px}
-    .page-traffic{text-align:right;flex-shrink:0}
-    .page-views{font-size:12px;font-weight:800;color:var(--ink)}
-    .page-views small{font-size:9px;color:var(--muted);font-weight:500;display:block}
-    .page-mob-bar{display:flex;align-items:center;gap:4px;margin-top:2px}
-    .page-mob-bar span{font-size:9px;color:var(--muted)}
-    .mob-ratio-track{flex:1;height:4px;background:var(--line);border-radius:99px;overflow:hidden;width:50px}
-    .mob-ratio-fill{height:100%;background:var(--momo);border-radius:99px}
+/* Forecast */
+.summary-box{background:var(--bg);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.sum-row{display:flex;justify-content:space-between;align-items:center}
+.sum-label{font-size:11px;color:var(--muted)}.sum-value{font-size:12px;font-weight:700}
+.sum-value.momo{color:var(--momo)}
+.forecast-hero{background:linear-gradient(135deg,var(--momo),var(--momo-2));border-radius:10px;padding:16px;color:#fff;text-align:center}
+.forecast-hero .num{font-size:32px;font-weight:900;display:block}
+.forecast-hero .label{font-size:11px;opacity:.85;margin-top:2px}
+.review-list{display:flex;flex-direction:column;gap:5px}
+.review-item{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;display:flex;align-items:center;gap:9px}
+.rv-info{flex:1}.rv-name{font-size:12px;font-weight:700}.rv-sub{font-size:10px;color:var(--muted);margin-top:1px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.rv-imp{font-size:11px;font-weight:700;color:var(--momo);flex-shrink:0}
+.empty-note{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.publish-btn{border:none;border-radius:10px;background:linear-gradient(135deg,var(--momo),var(--momo-2));color:#fff;font-size:14px;font-weight:800;padding:13px;cursor:pointer;width:100%;font-family:inherit}
+.publish-btn:hover{opacity:.9}
 
-    /* Placement cards */
-    .placement-group{display:flex;flex-direction:column;gap:5px}
-    .placement-card{border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:.15s;background:#fff}
-    .placement-card:hover{border-color:var(--momo);background:#fff9fd}
-    .placement-card.selected{border-color:var(--momo);background:var(--momo-light)}
-    .placement-card input[type="checkbox"]{accent-color:var(--momo);width:15px;height:15px;flex-shrink:0;cursor:pointer}
-    .placement-info{flex:1;min-width:0}
-    .placement-name{font-size:12px;font-weight:700}
-    .placement-meta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-    .pbadge{font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px}
-    .pb-native{background:var(--blue-bg);color:var(--blue)}
-    .pb-banner{background:var(--green-bg);color:var(--green)}
-    .pb-interstitial{background:var(--red-bg);color:var(--red)}
-    .pb-display{background:#f3f4f6;color:#374151}
-    .placement-imp{font-size:11px;font-weight:700;color:var(--momo);text-align:right;flex-shrink:0}
-    .placement-imp small{display:block;font-weight:500;color:var(--muted);font-size:9px}
-    .no-pages-note{font-size:11px;color:var(--muted);text-align:center;padding:16px;border:1.5px dashed var(--line);border-radius:8px;background:#f9fafb}
+.step-nav{border-top:1px solid var(--line);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.btn-prev,.btn-next{border:1.5px solid var(--line);border-radius:8px;background:#fff;padding:8px 15px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
+.btn-next{background:var(--momo);color:#fff;border-color:var(--momo)}
+.btn-prev:hover{border-color:var(--muted)}.btn-next:hover{opacity:.9}
 
-    /* View rate badge */
-    .vr-badge{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;background:#f0fdf4;color:#027a48}
+/* Right panel */
+.viz-panel{display:flex;flex-direction:column;overflow:hidden}
+.viz-toolbar{background:var(--white);border-bottom:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px}
+.viz-toolbar-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow:hidden}
+.viz-toolbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
 
-    /* Summary */
-    .summary-box{background:var(--bg);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:8px}
-    .sum-row{display:flex;justify-content:space-between;align-items:center}
-    .sum-label{font-size:11px;color:var(--muted)}.sum-value{font-size:12px;font-weight:700}
-    .sum-value.momo{color:var(--momo)}
+.proj-tabs{display:flex;gap:4px;flex-shrink:0}
+.proj-tab{border:1.5px solid var(--line);border-radius:6px;background:#fff;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;white-space:nowrap;transition:.13s}
+.proj-tab:hover{border-color:var(--momo);color:var(--momo)}
+.proj-tab.active{background:var(--momo);color:#fff;border-color:var(--momo)}
 
-    /* Review */
-    .review-list{display:flex;flex-direction:column;gap:5px}
-    .review-item{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;display:flex;align-items:center;gap:9px}
-    .rv-icon{font-size:14px;flex-shrink:0}
-    .rv-info{flex:1}.rv-name{font-size:12px;font-weight:700}.rv-sub{font-size:10px;color:var(--muted);margin-top:1px}
-    .rv-imp{font-size:11px;font-weight:700;color:var(--momo)}
+.url-tabs{display:flex;gap:3px;overflow-x:auto}
+.url-tab{border:1px solid var(--line);border-radius:5px;background:#fff;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;white-space:nowrap;transition:.13s;flex-shrink:0}
+.url-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
 
-    /* Forecast summary big */
-    .forecast-hero{background:linear-gradient(135deg,var(--momo),var(--momo-2));border-radius:10px;padding:16px;color:#fff;text-align:center}
-    .forecast-hero .num{font-size:32px;font-weight:900;display:block}
-    .forecast-hero .label{font-size:11px;opacity:.85;margin-top:2px}
+.device-switcher{display:flex;gap:4px}
+.dev-btn{border:1.5px solid var(--line);border-radius:7px;background:#fff;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;transition:.13s}
+.dev-btn.active{border-color:var(--momo);background:var(--momo-light);color:var(--momo)}
 
-    .publish-btn{border:none;border-radius:10px;background:linear-gradient(135deg,var(--momo),var(--momo-2));color:#fff;font-size:14px;font-weight:800;padding:13px;cursor:pointer;width:100%;font-family:inherit}
-    .publish-btn:hover{opacity:.9}
+.viz-scroll{flex:1;overflow:auto;padding:20px;display:flex;align-items:flex-start;justify-content:center;background:var(--bg)}
 
-    .step-nav{border-top:1px solid var(--line);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-    .btn-prev,.btn-next{border:1.5px solid var(--line);border-radius:8px;background:#fff;padding:8px 15px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
-    .btn-next{background:var(--momo);color:#fff;border-color:var(--momo)}
-    .btn-prev:hover{border-color:var(--muted)}.btn-next:hover{opacity:.9}
+/* Desktop frame */
+.desktop-frame{background:var(--white);border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.1);width:840px;min-height:560px;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.browser-bar{background:#f2f4f7;border-bottom:1px solid var(--line);padding:7px 11px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.bdots{display:flex;gap:4px}.bdots i{width:8px;height:8px;border-radius:99px;display:block}
+.bdots i:nth-child(1){background:#ff5f57}.bdots i:nth-child(2){background:#febc2e}.bdots i:nth-child(3){background:#28c840}
+.burl{background:#fff;border:1px solid var(--line);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--muted);flex:1;font-family:monospace}
 
-    /* Right panel */
-    .viz-panel{display:flex;flex-direction:column;overflow:hidden}
-    .viz-toolbar{background:var(--white);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-    .viz-label{font-size:13px;font-weight:700}.viz-hint{font-size:11px;color:var(--muted)}
-    .device-switcher{display:flex;gap:5px}
-    .dev-btn{border:1.5px solid var(--line);border-radius:7px;background:#fff;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);display:flex;align-items:center;gap:5px;font-family:inherit}
-    .dev-btn.active{border-color:var(--momo);background:var(--momo-light);color:var(--momo)}
+/* Ad zones */
+.ad-zone{position:relative;border:2px dashed #d0d5dd;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;transition:.2s;cursor:pointer;background:#f9fafb}
+.ad-zone:hover{border-color:#e8a1c8;background:#fff8fd}
+.ad-zone.active{border:2px solid var(--momo);background:var(--momo-light)}
+.az-label{font-size:9px;font-weight:800;color:#98a2b3;text-transform:uppercase;letter-spacing:.5px;text-align:center;line-height:1.3}
+.ad-zone.active .az-label{color:var(--momo)}
+.az-dim{font-size:8px;color:#c0c7d0}.ad-zone.active .az-dim{color:#d8a1c8}
+@keyframes zone-flash{0%{box-shadow:0 0 0 0 rgba(165,0,100,.5)}60%{box-shadow:0 0 0 8px rgba(165,0,100,0)}100%{box-shadow:0 0 0 0 rgba(165,0,100,0)}}
+.ad-zone.flash{animation:zone-flash .55s ease-out}
 
-    .viz-scroll{flex:1;overflow:auto;padding:20px;display:flex;align-items:flex-start;justify-content:center}
+/* Universal overlay zones */
+.u-topbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:10;border-left:none;border-right:none;border-top:none}
+.u-sticky{position:absolute;bottom:0;left:0;right:0;height:34px;z-index:10;border-left:none;border-right:none;border-bottom:none}
+.u-float{position:absolute;bottom:50px;right:14px;width:48px;height:48px;border-radius:50%;z-index:10}
+.u-popup{position:absolute;inset:0;z-index:20;display:none;border-radius:inherit}
+.u-popup.active{display:flex}
 
-    /* Desktop frame */
-    .desktop-frame{background:var(--white);border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.1);width:860px;min-height:640px;display:flex;flex-direction:column;overflow:hidden}
-    .browser-bar{background:#f2f4f7;border-bottom:1px solid var(--line);padding:7px 11px;display:flex;align-items:center;gap:8px;flex-shrink:0}
-    .bdots{display:flex;gap:4px}.bdots i{width:8px;height:8px;border-radius:99px;display:block}
-    .bdots i:nth-child(1){background:#ff5f57}.bdots i:nth-child(2){background:#febc2e}.bdots i:nth-child(3){background:#28c840}
-    .burl{background:#fff;border:1px solid var(--line);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--muted);flex:1}
+/* Page nav skeleton */
+.l-nav{height:40px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 14px;flex-shrink:0}
+.l-logo{width:22px;height:22px;border-radius:5px;background:var(--momo)}
+.l-links{display:flex;gap:12px}
+.l-links span{width:32px;height:6px;background:var(--line);border-radius:3px}
+.l-links span.hi{background:var(--momo);opacity:.5}
+.l-cta{margin-left:auto;width:52px;height:22px;background:var(--momo);border-radius:4px;opacity:.7}
+.l-bar{height:6px;background:var(--line);border-radius:3px}
+.l-bar.w100{width:100%}.l-bar.w80{width:80%}.l-bar.w60{width:60%}.l-bar.w90{width:90%}
 
-    /* Ad zone */
-    .ad-zone{position:relative;border:2px dashed #d0d5dd;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;transition:.2s;cursor:pointer;background:#f9fafb}
-    .ad-zone:hover{border-color:#e8a1c8;background:#fff8fd}
-    .ad-zone.active{border:2px solid var(--momo);background:var(--momo-light)}
-    .az-label{font-size:9px;font-weight:800;color:#98a2b3;text-transform:uppercase;letter-spacing:.5px;text-align:center}
-    .ad-zone.active .az-label{color:var(--momo)}
-    .az-dim{font-size:8px;color:#c0c7d0}.ad-zone.active .az-dim{color:#e8a1c8}
-    /* Impression forecast inside zone */
-    .az-imp{font-size:11px;font-weight:800;color:var(--momo);margin-top:2px;display:none}
-    .ad-zone.active .az-imp{display:block}
-    @keyframes zone-flash{0%{box-shadow:0 0 0 0 rgba(165,0,100,.5)}60%{box-shadow:0 0 0 8px rgba(165,0,100,0)}100%{box-shadow:0 0 0 0 rgba(165,0,100,0)}}
-    .ad-zone.flash{animation:zone-flash .55s ease-out}
+/* Cinema */
+.cinema-billboard{height:115px;border-radius:0;border-left:none;border-right:none}
+.cinema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+.cinema-card-el{background:#f5f5f8;border-radius:6px;overflow:hidden}
+.cinema-poster{height:70px;background:var(--line)}
+.cinema-card-info{padding:5px;display:flex;flex-direction:column;gap:3px}
+.cinema-native-zone{height:108px}
 
-    /* Desktop zones */
-    .zone-leaderboard{height:50px;border-radius:0;border-left:none;border-right:none;border-top:none}
-    .page-nav{height:42px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 14px;flex-shrink:0}
-    .nav-logo{width:24px;height:24px;border-radius:5px;background:var(--momo)}
-    .nav-links{display:flex;gap:14px}
-    .nav-links span{width:36px;height:7px;background:var(--line);border-radius:3px}
-    .nav-links span.hi{background:var(--momo)}
-    .nav-cta{margin-left:auto;width:58px;height:24px;background:var(--momo);border-radius:4px;opacity:.7}
-    .zone-billboard{height:130px;border-radius:0;border-left:none;border-right:none}
-    .page-body{display:grid;grid-template-columns:1fr 264px;flex:1}
-    .page-content{border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px}
-    .cl{height:7px;background:var(--line);border-radius:3px}
-    .cl.w100{width:100%}.cl.w80{width:80%}.cl.w60{width:60%}.cl.w90{width:90%}
-    .content-img{height:90px;background:var(--line);border-radius:5px}
-    .zone-infeed{height:72px;border-radius:5px}
-    .page-sidebar{padding:10px;display:flex;flex-direction:column;gap:10px}
-    .zone-sidebar-med{height:110px}.zone-sidebar-lg{height:200px}
-    .zone-sticky{height:44px;border-radius:0;border-left:none;border-right:none;border-bottom:none;flex-shrink:0}
+/* Merchant */
+.merchant-frame{display:flex;flex:1;overflow:hidden}
+.merchant-sidebar{width:170px;background:#1a2535;border-right:1px solid #2d3f55;flex-shrink:0;padding:10px 9px;display:flex;flex-direction:column;gap:7px;position:relative}
+.ms-logo{width:32px;height:32px;background:var(--momo);border-radius:7px;margin-bottom:6px}
+.ms-item{height:26px;border-radius:5px;background:rgba(255,255,255,.07);display:flex;align-items:center;padding:0 8px;gap:6px}
+.ms-item span{height:5px;flex:1;background:rgba(255,255,255,.18);border-radius:3px}
+.ms-item.hi{background:var(--momo)}
+.ms-item.hi span{background:rgba(255,255,255,.7)}
+.ms-lock{position:absolute;bottom:9px;left:9px;right:9px;font-size:8px;color:rgba(255,255,255,.4);text-align:center;line-height:1.5;background:rgba(255,255,255,.05);border-radius:5px;padding:5px}
+.merchant-main{flex:1;padding:11px;overflow:hidden}
+.deal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
+.deal-card-el{background:#f9fafb;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.deal-img{height:48px;background:var(--line)}
+.deal-info{padding:5px;display:flex;flex-direction:column;gap:3px}
+.deal-inline-zone{height:70px}
 
-    /* Mobile frame */
-    .mobile-wrapper{display:flex;justify-content:center}
-    .mobile-phone{width:300px;background:#1a2535;border-radius:34px;padding:10px 7px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
-    .mobile-notch{height:26px;display:flex;align-items:center;justify-content:center}
-    .mobile-notch div{width:72px;height:18px;background:#1a2535;border-radius:99px}
-    .mobile-screen{background:#fff;border-radius:24px;overflow:hidden;height:560px;display:flex;flex-direction:column;position:relative}
-    .mob-nav{height:38px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 11px;flex-shrink:0}
-    .mob-logo{width:20px;height:20px;background:var(--momo);border-radius:4px}
-    .mob-title{width:54px;height:6px;background:var(--line);border-radius:3px}
-    .mob-icon{width:18px;height:18px;border-radius:4px;background:var(--line);margin-left:auto}
-    .zone-mob-top{height:34px;border-radius:0;border-left:none;border-right:none;flex-shrink:0}
-    .mob-feed{flex:1;overflow:hidden;display:flex;flex-direction:column}
-    .mob-feed-item{padding:9px 11px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:5px;flex-shrink:0}
-    .mob-img{height:72px;background:var(--line);border-radius:5px}
-    .mob-line{height:6px;background:var(--line);border-radius:3px}
-    .mob-line.w80{width:80%}.mob-line.w60{width:60%}
-    .zone-mob-infeed{height:58px;margin:0 7px;border-radius:5px;flex-shrink:0}
-    .zone-mob-bottom{height:34px;border-radius:0;border-left:none;border-right:none;border-bottom:none;flex-shrink:0}
-    .zone-mob-interstitial{position:absolute;inset:0;border-radius:24px;border:3px solid var(--momo);background:rgba(165,0,100,.14);z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px}
-    .zone-mob-interstitial.active{display:flex}
-    .zone-mob-interstitial .az-label{font-size:13px;color:var(--momo)}
-    .inter-close{font-size:10px;color:var(--muted);margin-top:4px}
+/* Credit / Insurance */
+.credit-layout{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}
+.credit-pre-zone{height:86px;border-radius:7px}
+.credit-form-box{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:7px}
+.credit-field{height:26px;background:#fff;border:1px solid var(--line);border-radius:5px}
+.credit-cta{height:30px;background:var(--momo);border-radius:5px;margin-top:2px}
+.credit-result-box{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:7px}
+.credit-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.credit-result-cell{background:#fff;border:1px solid var(--line);border-radius:5px;padding:7px}
+.credit-result-cell small{font-size:8px;color:var(--muted);display:block;margin-bottom:2px}
+.credit-result-cell strong{font-size:13px;font-weight:800;color:var(--momo)}
+.credit-result-zone{height:64px;border-radius:5px}
 
-    /* Metrics bar */
-    .metrics-bar{background:var(--white);border-top:1px solid var(--line);padding:11px 20px;display:flex;gap:20px;align-items:center;flex-shrink:0}
-    .metric{display:flex;flex-direction:column;gap:1px}
-    .m-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-    .m-value{font-size:17px;font-weight:800}
-    .m-value.momo{color:var(--momo)}
-    .msep{width:1px;height:30px;background:var(--line)}
+/* Content */
+.content-layout{display:flex;flex-direction:column;flex:1}
+.content-billboard-zone{height:106px;border-radius:0;border-left:none;border-right:none}
+.content-body{display:grid;grid-template-columns:1fr 210px;flex:1;padding:12px;gap:11px}
+.content-article{display:flex;flex-direction:column;gap:7px}
+.content-img{height:90px;background:var(--line);border-radius:4px}
+.content-infeed-zone{height:62px;border-radius:5px}
+.content-sidebar{display:flex;flex-direction:column;gap:8px}
+.content-sb-med{height:96px;border-radius:5px}
+.content-sb-lg{height:170px;border-radius:5px}
 
-    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:#1d2939;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;transition:.3s;white-space:nowrap;z-index:999}
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .empty-note{text-align:center;color:var(--muted);font-size:12px;padding:20px}
-  </style>
+/* Homepage */
+.home-layout{display:flex;flex-direction:column;flex:1}
+.home-hero-zone{height:126px;border-radius:0;border-left:none;border-right:none}
+.home-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.home-svc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.home-svc-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.home-svc-circle{width:34px;height:34px;border-radius:50%;background:var(--line)}
+.home-svc-label{width:26px;height:4px;background:var(--line);border-radius:2px}
+.home-grid-zone{height:62px;border-radius:5px}
+
+/* Mobile frame */
+.mobile-wrapper{display:flex;justify-content:center}
+.mobile-phone{width:292px;background:#1a2535;border-radius:34px;padding:10px 7px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
+.mobile-notch{height:24px;display:flex;align-items:center;justify-content:center}
+.mobile-notch div{width:68px;height:16px;background:#1a2535;border-radius:99px}
+.mobile-screen{background:#fff;border-radius:24px;overflow:hidden;height:530px;display:flex;flex-direction:column;position:relative}
+.mob-nav{height:36px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 10px;flex-shrink:0}
+.mob-logo{width:18px;height:18px;background:var(--momo);border-radius:4px}
+.mob-title{width:50px;height:5px;background:var(--line);border-radius:3px}
+.mob-icon{width:17px;height:17px;border-radius:4px;background:var(--line);margin-left:auto}
+.mob-topbar{height:28px;flex-shrink:0;border-radius:0;border-left:none;border-right:none;border-top:none}
+.mob-sticky{height:28px;flex-shrink:0;border-radius:0;border-left:none;border-right:none;border-bottom:none}
+.mob-float{position:absolute;bottom:38px;right:10px;width:36px;height:36px;border-radius:50%;z-index:10}
+.mob-popup{position:absolute;inset:0;z-index:20;border-radius:24px;display:none;align-items:center;justify-content:center;flex-direction:column;gap:6px}
+.mob-popup.active{display:flex}
+.mob-content{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:0}
+.mob-feed-item{padding:8px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.mob-img{height:48px;background:var(--line);border-radius:4px;margin-bottom:2px}
+.mob-bar{height:5px;background:var(--line);border-radius:3px}
+.mob-bar.w80{width:80%}.mob-bar.w60{width:60%}
+.mob-infeed{height:44px;margin:0 10px;border-radius:5px;flex-shrink:0}
+.mob-inline{height:38px;margin:6px 10px;border-radius:5px;flex-shrink:0}
+
+/* Empty state */
+.viz-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;color:var(--muted);text-align:center}
+.viz-empty-icon{font-size:44px}
+.viz-empty-title{font-size:14px;font-weight:700;color:var(--ink)}
+.viz-empty-sub{font-size:12px;max-width:260px;line-height:1.6}
+
+/* Metrics */
+.metrics-bar{background:var(--white);border-top:1px solid var(--line);padding:10px 20px;display:flex;gap:18px;align-items:center;flex-shrink:0}
+.metric{display:flex;flex-direction:column;gap:1px}
+.m-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.m-value{font-size:16px;font-weight:800}
+.m-value.momo{color:var(--momo)}
+.msep{width:1px;height:28px;background:var(--line)}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:#1d2939;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;transition:.3s;white-space:nowrap;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
 </head>
 <body>
 
@@ -210,7 +274,7 @@
 
 <div class="ads-shell">
 
-  <!-- ── LEFT ───────────────────────────────────── -->
+  <!-- LEFT -->
   <aside class="setup-panel">
     <div class="step-tabs">
       <button class="step-tab active" data-step="0"><span class="step-num">1</span>Campaign</button>
@@ -218,13 +282,12 @@
       <button class="step-tab" data-step="2"><span class="step-num">3</span>Forecast</button>
     </div>
 
-    <!-- Step 1: Campaign -->
+    <!-- Step 1 -->
     <div class="step-content active" id="s0">
       <div class="form-group">
         <label class="form-label">Tên chiến dịch</label>
         <input class="form-input" id="campName" type="text" value="MoMo Credit Awareness Q3 2026">
       </div>
-
       <div class="form-group">
         <label class="form-label">Mục tiêu</label>
         <div class="obj-grid">
@@ -233,68 +296,67 @@
           <button class="obj-btn" data-obj="product"><span class="obj-icon">💳</span><span class="obj-name">Sản phẩm</span><span class="obj-desc">Quảng bá tính năng</span></button>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Thời gian chạy</label>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" style="font-weight:500;color:var(--muted)">Bắt đầu</label>
-            <input class="form-input" id="campStart" type="date" value="2026-06-20">
+            <input class="form-input" id="campStart" type="date" value="2026-07-01">
           </div>
           <div class="form-group">
             <label class="form-label" style="font-weight:500;color:var(--muted)">Kết thúc</label>
-            <input class="form-input" id="campEnd" type="date" value="2026-07-20">
+            <input class="form-input" id="campEnd" type="date" value="2026-07-31">
           </div>
         </div>
-        <span class="form-hint" id="daysHint">31 ngày chạy</span>
+        <span class="form-hint" id="daysHint">30 ngày chạy</span>
       </div>
-
       <div class="form-group">
-        <label class="form-label">Trang hiển thị</label>
-        <span class="form-hint">Chọn trang sẽ đặt ads. Forecast impression dựa trên tracking thực tế mỗi trang.</span>
-        <div class="page-list" id="pageList"></div>
+        <label class="form-label">Dự án</label>
+        <span class="form-hint">Chọn dự án để apply toàn bộ URL thuộc project. Có thể chọn nhiều.</span>
+        <div class="project-grid" id="projectGrid"></div>
       </div>
     </div>
 
-    <!-- Step 2: Placements -->
+    <!-- Step 2 -->
     <div class="step-content" id="s1">
-      <div id="placementsWrap">
-        <div class="no-pages-note">← Quay lại bước 1 và chọn ít nhất một trang để xem placement.</div>
+      <div>
+        <div class="section-head">Universal — toàn site</div>
+        <div class="form-hint" style="margin-bottom:8px">Không phụ thuộc UI trang — overlay, fixed position.</div>
+        <div class="placement-group" id="universalList"></div>
+      </div>
+      <div id="contextualWrap">
+        <div class="no-pages-note">← Chọn ít nhất một Dự án ở bước 1 để xem Contextual Placements.</div>
       </div>
     </div>
 
-    <!-- Step 3: Forecast -->
+    <!-- Step 3 -->
     <div class="step-content" id="s2">
       <div class="forecast-hero">
         <span class="num" id="rvTotalImp">—</span>
         <span class="label">TỔNG IMPRESSION DỰ KIẾN</span>
       </div>
-
       <div class="form-group">
         <div class="section-head">Chiến dịch</div>
         <div class="summary-box">
           <div class="sum-row"><span class="sum-label">Tên</span><strong class="sum-value" id="rvName">—</strong></div>
           <div class="sum-row"><span class="sum-label">Mục tiêu</span><strong class="sum-value" id="rvObj">—</strong></div>
           <div class="sum-row"><span class="sum-label">Thời gian</span><strong class="sum-value" id="rvDates">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Trang</span><strong class="sum-value" id="rvPages">—</strong></div>
+          <div class="sum-row"><span class="sum-label">Dự án</span><strong class="sum-value" id="rvProjects">—</strong></div>
         </div>
       </div>
-
       <div class="form-group">
         <div class="section-head">Vị trí đã chọn (<span id="rvCount">0</span>)</div>
         <div class="review-list" id="rvList"><div class="empty-note">Chưa chọn vị trí nào</div></div>
       </div>
-
       <div class="form-group">
         <div class="section-head">Forecast chi tiết</div>
         <div class="summary-box">
-          <div class="sum-row"><span class="sum-label">Impression/ngày</span><strong class="sum-value momo" id="rvDaily">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Desktop</span><strong class="sum-value" id="rvDesk">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Mobile</span><strong class="sum-value" id="rvMob">—</strong></div>
+          <div class="sum-row"><span class="sum-label">Tổng imp/ngày</span><strong class="sum-value momo" id="rvDaily">—</strong></div>
+          <div class="sum-row"><span class="sum-label">Universal</span><strong class="sum-value" id="rvUniv">—</strong></div>
+          <div class="sum-row"><span class="sum-label">Contextual</span><strong class="sum-value" id="rvCtx">—</strong></div>
           <div class="sum-row"><span class="sum-label">Số ngày</span><strong class="sum-value" id="rvDays">—</strong></div>
         </div>
       </div>
-
       <button class="publish-btn" id="publishBtn">🚀 Tạo chiến dịch</button>
     </div>
 
@@ -304,126 +366,31 @@
     </div>
   </aside>
 
-  <!-- ── RIGHT: Visualization ──────────────────── -->
+  <!-- RIGHT -->
   <div class="viz-panel">
     <div class="viz-toolbar">
-      <div>
-        <div class="viz-label">Forecast impression theo vị trí</div>
-        <div class="viz-hint" id="vizPageHint">Chọn trang ở bước 1 để xem forecast</div>
+      <div class="viz-toolbar-left">
+        <div class="proj-tabs" id="projTabs"></div>
+        <div class="url-tabs" id="urlTabs"></div>
       </div>
-      <div class="device-switcher">
-        <button class="dev-btn active" data-device="desktop">🖥 Desktop</button>
-        <button class="dev-btn" data-device="mobile">📱 Mobile</button>
-      </div>
-    </div>
-
-    <div class="viz-scroll">
-      <!-- Desktop -->
-      <div id="vizDesktop" class="desktop-frame">
-        <div class="browser-bar">
-          <div class="bdots"><i></i><i></i><i></i></div>
-          <div class="burl" id="vizUrl">🔒 momo.vn</div>
-        </div>
-        <div class="ad-zone zone-leaderboard" data-zone="leaderboard">
-          <span class="az-label">Leaderboard</span><span class="az-dim">970 × 90</span>
-          <span class="az-imp" id="imp-leaderboard">—</span>
-        </div>
-        <div class="page-nav">
-          <div class="nav-logo"></div>
-          <div class="nav-links"><span class="hi"></span><span></span><span></span><span></span></div>
-          <div class="nav-cta"></div>
-        </div>
-        <div class="ad-zone zone-billboard" data-zone="billboard">
-          <span class="az-label">Billboard</span><span class="az-dim">970 × 250</span>
-          <span class="az-imp" id="imp-billboard">—</span>
-        </div>
-        <div class="page-body">
-          <div class="page-content">
-            <div class="cl w100"></div><div class="cl w80"></div>
-            <div class="content-img"></div>
-            <div class="cl w100"></div><div class="cl w90"></div><div class="cl w60"></div>
-            <div class="ad-zone zone-infeed" data-zone="infeed-desktop">
-              <span class="az-label">In-Feed Native</span><span class="az-dim">Linh hoạt</span>
-              <span class="az-imp" id="imp-infeed-desktop">—</span>
-            </div>
-            <div class="cl w100"></div><div class="cl w80"></div><div class="cl w90"></div>
-          </div>
-          <div class="page-sidebar">
-            <div class="ad-zone zone-sidebar-med" data-zone="sidebar-medium">
-              <span class="az-label">Medium Rectangle</span><span class="az-dim">300 × 250</span>
-              <span class="az-imp" id="imp-sidebar-medium">—</span>
-            </div>
-            <div class="ad-zone zone-sidebar-lg" data-zone="sidebar-large">
-              <span class="az-label">Half Page</span><span class="az-dim">300 × 600</span>
-              <span class="az-imp" id="imp-sidebar-large">—</span>
-            </div>
-          </div>
-        </div>
-        <div class="ad-zone zone-sticky" data-zone="sticky-footer">
-          <span class="az-label">Sticky Footer</span><span class="az-dim">728 × 90</span>
-          <span class="az-imp" id="imp-sticky-footer">—</span>
-        </div>
-      </div>
-
-      <!-- Mobile -->
-      <div id="vizMobile" style="display:none" class="mobile-wrapper">
-        <div class="mobile-phone">
-          <div class="mobile-notch"><div></div></div>
-          <div class="mobile-screen">
-            <div class="ad-zone zone-mob-interstitial" data-zone="mobile-interstitial" id="mInterstitial">
-              <span class="az-label">Interstitial · 320×480</span>
-              <span class="az-imp" id="imp-mobile-interstitial">—</span>
-              <span class="inter-close">Full-screen · UX impact cao</span>
-            </div>
-            <div class="zone-mob-top ad-zone" data-zone="mobile-top">
-              <span class="az-label">Top Banner · 320×50</span>
-              <span class="az-imp" id="imp-mobile-top">—</span>
-            </div>
-            <div class="mob-nav">
-              <div class="mob-logo"></div><div class="mob-title"></div><div class="mob-icon"></div>
-            </div>
-            <div class="mob-feed">
-              <div class="mob-feed-item">
-                <div class="mob-img"></div>
-                <div class="mob-line w80"></div><div class="mob-line w60"></div>
-              </div>
-              <div class="ad-zone zone-mob-infeed" data-zone="mobile-infeed-1">
-                <span class="az-label">In-Feed Native</span>
-                <span class="az-imp" id="imp-mobile-infeed-1">—</span>
-              </div>
-              <div class="mob-feed-item">
-                <div class="mob-img"></div>
-                <div class="mob-line w80"></div><div class="mob-line w60"></div>
-              </div>
-              <div class="ad-zone zone-mob-infeed" data-zone="mobile-infeed-2">
-                <span class="az-label">In-Feed Banner · 320×100</span>
-                <span class="az-imp" id="imp-mobile-infeed-2">—</span>
-              </div>
-              <div class="mob-feed-item">
-                <div class="mob-img"></div><div class="mob-line w80"></div>
-              </div>
-            </div>
-            <div class="ad-zone zone-mob-bottom" data-zone="mobile-bottom">
-              <span class="az-label">Sticky Bottom · 320×50</span>
-              <span class="az-imp" id="imp-mobile-bottom">—</span>
-            </div>
-          </div>
-          <div style="height:8px"></div>
+      <div class="viz-toolbar-right">
+        <div class="device-switcher">
+          <button class="dev-btn active" data-device="desktop">🖥</button>
+          <button class="dev-btn" data-device="mobile">📱</button>
         </div>
       </div>
     </div>
-
-    <!-- Metrics bar -->
+    <div class="viz-scroll" id="vizScroll"></div>
     <div class="metrics-bar">
-      <div class="metric"><span class="m-label">Vị trí chọn</span><span class="m-value" id="mCount">0</span></div>
+      <div class="metric"><span class="m-label">Vị trí</span><span class="m-value" id="mCount">0</span></div>
       <div class="msep"></div>
-      <div class="metric"><span class="m-label">Imp/ngày ước tính</span><span class="m-value momo" id="mDaily">—</span></div>
+      <div class="metric"><span class="m-label">Imp/ngày</span><span class="m-value momo" id="mDaily">—</span></div>
       <div class="msep"></div>
-      <div class="metric"><span class="m-label">Desktop</span><span class="m-value" id="mDesk">—</span></div>
+      <div class="metric"><span class="m-label">Universal</span><span class="m-value" id="mUniv">—</span></div>
       <div class="msep"></div>
-      <div class="metric"><span class="m-label">Mobile</span><span class="m-value" id="mMob">—</span></div>
+      <div class="metric"><span class="m-label">Contextual</span><span class="m-value" id="mCtx">—</span></div>
       <div class="msep"></div>
-      <div class="metric"><span class="m-label">Tổng chiến dịch</span><span class="m-value" id="mTotal">—</span></div>
+      <div class="metric"><span class="m-label">Tổng campaign</span><span class="m-value" id="mTotal">—</span></div>
     </div>
   </div>
 </div>
@@ -431,253 +398,596 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Page tracking data (simulated from analytics)
-const PAGES = [
-  {id:'home',       name:'Trang chủ',          url:'momo.vn',                  views:520000, mobRatio:.72, cat:'Homepage'},
-  {id:'news',       name:'Tin tức tài chính',   url:'momo.vn/tin-tuc',          views:148000, mobRatio:.68, cat:'Content'},
-  {id:'vay-nhanh',  name:'Tính Vay Nhanh',      url:'momo.vn/vay-nhanh',        views:83000,  mobRatio:.65, cat:'Utility'},
-  {id:'merchant',   name:'Quán ngon gần đây',   url:'momo.vn/quan-ngon',        views:115000, mobRatio:.81, cat:'Discovery'},
-  {id:'tiet-kiem',  name:'Tính Tiết Kiệm',      url:'momo.vn/tiet-kiem',        views:67000,  mobRatio:.62, cat:'Utility'},
+// ── DATA
+const PROJECTS = [
+  {
+    id:'cinema', name:'Cinema', icon:'🎬', type:'Entertainment', tc:'t-entertainment',
+    urls:[
+      {id:'cinema-list',   label:'Listing',     url:'momo.vn/phim-rap',          views:380000, mobRatio:.76},
+      {id:'cinema-detail', label:'Movie Detail', url:'momo.vn/phim-rap/avengers', views:145000, mobRatio:.82},
+    ],
+    contextual:['cinema-billboard','cinema-card-native'],
+    pdNote:null,
+  },
+  {
+    id:'merchant', name:'MoMo Deal', icon:'🛍', type:'Discovery', tc:'t-discovery',
+    urls:[
+      {id:'merchant-list',   label:'Deal Listing',    url:'momo.vn/deal',        views:115000, mobRatio:.81},
+      {id:'merchant-detail', label:'Merchant Detail', url:'momo.vn/quan-an/abc', views:67000,  mobRatio:.85},
+    ],
+    contextual:['merchant-inline'],
+    pdNote:'⚠️ Sidebar cố định (Product Design constraint) — chỉ cho phép Inline Native trong feed',
+  },
+  {
+    id:'credit', name:'Credit', icon:'💳', type:'Utility', tc:'t-utility',
+    urls:[
+      {id:'credit-hub',  label:'Hub',        url:'momo.vn/vay-nhanh',      views:83000, mobRatio:.65},
+      {id:'credit-calc', label:'Calculator', url:'momo.vn/vay-nhanh/tinh', views:54000, mobRatio:.68},
+    ],
+    contextual:['credit-preform','credit-result'],
+    pdNote:'Single-column calculator layout — không có Billboard hoặc Sidebar',
+  },
+  {
+    id:'insurance', name:'Bảo hiểm', icon:'🛡', type:'Utility', tc:'t-utility',
+    urls:[
+      {id:'ins-hub',   label:'Hub',      url:'momo.vn/bao-hiem',        views:62000, mobRatio:.70},
+      {id:'ins-motor', label:'Xe máy',   url:'momo.vn/bao-hiem/xe-may', views:38000, mobRatio:.72},
+    ],
+    contextual:['ins-preform','ins-comparison'],
+    pdNote:null,
+  },
+  {
+    id:'content', name:'Tin tức', icon:'📰', type:'Content', tc:'t-content',
+    urls:[
+      {id:'news-list',    label:'Listing', url:'momo.vn/tin-tuc',          views:148000, mobRatio:.68},
+      {id:'news-article', label:'Article', url:'momo.vn/tin-tuc/bai-viet', views:72000,  mobRatio:.71},
+    ],
+    contextual:['content-billboard','content-sidebar-med','content-sidebar-lg','content-infeed'],
+    pdNote:null,
+  },
+  {
+    id:'homepage', name:'Homepage', icon:'🏠', type:'Homepage', tc:'t-homepage',
+    urls:[
+      {id:'home', label:'Homepage', url:'momo.vn', views:520000, mobRatio:.72},
+    ],
+    contextual:['home-hero','home-grid-native'],
+    pdNote:null,
+  },
 ];
 
-// ── Placement data — viewRate = viewability % từ tracking
-const PLACEMENTS = [
-  {id:'leaderboard',      device:'desktop', name:'Leaderboard',      dims:'970×90',    format:'Banner',       viewRate:.93, zone:'leaderboard',        desc:'Trên cùng, trước nav'},
-  {id:'billboard',        device:'desktop', name:'Billboard',         dims:'970×250',   format:'Banner',       viewRate:.88, zone:'billboard',          desc:'Hero area dưới nav'},
-  {id:'sidebar-medium',   device:'desktop', name:'Medium Rectangle',  dims:'300×250',   format:'Display',      viewRate:.78, zone:'sidebar-medium',     desc:'Sidebar phải, trên fold'},
-  {id:'sidebar-large',    device:'desktop', name:'Half Page',         dims:'300×600',   format:'Display',      viewRate:.61, zone:'sidebar-large',      desc:'Sidebar phải, dưới fold'},
-  {id:'infeed-desktop',   device:'desktop', name:'In-Feed Native',    dims:'Linh hoạt', format:'Native',       viewRate:.85, zone:'infeed-desktop',     desc:'Native blend vào content'},
-  {id:'sticky-footer',    device:'desktop', name:'Sticky Footer',     dims:'728×90',    format:'Banner',       viewRate:.74, zone:'sticky-footer',      desc:'Cố định đáy màn hình'},
-  {id:'mobile-top',       device:'mobile',  name:'Top Banner',        dims:'320×50',    format:'Banner',       viewRate:.94, zone:'mobile-top',         desc:'Đầu trang mobile'},
-  {id:'mobile-infeed-1',  device:'mobile',  name:'In-Feed Native',    dims:'Linh hoạt', format:'Native',       viewRate:.87, zone:'mobile-infeed-1',    desc:'Native sau item đầu'},
-  {id:'mobile-infeed-2',  device:'mobile',  name:'In-Feed Banner',    dims:'320×100',   format:'Banner',       viewRate:.72, zone:'mobile-infeed-2',    desc:'Banner sau item thứ 3'},
-  {id:'mobile-interstitial',device:'mobile',name:'Interstitial',      dims:'320×480',   format:'Interstitial', viewRate:.96, zone:'mobile-interstitial',desc:'Full-screen khi chuyển trang'},
-  {id:'mobile-bottom',    device:'mobile',  name:'Sticky Bottom',     dims:'320×50',    format:'Banner',       viewRate:.82, zone:'mobile-bottom',      desc:'Cố định đáy mobile'},
+const UNIVERSAL = [
+  {id:'u-topbar', name:'Top Bar',       dims:'Full-width × 48px', format:'Banner', viewRate:.93, desc:'Fixed top, không push layout xuống'},
+  {id:'u-sticky', name:'Sticky Bottom', dims:'728×90 / 320×50',  format:'Banner', viewRate:.82, desc:'Fixed bottom bar'},
+  {id:'u-float',  name:'Float Button',  dims:'60×60px',           format:'Float',  viewRate:.71, desc:'Corner overlay, bottom-right'},
+  {id:'u-popup',  name:'Popup',         dims:'Full-screen',        format:'Popup',  viewRate:.96, desc:'Trigger khi vào trang hoặc chuyển trang'},
 ];
 
-// ── State
+const CONTEXTUAL = {
+  'cinema-billboard':   {name:'Cinema Hero Billboard', dims:'970×250',   format:'Banner',  viewRate:.88, desc:'Dưới nav, trên danh sách phim'},
+  'cinema-card-native': {name:'Movie Card Native',     dims:'Linh hoạt', format:'Native',  viewRate:.85, desc:'Blend vào movie card grid'},
+  'merchant-inline':    {name:'Inline Native',         dims:'Linh hoạt', format:'Native',  viewRate:.80, desc:'Inline trong feed, không đụng sidebar cố định'},
+  'credit-preform':     {name:'Pre-form Banner',       dims:'300×250',   format:'Display', viewRate:.76, desc:'Trên form tính vay'},
+  'credit-result':      {name:'Result Native',         dims:'Linh hoạt', format:'Native',  viewRate:.83, desc:'Blend vào kết quả sau khi tính'},
+  'ins-preform':        {name:'Pre-form Banner',       dims:'300×250',   format:'Display', viewRate:.74, desc:'Trên form báo giá BH'},
+  'ins-comparison':     {name:'Comparison Native',     dims:'Linh hoạt', format:'Native',  viewRate:.81, desc:'Blend vào bảng so sánh gói BH'},
+  'content-billboard':  {name:'Billboard',             dims:'970×250',   format:'Banner',  viewRate:.88, desc:'Hero dưới nav bài viết'},
+  'content-sidebar-med':{name:'Sidebar 300×250',       dims:'300×250',   format:'Display', viewRate:.78, desc:'Sidebar phải, trên fold'},
+  'content-sidebar-lg': {name:'Sidebar 300×600',       dims:'300×600',   format:'Display', viewRate:.61, desc:'Sidebar phải, dưới fold'},
+  'content-infeed':     {name:'In-article Native',     dims:'Linh hoạt', format:'Native',  viewRate:.85, desc:'Blend vào bài viết'},
+  'home-hero':          {name:'Hero Banner',            dims:'970×250',   format:'Banner',  viewRate:.90, desc:'Hero section chính trang chủ'},
+  'home-grid-native':   {name:'Service Grid Native',   dims:'Linh hoạt', format:'Native',  viewRate:.86, desc:'Blend vào service icon grid'},
+};
+
+// ── STATE
 let step = 0;
-let selectedPages = new Set();
+let selectedProjects = new Set();
 let selectedPlacements = new Set();
+let vizProjectId = null;
+let vizUrlId = null;
 let device = 'desktop';
 
-// ── Formatters
+// ── UTILS
 const fmtN = n => {
   if (!n || n === 0) return '—';
   if (n >= 1e6) return (n/1e6).toFixed(1).replace('.0','') + 'M';
   if (n >= 1e3) return Math.round(n/1e3) + 'K';
   return n.toLocaleString('vi-VN');
 };
-
-// ── Impression forecast calculation
-function calcTotalViews() {
-  return [...selectedPages].reduce((sum, pid) => {
-    const p = PAGES.find(x => x.id === pid);
-    return sum + (p ? p.views : 0);
-  }, 0);
+function calcDays() {
+  const s = document.getElementById('campStart').value;
+  const e = document.getElementById('campEnd').value;
+  return s && e ? Math.max(1, Math.round((new Date(e)-new Date(s))/86400000)) : 30;
 }
+function projViews(p) { return p.urls.reduce((s,u)=>s+u.views,0); }
 
-function calcImpressionsForPlacement(p) {
-  let total = 0;
-  selectedPages.forEach(pid => {
-    const page = PAGES.find(x => x.id === pid);
-    if (!page) return;
-    const deviceViews = p.device === 'mobile'
-      ? page.views * page.mobRatio
-      : page.views * (1 - page.mobRatio);
-    total += Math.round(deviceViews * p.viewRate);
+function calcUnivImp(uid) {
+  const u = UNIVERSAL.find(x=>x.id===uid); if(!u) return 0;
+  let t = 0;
+  selectedProjects.forEach(pid=>{
+    const p = PROJECTS.find(x=>x.id===pid); if(!p) return;
+    p.urls.forEach(u2=>t+=Math.round(u2.views*u.viewRate));
   });
-  return total;
+  return t;
+}
+function calcCtxImp(cid) {
+  const c = CONTEXTUAL[cid]; if(!c) return 0;
+  let t = 0;
+  PROJECTS.forEach(p=>{
+    if(!selectedProjects.has(p.id)||!p.contextual.includes(cid)) return;
+    p.urls.forEach(u=>t+=Math.round(u.views*c.viewRate));
+  });
+  return t;
+}
+function totalImp() {
+  let univ=0, ctx=0;
+  selectedPlacements.forEach(id=>{
+    if(id.startsWith('u-')) univ+=calcUnivImp(id);
+    else ctx+=calcCtxImp(id);
+  });
+  return {univ,ctx,total:univ+ctx};
 }
 
-// ── Render page list
-function renderPages() {
-  document.getElementById('pageList').innerHTML = PAGES.map(p => {
-    const sel = selectedPages.has(p.id);
-    return `<div class="page-card${sel?' selected':''}" data-ppid="${p.id}">
-      <input type="checkbox" data-ppid="${p.id}"${sel?' checked':''}>
-      <div class="page-info">
-        <div class="page-name">${p.name}</div>
-        <div class="page-url">${p.url}</div>
-        <div class="page-mob-bar">
-          <span>${Math.round(p.mobRatio*100)}% mobile</span>
-          <div class="mob-ratio-track"><div class="mob-ratio-fill" style="width:${p.mobRatio*100}%"></div></div>
-        </div>
-      </div>
-      <div class="page-traffic">
-        <div class="page-views">${fmtN(p.views)}<small>views/ngày</small></div>
+// ── PROJECT GRID
+function renderProjectGrid() {
+  document.getElementById('projectGrid').innerHTML = PROJECTS.map(p => {
+    const sel = selectedProjects.has(p.id);
+    return `<div class="proj-card${sel?' selected':''}" data-pid="${p.id}">
+      <div class="proj-card-top"><span class="proj-icon">${p.icon}</span><span class="proj-check"></span></div>
+      <div class="proj-name">${p.name}</div>
+      <span class="proj-type ${p.tc}">${p.type}</span>
+      <div class="proj-stats">
+        <span>📄 ${p.urls.length} trang</span>
+        <span>👁 ${fmtN(projViews(p))}/ngày</span>
       </div>
     </div>`;
   }).join('');
-
-  document.querySelectorAll('.page-card').forEach(c => {
-    c.addEventListener('click', e => { if(e.target.tagName==='INPUT') return; togglePage(c.dataset.ppid); });
-  });
-  document.querySelectorAll('.page-card input').forEach(cb => {
-    cb.addEventListener('change', () => togglePage(cb.dataset.ppid));
-  });
+  document.querySelectorAll('.proj-card').forEach(c=>c.addEventListener('click',()=>toggleProject(c.dataset.pid)));
 }
 
-function togglePage(id) {
-  selectedPages.has(id) ? selectedPages.delete(id) : selectedPages.add(id);
-  renderPages();
-  renderPlacements();
-  updateViz();
+function toggleProject(id) {
+  selectedProjects.has(id) ? selectedProjects.delete(id) : selectedProjects.add(id);
+  renderProjectGrid();
+  renderContextual();
+  renderVizTabs();
+  if (!vizProjectId || !selectedProjects.has(vizProjectId)) {
+    vizProjectId = [...selectedProjects][0] || null;
+    const p = PROJECTS.find(x=>x.id===vizProjectId);
+    vizUrlId = p?.urls[0]?.id || null;
+  }
+  renderViz();
   updateMetrics();
-  // Update URL hint in viz
-  const first = PAGES.find(p => selectedPages.has(p.id));
-  document.getElementById('vizUrl').textContent = first ? '🔒 ' + first.url : '🔒 momo.vn';
-  document.getElementById('vizPageHint').textContent = selectedPages.size
-    ? `${selectedPages.size} trang · ${fmtN(calcTotalViews())} views/ngày tổng cộng`
-    : 'Chọn trang ở bước 1 để xem forecast';
 }
 
-// ── Render placement list
-function renderPlacements() {
-  const wrap = document.getElementById('placementsWrap');
-  if (!selectedPages.size) {
-    wrap.innerHTML = '<div class="no-pages-note">← Quay lại bước 1 và chọn ít nhất một trang để xem placement.</div>';
+// ── PLACEMENTS
+const BADGE = {Native:'pb-native',Banner:'pb-banner',Popup:'pb-popup',Float:'pb-float',Display:'pb-display'};
+
+function plCard(id, name, dims, format, viewRate, desc, imp) {
+  const sel = selectedPlacements.has(id);
+  return `<div class="placement-card${sel?' selected':''}" data-plid="${id}">
+    <input type="checkbox" data-plid="${id}"${sel?' checked':''}>
+    <div class="placement-info">
+      <div class="placement-name">${name}</div>
+      <div class="placement-meta">
+        <span class="pbadge ${BADGE[format]||'pb-display'}">${format}</span>
+        <span>${dims}</span>
+        <span class="vr-badge">View ${Math.round(viewRate*100)}%</span>
+        <span style="color:var(--muted)">${desc}</span>
+      </div>
+    </div>
+    <div class="placement-imp">${fmtN(imp)}<small>imp/ngày</small></div>
+  </div>`;
+}
+
+function attachPlCards(container) {
+  container.querySelectorAll('.placement-card').forEach(c=>{
+    c.addEventListener('click',e=>{if(e.target.tagName==='INPUT')return;togglePlacement(c.dataset.plid);});
+  });
+  container.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change',()=>togglePlacement(cb.dataset.plid));
+  });
+}
+
+function renderUniversal() {
+  const el = document.getElementById('universalList');
+  el.innerHTML = UNIVERSAL.map(u=>plCard(u.id,u.name,u.dims,u.format,u.viewRate,u.desc,calcUnivImp(u.id))).join('');
+  attachPlCards(el);
+}
+
+function renderContextual() {
+  const wrap = document.getElementById('contextualWrap');
+  if (!selectedProjects.size) {
+    wrap.innerHTML = '<div class="no-pages-note">← Chọn ít nhất một Dự án ở bước 1 để xem Contextual Placements.</div>';
     return;
   }
-
-  const BADGE = {Native:'pb-native',Banner:'pb-banner',Interstitial:'pb-interstitial',Display:'pb-display'};
-
-  const cardHtml = p => {
-    const sel = selectedPlacements.has(p.id);
-    const imp = calcImpressionsForPlacement(p);
-    return `<div class="placement-card${sel?' selected':''}" data-pid="${p.id}">
-      <input type="checkbox" data-pid="${p.id}"${sel?' checked':''}>
-      <div class="placement-info">
-        <div class="placement-name">${p.name}</div>
-        <div class="placement-meta">
-          <span class="pbadge ${BADGE[p.format]}">${p.format}</span>
-          <span>${p.dims}</span>
-          <span class="vr-badge">View ${Math.round(p.viewRate*100)}%</span>
-          <span>${p.desc}</span>
-        </div>
+  let html = '';
+  PROJECTS.forEach(p=>{
+    if(!selectedProjects.has(p.id)) return;
+    html += `<div style="margin-top:14px">
+      <div class="section-head">${p.icon} ${p.name} — Contextual</div>
+      ${p.pdNote?`<div class="pd-note">${p.pdNote}</div>`:''}
+      <div class="placement-group">
+        ${p.contextual.map(cid=>{
+          const c=CONTEXTUAL[cid]; if(!c) return '';
+          return plCard(cid,c.name,c.dims,c.format,c.viewRate,c.desc,calcCtxImp(cid));
+        }).join('')}
       </div>
-      <div class="placement-imp">${fmtN(imp)}<small>imp/ngày</small></div>
     </div>`;
-  };
-
-  wrap.innerHTML = `
-    <div class="section-head">🖥 Desktop</div>
-    <div class="placement-group">${PLACEMENTS.filter(p=>p.device==='desktop').map(cardHtml).join('')}</div>
-    <div class="section-head" style="margin-top:12px">📱 Mobile</div>
-    <div class="placement-group">${PLACEMENTS.filter(p=>p.device==='mobile').map(cardHtml).join('')}</div>
-  `;
-
-  document.querySelectorAll('.placement-card').forEach(c => {
-    c.addEventListener('click', e => { if(e.target.tagName==='INPUT') return; togglePlacement(c.dataset.pid); });
   });
-  document.querySelectorAll('.placement-card input').forEach(cb => {
-    cb.addEventListener('change', () => togglePlacement(cb.dataset.pid));
-  });
+  wrap.innerHTML = html;
+  attachPlCards(wrap);
 }
 
 function togglePlacement(id) {
   const adding = !selectedPlacements.has(id);
   adding ? selectedPlacements.add(id) : selectedPlacements.delete(id);
-
-  const p = PLACEMENTS.find(x => x.id === id);
-  if (p && adding) setDevice(p.device);
-
-  renderPlacements();
-  updateViz();
+  renderUniversal();
+  renderContextual();
+  updateVizZones();
   updateMetrics();
-
-  if (adding && p) {
-    const zone = document.querySelector(`[data-zone="${p.zone}"]`);
-    if (zone) { zone.classList.remove('flash'); void zone.offsetWidth; zone.classList.add('flash'); }
+  if (adding) {
+    const z = document.querySelector(`[data-zone="${id}"]`);
+    if(z){z.classList.remove('flash');void z.offsetWidth;z.classList.add('flash');}
   }
 }
 
-// ── Update visualization
-function updateViz() {
-  document.querySelectorAll('[data-zone]').forEach(el => {
-    const p = PLACEMENTS.find(x => x.zone === el.dataset.zone);
-    if (!p) return;
-    const on = selectedPlacements.has(p.id);
-    el.classList.toggle('active', on);
-    if (el.id === 'mInterstitial') el.style.display = on ? 'flex' : 'none';
+// ── VIZ TABS
+function renderVizTabs() {
+  const pt = document.getElementById('projTabs');
+  const ut = document.getElementById('urlTabs');
+  if (!selectedProjects.size) {
+    pt.innerHTML = '<span style="font-size:11px;color:var(--muted)">Chọn dự án để preview →</span>';
+    ut.innerHTML = ''; return;
+  }
+  pt.innerHTML = [...selectedProjects].map(pid=>{
+    const p=PROJECTS.find(x=>x.id===pid);
+    return `<button class="proj-tab${vizProjectId===pid?' active':''}" data-ptid="${pid}">${p.icon} ${p.name}</button>`;
+  }).join('');
+  pt.querySelectorAll('.proj-tab').forEach(t=>t.addEventListener('click',()=>{
+    vizProjectId=t.dataset.ptid;
+    const p=PROJECTS.find(x=>x.id===vizProjectId);
+    vizUrlId=p?.urls[0]?.id||null;
+    renderVizTabs(); renderViz();
+  }));
+  const proj = PROJECTS.find(p=>p.id===vizProjectId);
+  if(proj && proj.urls.length>1){
+    ut.innerHTML = proj.urls.map(u=>`<button class="url-tab${vizUrlId===u.id?' active':''}" data-utid="${u.id}">${u.label}</button>`).join('');
+    ut.querySelectorAll('.url-tab').forEach(t=>t.addEventListener('click',()=>{vizUrlId=t.dataset.utid;renderVizTabs();renderViz();}));
+  } else { ut.innerHTML=''; }
+}
 
-    // Update impression forecast label inside zone
-    const impEl = el.querySelector('.az-imp');
-    if (impEl) {
-      const imp = calcImpressionsForPlacement(p);
-      impEl.textContent = imp > 0 ? fmtN(imp) + ' imp/ngày' : '—';
+// ── VIZ RENDER
+function renderViz() {
+  const scroll = document.getElementById('vizScroll');
+  if (!vizProjectId) {
+    scroll.innerHTML = `<div class="viz-empty">
+      <div class="viz-empty-icon">🗂</div>
+      <div class="viz-empty-title">Chọn dự án để xem preview</div>
+      <div class="viz-empty-sub">Mỗi dự án có layout riêng phản ánh UI thực tế — Merchant khác Content khác Utility</div>
+    </div>`; return;
+  }
+  const proj = PROJECTS.find(p=>p.id===vizProjectId);
+  const url  = proj.urls.find(u=>u.id===vizUrlId)||proj.urls[0];
+  scroll.innerHTML = device==='mobile' ? renderMobile(proj,url) : renderDesktop(proj,url);
+  document.querySelectorAll('[data-zone]').forEach(z=>{
+    z.addEventListener('click',()=>{ const id=z.dataset.zone; if(id) togglePlacement(id); });
+  });
+  updateVizZones();
+}
+
+function nav() {
+  return `<div class="l-nav">
+    <div class="l-logo"></div>
+    <div class="l-links"><span class="hi"></span><span></span><span></span></div>
+    <div class="l-cta"></div>
+  </div>`;
+}
+function browserBar(url) {
+  return `<div class="browser-bar">
+    <div class="bdots"><i></i><i></i><i></i></div>
+    <div class="burl">🔒 ${url.url}</div>
+  </div>`;
+}
+function univOverlays() {
+  return `
+  <div class="ad-zone u-topbar" data-zone="u-topbar"><span class="az-label">Top Bar · Full-width×48</span></div>
+  <div class="ad-zone u-sticky" data-zone="u-sticky"><span class="az-label">Sticky Bottom</span></div>
+  <div class="ad-zone u-float" data-zone="u-float"><span class="az-label" style="font-size:7px">Float</span></div>
+  <div class="ad-zone u-popup" data-zone="u-popup"><span class="az-label">Popup / Interstitial</span><span class="az-dim">Full-screen overlay</span></div>`;
+}
+
+function renderDesktop(proj, url) {
+  let body = '';
+  switch(proj.id) {
+    case 'cinema':
+      body = `${nav()}
+      <div class="ad-zone cinema-billboard" data-zone="cinema-billboard">
+        <span class="az-label">Cinema Hero Billboard</span><span class="az-dim">970×250</span>
+      </div>
+      <div class="cinema-grid">
+        ${[0,1,2].map(()=>`<div class="cinema-card-el"><div class="cinema-poster"></div><div class="cinema-card-info"><div class="l-bar l-bar.w100"></div><div class="l-bar w80" style="margin-top:3px"></div></div></div>`).join('')}
+        <div class="ad-zone cinema-native-zone" data-zone="cinema-card-native">
+          <span class="az-label">Movie Card Native</span><span class="az-dim">Linh hoạt</span>
+        </div>
+        ${[0,1,2,3].map(()=>`<div class="cinema-card-el"><div class="cinema-poster"></div><div class="cinema-card-info"><div class="l-bar" style="width:100%"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
+      </div>`;
+      break;
+    case 'merchant':
+      body = `<div class="merchant-frame">
+        <div class="merchant-sidebar">
+          <div class="ms-logo"></div>
+          ${[0,1,2,3,4].map((i,idx)=>`<div class="ms-item${idx===1?' hi':''}"><span></span></div>`).join('')}
+          <div class="ms-lock">🔒 Sidebar cố định<br>Product Design</div>
+        </div>
+        <div class="merchant-main">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:10px;font-weight:700">Deal gần bạn</div>
+            <div style="width:55px;height:20px;background:var(--momo-light);border-radius:4px"></div>
+          </div>
+          <div class="deal-grid">
+            ${[0,1].map(()=>`<div class="deal-card-el"><div class="deal-img"></div><div class="deal-info"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
+            <div class="ad-zone deal-inline-zone" data-zone="merchant-inline">
+              <span class="az-label">Inline Native</span><span class="az-dim">Linh hoạt</span>
+            </div>
+            ${[0,1,2].map(()=>`<div class="deal-card-el"><div class="deal-img"></div><div class="deal-info"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+      break;
+    case 'credit':
+      body = `${nav()}<div class="credit-layout">
+        <div class="ad-zone credit-pre-zone" data-zone="credit-preform">
+          <span class="az-label">Pre-form Banner</span><span class="az-dim">300×250</span>
+        </div>
+        <div class="credit-form-box">
+          <div style="font-size:11px;font-weight:700">Tính số tiền vay</div>
+          <div class="credit-field"></div><div class="credit-field"></div><div class="credit-field"></div>
+          <div class="credit-cta"></div>
+        </div>
+        <div class="credit-result-box">
+          <div style="font-size:11px;font-weight:700">Kết quả</div>
+          <div class="credit-result-grid">
+            <div class="credit-result-cell"><small>Kỳ hạn</small><strong>24 tháng</strong></div>
+            <div class="credit-result-cell"><small>Lãi suất</small><strong>1.5%/tháng</strong></div>
+          </div>
+          <div class="ad-zone credit-result-zone" data-zone="credit-result">
+            <span class="az-label">Result Native</span>
+          </div>
+        </div>
+      </div>`;
+      break;
+    case 'insurance':
+      body = `${nav()}<div class="credit-layout">
+        <div class="ad-zone credit-pre-zone" data-zone="ins-preform">
+          <span class="az-label">Pre-form Banner</span><span class="az-dim">300×250</span>
+        </div>
+        <div class="credit-form-box">
+          <div style="font-size:11px;font-weight:700">Báo giá BH xe máy</div>
+          <div class="credit-field"></div><div class="credit-field"></div>
+          <div class="credit-cta"></div>
+        </div>
+        <div class="credit-result-box">
+          <div style="font-size:11px;font-weight:700">So sánh gói BH</div>
+          ${[0,1].map(()=>`<div style="background:#fff;border:1px solid var(--line);border-radius:5px;padding:8px;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:4px"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:2px"></div></div><div style="width:46px;height:20px;background:var(--momo);border-radius:4px;opacity:.7"></div></div>`).join('')}
+          <div class="ad-zone credit-result-zone" data-zone="ins-comparison">
+            <span class="az-label">Comparison Native</span>
+          </div>
+        </div>
+      </div>`;
+      break;
+    case 'content':
+      body = `${nav()}
+      <div class="content-layout">
+        <div class="ad-zone content-billboard-zone" data-zone="content-billboard">
+          <span class="az-label">Billboard</span><span class="az-dim">970×250</span>
+        </div>
+        <div class="content-body">
+          <div class="content-article">
+            <div class="l-bar" style="width:65%;height:9px"></div>
+            <div class="content-img"></div>
+            <div class="l-bar l-bar.w100"></div><div class="l-bar w90" style="margin-top:5px"></div><div class="l-bar w80" style="margin-top:5px"></div>
+            <div class="ad-zone content-infeed-zone" data-zone="content-infeed">
+              <span class="az-label">In-article Native</span>
+            </div>
+            <div class="l-bar" style="width:100%"></div><div class="l-bar w80" style="margin-top:5px"></div>
+          </div>
+          <div class="content-sidebar">
+            <div class="ad-zone content-sb-med" data-zone="content-sidebar-med">
+              <span class="az-label">Sidebar</span><span class="az-dim">300×250</span>
+            </div>
+            <div class="ad-zone content-sb-lg" data-zone="content-sidebar-lg">
+              <span class="az-label">Half Page</span><span class="az-dim">300×600</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+      break;
+    case 'homepage':
+      body = `${nav()}
+      <div class="home-layout">
+        <div class="ad-zone home-hero-zone" data-zone="home-hero">
+          <span class="az-label">Hero Banner</span><span class="az-dim">970×250</span>
+        </div>
+        <div class="home-body">
+          <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Dịch vụ</div>
+          <div class="home-svc-grid">
+            ${[0,1,2,3,4,5].map(()=>`<div class="home-svc-item"><div class="home-svc-circle"></div><div class="home-svc-label"></div></div>`).join('')}
+          </div>
+          <div class="ad-zone home-grid-zone" data-zone="home-grid-native">
+            <span class="az-label">Service Grid Native</span>
+          </div>
+          <div class="home-svc-grid">
+            ${[0,1,2,3,4,5].map(()=>`<div class="home-svc-item"><div class="home-svc-circle"></div><div class="home-svc-label"></div></div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+      break;
+  }
+  return `<div class="desktop-frame">${browserBar(url)}${univOverlays()}${body}</div>`;
+}
+
+function renderMobile(proj, url) {
+  let body = '';
+  switch(proj.id) {
+    case 'cinema':
+      body = `<div class="mob-content" style="padding:8px;overflow:hidden;gap:6px">
+        <div class="ad-zone" style="height:48px;border-radius:5px;flex-shrink:0" data-zone="cinema-billboard">
+          <span class="az-label">Billboard · 320×120</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;overflow:hidden">
+          ${[0,1,2].map(()=>`<div style="background:#f5f5f8;border-radius:6px;overflow:hidden"><div style="height:56px;background:var(--line)"></div><div style="padding:4px"><div class="mob-bar w80"></div></div></div>`).join('')}
+          <div class="ad-zone" style="border-radius:6px;min-height:72px" data-zone="cinema-card-native">
+            <span class="az-label">Card Native</span>
+          </div>
+        </div>
+      </div>`;
+      break;
+    case 'merchant':
+      body = `<div class="mob-content" style="padding:0;overflow:hidden">
+        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
+        <div class="ad-zone mob-inline" data-zone="merchant-inline"><span class="az-label">Inline Native</span></div>
+        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
+        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div></div>
+      </div>`;
+      break;
+    case 'credit':
+      body = `<div class="mob-content" style="padding:8px;gap:7px;overflow:hidden">
+        <div class="ad-zone" style="height:54px;border-radius:5px;flex-shrink:0" data-zone="credit-preform">
+          <span class="az-label">Pre-form Banner</span>
+        </div>
+        <div style="background:#f9fafb;border:1px solid var(--line);border-radius:7px;padding:8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <div style="height:22px;background:#fff;border:1px solid var(--line);border-radius:4px"></div>
+          <div style="height:22px;background:#fff;border:1px solid var(--line);border-radius:4px"></div>
+          <div style="height:26px;background:var(--momo);border-radius:4px"></div>
+        </div>
+        <div class="ad-zone" style="height:46px;border-radius:5px;flex-shrink:0" data-zone="credit-result">
+          <span class="az-label">Result Native</span>
+        </div>
+      </div>`;
+      break;
+    case 'insurance':
+      body = `<div class="mob-content" style="padding:8px;gap:7px;overflow:hidden">
+        <div class="ad-zone" style="height:54px;border-radius:5px;flex-shrink:0" data-zone="ins-preform">
+          <span class="az-label">Pre-form Banner</span>
+        </div>
+        <div style="background:#f9fafb;border:1px solid var(--line);border-radius:7px;padding:8px;flex-shrink:0">
+          <div style="height:22px;background:#fff;border:1px solid var(--line);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:26px;background:var(--momo);border-radius:4px"></div>
+        </div>
+        <div class="ad-zone" style="height:46px;border-radius:5px;flex-shrink:0" data-zone="ins-comparison">
+          <span class="az-label">Comparison Native</span>
+        </div>
+      </div>`;
+      break;
+    case 'content':
+      body = `<div class="mob-content" style="padding:0;overflow:hidden">
+        <div class="ad-zone" style="height:36px;flex-shrink:0;border-radius:0;border-left:none;border-right:none;border-top:none" data-zone="content-billboard">
+          <span class="az-label">Billboard · 320×100</span>
+        </div>
+        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
+        <div class="ad-zone mob-infeed" data-zone="content-infeed"><span class="az-label">In-article Native</span></div>
+        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div></div>
+      </div>`;
+      break;
+    case 'homepage':
+      body = `<div class="mob-content" style="padding:8px;overflow:hidden;gap:7px">
+        <div class="ad-zone" style="height:64px;border-radius:5px;flex-shrink:0" data-zone="home-hero">
+          <span class="az-label">Hero Banner</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex-shrink:0">
+          ${[0,1,2,3,4,5,6,7].map(()=>`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:28px;height:28px;border-radius:50%;background:var(--line)"></div><div style="width:22px;height:4px;background:var(--line);border-radius:2px"></div></div>`).join('')}
+        </div>
+        <div class="ad-zone" style="height:40px;border-radius:5px;flex-shrink:0" data-zone="home-grid-native">
+          <span class="az-label">Grid Native</span>
+        </div>
+      </div>`;
+      break;
+    default:
+      body = `<div class="mob-content">
+        ${[0,1,2].map(()=>`<div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>`).join('')}
+      </div>`;
+  }
+
+  return `<div class="mobile-wrapper"><div class="mobile-phone">
+    <div class="mobile-notch"><div></div></div>
+    <div class="mobile-screen">
+      <div class="ad-zone mob-popup" data-zone="u-popup">
+        <span class="az-label">Popup</span><span class="az-dim">Full-screen</span>
+      </div>
+      <div class="ad-zone mob-topbar" data-zone="u-topbar">
+        <span class="az-label">Top Bar · 320×50</span>
+      </div>
+      <div class="mob-nav">
+        <div class="mob-logo"></div><div class="mob-title"></div><div class="mob-icon"></div>
+      </div>
+      ${body}
+      <div class="ad-zone mob-float" data-zone="u-float">
+        <span class="az-label" style="font-size:6px">Float</span>
+      </div>
+      <div class="ad-zone mob-sticky" data-zone="u-sticky">
+        <span class="az-label">Sticky · 320×50</span>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+  </div></div>`;
+}
+
+function updateVizZones() {
+  document.querySelectorAll('[data-zone]').forEach(el=>{
+    const id = el.dataset.zone;
+    const on = selectedPlacements.has(id);
+    el.classList.toggle('active', on);
+    if(id==='u-popup'){
+      if(el.classList.contains('mob-popup')) el.style.display = on?'flex':'none';
+      else el.style.display = on?'flex':'none';
     }
   });
-
-  // Also update all zones' imp even when not selected (hover info)
-  PLACEMENTS.forEach(p => {
-    const impEl = document.getElementById('imp-' + p.zone);
-    if (!impEl) return;
-    const imp = calcImpressionsForPlacement(p);
-    impEl.textContent = imp > 0 ? fmtN(imp) + ' imp/ngày' : '—';
-  });
 }
 
-// ── Update metrics bar
+// ── METRICS
 function updateMetrics() {
-  const sel = PLACEMENTS.filter(p => selectedPlacements.has(p.id));
-  let deskImp = 0, mobImp = 0;
-  sel.forEach(p => {
-    const imp = calcImpressionsForPlacement(p);
-    if (p.device === 'desktop') deskImp += imp; else mobImp += imp;
-  });
-  const daily = deskImp + mobImp;
+  const {univ,ctx,total} = totalImp();
   const days = calcDays();
-  document.getElementById('mCount').textContent = sel.length;
-  document.getElementById('mDaily').textContent = fmtN(daily);
-  document.getElementById('mDesk').textContent  = fmtN(deskImp);
-  document.getElementById('mMob').textContent   = fmtN(mobImp);
-  document.getElementById('mTotal').textContent = fmtN(daily * days);
+  document.getElementById('mCount').textContent = selectedPlacements.size;
+  document.getElementById('mDaily').textContent = fmtN(total);
+  document.getElementById('mUniv').textContent  = fmtN(univ);
+  document.getElementById('mCtx').textContent   = fmtN(ctx);
+  document.getElementById('mTotal').textContent = fmtN(total*days);
 }
 
-function calcDays() {
-  const s = document.getElementById('campStart')?.value;
-  const e = document.getElementById('campEnd')?.value;
-  return s && e ? Math.max(1, Math.round((new Date(e) - new Date(s)) / 86400000)) : 30;
-}
-
-// ── Render Review
+// ── REVIEW
 function renderReview() {
-  const name  = document.getElementById('campName').value || '—';
+  const name  = document.getElementById('campName').value||'—';
   const start = document.getElementById('campStart').value;
   const end   = document.getElementById('campEnd').value;
-  const obj   = document.querySelector('.obj-btn.active')?.querySelector('.obj-name')?.textContent || '—';
+  const obj   = document.querySelector('.obj-btn.active .obj-name')?.textContent||'—';
   const days  = calcDays();
-  const pages = PAGES.filter(p => selectedPages.has(p.id));
-  const sel   = PLACEMENTS.filter(p => selectedPlacements.has(p.id));
-
-  let deskImp = 0, mobImp = 0;
-  sel.forEach(p => {
-    const imp = calcImpressionsForPlacement(p);
-    if (p.device === 'desktop') deskImp += imp; else mobImp += imp;
-  });
-  const daily = deskImp + mobImp;
-
-  document.getElementById('rvName').textContent   = name;
-  document.getElementById('rvObj').textContent    = obj;
-  document.getElementById('rvDates').textContent  = start && end ? `${start} → ${end} (${days} ngày)` : '—';
-  document.getElementById('rvPages').textContent  = pages.length ? pages.map(p=>p.name).join(', ') : '—';
-  document.getElementById('rvCount').textContent  = sel.length;
-  document.getElementById('rvTotalImp').textContent = fmtN(daily * days);
-  document.getElementById('rvDaily').textContent  = fmtN(daily) + '/ngày';
-  document.getElementById('rvDesk').textContent   = fmtN(deskImp) + '/ngày';
-  document.getElementById('rvMob').textContent    = fmtN(mobImp) + '/ngày';
-  document.getElementById('rvDays').textContent   = days + ' ngày';
-
-  const BADGE = {Native:'pb-native',Banner:'pb-banner',Interstitial:'pb-interstitial',Display:'pb-display'};
+  const {univ,ctx,total} = totalImp();
+  const projs = PROJECTS.filter(p=>selectedProjects.has(p.id));
+  document.getElementById('rvName').textContent     = name;
+  document.getElementById('rvObj').textContent      = obj;
+  document.getElementById('rvDates').textContent    = start&&end?`${start} → ${end} (${days} ngày)`:'—';
+  document.getElementById('rvProjects').textContent = projs.length?projs.map(p=>p.name).join(', '):'—';
+  document.getElementById('rvCount').textContent    = selectedPlacements.size;
+  document.getElementById('rvTotalImp').textContent = fmtN(total*days);
+  document.getElementById('rvDaily').textContent    = fmtN(total)+'/ngày';
+  document.getElementById('rvUniv').textContent     = fmtN(univ)+'/ngày';
+  document.getElementById('rvCtx').textContent      = fmtN(ctx)+'/ngày';
+  document.getElementById('rvDays').textContent     = days+' ngày';
+  const sel=[...selectedPlacements];
   document.getElementById('rvList').innerHTML = sel.length
-    ? sel.map(p => {
-        const imp = calcImpressionsForPlacement(p);
+    ? sel.map(id=>{
+        const isU=id.startsWith('u-');
+        const p=isU?UNIVERSAL.find(x=>x.id===id):CONTEXTUAL[id]; if(!p) return '';
+        const imp=isU?calcUnivImp(id):calcCtxImp(id);
         return `<div class="review-item">
-          <span class="rv-icon">${p.device==='desktop'?'🖥':'📱'}</span>
+          <span>${isU?'🌐':'📄'}</span>
           <div class="rv-info">
             <div class="rv-name">${p.name}</div>
-            <div class="rv-sub">${p.dims} · <span class="pbadge ${BADGE[p.format]}">${p.format}</span> · View ${Math.round(p.viewRate*100)}%</div>
+            <div class="rv-sub">
+              <span>${p.dims}</span>
+              <span class="pbadge ${BADGE[p.format]||'pb-display'}">${p.format}</span>
+              <span>View ${Math.round(p.viewRate*100)}%</span>
+            </div>
           </div>
           <span class="rv-imp">${fmtN(imp)}/ngày</span>
         </div>`;
@@ -685,57 +995,47 @@ function renderReview() {
     : '<div class="empty-note">Chưa chọn vị trí nào</div>';
 }
 
-// ── Step nav
+// ── STEP
 function goStep(n) {
-  step = Math.max(0, Math.min(2, n));
-  ['s0','s1','s2'].forEach((id,i) => document.getElementById(id).classList.toggle('active', i===step));
-  document.querySelectorAll('.step-tab').forEach((t,i) => { t.classList.toggle('active',i===step); t.classList.toggle('done',i<step); });
-  document.getElementById('btnPrev').style.visibility = step===0 ? 'hidden' : '';
-  document.getElementById('btnNext').style.display    = step===2 ? 'none'   : '';
-  if (step===2) renderReview();
+  step=Math.max(0,Math.min(2,n));
+  ['s0','s1','s2'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===step));
+  document.querySelectorAll('.step-tab').forEach((t,i)=>{t.classList.toggle('active',i===step);t.classList.toggle('done',i<step);});
+  document.getElementById('btnPrev').style.visibility=step===0?'hidden':'';
+  document.getElementById('btnNext').style.display=step===2?'none':'';
+  if(step===1){renderUniversal();renderContextual();}
+  if(step===2) renderReview();
 }
 
-// ── Device switch
-function setDevice(dev) {
-  device = dev;
-  document.querySelectorAll('.dev-btn').forEach(b => b.classList.toggle('active', b.dataset.device===dev));
-  document.getElementById('vizDesktop').style.display = dev==='desktop' ? '' : 'none';
-  document.getElementById('vizMobile').style.display  = dev==='mobile'  ? '' : 'none';
-}
-
-let toastT;
-function showToast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2800); }
-
-// ── Init
-document.addEventListener('DOMContentLoaded', () => {
-  renderPages();
-  renderPlacements();
+// ── INIT
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderProjectGrid();
+  renderUniversal();
+  renderVizTabs();
+  renderViz();
   updateMetrics();
 
-  document.getElementById('btnNext').addEventListener('click', ()=>goStep(step+1));
-  document.getElementById('btnPrev').addEventListener('click', ()=>goStep(step-1));
+  document.getElementById('btnNext').addEventListener('click',()=>goStep(step+1));
+  document.getElementById('btnPrev').addEventListener('click',()=>goStep(step-1));
   document.querySelectorAll('.step-tab').forEach(t=>t.addEventListener('click',()=>goStep(+t.dataset.step)));
-  document.querySelectorAll('.obj-btn').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('.obj-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); }));
-  document.querySelectorAll('.dev-btn').forEach(b=>b.addEventListener('click',()=>setDevice(b.dataset.device)));
-
-  // Days hint
-  const updateDays = () => {
-    const days = calcDays();
-    document.getElementById('daysHint').textContent = `${days} ngày chạy`;
-  };
-  document.getElementById('campStart').addEventListener('change', updateDays);
-  document.getElementById('campEnd').addEventListener('change', updateDays);
-
-  // Zone click in viz
-  document.querySelectorAll('[data-zone]').forEach(z => {
-    z.addEventListener('click', ()=>{ const p=PLACEMENTS.find(x=>x.zone===z.dataset.zone); if(p) togglePlacement(p.id); });
-  });
-
-  document.getElementById('publishBtn').addEventListener('click', ()=>{
-    if (!selectedPlacements.size) { showToast('Vui lòng chọn ít nhất một vị trí.'); return; }
-    showToast('🎉 Chiến dịch "'+document.getElementById('campName').value+'" đã được tạo! (prototype)');
+  document.querySelectorAll('.obj-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.obj-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  }));
+  document.querySelectorAll('.dev-btn').forEach(b=>b.addEventListener('click',()=>{
+    device=b.dataset.device;
+    document.querySelectorAll('.dev-btn').forEach(x=>x.classList.toggle('active',x===b));
+    renderViz();
+  }));
+  const updateDays=()=>{document.getElementById('daysHint').textContent=`${calcDays()} ngày chạy`;};
+  document.getElementById('campStart').addEventListener('change',updateDays);
+  document.getElementById('campEnd').addEventListener('change',updateDays);
+  document.getElementById('publishBtn').addEventListener('click',()=>{
+    if(!selectedPlacements.size){showToast('Vui lòng chọn ít nhất một vị trí.');return;}
+    showToast('🎉 Chiến dịch "'+document.getElementById('campName').value+'" đã được tạo!');
   });
 });
+
+let toastT;
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800);}
 </script>
 </body>
 </html>
