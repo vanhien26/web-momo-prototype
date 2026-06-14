@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tìm kiếm - MoMo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pk:#A50064;--pk2:#C8007A;--pk-light:#FFF0F7;--pk-ring:rgba(165,0,100,.1);
+  --ink:#0D0F1A;--sub:#475467;--muted:#98A2B3;--line:#E4E7EC;--bg:#F8F9FA;--white:#fff;
+  --green:#027A48;--green-bg:#D1FADF;
+  --blue:#1D4ED8;--blue-bg:#EFF6FF;
+  --amber:#B45309;--amber-bg:#FEF3C7;
+  --red:#B42318;--red-bg:#FEE4E2;
+  --purple:#6D28D9;--purple-bg:#F5F3FF;
+  --r:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 8px rgba(0,0,0,.05);
+  --shadow-lg:0 4px 6px rgba(0,0,0,.06),0 10px 36px rgba(0,0,0,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--white);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+/* ── Topbar ──────────────────────────────────── */
+.topbar{
+  display:none;position:sticky;top:0;z-index:100;
+  height:58px;background:var(--white);border-bottom:1px solid var(--line);
+  padding:0 20px;align-items:center;gap:14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+}
+body.searching .topbar{display:flex}
+
+.tb-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);flex-shrink:0}
+.tb-mark{
+  width:30px;height:30px;background:var(--pk);border-radius:7px;
+  display:grid;place-items:center;font-size:8px;font-weight:800;color:#fff;
+  line-height:1.1;text-align:center;
+}
+.tb-brand strong{font-size:13px;font-weight:700}
+.tb-sw{flex:1;position:relative;max-width:600px}
+.tb-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg);border:1.5px solid var(--line);
+  border-radius:10px;padding:0 14px;height:40px;
+  transition:.15s;cursor:text;
+}
+.tb-bar:focus-within{border-color:var(--pk);background:var(--white);box-shadow:0 0 0 3px var(--pk-ring)}
+.tb-icon{color:var(--muted);font-size:14px;flex-shrink:0}
+.tb-input{
+  flex:1;border:none;outline:none;background:transparent;
+  font-size:14px;font-family:inherit;color:var(--ink);
+}
+.tb-input::placeholder{color:var(--muted)}
+.tb-clear{color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px;border-radius:4px;display:none}
+.tb-clear:hover{background:var(--line)}
+.tb-clear.show{display:block}
+.tb-back{font-size:12px;color:var(--muted);text-decoration:none;flex-shrink:0;white-space:nowrap}
+.tb-back:hover{color:var(--pk)}
+
+/* ── Hero ────────────────────────────────────── */
+.hero{
+  display:flex;flex-direction:column;align-items:center;
+  padding:72px 20px 56px;
+  background:linear-gradient(180deg,#fff 0%,#fdf7fb 60%,#fff 100%);
+  min-height:100vh;
+}
+body.searching .hero{display:none}
+
+.hero-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.hero-mark{
+  width:56px;height:56px;border-radius:14px;
+  background:var(--pk);display:grid;place-items:center;
+  font-size:14px;font-weight:800;color:#fff;line-height:1.1;text-align:center;
+}
+.hero-title{font-size:28px;font-weight:800;color:var(--ink)}
+.hero-title small{display:block;font-size:12px;font-weight:400;color:var(--sub);margin-top:2px}
+
+.hero-h{
+  font-size:36px;font-weight:800;color:var(--ink);
+  text-align:center;line-height:1.2;margin-bottom:32px;max-width:560px;
+}
+.hero-h em{font-style:normal;color:var(--pk)}
+
+/* Hero search */
+.hero-sw{width:100%;max-width:620px;position:relative;margin-bottom:20px}
+.hero-bar{
+  display:flex;align-items:center;gap:12px;
+  background:var(--white);border:2px solid var(--line);
+  border-radius:18px;padding:0 20px;height:58px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);transition:.15s;cursor:text;
+}
+.hero-bar:focus-within{
+  border-color:var(--pk);
+  box-shadow:0 0 0 4px var(--pk-ring),0 2px 16px rgba(0,0,0,.1);
+}
+.hero-icon{color:var(--muted);font-size:18px;flex-shrink:0}
+.hero-input{
+  flex:1;border:none;outline:none;background:transparent;
+  font-size:16px;font-family:inherit;color:var(--ink);
+}
+.hero-input::placeholder{color:var(--muted)}
+.hero-kbd{
+  font-size:11px;color:var(--muted);background:var(--bg);
+  border:1px solid var(--line);border-radius:5px;padding:2px 7px;flex-shrink:0;
+}
+
+/* Autocomplete */
+.ac{
+  position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:300;
+  background:var(--white);border-radius:16px;
+  box-shadow:var(--shadow-lg),0 0 0 1px var(--line);
+  overflow:hidden;display:none;
+}
+.ac.show{display:block}
+.ac-sec{padding:6px 0}
+.ac-lbl{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;
+  padding:6px 16px 4px;display:flex;justify-content:space-between;align-items:center;
+}
+.ac-clr{font-size:10px;cursor:pointer;color:var(--muted)}
+.ac-clr:hover{color:var(--red)}
+.ac-row{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 16px;cursor:pointer;transition:.1s;
+}
+.ac-row:hover,.ac-row.hl{background:var(--bg)}
+.ac-ico{
+  width:32px;height:32px;border-radius:8px;
+  display:grid;place-items:center;font-size:15px;flex-shrink:0;
+}
+.ac-txt{flex:1;min-width:0}
+.ac-name{font-size:13px;font-weight:600}
+.ac-name mark{background:none;color:var(--pk);font-weight:700}
+.ac-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.ac-type-badge{
+  font-size:10px;font-weight:700;padding:2px 7px;
+  border-radius:99px;flex-shrink:0;
+}
+.tb-s .ac-type-badge,.act-service{background:var(--pk-light);color:var(--pk)}
+.act-article{background:var(--blue-bg);color:var(--blue)}
+.act-merchant{background:var(--green-bg);color:var(--green)}
+.act-tool{background:var(--purple-bg);color:var(--purple)}
+.ac-div{height:1px;background:var(--line);margin:2px 0}
+.ac-foot{
+  padding:10px 16px;font-size:13px;font-weight:600;color:var(--pk);
+  cursor:pointer;border-top:1px solid var(--line);
+}
+.ac-foot:hover{background:var(--pk-light)}
+
+/* Trending */
+.hero-trend{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  justify-content:center;margin-bottom:44px;max-width:600px;
+}
+.trend-lbl{font-size:12px;color:var(--muted);flex-shrink:0}
+.trend-chip{
+  padding:6px 13px;border:1.5px solid var(--line);border-radius:99px;
+  font-size:12px;font-weight:600;cursor:pointer;background:var(--white);
+  color:var(--sub);transition:.12s;white-space:nowrap;font-family:inherit;
+}
+.trend-chip:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-light)}
+
+/* Quick actions */
+.hero-ql{
+  font-size:11px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;text-align:center;
+}
+.hero-quick{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:600px}
+.qc{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 16px;background:var(--white);border:1.5px solid var(--line);
+  border-radius:var(--r);cursor:pointer;transition:.15s;min-width:86px;
+}
+.qc:hover{border-color:var(--pk);background:var(--pk-light);box-shadow:var(--shadow)}
+.qc-icon{font-size:24px}
+.qc-lbl{font-size:11px;font-weight:700;color:var(--sub);text-align:center;line-height:1.3}
+.qc:hover .qc-lbl{color:var(--pk)}
+
+/* ── Results ─────────────────────────────────── */
+.results{display:none;max-width:840px;margin:0 auto;padding:20px 20px 64px}
+body.searching .results{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.bc{font-size:12px;color:var(--sub);margin-bottom:16px}
+.bc b{color:var(--ink)}
+
+/* Tabs */
+.tabs{
+  display:flex;gap:0;margin-bottom:20px;
+  border-bottom:1px solid var(--line);overflow-x:auto;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 14px;border:none;background:transparent;
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--sub);
+  cursor:pointer;white-space:nowrap;
+  border-bottom:2.5px solid transparent;margin-bottom:-1px;
+  transition:.12s;
+}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--pk);border-bottom-color:var(--pk)}
+.tab-n{
+  font-size:10px;font-weight:700;padding:2px 6px;
+  border-radius:99px;background:var(--bg);
+}
+.tab.active .tab-n{background:var(--pk-light);color:var(--pk)}
+
+/* AI Answer */
+.ai-box{
+  background:linear-gradient(135deg,#f5f3ff 0%,#eff6ff 100%);
+  border:1.5px solid rgba(109,40,217,.2);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:16px;display:none;
+}
+.ai-box.show{display:block}
+.ai-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ai-badge{font-size:10px;font-weight:700;background:var(--purple);color:#fff;padding:3px 9px;border-radius:99px}
+.ai-sub{font-size:11px;color:var(--purple);font-weight:600}
+.ai-text{font-size:13.5px;color:var(--ink);line-height:1.75;margin-bottom:12px}
+.ai-srcs{display:flex;gap:6px;flex-wrap:wrap}
+.ai-src{
+  font-size:11px;color:var(--purple);background:var(--white);
+  border:1px solid rgba(109,40,217,.2);border-radius:99px;
+  padding:4px 10px;cursor:pointer;transition:.1s;
+}
+.ai-src:hover{background:var(--purple-bg)}
+
+/* Cards */
+.cards{display:flex;flex-direction:column;gap:10px}
+.card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 16px;display:flex;gap:14px;cursor:pointer;
+  transition:.15s;
+}
+.card:hover{border-color:var(--pk);box-shadow:0 2px 12px rgba(165,0,100,.1)}
+.card-ico{
+  width:44px;height:44px;border-radius:11px;
+  display:grid;place-items:center;font-size:22px;flex-shrink:0;
+}
+.card-body{flex:1;min-width:0}
+.card-tr{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.type-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.tp-s{background:var(--pk-light);color:var(--pk)}
+.tp-a{background:var(--blue-bg);color:var(--blue)}
+.tp-m{background:var(--green-bg);color:var(--green)}
+.tp-t{background:var(--purple-bg);color:var(--purple)}
+.card-name{font-size:14px;font-weight:700;line-height:1.35;margin-bottom:4px}
+.card-name mark{background:none;color:var(--pk)}
+.card-desc{font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:7px}
+.card-desc mark{background:none;color:var(--pk)}
+.card-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card-meta{font-size:11px;color:var(--muted)}
+.ctag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.ctag-g{background:var(--green-bg);color:var(--green)}
+.ctag-b{background:var(--blue-bg);color:var(--blue)}
+.ctag-a{background:var(--amber-bg);color:var(--amber)}
+.ctag-p{background:var(--pk-light);color:var(--pk)}
+.ctag-v{background:var(--purple-bg);color:var(--purple)}
+.cta{
+  flex-shrink:0;padding:8px 16px;background:var(--pk);color:#fff;
+  border:none;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;font-family:inherit;white-space:nowrap;transition:.15s;
+  align-self:flex-start;
+}
+.cta:hover{background:var(--pk2)}
+.cta.ghost{background:var(--white);color:var(--pk);border:1.5px solid var(--pk)}
+.cta.ghost:hover{background:var(--pk-light)}
+.cta.purple{background:var(--purple)}
+.cta.purple:hover{background:#5b21b6}
+
+/* Article card */
+.art-cat{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;
+  display:inline-block;margin-bottom:2px;
+}
+.art-thumb{
+  width:76px;height:76px;border-radius:10px;background:var(--bg);
+  flex-shrink:0;display:grid;place-items:center;font-size:28px;
+}
+.art-meta{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+.art-meta span{font-size:11px;color:var(--muted)}
+.art-meta .art-rt{margin-left:auto}
+
+/* Merchant deal */
+.deal-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:700;color:var(--amber);
+  background:var(--amber-bg);padding:3px 9px;border-radius:99px;
+}
+
+/* Empty */
+.empty{
+  text-align:center;padding:60px 24px;
+  display:none;flex-direction:column;align-items:center;gap:12px;
+}
+.empty.show{display:flex}
+.empty-icon{font-size:48px}
+.empty-title{font-size:18px;font-weight:800}
+.empty-sub{font-size:13px;color:var(--muted);max-width:320px;line-height:1.6}
+.empty-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.s-chip{
+  padding:7px 14px;border:1.5px solid var(--line);border-radius:99px;
+  font-size:12px;cursor:pointer;background:var(--white);font-family:inherit;transition:.1s;
+}
+.s-chip:hover{border-color:var(--pk);color:var(--pk)}
+
+/* Related */
+.related{margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+.rel-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.rel-chips{display:flex;gap:7px;flex-wrap:wrap}
+.rel-chip{
+  padding:7px 14px;border:1.5px solid var(--line);border-radius:99px;
+  font-size:12px;font-weight:600;cursor:pointer;background:var(--white);
+  color:var(--sub);transition:.12s;font-family:inherit;
+}
+.rel-chip:hover{border-color:var(--pk);color:var(--pk)}
+
+@media(max-width:600px){
+  .hero-h{font-size:24px}.hero{padding:48px 16px 40px}
+  .qc{min-width:72px;padding:10px 12px}.results{padding:16px 16px 60px}
+  .art-thumb{display:none}.cta{padding:7px 12px}
+  .tb-brand strong,.tb-back{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar (search mode) -->
+<header class="topbar">
+  <a class="tb-brand" href="../index.html">
+    <div class="tb-mark">mo<br>mo</div>
+    <strong>MoMo</strong>
+  </a>
+  <div class="tb-sw">
+    <div class="tb-bar" onclick="document.getElementById('tbIn').focus()">
+      <span class="tb-icon">🔍</span>
+      <input id="tbIn" class="tb-input" type="text"
+        placeholder="Tìm dịch vụ, bài viết, cửa hàng..."
+        autocomplete="off"
+        oninput="onIn(this.value,'tb')"
+        onfocus="onFocus('tb')"
+        onblur="onBlur('tb')"
+        onkeydown="onKd(event,'tb')">
+      <span class="tb-clear" id="tbClr" onclick="clearQ()">✕</span>
+    </div>
+    <div class="ac" id="tbAc"></div>
+  </div>
+  <a class="tb-back" href="../index.html">← Store</a>
+</header>
+
+<!-- Hero -->
+<div class="hero" id="hero">
+  <div class="hero-logo">
+    <div class="hero-mark">mo<br>mo</div>
+    <div class="hero-title">MoMo<small>Universal Search</small></div>
+  </div>
+
+  <h1 class="hero-h">Tìm kiếm <em>tất cả</em><br>trên MoMo</h1>
+
+  <div class="hero-sw">
+    <div class="hero-bar" onclick="document.getElementById('heroIn').focus()">
+      <span class="hero-icon">🔍</span>
+      <input id="heroIn" class="hero-input" type="text"
+        placeholder="Thử: 'phạt nguội', 'lãi suất', 'CGV', 'tính lãi vay'..."
+        autocomplete="off"
+        oninput="onIn(this.value,'hero')"
+        onfocus="onFocus('hero')"
+        onblur="onBlur('hero')"
+        onkeydown="onKd(event,'hero')">
+      <span class="hero-kbd">⌘K</span>
+    </div>
+    <div class="ac" id="heroAc"></div>
+  </div>
+
+  <div class="hero-trend">
+    <span class="trend-lbl">Xu hướng:</span>
+    <button class="trend-chip" onclick="go('phạt nguội')">📸 Phạt nguội</button>
+    <button class="trend-chip" onclick="go('lãi suất tiết kiệm')">🏦 Lãi suất</button>
+    <button class="trend-chip" onclick="go('cic score')">📊 CIC Score</button>
+    <button class="trend-chip" onclick="go('vay nhanh')">💳 Vay nhanh</button>
+    <button class="trend-chip" onclick="go('bảo hiểm xe máy')">🛵 Bảo hiểm xe</button>
+    <button class="trend-chip" onclick="go('cgv')">🎬 CGV</button>
+  </div>
+
+  <div class="hero-ql">Truy cập nhanh</div>
+  <div class="hero-quick">
+    <div class="qc" onclick="go('chuyển tiền')"><div class="qc-icon">💸</div><div class="qc-lbl">Chuyển<br>tiền</div></div>
+    <div class="qc" onclick="go('tiết kiệm')"><div class="qc-icon">🏦</div><div class="qc-lbl">Tiết<br>kiệm</div></div>
+    <div class="qc" onclick="go('vay nhanh')"><div class="qc-icon">💳</div><div class="qc-lbl">Vay<br>nhanh</div></div>
+    <div class="qc" onclick="go('bảo hiểm')"><div class="qc-icon">🛡️</div><div class="qc-lbl">Bảo<br>hiểm</div></div>
+    <div class="qc" onclick="go('phạt nguội')"><div class="qc-icon">📸</div><div class="qc-lbl">Phạt<br>nguội</div></div>
+    <div class="qc" onclick="go('cic')"><div class="qc-icon">📊</div><div class="qc-lbl">CIC<br>Score</div></div>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="results" id="resultsWrap">
+  <div class="bc" id="bc"></div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="all" onclick="setTab('all',this)">Tất cả <span class="tab-n" id="tn-all">0</span></button>
+    <button class="tab" data-tab="service" onclick="setTab('service',this)">Dịch vụ <span class="tab-n" id="tn-service">0</span></button>
+    <button class="tab" data-tab="article" onclick="setTab('article',this)">Bài viết <span class="tab-n" id="tn-article">0</span></button>
+    <button class="tab" data-tab="merchant" onclick="setTab('merchant',this)">Merchant <span class="tab-n" id="tn-merchant">0</span></button>
+    <button class="tab" data-tab="tool" onclick="setTab('tool',this)">Công cụ <span class="tab-n" id="tn-tool">0</span></button>
+  </div>
+
+  <div class="ai-box" id="aiBox">
+    <div class="ai-head">
+      <span class="ai-badge">MoSpark AI</span>
+      <span class="ai-sub">Tổng hợp từ nguồn chính thống</span>
+    </div>
+    <div class="ai-text" id="aiText"></div>
+    <div class="ai-srcs" id="aiSrcs"></div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="empty" id="empty">
+    <div class="empty-icon">🔍</div>
+    <div class="empty-title">Không tìm thấy kết quả</div>
+    <div class="empty-sub">Thử từ khoá khác hoặc xem gợi ý phổ biến</div>
+    <div class="empty-chips">
+      <button class="s-chip" onclick="go('chuyển tiền')">chuyển tiền</button>
+      <button class="s-chip" onclick="go('tiết kiệm')">tiết kiệm</button>
+      <button class="s-chip" onclick="go('vay nhanh')">vay nhanh</button>
+      <button class="s-chip" onclick="go('phạt nguội')">phạt nguội</button>
+    </div>
+  </div>
+
+  <div class="related" id="related" style="display:none">
+    <div class="rel-lbl">Mọi người cũng tìm</div>
+    <div class="rel-chips" id="relChips"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+
+const SV=[
+  {id:'s1',t:'service',name:'Chuyển tiền nhanh',icon:'💸',bg:'#D1FADF',
+   tags:[{l:'Miễn phí',c:'g'},{l:'Tức thì',c:'g'}],
+   desc:'Chuyển tiền 24/7 đến mọi ngân hàng, không phí, không giới hạn số lần giao dịch.',
+   rating:4.9,users:'40M+',cta:'Chuyển ngay',
+   kw:['chuyển tiền','transfer','gửi tiền','chuyển khoản']},
+  {id:'s2',t:'service',name:'Tiết kiệm MoMo',icon:'🏦',bg:'#EFF6FF',
+   tags:[{l:'Lãi 7.2%/năm',c:'b'},{l:'Linh hoạt',c:'g'}],
+   desc:'Gửi tiết kiệm linh hoạt 1–36 tháng, lãi suất lên đến 7.2%/năm từ đối tác ngân hàng.',
+   rating:4.7,users:'5M+',cta:'Gửi ngay',
+   kw:['tiết kiệm','lãi suất','gửi tiền','gửi tiết kiệm','lãi suất tiết kiệm']},
+  {id:'s3',t:'service',name:'Vay Nhanh',icon:'💳',bg:'#FFF0F7',
+   tags:[{l:'Duyệt 5 phút',c:'b'},{l:'Đến 10 triệu',c:'p'}],
+   desc:'Vay từ 500K đến 10 triệu, duyệt tự động trong 5 phút, nhận tiền ngay vào ví.',
+   rating:4.5,users:'2M+',cta:'Vay ngay',
+   kw:['vay','vay nhanh','vay tiền','mượn tiền','khoản vay']},
+  {id:'s4',t:'service',name:'Ví Trả Sau',icon:'🛍️',bg:'#FEF3C7',
+   tags:[{l:'BNPL',c:'a'},{l:'Miễn lãi 0%',c:'g'}],
+   desc:'Mua trước trả sau với hạn mức lên đến 15 triệu, miễn lãi đến 45 ngày.',
+   rating:4.6,users:'3M+',cta:'Kích hoạt',
+   kw:['trả sau','bnpl','mua trước','ví trả sau','buy now pay later']},
+  {id:'s5',t:'service',name:'Bảo hiểm xe máy',icon:'🛵',bg:'#F0F9FF',
+   tags:[{l:'Bắt buộc',c:'a'},{l:'Cấp ngay',c:'g'}],
+   desc:'Mua bảo hiểm TNDS xe máy bắt buộc online, giấy tờ điện tử cấp trong 1 phút.',
+   rating:4.8,users:'1.5M+',cta:'Mua ngay',
+   kw:['bảo hiểm','xe máy','tnds','bảo hiểm xe','bảo hiểm bắt buộc']},
+  {id:'s6',t:'service',name:'Tra cứu phạt nguội',icon:'📸',bg:'#FFF7ED',
+   tags:[{l:'Miễn phí',c:'g'},{l:'NĐ 168/2024',c:'a'}],
+   desc:'Tra cứu biển số xe bị phạt nguội qua camera giao thông theo Nghị định 168/2024.',
+   rating:4.7,users:'8M+',cta:'Tra cứu ngay',
+   kw:['phạt nguội','phạt','giao thông','biển số','tra cứu phạt']},
+  {id:'s7',t:'service',name:'Nạp điện thoại',icon:'📱',bg:'#F5F3FF',
+   tags:[{l:'Tức thì',c:'g'},{l:'Tất cả nhà mạng',c:'b'}],
+   desc:'Nạp tiền điện thoại Viettel, Vinaphone, Mobifone tức thì, không phí giao dịch.',
+   rating:4.9,users:'25M+',cta:'Nạp ngay',
+   kw:['nạp điện thoại','nạp tiền','viettel','vinaphone','mobifone','nạp thẻ']},
+  {id:'s8',t:'service',name:'Thanh toán hóa đơn',icon:'⚡',bg:'#FFFBEB',
+   tags:[{l:'Hoàn 5K Xu',c:'a'},{l:'Nhắc hẹn',c:'b'}],
+   desc:'Thanh toán tiền điện EVN, nước, internet, truyền hình — nhắc hẹn tự động hàng tháng.',
+   rating:4.7,users:'15M+',cta:'Thanh toán',
+   kw:['hóa đơn','điện','nước','internet','tiền điện','thanh toán hóa đơn']},
+];
+
+const AR=[
+  {id:'a1',t:'article',cat:'Giao thông',cc:'#EF9F27',cb:'#FEF3C7',thumb:'🚗',
+   name:'Tra cứu phạt nguội xe máy 2025: Hướng dẫn từ A đến Z để không bị oan',
+   excerpt:'Phạt nguội ghi nhận qua camera - bạn có thể bị phạt mà không hay biết. 3 kênh tra cứu chính thống và cách nộp phạt online qua MoMo không cần đến trụ sở.',
+   author:'Trần Linh',date:'12/06/2025',rt:'8 phút',rating:4.8,views:'24.8K',href:'blog.html',
+   kw:['phạt nguội','giao thông','phạt xe máy','tra cứu phạt','biển số phạt']},
+  {id:'a2',t:'article',cat:'Tín dụng',cc:'#5B9BD5',cb:'#EFF6FF',thumb:'📊',
+   name:'CIC Score là gì? Cách kiểm tra và cải thiện điểm tín dụng miễn phí',
+   excerpt:'Điểm CIC từ 300–900 ảnh hưởng trực tiếp đến khả năng vay vốn. Cách xem điểm và 5 hành động cải thiện điểm nhanh nhất.',
+   author:'Nguyễn Minh',date:'03/06/2025',rt:'6 phút',rating:4.7,views:'8.7K',href:'blog.html',
+   kw:['cic','cic score','điểm tín dụng','tín dụng','kiểm tra cic']},
+  {id:'a3',t:'article',cat:'Bảo hiểm',cc:'#7CB85E',cb:'#D1FAE5',thumb:'🛵',
+   name:'Bảo hiểm TNDS xe máy bắt buộc: Mua online ở đâu rẻ nhất 2025?',
+   excerpt:'So sánh giá từ 4 nhà cung cấp, quy trình mua online và những điều cần biết về bồi thường TNDS xe máy.',
+   author:'Lê Phương',date:'02/06/2025',rt:'4 phút',rating:4.6,views:'9.1K',href:'blog.html',
+   kw:['bảo hiểm','tnds','xe máy','bảo hiểm bắt buộc','mua bảo hiểm']},
+  {id:'a4',t:'article',cat:'Tín dụng',cc:'#5B9BD5',cb:'#EFF6FF',thumb:'💳',
+   name:'Vay nhanh online: So sánh lãi suất thực tế 5 app phổ biến nhất 2025',
+   excerpt:'Lãi suất trên quảng cáo thường khác lãi thực phải trả. Bảng so sánh APR thực tế của 5 app vay phổ biến và cách chọn phù hợp.',
+   author:'Trần Linh',date:'01/06/2025',rt:'7 phút',rating:4.5,views:'15.3K',href:'blog.html',
+   kw:['vay','vay online','lãi suất vay','app vay','so sánh vay']},
+  {id:'a5',t:'article',cat:'BNPL',cc:'#E2745B',cb:'#FEE2E2',thumb:'🛍️',
+   name:'Ví Trả Sau MoMo: Hướng dẫn kích hoạt và 5 mẹo quản lý chi tiêu thông minh',
+   excerpt:'Ví Trả Sau cho phép mua trước trả sau với hạn mức theo lịch sử MoMo. Cách kích hoạt, sử dụng và tránh phí trễ hạn.',
+   author:'Nguyễn Minh',date:'28/05/2025',rt:'5 phút',rating:4.6,views:'11.2K',href:'blog.html',
+   kw:['ví trả sau','trả sau','bnpl','mua trước trả sau']},
+];
+
+const MC=[
+  {id:'m1',t:'merchant',icon:'☕',bg:'#FEF3C7',name:'The Coffee House',
+   cat:'Cà phê & Đồ uống',loc:'Toàn quốc · 200+ chi nhánh',rating:4.8,deal:'Hoàn 15% Xu',
+   kw:['coffee','cà phê','the coffee house','đồ uống','cafe']},
+  {id:'m2',t:'merchant',icon:'🍔',bg:'#FEE2E2',name:'Lotteria',
+   cat:'Đồ ăn nhanh',loc:'Toàn quốc · 280+ chi nhánh',rating:4.6,deal:'Giảm 20K',
+   kw:['lotteria','đồ ăn','burger','fast food']},
+  {id:'m3',t:'merchant',icon:'💊',bg:'#D1FAE5',name:'Pharmacity',
+   cat:'Nhà thuốc',loc:'Toàn quốc · 1,000+ cửa hàng',rating:4.7,deal:'Hoàn 5% Xu',
+   kw:['pharmacity','thuốc','nhà thuốc','dược phẩm']},
+  {id:'m4',t:'merchant',icon:'🎬',bg:'#FCE7F3',name:'CGV Cinemas',
+   cat:'Rạp phim',loc:'Toàn quốc · 80+ rạp',rating:4.8,deal:'Giảm 30K/vé',
+   kw:['cgv','phim','rạp chiếu phim','vé phim','cinema','xem phim']},
+  {id:'m5',t:'merchant',icon:'🏪',bg:'#E0F2FE',name:'GS25',
+   cat:'Cửa hàng tiện lợi',loc:'HCM, Hà Nội · 500+ cửa hàng',rating:4.5,deal:'Hoàn 3K Xu',
+   kw:['gs25','tiện lợi','cửa hàng','convenience']},
+  {id:'m6',t:'merchant',icon:'💄',bg:'#F0FDF4',name:'Guardian',
+   cat:'Sức khỏe & Làm đẹp',loc:'Toàn quốc · 100+ chi nhánh',rating:4.6,deal:'Giảm 10%',
+   kw:['guardian','làm đẹp','skincare','mỹ phẩm','beauty']},
+];
+
+const TL=[
+  {id:'t1',t:'tool',icon:'🧮',bg:'#EFF6FF',name:'Tính lãi vay',
+   desc:'Ước tính khoản trả hàng tháng theo số tiền vay, lãi suất và kỳ hạn. Hỗ trợ vay tiêu dùng và mua sắm.',
+   cta:'Dùng ngay',href:'financial.html',
+   kw:['tính lãi','lãi vay','tính tiền vay','calculator vay','lãi suất vay']},
+  {id:'t2',t:'tool',icon:'📊',bg:'#F5F3FF',name:'CIC Score Simulator',
+   desc:'Mô phỏng điểm tín dụng CIC theo hành vi tài chính hiện tại và lên kế hoạch cải thiện điểm.',
+   cta:'Dùng ngay',href:'financial.html',
+   kw:['cic','cic score','điểm tín dụng','simulator cic','mô phỏng cic']},
+  {id:'t3',t:'tool',icon:'🛵',bg:'#F0F9FF',name:'Tính phí bảo hiểm xe',
+   desc:'Ước tính phí bảo hiểm xe máy bắt buộc (TNDS) và tự nguyện theo dòng xe và năm sản xuất.',
+   cta:'Dùng ngay',href:'financial.html',
+   kw:['phí bảo hiểm','bảo hiểm xe','tính bảo hiểm','phí tnds']},
+  {id:'t4',t:'tool',icon:'🏦',bg:'#F0FDF4',name:'Tính tiết kiệm tích lũy',
+   desc:'Xem bạn nhận được bao nhiêu lãi khi gửi tiết kiệm theo kỳ hạn, lãi suất và số tiền gốc.',
+   cta:'Dùng ngay',href:'financial.html',
+   kw:['tiết kiệm','lãi suất tiết kiệm','tính tiết kiệm','tính lãi tiết kiệm']},
+];
+
+const ALL=[...SV,...AR,...MC,...TL];
+
+const AI_A=[
+  {tr:['phạt nguội','phạt xe','camera phạt','tra cứu phạt'],
+   ans:'Phạt nguội là hình thức xử phạt giao thông dựa trên hình ảnh từ camera tự động theo Nghị định 168/2024. Bạn không nhận thông báo ngay sau khi vi phạm — phải tự tra cứu biển số xe. MoMo hỗ trợ tra cứu miễn phí và nộp phạt trực tuyến 24/7, không cần đến cơ quan chức năng.',
+   src:['Tra cứu phạt nguội trên MoMo','Bài viết: Hướng dẫn từ A đến Z','NĐ 168/2024 - Điều 5']},
+  {tr:['cic score','điểm tín dụng','kiểm tra cic'],
+   ans:'Điểm CIC (từ 300–900) do Trung tâm Thông tin Tín dụng Quốc gia cấp, phản ánh lịch sử vay và trả nợ. Điểm trên 700 là tốt — dễ được duyệt vay lãi suất ưu đãi. Dưới 500 sẽ khó tiếp cận tín dụng chính thống. Kiểm tra miễn phí 1 lần/năm, và dùng CIC Simulator để mô phỏng cải thiện.',
+   src:['CIC Score Simulator','Bài viết: Cách cải thiện CIC miễn phí','Ngân hàng Nhà nước - CIC']},
+  {tr:['lãi suất tiết kiệm','gửi tiết kiệm','lãi suất'],
+   ans:'MoMo Tiết Kiệm cung cấp lãi suất lên đến 7.2%/năm cho kỳ hạn 12 tháng thông qua đối tác ngân hàng được cấp phép. Không có số tiền tối thiểu, có thể rút linh hoạt. Dùng Công cụ Tính tiết kiệm để xem chính xác lãi nhận được theo kỳ hạn và số tiền.',
+   src:['MoMo Tiết Kiệm','Tính tiết kiệm tích lũy','Bảng lãi suất ngân hàng [*cần verify]']},
+  {tr:['vay nhanh','vay tiền','vay online'],
+   ans:'MoMo Vay Nhanh hỗ trợ vay từ 500K đến 10 triệu, duyệt tự động bằng AI trong 5 phút, nhận tiền ngay vào ví. Điều kiện: tài khoản MoMo đã KYC, điểm CIC đủ chuẩn và có lịch sử giao dịch. Lãi suất từ 0.05%/ngày — dùng Tính lãi vay để ước tính khoản phải trả.',
+   src:['MoMo Vay Nhanh','Tính lãi vay','Bài viết: So sánh app vay 2025']},
+  {tr:['bảo hiểm xe','tnds','bảo hiểm bắt buộc','bảo hiểm xe máy'],
+   ans:'Bảo hiểm TNDS xe máy bắt buộc theo pháp luật, phí từ 66.000đ/năm. Mua online trên MoMo cấp giấy tờ điện tử trong 1 phút — không cần ra đại lý. Bài viết so sánh 4 nhà cung cấp để bạn chọn nơi phù hợp nhất về giá và quyền lợi bồi thường.',
+   src:['Bảo hiểm xe máy MoMo','Tính phí bảo hiểm xe','Bài viết: Mua ở đâu rẻ nhất 2025']},
+];
+
+const REL={
+  'phạt nguội':['tra cứu biển số','nộp phạt online','phạt nguội ô tô','camera giao thông HCM'],
+  'tiết kiệm':['lãi suất ngân hàng','chứng chỉ quỹ','lãi suất tiết kiệm MoMo','đầu tư an toàn'],
+  'vay':['lãi suất vay','vay không thế chấp','điều kiện vay vốn','cải thiện điểm CIC'],
+  'cic':['cải thiện điểm CIC','lịch sử tín dụng','vay tín chấp','điểm CIC bị xấu'],
+  'bảo hiểm':['bảo hiểm sức khỏe','bảo hiểm nhân thọ','bảo hiểm ô tô','mua bảo hiểm online'],
+  'default':['chuyển tiền','tiết kiệm','vay nhanh','phạt nguội','bảo hiểm xe','cgv'],
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let Q='', TAB='all', acIdx=-1;
+
+// ── SEARCH ───────────────────────────────────────────────────────────────────
+function score(item,q){
+  const ql=q.toLowerCase();
+  let s=0;
+  if(item.name.toLowerCase().includes(ql))s+=3;
+  if(item.kw&&item.kw.some(k=>k.toLowerCase().includes(ql)))s+=2;
+  const d=item.desc||item.excerpt||'';
+  if(d.toLowerCase().includes(ql))s+=1;
+  if(item.cat&&item.cat.toLowerCase().includes(ql))s+=1;
+  return s;
+}
+
+function results(q,tab){
+  if(!q)return[];
+  return ALL
+    .map(i=>({i,s:score(i,q)}))
+    .filter(({s})=>s>0)
+    .sort((a,b)=>b.s-a.s)
+    .map(({i})=>i)
+    .filter(i=>tab==='all'||i.t===tab);
+}
+
+function counts(q){
+  const a=results(q,'all');
+  return{all:a.length,service:a.filter(i=>i.t==='service').length,
+    article:a.filter(i=>i.t==='article').length,
+    merchant:a.filter(i=>i.t==='merchant').length,
+    tool:a.filter(i=>i.t==='tool').length};
+}
+
+function getAI(q){
+  const ql=q.toLowerCase();
+  return AI_A.find(a=>a.tr.some(t=>ql.includes(t)));
+}
+
+function getRel(q){
+  const ql=q.toLowerCase();
+  for(const[k,v]of Object.entries(REL)){
+    if(k!=='default'&&ql.includes(k))return v;
+  }
+  return REL.default;
+}
+
+// ── HIGHLIGHT ────────────────────────────────────────────────────────────────
+function hl(t,q){
+  if(!q||!t)return t||'';
+  return t.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'),'<mark>$1</mark>');
+}
+
+// ── CARDS ────────────────────────────────────────────────────────────────────
+const CC={g:'ctag-g',b:'ctag-b',a:'ctag-a',p:'ctag-p',v:'ctag-v'};
+
+function cardService(s,q){
+  const tags=s.tags.map(t=>`<span class="ctag ${CC[t.c]||'ctag-b'}">${t.l}</span>`).join('');
+  return`<div class="card">
+    <div class="card-ico" style="background:${s.bg}">${s.icon}</div>
+    <div class="card-body">
+      <div class="card-tr">
+        <span class="type-pill tp-s">Dịch vụ</span>
+        <span class="card-meta">⭐ ${s.rating} · ${s.users} người dùng</span>
+      </div>
+      <div class="card-name">${hl(s.name,q)}</div>
+      <div class="card-desc">${hl(s.desc,q)}</div>
+      <div class="card-foot">${tags}</div>
+    </div>
+    <button class="cta">${s.cta} →</button>
+  </div>`;
+}
+
+function cardArticle(a,q){
+  return`<div class="card" style="align-items:flex-start" onclick="window.open('${a.href}','_blank')">
+    <div class="card-body">
+      <div class="card-tr">
+        <span class="type-pill tp-a">Bài viết</span>
+        <span class="art-cat" style="background:${a.cb};color:${a.cc}">${a.cat}</span>
+      </div>
+      <div class="card-name">${hl(a.name,q)}</div>
+      <div class="card-desc">${hl(a.excerpt,q)}</div>
+      <div class="art-meta">
+        <span>✍️ ${a.author} · ${a.date} · ${a.rt} đọc</span>
+        <span class="art-rt">⭐ ${a.rating} · 👁 ${a.views}</span>
+      </div>
+    </div>
+    <div class="art-thumb">${a.thumb}</div>
+  </div>`;
+}
+
+function cardMerchant(m,q){
+  return`<div class="card">
+    <div class="card-ico" style="background:${m.bg}">${m.icon}</div>
+    <div class="card-body">
+      <div class="card-tr">
+        <span class="type-pill tp-m">Merchant</span>
+        <span class="card-meta">${m.cat}</span>
+      </div>
+      <div class="card-name">${hl(m.name,q)}</div>
+      <div class="card-desc">${m.loc}</div>
+      <div class="card-foot">
+        <span class="deal-pill">🏷️ ${m.deal}</span>
+        <span class="card-meta">⭐ ${m.rating}</span>
+      </div>
+    </div>
+    <button class="cta ghost">Xem ưu đãi →</button>
+  </div>`;
+}
+
+function cardTool(t,q){
+  return`<div class="card" onclick="window.open('${t.href}','_blank')">
+    <div class="card-ico" style="background:${t.bg}">${t.icon}</div>
+    <div class="card-body">
+      <div class="card-tr"><span class="type-pill tp-t">Công cụ</span></div>
+      <div class="card-name">${hl(t.name,q)}</div>
+      <div class="card-desc">${hl(t.desc,q)}</div>
+    </div>
+    <button class="cta purple">${t.cta} →</button>
+  </div>`;
+}
+
+function renderCard(item,q){
+  if(item.t==='service')return cardService(item,q);
+  if(item.t==='article')return cardArticle(item,q);
+  if(item.t==='merchant')return cardMerchant(item,q);
+  if(item.t==='tool')return cardTool(item,q);
+  return'';
+}
+
+// ── RENDER RESULTS ───────────────────────────────────────────────────────────
+function render(){
+  const res=results(Q,TAB);
+  const c=counts(Q);
+
+  // Counts
+  ['all','service','article','merchant','tool'].forEach(k=>{
+    const el=document.getElementById('tn-'+k);
+    if(el)el.textContent=c[k];
+  });
+
+  // Breadcrumb
+  document.getElementById('bc').innerHTML=
+    `Tìm thấy <b>${c.all}</b> kết quả cho "<b>${Q}</b>"`;
+
+  // AI box
+  const ai=TAB==='all'?getAI(Q):null;
+  const aiBox=document.getElementById('aiBox');
+  if(ai){
+    document.getElementById('aiText').textContent=ai.ans;
+    document.getElementById('aiSrcs').innerHTML=
+      ai.src.map(s=>`<span class="ai-src">📎 ${s}</span>`).join('');
+    aiBox.classList.add('show');
+  } else {
+    aiBox.classList.remove('show');
+  }
+
+  // Cards
+  const cardsEl=document.getElementById('cards');
+  const emptyEl=document.getElementById('empty');
+  if(res.length===0){
+    cardsEl.innerHTML='';
+    emptyEl.classList.add('show');
+  } else {
+    emptyEl.classList.remove('show');
+    cardsEl.innerHTML=res.map(i=>renderCard(i,Q)).join('');
+  }
+
+  // Related
+  const rel=getRel(Q);
+  const relSec=document.getElementById('related');
+  if(res.length>0){
+    document.getElementById('relChips').innerHTML=
+      rel.map(r=>`<button class="rel-chip" onclick="go('${r}')">🔍 ${r}</button>`).join('');
+    relSec.style.display='block';
+  } else {
+    relSec.style.display='none';
+  }
+}
+
+function setTab(tab,el){
+  TAB=tab;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+// ── AUTOCOMPLETE ─────────────────────────────────────────────────────────────
+const RECENT=['phạt nguội','lãi suất tiết kiệm','vay nhanh','cic score'];
+
+function renderAc(id,val){
+  const ac=document.getElementById(id);
+  if(!val){
+    const trending=SV.filter(s=>['s1','s3','s6','s2'].includes(s.id));
+    ac.innerHTML=`
+      <div class="ac-sec">
+        <div class="ac-lbl">Tìm kiếm gần đây
+          <span class="ac-clr" onclick="RECENT.length=0;renderAc('${id}','')">Xoá</span>
+        </div>
+        ${RECENT.map(r=>`<div class="ac-row" onclick="go('${r}')">
+          <div class="ac-ico" style="background:#f3f4f6">🕐</div>
+          <div class="ac-txt"><div class="ac-name">${r}</div></div>
+        </div>`).join('')}
+      </div>
+      <div class="ac-div"></div>
+      <div class="ac-sec">
+        <div class="ac-lbl">Xu hướng 🔥</div>
+        ${trending.map(s=>`<div class="ac-row" onclick="go('${s.name}')">
+          <div class="ac-ico" style="background:${s.bg}">${s.icon}</div>
+          <div class="ac-txt">
+            <div class="ac-name">${s.name}</div>
+            <div class="ac-sub">${s.tags[0].l}</div>
+          </div>
+          <span class="ac-type-badge act-service">Dịch vụ</span>
+        </div>`).join('')}
+      </div>`;
+    ac.classList.add('show');
+    return;
+  }
+
+  const matched=ALL.filter(i=>score(i,val)>0).slice(0,6);
+  const tl={service:'Dịch vụ',article:'Bài viết',merchant:'Merchant',tool:'Công cụ'};
+  const tc={service:'act-service',article:'act-article',merchant:'act-merchant',tool:'act-tool'};
+
+  if(matched.length===0){
+    ac.innerHTML=`<div class="ac-row" style="cursor:default">
+      <div class="ac-txt"><div class="ac-name" style="color:var(--muted)">Không có gợi ý cho "${val}"</div></div>
+    </div>
+    <div class="ac-foot" onclick="go('${val}')">🔍 Tìm kiếm "<b>${val}</b>"</div>`;
+    ac.classList.add('show');
+    return;
+  }
+
+  ac.innerHTML=`<div class="ac-sec">
+    ${matched.map(item=>{
+      const icon=item.icon||item.thumb||'📄';
+      const bg=item.bg||item.iconBg||'#f3f4f6';
+      const sub=(item.desc||item.excerpt||item.cat||'').substring(0,50);
+      return`<div class="ac-row" onclick="go('${item.name}')">
+        <div class="ac-ico" style="background:${bg}">${icon}</div>
+        <div class="ac-txt">
+          <div class="ac-name">${hl(item.name,val)}</div>
+          <div class="ac-sub">${sub}${sub.length===50?'...':''}</div>
+        </div>
+        <span class="ac-type-badge ${tc[item.t]}">${tl[item.t]}</span>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="ac-foot" onclick="go('${val}')">🔍 Tìm kiếm "<b>${val}</b>"</div>`;
+  ac.classList.add('show');
+}
+
+function closeAcs(){
+  document.querySelectorAll('.ac').forEach(el=>el.classList.remove('show'));
+  acIdx=-1;
+}
+
+// ── INPUT HANDLERS ───────────────────────────────────────────────────────────
+function syncInputs(val,from){
+  const otherId=from==='hero'?'tbIn':'heroIn';
+  const other=document.getElementById(otherId);
+  if(other&&other.value!==val)other.value=val;
+  const clr=document.getElementById('tbClr');
+  if(clr)clr.classList.toggle('show',val.length>0);
+}
+
+function onIn(val,bar){
+  Q=val;
+  syncInputs(val,bar);
+  const acId=bar==='hero'?'heroAc':'tbAc';
+
+  if(val.trim()){
+    document.body.classList.add('searching');
+    // Reset to all tab
+    TAB='all';
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab==='all'));
+    render();
+  } else {
+    document.body.classList.remove('searching');
+  }
+  renderAc(acId,val);
+}
+
+function onFocus(bar){
+  const acId=bar==='hero'?'heroAc':'tbAc';
+  renderAc(acId,Q);
+}
+
+function onBlur(bar){
+  const acId=bar==='hero'?'heroAc':'tbAc';
+  setTimeout(()=>{
+    const el=document.getElementById(acId);
+    if(el)el.classList.remove('show');
+  },200);
+}
+
+function onKd(e,bar){
+  const acId=bar==='hero'?'heroAc':'tbAc';
+  const ac=document.getElementById(acId);
+  const rows=ac.querySelectorAll('.ac-row');
+  if(e.key==='ArrowDown'){
+    acIdx=Math.min(acIdx+1,rows.length-1);
+    rows.forEach((el,i)=>el.classList.toggle('hl',i===acIdx));
+    e.preventDefault();
+  } else if(e.key==='ArrowUp'){
+    acIdx=Math.max(acIdx-1,-1);
+    rows.forEach((el,i)=>el.classList.toggle('hl',i===acIdx));
+    e.preventDefault();
+  } else if(e.key==='Enter'){
+    if(acIdx>=0&&rows[acIdx])rows[acIdx].click();
+    else if(Q.trim())go(Q.trim());
+    acIdx=-1;
+  } else if(e.key==='Escape'){
+    closeAcs();
+  } else {
+    acIdx=-1;
+  }
+}
+
+function clearQ(){
+  Q='';
+  document.getElementById('heroIn').value='';
+  document.getElementById('tbIn').value='';
+  document.getElementById('tbClr').classList.remove('show');
+  document.body.classList.remove('searching');
+  closeAcs();
+  document.getElementById('heroIn').focus();
+}
+
+function go(val){
+  Q=val;
+  document.getElementById('heroIn').value=val;
+  document.getElementById('tbIn').value=val;
+  document.getElementById('tbClr').classList.add('show');
+  document.body.classList.add('searching');
+  TAB='all';
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab==='all'));
+  closeAcs();
+  render();
+  setTimeout(()=>document.getElementById('tbIn').focus(),50);
+}
+
+// ── KEYBOARD SHORTCUT ────────────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){
+    e.preventDefault();
+    if(document.body.classList.contains('searching'))
+      document.getElementById('tbIn').focus();
+    else document.getElementById('heroIn').focus();
+  }
+});
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.hero-sw')&&!e.target.closest('.tb-sw'))closeAcs();
+});
+</script>
+</body>
+</html>

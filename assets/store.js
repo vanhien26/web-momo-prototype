@@ -114,6 +114,21 @@ const PROTOTYPES = [
     address: 'prototype.momo.vn/seo-geo-hub',
   },
   {
+    id: 'universal-search',
+    name: 'Universal Search',
+    category: 'Platform',
+    maturity: 'Interactive',
+    description: 'Google-style federated search cho toàn bộ domain MoMo: dịch vụ, bài viết, merchant và công cụ tài chính trong một trang — với AI Answer box, content-type tabs và related queries.',
+    jtbd: 'Tìm bất kỳ thứ gì trên MoMo mà không cần biết nó nằm ở đâu',
+    northStar: 'Search-to-action conversion rate',
+    loop: 'Query → Federated results → Action',
+    hypothesis: 'Một điểm tìm kiếm duy nhất cho tất cả nội dung MoMo giảm friction discovery và tăng cross-sell giữa các use case.',
+    value: 'Bề mặt entry point cho mọi intent — thay thế navigation phức tạp bằng một search bar duy nhất với kết quả multi-entity.',
+    gate: 'Đo search-to-click, tab filter usage, AI box engagement, related query CTR và cross-entity discovery rate.',
+    src: 'demos/universal-search.html',
+    address: 'prototype.momo.vn/search',
+  },
+  {
     id: 'momo-services',
     name: 'MoMo Services',
     category: 'Platform',
@@ -270,7 +285,7 @@ const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
-  Platform: ['merchant', 'momo-services'],
+  Platform: ['universal-search', 'merchant', 'momo-services'],
 };
 
 const GROUP_SUMMARY = {
@@ -290,7 +305,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'Platform',
     title: 'MoMo Services',
     description: 'Nhóm điều hướng vào các surface dịch vụ và discovery của MoMo.',
-    examples: 'MoMo Deal · Search & Discovery',
+    examples: 'Universal Search · MoMo Deal · MoMo Services',
   },
 };
 
