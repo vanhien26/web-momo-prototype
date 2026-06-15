@@ -620,6 +620,18 @@ function renderContextual() {
 function togglePlacement(id) {
   const adding = !selectedPlacements.has(id);
   adding ? selectedPlacements.add(id) : selectedPlacements.delete(id);
+
+  // Auto-switch viz to the project that owns this contextual placement
+  if (adding && !id.startsWith('u-')) {
+    const owner = PROJECTS.find(p => p.contextual.includes(id));
+    if (owner && vizProjectId !== owner.id) {
+      vizProjectId = owner.id;
+      vizUrlId = owner.urls[0].id;
+      renderVizTabs();
+      renderViz();
+    }
+  }
+
   renderUniversal();
   renderContextual();
   updateVizZones();
@@ -1008,6 +1020,11 @@ function goStep(n) {
 
 // ── INIT
 document.addEventListener('DOMContentLoaded', ()=>{
+  // Pre-select all projects so viz shows immediately on load
+  PROJECTS.forEach(p => selectedProjects.add(p.id));
+  vizProjectId = 'homepage';
+  vizUrlId = PROJECTS.find(p=>p.id==='homepage').urls[0].id;
+
   renderProjectGrid();
   renderUniversal();
   renderVizTabs();
