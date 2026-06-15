@@ -14,7 +14,7 @@ const PROTOTYPES = [
     value: 'Mở rộng organic acquisition cho Credit, Insurance và Personal Finance với asset có khả năng tái sử dụng.',
     gate: 'Đo completion rate, CTA CTR, Web-to-App conversion và chất lượng traffic theo từng utility.',
     src: 'demos/financial.html',
-    address: 'prototype.momo.vn/financial-utilities',
+    address: 'web-momo-prototype.vercel.app/financial-utilities',
     tools: [
       { id: 'vay-nhanh',       name: 'Vay Nhanh',          category: 'Credit',     description: 'Ước tính số tiền trả hằng tháng theo số tiền vay, lãi suất và kỳ hạn.',               jtbd: 'Biết trước gánh nặng tài chính trước khi vay' },
       { id: 'tra-gop',         name: 'Trả Góp',            category: 'Credit',     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.', jtbd: 'So sánh gói trả góp để chọn phương án tối ưu' },
@@ -46,7 +46,7 @@ const PROTOTYPES = [
     value: 'Tăng khả năng khám phá merchant, sử dụng dịch vụ, redemption ưu đãi và payment volume trên nhiều ngành hàng.',
     gate: 'Đo merchant detail view, service CTA, direction, save, deal eligibility check và payment initiation theo loại hình merchant.',
     src: 'demos/merchant.html',
-    address: 'prototype.momo.vn/momo-deals',
+    address: 'web-momo-prototype.vercel.app/momo-deals',
   },
   {
     id: 'planning-tools',
@@ -61,7 +61,7 @@ const PROTOTYPES = [
     value: 'Tạo SEO surface cho các mục tiêu tài chính dài hạn, mở rộng phễu Web-to-App ngoài Credit và Insurance.',
     gate: 'Đo tool completion, CTA CTR, organic traffic theo từng goal keyword.',
     src: 'tools/tu-do-tai-chinh.html',
-    address: 'prototype.momo.vn/life-planning',
+    address: 'web-momo-prototype.vercel.app/life-planning',
     tools: [
       { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính', category: 'Planning', description: 'Ước tính số tiền cần có để đạt FIRE theo quy tắc 4% an toàn rút vốn.',        jtbd: 'Biết mình cần bao nhiêu để nghỉ hưu sớm', src: 'tools/tu-do-tai-chinh.html' },
       { id: 'de-danh-dam-cuoi', name: 'Đám Cưới',        category: 'Planning', description: 'Tính số tiền cần để dành mỗi tháng cho kế hoạch cưới theo ngân sách và thời hạn.', jtbd: 'Lên kế hoạch tích lũy cho đám cưới không thiếu hụt', src: 'tools/de-danh-dam-cuoi.html' },
@@ -70,7 +70,7 @@ const PROTOTYPES = [
   },
   {
     id: 'ads-manager',
-    name: 'Ads Placement Manager',
+    name: 'Ads & Widget Manager',
     category: 'MoSpark',
     maturity: 'Interactive',
     description: 'Mô phỏng quy trình tạo chiến dịch quảng cáo trên MoMo Web: setup campaign, chọn vị trí, visualize real-time trên Desktop và Mobile.',
@@ -81,7 +81,7 @@ const PROTOTYPES = [
     value: 'Tạo bề mặt self-serve cho ads booking trên Web Platform, giảm effort sales và tăng inventory utilization.',
     gate: 'Đo placement selection rate, preview interaction depth, campaign publish intent.',
     src: 'demos/ads.html',
-    address: 'prototype.momo.vn/ads-manager',
+    address: 'web-momo-prototype.vercel.app/ads-manager',
   },
   {
     id: 'chatbot',
@@ -96,7 +96,7 @@ const PROTOTYPES = [
     value: 'Một embed component dùng lại cho nhiều Mini Web và Microsite, nhưng cô lập knowledge, analytics và guardrail theo từng project.',
     gate: 'Đo grounded answer rate, citation coverage, low-confidence fallback, Typebot completion và assisted CTA.',
     src: 'demos/chatbot.html',
-    address: 'prototype.momo.vn/project-assistant',
+    address: 'web-momo-prototype.vercel.app/project-assistant',
   },
   {
     id: 'seo-geo-score',
@@ -111,7 +111,7 @@ const PROTOTYPES = [
     value: 'Single source of truth cho toàn bộ SEO/GEO portfolio: SoV per use case, funnel TOFU/MOFU/BOFU, Business Context đủ 12 trường là gate bắt buộc trước khi GenAI sản xuất.',
     gate: 'Đo use case coverage (% có keyword đầy đủ), Business Context completeness rate, keyword uniqueness index và GenAI kickoff rate per cluster.',
     src: 'demos/seo-geo-score.html',
-    address: 'prototype.momo.vn/seo-geo-hub',
+    address: 'web-momo-prototype.vercel.app/seo-geo-hub',
   },
   {
     id: 'universal-search',
@@ -126,7 +126,7 @@ const PROTOTYPES = [
     value: 'Bề mặt entry point cho mọi intent — thay thế navigation phức tạp bằng một search bar duy nhất với kết quả multi-entity.',
     gate: 'Đo search-to-click, tab filter usage, AI box engagement, related query CTR và cross-entity discovery rate.',
     src: 'demos/universal-search.html',
-    address: 'prototype.momo.vn/search',
+    address: 'web-momo-prototype.vercel.app/search',
   },
   {
     id: 'worldcup',
@@ -141,7 +141,7 @@ const PROTOTYPES = [
     value: 'Tạo engagement surface có khả năng gắn prediction game, voucher, mini app và campaign activation.',
     gate: 'Đo team views, comparison depth, returning users và campaign CTA conversion.',
     src: 'demos/world-cup.html',
-    address: 'prototype.momo.vn/world-cup-2026',
+    address: 'web-momo-prototype.vercel.app/world-cup-2026',
   },
   {
     id: 'metro',
@@ -156,7 +156,7 @@ const PROTOTYPES = [
     value: 'Làm rõ các module cần có cho transit purchase: route select, ticket select, payment và ticket wallet.',
     gate: 'Đo completion rate, payment success state và QR ticket handoff.',
     src: 'demos/metro-ticket.html',
-    address: 'prototype.momo.vn/metro-ticket',
+    address: 'web-momo-prototype.vercel.app/metro-ticket',
   },
   {
     id: 'bill-lookup',
@@ -171,7 +171,7 @@ const PROTOTYPES = [
     value: 'Mở bề mặt cho utilities, recurring payment và nhắc hạn thanh toán.',
     gate: 'Đo lookup success, pay CTA, reminder opt-in và repeat usage.',
     src: 'demos/bill-lookup.html',
-    address: 'prototype.momo.vn/bill-lookup',
+    address: 'web-momo-prototype.vercel.app/bill-lookup',
   },
   {
     id: 'scam-check',
@@ -186,7 +186,7 @@ const PROTOTYPES = [
     value: 'Tạo lớp bảo vệ cho P2P, QR, chuyển khoản và social payment.',
     gate: 'Đo risk-check completion, warning CTR, abort rate và report intent.',
     src: 'demos/scam-check.html',
-    address: 'prototype.momo.vn/scam-check',
+    address: 'web-momo-prototype.vercel.app/scam-check',
   },
   {
     id: 'blog-category',
@@ -201,7 +201,7 @@ const PROTOTYPES = [
     value: 'Tạo bề mặt điều hướng nội dung theo 8 danh mục MoMo, tăng internal linking và time-on-site.',
     gate: 'Đo category filter usage, article CTR, scroll depth và CTA conversion từ listing sang bài viết.',
     src: 'demos/blog-category.html',
-    address: 'prototype.momo.vn/mospark-blog',
+    address: 'web-momo-prototype.vercel.app/mospark-blog',
   },
   {
     id: 'blog',
@@ -216,7 +216,7 @@ const PROTOTYPES = [
     value: 'Tạo bề mặt nội dung chiều sâu cho SEO/GEO, quiz tăng time-on-page, contextual ad phục vụ monetization.',
     gate: 'Đo scroll depth, quiz completion, CTA CTR từ inline ad và fixed bar, Web-to-App conversion.',
     src: 'demos/blog.html',
-    address: 'prototype.momo.vn/mospark-blog/phạt-nguội',
+    address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
   },
   {
     id: 'orchestrator',
@@ -231,7 +231,22 @@ const PROTOTYPES = [
     value: 'Tạo bề mặt pitch cho GenAI Content/Report/Video platform, làm nền tảng BRD handoff cho Trọng build production version.',
     gate: 'Đo preset selections, workflow completions, output panel engagement và open-in-tab rate.',
     src: 'demos/orchestrator.html',
-    address: 'prototype.momo.vn/genai-orchestrator',
+    address: 'web-momo-prototype.vercel.app/genai-orchestrator',
+  },
+  {
+    id: 'agentic-hub',
+    name: 'Agentic Hub',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Multi-agent pipeline nâng cấp: per-agent model selection (Haiku/Sonnet/Opus theo complexity và cost), vector RAG knowledge injection, cost/token tracking theo thời gian thực và Inspector tab breakdown.',
+    jtbd: 'Demo hệ thống agentic thực tế — chọn đúng model cho đúng tác vụ, kiểm soát cost',
+    northStar: 'Pipeline run completion + model selection engagement',
+    loop: 'Select preset → Assign models → Run pipeline → Inspect cost',
+    hypothesis: 'Per-agent model selection và RAG chunk visibility giúp team hiểu trade-off cost/quality trong agentic system — nền tảng quyết định build production.',
+    value: 'Bề mặt pitch cho AI Content Platform v2 với cost-awareness; làm rõ spec cho Trọng về model routing và RAG injection per agent.',
+    gate: 'Đo preset selections, model override rate, Inspector tab views, pipeline completions và session cost distribution theo tier.',
+    src: 'demos/agentic-hub.html',
+    address: 'web-momo-prototype.vercel.app/agentic-hub',
   },
 ];
 
@@ -259,7 +274,7 @@ const CAT_COLOR = {
 
 const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
   Platform: ['universal-search', 'merchant'],
 };
@@ -269,7 +284,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'MoSpark',
     title: 'GenAI / Content / Chatbot / Ads',
     description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
-    examples: 'GenAI Orchestrator · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager · Blog Category · Blog Article',
+    examples: 'GenAI Orchestrator · Agentic Hub · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager · Blog Category · Blog Article',
   },
   Widget: {
     eyebrow: 'Widget',

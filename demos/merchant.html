@@ -4,1080 +4,629 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <title>MoMo Deal - Merchant Network</title>
+  <title>Tiệm Mì Chú Cao | Merchant MoMo</title>
   <style>
-    :root{--momo:#a50064;--pink:#f95396;--ink:#202124;--muted:#667085;--line:#e7e8ec;--bg:#f2f4f7;--white:#fff}
+    @font-face{
+      font-family:"MoMo Trust Sans";
+      src:url("../assets/fonts/momo-trust/MoMoTrustSans-Light.otf") format("opentype");
+      font-style:normal;
+      font-weight:300;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"MoMo Trust Sans";
+      src:url("../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf") format("opentype");
+      font-style:normal;
+      font-weight:400;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"MoMo Trust Sans";
+      src:url("../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf") format("opentype");
+      font-style:normal;
+      font-weight:500;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"MoMo Trust Display";
+      src:url("../assets/fonts/momo-trust/MoMoTrustDisplay.otf") format("opentype");
+      font-style:normal;
+      font-weight:700;
+      font-display:swap;
+    }
+    :root{
+      --momo:#d82d8b;
+      --momo-dark:#a50064;
+      --pink-soft:#fff0f7;
+      --ink:#171b24;
+      --muted:#667085;
+      --line:#e8e9ed;
+      --surface:#fff;
+      --page:#f6f7f9;
+      --green:#16803d;
+      --amber:#f5a400;
+      --shadow:0 12px 40px rgba(16,24,40,.07);
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 3% 0%,rgba(216,45,139,.08),transparent 24rem),
+        var(--page);
+      font-family:"MoMo Trust Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    button,input{font:inherit}
+    button,a{transition:transform .18s ease,background .18s ease,color .18s ease,border-color .18s ease}
+    button:hover,a:hover{transform:translateY(-1px)}
+    .shell{width:min(1460px,calc(100% - 32px));margin:16px auto 42px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 
-    /* ── Layout ── */
-    .app{min-height:100vh;display:grid;grid-template-columns:232px 1fr 272px;gap:12px;padding:12px}
-    .panel{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px}
-    .panel h2{font-size:12px;margin:0 0 12px;font-weight:700;color:var(--ink)}
-    .stage{background:#fafafa;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;align-items:center;padding:16px}
+    .topbar{
+      min-height:64px;
+      display:grid;
+      grid-template-columns:150px minmax(280px,620px) 1fr auto;
+      align-items:center;
+      gap:18px;
+      padding:10px 24px;
+      border-radius:20px 20px 0 0;
+      background:rgba(255,255,255,.94);
+      border-bottom:1px solid var(--line);
+      backdrop-filter:blur(16px);
+      position:sticky;
+      top:0;
+      z-index:30;
+    }
+    .logo{font-family:"MoMo Trust Display","MoMo Trust Sans",sans-serif;font-size:34px;line-height:1;font-weight:700;letter-spacing:-.04em;color:var(--momo-dark);text-decoration:none}
+    .search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#f7f7f8;
+      border:1px solid #ececef;
+      border-radius:999px;
+      padding:10px 16px;
+      color:#98a2b3;
+    }
+    .search input{width:100%;border:0;outline:0;background:transparent;color:#344054;font-size:13px}
+    .location{justify-self:end;font-size:12px;color:#475467;font-weight:650}
+    .open-app{border:0;border-radius:999px;padding:11px 20px;background:linear-gradient(135deg,var(--momo),var(--momo-dark));color:#fff;font-size:12px;font-weight:800}
 
-    /* ── Left panel ── */
-    .flabel{font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 7px}
-    .flabel:first-of-type{margin-top:0}
-    .fgroup{display:flex;gap:5px;flex-wrap:wrap}
-    .fchip{border:1px solid var(--line);background:var(--white);border-radius:20px;padding:5px 9px;font:inherit;font-size:10px;cursor:pointer;color:var(--muted);transition:all .15s;line-height:1}
-    .fchip.on{background:#fff0f7;color:var(--momo);border-color:#e6a3c8;font-weight:700}
-    .fchip:hover:not(.on){border-color:#bbb}
+    .hero{
+      position:relative;
+      min-height:340px;
+      overflow:hidden;
+      border-radius:0 0 24px 24px;
+      background:#342c24;
+    }
+    .hero-media{position:absolute;inset:0}
+    .hero-media img{width:100%;height:100%;object-fit:cover;object-position:60% center;transform:scale(1.08)}
+    .hero-media:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,rgba(23,17,12,.92) 0%,rgba(23,17,12,.62) 38%,rgba(23,17,12,.12) 76%),linear-gradient(0deg,rgba(10,8,6,.45),transparent 55%);
+    }
+    .hero-content{
+      position:relative;
+      z-index:2;
+      min-height:340px;
+      display:flex;
+      align-items:center;
+      gap:28px;
+      max-width:1020px;
+      padding:42px 44px;
+    }
+    .merchant-mark{
+      width:178px;
+      aspect-ratio:1;
+      border-radius:22px;
+      flex:none;
+      border:1px solid rgba(255,255,255,.32);
+      box-shadow:0 16px 38px rgba(0,0,0,.28);
+      background:
+        linear-gradient(rgba(255,250,232,.92),rgba(250,226,180,.95)),
+        repeating-linear-gradient(45deg,transparent 0 8px,rgba(135,84,34,.08) 8px 9px);
+      color:#9f2922;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:18px;
+    }
+    .merchant-mark span{display:block;font-size:14px;font-weight:800;letter-spacing:.05em;color:#28733c;margin-bottom:6px}
+    .merchant-mark strong{display:block;font-size:29px;line-height:1.02;letter-spacing:-.04em}
+    .merchant-mark small{display:block;margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.08em}
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      border-radius:999px;
+      padding:7px 11px;
+      background:rgba(255,255,255,.92);
+      color:var(--momo-dark);
+      font-size:11px;
+      font-weight:700;
+      margin-bottom:14px;
+    }
+    .hero h1{font-family:"MoMo Trust Display","MoMo Trust Sans",sans-serif;color:#fff;font-size:48px;line-height:1.04;letter-spacing:-.02em;margin:0 0 14px;font-weight:700}
+    .hero-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:rgba(255,255,255,.85);font-size:13px}
+    .hero-meta strong{color:#ffd055}.hero-meta .dot{opacity:.5}
+    .open-status{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      margin-top:15px;
+      padding:7px 10px;
+      border-radius:8px;
+      background:rgba(22,128,61,.85);
+      color:#fff;
+      font-size:11px;
+      font-weight:750;
+    }
+    .gallery-link{
+      position:absolute;
+      right:26px;
+      bottom:24px;
+      z-index:3;
+      border:1px solid rgba(255,255,255,.3);
+      background:rgba(17,20,27,.72);
+      color:#fff;
+      border-radius:999px;
+      padding:9px 13px;
+      font-size:11px;
+      font-weight:750;
+      backdrop-filter:blur(10px);
+    }
 
-    /* Stats strip */
-    .stats-strip{background:linear-gradient(135deg,#fff0f7,#fce4f0);border:1px solid #f5c0db;border-radius:8px;padding:12px;margin-top:4px}
-    .stats-strip-title{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--momo);margin-bottom:8px}
-    .stat-row{display:flex;justify-content:space-between;margin-bottom:5px}
-    .stat-row:last-child{margin:0}
-    .stat-label{font-size:9px;color:var(--muted)}
-    .stat-val{font-size:9px;font-weight:700;color:var(--ink)}
+    .benefits{
+      position:relative;
+      z-index:5;
+      margin:-28px 28px 18px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      padding:12px;
+    }
+    .benefit{
+      min-height:88px;
+      display:grid;
+      grid-template-columns:46px 1fr;
+      gap:12px;
+      align-items:center;
+      padding:10px 18px;
+      border-right:1px solid var(--line);
+    }
+    .benefit:last-child{border-right:0}
+    .benefit-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--pink-soft);color:var(--momo-dark);font-weight:800;font-size:18px}
+    .benefit small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+    .benefit strong{display:block;font-size:16px;line-height:1.15;margin-bottom:3px}
+    .benefit span{display:block;color:var(--muted);font-size:10px;line-height:1.35}
+    .benefit.primary{background:linear-gradient(135deg,#fff2f8,#fff);border-radius:13px}
+    .benefit.primary strong{color:var(--momo-dark)}
 
-    /* Deal type legend */
-    .deal-legend{margin-top:6px}
-    .legend-item{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:9px;color:var(--muted)}
-    .legend-dot{width:8px;height:8px;border-radius:50%;flex:none}
+    .page-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;padding:0 28px}
+    .main{min-width:0}
+    .quick-info{display:grid;grid-template-columns:1.35fr .8fr .8fr .8fr 1fr;margin-bottom:14px}
+    .quick-item{padding:16px;border-right:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+    .quick-item:last-child{border-right:0}
+    .quick-item i{font-style:normal;font-size:18px}
+    .quick-item strong{display:block;font-size:11px;margin-bottom:5px}
+    .quick-item span{display:block;color:var(--muted);font-size:10px;line-height:1.55}
+    .text-link{display:inline-block;color:var(--momo-dark)!important;font-weight:800;margin-top:4px}
 
-    /* ── Stage header ── */
-    .stage-header{width:100%;max-width:420px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .brand{font-weight:800;font-size:17px;letter-spacing:-.02em}
-    .brand span{color:var(--pink)}
-    .brand sub{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:0;vertical-align:middle;margin-left:4px}
-    .loc-pill{font-size:9px;color:var(--muted);background:var(--white);border:1px solid var(--line);padding:5px 10px;border-radius:20px}
-    .merchant-search{width:100%;max-width:420px;display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 11px;border:1px solid var(--line);border-radius:10px;background:#fff}
-    .merchant-search span{font-size:12px;color:#98a2b3}
-    .merchant-search input{min-width:0;flex:1;border:0;outline:0;font:inherit;font-size:10px;color:#344054}
-    .merchant-search input::placeholder{color:#98a2b3}
+    .tabs{
+      display:flex;
+      gap:24px;
+      position:sticky;
+      top:64px;
+      z-index:20;
+      background:rgba(246,247,249,.94);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+      padding:4px 8px 0;
+      margin:0 0 14px;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{
+      border:0;
+      border-bottom:3px solid transparent;
+      padding:13px 4px 11px;
+      background:transparent;
+      color:#475467;
+      font-size:11px;
+      font-weight:750;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+    .tab.active{color:var(--momo-dark);border-color:var(--momo)}
+    .section{margin-bottom:14px;padding:20px;scroll-margin-top:126px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .section-title h2{font-family:"MoMo Trust Display","MoMo Trust Sans",sans-serif;font-size:16px;letter-spacing:-.01em;margin:0}
+    .section-title a{color:var(--momo-dark);font-size:11px;font-weight:800;text-decoration:none}
+    .about-menu{display:grid;grid-template-columns:.85fr 1.15fr;gap:22px}
+    .about p{font-size:12px;line-height:1.8;color:#475467;margin:0 0 10px}
+    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .dish{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:#fff}
+    .dish-photo{height:104px;background-size:cover;background-position:center;filter:saturate(1.05)}
+    .dish:nth-child(1) .dish-photo{background-image:url("https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&h=280&fit=crop")}
+    .dish:nth-child(2) .dish-photo{background-image:url("https://images.unsplash.com/photo-1552611052-33e04de081de?w=500&h=280&fit=crop")}
+    .dish:nth-child(3) .dish-photo{background-image:url("https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=500&h=280&fit=crop")}
+    .dish:nth-child(4) .dish-photo{background-image:url("https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&h=280&fit=crop")}
+    .dish:nth-child(5) .dish-photo{background-image:url("https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=500&h=280&fit=crop")}
+    .dish:nth-child(6) .dish-photo{background-image:url("https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500&h=280&fit=crop")}
+    .dish-copy{padding:10px}
+    .dish strong{display:block;font-size:11px;margin-bottom:4px}
+    .dish span{color:var(--muted);font-size:10px}
 
-    /* Deal type tabs */
-    .deal-tabs{width:100%;max-width:420px;display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
-    .deal-tabs::-webkit-scrollbar{display:none}
-    .dtab{border:1.5px solid var(--line);background:var(--white);border-radius:20px;padding:6px 12px;font:inherit;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:5px}
-    .dtab.on{border-color:var(--momo);background:#fff0f7;color:var(--momo)}
-    .dtab .count{background:var(--line);color:var(--muted);font-size:8px;padding:1px 5px;border-radius:10px;font-weight:700}
-    .dtab.on .count{background:var(--momo);color:#fff}
+    .rating-layout{display:grid;grid-template-columns:180px 220px 1fr;gap:24px;align-items:center}
+    .score{padding-right:24px;border-right:1px solid var(--line)}
+    .score strong{display:block;font-size:54px;line-height:1;letter-spacing:-.06em}
+    .stars{color:var(--amber);font-size:18px;letter-spacing:2px;margin:8px 0}
+    .score span{font-size:10px;color:var(--muted)}
+    .bars{display:grid;gap:7px}
+    .bar-row{display:grid;grid-template-columns:22px 1fr 28px;gap:8px;align-items:center;font-size:9px;color:var(--muted)}
+    .bar{height:5px;border-radius:99px;background:#eceef1;overflow:hidden}
+    .bar i{display:block;height:100%;border-radius:99px;background:var(--amber)}
+    .review-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .review-tags span{padding:8px 10px;border-radius:9px;background:#f5f6f7;color:#475467;font-size:10px;font-weight:650}
+    .review-card{display:grid;grid-template-columns:38px 1fr;gap:10px}
+    .avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffd5e8,#f3b06d);font-weight:800;color:#7a274f}
+    .review-card strong{font-size:11px}.review-card p{font-size:10px;color:#475467;line-height:1.55;margin:5px 0 0}
 
-    /* ── Card stack ── */
-    .card-stack{width:100%;max-width:420px;position:relative;height:480px;margin-bottom:6px}
-    .card-behind2{position:absolute;left:50%;top:16px;transform:translateX(-50%) scale(.87);width:100%;height:460px;border-radius:16px;background:#d8d8d8}
-    .card-behind{position:absolute;left:50%;top:8px;transform:translateX(-50%) scale(.94);width:100%;height:470px;border-radius:16px;background:#e4e4e4;box-shadow:0 6px 20px #0001}
-    .card{width:100%;height:470px;border-radius:16px;overflow:hidden;position:absolute;left:50%;top:0;transform:translateX(-50%);background:#1a1a1a;box-shadow:0 14px 40px #10182830;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
-    .card.dragging{cursor:grabbing}
+    .offer{
+      display:grid;
+      grid-template-columns:54px 1fr auto;
+      gap:14px;
+      align-items:center;
+      background:linear-gradient(100deg,#fff0f7,#fff);
+      border-color:#f4c8df;
+    }
+    .offer-icon{width:54px;height:54px;border-radius:16px;background:#fff;display:grid;place-items:center;color:var(--momo-dark);font-size:22px;font-weight:800}
+    .offer strong{display:block;font-size:15px;margin-bottom:5px}
+    .offer span{display:block;color:var(--muted);font-size:10px;line-height:1.5}
+    .offer button,.primary-btn{border:0;border-radius:10px;padding:11px 16px;background:var(--momo-dark);color:#fff;font-size:11px;font-weight:800}
 
-    /* Card layout: top photo + bottom deal panel */
-    .card-photo{position:absolute;top:0;left:0;right:0;height:52%;overflow:hidden}
-    .card-photo img{width:100%;height:100%;object-fit:cover}
-    .card-photo-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px}
-    .photo-grad{position:absolute;inset:0;background:linear-gradient(to bottom,#0004 0%,transparent 40%,#1a1a1a 100%)}
+    .faq-item{border-top:1px solid var(--line)}
+    .faq-item:first-of-type{border-top:0}
+    .faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;border:0;background:transparent;padding:15px 0;font-size:11px;font-weight:800;cursor:pointer}
+    .faq-answer{display:none;color:var(--muted);font-size:11px;line-height:1.7;padding:0 32px 16px 0}
+    .faq-item.open .faq-answer{display:block}
+    .faq-item.open .faq-question b{transform:rotate(45deg)}
 
-    /* Deal panel (bottom 55% - slight overlap) */
-    .deal-panel{position:absolute;bottom:0;left:0;right:0;height:55%;background:#1a1a1a;padding:16px 18px 18px;display:flex;flex-direction:column}
-    .deal-panel-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
-    .deal-hero{flex:1}
-    .deal-type-badge{display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:5px;margin-bottom:6px}
-    .deal-amount{font-size:28px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.02em;margin-bottom:2px}
-    .deal-amount span{font-size:13px;font-weight:600;opacity:.8}
-    .deal-cond{font-size:9px;color:rgba(255,255,255,.55);margin-bottom:0}
-    .paylater-label{display:inline-flex;align-items:center;gap:5px;font-size:8px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#ff9fce;margin-bottom:7px}
-    .paylater-title{font-size:22px;font-weight:850;color:#fff;line-height:1.12;letter-spacing:-.025em}
-    .paylater-sub{font-size:9px;color:rgba(255,255,255,.58);margin-top:4px}
-    .offer-inline{margin-top:9px;padding:7px 9px;border-radius:8px;background:#fff0f7;color:#a50064;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px}
-    .offer-inline.none{background:rgba(255,255,255,.07);color:rgba(255,255,255,.58);font-weight:600}
+    .side{display:flex;flex-direction:column;gap:14px}
+    .side-card{padding:14px}
+    .map{
+      height:170px;
+      position:relative;
+      border-radius:13px;
+      overflow:hidden;
+      background-color:#f3efe8;
+      background-image:
+        linear-gradient(28deg,transparent 46%,#fff 47%,#fff 51%,transparent 52%),
+        linear-gradient(93deg,transparent 45%,#fff 46%,#fff 51%,transparent 52%),
+        linear-gradient(-24deg,transparent 46%,#dfe9d8 47%,#dfe9d8 58%,transparent 59%);
+      background-size:62px 48px,78px 78px,150px 120px;
+      border:1px solid var(--line);
+    }
+    .pin{position:absolute;left:52%;top:46%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50% 50% 50% 8px;rotate:-45deg;background:var(--momo);box-shadow:0 5px 18px rgba(165,0,100,.35)}
+    .pin:after{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:#fff;left:12px;top:12px}
+    .address-block{display:flex;gap:9px;padding:14px 4px;color:#344054;font-size:10px;line-height:1.55}
+    .side-card .primary-btn{width:100%}
+    .side-title{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;margin:2px 0 12px}
+    .paylater-card{background:linear-gradient(145deg,#4f0b39,#9f145f);color:#fff;border:0;overflow:hidden;position:relative}
+    .paylater-card:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;border:1px solid rgba(255,255,255,.13);right:-60px;top:-65px}
+    .paylater-card small{position:relative;z-index:2;color:#ffcce5;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+    .paylater-card h3{position:relative;z-index:2;font-family:"MoMo Trust Display","MoMo Trust Sans",sans-serif;font-size:21px;line-height:1.12;margin:10px 0 8px;max-width:210px}
+    .paylater-card p{position:relative;z-index:2;font-size:10px;line-height:1.55;color:rgba(255,255,255,.75);margin:0 0 14px}
+    .paylater-card .primary-btn{position:relative;z-index:2;background:#fff;color:var(--momo-dark)}
+    .related{display:grid;gap:8px}
+    .related-item{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--line);border-radius:11px}
+    .related-icon{width:42px;height:42px;border-radius:10px;background:var(--pink-soft);display:grid;place-items:center;font-size:19px}
+    .related-item strong{display:block;font-size:10px;margin-bottom:3px}.related-item span{font-size:9px;color:var(--muted)}
+    .share-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .share-row button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 4px;color:#475467;font-size:9px;font-weight:700}
+    .source-note{font-size:9px;line-height:1.55;color:#98a2b3;text-align:center;padding:4px 10px}
 
-    .card-dist-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 8px;font-size:9px;color:rgba(255,255,255,.75);font-weight:600;white-space:nowrap;flex:none;margin-left:8px;margin-top:2px}
-
-    .divider{height:1px;background:rgba(255,255,255,.08);margin:0 0 10px}
-
-    .merchant-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-    .merchant-logo{width:36px;height:36px;border-radius:8px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.12)}
-    .merchant-logo img{width:100%;height:100%;object-fit:cover}
-    .merchant-name{font-size:14px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:2px}
-    .merchant-cat{font-size:9px;color:rgba(255,255,255,.5)}
-
-    .card-meta-row{display:flex;align-items:center;gap:8px;font-size:8px;color:rgba(255,255,255,.45)}
-    .cmr-dot{width:2px;height:2px;border-radius:50%;background:rgba(255,255,255,.3)}
-
-    .expiry-strip{margin-top:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between}
-    .expiry-label{font-size:8px;color:rgba(255,255,255,.4)}
-    .expiry-val{font-size:8px;font-weight:700;color:#ff8fc4}
-
-    /* Badges on photo */
-    .photo-badges{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;z-index:2}
-    .cat-badge{background:rgba(255,255,255,.9);backdrop-filter:blur(6px);font-size:8px;font-weight:700;padding:4px 8px;border-radius:5px;color:var(--ink)}
-    .status-badge{background:rgba(255,255,255,.9);backdrop-filter:blur(6px);font-size:8px;font-weight:700;padding:4px 8px;border-radius:5px}
-    .status-badge.open{color:#067647}
-    .status-badge.closed{color:#ef4444}
-
-    /* Swipe hints */
-    .hint{position:absolute;top:60px;padding:7px 13px;border-radius:8px;font-size:13px;font-weight:800;opacity:0;pointer-events:none;z-index:20;border:3px solid;letter-spacing:.04em}
-    .hint.like{left:13px;color:#22c55e;border-color:#22c55e;transform:rotate(-12deg)}
-    .hint.skip{right:13px;color:#ef4444;border-color:#ef4444;transform:rotate(12deg)}
-
-    /* counter */
-    .card-counter{position:absolute;top:12px;right:12px;font-size:8px;color:rgba(255,255,255,.5);font-weight:700;z-index:10;background:rgba(0,0,0,.3);padding:3px 7px;border-radius:10px;display:none}
-    .ad-card{background:linear-gradient(145deg,#4a0b36,#101828);cursor:default}
-    .ad-visual{height:54%;position:relative;padding:22px;color:#fff;overflow:hidden;background:
-      radial-gradient(circle at 85% 12%,#ff73b955,transparent 30%),
-      linear-gradient(145deg,#70104d,#241227)}
-    .ad-visual:before{content:"";position:absolute;width:230px;height:230px;border:1px solid #ffffff26;border-radius:50%;right:-70px;bottom:-100px}
-    .ad-sponsored{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid #ffffff35;border-radius:999px;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#ffffff18}
-    .ad-visual h3{font-size:29px;line-height:1.04;letter-spacing:-.04em;margin:24px 0 8px;max-width:310px}
-    .ad-visual p{font-size:10px;line-height:1.5;color:#ffffffb3;max-width:280px}
-    .ad-product{position:absolute;right:24px;bottom:20px;width:72px;height:72px;border-radius:22px;background:#fff;color:var(--momo);display:grid;place-items:center;font-size:22px;font-weight:900;transform:rotate(-7deg);box-shadow:0 16px 36px #0005}
-    .ad-panel{height:46%;padding:17px 18px;background:#15131a;color:#fff;display:flex;flex-direction:column}
-    .ad-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ffffff75;font-size:8px;margin-bottom:10px}
-    .ad-placement{padding:4px 7px;border-radius:999px;background:#25324a;color:#9ec5ff;font-weight:800}
-    .ad-panel strong{font-size:14px;margin-bottom:5px}.ad-panel p{font-size:9px;color:#ffffff85;line-height:1.5;margin:0}
-    .ad-cta{margin-top:auto;border:0;border-radius:9px;padding:10px;background:#fff;color:var(--momo);font-size:10px;font-weight:850}
-
-    /* ── Actions ── */
-    .actions{display:flex;gap:14px;align-items:center;margin:8px 0 3px}
-    .act{width:50px;height:50px;border-radius:50%;border:1.5px solid var(--line);background:var(--white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 2px 6px #0001}
-    .act:hover{transform:scale(1.09)}
-    .act.skip:hover{border-color:#ef4444;color:#ef4444}
-    .act.save{background:var(--momo);color:#fff;border-color:var(--momo);width:58px;height:58px;font-size:21px}
-    .act.save:hover{background:#8a0052}
-    .act.info:hover{border-color:var(--momo);color:var(--momo)}
-    .act-tip{font-size:8px;color:var(--muted);text-align:center}
-
-    /* Progress dots */
-    .pdots{display:flex;gap:5px;margin-top:4px}
-    .pdots span{width:5px;height:5px;border-radius:50%;background:var(--line);transition:all .18s}
-    .pdots span.done{background:#ccc}
-    .pdots span.cur{background:var(--momo);width:14px;border-radius:3px}
-
-    /* ── Saved panel ── */
-    .saved-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
-    .saved-top h2{margin:0}
-    .saved-total{font-size:9px;color:var(--muted)}
-
-    .saved-empty{font-size:9px;line-height:1.7;color:var(--muted);padding:14px;background:#fafafa;border-radius:8px;text-align:center}
-    .saved-empty-icon{font-size:26px;margin-bottom:7px}
-
-    .saved-item{padding:10px 0;border-bottom:1px solid var(--line)}
-    .saved-item:last-child{border:none}
-    .saved-row1{display:flex;gap:9px;align-items:flex-start;margin-bottom:7px}
-    .saved-thumb{width:44px;height:44px;border-radius:7px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:20px}
-    .saved-thumb img{width:100%;height:100%;object-fit:cover}
-    .saved-name{font-size:10px;font-weight:700;margin-bottom:1px;line-height:1.3}
-    .saved-cat{font-size:8px;color:var(--muted);margin-bottom:3px}
-
-    /* Deal highlight in saved */
-    .saved-deal-hl{display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:4px 7px;font-size:9px;font-weight:700;margin-bottom:7px}
-
-    .saved-cta{display:flex;gap:5px}
-    .saved-cta button{font-size:8px;padding:5px 9px;border-radius:5px;border:none;cursor:pointer;font-weight:700;transition:opacity .15s}
-    .saved-cta button:hover{opacity:.85}
-    .btn-pay{background:var(--momo);color:#fff}
-    .btn-nav{background:#f2f4f7;color:var(--muted);border:1px solid var(--line) !important}
-
-    .saved-summary{margin-top:12px;padding:10px;background:#fff0f7;border-radius:8px;border:1px solid #f5c0db}
-    .saved-summary-title{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--momo);margin-bottom:6px}
-    .saved-saving{font-size:18px;font-weight:800;color:var(--momo);margin-bottom:1px}
-    .saved-saving-sub{font-size:8px;color:#c060a0}
-
-    /* ── Merchant detail ── */
-    .drawer-wrap{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:0;transition:opacity .2s}
-    .drawer-wrap.open{pointer-events:auto;opacity:1}
-    .drawer-bd{position:absolute;inset:0;background:#10182899;backdrop-filter:blur(4px)}
-    .drawer-sheet{position:absolute;bottom:14px;left:50%;transform:translateX(-50%) translateY(105%);width:min(960px,calc(100% - 28px));background:var(--white);border-radius:22px;padding:0;max-height:94vh;overflow-y:auto;transition:transform .28s cubic-bezier(.32,.72,0,1);box-shadow:0 30px 80px #10182845}
-    .drawer-wrap.open .drawer-sheet{transform:translateX(-50%) translateY(0)}
-    .drawer-sheet::-webkit-scrollbar{width:5px}
-    .drawer-sheet::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:6px}
-    .detail-cover{height:210px;position:relative;overflow:hidden;border-radius:22px 22px 0 0;background:#111}
-    .detail-cover img{width:100%;height:100%;object-fit:cover}
-    .detail-cover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0002 0%,#0000 38%,#101828cc 100%)}
-    .detail-top-actions{position:absolute;top:16px;right:16px;display:flex;gap:7px;z-index:3}
-    .detail-icon-btn{width:36px;height:36px;border:1px solid #ffffff55;background:#ffffffeb;color:#344054;border-radius:11px;font-size:14px;display:grid;place-items:center}
-    .detail-cover-copy{position:absolute;left:24px;right:150px;bottom:20px;color:#fff;z-index:2}
-    .detail-cover-copy .detail-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-    .detail-badge{font-size:8px;font-weight:800;padding:4px 7px;border-radius:999px;background:#ffffff22;border:1px solid #ffffff33;backdrop-filter:blur(5px)}
-    .detail-badge.verified{background:#e9f8f1;color:#087a55;border-color:#b7ebd5}
-    .detail-cover-copy h2{font-size:28px;line-height:1.1;letter-spacing:-.03em;margin:0 0 7px}
-    .detail-cover-copy p{font-size:10px;color:#ffffffbd;margin:0}
-    .detail-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.75fr);gap:18px;padding:20px 22px 88px}
-    .detail-main,.detail-side{display:flex;flex-direction:column;gap:14px}
-    .detail-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
-    .detail-card-title{font-size:9px;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-    .detail-card-title span{font-size:8px;text-transform:none;letter-spacing:0;color:var(--momo)}
-    .detail-summary{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
-    .detail-identity{display:flex;gap:12px;align-items:center}
-    .drawer-logo{width:58px;height:58px;border-radius:13px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid var(--line)}
-    .drawer-logo img{width:100%;height:100%;object-fit:cover}
-    .drawer-mname{font-size:18px;font-weight:800;margin-bottom:3px}
-    .drawer-mcat{font-size:9px;color:var(--muted);margin-bottom:6px}
-    .drawer-mstats{display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:#475467}
-    .rating{font-weight:800;color:#b54708}
-    .open-now{color:#087a55;font-weight:700}
-    .detail-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
-    .detail-actions button{border:1px solid var(--line);background:#fff;color:#475467;border-radius:9px;padding:8px 10px;font-size:9px;font-weight:700}
-    .detail-actions .action-primary{background:var(--momo);border-color:var(--momo);color:#fff}
-    .eligibility{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(135deg,#fff0f7,#fff8fc);border:1px solid #f2c1da}
-    .eligibility-icon{width:36px;height:36px;border-radius:11px;background:var(--momo);color:#fff;display:grid;place-items:center;font-weight:800}
-    .eligibility strong{display:block;font-size:11px;margin-bottom:2px}.eligibility p{font-size:9px;color:#667085;margin:0;line-height:1.45}
-    .eligibility-value{text-align:right}.eligibility-value b{display:block;font-size:20px;color:var(--momo)}.eligibility-value span{font-size:8px;color:#9b4c7a}
-    .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-    .service-item{border:1px solid var(--line);border-radius:11px;padding:10px;background:#fafafa}
-    .service-item i{display:block;font-size:17px;font-style:normal;margin-bottom:7px}.service-item strong{display:block;font-size:10px;margin-bottom:3px}.service-item span{display:block;font-size:8px;color:#667085;line-height:1.35}
-    .menu-list{display:grid;gap:0}
-    .menu-row{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
-    .menu-row:last-child{border-bottom:0}
-    .menu-thumb{width:46px;height:40px;border-radius:8px;display:grid;place-items:center;font-size:21px;background:#f2f4f7}
-    .menu-row strong{font-size:10px;display:block;margin-bottom:2px}.menu-row span{font-size:8px;color:#667085}.menu-price{font-size:10px!important;color:#344054!important;font-weight:800}
-    .about-copy{font-size:10px;color:#667085;line-height:1.65;margin:0}
-    .payment-list,.trust-list,.branch-list{display:grid;gap:8px}
-    .payment-item,.trust-item,.branch-item{display:flex;align-items:flex-start;gap:9px;padding:9px;border-radius:10px;background:#fafafa;border:1px solid #eef0f3}
-    .payment-item i,.trust-item i,.branch-item i{width:27px;height:27px;display:grid;place-items:center;border-radius:8px;background:#fff0f7;color:var(--momo);font-style:normal;flex:none}
-    .payment-item strong,.trust-item strong,.branch-item strong{display:block;font-size:9px;margin-bottom:2px}
-    .payment-item span,.trust-item span,.branch-item span{display:block;font-size:8px;color:#667085;line-height:1.35}
-    .faq-item{padding:9px 0;border-bottom:1px solid var(--line)}
-    .faq-item:last-child{border-bottom:0}.faq-item strong{display:block;font-size:10px;margin-bottom:4px}.faq-item p{font-size:9px;color:#667085;line-height:1.5;margin:0}
-    .deal-list{display:grid;gap:8px}
-    .mini-deal{border:1px solid #f2c1da;border-radius:11px;padding:10px;background:#fff8fc}
-    .mini-deal b{display:block;font-size:13px;color:var(--momo);margin-bottom:2px}.mini-deal span{display:block;font-size:8px;color:#7d526a;line-height:1.4}
-    .detail-sticky{position:sticky;bottom:0;z-index:4;display:flex;gap:8px;padding:12px 22px;background:#ffffffed;border-top:1px solid var(--line);backdrop-filter:blur(10px)}
-    .detail-sticky button{padding:12px 14px;border-radius:10px;border:1px solid var(--line);font:inherit;font-size:10px;font-weight:800}
-    .detail-sticky .sticky-primary{flex:1;background:var(--momo);border-color:var(--momo);color:#fff}
-    .detail-sticky .sticky-secondary{background:#fff;color:var(--momo);border-color:#e7a6c9}
-
-    /* Deal type colors */
-    .dt-cashback{background:#fff0f7;color:#a50064}
-    .dt-voucher{background:#eff6ff;color:#1d4ed8}
-    .dt-point{background:#f0fdf4;color:#15803d}
-    .dt-free{background:#fffbeb;color:#b45309}
-
+    .mobile-bar{display:none}
+    @media(max-width:1050px){
+      .topbar{grid-template-columns:120px 1fr auto}.location{display:none}
+      .benefits{grid-template-columns:repeat(2,1fr)}.benefit:nth-child(2){border-right:0}.benefit:nth-child(-n+2){border-bottom:1px solid var(--line)}
+      .page-grid{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,1fr)}.source-note{grid-column:1/-1}
+    }
     @media(max-width:900px){
-      .app{grid-template-columns:1fr}.panel{display:none}.stage{min-height:100vh}
-      .drawer-sheet{bottom:0;width:100%;max-height:100vh;border-radius:0}
-      .detail-cover{height:190px;border-radius:0}
-      .detail-cover-copy{right:70px;left:18px}.detail-cover-copy h2{font-size:22px}
-      .detail-layout{grid-template-columns:1fr;padding:14px 14px 88px}
-      .detail-summary{grid-template-columns:1fr}.detail-actions{justify-content:flex-start}
-      .service-grid{grid-template-columns:repeat(2,1fr)}
-      .detail-sticky{padding:10px 14px}
+      .shell{width:min(100% - 24px,1460px);margin-top:12px}
+      .topbar{grid-template-columns:110px minmax(0,1fr) auto;padding-inline:18px}
+      .hero-content{gap:22px;padding:34px 32px}
+      .merchant-mark{width:150px;padding:14px}
+      .merchant-mark strong{font-size:25px}
+      .hero h1{font-size:40px}
+      .benefits{margin-inline:20px}
+      .page-grid{padding-inline:20px}
+      .quick-info{grid-template-columns:1.2fr 1fr 1fr}
+      .quick-item{border-bottom:1px solid var(--line)}
+      .quick-item:nth-child(3){border-right:0}
+      .quick-item:nth-child(n+4){border-bottom:0}
+      .quick-item:last-child{border-right:0}
+      .rating-layout{grid-template-columns:150px 190px 1fr;gap:18px}
+    }
+    @media(max-width:760px){
+      body{background:#fff;padding-bottom:72px}.shell{width:100%;margin:0}.card{border-radius:0;box-shadow:none;border-left:0;border-right:0}
+      .topbar{grid-template-columns:88px minmax(0,1fr);gap:10px;padding:10px 14px;border-radius:0}.logo{font-size:27px}.search{min-width:0;padding:9px 12px}.search input{font-size:12px}.open-app{display:none}
+      .hero{border-radius:0;min-height:420px}.hero-media:after{background:linear-gradient(0deg,rgba(15,11,8,.94),rgba(15,11,8,.08) 76%)}
+      .hero-media img{object-position:73% center;transform:scale(1.28)}
+      .hero-content{min-height:420px;display:grid;grid-template-columns:88px minmax(0,1fr);align-items:end;gap:14px;padding:96px 16px 26px}
+      .merchant-mark{width:88px;padding:10px;border-radius:15px}
+      .merchant-mark span{font-size:9px}.merchant-mark strong{font-size:20px}.merchant-mark small{font-size:8px}
+      .hero h1{font-size:31px}.hero-meta{gap:6px;font-size:10px}.hero-meta span:last-child{width:100%}.open-status{margin-top:11px;font-size:10px}
+      .eyebrow{padding:6px 9px;font-size:10px;margin-bottom:10px}
+      .gallery-link{top:14px;right:12px;bottom:auto;padding:8px 10px;font-size:10px}
+      .benefits{
+        display:flex;
+        gap:8px;
+        margin:-16px 0 12px;
+        padding:8px 14px 10px;
+        border:0;
+        border-radius:0;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        scrollbar-width:none;
+        box-shadow:0 -8px 28px rgba(16,24,40,.08);
+      }
+      .benefits::-webkit-scrollbar{display:none}
+      .benefit,.benefit:nth-child(2){
+        min-width:min(76vw,280px);
+        min-height:82px;
+        padding:10px 12px;
+        border:1px solid var(--line);
+        border-radius:14px;
+        scroll-snap-align:start;
+      }
+      .benefit:last-child{border:1px solid var(--line)}
+      .page-grid{padding:0}
+      .quick-info{grid-template-columns:repeat(2,minmax(0,1fr));border-radius:0}
+      .quick-item,.quick-item:nth-child(3),.quick-item:nth-child(n+4){min-width:0;padding:14px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+      .quick-item:nth-child(2n){border-right:0}
+      .quick-item:last-child{grid-column:1/-1;border-right:0;border-bottom:0}
+      .quick-item strong{font-size:10px}.quick-item span{font-size:9px}
+      .tabs{top:57px;gap:20px;padding-left:16px}.section{border-radius:0;padding:18px 16px}
+      .about-menu{grid-template-columns:1fr}.menu-grid{grid-template-columns:repeat(2,1fr)}
+      .rating-layout{grid-template-columns:1fr}.score{border-right:0;border-bottom:1px solid var(--line);padding:0 0 16px}.bars{max-width:330px}
+      .offer{grid-template-columns:48px 1fr}.offer button{grid-column:1/-1}.side{display:flex}.side-card{border-radius:0}.map{height:210px}
+      .mobile-bar{position:fixed;display:grid;grid-template-columns:1fr 1.7fr;gap:8px;left:0;right:0;bottom:0;z-index:50;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.95);border-top:1px solid var(--line);backdrop-filter:blur(12px)}
+      .mobile-bar button{border-radius:11px;padding:12px;border:1px solid #ecc0d8;background:#fff;color:var(--momo-dark);font-size:11px;font-weight:700}.mobile-bar .pay{background:var(--momo-dark);color:#fff;border-color:var(--momo-dark)}
+    }
+    @media(max-width:360px){
+      .topbar{grid-template-columns:80px minmax(0,1fr);padding-inline:12px}.logo{font-size:25px}
+      .search input::placeholder{font-size:0}.search input::placeholder{color:transparent}
+      .search:after{content:"Tìm kiếm";font-size:11px;color:#98a2b3;position:absolute;left:38px;pointer-events:none}
+      .search{position:relative}
+      .hero{min-height:400px}.hero-content{min-height:400px;grid-template-columns:76px minmax(0,1fr);gap:11px;padding:90px 14px 22px}
+      .merchant-mark{width:76px;padding:8px}.merchant-mark strong{font-size:17px}
+      .hero h1{font-size:27px}.eyebrow{font-size:9px}.hero-meta .dot{display:none}
+      .open-status{padding:6px 8px}
+      .benefit,.benefit:nth-child(2){min-width:82vw}
+      .menu-grid{gap:8px}.dish-photo{height:92px}.dish-copy{padding:8px}
     }
   </style>
 </head>
 <body>
-<div class="app">
+  <a href="/lab.html" target="_top" style="position:fixed;top:10px;left:12px;z-index:9999;background:#fff;border:1px solid #e0e0e8;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:#636378;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.08)">← Lab</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="logo" href="/lab.html" target="_top" aria-label="Về Prototype Store">momo</a>
+      <label class="search">
+        <span>⌕</span>
+        <input aria-label="Tìm kiếm" placeholder="Tìm thương hiệu, dịch vụ, món ăn...">
+      </label>
+      <div class="location">● TP. Hồ Chí Minh</div>
+      <button class="open-app" data-action="open-app">Mở ứng dụng MoMo</button>
+    </header>
 
-  <!-- Left: Filters -->
-  <aside class="panel">
-    <h2>Khám phá merchant</h2>
-
-    <div class="flabel">Khả dụng thanh toán</div>
-    <div class="fgroup" id="fPayment">
-      <button class="fchip on" data-v="all">Tất cả</button>
-      <button class="fchip" data-v="paylater">◷ Có Ví Trả Sau</button>
-      <button class="fchip" data-v="momo">mo Ví MoMo</button>
-    </div>
-
-    <div class="flabel">Danh mục</div>
-    <div class="fgroup" id="fCat">
-      <button class="fchip on" data-v="all">Tất cả</button>
-      <button class="fchip" data-v="Ăn uống">🍜 Ăn uống</button>
-      <button class="fchip" data-v="Siêu thị">🛒 Siêu thị</button>
-      <button class="fchip" data-v="Mua sắm">🛍️ Mua sắm</button>
-      <button class="fchip" data-v="Sức khỏe">💊 Sức khỏe</button>
-      <button class="fchip" data-v="Giải trí">🎬 Giải trí</button>
-      <button class="fchip" data-v="Di chuyển">⛽ Di chuyển</button>
-      <button class="fchip" data-v="CVS">🏪 Tiện lợi</button>
-    </div>
-
-    <div class="flabel">Khoảng cách</div>
-    <div class="fgroup" id="fDist">
-      <button class="fchip on" data-v="all">Tất cả</button>
-      <button class="fchip" data-v="500">&lt; 500m</button>
-      <button class="fchip" data-v="1000">&lt; 1km</button>
-      <button class="fchip" data-v="2000">&lt; 2km</button>
-    </div>
-
-    <div class="flabel">Tổng quan</div>
-    <div class="stats-strip">
-      <div class="stats-strip-title">Ví Trả Sau quanh bạn</div>
-      <div class="stat-row"><span class="stat-label">Merchant có Ví Trả Sau</span><span class="stat-val" id="statPayLater">0</span></div>
-      <div class="stat-row"><span class="stat-label">Có thêm ưu đãi</span><span class="stat-val" id="statOffers">0</span></div>
-      <div class="stat-row"><span class="stat-label">Ads trong swipe deck</span><span class="stat-val" id="statAds">1/4 card</span></div>
-    </div>
-
-    <div class="flabel">Quy ước hiển thị</div>
-    <div class="deal-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#a50064"></div>Ví Trả Sau - tiêu chí discovery chính</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#22a06b"></div>Ưu đãi - chỉ hiện khi merchant có</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div>Sponsored - inventory từ Ads Placement</div>
-    </div>
-  </aside>
-
-  <!-- Center: Swipe -->
-  <main class="stage">
-    <div class="stage-header">
-      <div style="display:flex;align-items:center;gap:12px">
-        <a href="../index.html" target="_top" style="font-size:10px;font-weight:700;color:#667085;text-decoration:none">← Store</a>
-        <div class="brand">MoMo<span>Deal</span><sub>Merchant Network</sub></div>
+    <section class="hero">
+      <div class="hero-media">
+        <img src="https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg" alt="Các món ăn tại Tiệm Mì Chú Cao">
       </div>
-      <div class="loc-pill">📍 Quận 1, TP.HCM</div>
-    </div>
-
-    <label class="merchant-search">
-      <span>⌕</span>
-      <input id="merchantSearch" type="search" placeholder="Tìm merchant, món ăn, dịch vụ hoặc địa điểm">
-    </label>
-
-    <!-- Merchant discovery quick tabs -->
-    <div class="deal-tabs" id="dealTabs">
-      <button class="dtab on" data-v="paylater">◷ Có Ví Trả Sau <span class="count" id="tab-paylater">0</span></button>
-      <button class="dtab" data-v="deal">🎁 Có ưu đãi <span class="count" id="tab-deal">0</span></button>
-      <button class="dtab" data-v="nearby">⌖ Gần tôi <span class="count" id="tab-nearby">0</span></button>
-      <button class="dtab" data-v="open">● Đang mở <span class="count" id="tab-open">0</span></button>
-      <button class="dtab" data-v="all">Tất cả <span class="count" id="tab-all">0</span></button>
-    </div>
-
-    <div class="card-stack">
-      <div class="card-behind2" id="cb2"></div>
-      <div class="card-behind" id="cb1"></div>
-      <article class="card" id="card"></article>
-    </div>
-
-    <div class="pdots" id="pdots"></div>
-    <div class="actions">
-      <button class="act skip" id="btnSkip" title="Bỏ qua">✕</button>
-      <button class="act save" id="btnSave" title="Lưu merchant">♥</button>
-      <button class="act info" id="btnInfo" title="Xem chi tiết">ⓘ</button>
-    </div>
-    <div class="act-tip">Vuốt trái bỏ qua · Vuốt phải lưu merchant</div>
-  </main>
-
-  <!-- Right: Saved -->
-  <aside class="panel">
-    <div class="saved-top">
-      <h2>Merchant đã lưu</h2>
-      <span class="saved-total" id="savedTotal">0 merchant</span>
-    </div>
-    <div id="savedList">
-      <div class="saved-empty">
-        <div class="saved-empty-icon">💰</div>
-        Lưu merchant để quay lại xem dịch vụ, ưu đãi đang áp dụng, vị trí và phương thức thanh toán.
-      </div>
-    </div>
-    <div id="savedSummary" style="display:none" class="saved-summary">
-      <div class="saved-summary-title">Ước tính tiết kiệm</div>
-      <div class="saved-saving" id="savingAmt">0đ</div>
-      <div class="saved-saving-sub">nếu dùng tất cả deal đã lưu</div>
-    </div>
-  </aside>
-</div>
-
-<!-- Detail drawer -->
-<div class="drawer-wrap" id="drawer">
-  <div class="drawer-bd" id="drawerBd"></div>
-  <div class="drawer-sheet" id="drawerSheet"></div>
-</div>
-
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function track(e,p){console.log('[momo_track]',e,p);window.dataLayer.push({event:e,...p})}
-
-  const DEALS = [
-    {
-      id:'tiem-my-chu-cao-46', merchant:'Tiệm Mì Chú Cao', cat:'Ăn uống', subcat:'Quán mì',
-      dealType:'cashback', dealLabel:'HOÀN TIỀN',
-      dealAmount:'50%', dealAmountFull:'Hoàn 50%', dealAmountEst:10000,
-      dealCond:'Tối đa 10.000đ/lần', dealDetail:'Dùng Ví Trả Sau quét QR tại quán',
-      expiry:'30/6/2026', expiryUrgent:false,
-      distM:450, open:true, price:'30K-55K', address:'59 Trần Bình Trọng, P. Chợ Quán',
-      img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=900&h=520&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=100&h=100&fit=crop',
-      bg:'linear-gradient(135deg,#6F2C13,#C56828)', emoji:'🍜',
-      rating:4, reviews:345, hours:'06:00 - 20:00', verified:true, updated:'12/06/2026',
-      about:'Quán mì tàu gia truyền tại khu Chợ Quán, nổi bật với mì nước, mì khô và hủ tiếu kiểu Hoa. Không gian bình dân, phù hợp cho bữa sáng hoặc bữa ăn nhanh trong ngày.',
-      services:[
-        {icon:'🍜',title:'Ăn tại quán',desc:'Mì và hủ tiếu phục vụ trong ngày'},
-        {icon:'🥡',title:'Mang đi',desc:'Đặt món trực tiếp tại quầy'},
-        {icon:'▣',title:'Quét QR MoMo',desc:'Ví MoMo, Ví Trả Sau, ngân hàng liên kết'}
-      ],
-      menu:[
-        {icon:'🥟',name:'Mì hoành thánh',desc:'Mì tươi, hoành thánh và xá xíu',price:'45.000đ'},
-        {icon:'🍜',name:'Hủ tiếu mì thập cẩm',desc:'Topping tim, gan, tôm và xá xíu',price:'40.000đ'},
-        {icon:'🥢',name:'Mì khô thập cẩm',desc:'Sốt trộn kiểu Hoa',price:'38K - 45K'},
-        {icon:'🍤',name:'Bánh tôm chiên',desc:'Món ăn kèm',price:'10K - 15K'}
-      ],
-      faq:[
-        {q:'Quán có thanh toán MoMo không?',a:'Có. Quán hỗ trợ quét QR bằng Ví MoMo, Ví Trả Sau và nguồn tiền ngân hàng liên kết.'},
-        {q:'Món nào được gọi nhiều?',a:'Mì hoành thánh, hủ tiếu mì thập cẩm và mì khô thập cẩm là các lựa chọn phổ biến.'},
-        {q:'Ưu đãi áp dụng thế nào?',a:'Dùng Ví Trả Sau quét QR MoMo tại quán. Mức hoàn và hạn mức áp dụng theo điều kiện chương trình.'}
-      ],
-      conditions:['Dùng Ví Trả Sau quét QR MoMo','Hoàn tối đa 10.000đ/giao dịch','Áp dụng tại merchant có Loa MoMo','Khoản hoàn ghi nhận vào Sổ Tay Hoàn Tiền'],
-    },
-    {
-      id:'coopmart', merchant:'Co.opmart', cat:'Siêu thị', subcat:'Siêu thị',
-      dealType:'cashback', dealLabel:'HOÀN TIỀN',
-      dealAmount:'50K', dealAmountFull:'Hoàn 50.000đ', dealAmountEst:50000,
-      dealCond:'Đơn từ 300.000đ', dealDetail:'Thanh toán MoMo tại quầy',
-      expiry:'Hôm nay', expiryUrgent:true,
-      distM:410, open:true, price:'—', address:'Nguyễn Đình Chiểu, Q3',
-      img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#005B20,#00A651)', emoji:'🛒',
-      conditions:['Áp dụng tại quầy thanh toán MoMo','Tối thiểu 300.000đ/đơn','1 lần/ngày/tài khoản','Hết hạn HÔM NAY'],
-    },
-    {
-      id:'cgv', merchant:'CGV Cinemas', cat:'Giải trí', subcat:'Rạp chiếu phim',
-      dealType:'voucher', dealLabel:'VOUCHER',
-      dealAmount:'25K', dealAmountFull:'Giảm 25.000đ/vé', dealAmountEst:50000,
-      dealCond:'Mua 2 vé trở lên', dealDetail:'Chọn xuất chiếu qua MoMo',
-      expiry:'15/7/2026', expiryUrgent:false,
-      distM:680, open:true, price:'90K-150K/vé', address:'Vincom Center, Q1',
-      img:'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#1a0030,#6B21A8)', emoji:'🎬',
-      conditions:['Mua tối thiểu 2 vé','Đặt vé qua MoMo app','Áp dụng mọi xuất chiếu','Hết hạn 15/7/2026'],
-    },
-    {
-      id:'pharmacity', merchant:'Pharmacity', cat:'Sức khỏe', subcat:'Nhà thuốc',
-      dealType:'cashback', dealLabel:'HOÀN TIỀN',
-      dealAmount:'30K', dealAmountFull:'Hoàn 30.000đ', dealAmountEst:30000,
-      dealCond:'Đơn từ 150.000đ', dealDetail:'Lần đầu thanh toán MoMo',
-      expiry:'31/7/2026', expiryUrgent:false,
-      distM:520, open:true, price:'—', address:'Lê Lợi, Q1',
-      img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#0F4C81,#1976D2)', emoji:'💊',
-      conditions:['Chỉ áp dụng lần đầu thanh toán MoMo tại Pharmacity','Tối thiểu 150.000đ/đơn','Không kết hợp KM khác'],
-    },
-    {
-      id:'tgdd', merchant:'Thế Giới Di Động', cat:'Mua sắm', subcat:'Điện máy',
-      dealType:'cashback', dealLabel:'HOÀN TIỀN',
-      dealAmount:'100K', dealAmountFull:'Hoàn 100.000đ', dealAmountEst:100000,
-      dealCond:'Đơn từ 2.000.000đ', dealDetail:'Thanh toán MoMo tại cửa hàng',
-      expiry:'30/6/2026', expiryUrgent:false,
-      distM:920, open:true, price:'—', address:'Nguyễn Trãi, Q1',
-      img:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#003366,#0055A4)', emoji:'📱',
-      conditions:['Đơn tối thiểu 2.000.000đ','Thanh toán MoMo tại quầy','Tối đa 100.000đ/giao dịch','Hết hạn 30/6/2026'],
-    },
-    {
-      id:'petrolimex', merchant:'Petrolimex', cat:'Di chuyển', subcat:'Xăng dầu',
-      dealType:'point', dealLabel:'TÍCH ĐIỂM',
-      dealAmount:'2x', dealAmountFull:'Điểm x2', dealAmountEst:0,
-      dealCond:'Mọi lần đổ xăng', dealDetail:'Thanh toán MoMo, tích điểm đổi quà',
-      expiry:'31/12/2026', expiryUrgent:false,
-      distM:750, open:true, price:'—', address:'Điện Biên Phủ, Q3',
-      img:'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#7C0000,#CC0000)', emoji:'⛽',
-      conditions:['Áp dụng khi thanh toán MoMo','2 điểm/1.000đ (thay vì 1 điểm)','Không giới hạn số lần','Đổi quà từ 500 điểm'],
-    },
-    {
-      id:'circle-k', merchant:'Circle K', cat:'CVS', subcat:'Tiện lợi',
-      dealType:'free', dealLabel:'MIỄN PHÍ',
-      dealAmount:'Tặng ngay', dealAmountFull:'Tặng 1 lon nước', dealAmountEst:15000,
-      dealCond:'Mua bất kỳ sản phẩm', dealDetail:'Check-in MoMo tại cửa hàng',
-      expiry:'Hôm nay', expiryUrgent:true,
-      distM:200, open:true, price:'—', address:'Nguyễn Huệ, Q1',
-      img:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#7B1113,#C41E3A)', emoji:'🏪',
-      conditions:['Check-in MoMo tại cửa hàng','Nhận 1 lon nước miễn phí','1 lần/ngày','Hết hạn HÔM NAY'],
-    },
-    {
-      id:'the-coffee-house', merchant:'The Coffee House', cat:'Ăn uống', subcat:'Cà phê',
-      dealType:'voucher', dealLabel:'VOUCHER',
-      dealAmount:'1 Miễn Phí', dealAmountFull:'Mua 2 tặng 1', dealAmountEst:55000,
-      dealCond:'Mua 2 ly cùng size', dealDetail:'Thanh toán toàn bộ qua MoMo',
-      expiry:'15/7/2026', expiryUrgent:false,
-      distM:280, open:true, price:'45K-90K', address:'Đồng Khởi, Q1',
-      img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#1a0a00,#6F4E37)', emoji:'☕',
-      conditions:['Mua 2 ly cùng size','Thanh toán MoMo','Ly miễn phí size nhỏ hơn hoặc bằng','Không áp dụng cuối tuần'],
-    },
-    {
-      id:'guardian', merchant:'Guardian', cat:'Sức khỏe', subcat:'Làm đẹp',
-      dealType:'point', dealLabel:'TÍCH ĐIỂM',
-      dealAmount:'3x', dealAmountFull:'Điểm x3', dealAmountEst:0,
-      dealCond:'Mua sản phẩm skincare', dealDetail:'Thanh toán MoMo tại Guardian',
-      expiry:'31/7/2026', expiryUrgent:false,
-      distM:600, open:true, price:'—', address:'Vincom Center, Q1',
-      img:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#3D1A5A,#7B2D8B)', emoji:'💄',
-      conditions:['Chỉ áp dụng danh mục Skincare','Thanh toán MoMo tại quầy','3 điểm/1.000đ','Đổi quà từ 300 điểm'],
-    },
-    {
-      id:'grab', merchant:'GrabCar', cat:'Di chuyển', subcat:'Taxi',
-      dealType:'cashback', dealLabel:'HOÀN TIỀN',
-      dealAmount:'15%', dealAmountFull:'Hoàn 15%', dealAmountEst:30000,
-      dealCond:'Tối đa 30.000đ/chuyến', dealDetail:'Thanh toán MoMo trên Grab',
-      expiry:'30/6/2026', expiryUrgent:false,
-      distM:0, open:true, price:'—', address:'Toàn quốc',
-      img:'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#00B14F,#007A36)', emoji:'🚗',
-      conditions:['Chọn thanh toán MoMo trên Grab','15% hoàn về ví MoMo','Tối đa 30.000đ/chuyến','2 lần/ngày'],
-    },
-    {
-      id:'fahasa', merchant:'Fahasa', cat:'Mua sắm', subcat:'Sách',
-      dealType:'voucher', dealLabel:'VOUCHER',
-      dealAmount:'10%', dealAmountFull:'Giảm 10%', dealAmountEst:30000,
-      dealCond:'Đơn từ 200.000đ', dealDetail:'Áp dụng toàn bộ sản phẩm',
-      expiry:'31/7/2026', expiryUrgent:false,
-      distM:850, open:true, price:'—', address:'Nguyễn Huệ, Q1',
-      img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#1C3A6E,#2E5CB8)', emoji:'📚',
-      conditions:['Đơn tối thiểu 200.000đ','Thanh toán MoMo tại quầy hoặc online','Giảm tối đa 50.000đ','Hết hạn 31/7/2026'],
-    },
-    {
-      id:'minimart', merchant:'Vinmart+', cat:'CVS', subcat:'Minimart',
-      dealType:'free', dealLabel:'MIỄN PHÍ',
-      dealAmount:'Giao miễn phí', dealAmountFull:'Ship 0đ lần đầu', dealAmountEst:25000,
-      dealCond:'Đơn đầu qua MoMo', dealDetail:'Đặt hàng online, giao tận nơi',
-      expiry:'30/6/2026', expiryUrgent:false,
-      distM:320, open:true, price:'—', address:'Lý Tự Trọng, Q1',
-      img:'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=480&h=260&fit=crop',
-      thumb:'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=80&h=80&fit=crop',
-      bg:'linear-gradient(135deg,#004D1C,#00882E)', emoji:'🏬',
-      conditions:['Chỉ đơn đầu tiên đặt qua MoMo','Giao trong vòng 2km','Miễn phí ship, không giới hạn giá trị đơn','Hết hạn 30/6/2026'],
-    },
-  ];
-
-  const DEAL_TYPE_COLORS = {
-    cashback:{bg:'#fff0f7',text:'#a50064',heroBg:'#a50064',heroText:'#fff'},
-    voucher:{bg:'#eff6ff',text:'#1d4ed8',heroBg:'#1d4ed8',heroText:'#fff'},
-    point:{bg:'#f0fdf4',text:'#15803d',heroBg:'#15803d',heroText:'#fff'},
-    free:{bg:'#fffbeb',text:'#b45309',heroBg:'#b45309',heroText:'#fff'},
-  };
-
-  function fmtDist(m){return m===0?'Toàn quốc':m>=1000?(m/1000).toFixed(1)+'km':m+'m'}
-  function fmtEst(v){return v>=1000?v.toLocaleString('vi-VN')+'đ':'—'}
-
-  let deck=[...DEALS], idx=0;
-  const saved=[];
-  let fDeal='all', fCat='all', fDist='all', fTabDeal='all', fSearch='';
-
-  function applyFilters(){
-    const dealF=fTabDeal!=='all'?fTabDeal:fDeal;
-    deck=DEALS.filter(d=>{
-      if(dealF!=='all'&&d.dealType!==dealF) return false;
-      if(fCat!=='all'&&d.cat!==fCat) return false;
-      if(fDist!=='all'&&d.distM>0&&d.distM>+fDist) return false;
-      if(fSearch){
-        const haystack=[d.merchant,d.cat,d.subcat,d.dealDetail,d.address,d.about||''].join(' ').toLowerCase();
-        if(!haystack.includes(fSearch)) return false;
-      }
-      return true;
-    });
-    idx=0;
-    updateTabCounts();
-    updateStats();
-    renderDots();
-    renderCard();
-  }
-
-  function updateTabCounts(){
-    ['all','cashback','voucher','point','free'].forEach(t=>{
-      const n=t==='all'?DEALS.length:DEALS.filter(d=>d.dealType===t).length;
-      const el=document.getElementById('tab-'+t);
-      if(el) el.textContent=n;
-    });
-    document.getElementById('statNearby').textContent=DEALS.filter(d=>d.distM<=2000||d.distM===0).length;
-  }
-
-  function updateStats(){
-    const expiring=DEALS.filter(d=>d.expiryUrgent).length;
-    const saving=saved.reduce((a,d)=>a+d.dealAmountEst,0);
-    document.getElementById('statExpiring').textContent=expiring+' deal';
-    document.getElementById('statSaving').textContent=saving>0?saving.toLocaleString('vi-VN')+'đ':'Chưa lưu';
-  }
-
-  function cur(){return deck[idx%Math.max(deck.length,1)]}
-
-  function renderDots(){
-    document.getElementById('pdots').innerHTML=deck.map((_,i)=>{
-      const c=i<idx?'done':i===idx?'cur':'';
-      return`<span class="${c}"></span>`;
-    }).join('');
-  }
-
-  function renderCard(){
-    const card=document.getElementById('card');
-    if(!deck.length){
-      card.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#fff;text-align:center;padding:30px;background:#1a1a1a"><div style="font-size:44px;margin-bottom:14px">🔍</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Không có deal phù hợp</div><div style="font-size:10px;opacity:.5">Thử thay đổi bộ lọc</div></div>`;
-      document.getElementById('cb1').style.background='#e4e4e4';
-      document.getElementById('cb2').style.background='#d8d8d8';
-      return;
-    }
-    const d=cur();
-    const c=DEAL_TYPE_COLORS[d.dealType];
-    const n1=deck[(idx+1)%deck.length];
-    const n2=deck[(idx+2)%deck.length];
-    document.getElementById('cb1').style.background=n1?n1.bg:'#e4e4e4';
-    document.getElementById('cb2').style.background=n2?n2.bg:'#d8d8d8';
-
-    card.innerHTML=`
-      <div class="card-photo">
-        <img src="${d.img}" alt="${d.merchant}" onerror="this.style.display='none'">
-        <div class="card-photo-fallback" style="background:${d.bg}">${d.emoji}</div>
-        <div class="photo-grad"></div>
-        <div class="photo-badges">
-          <span class="cat-badge">${d.cat} · ${d.subcat}</span>
-          <span class="status-badge ${d.open?'open':'closed'}">${d.open?'ĐANG MỞ':'ĐÓNG CỬA'}</span>
+      <div class="hero-content">
+        <div class="merchant-mark" aria-label="Tiệm Mì Chú Cao">
+          <div><span>TIỆM MÌ</span><strong>CHÚ CAO</strong><small>QUẬN 5</small></div>
+        </div>
+        <div>
+          <div class="eyebrow">✦ Merchant nổi bật trên MoMo</div>
+          <h1>Tiệm Mì Chú Cao</h1>
+          <div class="hero-meta">
+            <strong>★ 4.0</strong><span>(345 đánh giá)</span><span class="dot">•</span>
+            <span>Quán ăn</span><span class="dot">•</span><span>Phường Chợ Quán, TP.HCM</span>
+          </div>
+          <div class="open-status">● Đang mở cửa &nbsp; 06:00 - 20:00</div>
         </div>
       </div>
-      <div class="hint like">♥ LƯU</div>
-      <div class="hint skip">✕ BỎ</div>
-      <div class="deal-panel">
-        <div class="deal-panel-top">
-          <div class="deal-hero">
-            <div class="deal-type-badge dt-${d.dealType}">${d.dealLabel}</div>
-            <div class="deal-amount">${d.dealAmount} <span>${d.dealAmountFull}</span></div>
-            <div class="deal-cond">${d.dealCond}</div>
-          </div>
-          <div class="card-dist-pill">📍 ${fmtDist(d.distM)}</div>
-        </div>
-        <div class="divider"></div>
-        <div class="merchant-row">
-          <div class="merchant-logo" style="background:${d.bg}">
-            <img src="${d.thumb}" alt="${d.merchant}" onerror="this.style.display='none';this.parentNode.innerHTML='${d.emoji}'">
-          </div>
-          <div>
-            <div class="merchant-name">${d.merchant}</div>
-            <div class="merchant-cat">${d.dealDetail}</div>
-          </div>
-        </div>
-        <div class="card-meta-row">
-          <span>${d.address}</span>
-          ${d.price!=='—'?`<span class="cmr-dot"></span><span>${d.price}</span>`:''}
-        </div>
-        <div class="expiry-strip">
-          <span class="expiry-label">Hết hạn</span>
-          <span class="expiry-val" style="${d.expiryUrgent?'color:#ef4444':''}">${d.expiry}${d.expiryUrgent?' ⚡':''}</span>
-        </div>
+      <button class="gallery-link" data-scroll="menu">▣ Xem món nổi bật</button>
+    </section>
+
+    <section class="benefits card" aria-label="Quyền lợi và thanh toán">
+      <div class="benefit primary">
+        <div class="benefit-icon">◷</div>
+        <div><small>Ví Trả Sau</small><strong>Áp dụng</strong><span>Mua trước, trả sau linh hoạt</span></div>
       </div>
-      <div class="card-counter">${idx+1}/${deck.length}</div>`;
-  }
-
-  function renderSaved(){
-    document.getElementById('savedTotal').textContent=saved.length+' merchant';
-    const el=document.getElementById('savedList');
-    const sum=document.getElementById('savedSummary');
-    const total=saved.reduce((a,d)=>a+d.dealAmountEst,0);
-
-    if(!saved.length){
-      el.innerHTML=`<div class="saved-empty"><div class="saved-empty-icon">⌖</div>Lưu merchant để quay lại xem dịch vụ, ưu đãi đang áp dụng, vị trí và phương thức thanh toán.</div>`;
-      sum.style.display='none';
-      return;
-    }
-    const c=DEAL_TYPE_COLORS;
-    el.innerHTML=saved.map(d=>`
-      <div class="saved-item">
-        <div class="saved-row1">
-          <div class="saved-thumb" style="background:${d.bg}">
-            <img src="${d.thumb}" alt="${d.merchant}" onerror="this.style.display='none';this.parentNode.textContent='${d.emoji}'">
-          </div>
-          <div>
-            <div class="saved-name">${d.merchant}</div>
-            <div class="saved-cat">${d.cat} · ${fmtDist(d.distM)}</div>
-          </div>
-        </div>
-        <div class="saved-deal-hl dt-${d.dealType}">
-          ${d.dealAmountFull}${d.dealAmountEst>0?' · Tiết kiệm ~'+fmtEst(d.dealAmountEst):''}
-        </div>
-        <div class="saved-cta">
-          <button class="btn-pay" onclick="doPay('${d.id}','${d.merchant}')">💳 Thanh toán MoMo</button>
-          ${d.distM>0?`<button class="btn-nav" onclick="doNav('${d.merchant}')">🗺️ Chỉ đường</button>`:''}
-        </div>
-      </div>`).join('');
-
-    if(total>0){
-      sum.style.display='block';
-      document.getElementById('savingAmt').textContent='~'+total.toLocaleString('vi-VN')+'đ';
-    }
-    document.getElementById('statSaving').textContent=total>0?total.toLocaleString('vi-VN')+'đ':'Đã lưu '+saved.length+' merchant';
-  }
-
-  function doPay(id,name){
-    track('deal_pay_click',{merchant_id:id,merchant_name:name});
-    alert(`Mở MoMo → Thanh toán tại ${name}\n\n(deeplink: momo://merchant?id=${id})`);
-  }
-  function doNav(name){
-    track('merchant_navigate',{merchant_name:name});
-    alert(`Mở Google Maps → Chỉ đường đến ${name}`);
-  }
-
-  const MERCHANT_TYPE_CONFIG = {
-    'Ăn uống': {
-      primary:'Xem menu và thanh toán',
-      catalogTitle:'Món được quan tâm',
-      services:[
-        {icon:'🍽️',title:'Ăn tại quán',desc:'Xem giờ mở cửa và thông tin phục vụ'},
-        {icon:'🥡',title:'Mang đi',desc:'Đặt món và nhận tại quầy'},
-        {icon:'▣',title:'Thanh toán QR',desc:'Dùng MoMo tại cửa hàng'}
-      ],
-      catalog:[
-        {icon:'⭐',name:'Món bán chạy',desc:'Được nhiều khách lựa chọn',price:'Từ 35K'},
-        {icon:'🥤',name:'Combo món và nước',desc:'Phù hợp cho bữa nhanh',price:'Từ 59K'},
-        {icon:'🥡',name:'Món mang đi',desc:'Đóng gói tại quầy',price:'Từ 30K'}
-      ]
-    },
-    'Siêu thị': {
-      primary:'Mua sắm và thanh toán',
-      catalogTitle:'Danh mục nổi bật',
-      services:[
-        {icon:'🛒',title:'Mua tại quầy',desc:'Thanh toán MoMo tại cửa hàng'},
-        {icon:'📦',title:'Đặt hàng',desc:'Chuẩn bị đơn trước khi nhận'},
-        {icon:'🛵',title:'Giao hàng',desc:'Kiểm tra phạm vi giao theo chi nhánh'}
-      ],
-      catalog:[
-        {icon:'🥬',name:'Thực phẩm tươi',desc:'Rau củ, thịt và hàng đông lạnh',price:'Theo sản phẩm'},
-        {icon:'🧴',name:'Gia dụng',desc:'Sản phẩm thiết yếu hằng ngày',price:'Theo sản phẩm'},
-        {icon:'🎁',name:'Combo ưu đãi',desc:'Danh mục đang có khuyến mãi',price:'Xem tại quầy'}
-      ]
-    },
-    'Mua sắm': {
-      primary:'Xem sản phẩm',
-      catalogTitle:'Sản phẩm và dịch vụ',
-      services:[
-        {icon:'🏬',title:'Mua tại cửa hàng',desc:'Kiểm tra địa chỉ và giờ hoạt động'},
-        {icon:'🛍️',title:'Đặt hàng online',desc:'Chuyển sang kênh bán của merchant'},
-        {icon:'🛡️',title:'Hậu mãi',desc:'Chính sách đổi trả hoặc bảo hành'}
-      ],
-      catalog:[
-        {icon:'🔥',name:'Sản phẩm nổi bật',desc:'Được quan tâm tại merchant',price:'Xem giá'},
-        {icon:'🏷️',name:'Đang giảm giá',desc:'Sản phẩm có ưu đãi hiện hành',price:'Xem deal'},
-        {icon:'🎁',name:'Quà tặng kèm',desc:'Theo điều kiện từng chương trình',price:'Có điều kiện'}
-      ]
-    },
-    'Sức khỏe': {
-      primary:'Xem sản phẩm và tư vấn',
-      catalogTitle:'Nhóm sản phẩm',
-      services:[
-        {icon:'💊',title:'Mua tại quầy',desc:'Kiểm tra chi nhánh gần nhất'},
-        {icon:'💬',title:'Tư vấn',desc:'Nhận hướng dẫn từ merchant'},
-        {icon:'🛵',title:'Giao hàng',desc:'Áp dụng cho sản phẩm phù hợp'}
-      ],
-      catalog:[
-        {icon:'🧴',name:'Chăm sóc cá nhân',desc:'Sản phẩm sử dụng hằng ngày',price:'Theo sản phẩm'},
-        {icon:'🌿',name:'Sức khỏe chủ động',desc:'Vitamin và sản phẩm bổ sung',price:'Theo sản phẩm'},
-        {icon:'✨',name:'Làm đẹp',desc:'Skincare và mỹ phẩm',price:'Theo sản phẩm'}
-      ]
-    },
-    'Giải trí': {
-      primary:'Đặt vé ngay',
-      catalogTitle:'Lịch và gói dịch vụ',
-      services:[
-        {icon:'🎟️',title:'Đặt vé',desc:'Chọn lịch và số lượng trên MoMo'},
-        {icon:'🍿',title:'Mua combo',desc:'Thêm sản phẩm đi kèm'},
-        {icon:'💺',title:'Chọn chỗ',desc:'Hoàn tất trước khi thanh toán'}
-      ],
-      catalog:[
-        {icon:'🎬',name:'Suất chiếu nổi bật',desc:'Khung giờ được quan tâm',price:'Từ 90K'},
-        {icon:'🍿',name:'Combo bắp nước',desc:'Mua cùng vé',price:'Từ 69K'},
-        {icon:'👨‍👩‍👧',name:'Gói nhóm',desc:'Cho từ 3 người',price:'Xem lịch'}
-      ]
-    },
-    'Di chuyển': {
-      primary:'Dùng dịch vụ',
-      catalogTitle:'Dịch vụ có thể dùng',
-      services:[
-        {icon:'📍',title:'Tìm điểm gần nhất',desc:'Chi nhánh hoặc dịch vụ quanh bạn'},
-        {icon:'🚗',title:'Bắt đầu hành trình',desc:'Mở flow phù hợp theo merchant'},
-        {icon:'▣',title:'Thanh toán MoMo',desc:'Dùng nguồn tiền đã liên kết'}
-      ],
-      catalog:[
-        {icon:'🛣️',name:'Dịch vụ tiêu chuẩn',desc:'Phù hợp nhu cầu thường ngày',price:'Theo sử dụng'},
-        {icon:'⚡',name:'Dịch vụ nhanh',desc:'Ưu tiên thời gian',price:'Theo sử dụng'},
-        {icon:'⭐',name:'Tích điểm',desc:'Quyền lợi theo giao dịch',price:'Theo chương trình'}
-      ]
-    },
-    'CVS': {
-      primary:'Mua nhanh tại cửa hàng',
-      catalogTitle:'Danh mục mua nhanh',
-      services:[
-        {icon:'🏪',title:'Mua tại quầy',desc:'Merchant gần bạn và mở cửa dài giờ'},
-        {icon:'🛵',title:'Giao nhanh',desc:'Kiểm tra phạm vi từng chi nhánh'},
-        {icon:'▣',title:'Thanh toán QR',desc:'Nhận deal khi dùng MoMo'}
-      ],
-      catalog:[
-        {icon:'🥤',name:'Đồ uống',desc:'Nước và sản phẩm dùng nhanh',price:'Từ 10K'},
-        {icon:'🍱',name:'Đồ ăn tiện lợi',desc:'Dùng ngay hoặc hâm nóng',price:'Từ 20K'},
-        {icon:'🧺',name:'Hàng thiết yếu',desc:'Sản phẩm sử dụng hằng ngày',price:'Theo sản phẩm'}
-      ]
-    }
-  };
-
-  function merchantExperience(d){
-    const config=MERCHANT_TYPE_CONFIG[d.cat]||MERCHANT_TYPE_CONFIG['Mua sắm'];
-    return{
-      primary:config.primary,
-      catalogTitle:config.catalogTitle,
-      services:d.services||config.services,
-      catalog:d.menu||config.catalog,
-      about:d.about||`${d.merchant} là merchant thuộc nhóm ${d.cat} · ${d.subcat}. Trang này tập trung các dịch vụ có thể sử dụng, chi nhánh, phương thức thanh toán và ưu đãi MoMo đang áp dụng.`,
-      faq:d.faq||[
-        {q:`${d.merchant} hỗ trợ thanh toán nào?`,a:'Bạn có thể dùng Ví MoMo, nguồn tiền ngân hàng liên kết và các phương thức được hiển thị tại merchant.'},
-        {q:'Ưu đãi có áp dụng tại mọi chi nhánh không?',a:'Điều kiện có thể khác theo chi nhánh và thời gian. Hãy kiểm tra trạng thái áp dụng trước khi thanh toán.'},
-        {q:'Làm sao biết mình nhận được ưu đãi?',a:'Trang chi tiết hiển thị phương thức thanh toán, giá trị tối thiểu và hạn mức hoàn tiền trước khi bạn bắt đầu.'}
-      ]
-    };
-  }
-
-  function doPrimary(id,name,label){
-    track('merchant_primary_action',{merchant_id:id,merchant_name:name,action_label:label});
-    alert(`${label} tại ${name}\n\nPrototype sẽ mở flow phù hợp theo loại merchant.`);
-  }
-  function doShare(name){
-    track('merchant_share',{merchant_name:name});
-    alert(`Đã tạo link chia sẻ cho ${name}`);
-  }
-
-  function openDetail(){
-    if(!deck.length) return;
-    const d=cur();
-    const tc=DEAL_TYPE_COLORS[d.dealType];
-    const exp=merchantExperience(d);
-    const rating=d.rating||4.5;
-    const reviews=d.reviews||Math.round(120+d.distM/3);
-    const hours=d.hours||'08:00 - 22:00';
-    const updated=d.updated||'10/06/2026';
-    document.getElementById('drawerSheet').innerHTML=`
-      <div class="detail-cover" style="background:${d.bg}">
-        <img src="${d.img}" alt="${d.merchant}" onerror="this.style.display='none'">
-        <div class="detail-top-actions">
-          <button class="detail-icon-btn" onclick="doShare('${d.merchant}')" title="Chia sẻ">↗</button>
-          <button class="detail-icon-btn" onclick="saveFromDrawer()" title="Lưu merchant">♡</button>
-          <button class="detail-icon-btn" onclick="closeDetail()" title="Đóng">✕</button>
-        </div>
-        <div class="detail-cover-copy">
-          <div class="detail-badges">
-            <span class="detail-badge">${d.cat} · ${d.subcat}</span>
-            <span class="detail-badge verified">✓ MoMo verified</span>
-            <span class="detail-badge">${d.open?'Đang mở':'Đóng cửa'}</span>
-          </div>
-          <h2>${d.merchant}</h2>
-          <p>${d.address} · ${fmtDist(d.distM)} từ vị trí hiện tại</p>
-        </div>
+      <div class="benefit">
+        <div class="benefit-icon">50%</div>
+        <div><small>Ưu đãi tháng 6</small><strong>Hoàn 50%</strong><span>Tối đa 10.000đ mỗi giao dịch</span></div>
       </div>
+      <div class="benefit">
+        <div class="benefit-icon">mo</div>
+        <div><small>Thanh toán bằng</small><strong>Ví MoMo</strong><span>Quét QR nhanh tại quán</span></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🏦</div>
+        <div><small>Nguồn tiền</small><strong>Ngân hàng liên kết</strong><span>Thanh toán qua mã QR</span></div>
+      </div>
+    </section>
 
-      <div class="detail-layout">
-        <div class="detail-main">
-          <section class="detail-card">
-            <div class="detail-summary">
-              <div class="detail-identity">
-                <div class="drawer-logo" style="background:${d.bg}">
-                  <img src="${d.thumb}" alt="${d.merchant}" onerror="this.style.display='none';this.parentNode.textContent='${d.emoji}'">
-                </div>
-                <div>
-                  <div class="drawer-mname">${d.merchant}</div>
-                  <div class="drawer-mcat">${d.cat} · ${d.subcat} · ${d.price!=='—'?d.price:'Giá theo dịch vụ'}</div>
-                  <div class="drawer-mstats">
-                    <span class="rating">★ ${rating} (${reviews} đánh giá)</span>
-                    <span class="open-now">● ${d.open?'Đang mở':'Đóng cửa'} · ${hours}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="detail-actions">
-                <button class="action-primary" onclick="doPrimary('${d.id}','${d.merchant}','${exp.primary}')">${exp.primary}</button>
-                <button onclick="doNav('${d.merchant}')">⌖ Chỉ đường</button>
-                <button onclick="doShare('${d.merchant}')">↗ Chia sẻ</button>
+    <div class="page-grid">
+      <main class="main">
+        <section class="quick-info card">
+          <div class="quick-item"><i>📍</i><div><strong>Địa chỉ</strong><span>59 Trần Bình Trọng, Phường Chợ Quán, TP.HCM</span><span class="text-link">Xem bản đồ</span></div></div>
+          <div class="quick-item"><i>◷</i><div><strong>Giờ mở cửa</strong><span>06:00 - 20:00<br>Hằng ngày</span></div></div>
+          <div class="quick-item"><i>◉</i><div><strong>Khoảng giá</strong><span>30.000đ - 50.000đ</span></div></div>
+          <div class="quick-item"><i>✓</i><div><strong>Thanh toán</strong><span>MoMo QR<br>Ví Trả Sau</span></div></div>
+          <div class="quick-item"><i>✦</i><div><strong>Đặc trưng</strong><span>Mì tàu và hủ tiếu phong cách người Hoa</span></div></div>
+        </section>
+
+        <nav class="tabs" aria-label="Điều hướng nội dung">
+          <button class="tab active" data-target="intro">Giới thiệu</button>
+          <button class="tab" data-target="menu">Menu</button>
+          <button class="tab" data-target="reviews">Đánh giá</button>
+          <button class="tab" data-target="offer">Ưu đãi</button>
+          <button class="tab" data-target="faq">FAQ</button>
+        </nav>
+
+        <section class="section card" id="intro">
+          <div class="about-menu">
+            <div class="about">
+              <div class="section-title"><h2>Giới thiệu về Tiệm Mì Chú Cao</h2></div>
+              <p>Tiệm Mì Chú Cao là địa chỉ quen thuộc của thực khách yêu thích mì tàu và hủ tiếu kiểu Hoa tại khu vực Quận 5 cũ.</p>
+              <p>Điểm nhấn của quán là sợi mì tươi dai vừa phải, nước dùng thanh ngọt và các topping như gan, tim, tôm tươi, xá xíu, hoành thánh.</p>
+              <a class="text-link" href="#faq">Xem câu hỏi thường gặp →</a>
+            </div>
+            <div id="menu">
+              <div class="section-title"><h2>Món nổi bật</h2><a href="#menu">Xem toàn bộ menu →</a></div>
+              <div class="menu-grid">
+                <article class="dish"><div class="dish-photo"></div><div class="dish-copy"><strong>Mì hoành thánh</strong><span>45.000đ</span></div></article>
+                <article class="dish"><div class="dish-photo"></div><div class="dish-copy"><strong>Hủ tiếu mì thập cẩm</strong><span>Khoảng 40.000đ</span></div></article>
+                <article class="dish"><div class="dish-photo"></div><div class="dish-copy"><strong>Mì khô thập cẩm</strong><span>38.000đ - 45.000đ</span></div></article>
+                <article class="dish"><div class="dish-photo"></div><div class="dish-copy"><strong>Hủ tiếu 3 màu</strong><span>32.000đ - 45.000đ</span></div></article>
+                <article class="dish"><div class="dish-photo"></div><div class="dish-copy"><strong>Xá xíu riêng</strong><span>Khoảng 30.000đ</span></div></article>
+                <article class="dish"><div class="dish-photo"></div><div class="dish-copy"><strong>Bánh tôm chiên</strong><span>10.000đ - 15.000đ</span></div></article>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section class="eligibility">
-            <div class="eligibility-icon">%</div>
+        <section class="section card" id="reviews">
+          <div class="section-title"><h2>Đánh giá từ khách hàng</h2><a href="#reviews">345 đánh giá</a></div>
+          <div class="rating-layout">
+            <div class="score"><strong>4.0<small style="font-size:18px">/5</small></strong><div class="stars">★★★★☆</div><span>345 đánh giá trên MoMo</span></div>
+            <div class="bars">
+              <div class="bar-row"><span>5 ★</span><div class="bar"><i style="width:57%"></i></div><span>57%</span></div>
+              <div class="bar-row"><span>4 ★</span><div class="bar"><i style="width:25%"></i></div><span>25%</span></div>
+              <div class="bar-row"><span>3 ★</span><div class="bar"><i style="width:11%"></i></div><span>11%</span></div>
+              <div class="bar-row"><span>2 ★</span><div class="bar"><i style="width:5%"></i></div><span>5%</span></div>
+              <div class="bar-row"><span>1 ★</span><div class="bar"><i style="width:2%"></i></div><span>2%</span></div>
+            </div>
             <div>
-              <strong>Bạn có ưu đãi phù hợp tại merchant này</strong>
-              <p>${d.dealDetail}. ${d.dealCond}. Kiểm tra điều kiện trước khi thanh toán.</p>
+              <div class="review-tags"><span>Mì tươi</span><span>Nước dùng thanh</span><span>Giá hợp lý</span><span>Phục vụ nhanh</span></div>
+              <div class="review-card"><div class="avatar">M</div><div><strong>Điểm khách hàng thường nhắc tới</strong><p>Mì tươi, nước dùng thanh ngọt và nhiều lựa chọn topping theo phong cách người Hoa.</p></div></div>
             </div>
-            <div class="eligibility-value"><b>${d.dealAmount}</b><span>${d.dealAmountFull}</span></div>
-          </section>
+          </div>
+        </section>
 
-          <section class="detail-card">
-            <div class="detail-card-title">Bạn có thể làm gì tại đây <span>Module theo loại merchant</span></div>
-            <div class="service-grid">
-              ${exp.services.map(s=>`
-                <div class="service-item">
-                  <i>${s.icon}</i>
-                  <strong>${s.title}</strong>
-                  <span>${s.desc}</span>
-                </div>`).join('')}
-            </div>
-          </section>
+        <section class="section card offer" id="offer">
+          <div class="offer-icon">%</div>
+          <div><strong>Dùng Ví Trả Sau nhận hoàn tiền 50%</strong><span>Tối đa 10.000đ mỗi lần thanh toán. Áp dụng trong tháng 6 khi quét QR tại hàng quán có Loa MoMo. Khoản hoàn được ghi nhận vào Sổ Tay Hoàn Tiền.</span></div>
+          <button data-action="paylater">Xem điều kiện</button>
+        </section>
 
-          <section class="detail-card">
-            <div class="detail-card-title">${exp.catalogTitle}<span>Xem tất cả</span></div>
-            <div class="menu-list">
-              ${exp.catalog.map(item=>`
-                <div class="menu-row">
-                  <div class="menu-thumb">${item.icon}</div>
-                  <div><strong>${item.name}</strong><span>${item.desc}</span></div>
-                  <span class="menu-price">${item.price}</span>
-                </div>`).join('')}
-            </div>
-          </section>
+        <section class="section card" id="faq">
+          <div class="section-title"><h2>Câu hỏi thường gặp</h2></div>
+          <div class="faq-item open">
+            <button class="faq-question">Tiệm Mì Chú Cao có món nào được gọi nhiều?<b>+</b></button>
+            <div class="faq-answer">Các món được nhiều thực khách lựa chọn gồm mì hoành thánh, hủ tiếu mì thập cẩm, mì khô thập cẩm và hủ tiếu 3 màu.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">Giá các món khoảng bao nhiêu?<b>+</b></button>
+            <div class="faq-answer">Mức giá phổ biến dao động từ 30.000đ đến 55.000đ mỗi người. Các món chính khoảng 32.000đ đến 45.000đ tùy loại.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">Quán có thanh toán MoMo và Ví Trả Sau không?<b>+</b></button>
+            <div class="faq-answer">Có. Quán hỗ trợ quét QR bằng Ví MoMo, ngân hàng liên kết và Ví Trả Sau theo điều kiện tài khoản.</div>
+          </div>
+        </section>
+      </main>
 
-          <section class="detail-card">
-            <div class="detail-card-title">Về merchant</div>
-            <p class="about-copy">${exp.about}</p>
-          </section>
+      <aside class="side">
+        <section class="side-card card">
+          <div class="map" aria-label="Bản đồ minh họa"><div class="pin"></div></div>
+          <div class="address-block"><span>📍</span><span>59 Trần Bình Trọng,<br>Phường Chợ Quán, TP.HCM</span></div>
+          <button class="primary-btn" data-action="directions">Chỉ đường</button>
+        </section>
 
-          <section class="detail-card">
-            <div class="detail-card-title">Câu hỏi thường gặp</div>
-            ${exp.faq.map(item=>`
-              <div class="faq-item"><strong>${item.q}</strong><p>${item.a}</p></div>
-            `).join('')}
-          </section>
-        </div>
+        <section class="side-card card paylater-card">
+          <small>Thanh toán linh hoạt</small>
+          <h3>Mua trước, trả sau tại quán</h3>
+          <p>Chọn Ví Trả Sau khi quét mã QR MoMo. Hạn mức và khả dụng phụ thuộc vào tài khoản của bạn.</p>
+          <button class="primary-btn" data-action="paylater">Mở Ví Trả Sau</button>
+        </section>
 
-        <aside class="detail-side">
-          <section class="detail-card">
-            <div class="detail-card-title">Phương thức thanh toán</div>
-            <div class="payment-list">
-              <div class="payment-item"><i>mo</i><div><strong>Ví MoMo</strong><span>Quét QR hoặc mở flow thanh toán trong ứng dụng.</span></div></div>
-              <div class="payment-item"><i>後</i><div><strong>Ví Trả Sau</strong><span>${d.dealType==='cashback'?'Đang có ưu đãi phù hợp.':'Khả dụng theo điều kiện tài khoản.'}</span></div></div>
-              <div class="payment-item"><i>🏦</i><div><strong>Ngân hàng liên kết</strong><span>Dùng nguồn tiền đã liên kết với MoMo.</span></div></div>
-            </div>
-          </section>
+        <section class="side-card card">
+          <div class="side-title">Khám phá thêm trên MoMo</div>
+          <div class="related">
+            <div class="related-item"><div class="related-icon">🍜</div><div><strong>Quán mì người Hoa</strong><span>Bộ sưu tập món Hoa tại TP.HCM</span></div></div>
+            <div class="related-item"><div class="related-icon">📍</div><div><strong>Ăn ngon khu Chợ Quán</strong><span>Merchant MoMo quanh khu vực</span></div></div>
+            <div class="related-item"><div class="related-icon">◷</div><div><strong>Nơi dùng Ví Trả Sau</strong><span>Tìm merchant có hỗ trợ</span></div></div>
+          </div>
+        </section>
 
-          <section class="detail-card">
-            <div class="detail-card-title">Ưu đãi đang áp dụng <span>${d.expiryUrgent?'Sắp hết hạn':'Còn hiệu lực'}</span></div>
-            <div class="deal-list">
-              <div class="mini-deal"><b>${d.dealAmountFull}</b><span>${d.dealCond} · Hết hạn ${d.expiry}</span></div>
-              <ul class="drawer-cond-list" style="list-style:none;padding:0;margin:8px 0 0">
-                ${d.conditions.map(c=>`<li style="font-size:8px;color:#667085;padding:4px 0;border-bottom:1px solid #eef0f3">✓ ${c}</li>`).join('')}
-              </ul>
-            </div>
-          </section>
+        <section class="side-card card">
+          <div class="side-title">Chia sẻ</div>
+          <div class="share-row">
+            <button data-share="Facebook">f</button><button data-share="Messenger">m</button>
+            <button data-share="Zalo">Zalo</button><button data-share="Sao chép link">🔗</button>
+          </div>
+        </section>
+        <p class="source-note">Thông tin merchant được dựng lại từ trang MoMo, truy cập ngày 14/06/2026. Bản đồ và ảnh món là minh họa cho prototype.</p>
+      </aside>
+    </div>
+  </div>
 
-          <section class="detail-card">
-            <div class="detail-card-title">Chi nhánh và vị trí <span>Xem bản đồ</span></div>
-            <div class="branch-list">
-              <div class="branch-item"><i>⌖</i><div><strong>${d.address}</strong><span>${fmtDist(d.distM)} · ${d.open?'Đang mở':'Đóng cửa'} · ${hours}</span></div></div>
-            </div>
-          </section>
+  <div class="mobile-bar">
+    <button data-action="directions">Chỉ đường</button>
+    <button class="pay" data-action="open-app">Thanh toán bằng MoMo</button>
+  </div>
 
-          <section class="detail-card">
-            <div class="detail-card-title">Thông tin tin cậy</div>
-            <div class="trust-list">
-              <div class="trust-item"><i>✓</i><div><strong>Merchant MoMo đã xác minh</strong><span>Thông tin thanh toán thuộc mạng lưới chấp nhận MoMo.</span></div></div>
-              <div class="trust-item"><i>↻</i><div><strong>Cập nhật gần nhất ${updated}</strong><span>Giờ hoạt động và ưu đãi cần được đồng bộ theo chi nhánh.</span></div></div>
-              <div class="trust-item"><i>!</i><div><strong>Báo thông tin chưa đúng</strong><span>Cho phép user gửi correction về địa chỉ, giờ mở cửa hoặc dịch vụ.</span></div></div>
-            </div>
-          </section>
-        </aside>
-      </div>
-
-      <div class="detail-sticky">
-        <button class="sticky-secondary" onclick="saveFromDrawer()">♡ Lưu merchant</button>
-        ${d.distM>0?`<button class="sticky-secondary" onclick="doNav('${d.merchant}')">⌖ Chỉ đường</button>`:''}
-        <button class="sticky-primary" onclick="doPrimary('${d.id}','${d.merchant}','${exp.primary}')">${exp.primary}</button>
-      </div>`;
-    document.getElementById('drawer').classList.add('open');
-    track('merchant_detail_open',{merchant_id:d.id,merchant_category:d.cat,deal_type:d.dealType});
-  }
-  function closeDetail(){document.getElementById('drawer').classList.remove('open')}
-  function saveFromDrawer(){closeDetail();doSave()}
-  document.getElementById('drawerBd').addEventListener('click',closeDetail);
-
-  // Swipe
-  const card=document.getElementById('card');
-  let x0=0,dragging=false,dx=0;
-  const THR=80;
-  function getHints(){return{like:card.querySelector('.hint.like'),skip:card.querySelector('.hint.skip')}}
-  function dragStart(x){x0=x;dragging=true;dx=0;card.style.transition='none';card.classList.add('dragging')}
-  function dragMove(x){
-    if(!dragging)return;dx=x-x0;
-    card.style.transform=`translateX(calc(-50% + ${dx}px)) rotate(${dx*.05}deg)`;
-    const h=getHints();
-    if(h.like)h.like.style.opacity=Math.min(1,Math.max(0,dx/THR));
-    if(h.skip)h.skip.style.opacity=Math.min(1,Math.max(0,-dx/THR));
-  }
-  function animOut(dir,cb){
-    card.style.transition='transform .28s ease,opacity .28s';
-    card.style.transform=dir>0?'translateX(110%) rotate(20deg)':'translateX(-110%) rotate(-20deg)';
-    card.style.opacity='0';
-    setTimeout(()=>{card.style.transition='none';card.style.transform='translateX(-50%)';card.style.opacity='';cb()},290);
-  }
-  function goNext(){idx=(idx+1)%Math.max(deck.length,1);renderCard();renderDots()}
-  function doSave(){
-    if(!deck.length)return;
-    const d=cur();
-    track('merchant_saved',{merchant_id:d.id,deal_type:d.dealType,deal_est:d.dealAmountEst});
-    if(!saved.some(x=>x.id===d.id)){saved.push(d);renderSaved()}
-    animOut(1,goNext);
-  }
-  function doSkip(){
-    if(!deck.length)return;
-    track('deal_skipped',{merchant_id:cur().id,deal_type:cur().dealType});
-    animOut(-1,goNext);
-  }
-  function dragEnd(){
-    if(!dragging)return;dragging=false;card.classList.remove('dragging');
-    if(dx>THR)doSave();
-    else if(dx<-THR)doSkip();
-    else{
-      card.style.transition='transform .3s ease';card.style.transform='translateX(-50%)';
-      setTimeout(()=>card.style.transition='none',310);
-      const h=getHints();if(h.like)h.like.style.opacity='0';if(h.skip)h.skip.style.opacity='0';
+  <script>
+    window.dataLayer=window.dataLayer||[];
+    function track(event,params){window.dataLayer.push({event,...params});console.log('[momo_track]',event,params)}
+    function notify(message){
+      const old=document.querySelector('.toast');if(old)old.remove();
+      const toast=document.createElement('div');
+      toast.className='toast';
+      toast.textContent=message;
+      Object.assign(toast.style,{position:'fixed',left:'50%',bottom:'84px',transform:'translateX(-50%)',zIndex:80,background:'#171b24',color:'#fff',padding:'11px 16px',borderRadius:'999px',fontSize:'11px',fontWeight:'750',boxShadow:'0 12px 30px #0003'});
+      document.body.appendChild(toast);
+      setTimeout(()=>toast.remove(),2200);
     }
-  }
-  card.addEventListener('touchstart',e=>dragStart(e.touches[0].clientX),{passive:true});
-  card.addEventListener('touchmove',e=>{e.preventDefault();dragMove(e.touches[0].clientX)},{passive:false});
-  card.addEventListener('touchend',dragEnd);card.addEventListener('touchcancel',dragEnd);
-  card.addEventListener('mousedown',e=>{dragStart(e.clientX);e.preventDefault()});
-  document.addEventListener('mousemove',e=>{if(dragging)dragMove(e.clientX)});
-  document.addEventListener('mouseup',()=>{if(dragging)dragEnd()});
 
-  // Buttons
-  document.getElementById('btnSkip').addEventListener('click',doSkip);
-  document.getElementById('btnSave').addEventListener('click',doSave);
-  document.getElementById('btnInfo').addEventListener('click',openDetail);
-
-  // Filter wiring
-  function wireFilter(elId,key){
-    document.getElementById(elId).querySelectorAll('.fchip').forEach(b=>{
-      b.addEventListener('click',()=>{
-        document.getElementById(elId).querySelectorAll('.fchip').forEach(x=>x.classList.remove('on'));
-        b.classList.add('on');
-        if(key==='deal')fDeal=b.dataset.v;
-        if(key==='cat')fCat=b.dataset.v;
-        if(key==='dist')fDist=b.dataset.v;
-        applyFilters();
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        const target=document.getElementById(tab.dataset.target);
+        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+        document.querySelectorAll('.tab').forEach(item=>item.classList.remove('active'));
+        tab.classList.add('active');
+        track('merchant_section_click',{section:tab.dataset.target,merchant_id:'tiem-my-chu-cao-46'});
       });
     });
-  }
-  wireFilter('fDeal','deal');
-  wireFilter('fCat','cat');
-  wireFilter('fDist','dist');
-
-  // Tab deal type
-  document.getElementById('dealTabs').querySelectorAll('.dtab').forEach(b=>{
-    b.addEventListener('click',()=>{
-      document.getElementById('dealTabs').querySelectorAll('.dtab').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on');
-      fTabDeal=b.dataset.v;
-      // Sync left panel
-      document.getElementById('fDeal').querySelectorAll('.fchip').forEach(x=>{
-        x.classList.toggle('on',x.dataset.v===fTabDeal);
-      });
-      fDeal=fTabDeal;
-      applyFilters();
-    });
-  });
-
-  document.getElementById('merchantSearch').addEventListener('input',e=>{
-    fSearch=e.target.value.trim().toLowerCase();
-    applyFilters();
-    track('merchant_search',{query:fSearch,result_count:deck.length});
-  });
-
-  // Init
-  updateTabCounts();
-  updateStats();
-  renderDots();
-  renderCard();
-  renderSaved();
-</script>
+    document.querySelectorAll('[data-scroll]').forEach(button=>button.addEventListener('click',()=>{
+      document.getElementById(button.dataset.scroll)?.scrollIntoView({behavior:'smooth',block:'center'});
+    }));
+    document.querySelectorAll('.faq-question').forEach(button=>button.addEventListener('click',()=>{
+      button.closest('.faq-item').classList.toggle('open');
+    }));
+    document.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{
+      const action=button.dataset.action;
+      const messages={
+        'open-app':'Mở deeplink MoMo để thanh toán tại Tiệm Mì Chú Cao',
+        directions:'Mở chỉ đường đến 59 Trần Bình Trọng',
+        paylater:'Mở thông tin Ví Trả Sau và điều kiện ưu đãi'
+      };
+      track('merchant_action_click',{action,merchant_id:'tiem-my-chu-cao-46'});
+      notify(messages[action]);
+    }));
+    document.querySelectorAll('[data-share]').forEach(button=>button.addEventListener('click',()=>{
+      track('merchant_share',{channel:button.dataset.share,merchant_id:'tiem-my-chu-cao-46'});
+      notify(`Đã chọn ${button.dataset.share}`);
+    }));
+  </script>
 </body>
 </html>
