@@ -75,12 +75,12 @@ const demos = {
     gate: 'Đo first-pass rate, số lần submit lại, phân phối điểm SEO/GEO và nhóm tiêu chí thường fail.'
   },
   merchant: {
-    name: 'MoMo Deal',
+    name: 'Merchant',
     title: 'MoMo Merchant Network',
     type: 'Merchant Discovery',
     maturity: 'Interaction prototype',
     src: 'demos/merchant.html',
-    address: 'prototype.momo.vn/momo-deals',
+    address: 'prototype.momo.vn/merchant',
     description: 'Merchant network đa ngành của MoMo: khám phá nơi ăn uống, mua sắm, sức khỏe, giải trí và di chuyển; xem dịch vụ, chi nhánh, ưu đãi và phương thức thanh toán.',
     jtbd: 'Tìm merchant phù hợp, biết có gì và dùng dịch vụ ngay',
     northStar: 'Qualified merchant action rate',
@@ -88,6 +88,21 @@ const demos = {
     hypothesis: 'Trang merchant có cấu trúc theo loại hình giúp MoMo chuyển từ danh sách deal sang lớp discovery và transaction cho toàn bộ mạng lưới chấp nhận thanh toán.',
     value: 'Tăng khả năng khám phá merchant, sử dụng dịch vụ, redemption ưu đãi và payment volume trên nhiều ngành hàng.',
     gate: 'Đo merchant detail view, service CTA, direction, save, deal eligibility check và payment initiation theo loại hình merchant.'
+  },
+  merchantDiscovery: {
+    name: 'Merchant Discovery',
+    title: 'Merchant Discovery',
+    type: 'Swipe Discovery',
+    maturity: 'Interactive prototype',
+    src: 'demos/merchant-discovery.html',
+    address: 'prototype.momo.vn/merchant-discovery',
+    description: 'Khám phá Merchant theo nhu cầu bằng card stack: swipe để bỏ qua hoặc lưu, xem nhanh rating, giá, địa chỉ, Ví Trả Sau và Sponsored Card từ Ads Placement.',
+    jtbd: 'Tìm và lưu Merchant phù hợp mà không phải đọc một danh sách dài',
+    northStar: 'Qualified merchant save rate',
+    loop: 'Choose category → Swipe → Save → View Merchant',
+    hypothesis: 'Card stack giảm tải lựa chọn trên mobile và biến merchant discovery thành hành vi khám phá chủ động thay vì lọc danh sách tĩnh.',
+    value: 'Tạo entry surface mới cho mạng lưới Merchant, đồng thời thu tín hiệu sở thích để cải thiện recommendation và Ads Placement.',
+    gate: 'Đo swipe depth, save rate, Merchant Detail CTR, ad impression/interest, frequency cap và saved-to-visit intent.'
   },
   worldcup: {
     name: 'World Cup Predictor',

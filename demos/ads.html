@@ -257,6 +257,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:#1d2939;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;transition:.3s;white-space:nowrap;z-index:999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* CTR badges */
+.ctr-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
+.ctr-high{background:#d1fadf;color:#027a48}
+.ctr-avg{background:#f3f4f6;color:#374151}
+.ctr-low{background:#fef3c7;color:#b45309}
+/* Slot availability */
+.slot-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
+.slot-avail{background:#d1fadf;color:#027a48}
+.slot-low{background:#fef3c7;color:#b45309}
+.slot-full{background:#fee4e2;color:#b42318}
+/* Unavailable placement */
+.placement-card.unavailable{opacity:.55;cursor:not-allowed;pointer-events:none}
+/* Proj slot summary */
+.proj-avail{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;margin-top:3px;width:fit-content}
+.proj-avail.ok{background:#d1fadf;color:#027a48}
+.proj-avail.low{background:#fef3c7;color:#b45309}
+.proj-avail.out{background:#fee4e2;color:#b42318}
+/* Conflict warning */
+.conflict-warn{font-size:11px;color:var(--amber);background:var(--amber-bg);border:1px solid #fde68a;border-radius:7px;padding:8px 10px;margin-bottom:8px;display:none;line-height:1.5}
+.conflict-warn.show{display:block}
+/* Freq cap hint */
+.freq-row{display:grid;grid-template-columns:1fr 120px;gap:6px}
+/* Page-format inventory block */
+.inv-block{background:var(--bg);border-radius:7px;padding:8px 10px;margin-bottom:8px}
+.inv-section-label{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.inv-pages{display:flex;flex-direction:column;gap:3px;margin-bottom:7px}
+.inv-page{display:flex;align-items:center;gap:6px;font-size:10px}
+.inv-page-label{font-weight:700;color:var(--ink);flex-shrink:0}
+.inv-url-text{font-size:9px;font-family:monospace;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.inv-views{font-size:9px;font-weight:700;color:var(--muted);flex-shrink:0}
+.inv-formats{display:flex;flex-wrap:wrap;gap:4px;padding-top:6px;border-top:1px solid var(--line)}
+.fmt-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px}
+/* Format tags on project card */
+.proj-fmt-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+.fmt-tag{font-size:8px;font-weight:700;padding:2px 5px;border-radius:4px}
 </style>
 </head>
 <body>
@@ -319,6 +355,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
     <!-- Step 2 -->
     <div class="step-content" id="s1">
+      <div id="conflictWarn" class="conflict-warn">
+        ⚠️ <strong>Cảnh báo overload:</strong> Popup kết hợp Top Bar hoặc Sticky Bottom trên cùng trang làm tăng UX friction đáng kể — người dùng bị chặn bởi 2+ lớp overlay. Cân nhắc chỉ dùng 1 vị trí intrusive mỗi session.
+      </div>
       <div>
         <div class="section-head">Universal — toàn site</div>
         <div class="form-hint" style="margin-bottom:8px">Không phụ thuộc UI trang — overlay, fixed position.</div>
@@ -352,6 +391,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
         <div class="section-head">Forecast chi tiết</div>
         <div class="summary-box">
           <div class="sum-row"><span class="sum-label">Tổng imp/ngày</span><strong class="sum-value momo" id="rvDaily">—</strong></div>
+          <div class="sum-row"><span class="sum-label">Projected clicks/ngày</span><strong class="sum-value" style="color:var(--green)" id="rvClicks">—</strong></div>
+          <div class="sum-row"><span class="sum-label">Avg CTR (weighted)</span><strong class="sum-value" id="rvAvgCtr">—</strong></div>
           <div class="sum-row"><span class="sum-label">Universal</span><strong class="sum-value" id="rvUniv">—</strong></div>
           <div class="sum-row"><span class="sum-label">Contextual</span><strong class="sum-value" id="rvCtx">—</strong></div>
           <div class="sum-row"><span class="sum-label">Số ngày</span><strong class="sum-value" id="rvDays">—</strong></div>
@@ -410,13 +451,13 @@ const PROJECTS = [
     pdNote:null,
   },
   {
-    id:'merchant', name:'MoMo Deal', icon:'🛍', type:'Discovery', tc:'t-discovery',
+    id:'merchant', name:'Merchant', icon:'🛍', type:'Discovery', tc:'t-discovery',
     urls:[
-      {id:'merchant-list',   label:'Deal Listing',    url:'momo.vn/deal',        views:115000, mobRatio:.81},
-      {id:'merchant-detail', label:'Merchant Detail', url:'momo.vn/quan-an/abc', views:67000,  mobRatio:.85},
+      {id:'merchant-list',   label:'Merchant Discovery', url:'momo.vn/merchant-discovery', views:115000, mobRatio:.88},
+      {id:'merchant-detail', label:'Merchant Detail',    url:'momo.vn/merchant/abc',       views:67000,  mobRatio:.85},
     ],
     contextual:['merchant-inline'],
-    pdNote:'⚠️ Sidebar cố định (Product Design constraint) — chỉ cho phép Inline Native trong feed',
+    pdNote:'Frequency guardrail: tối đa 1 Sponsored Card sau 3 - 5 Merchant trong production, frequency cap 2 impression/session',
   },
   {
     id:'credit', name:'Credit', icon:'💳', type:'Utility', tc:'t-utility',
@@ -455,27 +496,29 @@ const PROJECTS = [
   },
 ];
 
+const CTR_BENCH = {Banner:.003, Native:.008, Display:.004, Popup:.025, Float:.006};
+
 const UNIVERSAL = [
-  {id:'u-topbar', name:'Top Bar',       dims:'Full-width × 48px', format:'Banner', viewRate:.93, desc:'Fixed top, không push layout xuống'},
-  {id:'u-sticky', name:'Sticky Bottom', dims:'728×90 / 320×50',  format:'Banner', viewRate:.82, desc:'Fixed bottom bar'},
-  {id:'u-float',  name:'Float Button',  dims:'60×60px',           format:'Float',  viewRate:.71, desc:'Corner overlay, bottom-right'},
-  {id:'u-popup',  name:'Popup',         dims:'Full-screen',        format:'Popup',  viewRate:.96, desc:'Trigger khi vào trang hoặc chuyển trang'},
+  {id:'u-topbar', name:'Top Bar',       dims:'Full-width × 48px', format:'Banner', fillRate:.93, ctr:.009, slots:3, booked:2, desc:'Fixed top, không push layout xuống'},
+  {id:'u-sticky', name:'Sticky Bottom', dims:'728×90 / 320×50',  format:'Banner', fillRate:.82, ctr:.011, slots:2, booked:1, desc:'Fixed bottom bar'},
+  {id:'u-float',  name:'Float Button',  dims:'60×60px',           format:'Float',  fillRate:.71, ctr:.008, slots:1, booked:0, desc:'Corner overlay, bottom-right'},
+  {id:'u-popup',  name:'Popup',         dims:'Full-screen',        format:'Popup',  fillRate:.96, ctr:.032, slots:2, booked:2, desc:'Trigger khi vào trang hoặc chuyển trang'},
 ];
 
 const CONTEXTUAL = {
-  'cinema-billboard':   {name:'Cinema Hero Billboard', dims:'970×250',   format:'Banner',  viewRate:.88, desc:'Dưới nav, trên danh sách phim'},
-  'cinema-card-native': {name:'Movie Card Native',     dims:'Linh hoạt', format:'Native',  viewRate:.85, desc:'Blend vào movie card grid'},
-  'merchant-inline':    {name:'Inline Native',         dims:'Linh hoạt', format:'Native',  viewRate:.80, desc:'Inline trong feed, không đụng sidebar cố định'},
-  'credit-preform':     {name:'Pre-form Banner',       dims:'300×250',   format:'Display', viewRate:.76, desc:'Trên form tính vay'},
-  'credit-result':      {name:'Result Native',         dims:'Linh hoạt', format:'Native',  viewRate:.83, desc:'Blend vào kết quả sau khi tính'},
-  'ins-preform':        {name:'Pre-form Banner',       dims:'300×250',   format:'Display', viewRate:.74, desc:'Trên form báo giá BH'},
-  'ins-comparison':     {name:'Comparison Native',     dims:'Linh hoạt', format:'Native',  viewRate:.81, desc:'Blend vào bảng so sánh gói BH'},
-  'content-billboard':  {name:'Billboard',             dims:'970×250',   format:'Banner',  viewRate:.88, desc:'Hero dưới nav bài viết'},
-  'content-sidebar-med':{name:'Sidebar 300×250',       dims:'300×250',   format:'Display', viewRate:.78, desc:'Sidebar phải, trên fold'},
-  'content-sidebar-lg': {name:'Sidebar 300×600',       dims:'300×600',   format:'Display', viewRate:.61, desc:'Sidebar phải, dưới fold'},
-  'content-infeed':     {name:'In-article Native',     dims:'Linh hoạt', format:'Native',  viewRate:.85, desc:'Blend vào bài viết'},
-  'home-hero':          {name:'Hero Banner',            dims:'970×250',   format:'Banner',  viewRate:.90, desc:'Hero section chính trang chủ'},
-  'home-grid-native':   {name:'Service Grid Native',   dims:'Linh hoạt', format:'Native',  viewRate:.86, desc:'Blend vào service icon grid'},
+  'cinema-billboard':   {name:'Cinema Hero Billboard', dims:'970×250',   format:'Banner',  fillRate:.88, ctr:.004, slots:2, booked:0, desc:'Dưới nav, trên danh sách phim'},
+  'cinema-card-native': {name:'Movie Card Native',     dims:'Linh hoạt', format:'Native',  fillRate:.85, ctr:.012, slots:2, booked:1, desc:'Blend vào movie card grid'},
+  'merchant-inline':    {name:'Sponsored Swipe Card',  dims:'Linh hoạt', format:'Native',  fillRate:.80, ctr:.014, slots:2, booked:0, desc:'Card tài trợ đan xen trong swipe feed, có disclosure và frequency cap'},
+  'credit-preform':     {name:'Pre-form Banner',       dims:'300×250',   format:'Display', fillRate:.76, ctr:.006, slots:2, booked:0, desc:'Trên form tính vay'},
+  'credit-result':      {name:'Result Native',         dims:'Linh hoạt', format:'Native',  fillRate:.83, ctr:.018, slots:1, booked:1, desc:'Blend vào kết quả sau khi tính'},
+  'ins-preform':        {name:'Pre-form Banner',       dims:'300×250',   format:'Display', fillRate:.74, ctr:.005, slots:2, booked:1, desc:'Trên form báo giá BH'},
+  'ins-comparison':     {name:'Comparison Native',     dims:'Linh hoạt', format:'Native',  fillRate:.81, ctr:.016, slots:1, booked:0, desc:'Blend vào bảng so sánh gói BH'},
+  'content-billboard':  {name:'Billboard',             dims:'970×250',   format:'Banner',  fillRate:.88, ctr:.0035,slots:3, booked:2, desc:'Hero dưới nav bài viết'},
+  'content-sidebar-med':{name:'Sidebar 300×250',       dims:'300×250',   format:'Display', fillRate:.78, ctr:.0028,slots:2, booked:2, desc:'Sidebar phải, trên fold'},
+  'content-sidebar-lg': {name:'Sidebar 300×600',       dims:'300×600',   format:'Display', fillRate:.61, ctr:.0018,slots:2, booked:0, desc:'Sidebar phải, dưới fold'},
+  'content-infeed':     {name:'In-article Native',     dims:'Linh hoạt', format:'Native',  fillRate:.85, ctr:.011, slots:2, booked:1, desc:'Blend vào bài viết'},
+  'home-hero':          {name:'Hero Banner',            dims:'970×250',   format:'Banner',  fillRate:.90, ctr:.015, slots:3, booked:3, desc:'Hero section chính trang chủ'},
+  'home-grid-native':   {name:'Service Grid Native',   dims:'Linh hoạt', format:'Native',  fillRate:.86, ctr:.022, slots:2, booked:0, desc:'Blend vào service icon grid'},
 };
 
 // ── STATE
@@ -505,7 +548,7 @@ function calcUnivImp(uid) {
   let t = 0;
   selectedProjects.forEach(pid=>{
     const p = PROJECTS.find(x=>x.id===pid); if(!p) return;
-    p.urls.forEach(u2=>t+=Math.round(u2.views*u.viewRate));
+    p.urls.forEach(u2=>t+=Math.round(u2.views*u.fillRate));
   });
   return t;
 }
@@ -514,9 +557,27 @@ function calcCtxImp(cid) {
   let t = 0;
   PROJECTS.forEach(p=>{
     if(!selectedProjects.has(p.id)||!p.contextual.includes(cid)) return;
-    p.urls.forEach(u=>t+=Math.round(u.views*c.viewRate));
+    p.urls.forEach(u=>t+=Math.round(u.views*c.fillRate));
   });
   return t;
+}
+function calcWeightedCtr() {
+  let totalImp=0, totalClicks=0;
+  selectedPlacements.forEach(id=>{
+    const isU=id.startsWith('u-');
+    const d=isU?UNIVERSAL.find(x=>x.id===id):CONTEXTUAL[id]; if(!d) return;
+    const imp=isU?calcUnivImp(id):calcCtxImp(id);
+    totalImp+=imp; totalClicks+=imp*d.ctr;
+  });
+  return {avgCtr: totalImp>0?totalClicks/totalImp:0, dailyClicks:Math.round(totalClicks)};
+}
+function ctrRatingClass(ctr, format) {
+  const bench = CTR_BENCH[format]||0.004;
+  return ctr >= bench*1.3 ? 'ctr-high' : ctr >= bench*0.7 ? 'ctr-avg' : 'ctr-low';
+}
+function ctrRatingLabel(ctr, format) {
+  const bench = CTR_BENCH[format]||0.004;
+  return ctr >= bench*1.3 ? '↑ Cao' : ctr >= bench*0.7 ? '= TB' : '↓ Thấp';
 }
 function totalImp() {
   let univ=0, ctx=0;
@@ -528,6 +589,58 @@ function totalImp() {
 }
 
 // ── PROJECT GRID
+function fmtGroups(p) {
+  const g = {};
+  p.contextual.forEach(cid=>{
+    const c=CONTEXTUAL[cid]; if(!c) return;
+    if(!g[c.format]) g[c.format]={avail:0,total:0};
+    g[c.format].total++;
+    if(c.slots-c.booked>0) g[c.format].avail++;
+  });
+  return g;
+}
+
+function projFormatTags(p) {
+  const g = fmtGroups(p);
+  if(!Object.keys(g).length) return '';
+  return `<div class="proj-fmt-tags">${Object.entries(g).map(([fmt,{avail,total}])=>{
+    const cls=avail===0?'slot-full':avail<total?'slot-low':'slot-avail';
+    const icon=avail===0?'✗':avail<total?'◑':'✓';
+    return `<span class="fmt-tag ${cls}">${icon} ${fmt}</span>`;
+  }).join('')}</div>`;
+}
+
+function projPageInventory(p) {
+  if(!p.contextual.length) return '';
+  const g = fmtGroups(p);
+  return `<div class="inv-block">
+    <div class="inv-section-label">Trang áp dụng</div>
+    <div class="inv-pages">
+      ${p.urls.map(u=>`<div class="inv-page">
+        <span class="inv-page-label">📄 ${u.label}</span>
+        <span class="inv-url-text">${u.url}</span>
+        <span class="inv-views">${fmtN(u.views)}/ngày</span>
+      </div>`).join('')}
+    </div>
+    <div class="inv-formats">
+      ${Object.entries(g).map(([fmt,{avail,total}])=>{
+        const cls=avail===0?'slot-full':avail<total?'slot-low':'slot-avail';
+        const lbl=avail===0?`${fmt} Hết slot`:avail<total?`${fmt} ${avail}/${total} slot trống`:`${fmt} ${avail} slot trống`;
+        return `<span class="fmt-pill ${cls}">${lbl}</span>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function projSlotSummary(p) {
+  let total=0, avail=0;
+  p.contextual.forEach(cid=>{const c=CONTEXTUAL[cid];if(!c)return;total++;if(c.slots-c.booked>0)avail++;});
+  if(total===0) return '';
+  const cls = avail===0?'out':avail<total?'low':'ok';
+  const lbl = avail===0?'✗ Hết vị trí':`✓ ${avail}/${total} vị trí trống`;
+  return `<span class="proj-avail ${cls}">${lbl}</span>`;
+}
+
 function renderProjectGrid() {
   document.getElementById('projectGrid').innerHTML = PROJECTS.map(p => {
     const sel = selectedProjects.has(p.id);
@@ -535,6 +648,8 @@ function renderProjectGrid() {
       <div class="proj-card-top"><span class="proj-icon">${p.icon}</span><span class="proj-check"></span></div>
       <div class="proj-name">${p.name}</div>
       <span class="proj-type ${p.tc}">${p.type}</span>
+      ${projSlotSummary(p)}
+      ${projFormatTags(p)}
       <div class="proj-stats">
         <span>📄 ${p.urls.length} trang</span>
         <span>👁 ${fmtN(projViews(p))}/ngày</span>
@@ -561,20 +676,28 @@ function toggleProject(id) {
 // ── PLACEMENTS
 const BADGE = {Native:'pb-native',Banner:'pb-banner',Popup:'pb-popup',Float:'pb-float',Display:'pb-display'};
 
-function plCard(id, name, dims, format, viewRate, desc, imp) {
+function plCard(data, imp) {
+  const {id, name, dims, format, ctr, slots, booked, desc} = data;
   const sel = selectedPlacements.has(id);
-  return `<div class="placement-card${sel?' selected':''}" data-plid="${id}">
-    <input type="checkbox" data-plid="${id}"${sel?' checked':''}>
+  const avail = slots - booked;
+  const unavail = avail <= 0;
+  const rc = ctrRatingClass(ctr, format);
+  const rl = ctrRatingLabel(ctr, format);
+  const sc = avail===0?'slot-full':avail===1?'slot-low':'slot-avail';
+  const sl = avail===0?'Hết slot':`${avail} slot trống`;
+  return `<div class="placement-card${sel?' selected':''}${unavail?' unavailable':''}" data-plid="${id}">
+    <input type="checkbox" data-plid="${id}"${sel?' checked':''}${unavail?' disabled':''}>
     <div class="placement-info">
-      <div class="placement-name">${name}</div>
+      <div class="placement-name">${name}${unavail?' <span style="color:var(--red);font-size:10px;font-weight:600">(Hết slot)</span>':''}</div>
       <div class="placement-meta">
         <span class="pbadge ${BADGE[format]||'pb-display'}">${format}</span>
         <span>${dims}</span>
-        <span class="vr-badge">View ${Math.round(viewRate*100)}%</span>
+        <span class="ctr-badge ${rc}">CTR ${(ctr*100).toFixed(1)}% ${rl}</span>
+        <span class="slot-badge ${sc}">◉ ${sl}</span>
         <span style="color:var(--muted)">${desc}</span>
       </div>
     </div>
-    <div class="placement-imp">${fmtN(imp)}<small>imp/ngày</small></div>
+    <div class="placement-imp">${unavail?'<span style="color:var(--red);font-size:10px">—</span>':fmtN(imp)}<small>${unavail?'':' imp/ngày'}</small></div>
   </div>`;
 }
 
@@ -589,7 +712,7 @@ function attachPlCards(container) {
 
 function renderUniversal() {
   const el = document.getElementById('universalList');
-  el.innerHTML = UNIVERSAL.map(u=>plCard(u.id,u.name,u.dims,u.format,u.viewRate,u.desc,calcUnivImp(u.id))).join('');
+  el.innerHTML = UNIVERSAL.map(u=>plCard(u, calcUnivImp(u.id))).join('');
   attachPlCards(el);
 }
 
@@ -605,10 +728,11 @@ function renderContextual() {
     html += `<div style="margin-top:14px">
       <div class="section-head">${p.icon} ${p.name} — Contextual</div>
       ${p.pdNote?`<div class="pd-note">${p.pdNote}</div>`:''}
+      ${projPageInventory(p)}
       <div class="placement-group">
         ${p.contextual.map(cid=>{
           const c=CONTEXTUAL[cid]; if(!c) return '';
-          return plCard(cid,c.name,c.dims,c.format,c.viewRate,c.desc,calcCtxImp(cid));
+          return plCard(c, calcCtxImp(cid));
         }).join('')}
       </div>
     </div>`;
@@ -617,7 +741,20 @@ function renderContextual() {
   attachPlCards(wrap);
 }
 
+function checkConflict() {
+  const hasPopup = selectedPlacements.has('u-popup');
+  const hasTopbar = selectedPlacements.has('u-topbar');
+  const hasSticky = selectedPlacements.has('u-sticky');
+  const warn = document.getElementById('conflictWarn');
+  if (warn) warn.classList.toggle('show', hasPopup && (hasTopbar || hasSticky));
+}
+
 function togglePlacement(id) {
+  const isU = id.startsWith('u-');
+  const d = isU ? UNIVERSAL.find(x=>x.id===id) : CONTEXTUAL[id];
+  if (d && (d.slots - d.booked) <= 0 && !selectedPlacements.has(id)) {
+    showToast('Vị trí này đã hết slot — không thể đặt thêm.'); return;
+  }
   const adding = !selectedPlacements.has(id);
   adding ? selectedPlacements.add(id) : selectedPlacements.delete(id);
 
@@ -636,6 +773,7 @@ function togglePlacement(id) {
   renderContextual();
   updateVizZones();
   updateMetrics();
+  checkConflict();
   if (adding) {
     const z = document.querySelector(`[data-zone="${id}"]`);
     if(z){z.classList.remove('flash');void z.offsetWidth;z.classList.add('flash');}
@@ -732,13 +870,13 @@ function renderDesktop(proj, url) {
         </div>
         <div class="merchant-main">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:10px;font-weight:700">Deal gần bạn</div>
+            <div style="font-size:10px;font-weight:700">Merchant Discovery</div>
             <div style="width:55px;height:20px;background:var(--momo-light);border-radius:4px"></div>
           </div>
           <div class="deal-grid">
             ${[0,1].map(()=>`<div class="deal-card-el"><div class="deal-img"></div><div class="deal-info"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
             <div class="ad-zone deal-inline-zone" data-zone="merchant-inline">
-              <span class="az-label">Inline Native</span><span class="az-dim">Linh hoạt</span>
+              <span class="az-label">Sponsored Swipe Card</span><span class="az-dim">Linh hoạt</span>
             </div>
             ${[0,1,2].map(()=>`<div class="deal-card-el"><div class="deal-img"></div><div class="deal-info"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
           </div>
@@ -856,7 +994,7 @@ function renderMobile(proj, url) {
     case 'merchant':
       body = `<div class="mob-content" style="padding:0;overflow:hidden">
         <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
-        <div class="ad-zone mob-inline" data-zone="merchant-inline"><span class="az-label">Inline Native</span></div>
+        <div class="ad-zone mob-inline" data-zone="merchant-inline"><span class="az-label">Sponsored Swipe Card</span></div>
         <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
         <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div></div>
       </div>`;
@@ -980,8 +1118,11 @@ function renderReview() {
   document.getElementById('rvDates').textContent    = start&&end?`${start} → ${end} (${days} ngày)`:'—';
   document.getElementById('rvProjects').textContent = projs.length?projs.map(p=>p.name).join(', '):'—';
   document.getElementById('rvCount').textContent    = selectedPlacements.size;
+  const {avgCtr, dailyClicks} = calcWeightedCtr();
   document.getElementById('rvTotalImp').textContent = fmtN(total*days);
   document.getElementById('rvDaily').textContent    = fmtN(total)+'/ngày';
+  document.getElementById('rvClicks').textContent   = dailyClicks>0?fmtN(dailyClicks)+'/ngày':'—';
+  document.getElementById('rvAvgCtr').textContent   = avgCtr>0?(avgCtr*100).toFixed(2)+'%':'—';
   document.getElementById('rvUniv').textContent     = fmtN(univ)+'/ngày';
   document.getElementById('rvCtx').textContent      = fmtN(ctx)+'/ngày';
   document.getElementById('rvDays').textContent     = days+' ngày';
@@ -991,6 +1132,7 @@ function renderReview() {
         const isU=id.startsWith('u-');
         const p=isU?UNIVERSAL.find(x=>x.id===id):CONTEXTUAL[id]; if(!p) return '';
         const imp=isU?calcUnivImp(id):calcCtxImp(id);
+        const rc=ctrRatingClass(p.ctr,p.format);
         return `<div class="review-item">
           <span>${isU?'🌐':'📄'}</span>
           <div class="rv-info">
@@ -998,7 +1140,8 @@ function renderReview() {
             <div class="rv-sub">
               <span>${p.dims}</span>
               <span class="pbadge ${BADGE[p.format]||'pb-display'}">${p.format}</span>
-              <span>View ${Math.round(p.viewRate*100)}%</span>
+              <span class="ctr-badge ${rc}">CTR ${(p.ctr*100).toFixed(1)}%</span>
+              <span class="slot-badge ${p.slots-p.booked>0?'slot-avail':'slot-full'}">${p.slots-p.booked} slot trống</span>
             </div>
           </div>
           <span class="rv-imp">${fmtN(imp)}/ngày</span>

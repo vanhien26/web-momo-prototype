@@ -31,11 +31,14 @@ const PROTOTYPES = [
       { id: 'stock',           name: 'Chứng Khoán',        category: 'Investment', description: 'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.',         jtbd: 'Làm quen thị trường chứng khoán không rủi ro' },
       { id: 'ty-gia',          name: 'Tỷ Giá',             category: 'FX',         description: 'Quy đổi VND sang 6 ngoại tệ phổ biến theo tỷ giá mua bán tham chiếu, xem chênh lệch spread.', jtbd: 'Biết trước được bao nhiêu khi đổi tiền' },
       { id: 'quy-du-phong',    name: 'Quỹ Dự Phòng',      category: 'Planning',   description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',       jtbd: 'Xác định đúng mức quỹ dự phòng cần tích lũy' },
+      { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính',   category: 'Planning',   description: 'Ước tính số tiền cần tích lũy để đạt FIRE theo quy tắc an toàn rút vốn.',             jtbd: 'Biết mình cần bao nhiêu để đạt tự do tài chính' },
+      { id: 'dam-cuoi',        name: 'Kế Hoạch Đám Cưới', category: 'Planning',   description: 'Tính số tiền cần để dành mỗi tháng cho đám cưới theo ngân sách và thời hạn.',          jtbd: 'Lên kế hoạch tích lũy cho đám cưới không thiếu hụt' },
+      { id: 'hoc-phi',         name: 'Học Phí Tương Lai',  category: 'Planning',   description: 'Ước tính học phí thực tế theo lạm phát và tính số tiền cần chuẩn bị từ hôm nay.',      jtbd: 'Tính trước chi phí học phí để chuẩn bị đủ vốn' },
     ],
   },
   {
     id: 'merchant',
-    name: 'MoMo Deal',
+    name: 'Merchant',
     category: 'Platform',
     maturity: 'Interaction',
     description: 'Merchant network đa ngành của MoMo: khám phá nơi ăn uống, mua sắm, sức khỏe, giải trí và di chuyển; xem dịch vụ, chi nhánh, ưu đãi, phương thức thanh toán rồi đi tới hành động phù hợp.',
@@ -46,27 +49,37 @@ const PROTOTYPES = [
     value: 'Tăng khả năng khám phá merchant, sử dụng dịch vụ, redemption ưu đãi và payment volume trên nhiều ngành hàng.',
     gate: 'Đo merchant detail view, service CTA, direction, save, deal eligibility check và payment initiation theo loại hình merchant.',
     src: 'demos/merchant.html',
-    address: 'web-momo-prototype.vercel.app/momo-deals',
+    address: 'web-momo-prototype.vercel.app/merchant',
   },
   {
-    id: 'planning-tools',
-    name: 'Life Planning Tools',
-    category: 'Widget',
+    id: 'cinema-film-detail',
+    name: 'Cinema Film Detail',
+    category: 'Platform',
+    maturity: 'Campaign Page',
+    description: 'Film Detail page cho Summer Campaign 2026 — tích hợp Hero campaign, Game Mở Khoá (Mua vé → Check-in → Review), Bundle Banner, Thông tin phim, Lịch chiếu và Đánh giá.',
+    jtbd: 'Mua vé và tham gia campaign ngay từ trang phim',
+    northStar: 'Game mission completion + ticket purchase',
+    loop: 'Hero → Game block → Buy ticket → Check-in → Review',
+    hypothesis: 'Tích hợp campaign gamification trực tiếp vào film detail tăng mission completion rate so với popup/banner riêng lẻ.',
+    value: 'Tạo luồng campaign mới cho Cinema: từ organic traffic vào film detail → mua vé → check-in → review → cashback.',
+    gate: 'Đo mission completion rate (1→2→3), ticket CTA CTR, check-in activation và review submission.',
+    src: 'demos/cinema-film-detail.html',
+    address: 'web-momo-prototype.vercel.app/cinema/nghi-he-so-nghi-huu',
+  },
+  {
+    id: 'merchant-discovery',
+    name: 'Merchant Discovery',
+    category: 'Platform',
     maturity: 'Interactive',
-    description: 'Bộ công cụ lập kế hoạch tài chính cá nhân dài hạn: tự do tài chính, đám cưới, học phí. Mỗi tool là một standalone page tối ưu SEO.',
-    jtbd: 'Lên kế hoạch tài chính cho mục tiêu lớn',
-    northStar: 'Goal completion rate',
-    loop: 'Search → Plan → Save',
-    hypothesis: 'Life planning tools thu hút long-tail search intent có conversion cao hơn generic financial content.',
-    value: 'Tạo SEO surface cho các mục tiêu tài chính dài hạn, mở rộng phễu Web-to-App ngoài Credit và Insurance.',
-    gate: 'Đo tool completion, CTA CTR, organic traffic theo từng goal keyword.',
-    src: 'tools/tu-do-tai-chinh.html',
-    address: 'web-momo-prototype.vercel.app/life-planning',
-    tools: [
-      { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính', category: 'Planning', description: 'Ước tính số tiền cần có để đạt FIRE theo quy tắc 4% an toàn rút vốn.',        jtbd: 'Biết mình cần bao nhiêu để nghỉ hưu sớm', src: 'tools/tu-do-tai-chinh.html' },
-      { id: 'de-danh-dam-cuoi', name: 'Đám Cưới',        category: 'Planning', description: 'Tính số tiền cần để dành mỗi tháng cho kế hoạch cưới theo ngân sách và thời hạn.', jtbd: 'Lên kế hoạch tích lũy cho đám cưới không thiếu hụt', src: 'tools/de-danh-dam-cuoi.html' },
-      { id: 'hoc-phi',          name: 'Học Phí',          category: 'Planning', description: 'Ước tính số tiền cần chuẩn bị cho học phí tương lai theo lộ trình tích lũy.',    jtbd: 'Tính trước chi phí học phí để chuẩn bị đủ vốn', src: 'tools/hoc-phi.html' },
-    ],
+    description: 'Trải nghiệm khám phá Merchant theo nhu cầu bằng card stack: swipe để bỏ qua hoặc lưu, xem nhanh rating, giá, địa chỉ, Ví Trả Sau và Sponsored Card được phân phối từ Ads Placement.',
+    jtbd: 'Tìm và lưu Merchant phù hợp mà không phải đọc một danh sách dài',
+    northStar: 'Qualified merchant save rate',
+    loop: 'Choose category → Swipe → Save → View Merchant',
+    hypothesis: 'Card stack giảm tải lựa chọn trên mobile và biến merchant discovery thành hành vi khám phá chủ động thay vì lọc danh sách tĩnh.',
+    value: 'Tạo entry surface mới cho mạng lưới Merchant, đồng thời thu tín hiệu sở thích để cải thiện recommendation và Ads Placement.',
+    gate: 'Đo swipe depth, save rate, Merchant Detail CTR, ad impression/interest, frequency cap và saved-to-visit intent.',
+    src: 'demos/merchant-discovery.html',
+    address: 'web-momo-prototype.vercel.app/merchant-discovery',
   },
   {
     id: 'ads-manager',
@@ -275,8 +288,8 @@ const CAT_COLOR = {
 const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
-  Widget: ['financial', 'bill-lookup', 'scam-check', 'planning-tools', 'worldcup', 'metro'],
-  Platform: ['universal-search', 'merchant'],
+  Widget: ['financial', 'bill-lookup', 'scam-check', 'worldcup', 'metro'],
+  Platform: ['universal-search', 'cinema-film-detail', 'merchant-discovery', 'merchant'],
 };
 
 const GROUP_SUMMARY = {
@@ -290,13 +303,13 @@ const GROUP_SUMMARY = {
     eyebrow: 'Widget',
     title: 'Financial / Planning / Transit',
     description: 'Nhóm tool và lookup ngắn để Dev implement nhanh, rõ input, output và trạng thái an toàn.',
-    examples: 'Financial · Bill lookup · Scam check · Life planning · Metro',
+    examples: 'Financial (18 tools) · Bill lookup · Scam check · Metro',
   },
   Platform: {
     eyebrow: 'Platform',
     title: 'MoMo Services',
     description: 'Nhóm điều hướng vào các surface dịch vụ và discovery của MoMo.',
-    examples: 'Universal Search · MoMo Deal',
+    examples: 'Universal Search · Merchant Discovery · Merchant',
   },
 };
 
@@ -527,50 +540,66 @@ const GROUP_PRIMARY = {
 
 function buildHomeHero() {
   return `
-    <section class="home-hero">
-      <div class="home-hero-copy">
-        <span class="home-kicker">Prototype home</span>
-        <h1>Trang chủ prototype cho đội Dev</h1>
-        <p>
-          Đây là trang điều hướng nội bộ. Chọn một nhóm để mở demo tương ứng, không phải landing
-          content hay page kể chuyện.
-        </p>
-        <div class="home-highlights">
-          <div>
-            <strong>3</strong>
-            <span>project groups</span>
-          </div>
-          <div>
-            <strong>${PROTOTYPES.length}</strong>
-            <span>prototype surfaces</span>
-          </div>
-          <div>
-            <strong>1</strong>
-            <span>shared shell</span>
-          </div>
+    <div class="hl-page-wrap">
+      <div class="hl-page-header">
+        <div class="hl-page-header-left">
+          <span class="hl-page-kicker">Internal · Prototype Directory</span>
+          <h1 class="hl-page-title">Prototype Lab</h1>
+          <p class="hl-page-sub">${PROTOTYPES.length} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
+        </div>
+        <div class="hl-page-header-stats">
+          ${GROUP_ORDER.map(g => {
+            const count = getGroupCount(g);
+            const col = CAT_COLOR[g] || { bg: '#f1f5f9', text: '#475569' };
+            return `<div class="hl-stat-chip" style="background:${col.bg};color:${col.text}">
+              <strong>${count}</strong>${g}
+            </div>`;
+          }).join('')}
         </div>
       </div>
 
-      <div class="home-group-grid">
-        ${GROUP_ORDER.map(groupName => {
-          const info = GROUP_SUMMARY[groupName];
-          const count = getGroupCount(groupName);
-          const primaryId = GROUP_PRIMARY[groupName];
-          return `
-            <article class="home-group-card">
-              <div class="home-group-card-top">
-                <span>${info.eyebrow}</span>
-                <b>${count} project${count > 1 ? 's' : ''}</b>
-              </div>
-              <h2>${info.title}</h2>
-              <p>${info.description}</p>
-              <small>${info.examples}</small>
-              <button class="home-open-btn" type="button" data-open-proto="${primaryId}">Open ${info.eyebrow}</button>
-            </article>
-          `;
-        }).join('')}
-      </div>
-    </section>
+      ${GROUP_ORDER.map(groupName => {
+        const info = GROUP_SUMMARY[groupName];
+        const col = CAT_COLOR[groupName] || { bg: '#f1f5f9', text: '#475569' };
+        const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
+        const groupItems = PROTOTYPES
+          .filter(p => p.category === groupName)
+          .slice()
+          .sort((a, b) => {
+            const ia = desiredOrder.indexOf(a.id);
+            const ib = desiredOrder.indexOf(b.id);
+            if (ia === -1 && ib === -1) return 0;
+            if (ia === -1) return 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+          });
+        const count = groupItems.length;
+
+        return `
+          <section class="hl-section">
+            <div class="hl-sec-head">
+              <span class="hl-sec-badge" style="background:${col.bg};color:${col.text}">${groupName}</span>
+              <h2 class="hl-sec-title">${info.title}</h2>
+              <span class="hl-sec-count">${count} project${count !== 1 ? 's' : ''}</span>
+              <p class="hl-sec-desc">${info.description}</p>
+            </div>
+            <div class="hl-cards">
+              ${groupItems.map(p => {
+                const matCol = MAT_COLOR[p.maturity] || { bg: '#f1f5f9', text: '#475569' };
+                const slug = '/' + p.address.replace(/^.*vercel\.app\//, '');
+                return `
+                  <article class="hl-card" data-open-proto="${p.id}">
+                    <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${p.maturity}</span>
+                    <h3 class="hl-card-name">${p.name}</h3>
+                    <button class="hl-open-btn" type="button">Preview ↗</button>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          </section>
+        `;
+      }).join('')}
+    </div>
   `;
 }
 
@@ -579,12 +608,12 @@ function buildHomeView() {
     <div class="ws-topbar ws-topbar-home">
       <div class="ws-breadcrumb">
         <button class="menu-toggle" id="menuToggle">☰</button>
-        <span class="ws-cat-tag ws-cat-home">Home</span>
+        <span class="ws-cat-tag ws-cat-home">Lab</span>
         <span class="ws-bc-sep">/</span>
-        <span class="ws-bc-cur">Project groups</span>
+        <span class="ws-bc-cur">All Prototypes</span>
       </div>
       <div class="ws-topbar-right">
-        <span class="home-hint">Chọn nhóm để mở demo window</span>
+        <span class="hl-total-count">${PROTOTYPES.length} prototypes</span>
       </div>
     </div>
 

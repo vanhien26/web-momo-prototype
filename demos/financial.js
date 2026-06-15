@@ -354,6 +354,86 @@ const TOOLS = [
       ]};
     },
   },
+  {
+    id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính', category: 'Planning', abbr: 'FI',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Ước tính số tiền cần tích lũy để đạt tự do tài chính (FIRE) theo quy tắc an toàn rút vốn.',
+    formula: 'FIRE Number = <b>Chi tiêu/năm ÷ Tỷ lệ rút vốn</b><br><em>Quy tắc 4% (Bengen 1994): rút 4%/năm giúp danh mục bền vững 30+ năm</em>',
+    resultLabel: 'SỐ TIỀN CẦN ĐỂ FIRE',
+    fields: [
+      { id: 'fireMonthly',   label: 'Chi tiêu hàng tháng',   type: 'money',  min: 1000000, max: 100000000, step: 500000, value: 15000000, chips: [8000000, 15000000, 30000000] },
+      { id: 'fireRate',      label: 'Tỷ lệ rút vốn/năm',     type: 'range',  min: 2, max: 6, step: 0.5, value: 4, unit: '%' },
+      { id: 'fireAssets',    label: 'Tài sản đầu tư hiện có', type: 'money',  min: 0, max: 50000000000, step: 10000000, value: 200000000, chips: [0, 200000000, 1000000000] },
+    ],
+    compute(v) {
+      const annual = v.fireMonthly * 12;
+      const fireNum = annual / (v.fireRate / 100);
+      const gap = Math.max(0, fireNum - v.fireAssets);
+      const pct = Math.min(100, Math.round(v.fireAssets / fireNum * 100));
+      const insight = v.fireAssets >= fireNum
+        ? 'Bạn đã đạt FIRE! Danh mục hiện tại đủ để chi tiêu an toàn theo quy tắc ' + v.fireRate + '%/năm.'
+        : 'Còn thiếu ' + fmtM(gap) + ' để đạt FIRE. Tăng tiết kiệm hoặc giảm chi tiêu để rút ngắn hành trình.';
+      return { result: fmtM(fireNum), details: [
+        { label: 'Tài sản hiện có', value: fmtM(v.fireAssets) + ' (' + pct + '%)' },
+        { label: 'Còn cần tích lũy', value: gap > 0 ? fmtM(gap) : 'Đã đạt mục tiêu ✓' },
+        { label: 'Chi tiêu/năm an toàn', value: fmtM(annual) },
+      ], insight };
+    },
+  },
+  {
+    id: 'dam-cuoi', name: 'Kế Hoạch Đám Cưới', category: 'Planning', abbr: 'DC',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Tính số tiền cần để dành mỗi tháng cho đám cưới theo ngân sách mục tiêu và thời hạn.',
+    formula: 'Để dành/tháng = <b>(Ngân sách − Tiết kiệm hiện có) ÷ Số tháng còn lại</b>',
+    resultLabel: 'CẦN ĐỂ DÀNH MỖI THÁNG',
+    fields: [
+      { id: 'weddingBudget',  label: 'Ngân sách đám cưới',    type: 'money',  min: 10000000, max: 2000000000, step: 5000000, value: 150000000, chips: [80000000, 150000000, 300000000] },
+      { id: 'weddingSavings', label: 'Tiết kiệm hiện có',      type: 'money',  min: 0, max: 1000000000, step: 1000000, value: 20000000, chips: [0, 20000000, 100000000] },
+      { id: 'weddingMonths',  label: 'Số tháng còn lại',       type: 'select', options: [
+        {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},{value:18,label:'18 tháng'},
+        {value:24,label:'24 tháng'},{value:36,label:'36 tháng'},
+      ], value: 18 },
+    ],
+    compute(v) {
+      const gap = Math.max(0, v.weddingBudget - v.weddingSavings);
+      const monthly = gap > 0 ? Math.ceil(gap / v.weddingMonths / 100000) * 100000 : 0;
+      const insight = monthly === 0
+        ? 'Tiết kiệm hiện có đã đủ cho ngân sách đám cưới!'
+        : 'Cần để dành ' + fmtM(monthly) + '/tháng trong ' + v.weddingMonths + ' tháng để đạt mục tiêu.';
+      return { result: monthly === 0 ? 'Đã đủ ✓' : fmt(monthly), details: [
+        { label: 'Ngân sách mục tiêu', value: fmtM(v.weddingBudget) },
+        { label: 'Đã có sẵn', value: fmtM(v.weddingSavings) },
+        { label: 'Còn thiếu', value: gap > 0 ? fmtM(gap) : 'Không thiếu' },
+      ], insight };
+    },
+  },
+  {
+    id: 'hoc-phi', name: 'Học Phí Tương Lai', category: 'Planning', abbr: 'HP',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Ước tính học phí thực tế theo lạm phát học phí và tính số tiền cần chuẩn bị từ hôm nay.',
+    formula: 'Học phí tương lai = <b>Học phí hiện tại × (1 + Lạm phát/năm)ⁿ</b><br><em>n = số năm đến khi cần dùng</em>',
+    resultLabel: 'HỌC PHÍ TƯƠNG LAI ƯỚC TÍNH',
+    fields: [
+      { id: 'currentFee',   label: 'Học phí/năm hiện tại',   type: 'money',  min: 1000000, max: 500000000, step: 1000000, value: 30000000, chips: [15000000, 30000000, 80000000] },
+      { id: 'yearsUntil',   label: 'Số năm đến khi cần',     type: 'select', options: [
+        {value:1,label:'1 năm'},{value:3,label:'3 năm'},{value:5,label:'5 năm'},
+        {value:10,label:'10 năm'},{value:15,label:'15 năm'},{value:18,label:'18 năm'},
+      ], value: 5 },
+      { id: 'feeInflation', label: 'Tăng học phí/năm',       type: 'range',  min: 3, max: 20, step: 0.5, value: 8, unit: '%' },
+    ],
+    compute(v) {
+      const future = v.currentFee * Math.pow(1 + v.feeInflation / 100, v.yearsUntil);
+      const totalNeeded = future * 4; // 4-year degree estimate
+      const monthlySave = totalNeeded / (v.yearsUntil * 12);
+      const insight = 'Với lạm phát học phí ' + v.feeInflation + '%/năm, sau ' + v.yearsUntil + ' năm học phí sẽ tăng '
+        + ((Math.pow(1 + v.feeInflation / 100, v.yearsUntil) - 1) * 100).toFixed(0) + '% so với hiện tại.';
+      return { result: fmtM(future), details: [
+        { label: 'Tổng 4 năm đại học', value: fmtM(totalNeeded) },
+        { label: 'Cần để dành/tháng', value: fmtM(monthlySave) },
+        { label: 'Tăng so với hiện tại', value: fmtM(future - v.currentFee) },
+      ], insight };
+    },
+  },
 ];
 
 // ─── State
