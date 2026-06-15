@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEO/GEO Dashboard — MoMo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --momo: #AF0171;
+  --momo-dark: #8b0059;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --bg: #f1f5f9;
+  --white: #fff;
+  --sidebar-bg: #0d1117;
+  --sidebar-2: #161b22;
+  --green: #10b981;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --col-ga4: #1a73e8;
+  --col-ga4-bg: #e8f0fe;
+  --col-gsc: #137333;
+  --col-gsc-bg: #e6f4ea;
+  --col-bq: #b06000;
+  --col-bq-bg: #fef3e2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+}
+
+/* ── APP SHELL ─────────────────────────── */
+.app { display: grid; grid-template-rows: 50px 1fr; height: 100vh; }
+
+/* ── TOP BAR ───────────────────────────── */
+.top-bar {
+  background: var(--sidebar-bg);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 10;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-mark {
+  width: 28px; height: 28px; background: var(--momo); border-radius: 6px;
+  display: grid; place-items: center; font-size: 8px; font-weight: 900; color: #fff; line-height: 1.2; text-align: center;
+}
+.brand-name { font-size: 13px; font-weight: 700; color: #fff; }
+.brand-sep { color: rgba(255,255,255,.2); margin: 0 4px; }
+.brand-sub { font-size: 12px; color: rgba(255,255,255,.45); font-weight: 500; }
+
+.top-right { display: flex; align-items: center; gap: 10px; }
+
+.freshness { font-size: 10px; color: rgba(255,255,255,.3); }
+
+.period-sel {
+  height: 28px; border: 1px solid rgba(255,255,255,.14); border-radius: 6px;
+  background: rgba(255,255,255,.07); color: rgba(255,255,255,.8); font-size: 11px; font-weight: 600;
+  padding: 0 10px; font-family: inherit; outline: none; cursor: pointer;
+}
+
+.btn-export {
+  height: 28px; padding: 0 12px;
+  border: 1px solid rgba(255,255,255,.14); border-radius: 6px;
+  background: rgba(255,255,255,.06); color: rgba(255,255,255,.65);
+  font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ── LAYOUT ────────────────────────────── */
+.layout { display: grid; grid-template-columns: 210px 1fr; overflow: hidden; }
+
+/* ── SIDEBAR ───────────────────────────── */
+.sidebar {
+  background: var(--sidebar-bg);
+  border-right: 1px solid rgba(255,255,255,.07);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+.sb-section-lbl {
+  font-size: 9px; font-weight: 800; color: rgba(255,255,255,.25);
+  text-transform: uppercase; letter-spacing: .7px;
+  padding: 14px 14px 5px;
+}
+
+.uc-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 14px; cursor: pointer; transition: .12s;
+  border-left: 2px solid transparent;
+  position: relative;
+}
+.uc-item:hover { background: rgba(255,255,255,.05); }
+.uc-item.active { background: rgba(175,1,113,.1); border-left-color: var(--momo); }
+
+.uc-icon { font-size: 14px; flex-shrink: 0; width: 20px; text-align: center; }
+.uc-info { flex: 1; min-width: 0; }
+.uc-name { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.65); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.uc-item.active .uc-name { color: #fff; }
+.uc-cat { font-size: 9px; color: rgba(255,255,255,.28); margin-top: 1px; }
+.uc-item.active .uc-cat { color: rgba(175,1,113,.7); }
+
+.uc-pos {
+  font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+  background: rgba(255,255,255,.06); color: rgba(255,255,255,.35); flex-shrink: 0;
+}
+.uc-pos.good { background: rgba(16,185,129,.15); color: #34d399; }
+.uc-pos.ok   { background: rgba(245,158,11,.12); color: #fbbf24; }
+.uc-pos.bad  { background: rgba(239,68,68,.1); color: #f87171; }
+.uc-item.active .uc-pos { background: rgba(175,1,113,.2); color: #f472b6; }
+
+.sb-footer {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  font-size: 10px;
+  color: rgba(255,255,255,.2);
+  line-height: 1.5;
+}
+
+/* ── MAIN AREA ─────────────────────────── */
+.main { overflow-y: auto; display: flex; flex-direction: column; }
+
+.main::-webkit-scrollbar { width: 4px; }
+.main::-webkit-scrollbar-track { background: transparent; }
+.main::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+/* Content bar */
+.content-bar {
+  height: 42px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px; border-bottom: 1px solid var(--line); background: var(--white); flex-shrink: 0;
+  position: sticky; top: 0; z-index: 5;
+}
+
+.bc { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.bc strong { color: var(--ink); font-weight: 700; }
+.bc-sep { color: var(--line); }
+
+.src-pills { display: flex; gap: 5px; }
+.src-pill {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px;
+  padding: 3px 8px; border-radius: 5px;
+}
+.src-pill.ga4 { background: var(--col-ga4-bg); color: var(--col-ga4); }
+.src-pill.gsc { background: var(--col-gsc-bg); color: var(--col-gsc); }
+.src-pill.bq  { background: var(--col-bq-bg);  color: var(--col-bq);  }
+
+/* Content body */
+.content-body { flex: 1; padding: 18px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+/* ── KPI ROW ───────────────────────────── */
+.kpi-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+
+.kpi-card {
+  background: var(--white); border: 1px solid var(--line); border-radius: 11px;
+  padding: 11px 13px; display: flex; flex-direction: column; gap: 3px;
+  position: relative; overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+}
+.kpi-card.ga4::before { background: var(--col-ga4); }
+.kpi-card.gsc::before { background: var(--col-gsc); }
+.kpi-card.bq::before  { background: var(--col-bq); }
+
+.kpi-src { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.kpi-card.ga4 .kpi-src { color: var(--col-ga4); }
+.kpi-card.gsc .kpi-src { color: var(--col-gsc); }
+.kpi-card.bq .kpi-src  { color: var(--col-bq); }
+
+.kpi-lbl { font-size: 10px; color: var(--muted); font-weight: 500; }
+.kpi-val { font-size: 19px; font-weight: 900; color: var(--ink); line-height: 1.1; }
+.kpi-delta { font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 2px; }
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.dn { color: var(--red); }
+
+/* ── PANELS ────────────────────────────── */
+.panel {
+  background: var(--white); border: 1px solid var(--line); border-radius: 13px; overflow: hidden;
+}
+
+.panel-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 18px; border-bottom: 1px solid var(--line);
+}
+
+.ph-left { display: flex; align-items: center; gap: 8px; }
+
+.ph-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+}
+.ph-dot.ga4 { background: var(--col-ga4); }
+.ph-dot.gsc { background: var(--col-gsc); }
+.ph-dot.bq  { background: var(--col-bq); }
+
+.ph-title { font-size: 13px; font-weight: 800; color: var(--ink); }
+.ph-sub { font-size: 11px; color: var(--muted); }
+
+.ph-right { font-size: 11px; color: var(--muted); }
+
+.panel-body { padding: 18px; }
+
+/* GA4 panel layout */
+.ga4-layout { display: grid; grid-template-columns: 1fr 200px; gap: 18px; align-items: start; }
+
+.chart-wrap { position: relative; height: 160px; }
+
+.ga4-mini { display: flex; flex-direction: column; gap: 8px; }
+.ga4-mini-card {
+  background: var(--bg); border-radius: 9px; padding: 11px 13px;
+}
+.gmc-lbl { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.gmc-val { font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1; }
+.gmc-rate { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.gmc-rate strong { color: var(--col-ga4); font-weight: 700; }
+
+/* GSC panel layout */
+.gsc-layout { display: flex; flex-direction: column; gap: 14px; }
+
+.gsc-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.gsc-stat {
+  background: var(--col-gsc-bg); border-radius: 9px; padding: 11px 13px;
+}
+.gsc-stat-val { font-size: 20px; font-weight: 900; color: var(--col-gsc); line-height: 1; }
+.gsc-stat-lbl { font-size: 10px; color: #1e7a3a; margin-top: 3px; }
+
+.kw-table { width: 100%; border-collapse: collapse; }
+.kw-table thead th {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
+  color: var(--muted); padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line);
+  cursor: pointer; user-select: none;
+}
+.kw-table thead th:not(:first-child) { text-align: right; }
+.kw-table thead th:hover { color: var(--ink); }
+.kw-table tbody td { padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.kw-table tbody td:not(:first-child) { text-align: right; }
+.kw-table tbody tr:last-child td { border-bottom: none; }
+.kw-table tbody tr:hover td { background: var(--bg); }
+
+.kw-text { font-weight: 600; color: var(--ink); }
+.kw-url { font-size: 10px; color: var(--muted); display: block; font-weight: 400; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+
+.pos-tag {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 38px; padding: 2px 6px; border-radius: 5px; font-size: 11px; font-weight: 700;
+}
+.pos-tag.top3  { background: #d1fae5; color: #065f46; }
+.pos-tag.top10 { background: #fef3c7; color: #92400e; }
+.pos-tag.top20 { background: #ffedd5; color: #9a3412; }
+.pos-tag.below { background: #fee2e2; color: #991b1b; }
+
+.ctr-cell { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.ctr-track { width: 44px; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.ctr-fill { height: 100%; background: var(--col-ga4); border-radius: 2px; }
+
+/* BigQuery panel */
+.bq-layout { display: flex; flex-direction: column; gap: 16px; }
+
+.bq-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.bq-stat {
+  background: var(--col-bq-bg); border-radius: 9px; padding: 11px 13px;
+}
+.bq-stat-val { font-size: 20px; font-weight: 900; color: var(--col-bq); line-height: 1; }
+.bq-stat-lbl { font-size: 10px; color: #9a5200; margin-top: 3px; }
+
+/* Funnel */
+.funnel-wrap { display: flex; flex-direction: column; gap: 6px; }
+.funnel-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.funnel-lbl {
+  font-size: 11px; font-weight: 600; color: var(--muted); width: 110px; flex-shrink: 0; text-align: right;
+}
+.funnel-bar-wrap { flex: 1; position: relative; height: 30px; }
+.funnel-bar-bg { position: absolute; inset: 0; background: var(--bg); border-radius: 6px; }
+.funnel-bar-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  border-radius: 6px; display: flex; align-items: center; padding-left: 10px;
+  font-size: 11px; font-weight: 800; color: #fff;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+  min-width: 60px;
+}
+.funnel-meta { width: 130px; flex-shrink: 0; }
+.funnel-val { font-size: 13px; font-weight: 800; color: var(--ink); }
+.funnel-conv { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.funnel-conv.good { color: var(--green); }
+.funnel-conv.warn { color: var(--amber); }
+.funnel-conv.low  { color: var(--red); }
+
+.bq-chart-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* ── RESPONSIVE ─────────────────────────── */
+@media (max-width: 1200px) {
+  .kpi-row { grid-template-columns: repeat(4, 1fr); }
+  .ga4-layout { grid-template-columns: 1fr; }
+  .ga4-mini { flex-direction: row; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── TOP BAR ─────────────────────────── -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="brand-mark">mo<br>mo</div>
+      <span class="brand-name">SEO/GEO Dashboard</span>
+      <span class="brand-sep">·</span>
+      <span class="brand-sub">Out-App Traffic Analytics</span>
+    </div>
+    <div class="top-right">
+      <span class="freshness">📡 Cập nhật: hôm nay 08:00</span>
+      <select class="period-sel" id="periodSel" onchange="renderAll()">
+        <option value="jun26">T6/2026 (hiện tại)</option>
+        <option value="may26">T5/2026</option>
+        <option value="apr26">T4/2026</option>
+        <option value="q2">Q2/2026</option>
+      </select>
+      <button class="btn-export">⬇ Export CSV</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ── SIDEBAR ───────────────────────── -->
+    <aside class="sidebar">
+      <div class="sb-section-lbl">Use Cases</div>
+      <div id="ucList"></div>
+      <div class="sb-footer">
+        MoMo · Out-App &amp; GPD<br>
+        Data: GA4 · GSC · BigQuery
+      </div>
+    </aside>
+
+    <!-- ── MAIN ──────────────────────────── -->
+    <main class="main">
+      <div class="content-bar" id="contentBar">
+        <div class="bc">
+          <span>Use Case</span>
+          <span class="bc-sep">/</span>
+          <strong id="bcName">Vay Nhanh</strong>
+        </div>
+        <div class="src-pills">
+          <span class="src-pill ga4">GA4</span>
+          <span class="src-pill gsc">GSC</span>
+          <span class="src-pill bq">BigQuery</span>
+        </div>
+      </div>
+
+      <div class="content-body" id="contentBody"></div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+
+const MONTHS = ['T1','T2','T3','T4','T5','T6'];
+
+const USE_CASES = [
+  {
+    id: 'vay-nhanh', name: 'Vay Nhanh', icon: '💳', cat: 'Credit',
+    ga4: {
+      pageviews: 245820, users: 89340, clickApp: 12480,
+      trend: {
+        pv:  [168000,192000,210000,228000,241000,245820],
+        usr: [62000, 71000, 77000, 83000, 87000, 89340],
+        cta: [8400,  9600, 10400, 11200, 11900, 12480],
+      }
+    },
+    gsc: {
+      avgPos: 8.2, impressions: 1254000, clicks: 24800, ctr: 1.98,
+      keywords: [
+        { kw:'vay nhanh',         url:'/vay-nhanh',         pos:3.2,  imp:180000, clicks:8200,  ctr:4.56 },
+        { kw:'vay tiền online',   url:'/vay-nhanh',         pos:6.1,  imp:220000, clicks:6100,  ctr:2.77 },
+        { kw:'vay tiền nhanh',    url:'/vay-nhanh',         pos:4.8,  imp:145000, clicks:5800,  ctr:4.00 },
+        { kw:'momo vay',          url:'/vay-nhanh',         pos:2.1,  imp:89000,  clicks:5400,  ctr:6.07 },
+        { kw:'lãi suất vay nhanh',url:'/vay-nhanh',         pos:9.4,  imp:67000,  clicks:1800,  ctr:2.69 },
+        { kw:'vay tiêu dùng',     url:'/vay-tieu-dung',     pos:14.2, imp:98000,  clicks:1200,  ctr:1.22 },
+        { kw:'calculator vay',    url:'/vay-nhanh/simulate', pos:18.6, imp:54000,  clicks:980,   ctr:1.81 },
+      ]
+    },
+    bq: {
+      openApp: 8240, mau: 5380, meu: 11820,
+      mauTrend: [3400,3800,4200,4700,5100,5380],
+      meuTrend: [7800,8400,9200,10200,11100,11820],
+    },
+    priority: 'CAO',
+  },
+  {
+    id: 'phat-nguoi', name: 'Phạt Nguội', icon: '🚔', cat: 'Traffic',
+    ga4: {
+      pageviews: 524000, users: 198000, clickApp: 42000,
+      trend: {
+        pv:  [280000,340000,420000,480000,510000,524000],
+        usr: [108000,130000,158000,178000,192000,198000],
+        cta: [22000, 27000, 33000, 37000, 40000, 42000],
+      }
+    },
+    gsc: {
+      avgPos: 5.4, impressions: 3210000, clicks: 84400, ctr: 2.63,
+      keywords: [
+        { kw:'phạt nguội',             url:'/phat-nguoi',    pos:2.4,  imp:820000, clicks:38000, ctr:4.63 },
+        { kw:'tra cứu phạt nguội',     url:'/phat-nguoi',    pos:3.8,  imp:640000, clicks:24000, ctr:3.75 },
+        { kw:'tra phạt nguội online',  url:'/phat-nguoi',    pos:5.1,  imp:480000, clicks:14400, ctr:3.00 },
+        { kw:'kiểm tra phạt nguội',    url:'/phat-nguoi',    pos:7.2,  imp:380000, clicks:7200,  ctr:1.89 },
+        { kw:'nộp phạt nguội momo',    url:'/phat-nguoi',    pos:4.1,  imp:210000, clicks:5600,  ctr:2.67 },
+        { kw:'biển số xe phạt nguội',  url:'/phat-nguoi',    pos:8.9,  imp:180000, clicks:2400,  ctr:1.33 },
+        { kw:'mức phạt nguội 2026',    url:'/phat-nguoi',    pos:6.4,  imp:150000, clicks:1800,  ctr:1.20 },
+      ]
+    },
+    bq: {
+      openApp: 28000, mau: 18000, meu: 42000,
+      mauTrend: [9200,11400,14000,15800,17200,18000],
+      meuTrend: [22000,27000,33000,37000,40000,42000],
+    },
+    priority: 'P0',
+  },
+  {
+    id: 'cic-score', name: 'CIC Score', icon: '📊', cat: 'Credit',
+    ga4: {
+      pageviews: 28400, users: 12200, clickApp: 1840,
+      trend: {
+        pv:  [14000,16000,20000,24000,27000,28400],
+        usr: [6000, 7200, 8800, 10400, 11600, 12200],
+        cta: [820,  960, 1200, 1480, 1700, 1840],
+      }
+    },
+    gsc: {
+      avgPos: 22.4, impressions: 182000, clicks: 3240, ctr: 1.78,
+      keywords: [
+        { kw:'điểm CIC là gì',      url:'/cic-score',  pos:12.4, imp:48000, clicks:980,  ctr:2.04 },
+        { kw:'kiểm tra CIC score',  url:'/cic-score',  pos:18.6, imp:42000, clicks:720,  ctr:1.71 },
+        { kw:'cải thiện điểm CIC',  url:'/cic-score',  pos:24.2, imp:36000, clicks:480,  ctr:1.33 },
+        { kw:'tra cứu CIC',         url:'/cic-score',  pos:31.8, imp:28000, clicks:420,  ctr:1.50 },
+        { kw:'điểm tín dụng CIC',   url:'/cic-score',  pos:28.4, imp:18000, clicks:280,  ctr:1.56 },
+        { kw:'momo cic',            url:'/cic-score',  pos:8.2,  imp:10000, clicks:360,  ctr:3.60 },
+      ]
+    },
+    bq: {
+      openApp: 1240, mau: 820, meu: 2140,
+      mauTrend: [380, 480, 580, 680, 760, 820],
+      meuTrend: [920, 1120, 1380, 1680, 1980, 2140],
+    },
+    priority: 'CAO',
+  },
+  {
+    id: 'bh-o-to', name: 'BH Ô Tô', icon: '🚗', cat: 'Insurance',
+    ga4: {
+      pageviews: 8420, users: 3840, clickApp: 420,
+      trend: {
+        pv:  [2200, 3100, 4800, 6200, 7600, 8420],
+        usr: [980,  1400, 2100, 2800, 3400, 3840],
+        cta: [100,  140,  220,  300,  380,  420],
+      }
+    },
+    gsc: {
+      avgPos: 38.2, impressions: 126000, clicks: 1210, ctr: 0.96,
+      keywords: [
+        { kw:'bảo hiểm ô tô',          url:'/bh-o-to', pos:28.4, imp:42000, clicks:480, ctr:1.14 },
+        { kw:'phí bảo hiểm xe hơi',    url:'/bh-o-to', pos:34.6, imp:28000, clicks:280, ctr:1.00 },
+        { kw:'bảo hiểm vật chất ô tô', url:'/bh-o-to', pos:42.1, imp:22000, clicks:180, ctr:0.82 },
+        { kw:'mua bảo hiểm ô tô online',url:'/bh-o-to', pos:48.8, imp:18000, clicks:140, ctr:0.78 },
+        { kw:'tính phí bảo hiểm xe',   url:'/bh-o-to', pos:38.2, imp:16000, clicks:130, ctr:0.81 },
+      ]
+    },
+    bq: {
+      openApp: 280, mau: 120, meu: 360,
+      mauTrend: [20, 42, 62, 80, 105, 120],
+      meuTrend: [60, 100, 160, 240, 310, 360],
+    },
+    priority: 'CAO',
+  },
+  {
+    id: 'bhxh', name: 'BHXH', icon: '🏥', cat: 'Insurance',
+    ga4: {
+      pageviews: 18200, users: 8240, clickApp: 2100,
+      trend: {
+        pv:  [8000, 10400, 13200, 15400, 17000, 18200],
+        usr: [3600, 4700,  6000,  7000,  7800,  8240],
+        cta: [860,  1100,  1420,  1680,  1920,  2100],
+      }
+    },
+    gsc: {
+      avgPos: 12.8, impressions: 454000, clicks: 8420, ctr: 1.85,
+      keywords: [
+        { kw:'BHXH là gì',           url:'/bhxh',       pos:6.4,  imp:98000, clicks:2800, ctr:2.86 },
+        { kw:'tra cứu BHXH',         url:'/bhxh',       pos:9.8,  imp:82000, clicks:2200, ctr:2.68 },
+        { kw:'đóng BHXH tự nguyện',  url:'/bhxh',       pos:14.2, imp:72000, clicks:1600, ctr:2.22 },
+        { kw:'lương hưu BHXH',       url:'/bhxh/luong-huu', pos:18.6, imp:64000, clicks:1080, ctr:1.69 },
+        { kw:'mức đóng BHXH 2026',   url:'/bhxh',       pos:11.4, imp:58000, clicks:980,  ctr:1.69 },
+        { kw:'bảo hiểm xã hội momo', url:'/bhxh',       pos:4.2,  imp:28000, clicks:480,  ctr:1.71 },
+      ]
+    },
+    bq: {
+      openApp: 1420, mau: 920, meu: 2840,
+      mauTrend: [420, 540, 660, 760, 860, 920],
+      meuTrend: [1100, 1380, 1740, 2160, 2560, 2840],
+    },
+    priority: 'CAO',
+  },
+  {
+    id: 'cinema', name: 'Cinema', icon: '🎬', cat: 'Entertainment',
+    ga4: {
+      pageviews: 382000, users: 142000, clickApp: 28000,
+      trend: {
+        pv:  [280000,300000,320000,340000,360000,382000],
+        usr: [105000,112000,120000,128000,136000,142000],
+        cta: [20000, 21800, 23200, 24600, 26400, 28000],
+      }
+    },
+    gsc: {
+      avgPos: 6.8, impressions: 2104000, clicks: 58400, ctr: 2.78,
+      keywords: [
+        { kw:'phim đang chiếu',      url:'/cinema',        pos:4.2,  imp:580000, clicks:18000, ctr:3.10 },
+        { kw:'lịch chiếu phim',      url:'/cinema',        pos:5.8,  imp:480000, clicks:13200, ctr:2.75 },
+        { kw:'mua vé xem phim momo', url:'/cinema',        pos:3.1,  imp:280000, clicks:11200, ctr:4.00 },
+        { kw:'cgv lịch chiếu',       url:'/cinema',        pos:8.4,  imp:240000, clicks:6400,  ctr:2.67 },
+        { kw:'momo cinema ưu đãi',   url:'/cinema',        pos:6.2,  imp:180000, clicks:5800,  ctr:3.22 },
+        { kw:'phim mới 2026',        url:'/cinema',        pos:9.6,  imp:160000, clicks:3200,  ctr:2.00 },
+        { kw:'nghỉ hè số nghỉ hưu',  url:'/cinema/nghi-he', pos:2.4, imp:48000,  clicks:2400,  ctr:5.00 },
+      ]
+    },
+    bq: {
+      openApp: 18400, mau: 12200, meu: 31000,
+      mauTrend: [9200, 10000, 10800, 11200, 11800, 12200],
+      meuTrend: [22000,24000,26400,28000,29600,31000],
+    },
+    priority: 'DUY TRI',
+  },
+  {
+    id: 'vi-tra-sau', name: 'Ví Trả Sau', icon: '🔄', cat: 'BNPL',
+    ga4: {
+      pageviews: 42400, users: 18200, clickApp: 6240,
+      trend: {
+        pv:  [34000,36000,38000,39500,41000,42400],
+        usr: [14600,15400,16200,17000,17700,18200],
+        cta: [4800,  5200,  5600,  5900,  6100,  6240],
+      }
+    },
+    gsc: {
+      avgPos: 4.2, impressions: 322000, clicks: 28200, ctr: 8.76,
+      keywords: [
+        { kw:'ví trả sau momo',       url:'/vi-tra-sau', pos:1.8, imp:92000, clicks:12400, ctr:13.48 },
+        { kw:'mua trước trả sau',     url:'/vi-tra-sau', pos:3.4, imp:74000, clicks:7200,  ctr:9.73 },
+        { kw:'hạn mức ví trả sau',    url:'/vi-tra-sau', pos:5.6, imp:58000, clicks:4800,  ctr:8.28 },
+        { kw:'đăng ký ví trả sau',    url:'/vi-tra-sau', pos:4.2, imp:42000, clicks:2800,  ctr:6.67 },
+        { kw:'bnpl momo',             url:'/vi-tra-sau', pos:2.8, imp:28000, clicks:2400,  ctr:8.57 },
+        { kw:'trả góp 0% momo',       url:'/vi-tra-sau', pos:7.4, imp:18000, clicks:840,   ctr:4.67 },
+      ]
+    },
+    bq: {
+      openApp: 4820, mau: 3240, meu: 8420,
+      mauTrend: [2600,2800,2960,3060,3160,3240],
+      meuTrend: [6400,6800,7200,7700,8100,8420],
+    },
+    priority: 'Market Leader',
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────
+let activeId = 'vay-nhanh';
+let ga4Chart = null;
+let bqChart  = null;
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function fmtN(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M';
+  if (n >= 1000)    return (n/1000).toFixed(1).replace('.0','') + 'K';
+  return n.toLocaleString('vi-VN');
+}
+
+function posClass(p) {
+  if (p <= 3)  return 'top3';
+  if (p <= 10) return 'top10';
+  if (p <= 20) return 'top20';
+  return 'below';
+}
+
+function delta(pct, label) {
+  const cls = pct >= 0 ? 'up' : 'dn';
+  const arrow = pct >= 0 ? '▲' : '▼';
+  return `<span class="kpi-delta ${cls}">${arrow} ${Math.abs(pct)}% MoM</span>`;
+}
+
+function funnelConv(a, b) {
+  if (!a) return '';
+  const r = ((b/a)*100).toFixed(1);
+  const cls = r > 20 ? 'good' : r > 8 ? 'warn' : 'low';
+  return `<div class="funnel-conv ${cls}">→ ${r}% từ trước</div>`;
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────────────────
+function renderSidebar() {
+  document.getElementById('ucList').innerHTML = USE_CASES.map(uc => {
+    const p = uc.gsc.avgPos;
+    const pcls = p <= 3 ? 'good' : p <= 10 ? 'ok' : 'bad';
+    return `<div class="uc-item${uc.id===activeId?' active':''}" onclick="setActive('${uc.id}')">
+      <span class="uc-icon">${uc.icon}</span>
+      <div class="uc-info">
+        <div class="uc-name">${uc.name}</div>
+        <div class="uc-cat">${uc.cat} · ${uc.priority}</div>
+      </div>
+      <span class="uc-pos ${pcls}">#${p.toFixed(0)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────
+function renderAll() {
+  const uc = USE_CASES.find(u => u.id === activeId);
+  document.getElementById('bcName').textContent = uc.name;
+
+  const body = document.getElementById('contentBody');
+  body.innerHTML = buildKPIRow(uc) + buildGA4Panel(uc) + buildGSCPanel(uc) + buildBQPanel(uc);
+
+  // Destroy old charts
+  if (ga4Chart) { ga4Chart.destroy(); ga4Chart = null; }
+  if (bqChart)  { bqChart.destroy();  bqChart  = null; }
+
+  // Render charts after DOM is painted
+  requestAnimationFrame(() => {
+    ga4Chart = renderGA4Chart(uc);
+    bqChart  = renderBQChart(uc);
+
+    // Animate funnel bars
+    setTimeout(() => {
+      document.querySelectorAll('.funnel-bar-fill[data-w]').forEach(el => {
+        el.style.width = el.dataset.w;
+      });
+    }, 50);
+  });
+}
+
+// ── KPI ROW ───────────────────────────────────────────────────────────
+function buildKPIRow(uc) {
+  const ctr = ((uc.ga4.clickApp / uc.ga4.users)*100).toFixed(1);
+  const gscctr = uc.gsc.ctr.toFixed(2);
+  const openRate = ((uc.bq.openApp / uc.ga4.clickApp)*100).toFixed(1);
+
+  const cards = [
+    { src:'ga4', lbl:'Pageviews',     val: fmtN(uc.ga4.pageviews), delta: '+12% MoM', up: true },
+    { src:'ga4', lbl:'Total Users',   val: fmtN(uc.ga4.users),     delta: '+8% MoM',  up: true },
+    { src:'ga4', lbl:'Click to App',  val: fmtN(uc.ga4.clickApp),  delta: `${ctr}% rate`, up: true },
+    { src:'gsc', lbl:'Avg Position',  val: `#${uc.gsc.avgPos}`,    delta: '−0.4 MoM', up: true },
+    { src:'gsc', lbl:'Impressions',   val: fmtN(uc.gsc.impressions), delta: '+6% MoM', up: true },
+    { src:'bq',  lbl:'Open in App',   val: fmtN(uc.bq.openApp),   delta: `${openRate}% từ CTA`, up: true },
+    { src:'bq',  lbl:'MAU',           val: fmtN(uc.bq.mau),        delta: '+9% MoM',  up: true },
+    { src:'bq',  lbl:'MEU',           val: fmtN(uc.bq.meu),        delta: '+11% MoM', up: true },
+  ];
+
+  return `<div class="kpi-row">${cards.map(c => `
+    <div class="kpi-card ${c.src}">
+      <span class="kpi-src">${c.src.toUpperCase()}</span>
+      <span class="kpi-lbl">${c.lbl}</span>
+      <span class="kpi-val">${c.val}</span>
+      <span class="kpi-delta ${c.up?'up':'dn'}">${c.delta}</span>
+    </div>`).join('')}</div>`;
+}
+
+// ── GA4 PANEL ─────────────────────────────────────────────────────────
+function buildGA4Panel(uc) {
+  const ctr = ((uc.ga4.clickApp / uc.ga4.users)*100).toFixed(1);
+  return `<div class="panel">
+    <div class="panel-hd">
+      <div class="ph-left">
+        <div class="ph-dot ga4"></div>
+        <span class="ph-title">GA4 — Google Analytics 4</span>
+        <span class="ph-sub">Nguồn: G-02G70QKZ26 · Web sessions</span>
+      </div>
+      <span class="ph-right">T6/2026 · hàng ngày</span>
+    </div>
+    <div class="panel-body">
+      <div class="ga4-layout">
+        <div class="chart-wrap"><canvas id="ga4Chart"></canvas></div>
+        <div class="ga4-mini">
+          <div class="ga4-mini-card">
+            <div class="gmc-lbl">Pageviews / tháng</div>
+            <div class="gmc-val">${fmtN(uc.ga4.pageviews)}</div>
+            <div class="gmc-rate">Avg <strong>${fmtN(Math.round(uc.ga4.pageviews/30))}</strong>/ngày</div>
+          </div>
+          <div class="ga4-mini-card">
+            <div class="gmc-lbl">Total Users</div>
+            <div class="gmc-val">${fmtN(uc.ga4.users)}</div>
+            <div class="gmc-rate">New vs Return <strong>72:28</strong></div>
+          </div>
+          <div class="ga4-mini-card">
+            <div class="gmc-lbl">Click to App (CTA)</div>
+            <div class="gmc-val">${fmtN(uc.ga4.clickApp)}</div>
+            <div class="gmc-rate">CTA Rate <strong>${ctr}%</strong> of users</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderGA4Chart(uc) {
+  const ctx = document.getElementById('ga4Chart');
+  if (!ctx) return null;
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: MONTHS,
+      datasets: [
+        {
+          label: 'Pageviews',
+          data: uc.ga4.trend.pv,
+          borderColor: '#1a73e8',
+          backgroundColor: 'rgba(26,115,232,.08)',
+          fill: true, tension: .4, pointRadius: 3, pointBackgroundColor: '#1a73e8',
+          yAxisID: 'y',
+        },
+        {
+          label: 'Users',
+          data: uc.ga4.trend.usr,
+          borderColor: '#34a853',
+          backgroundColor: 'transparent',
+          fill: false, tension: .4, pointRadius: 3, pointBackgroundColor: '#34a853',
+          yAxisID: 'y',
+        },
+        {
+          label: 'Click to App',
+          data: uc.ga4.trend.cta,
+          borderColor: '#AF0171',
+          backgroundColor: 'rgba(175,1,113,.06)',
+          fill: true, tension: .4, pointRadius: 3, pointBackgroundColor: '#AF0171',
+          yAxisID: 'y',
+          borderDash: [4,3],
+        },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 11, family: 'Be Vietnam Pro' }, boxWidth: 12, padding: 12 } },
+        tooltip: { bodyFont: { family: 'Be Vietnam Pro' }, titleFont: { family: 'Be Vietnam Pro' } },
+      },
+      scales: {
+        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, callback: v => fmtN(v) } },
+      }
+    }
+  });
+}
+
+// ── GSC PANEL ─────────────────────────────────────────────────────────
+function buildGSCPanel(uc) {
+  const gscctr = uc.gsc.ctr.toFixed(2);
+  const maxCtr = Math.max(...uc.gsc.keywords.map(k => k.ctr));
+  const rows = uc.gsc.keywords.map(k => {
+    const pc = posClass(k.pos);
+    const pLabel = pc==='top3'?'Top 3':pc==='top10'?'Top 10':pc==='top20'?'Top 20':'Below';
+    const barPct = Math.round((k.ctr / maxCtr) * 100);
+    return `<tr>
+      <td>
+        <span class="kw-text">${k.kw}</span>
+        <span class="kw-url">${k.url}</span>
+      </td>
+      <td><span class="pos-tag ${pc}">${k.pos.toFixed(1)}</span></td>
+      <td>${fmtN(k.imp)}</td>
+      <td>${fmtN(k.clicks)}</td>
+      <td>
+        <div class="ctr-cell">
+          <span>${k.ctr.toFixed(2)}%</span>
+          <div class="ctr-track"><div class="ctr-fill" style="width:${barPct}%"></div></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="panel">
+    <div class="panel-hd">
+      <div class="ph-left">
+        <div class="ph-dot gsc"></div>
+        <span class="ph-title">GSC — Google Search Console</span>
+        <span class="ph-sub">Property: momo.vn · Web</span>
+      </div>
+      <span class="ph-right">T6/2026 · ${uc.gsc.keywords.length} keywords tracked</span>
+    </div>
+    <div class="panel-body">
+      <div class="gsc-layout">
+        <div class="gsc-summary">
+          <div class="gsc-stat">
+            <div class="gsc-stat-val">#${uc.gsc.avgPos}</div>
+            <div class="gsc-stat-lbl">Avg Position</div>
+          </div>
+          <div class="gsc-stat">
+            <div class="gsc-stat-val">${fmtN(uc.gsc.impressions)}</div>
+            <div class="gsc-stat-lbl">Impressions / tháng</div>
+          </div>
+          <div class="gsc-stat">
+            <div class="gsc-stat-val">${fmtN(uc.gsc.clicks)}</div>
+            <div class="gsc-stat-lbl">Organic Clicks</div>
+          </div>
+          <div class="gsc-stat">
+            <div class="gsc-stat-val">${gscctr}%</div>
+            <div class="gsc-stat-lbl">Organic CTR</div>
+          </div>
+        </div>
+        <table class="kw-table">
+          <thead>
+            <tr>
+              <th>Keyword</th>
+              <th>Position</th>
+              <th>Impressions</th>
+              <th>Clicks</th>
+              <th>CTR</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── BIGQUERY PANEL ────────────────────────────────────────────────────
+function buildBQPanel(uc) {
+  const steps = [
+    { lbl: 'Pageviews',   val: uc.ga4.pageviews,  ref: null,               col: '#64748b' },
+    { lbl: 'Users',       val: uc.ga4.users,       ref: uc.ga4.pageviews,   col: '#3b82f6' },
+    { lbl: 'Click to App',val: uc.ga4.clickApp,    ref: uc.ga4.users,       col: '#8b5cf6' },
+    { lbl: 'Open in App', val: uc.bq.openApp,      ref: uc.ga4.clickApp,    col: '#AF0171' },
+    { lbl: 'MAU',         val: uc.bq.mau,          ref: uc.bq.openApp,      col: '#ef4444' },
+  ];
+
+  const maxVal = steps[0].val;
+  const funnelRows = steps.map((s, i) => {
+    const w = Math.max(14, Math.round((s.val / maxVal) * 100));
+    const conv = s.ref ? funnelConv(s.ref, s.val) : '';
+    return `<div class="funnel-row">
+      <span class="funnel-lbl">${s.lbl}</span>
+      <div class="funnel-bar-wrap">
+        <div class="funnel-bar-bg"></div>
+        <div class="funnel-bar-fill" data-w="${w}%" style="width:0%;background:${s.col}">${fmtN(s.val)}</div>
+      </div>
+      <div class="funnel-meta">
+        <div class="funnel-val">${fmtN(s.val)}</div>
+        ${conv}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="panel">
+    <div class="panel-hd">
+      <div class="ph-left">
+        <div class="ph-dot bq"></div>
+        <span class="ph-title">BigQuery — Web-to-App Pipeline</span>
+        <span class="ph-sub">Event stream · Appsflyer + GA4 · Cashin funnel</span>
+      </div>
+      <span class="ph-right">T6/2026 · daily snapshot</span>
+    </div>
+    <div class="panel-body">
+      <div class="bq-layout">
+        <div class="bq-stats">
+          <div class="bq-stat">
+            <div class="bq-stat-val">${fmtN(uc.bq.openApp)}</div>
+            <div class="bq-stat-lbl">Open in App / tháng</div>
+          </div>
+          <div class="bq-stat">
+            <div class="bq-stat-val">${fmtN(uc.bq.mau)}</div>
+            <div class="bq-stat-lbl">MAU (Cashin event)</div>
+          </div>
+          <div class="bq-stat">
+            <div class="bq-stat-val">${fmtN(uc.bq.meu)}</div>
+            <div class="bq-stat-lbl">MEU (Feature engaged)</div>
+          </div>
+        </div>
+
+        <div class="funnel-wrap">${funnelRows}</div>
+
+        <div class="bq-chart-wrap">
+          <div style="position:relative;height:160px"><canvas id="bqChart"></canvas></div>
+          <div style="background:var(--bg);border-radius:11px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Web-to-App Rate</div>
+            ${buildRateRow('CTA Rate', uc.ga4.clickApp, uc.ga4.users, '#8b5cf6')}
+            ${buildRateRow('Open Rate', uc.bq.openApp, uc.ga4.clickApp, '#AF0171')}
+            ${buildRateRow('MAU Rate', uc.bq.mau, uc.bq.openApp, '#ef4444')}
+            ${buildRateRow('MEU/MAU', uc.bq.meu, uc.bq.mau, '#f59e0b')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildRateRow(lbl, num, den, col) {
+  const rate = den > 0 ? ((num/den)*100).toFixed(1) : '0.0';
+  const pct = Math.min(100, parseFloat(rate));
+  return `<div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+      <span style="color:var(--muted)">${lbl}</span>
+      <strong style="color:var(--ink)">${rate}%</strong>
+    </div>
+    <div style="height:5px;background:var(--line);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${col};border-radius:3px"></div>
+    </div>
+  </div>`;
+}
+
+function renderBQChart(uc) {
+  const ctx = document.getElementById('bqChart');
+  if (!ctx) return null;
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: MONTHS,
+      datasets: [
+        {
+          label: 'MAU',
+          data: uc.bq.mauTrend,
+          borderColor: '#AF0171',
+          backgroundColor: 'rgba(175,1,113,.08)',
+          fill: true, tension: .4, pointRadius: 3, pointBackgroundColor: '#AF0171',
+        },
+        {
+          label: 'MEU',
+          data: uc.bq.meuTrend,
+          borderColor: '#f59e0b',
+          backgroundColor: 'transparent',
+          fill: false, tension: .4, pointRadius: 3, pointBackgroundColor: '#f59e0b',
+          borderDash: [4,3],
+        },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 11, family: 'Be Vietnam Pro' }, boxWidth: 12, padding: 10 } },
+        tooltip: { bodyFont: { family: 'Be Vietnam Pro' }, titleFont: { family: 'Be Vietnam Pro' } },
+      },
+      scales: {
+        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, callback: v => fmtN(v) } },
+      }
+    }
+  });
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────
+function setActive(id) {
+  activeId = id;
+  renderSidebar();
+  renderAll();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+renderSidebar();
+renderAll();
+</script>
+
+</body>
+</html>
