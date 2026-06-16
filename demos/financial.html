@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
-  <link rel="stylesheet" href="financial.css">
+  <link rel="stylesheet" href="financial.css?v=5">
 </head>
 <body>
   <header class="site-header">
@@ -278,19 +278,26 @@
             <div>
               <span class="panel-kicker">FOREIGN EXCHANGE</span>
               <h2>Tỷ giá đổi tiền</h2>
-              <p>Quy đổi VND và ngoại tệ phổ biến theo tỷ giá mua bán tham chiếu. Xem spread và số tiền thực nhận.</p>
+              <p>Converter A → B: chọn cặp tiền, đảo chiều, xem số nhận ròng, tỷ giá hiệu dụng và chart biến động.</p>
             </div>
             <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
           </div>
 
-          <div class="gold-price-grid" id="fxRateGrid" style="grid-template-columns:repeat(6,1fr)"></div>
+          <div class="gold-price-grid" id="fxRateGrid"></div>
 
           <div class="market-workspace">
             <div class="control-section">
-              <div class="section-label"><span>01</span><strong>Chiều đổi</strong></div>
-              <div class="segmented-control" id="fxDirection" style="margin-top:8px">
-                <button type="button" data-dir="from-vnd" class="active">VNĐ → Ngoại tệ</button>
-                <button type="button" data-dir="to-vnd">Ngoại tệ → VNĐ</button>
+              <div class="section-label"><span>01</span><strong>Convert A → B</strong></div>
+              <div class="fx-pair-grid">
+                <label class="fx-currency-field" for="fxFromCurrency">
+                  <span>Bạn có</span>
+                  <select id="fxFromCurrency"></select>
+                </label>
+                <button class="fx-swap-button" id="fxSwap" type="button" aria-label="Đảo chiều cặp tiền">⇄</button>
+                <label class="fx-currency-field" for="fxToCurrency">
+                  <span>Bạn nhận</span>
+                  <select id="fxToCurrency"></select>
+                </label>
               </div>
               <label class="input-label" for="fxAmount" style="margin-top:14px">Số tiền</label>
               <div class="money-input" style="margin-top:4px">
@@ -302,23 +309,33 @@
                 <button type="button" data-fx="10000000" class="active">10 triệu</button>
                 <button type="button" data-fx="50000000">50 triệu</button>
               </div>
-              <label class="input-label" for="fxCurrency" style="margin-top:14px">Ngoại tệ</label>
-              <select id="fxCurrency" style="margin-top:4px;width:100%;padding:8px;border:1px solid var(--line);border-radius:7px"></select>
             </div>
 
             <div class="gold-result">
               <span id="fxResultLabel">NHẬN ĐƯỢC (THEO TỶ GIÁ BÁN)</span>
               <strong id="fxResultValue" style="font-size:22px">--</strong>
               <div class="gold-result-grid" style="margin-top:12px">
-                <div><small>Tỷ giá mua</small><b id="fxBuyRate">--</b></div>
-                <div><small>Tỷ giá bán</small><b id="fxSellRate">--</b></div>
-                <div><small>Spread mua-bán</small><b id="fxSpread">--</b></div>
-                <div><small>Tỷ giá tham chiếu</small><b id="fxRef">--</b></div>
+                <div><small>Bank route</small><b id="fxBuyRate">--</b></div>
+                <div><small>Mid-market</small><b id="fxSellRate">--</b></div>
+                <div><small>Lệch bank-mid</small><b id="fxSpread">--</b></div>
+                <div><small>Cặp tiền</small><b id="fxRef">--</b></div>
+              </div>
+              <div class="fx-cost-grid">
+                <div><small>Tỷ giá hiệu dụng</small><b id="fxEffectiveRate">--</b></div>
+                <div><small>Lệch so với mid-market</small><b id="fxMidDelta">--</b></div>
+              </div>
+              <div class="fx-chart-card">
+                <div class="fx-chart-head">
+                  <span id="fxChartTitle">Rate history</span>
+                  <b id="fxChartChange">--</b>
+                </div>
+                <div class="fx-chart" id="fxChart"></div>
+                <div class="fx-chart-axis" id="fxChartAxis"></div>
               </div>
               <div class="insight-box" id="fxInsight" style="margin-top:12px"></div>
             </div>
           </div>
-          <p class="source-note">Tỷ giá tham chiếu theo bảng giá Vietcombank tháng 6/2026. Prototype không kết nối dữ liệu thời gian thực. Tỷ giá thực tế tại thời điểm giao dịch có thể khác.</p>
+          <p class="source-note">Tỷ giá tham chiếu theo bảng giá ngân hàng tháng 6/2026. Prototype không kết nối dữ liệu thời gian thực; chart là dữ liệu mô phỏng để thể hiện UI history.</p>
         </section>
 
       </div>
@@ -327,6 +344,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js?v=2"></script>
+  <script src="financial.js?v=8"></script>
 </body>
 </html>

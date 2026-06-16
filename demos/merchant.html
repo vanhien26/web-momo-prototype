@@ -59,10 +59,80 @@
     .shell{width:min(var(--content-max),calc(100% - 40px));margin:20px auto 44px}
     .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 
+    .storefront-signboard{
+      position:relative;
+      overflow:hidden;
+      min-height:168px;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(86,38,9,.2);
+      border-radius:24px 24px 0 0;
+      background:
+        radial-gradient(circle at 50% 0%,rgba(255,255,255,.54),transparent 14rem),
+        linear-gradient(180deg,#f7d38c 0%,#d89035 58%,#a84e19 100%);
+      box-shadow:0 18px 42px rgba(80,41,11,.16);
+    }
+    .storefront-signboard:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg,transparent 0 15%,rgba(255,255,255,.18) 16%,transparent 17% 83%,rgba(255,255,255,.14) 84%,transparent 85%),
+        repeating-linear-gradient(0deg,rgba(91,42,12,.1) 0 1px,transparent 1px 18px);
+      opacity:.75;
+      pointer-events:none;
+    }
+    .storefront-signboard:after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:18px;
+      background:repeating-linear-gradient(90deg,#a50064 0 34px,#f6c1dc 34px 68px);
+      box-shadow:0 -10px 22px rgba(74,25,0,.16);
+    }
+    .signboard-face{
+      position:relative;
+      z-index:2;
+      width:min(760px,calc(100% - 48px));
+      padding:24px 20px 36px;
+      text-align:center;
+    }
+    .signboard-kicker{margin:0 0 8px;color:#6c3512;font-size:11px;font-weight:850;letter-spacing:.18em;text-transform:uppercase}
+    .signboard-name{
+      display:block;
+      color:#2c1508;
+      font-size:56px;
+      line-height:.98;
+      font-weight:900;
+      letter-spacing:-.06em;
+      text-shadow:0 2px 0 rgba(255,255,255,.22),0 8px 24px rgba(70,27,2,.16);
+    }
+    .signboard-meta{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+      color:#4f260d;
+      font-size:12px;
+      font-weight:820;
+    }
+    .signboard-meta span{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:7px 11px;
+      border-radius:999px;
+      background:rgba(255,248,229,.66);
+      border:1px solid rgba(120,65,20,.13);
+      backdrop-filter:blur(8px);
+    }
     .topbar{
       min-height:64px;
       display:grid;
-      grid-template-columns:140px minmax(260px,500px) 1fr auto;
+      grid-template-columns:auto minmax(0,1fr);
       align-items:center;
       gap:16px;
       padding:10px var(--page-gutter);
@@ -74,9 +144,24 @@
       top:0;
       z-index:30;
     }
-    .logo{font-family:"MoMo Trust Sans",sans-serif;font-size:34px;line-height:1;font-weight:800;letter-spacing:-.04em;color:var(--momo-dark);text-decoration:none}
+    .storefront-signboard + .topbar{border-radius:0;background:rgba(255,255,255,.96)}
+    .logo{display:block;font-family:"MoMo Trust Sans",sans-serif;font-size:34px;line-height:1;font-weight:900;letter-spacing:-.05em;color:var(--momo-dark);text-decoration:none}
+    .merchant-header-logo{
+      justify-self:end;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border:1px solid rgba(120,65,20,.16);
+      border-radius:12px;
+      background:linear-gradient(135deg,#fff8e7,#f5d18a);
+      color:#7b2d15;
+      box-shadow:0 8px 18px rgba(80,41,11,.08);
+    }
+    .merchant-header-logo span{color:#28733c;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .merchant-header-logo strong{font-size:13px;font-weight:900;letter-spacing:-.02em}
     .search{
-      display:flex;
+      display:none;
       align-items:center;
       gap:10px;
       background:#f7f7f8;
@@ -86,8 +171,8 @@
       color:#98a2b3;
     }
     .search input{width:100%;border:0;outline:0;background:transparent;color:#344054;font-size:13px}
-    .location{justify-self:end;font-size:12px;color:#475467;font-weight:650}
-    .open-app{border:0;border-radius:999px;padding:11px 20px;background:linear-gradient(135deg,var(--momo),var(--momo-dark));color:#fff;font-size:12px;font-weight:800}
+    .location{display:none;justify-self:end;font-size:12px;color:#475467;font-weight:650}
+    .open-app{display:none;border:0;border-radius:999px;padding:11px 20px;background:linear-gradient(135deg,var(--momo),var(--momo-dark));color:#fff;font-size:12px;font-weight:800}
 
     .hero{
       position:relative;
@@ -262,19 +347,26 @@
     .quick-item span{display:block;color:var(--muted);font-size:10px;line-height:1.55}
     .text-link{display:inline-block;color:var(--momo-dark)!important;font-weight:800;margin-top:4px}
 
-    .amenities{margin-bottom:14px;padding:16px}
-    .amenities-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:13px}
-    .amenities-head h2{font-family:"MoMo Trust Sans",sans-serif;font-size:15px;font-weight:800;margin:0 0 4px}
-    .amenities-head p{font-size:9px;color:var(--muted);line-height:1.5;margin:0}
-    .amenities-source{flex:none;padding:5px 8px;border-radius:999px;background:#ecfdf3;color:#067647;font-size:8px;font-weight:800}
-    .amenities-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-    .amenity-item{display:flex;align-items:center;gap:9px;min-width:0;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fff}
-    .amenity-icon{width:34px;height:34px;display:grid;place-items:center;flex:none;border-radius:10px;background:var(--pink-soft);color:var(--momo-dark)}
-    .amenity-icon svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .amenity-item strong{display:block;font-size:9px;margin-bottom:2px}
-    .amenity-item span{display:block;font-size:8px;color:var(--green)}
-    .amenity-item.pending .amenity-icon{background:#f2f4f7;color:#667085}
-    .amenity-item.pending span{color:#98a2b3}
+    .amenities{margin-bottom:14px;padding:22px 24px}
+    .amenities-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #eef0f3}
+    .amenities-head h2{font-family:"MoMo Trust Sans",sans-serif;font-size:18px;font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
+    .amenities-head p{max-width:520px;font-size:10px;color:var(--muted);line-height:1.55;margin:0}
+    .amenities-source{flex:none;padding:6px 10px;border:1px solid #e4e7ec;border-radius:999px;background:#fff;color:#344054;font-size:8px;font-weight:800}
+    .amenities-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 30px}
+    .amenity-group{min-width:0}
+    .amenity-group h3{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px;color:#344054;font-size:10px;font-weight:800}
+    .amenity-group h3 span{color:#98a2b3;font-size:8px;font-weight:800}
+    .amenity-list{display:grid}
+    .amenity-item{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0;padding:9px 0;border:0;border-bottom:1px solid #f0f2f5;background:transparent}
+    .amenity-item:last-child{border-bottom:0}
+    .amenity-icon{width:28px;height:28px;display:grid;place-items:center;flex:none;border-radius:9px;background:#f7f8fa;color:#667085;font-size:15px}
+    .amenity-item strong{display:block;min-width:0;color:#171b24;font-size:10px;line-height:1.3;font-weight:760}
+    .amenity-state{justify-self:end;padding:4px 8px;border-radius:999px;background:#edf8f1;color:#087443;font-size:8px;font-weight:850;white-space:nowrap}
+    .amenity-item.warning .amenity-state{background:#fff6e6;color:#b54708}
+    .amenity-item.pending .amenity-state{background:#f2f4f7;color:#667085}
+    .amenity-footnote{margin-top:18px;padding-top:12px;border-top:1px solid #eef0f3;color:#667085;font-size:8px;line-height:1.45}
+    .amenity-empty{grid-column:1/-1;padding:16px;border:1px dashed #d0d5dd;border-radius:12px;background:#fff;color:#667085;font-size:10px;line-height:1.6}
+    .amenity-empty strong{display:block;color:#344054;font-size:12px;margin-bottom:4px}
 
     .tabs{
       display:flex;
@@ -312,12 +404,12 @@
     .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     .dish{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:#fff}
     .dish-photo{height:104px;background-size:cover;background-position:center;filter:saturate(1.05)}
-    .dish:nth-child(1) .dish-photo{background-image:url("../assets/merchant/tiem-my-chu-cao/dish-1.jpg")}
-    .dish:nth-child(2) .dish-photo{background-image:url("../assets/merchant/tiem-my-chu-cao/dish-2.jpg")}
-    .dish:nth-child(3) .dish-photo{background-image:url("../assets/merchant/tiem-my-chu-cao/dish-3.jpg")}
-    .dish:nth-child(4) .dish-photo{background-image:url("../assets/merchant/tiem-my-chu-cao/dish-4.jpg")}
-    .dish:nth-child(5) .dish-photo{background-image:url("../assets/merchant/tiem-my-chu-cao/dish-5.jpg")}
-    .dish:nth-child(6) .dish-photo{background-image:url("../assets/merchant/tiem-my-chu-cao/dish-6.jpg")}
+    .dish:nth-child(1) .dish-photo{background-image:url("https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg")}
+    .dish:nth-child(2) .dish-photo{background-image:url("https://homepage.momocdn.net/img/bg-new1-1-260604171015.jpg")}
+    .dish:nth-child(3) .dish-photo{background-image:url("https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg")}
+    .dish:nth-child(4) .dish-photo{background-image:url("https://homepage.momocdn.net/img/bg-new1-1-260604171015.jpg")}
+    .dish:nth-child(5) .dish-photo{background-image:url("https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg")}
+    .dish:nth-child(6) .dish-photo{background-image:url("https://homepage.momocdn.net/img/bg-new1-1-260604171015.jpg")}
     .dish-copy{padding:10px}
     .dish strong{display:block;font-size:11px;margin-bottom:4px}
     .dish span{color:var(--muted);font-size:10px}
@@ -380,7 +472,7 @@
     .momo-review-list{display:grid;gap:10px}
     .momo-review{padding:15px;border:1px solid var(--line);border-radius:14px;background:#fff}
     .momo-review-top{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center}
-    .momo-review-avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid #e4e7ec;background:#f2f4f7}
+    .momo-review-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid #e4e7ec;background:linear-gradient(135deg,var(--avatar-a,#ffd8eb),var(--avatar-b,#f5a86e));color:#7a274f;font-size:12px;font-weight:850}
     .momo-review-author strong{display:block;font-size:11px;margin-bottom:4px}
     .review-identity{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
     .verified-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:6px;background:#fff0f7;color:var(--momo-dark);font-size:7px;font-weight:800}
@@ -508,14 +600,18 @@
 
     .mobile-bar{display:none}
     @media(max-width:1050px){
-      .topbar{grid-template-columns:120px 1fr auto}.location{display:none}
+      .signboard-name{font-size:50px}
+      .topbar{grid-template-columns:auto minmax(0,1fr)}.location{display:none}
       .benefits{grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr)}
       .page-grid{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,1fr)}.source-note{grid-column:1/-1}
     }
     @media(max-width:900px){
       :root{--page-gutter:20px}
       .shell{width:min(100% - 24px,var(--content-max));margin-top:12px}
-      .topbar{grid-template-columns:110px minmax(0,1fr) auto;padding-inline:18px}
+      .storefront-signboard{min-height:164px}
+      .signboard-face{width:min(720px,calc(100% - 32px));padding:22px 16px 34px}
+      .signboard-name{font-size:44px}
+      .topbar{grid-template-columns:auto minmax(0,1fr);padding-inline:18px}
       .hero-content{gap:22px;padding:34px var(--page-gutter)}
       .merchant-mark{width:150px;padding:14px}
       .merchant-mark strong{font-size:25px}
@@ -530,14 +626,21 @@
     @media(max-width:760px){
       :root{--page-gutter:12px}
       body{background:var(--page);padding-bottom:72px}.shell{width:100%;margin:0}
-      .topbar{grid-template-columns:minmax(0,1fr) 40px auto;gap:8px;padding:9px 12px;border-radius:0}
-      .logo{font-size:27px}
-      .search{width:40px;height:40px;justify-content:center;padding:0;border-radius:50%}
-      .search span{font-size:17px}.search input{display:none}
-      .open-app{display:block;padding:10px 12px;font-size:10px;white-space:nowrap}
-      .hero{border-radius:0;min-height:404px}.hero-media:after{background:linear-gradient(0deg,rgba(15,11,8,.96) 0%,rgba(15,11,8,.62) 38%,rgba(15,11,8,.03) 78%)}
+      .storefront-signboard{min-height:0;border-radius:0;border-left:0;border-right:0}
+      .signboard-face{width:100%;padding:24px 14px 32px}
+      .signboard-kicker{font-size:8px;margin-bottom:6px}
+      .signboard-name{font-size:34px;line-height:1}
+      .signboard-meta{gap:6px;margin-top:10px;font-size:9px}
+      .signboard-meta span{padding:5px 7px}
+      .topbar{grid-template-columns:74px minmax(0,1fr);justify-content:initial;gap:10px;padding:9px 12px;border-radius:0}
+      .logo{display:block;font-size:27px;line-height:1;font-weight:900;color:var(--momo-dark);letter-spacing:-.05em;text-decoration:none}
+      .merchant-header-logo{display:none}
+      .search{display:flex;width:100%;height:40px;justify-content:flex-start;padding:0 12px;border-radius:999px}
+      .search span{font-size:16px}.search input{display:block;font-size:11px;min-width:0}
+      .open-app{display:none}
+      .hero{border-radius:0;min-height:326px}.hero-media:after{background:linear-gradient(0deg,rgba(15,11,8,.96) 0%,rgba(15,11,8,.62) 38%,rgba(15,11,8,.03) 78%)}
       .hero-media img{object-position:84% center;transform:scale(1.62)}
-      .hero-content{min-height:404px;display:grid;grid-template-columns:78px minmax(0,1fr);align-items:end;gap:12px;padding:88px 14px 22px}
+      .hero-content{min-height:326px;display:grid;grid-template-columns:78px minmax(0,1fr);align-items:end;gap:12px;padding:66px 14px 22px}
       .merchant-mark{width:78px;padding:8px;border-radius:14px}
       .merchant-mark span{font-size:8px}.merchant-mark strong{font-size:18px}.merchant-mark small{font-size:7px}
       .hero h1{font-size:30px;margin-bottom:12px}.hero-meta{gap:6px;font-size:10px}.hero-meta span:last-child{width:100%}.open-status{margin-top:10px;font-size:9px}
@@ -577,8 +680,9 @@
       .quick-item:nth-child(2){border-right:1px solid var(--line);border-bottom:0}
       .quick-item:last-child{border-bottom:0}
       .quick-item strong{font-size:10px}.quick-item span{font-size:9px}
-      .amenities{border-radius:16px;padding:16px}.amenities-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .amenities-head{align-items:center}.amenities-source{font-size:7px}
+      .amenities{border-radius:16px;padding:18px 16px}.amenities-grid{grid-template-columns:1fr;gap:16px}
+      .amenities-head{align-items:flex-start;margin-bottom:14px}.amenities-source{font-size:7px}
+      .amenity-item{grid-template-columns:28px minmax(0,1fr) auto;padding:9px 0}
       .tabs{top:58px;gap:20px;padding-left:4px}.section{border-radius:16px;padding:18px 16px}
       .about-menu{grid-template-columns:1fr}.menu-grid{grid-template-columns:repeat(2,1fr)}
       .rating-layout{grid-template-columns:1fr}.score{border-right:0;border-bottom:1px solid var(--line);padding:0 0 16px}.bars{max-width:330px}
@@ -594,10 +698,10 @@
       .mobile-bar button{border-radius:11px;padding:12px;border:1px solid #ecc0d8;background:#fff;color:var(--momo-dark);font-size:11px;font-weight:700}.mobile-bar .pay{background:var(--momo-dark);color:#fff;border-color:var(--momo-dark)}
     }
     @media(max-width:360px){
-      .topbar{grid-template-columns:minmax(0,1fr) 38px auto;padding-inline:10px}.logo{font-size:25px}
-      .search{width:38px;height:38px}
-      .open-app{padding:9px 10px;font-size:9px}
-      .hero{min-height:390px}.hero-content{min-height:390px;grid-template-columns:70px minmax(0,1fr);gap:10px;padding:84px 12px 20px}
+      .signboard-face{padding-inline:12px}.signboard-name{font-size:30px}
+      .topbar{grid-template-columns:66px minmax(0,1fr);padding-inline:10px}.logo{font-size:25px}
+      .search{height:38px;padding-inline:10px}.search input{font-size:10px}
+      .hero{min-height:306px}.hero-content{min-height:306px;grid-template-columns:70px minmax(0,1fr);gap:10px;padding:62px 12px 20px}
       .merchant-mark{width:70px;padding:7px}.merchant-mark strong{font-size:16px}
       .hero h1{font-size:26px}.hero-meta .dot{display:none}
       .activity-pulse{display:none}.merchant-badge{font-size:8px}
@@ -611,8 +715,20 @@
 <body>
   <a href="/lab.html" target="_top" style="position:fixed;top:10px;left:12px;z-index:9999;background:#fff;border:1px solid #e0e0e8;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:#636378;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.08)">← Lab</a>
   <div class="shell">
+    <section class="storefront-signboard" aria-label="Bảng hiệu Tiệm Mì Chú Cao">
+      <div class="signboard-face">
+        <strong class="signboard-name">Tiệm Mì Chú Cao</strong>
+        <div class="signboard-meta">
+          <span>59 Trần Bình Trọng, Phường Chợ Quán, TP.HCM</span>
+        </div>
+      </div>
+    </section>
     <header class="topbar">
       <a class="logo" href="/lab.html" target="_top" aria-label="Về Prototype Store">momo</a>
+      <div class="merchant-header-logo" aria-label="Logo Tiệm Mì Chú Cao">
+        <span>Tiệm mì</span>
+        <strong>Chú Cao</strong>
+      </div>
       <label class="search">
         <span>⌕</span>
         <input aria-label="Tìm kiếm" placeholder="Tìm thương hiệu, dịch vụ, món ăn...">
@@ -623,7 +739,7 @@
 
     <section class="hero">
       <div class="hero-media">
-        <img src="../assets/merchant/tiem-my-chu-cao/hero.jpg" alt="Các món ăn tại Tiệm Mì Chú Cao">
+        <img src="https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg" alt="Tiệm Mì Chú Cao trên MoMo">
       </div>
       <div class="hero-content">
         <div class="merchant-mark" aria-label="Tiệm Mì Chú Cao">
@@ -679,37 +795,13 @@
         <section class="amenities card" aria-labelledby="amenities-title">
           <div class="amenities-head">
             <div>
-              <h2 id="amenities-title">Tiện ích tại quán</h2>
-              <p>Thông tin giúp bạn chuẩn bị trước khi ghé quán.</p>
+              <h2 id="amenities-title">Tiện ích quán</h2>
+              <p>Dữ liệu từ Google Business Profile theo từng merchant. Prototype đang dùng payload mock để kiểm tra UI.</p>
             </div>
-            <span class="amenities-source">Merchant cung cấp</span>
+            <span class="amenities-source" id="amenitySource">Google Business Profile</span>
           </div>
-          <div class="amenities-grid">
-            <div class="amenity-item">
-              <div class="amenity-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a10 10 0 0 1 14 0M8.5 12.5a5 5 0 0 1 7 0M12 17h.01"/></svg></div>
-              <div><strong>Wi-Fi miễn phí</strong><span>Có</span></div>
-            </div>
-            <div class="amenity-item">
-              <div class="amenity-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M9 17h4l2-6h-4l-2-3H6M14 8h3"/></svg></div>
-              <div><strong>Bãi đậu xe máy</strong><span>Có</span></div>
-            </div>
-            <div class="amenity-item">
-              <div class="amenity-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10l1 12H6L7 8Z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></div>
-              <div><strong>Phục vụ mang đi</strong><span>Có</span></div>
-            </div>
-            <div class="amenity-item">
-              <div class="amenity-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16v7H4zM7 12V8h10v4M8 19v2M16 19v2"/></svg></div>
-              <div><strong>Chỗ ngồi trong nhà</strong><span>Có</span></div>
-            </div>
-            <div class="amenity-item pending">
-              <div class="amenity-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9M9 5l3 2 3-2M9 19l3-2 3 2"/></svg></div>
-              <div><strong>Máy lạnh</strong><span>Chưa xác nhận</span></div>
-            </div>
-            <div class="amenity-item">
-              <div class="amenity-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v7a4 4 0 0 0 8 0V3M6 21h12M12 14v7"/></svg></div>
-              <div><strong>Nhà vệ sinh</strong><span>Có</span></div>
-            </div>
-          </div>
+          <div class="amenities-grid" id="amenitiesGrid"></div>
+          <div class="amenity-footnote" id="amenityFootnote">Mock payload theo contract Google Business Profile. Khi có crawl thật, thay payload và giữ nguyên UI.</div>
         </section>
 
         <nav class="tabs" aria-label="Điều hướng nội dung">
@@ -865,7 +957,7 @@
             <button data-share="Zalo">Zalo</button><button data-share="Sao chép link">🔗</button>
           </div>
         </section>
-        <p class="source-note">Thông tin merchant được dựng lại từ trang MoMo, truy cập ngày 14/06/2026. Popular Times, Google AI Summary, MoMo Review, tiện ích và tín hiệu giao dịch nội bộ hiện là dữ liệu mẫu cho prototype.</p>
+        <p class="source-note">Thông tin merchant được dựng lại từ trang MoMo, truy cập ngày 14/06/2026. Popular Times, Google AI Summary, MoMo Review, tín hiệu giao dịch nội bộ và tiện ích Google Business Profile hiện là dữ liệu mẫu cho prototype.</p>
       </aside>
     </div>
   </div>
@@ -894,13 +986,44 @@
       socialProof:{label:'Được 1.200+ khách MoMo tin dùng',roundedPayments:1200},
       activity:{isHot:true,label:'Quán đang hot',recentLabel:'12 lượt thanh toán gần đây'}
     };
+	    // Prototype only: fake a Google Business Profile crawl payload for UI review.
+	    // Production must replace this object with the crawler payload and keep displayName unchanged.
+	    const GOOGLE_BUSINESS_PROFILE_AMENITIES={
+	      merchantId:'tiem-my-chu-cao-46',
+	      placeId:'mock-google-place-tiem-my-chu-cao-46',
+	      source:'Mock Google Business Profile',
+	      crawlStatus:'mock-ready',
+	      crawledAt:'2026-06-16T08:30:00+07:00',
+	      attributes:[
+	        {attributeId:'service_options.dine_in',displayName:'Ăn tại chỗ',value:true,valueLabel:'Có',group:'Tùy chọn dịch vụ',icon:'🍜',status:'highlight'},
+	        {attributeId:'service_options.takeout',displayName:'Mua mang đi',value:true,valueLabel:'Có',group:'Tùy chọn dịch vụ',icon:'🥡',status:'highlight'},
+	        {attributeId:'service_options.delivery',displayName:'Giao hàng',value:false,valueLabel:'Chưa rõ',group:'Tùy chọn dịch vụ',icon:'🛵',status:'warning'},
+	        {attributeId:'payments.mobile_payments',displayName:'Thanh toán bằng thiết bị di động NFC',value:true,valueLabel:'Có',group:'Thanh toán',icon:'📱',status:'highlight'},
+	        {attributeId:'payments.credit_cards',displayName:'Thẻ tín dụng',value:true,valueLabel:'Có',group:'Thanh toán',icon:'💳'},
+	        {attributeId:'payments.debit_cards',displayName:'Thẻ ghi nợ',value:true,valueLabel:'Có',group:'Thanh toán',icon:'💳'},
+	        {attributeId:'amenities.restroom',displayName:'Nhà vệ sinh',value:true,valueLabel:'Có',group:'Tiện nghi',icon:'🚻'},
+	        {attributeId:'amenities.wifi',displayName:'Wi-Fi',value:true,valueLabel:'Có',group:'Tiện nghi',icon:'📶'},
+	        {attributeId:'parking.street_parking',displayName:'Bãi đỗ xe trên đường',value:true,valueLabel:'Có',group:'Bãi đỗ xe',icon:'🅿️'},
+	        {attributeId:'crowd.good_for_kids',displayName:'Phù hợp cho trẻ em',value:true,valueLabel:'Có',group:'Phù hợp khách hàng',icon:'👨‍👩‍👧'},
+	        {attributeId:'planning.accepts_reservations',displayName:'Chấp nhận đặt chỗ',value:false,valueLabel:'Không',group:'Đặt chỗ',icon:'📅',status:'warning'},
+	        {attributeId:'accessibility.wheelchair_accessible_entrance',displayName:'Lối vào cho xe lăn',value:false,valueLabel:'Chưa rõ',group:'Khả năng tiếp cận',icon:'♿',status:'pending'}
+	      ]
+	    };
+    const CDN_IMAGES={
+      merchantHero:'https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg',
+      merchantBg:'https://homepage.momocdn.net/img/bg-new1-1-260604171015.jpg',
+      vtsScreen:'https://homepage.momocdn.net/img/momo-amazone-s3-api-251002121032-638950038326604339.png',
+      vtsNearby:'https://homepage.momocdn.net/img/vts-gan-ban-260610104315.png',
+      vtsOffer:'https://homepage.momocdn.net/img/vts-260608172836.webp',
+      payLater:'https://homepage.momocdn.net/img/thanh-toan-quoc-te-1-260115154221.png'
+    };
     const RECOMMENDED_MERCHANTS=[
-      {id:'mi-hoa-ky',name:'Tiệm Mì Hòa Ký',rating:'4.5',area:'Quận 5',distance:'250 m',badge:'Top 10 Quận 5',badgeType:'top',payLater:true,offer:'Hoàn 10%',image:'../assets/merchant/tiem-my-chu-cao/dish-1.jpg'},
-      {id:'hu-tieu-nam-vang',name:'Hủ Tiếu Nam Vang Thành Đạt',rating:'4.4',area:'Quận 5',distance:'450 m',badge:'Quán đang hot',badgeType:'hot',payLater:true,offer:null,image:'../assets/merchant/tiem-my-chu-cao/dish-2.jpg'},
-      {id:'mi-nguoi-hoa-72',name:'Mì Người Hoa 72',rating:'4.3',area:'Quận 5',distance:'600 m',badge:'Merchant nổi bật MoMo',badgeType:'curated',payLater:true,offer:'Ưu đãi 20K',image:'../assets/merchant/tiem-my-chu-cao/dish-3.jpg'},
-      {id:'sui-cao-ha-ton-quyen',name:'Sủi Cảo Hà Tôn Quyền',rating:'4.6',area:'Quận 11',distance:'1,2 km',badge:'Được ghé nhiều',badgeType:'top',payLater:false,offer:null,image:'../assets/merchant/tiem-my-chu-cao/dish-4.jpg'},
-      {id:'hu-tieu-ca-cho-lon',name:'Hủ Tiếu Cá Chợ Lớn',rating:'4.2',area:'Quận 5',distance:'1,5 km',badge:'Mới & Đang Hot',badgeType:'hot',payLater:true,offer:'Giảm 15%',image:'../assets/merchant/tiem-my-chu-cao/dish-5.jpg'},
-      {id:'mi-vit-tiem-a-con',name:'Mì Vịt Tiềm A Cón',rating:'4.4',area:'Quận 5',distance:'1,8 km',badge:'Gợi ý cho bạn',badgeType:'curated',payLater:true,offer:null,image:'../assets/merchant/tiem-my-chu-cao/dish-6.jpg'}
+      {id:'mi-hoa-ky',name:'Tiệm Mì Hòa Ký',rating:'4.5',area:'Quận 5',distance:'250 m',badge:'Top 10 Quận 5',badgeType:'top',payLater:true,offer:'Hoàn 10%',image:CDN_IMAGES.merchantHero},
+      {id:'hu-tieu-nam-vang',name:'Hủ Tiếu Nam Vang Thành Đạt',rating:'4.4',area:'Quận 5',distance:'450 m',badge:'Quán đang hot',badgeType:'hot',payLater:true,offer:null,image:CDN_IMAGES.vtsNearby},
+      {id:'mi-nguoi-hoa-72',name:'Mì Người Hoa 72',rating:'4.3',area:'Quận 5',distance:'600 m',badge:'Merchant nổi bật MoMo',badgeType:'curated',payLater:true,offer:'Ưu đãi 20K',image:CDN_IMAGES.merchantBg},
+      {id:'sui-cao-ha-ton-quyen',name:'Sủi Cảo Hà Tôn Quyền',rating:'4.6',area:'Quận 11',distance:'1,2 km',badge:'Được ghé nhiều',badgeType:'top',payLater:false,offer:null,image:CDN_IMAGES.payLater},
+      {id:'hu-tieu-ca-cho-lon',name:'Hủ Tiếu Cá Chợ Lớn',rating:'4.2',area:'Quận 5',distance:'1,5 km',badge:'Mới & Đang Hot',badgeType:'hot',payLater:true,offer:'Giảm 15%',image:CDN_IMAGES.vtsOffer},
+      {id:'mi-vit-tiem-a-con',name:'Mì Vịt Tiềm A Cón',rating:'4.4',area:'Quận 5',distance:'1,8 km',badge:'Gợi ý cho bạn',badgeType:'curated',payLater:true,offer:null,image:CDN_IMAGES.vtsScreen}
     ];
     const POPULAR_LABELS=['06','07','08','09','10','11','12','14','17','19'];
     const POPULAR_TIMES={
@@ -916,7 +1039,8 @@
       {
         id:'review-loan',
         name:'Lương Hồng Loan',
-        avatar:'../assets/merchant/tiem-my-chu-cao/avatar-loan.svg',
+        initials:'LL',
+        avatarTone:['#ffd6ea','#f1a66f'],
         badges:['Đã thanh toán bằng MoMo','Khách hàng thân thiết'],
         ago:'2 tuần trước',
         rating:4,
@@ -925,14 +1049,15 @@
         topics:['Giá cả hợp lý','Mì tươi ngon','Lên món nhanh'],
         likes:15,
         photos:[
-          '../assets/merchant/tiem-my-chu-cao/dish-1.jpg',
-          '../assets/merchant/tiem-my-chu-cao/dish-2.jpg'
+          CDN_IMAGES.merchantHero,
+          CDN_IMAGES.merchantBg
         ]
       },
       {
         id:'review-huy',
         name:'Đỗ Hoàng Huy',
-        avatar:'../assets/merchant/tiem-my-chu-cao/avatar-huy.svg',
+        initials:'HH',
+        avatarTone:['#d7ebff','#92b9f4'],
         badges:['Đã thanh toán bằng MoMo','Reviewer uy tín'],
         ago:'1 tháng trước',
         rating:5,
@@ -945,7 +1070,8 @@
       {
         id:'review-minh',
         name:'Nguyễn Minh Anh',
-        avatar:'../assets/merchant/tiem-my-chu-cao/avatar-minh.svg',
+        initials:'MA',
+        avatarTone:['#ffe9bc','#ffbd71'],
         badges:['Đã thanh toán bằng MoMo'],
         ago:'2 tháng trước',
         rating:5,
@@ -953,12 +1079,13 @@
         text:'Mì khô trộn đậm vị, xá xíu mềm và phần ăn vừa đủ. Quán có Wi-Fi, chỗ gửi xe máy và nhân viên hướng dẫn thanh toán QR rất rõ.',
         topics:['Mì khô đậm vị','Có chỗ gửi xe','Wi-Fi ổn định'],
         likes:7,
-        photos:['../assets/merchant/tiem-my-chu-cao/dish-3.jpg']
+        photos:[CDN_IMAGES.merchantHero]
       },
       {
         id:'review-quang',
         name:'Trần Quang Phúc',
-        avatar:'../assets/merchant/tiem-my-chu-cao/avatar-phuc.svg',
+        initials:'QP',
+        avatarTone:['#d9f8e8','#89d6a8'],
         badges:['Đã thanh toán bằng MoMo'],
         ago:'3 tháng trước',
         rating:3,
@@ -977,6 +1104,41 @@
       document.getElementById('activityPulse').hidden=!MERCHANT_SIGNALS.activity.isHot;
       document.getElementById('activityPulse').textContent=MERCHANT_SIGNALS.activity.label;
       document.getElementById('liveCounter').textContent=MERCHANT_SIGNALS.activity.recentLabel;
+    }
+
+	    function renderAmenities(payload=GOOGLE_BUSINESS_PROFILE_AMENITIES){
+	      const attributes=payload.attributes||[];
+	      const crawledAt=payload.crawledAt?new Date(payload.crawledAt).toLocaleDateString('vi-VN'):'Chưa crawl';
+	      const sourceLabel=payload.crawlStatus==='mock-ready'?'Mock GBP':'Google Business Profile';
+	      const groupOrder=['Tùy chọn dịch vụ','Thanh toán','Tiện nghi','Bãi đỗ xe','Phù hợp khách hàng','Đặt chỗ','Khả năng tiếp cận'];
+	      const groups=groupOrder
+	        .map(group=>({group,items:attributes.filter(attribute=>attribute.group===group)}))
+	        .filter(section=>section.items.length);
+	      document.getElementById('amenitySource').textContent=`${sourceLabel} · ${attributes.length} tiện ích`;
+	      document.getElementById('amenityFootnote').textContent=`Mock payload theo contract Google Business Profile. Lần crawl mock: ${crawledAt}. Production chỉ thay payload crawl thật.`;
+	      document.getElementById('amenitiesGrid').innerHTML=groups.length?groups.map(section=>`
+	        <section class="amenity-group" aria-label="${section.group}">
+	          <h3>${section.group}<span>${section.items.length}</span></h3>
+	          <div class="amenity-list">
+	            ${section.items.map(attribute=>{
+	              const stateClass=attribute.status||'';
+	              const valueText=attribute.valueLabel||attribute.value||'Có';
+	              return `
+	                <article class="amenity-item ${stateClass}">
+	                  <div class="amenity-icon" aria-hidden="true">${attribute.icon||'✓'}</div>
+	                  <strong>${attribute.displayName}</strong>
+	                  <span class="amenity-state">${valueText}</span>
+	                </article>
+	              `;
+	            }).join('')}
+	          </div>
+	        </section>
+	      `).join(''):`
+	        <div class="amenity-empty">
+	          <strong>Chưa hiển thị tiện ích</strong>
+	          Cần payload crawl từ Google Business Profile của Tiệm Mì Chú Cao. Khi có dữ liệu, chỉ render đúng tên Google trả về trong displayName.
+	        </div>
+      `;
     }
 
     function renderRecommendations(){
@@ -1021,7 +1183,7 @@
       document.getElementById('momoReviewList').innerHTML=reviews.length?reviews.map(review=>`
         <article class="momo-review" data-review-id="${review.id}">
           <div class="momo-review-top">
-            <img class="momo-review-avatar" src="${review.avatar}" alt="Ảnh đại diện ${review.name}" loading="lazy" decoding="async">
+            <div class="momo-review-avatar" aria-label="Ảnh đại diện ${review.name}" style="--avatar-a:${review.avatarTone[0]};--avatar-b:${review.avatarTone[1]}">${review.initials}</div>
             <div class="momo-review-author">
               <strong>${review.name}</strong>
               <div class="review-identity">
@@ -1046,6 +1208,7 @@
     }
 
     renderMerchantSignals();
+    renderAmenities();
     renderRecommendations();
     renderMomoReviews();
     document.querySelectorAll('.day-chip').forEach(button=>button.addEventListener('click',()=>{

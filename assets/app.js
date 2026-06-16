@@ -47,17 +47,17 @@ const demos = {
   chatbot: {
     name: 'MoMo Project Assistant',
     title: 'MoMo Project Assistant',
-    type: 'Embedded RAG + Typebot',
-    maturity: 'Architecture prototype',
+    type: 'RAG + Typebot Template System',
+    maturity: 'Interactive prototype',
     src: 'demos/chatbot.html',
     address: 'prototype.momo.vn/project-assistant',
-    description: 'Chatbot nhúng cho từng Mini Web hoặc Microsite, trả lời câu hỏi mở từ RAG của đúng project và chuyển sang Typebot khi cần chạy kịch bản có trạng thái.',
-    jtbd: 'Hỏi bất kỳ điều gì về project đang xem và nhận câu trả lời có nguồn',
-    northStar: 'Grounded answer success rate',
-    loop: 'Question → Project RAG → Answer / Typebot flow',
-    hypothesis: 'Project-scoped RAG có citation giúp user hiểu sản phẩm ngay tại trang, còn Typebot giữ các flow xác định và an toàn hơn cho dữ liệu có cấu trúc.',
-    value: 'Một embed component dùng lại cho nhiều Mini Web và Microsite, nhưng cô lập knowledge, analytics và guardrail theo từng project.',
-    gate: 'Đo grounded answer rate, citation coverage, low-confidence fallback, Typebot completion và assisted CTA.'
+    description: 'Hệ thống chatbot nhúng với 6 template UX, hỗ trợ Bubble, Popup, Standard và Proactive; trả lời từ project-scoped RAG rồi chuyển Typebot cho flow có trạng thái.',
+    jtbd: 'Chọn đúng kiểu trợ lý cho từng Mini Web và hoàn thành nhu cầu ngay trong context',
+    northStar: 'Assisted task success rate',
+    loop: 'Choose template → Ask / Guide → RAG / Typebot → Complete CTA',
+    hypothesis: 'Template theo JTBD giúp mỗi project dùng đúng interaction pattern thay vì ép mọi nhu cầu vào một chat bubble tổng quát.',
+    value: 'Một embed system dùng lại cho nhiều Mini Web, nhưng tách template UX, knowledge scope, analytics và guardrail theo từng project.',
+    gate: 'Đo template engagement, grounded answer rate, citation coverage, Typebot completion, assisted CTA và handoff rate.'
   },
   seoGeoScore: {
     name: 'SEO / GEO Score',

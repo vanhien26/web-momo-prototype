@@ -29,10 +29,10 @@ const PROTOTYPES = [
       { id: 'chung-chi-quy',   name: 'Chứng Chỉ Quỹ',     category: 'Investment', description: 'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',        jtbd: 'Hiểu tốc độ tăng trưởng đầu tư định kỳ trước khi bắt đầu' },
       { id: 'gold',            name: 'Giá Vàng',           category: 'Investment', description: 'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và hòa vốn theo kịch bản.',          jtbd: 'Đánh giá có nên mua vàng tích lũy không' },
       { id: 'stock',           name: 'Chứng Khoán',        category: 'Investment', description: 'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.',         jtbd: 'Làm quen thị trường chứng khoán không rủi ro' },
-      { id: 'ty-gia',          name: 'Tỷ Giá',             category: 'FX',         description: 'Quy đổi VND sang 6 ngoại tệ phổ biến theo tỷ giá mua bán tham chiếu, xem chênh lệch spread.', jtbd: 'Biết trước được bao nhiêu khi đổi tiền' },
+      { id: 'ty-gia',          name: 'Tỷ Giá',             category: 'FX',         description: 'Converter A/B: chọn cặp tiền, đảo chiều, xem chart, chênh lệch bank-mid, tỷ giá hiệu dụng và số nhận ròng.', jtbd: 'Biết đổi từ tiền nào sang tiền nào, rate đang biến động ra sao và nhận ròng bao nhiêu' },
       { id: 'quy-du-phong',    name: 'Quỹ Dự Phòng',      category: 'Planning',   description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',       jtbd: 'Xác định đúng mức quỹ dự phòng cần tích lũy' },
-      { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính',   category: 'Planning',   description: 'Ước tính số tiền cần tích lũy để đạt FIRE theo quy tắc an toàn rút vốn.',             jtbd: 'Biết mình cần bao nhiêu để đạt tự do tài chính' },
-      { id: 'dam-cuoi',        name: 'Kế Hoạch Đám Cưới', category: 'Planning',   description: 'Tính số tiền cần để dành mỗi tháng cho đám cưới theo ngân sách và thời hạn.',          jtbd: 'Lên kế hoạch tích lũy cho đám cưới không thiếu hụt' },
+      { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính',   category: 'Planning',   description: 'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư, tỷ lệ rút vốn an toàn và dòng tiền góp hàng tháng.', jtbd: 'Biết mình cần bao nhiêu, tốc độ góp có đủ không và thiếu ở đâu' },
+      { id: 'dam-cuoi',        name: 'Kế Hoạch Đám Cưới', category: 'Planning',   description: 'Lập ngân sách cưới theo số khách, bàn tiệc, chi phí cố định, tiền mừng dự kiến, dự phòng và quỹ sau cưới.', jtbd: 'Biết cần chuẩn bị bao nhiêu tiền mặt để cưới xong không hụt dòng tiền' },
       { id: 'hoc-phi',         name: 'Học Phí Tương Lai',  category: 'Planning',   description: 'Ước tính học phí thực tế theo lạm phát và tính số tiền cần chuẩn bị từ hôm nay.',      jtbd: 'Tính trước chi phí học phí để chuẩn bị đủ vốn' },
     ],
   },
@@ -276,6 +276,21 @@ const PROTOTYPES = [
     src: 'demos/agentic-hub.html',
     address: 'web-momo-prototype.vercel.app/agentic-hub',
   },
+  {
+    id: 'phat-nguoi-ha-noi',
+    name: 'Phạt Nguội Hà Nội',
+    category: 'Platform',
+    maturity: 'pSEO',
+    description: 'Trang pSEO Tra cứu Phạt Nguội theo Tỉnh/Thành — demo Hà Nội: Hero H1 + Lookup biển số, kết quả CSGT có/không vi phạm, Đề xuất tỉnh/thành + dịch vụ liên quan, Content SEO dạng card (mức phạt, quy trình, timeline, FAQ).',
+    jtbd: 'Tra cứu vi phạm giao thông theo biển số xe tại Hà Nội, biết mức phạt và quy trình xử lý',
+    northStar: 'Lookup completion rate',
+    loop: 'Search → Lookup → Result → Related CTA',
+    hypothesis: 'Trang pSEO theo tỉnh/thành tạo organic entry point riêng cho từng địa phương — mỗi trang là một keyword cluster với lookup tool + content SEO địa phương hóa.',
+    value: 'Template nhân rộng cho 63 tỉnh/thành: mỗi URL /phat-nguoi/{tinh} là một pSEO page độc lập, tăng SoV phạt nguội và cross-sell dịch vụ liên quan.',
+    gate: 'Đo lookup completion, result engagement (found/not-found rate), related service CTR, CTA conversion và Web-to-App từ pSEO page.',
+    src: 'demos/phat-nguoi-ha-noi.html',
+    address: 'web-momo-prototype.vercel.app/phat-nguoi/ha-noi',
+  },
 ];
 
 // ─── Color maps ───────────────────────────────────────────────────────────────
@@ -304,7 +319,7 @@ const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   Widget: ['financial', 'bill-lookup', 'scam-check', 'worldcup', 'metro'],
-  Platform: ['universal-search', 'cinema-film-detail', 'merchant-discovery', 'merchant'],
+  Platform: ['phat-nguoi-ha-noi', 'universal-search', 'cinema-film-detail', 'merchant-discovery', 'merchant'],
 };
 
 const GROUP_SUMMARY = {
@@ -321,10 +336,10 @@ const GROUP_SUMMARY = {
     examples: 'Financial (18 tools) · Bill lookup · Scam check · Metro',
   },
   Platform: {
-    eyebrow: 'Platform',
-    title: 'MoMo Services',
-    description: 'Nhóm điều hướng vào các surface dịch vụ và discovery của MoMo.',
-    examples: 'Universal Search · Merchant Discovery · Merchant',
+    eyebrow: 'Use Case',
+    title: 'Use Case',
+    description: 'Nhóm prototype cho các trang Use Case: pSEO lookup, service detail, discovery và search surfaces của MoMo.',
+    examples: 'Phạt Nguội Hà Nội (pSEO) · Universal Search · Cinema Film Detail · Merchant Discovery · Merchant',
   },
 };
 
@@ -552,6 +567,117 @@ const GROUP_PRIMARY = {
   Widget: 'financial',
   Platform: 'momo-services',
 };
+
+const MOSPARK_HOME_CAPABILITIES = [
+  {
+    title: 'GenAI Content',
+    text: 'Sản xuất outline, article, FAQ và product embed từ Content Plan đã duyệt, có Business Context và quality gate.',
+    proto: 'blog',
+  },
+  {
+    title: 'Ads & Widget',
+    text: 'Quản lý Native Widget, Balloon, Inline Banner và product component theo đúng ngữ cảnh trang.',
+    proto: 'ads-manager',
+  },
+  {
+    title: 'Landing Page Builder',
+    text: 'BU/PM mô tả mục tiêu, chọn template theo use case, preview mobile và publish không phải chờ Dev cho thay đổi thường ngày.',
+    proto: 'blog-category',
+  },
+  {
+    title: 'SEO/GEO Project',
+    text: 'Quản lý Use Case, Cluster, Keyword Registry, Business Context và performance trên Google Search lẫn AI Search.',
+    proto: 'seo-geo-score',
+  },
+  {
+    title: 'Chatbot',
+    text: 'Nhúng trợ lý theo project, trả lời từ RAG và chuyển Typebot cho flow có trạng thái.',
+    proto: 'chatbot',
+  },
+];
+
+const MOSPARK_PRODUCTION_STEPS = [
+  { icon: '💡', name: 'Ideation', oldTime: '2 weeks', oldText: 'Brief thủ công', newTime: '2 days', newText: 'AI concept từ market gap' },
+  { icon: '🔎', name: 'Research', oldTime: '3 weeks', oldText: 'Keyword rời rạc', newTime: '1 week', newText: 'Inventory và registry' },
+  { icon: '✍️', name: 'Production', oldTime: '8 weeks', oldText: 'Viết tay, sửa nhiều vòng', newTime: '2 weeks', newText: 'Outline, draft, FAQ, embed' },
+  { icon: '🛡️', name: 'Gate', oldTime: '2 weeks', oldText: 'Review không nhất quán', newTime: '2 days', newText: 'SEO/GEO score và PM approve' },
+  { icon: '🧩', name: 'Widget Sync', oldTime: '3 weeks', oldText: 'Nhờ Dev nhúng CTA', newTime: '3 days', newText: 'Component sẵn để embed' },
+  { icon: '📊', name: 'Measure', oldTime: '4 weeks', oldText: 'Pageview rời rạc', newTime: '1 week', newText: 'Web-to-App và transaction' },
+];
+
+function buildMoSparkHomeIntro() {
+  return `
+    <section class="mh-hero">
+      <div class="mh-copy">
+        <span class="mh-kicker">MoSpark · Web Growth Platform</span>
+        <h1>Product Led Growth trên Web MoMo</h1>
+        <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
+        <div class="mh-actions">
+          <button type="button" class="mh-primary" data-open-proto="blog">Mở demo Phạt Nguội</button>
+          <button type="button" class="mh-secondary" data-open-proto="seo-geo-score">Xem SEO/GEO Project</button>
+        </div>
+      </div>
+      <div class="mh-stack">
+        <div><strong>5</strong><span>capabilities</span></div>
+        <div><strong>&lt;1 ngày</strong><span>landing page self-serve</span></div>
+        <div><strong>0 ticket</strong><span>cho thay đổi content thường ngày</span></div>
+      </div>
+    </section>
+
+    <section class="mh-section">
+      <div class="mh-section-head">
+        <span>Capabilities</span>
+        <h2>MoSpark build bằng Widget và Component</h2>
+        <p>Homepage vẫn là nơi navigate prototype, nhưng cần cho Dev/PO hiểu platform đang gom những module nào.</p>
+      </div>
+      <div class="mh-cap-grid">
+        ${MOSPARK_HOME_CAPABILITIES.map(cap => `
+          <article class="mh-cap-card" data-open-proto="${cap.proto}">
+            <h3>${cap.title}</h3>
+            <p>${cap.text}</p>
+            <button type="button">Open prototype ↗</button>
+          </article>
+        `).join('')}
+      </div>
+    </section>
+
+    <section class="mh-section">
+      <div class="mh-section-head">
+        <span>GenAI Content Production · Phạt Nguội</span>
+        <h2>Trước và sau khi có MoSpark</h2>
+        <p>Minh họa workflow từ keyword “phạt nguội” đến bài viết có product embed, audio, feedback cuối bài và CTA Web-to-App.</p>
+      </div>
+      <div class="mh-timeline">
+        <div class="mh-timeline-head">
+          <b>Without MoSpark</b>
+          <strong>Total time: 22 weeks → 5 weeks · 77% faster</strong>
+        </div>
+        <div class="mh-lane mh-lane-old">
+          <div class="mh-lane-label">Cách cũ</div>
+          ${MOSPARK_PRODUCTION_STEPS.map(step => `
+            <div class="mh-step">
+              <i>${step.icon}</i>
+              <b>${step.name}</b>
+              <strong>${step.oldTime}</strong>
+              <span>${step.oldText}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="mh-lane mh-lane-new">
+          <div class="mh-lane-label">Với MoSpark</div>
+          ${MOSPARK_PRODUCTION_STEPS.map(step => `
+            <div class="mh-step">
+              <i>${step.icon}</i>
+              <b>${step.name}</b>
+              <strong>${step.newTime}</strong>
+              <span>${step.newText}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+}
 
 function buildHomeHero() {
   return `

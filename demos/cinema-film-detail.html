@@ -36,7 +36,7 @@ body {
   font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #111;
   min-height: 100vh;
-  padding-bottom: 90px;
+  padding-bottom: 32px;
 }
 
 /* ── WRAPPER ───────────────────────────── */
@@ -491,51 +491,47 @@ body {
 }
 .mission-item:last-of-type { margin-bottom: 0; }
 .mission-item:hover { border-color: rgba(255,255,255,.11); }
-.mission-item.done  { opacity: .7; }
-.mission-item.now   { border-color: rgba(175,1,113,.35); }
-.mission-item.locked { cursor: default; }
-
-.mission-item.now::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-  background: var(--momo);
-  border-radius: 3px 0 0 3px;
-}
 
 .mission-ico {
   width: 38px;
   height: 38px;
   border-radius: 11px;
+  background: rgba(255,255,255,.07);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
 }
-.mission-item.done .mission-ico   { background: rgba(10,138,63,.12); }
-.mission-item.now .mission-ico    { background: rgba(175,1,113,.14); }
-.mission-item.locked .mission-ico { background: rgba(255,255,255,.04); }
-
 .mission-body { flex: 1; min-width: 0; }
 .mission-name {
   font-size: 13px;
   font-weight: 700;
+  color: #fff;
   margin-bottom: 3px;
   line-height: 1.3;
 }
-.mission-item.done .mission-name   { color: rgba(255,255,255,.4); text-decoration: line-through; }
-.mission-item.now .mission-name    { color: #fff; }
-.mission-item.locked .mission-name { color: rgba(255,255,255,.25); }
-
 .mission-hint {
   font-size: 11px;
+  color: rgba(255,255,255,.5);
   line-height: 1.4;
 }
-.mission-item.done .mission-hint   { color: rgba(255,255,255,.25); }
-.mission-item.now .mission-hint    { color: rgba(255,255,255,.5); }
-.mission-item.locked .mission-hint { color: rgba(255,255,255,.18); }
+.mission-cta {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--momo);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: .15s;
+}
+.mission-cta:hover { filter: brightness(1.12); }
 
 .mission-reward {
   text-align: right;
@@ -805,41 +801,6 @@ body {
 .rv-stars { font-size: 12px; color: var(--star); letter-spacing: 1px; }
 .rv-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
-/* ── BOTTOM BAR ────────────────────────── */
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  padding: 10px 16px max(env(safe-area-inset-bottom), 10px);
-  background: rgba(255,255,255,.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--line);
-  z-index: 90;
-}
-
-.btn-buy {
-  width: 100%;
-  height: 50px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #d42d8b, #af0171);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 900;
-  cursor: pointer;
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 20px rgba(175,1,113,.38);
-  transition: .15s;
-}
-.btn-buy:hover { transform: translateY(-1px); box-shadow: 0 7px 28px rgba(175,1,113,.48); }
 
 /* ── MODAL ─────────────────────────────── */
 .overlay {
@@ -939,7 +900,6 @@ body {
 
 @media (max-width: 440px) {
   .page { max-width: 100%; }
-  .bottom-bar { max-width: 100%; }
 }
 </style>
 </head>
@@ -1062,45 +1022,41 @@ body {
       <span class="sec-prog"><strong>1</strong>/4 hoàn thành</span>
     </div>
 
-    <div class="mission-item done">
+    <div class="mission-item">
       <div class="mission-ico">🎟️</div>
       <div class="mission-body">
         <div class="mission-name">Nhiệm vụ 1 — Mua Vé</div>
         <div class="mission-hint">Mua ít nhất 1 vé xem phim qua MoMo Cinema</div>
       </div>
-      <span style="font-size:11px;color:rgba(255,255,255,.35);flex-shrink:0">Đã xong</span>
+      <button class="mission-cta" onclick="toast('Đang mở trang mua vé...')">Mua Vé</button>
     </div>
 
-    <div class="mission-item now">
+    <div class="mission-item">
       <div class="mission-ico">📍</div>
       <div class="mission-body">
         <div class="mission-name">Nhiệm vụ 2 — Check-in tại Rạp</div>
         <div class="mission-hint">Mở app tại rạp và nhấn Check-in trong vòng 15 phút trước hoặc sau suất chiếu</div>
       </div>
-      <span style="font-size:11px;color:var(--momo);font-weight:700;flex-shrink:0">Đang làm</span>
+      <button class="mission-cta" onclick="toast('Đang mở Check-in...')">Check-in</button>
     </div>
 
-    <div class="mission-item locked">
+    <div class="mission-item">
       <div class="mission-ico">⭐</div>
       <div class="mission-body">
         <div class="mission-name">Nhiệm vụ 3 — Đánh Giá Phim</div>
         <div class="mission-hint">Viết đánh giá tối thiểu 30 từ sau khi xem phim</div>
       </div>
-      <span style="font-size:11px;color:rgba(255,255,255,.2);flex-shrink:0">Chưa mở</span>
+      <button class="mission-cta" onclick="toast('Đang mở trang đánh giá...')">Viết Đánh Giá</button>
     </div>
 
-    <div class="mission-item locked">
+    <div class="mission-item">
       <div class="mission-ico">🎁</div>
       <div class="mission-body">
         <div class="mission-name">Nhiệm vụ 4 — Mời Bạn Bè</div>
         <div class="mission-hint">Chia sẻ link phim và mời ít nhất 1 bạn mua vé qua MoMo</div>
       </div>
-      <span style="font-size:11px;color:rgba(255,255,255,.2);flex-shrink:0">Chưa mở</span>
+      <button class="mission-cta" onclick="toast('Đã copy link mời bạn!')">Mời Bạn Bè</button>
     </div>
-
-    <button class="btn-open-app" onclick="toast('Đang mở MoMo App...')">
-      Mở App để tham gia
-    </button>
   </section>
 
   <div class="divider"></div>
@@ -1225,11 +1181,6 @@ body {
 </div><!-- .page -->
 
 <!-- Bottom Bar -->
-<div class="bottom-bar">
-  <button class="btn-buy" onclick="scrollToShowtimes()">
-    🎟 Mua vé ngay — Nhận 5,000đ cashback
-  </button>
-</div>
 
 <!-- Rules Sheet -->
 <div class="overlay" id="rulesOverlay" onclick="closeOverlay(event,'rulesOverlay')">

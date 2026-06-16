@@ -357,52 +357,98 @@ const TOOLS = [
   {
     id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính', category: 'Planning', abbr: 'FI',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Ước tính số tiền cần tích lũy để đạt tự do tài chính (FIRE) theo quy tắc an toàn rút vốn.',
-    formula: 'FIRE Number = <b>Chi tiêu/năm ÷ Tỷ lệ rút vốn</b><br><em>Quy tắc 4% (Bengen 1994): rút 4%/năm giúp danh mục bền vững 30+ năm</em>',
+    description: 'Lập kế hoạch FIRE theo chi tiêu tương lai đã tính lạm phát, tỷ lệ rút vốn an toàn, lợi suất đầu tư và dòng tiền góp hàng tháng.',
+    formula: 'Chi tiêu tương lai = <b>Chi tiêu hiện tại × (1 + lạm phát)ⁿ</b><br>FIRE Number = <b>Chi tiêu tương lai/năm ÷ Tỷ lệ rút vốn an toàn</b><br>Danh mục dự kiến = <b>Tài sản hiện có × (1+r/12)ⁿ + Góp tháng × [((1+r/12)ⁿ - 1) ÷ (r/12)]</b><br><em>Quy tắc 4% chỉ là mốc tham chiếu. Nên stress test với 3-3,5% nếu muốn an toàn hơn hoặc nghỉ hưu dài hơn 30 năm.</em>',
     resultLabel: 'SỐ TIỀN CẦN ĐỂ FIRE',
     fields: [
-      { id: 'fireMonthly',   label: 'Chi tiêu hàng tháng',   type: 'money',  min: 1000000, max: 100000000, step: 500000, value: 15000000, chips: [8000000, 15000000, 30000000] },
-      { id: 'fireRate',      label: 'Tỷ lệ rút vốn/năm',     type: 'range',  min: 2, max: 6, step: 0.5, value: 4, unit: '%' },
-      { id: 'fireAssets',    label: 'Tài sản đầu tư hiện có', type: 'money',  min: 0, max: 50000000000, step: 10000000, value: 200000000, chips: [0, 200000000, 1000000000] },
+      { id: 'fireMonthly',      label: 'Chi tiêu hiện tại/tháng', type: 'money',  min: 1000000, max: 150000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 40000000] },
+      { id: 'fireYears',        label: 'Số năm muốn đạt FIRE',    type: 'select', options: [
+        {value:5,label:'5 năm'},{value:10,label:'10 năm'},{value:15,label:'15 năm'},
+        {value:20,label:'20 năm'},{value:25,label:'25 năm'},
+      ], value: 15 },
+      { id: 'fireInflation',    label: 'Lạm phát chi tiêu/năm',   type: 'range', min: 0, max: 10, step: 0.5, value: 4, unit: '%' },
+      { id: 'fireRate',         label: 'Tỷ lệ rút vốn an toàn',   type: 'range', min: 2.5, max: 5.5, step: 0.25, value: 3.5, unit: '%' },
+      { id: 'fireReturn',       label: 'Lợi suất đầu tư kỳ vọng', type: 'range', min: 0, max: 15, step: 0.5, value: 8, unit: '%' },
+      { id: 'fireAssets',       label: 'Tài sản đầu tư hiện có',  type: 'money', min: 0, max: 50000000000, step: 10000000, value: 500000000, chips: [0, 500000000, 2000000000] },
+      { id: 'fireContribution', label: 'Đầu tư thêm mỗi tháng',   type: 'money', min: 0, max: 500000000, step: 1000000, value: 10000000, chips: [3000000, 10000000, 30000000] },
     ],
     compute(v) {
-      const annual = v.fireMonthly * 12;
-      const fireNum = annual / (v.fireRate / 100);
-      const gap = Math.max(0, fireNum - v.fireAssets);
-      const pct = Math.min(100, Math.round(v.fireAssets / fireNum * 100));
-      const insight = v.fireAssets >= fireNum
-        ? 'Bạn đã đạt FIRE! Danh mục hiện tại đủ để chi tiêu an toàn theo quy tắc ' + v.fireRate + '%/năm.'
-        : 'Còn thiếu ' + fmtM(gap) + ' để đạt FIRE. Tăng tiết kiệm hoặc giảm chi tiêu để rút ngắn hành trình.';
+      const years = v.fireYears;
+      const months = years * 12;
+      const monthlyReturn = v.fireReturn / 100 / 12;
+      const futureMonthlyExpense = v.fireMonthly * Math.pow(1 + v.fireInflation / 100, years);
+      const annualExpenseAtFire = futureMonthlyExpense * 12;
+      const fireNum = annualExpenseAtFire / (v.fireRate / 100);
+      const growthFactor = Math.pow(1 + monthlyReturn, months);
+      const futureCurrentAssets = v.fireAssets * growthFactor;
+      const futureContribution = monthlyReturn === 0
+        ? v.fireContribution * months
+        : v.fireContribution * (growthFactor - 1) / monthlyReturn;
+      const projectedPortfolio = futureCurrentAssets + futureContribution;
+      const gap = Math.max(0, fireNum - projectedPortfolio);
+      const requiredMonthly = Math.max(0, monthlyReturn === 0
+        ? (fireNum - futureCurrentAssets) / months
+        : (fireNum - futureCurrentAssets) * monthlyReturn / (growthFactor - 1));
+      const fiRatio = fireNum ? Math.min(999, Math.round(projectedPortfolio / fireNum * 100)) : 100;
+      const passiveNow = v.fireAssets * (v.fireRate / 100) / 12;
+      const extraMonthly = Math.max(0, requiredMonthly - v.fireContribution);
+      const insight = projectedPortfolio >= fireNum
+        ? `Với tốc độ góp hiện tại, sau ${years} năm danh mục dự kiến đạt ${fmtM(projectedPortfolio)}, vượt mục tiêu FIRE khoảng ${fmtM(projectedPortfolio - fireNum)}.`
+        : `Kế hoạch hiện tại mới đạt ${fiRatio}% mục tiêu. Cần tăng thêm khoảng ${fmtM(extraMonthly)}/tháng hoặc giảm chi tiêu, kéo dài thời gian, hoặc tăng lợi suất kỳ vọng.`;
       return { result: fmtM(fireNum), details: [
-        { label: 'Tài sản hiện có', value: fmtM(v.fireAssets) + ' (' + pct + '%)' },
-        { label: 'Còn cần tích lũy', value: gap > 0 ? fmtM(gap) : 'Đã đạt mục tiêu ✓' },
-        { label: 'Chi tiêu/năm an toàn', value: fmtM(annual) },
+        { label: 'Chi tiêu/tháng tại năm FIRE', value: fmtM(futureMonthlyExpense) },
+        { label: 'Danh mục dự kiến sau ' + years + ' năm', value: fmtM(projectedPortfolio) + ' (' + fiRatio + '%)' },
+        { label: 'Còn thiếu tại năm mục tiêu', value: gap > 0 ? fmtM(gap) : 'Đã đạt mục tiêu ✓' },
+        { label: 'Cần đầu tư/tháng để đạt mục tiêu', value: requiredMonthly > 0 ? fmtM(requiredMonthly) : 'Không cần góp thêm' },
+        { label: 'Dòng tiền thụ động hiện tại', value: fmtM(passiveNow) + '/tháng' },
       ], insight };
     },
   },
   {
     id: 'dam-cuoi', name: 'Kế Hoạch Đám Cưới', category: 'Planning', abbr: 'DC',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Tính số tiền cần để dành mỗi tháng cho đám cưới theo ngân sách mục tiêu và thời hạn.',
-    formula: 'Để dành/tháng = <b>(Ngân sách − Tiết kiệm hiện có) ÷ Số tháng còn lại</b>',
+    description: 'Lập kế hoạch tiền cưới theo số khách, chi phí bàn tiệc, chi phí cố định, tiền mừng dự kiến, quỹ dự phòng và lãi gửi tích lũy.',
+    formula: 'Số bàn = <b>Làm tròn lên(Số khách ÷ 10)</b><br>Tổng chi phí = <b>Số bàn × Chi phí/bàn + Chi phí cố định</b><br>Dự phòng = <b>Tổng chi phí × Tỷ lệ dự phòng</b><br>Tiền mặt cần chuẩn bị = <b>max(0, Tổng chi phí + Dự phòng - Tiền mừng dự kiến) + Quỹ sau cưới</b><br>Góp/tháng = <b>PMT để đạt mục tiêu sau n tháng, có tính lãi gửi tích lũy</b><br><em>Không nên xem tiền mừng là chắc chắn. Quỹ sau cưới giúp tránh cưới xong bị hụt dòng tiền.</em>',
     resultLabel: 'CẦN ĐỂ DÀNH MỖI THÁNG',
     fields: [
-      { id: 'weddingBudget',  label: 'Ngân sách đám cưới',    type: 'money',  min: 10000000, max: 2000000000, step: 5000000, value: 150000000, chips: [80000000, 150000000, 300000000] },
-      { id: 'weddingSavings', label: 'Tiết kiệm hiện có',      type: 'money',  min: 0, max: 1000000000, step: 1000000, value: 20000000, chips: [0, 20000000, 100000000] },
+      { id: 'weddingGuests',       label: 'Số khách dự kiến',       type: 'range', min: 50, max: 600, step: 10, value: 220, unit: ' khách' },
+      { id: 'weddingTableCost',    label: 'Chi phí một bàn 10 khách', type: 'money', min: 2000000, max: 30000000, step: 500000, value: 6500000, chips: [4000000, 6500000, 10000000] },
+      { id: 'weddingFixedCost',    label: 'Chi phí cố định',        type: 'money', min: 0, max: 1000000000, step: 1000000, value: 90000000, chips: [50000000, 90000000, 150000000] },
+      { id: 'weddingGiftPerGuest', label: 'Tiền mừng dự kiến/khách', type: 'money', min: 0, max: 5000000, step: 50000, value: 500000, chips: [300000, 500000, 800000] },
+      { id: 'weddingContingency',  label: 'Dự phòng phát sinh',     type: 'range', min: 0, max: 25, step: 1, value: 10, unit: '%' },
+      { id: 'weddingBuffer',       label: 'Quỹ sau cưới muốn giữ',  type: 'money', min: 0, max: 500000000, step: 1000000, value: 30000000, chips: [0, 30000000, 80000000] },
+      { id: 'weddingSavings',      label: 'Tiết kiệm hiện có',      type: 'money', min: 0, max: 1000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 150000000] },
+      { id: 'weddingReturn',       label: 'Lãi gửi kỳ vọng/năm',    type: 'range', min: 0, max: 8, step: 0.5, value: 4.5, unit: '%' },
       { id: 'weddingMonths',  label: 'Số tháng còn lại',       type: 'select', options: [
         {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},{value:18,label:'18 tháng'},
         {value:24,label:'24 tháng'},{value:36,label:'36 tháng'},
       ], value: 18 },
     ],
     compute(v) {
-      const gap = Math.max(0, v.weddingBudget - v.weddingSavings);
-      const monthly = gap > 0 ? Math.ceil(gap / v.weddingMonths / 100000) * 100000 : 0;
+      const tables = Math.ceil(v.weddingGuests / 10);
+      const foodCost = tables * v.weddingTableCost;
+      const directCost = foodCost + v.weddingFixedCost;
+      const contingency = directCost * v.weddingContingency / 100;
+      const grossBudget = directCost + contingency;
+      const expectedGift = v.weddingGuests * v.weddingGiftPerGuest;
+      const netWeddingCash = Math.max(0, grossBudget - expectedGift);
+      const targetCash = netWeddingCash + v.weddingBuffer;
+      const monthlyReturn = v.weddingReturn / 100 / 12;
+      const n = v.weddingMonths;
+      const futureSavings = v.weddingSavings * Math.pow(1 + monthlyReturn, n);
+      const gap = Math.max(0, targetCash - futureSavings);
+      const monthly = gap > 0
+        ? Math.ceil((monthlyReturn === 0 ? gap / n : gap * monthlyReturn / (Math.pow(1 + monthlyReturn, n) - 1)) / 100000) * 100000
+        : 0;
       const insight = monthly === 0
-        ? 'Tiết kiệm hiện có đã đủ cho ngân sách đám cưới!'
-        : 'Cần để dành ' + fmtM(monthly) + '/tháng trong ' + v.weddingMonths + ' tháng để đạt mục tiêu.';
+        ? `Tiết kiệm hiện có sau lãi dự kiến đủ để chi trả phần tiền mặt cần chuẩn bị và vẫn giữ ${fmtM(v.weddingBuffer)} quỹ sau cưới.`
+        : `Cần để dành ${fmtM(monthly)}/tháng trong ${v.weddingMonths} tháng. Nếu không muốn phụ thuộc tiền mừng, hãy xem thêm kịch bản bỏ biến "tiền mừng dự kiến".`;
       return { result: monthly === 0 ? 'Đã đủ ✓' : fmt(monthly), details: [
-        { label: 'Ngân sách mục tiêu', value: fmtM(v.weddingBudget) },
-        { label: 'Đã có sẵn', value: fmtM(v.weddingSavings) },
+        { label: 'Bàn tiệc và chi phí bàn', value: tables + ' bàn · ' + fmtM(foodCost) },
+        { label: 'Tổng chi phí trước tiền mừng', value: fmtM(grossBudget) },
+        { label: 'Tiền mừng dự kiến bù trừ', value: '- ' + fmtM(expectedGift) },
+        { label: 'Mục tiêu tiền mặt cần có', value: fmtM(targetCash) },
+        { label: 'Tiết kiệm hiện có sau lãi', value: fmtM(futureSavings) },
         { label: 'Còn thiếu', value: gap > 0 ? fmtM(gap) : 'Không thiếu' },
       ], insight };
     },
@@ -438,6 +484,7 @@ const TOOLS = [
 
 // ─── State
 let currentToolId = TOOLS[0].id;
+let detailMode = false;
 
 // ─── Sidebar
 function renderSidebar() {
@@ -461,15 +508,38 @@ function renderSidebar() {
     </section>`;
   });
   document.getElementById('toolList').innerHTML = html;
-  document.querySelectorAll('.tool-item').forEach(btn => {
-    btn.addEventListener('click', () => selectTool(btn.dataset.id));
+}
+
+function bindToolList() {
+  const list = document.getElementById('toolList');
+  if (!list || list.dataset.bound === '1') return;
+  list.dataset.bound = '1';
+  list.addEventListener('click', event => {
+    const btn = event.target.closest('.tool-item');
+    if (!btn || !list.contains(btn)) return;
+    event.preventDefault();
+    selectTool(btn.dataset.id);
   });
 }
 
-function selectTool(id) {
-  currentToolId = id;
-  renderSidebar();
+function setDetailMode(enabled) {
+  detailMode = enabled;
+  document.body.classList.toggle('tool-detail-mode', enabled);
+}
+
+function syncHash(id) {
+  if (location.hash.slice(1) === id) return;
+  history.replaceState(null, '', `#${id}`);
+}
+
+function selectTool(id, options = {}) {
+  const { updateHash = true, detail = true } = options;
   const tool = TOOLS.find(t => t.id === id);
+  if (!tool) return;
+  currentToolId = id;
+  setDetailMode(detail);
+  if (updateHash) syncHash(id);
+  renderSidebar();
   document.getElementById('genericPanel').hidden = tool.panel !== 'generic';
   document.getElementById('goldPanel').hidden    = tool.panel !== 'gold';
   document.getElementById('stockPanel').hidden   = tool.panel !== 'stock';
@@ -1059,53 +1129,59 @@ const FX_RATES = [
   { code: 'SGD', name: 'Đô la Singapore',   flag: '🇸🇬', buy: 18800, sell: 19400, ref: 19100, per: 1 },
 ];
 
-let fxDir = 'from-vnd';
-let fxCode = 'USD';
+const FX_CURRENCIES = [
+  { code: 'VND', name: 'Việt Nam đồng', flag: '🇻🇳' },
+  ...FX_RATES.map(r => ({ code: r.code, name: r.name, flag: r.flag })),
+];
+
+const FX_HISTORY_FACTORS = [
+  { label: 'T-6', factor: -0.014 },
+  { label: 'T-5', factor: -0.009 },
+  { label: 'T-4', factor: -0.012 },
+  { label: 'T-3', factor: -0.004 },
+  { label: 'T-2', factor: 0.003 },
+  { label: 'T-1', factor: 0.008 },
+  { label: 'Now', factor: 0 },
+];
+
+let fxFrom = 'VND';
+let fxTo = 'USD';
 
 function initFxPanel() {
   document.getElementById('fxRateGrid').innerHTML = FX_RATES.map(r =>
     `<div class="gold-price-card fx-card" data-code="${r.code}" style="cursor:pointer">
       <span>${r.flag} ${r.code}</span>
       <strong>${new Intl.NumberFormat('vi-VN').format(r.sell / r.per)}</strong>
-      <em>Mua: ${new Intl.NumberFormat('vi-VN').format(r.buy / r.per)} đ</em>
+      <em>Mid: ${new Intl.NumberFormat('vi-VN').format(r.ref / r.per)} đ</em>
     </div>`
   ).join('');
   document.querySelectorAll('.fx-card').forEach(card => {
     card.addEventListener('click', () => {
-      fxCode = card.dataset.code;
-      document.getElementById('fxCurrency').value = fxCode;
-      if (fxDir === 'to-vnd') document.getElementById('fxAmountUnit').textContent = fxCode;
-      computeFx();
+      fxTo = card.dataset.code;
+      if (fxFrom === fxTo) fxFrom = 'VND';
+      syncFxPairControls({ resetAmount: false });
     });
   });
 
-  document.getElementById('fxCurrency').innerHTML = FX_RATES.map(r =>
-    `<option value="${r.code}">${r.flag} ${r.name}</option>`
+  const currencyOptions = FX_CURRENCIES.map(c =>
+    `<option value="${c.code}">${c.flag} ${c.code} · ${c.name}</option>`
   ).join('');
-  document.getElementById('fxCurrency').addEventListener('change', e => {
-    fxCode = e.target.value;
-    if (fxDir === 'to-vnd') document.getElementById('fxAmountUnit').textContent = fxCode;
-    computeFx();
-  });
+  document.getElementById('fxFromCurrency').innerHTML = currencyOptions;
+  document.getElementById('fxToCurrency').innerHTML = currencyOptions;
 
-  document.querySelectorAll('#fxDirection button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#fxDirection button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      fxDir = btn.dataset.dir;
-      document.getElementById('fxAmountUnit').textContent = fxDir === 'from-vnd' ? 'VNĐ' : fxCode;
-      const qv = document.querySelectorAll('[data-fx]');
-      if (fxDir === 'from-vnd') {
-        qv.forEach((b, i) => { b.dataset.fx = [5000000, 10000000, 50000000][i]; b.textContent = ['5 triệu', '10 triệu', '50 triệu'][i]; });
-        document.getElementById('fxAmount').value = 10000000;
-      } else {
-        qv.forEach((b, i) => { b.dataset.fx = [100, 500, 1000][i]; b.textContent = ['100', '500', '1,000'][i]; });
-        document.getElementById('fxAmount').value = 100;
-      }
-      document.querySelectorAll('[data-fx]').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('[data-fx]')[1].classList.add('active');
-      computeFx();
-    });
+  document.getElementById('fxFromCurrency').addEventListener('change', e => {
+    fxFrom = e.target.value;
+    normalizeFxPair('from');
+    syncFxPairControls({ resetAmount: true });
+  });
+  document.getElementById('fxToCurrency').addEventListener('change', e => {
+    fxTo = e.target.value;
+    normalizeFxPair('to');
+    syncFxPairControls({ resetAmount: false });
+  });
+  document.getElementById('fxSwap').addEventListener('click', () => {
+    [fxFrom, fxTo] = [fxTo, fxFrom];
+    syncFxPairControls({ resetAmount: true });
   });
 
   document.querySelectorAll('[data-fx]').forEach(btn => {
@@ -1118,40 +1194,158 @@ function initFxPanel() {
   });
 
   document.getElementById('fxAmount').addEventListener('input', computeFx);
+  syncFxPairControls({ resetAmount: false });
+}
+
+function normalizeFxPair(changed) {
+  if (fxFrom !== fxTo) return;
+  if (changed === 'from') {
+    fxTo = fxFrom === 'VND' ? 'USD' : 'VND';
+  } else {
+    fxFrom = fxTo === 'VND' ? 'USD' : 'VND';
+  }
+}
+
+function syncFxPairControls({ resetAmount } = {}) {
+  document.getElementById('fxFromCurrency').value = fxFrom;
+  document.getElementById('fxToCurrency').value = fxTo;
+  document.getElementById('fxAmountUnit').textContent = fxFrom;
+  updateFxQuickValues(resetAmount);
+  document.querySelectorAll('.fx-card').forEach(card => {
+    card.classList.toggle('active', card.dataset.code === fxTo || (fxTo === 'VND' && card.dataset.code === fxFrom));
+  });
   computeFx();
+}
+
+function updateFxQuickValues(resetAmount = false) {
+  const values = fxFrom === 'VND'
+    ? [
+      { value: 5000000, label: '5 triệu' },
+      { value: 10000000, label: '10 triệu' },
+      { value: 50000000, label: '50 triệu' },
+    ]
+    : [
+      { value: 100, label: '100' },
+      { value: 500, label: '500' },
+      { value: 1000, label: '1,000' },
+    ];
+  document.querySelectorAll('[data-fx]').forEach((btn, index) => {
+    btn.dataset.fx = values[index].value;
+    btn.textContent = values[index].label;
+    btn.classList.toggle('active', index === 1);
+  });
+  if (resetAmount) document.getElementById('fxAmount').value = values[1].value;
+}
+
+function rateToVnd(code, type = 'ref') {
+  if (code === 'VND') return 1;
+  const fx = FX_RATES.find(r => r.code === code) || FX_RATES[0];
+  return fx[type] / fx.per;
+}
+
+function getPairRate(from, to, mode = 'mid') {
+  if (from === to) return 1;
+  if (mode === 'bank') {
+    if (from === 'VND') return 1 / rateToVnd(to, 'sell');
+    if (to === 'VND') return rateToVnd(from, 'buy');
+    return rateToVnd(from, 'buy') / rateToVnd(to, 'sell');
+  }
+  return rateToVnd(from, 'ref') / rateToVnd(to, 'ref');
+}
+
+function formatFxCurrency(value, code) {
+  if (code === 'VND') return fmtM(value);
+  return new Intl.NumberFormat('vi-VN', {
+    maximumFractionDigits: value >= 1000 ? 0 : 2,
+  }).format(value) + ' ' + code;
+}
+
+function formatFxRate(rate) {
+  const digits = rate < 0.01 ? 6 : rate < 1 ? 4 : rate < 100 ? 2 : 0;
+  return new Intl.NumberFormat('vi-VN', { maximumFractionDigits: digits }).format(rate);
+}
+
+function getFxDisplayRates(from, to, bankRate, midRate, effectiveRate) {
+  if (from === 'VND' && to !== 'VND') {
+    return {
+      base: to,
+      quote: from,
+      bank: bankRate > 0 ? 1 / bankRate : 0,
+      mid: midRate > 0 ? 1 / midRate : 0,
+      effective: effectiveRate > 0 ? 1 / effectiveRate : 0,
+    };
+  }
+  return {
+    base: from,
+    quote: to,
+    bank: bankRate,
+    mid: midRate,
+    effective: effectiveRate,
+  };
 }
 
 function computeFx() {
   const amount = +document.getElementById('fxAmount').value || 0;
-  const fx = FX_RATES.find(r => r.code === fxCode) || FX_RATES[0];
-  const buyPer1  = fx.buy  / fx.per;
-  const sellPer1 = fx.sell / fx.per;
-  const refPer1  = fx.ref  / fx.per;
-  const fmtR = n => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(n);
+  const bankRate = getPairRate(fxFrom, fxTo, 'bank');
+  const midRate = getPairRate(fxFrom, fxTo, 'mid');
+  const received = Math.max(0, amount * bankRate);
+  const effectiveRate = amount > 0 ? received / amount : 0;
+  const midNoFee = amount * midRate;
+  const midLoss = Math.max(0, midNoFee - received);
+  const bankGapPct = midRate > 0 ? Math.abs((bankRate - midRate) / midRate * 100) : 0;
+  const displayRates = getFxDisplayRates(fxFrom, fxTo, bankRate, midRate, effectiveRate);
+  const insight = `Đổi ${formatFxCurrency(amount, fxFrom)} lấy ${formatFxCurrency(received, fxTo)}. Bank route đang lệch ${bankGapPct.toFixed(2)}% so với mid-market; phần chênh này là chi phí nằm trong tỷ giá.`;
 
-  let label, value, insight;
-  if (fxDir === 'from-vnd') {
-    const got = amount / sellPer1;
-    label   = `NHẬN ĐƯỢC (${fx.code})`;
-    value   = fmtR(got) + ' ' + fx.code;
-    insight = `Đổi ${fmtM(amount)} → ${fmtR(got)} ${fx.code} (tỷ giá bán ${fmtR(sellPer1)} đ/${fx.per > 1 ? fx.per + ' ' : ''}${fx.code}). Spread ${fmtR((fx.sell - fx.buy) / fx.per)} đ so với tham chiếu ${fmtR(refPer1)} đ.`;
-  } else {
-    const got = amount * buyPer1;
-    label   = 'NHẬN ĐƯỢC (VNĐ)';
-    value   = fmtM(got);
-    insight = `Đổi ${fmtR(amount)} ${fx.code} → ${fmtM(got)} (tỷ giá mua ${fmtR(buyPer1)} đ/${fx.per > 1 ? fx.per + ' ' : ''}${fx.code}). Spread ${fmtR((fx.sell - fx.buy) / fx.per)} đ.`;
-  }
-  document.getElementById('fxResultLabel').textContent = label;
-  document.getElementById('fxResultValue').textContent = value;
-  document.getElementById('fxBuyRate').textContent  = fmtR(buyPer1)  + ' đ';
-  document.getElementById('fxSellRate').textContent = fmtR(sellPer1) + ' đ';
-  document.getElementById('fxSpread').textContent   = fmtR((fx.sell - fx.buy) / fx.per) + ' đ';
-  document.getElementById('fxRef').textContent      = fmtR(refPer1)  + ' đ';
+  document.getElementById('fxResultLabel').textContent = `NHẬN ĐƯỢC (${fxTo})`;
+  document.getElementById('fxResultValue').textContent = formatFxCurrency(received, fxTo);
+  document.getElementById('fxBuyRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.bank)} ${displayRates.quote}`;
+  document.getElementById('fxSellRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.mid)} ${displayRates.quote}`;
+  document.getElementById('fxSpread').textContent = bankGapPct.toFixed(2) + '%';
+  document.getElementById('fxRef').textContent = `${fxFrom}/${fxTo}`;
   document.getElementById('fxInsight').textContent  = insight;
+  document.getElementById('fxEffectiveRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.effective)} ${displayRates.quote}`;
+  document.getElementById('fxMidDelta').textContent = formatFxCurrency(midLoss, fxTo);
+  renderFxChart(displayRates);
+}
+
+function renderFxChart(displayRates) {
+  const seed = (fxFrom + fxTo).split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % 11;
+  const points = FX_HISTORY_FACTORS.map((item, index) => {
+    const wave = Math.sin((index + 1) * (seed + 1)) * 0.004;
+    return { label: item.label, rate: displayRates.mid * (1 + item.factor + wave) };
+  });
+  points[points.length - 1].rate = displayRates.mid;
+  const min = Math.min(...points.map(p => p.rate), displayRates.effective);
+  const max = Math.max(...points.map(p => p.rate), displayRates.effective);
+  const range = max - min || 1;
+  const width = 320;
+  const height = 122;
+  const pad = 16;
+  const coords = points.map((point, index) => {
+    const x = pad + index * ((width - pad * 2) / (points.length - 1));
+    const y = height - pad - ((point.rate - min) / range) * (height - pad * 2);
+    return { ...point, x, y };
+  });
+  const line = coords.map((p, index) => `${index === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const area = `${line} L${coords[coords.length - 1].x.toFixed(1)},${height - pad} L${coords[0].x.toFixed(1)},${height - pad} Z`;
+  const delta = (points[points.length - 1].rate - points[0].rate) / points[0].rate * 100;
+  const deltaText = `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}%`;
+  document.getElementById('fxChartTitle').textContent = `6 tháng · 1 ${displayRates.base} = ${formatFxRate(displayRates.mid)} ${displayRates.quote}`;
+  document.getElementById('fxChartChange').textContent = deltaText;
+  document.getElementById('fxChartChange').className = delta >= 0 ? 'up' : 'down';
+  document.getElementById('fxChart').innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Chart tỷ giá ${fxFrom} sang ${fxTo}">
+      <path class="fx-chart-area" d="${area}"></path>
+      <path class="fx-chart-line" d="${line}"></path>
+      ${coords.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3"></circle>`).join('')}
+    </svg>`;
+  document.getElementById('fxChartAxis').innerHTML =
+    `<span>${points[0].label}</span><b>Effective: ${formatFxRate(displayRates.effective)} ${displayRates.quote}</b><span>${points[points.length - 1].label}</span>`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
+  bindToolList();
   renderGenericPanel(TOOLS[0]);
   initGoldPanel();
   initStockPanel();
@@ -1161,6 +1355,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const hash = location.hash.slice(1);
   if (hash) {
     const tool = TOOLS.find(t => t.id === hash);
-    if (tool) selectTool(tool.id);
+    if (tool) selectTool(tool.id, { updateHash: false, detail: true });
   }
 });
