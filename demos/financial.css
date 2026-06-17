@@ -1074,3 +1074,109 @@ select {
 .rate-fill { height: 100%; background: var(--momo); border-radius: 2px; }
 .bank-interest { font-size: 12px; color: var(--muted); }
 .bank-net      { font-size: 13px; font-weight: 700; color: var(--ink); }
+
+/* ══════════════════════════════════════════════════════════════════
+   EMBED-SAFE RESPONSIVE — Container Queries
+   Responds to the CONTAINER width, not browser viewport.
+   Safe when embedded in a page column, card, or iframe.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1. Container roots */
+.lab            { container-type: inline-size; container-name: lab; }
+.tool-workspace { container-type: inline-size; container-name: workspace; }
+.tool-panel     { container-type: inline-size; container-name: panel; }
+
+/* 2. Tool catalog — horizontal scroll strip on narrow embed */
+@container lab (max-width: 640px) {
+  .tool-list {
+    display: flex;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .tool-list::-webkit-scrollbar { display: none; }
+  .tool-group { flex-shrink: 0; min-width: 200px; max-width: 240px; }
+}
+@container lab (max-width: 480px) {
+  .tool-group { min-width: 170px; max-width: 210px; }
+  .tool-item-label span { display: none; }
+}
+
+/* 3. Calculator & widget layouts — stack at narrow container */
+@container panel (max-width: 620px) {
+  .calculator-layout   { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
+  .market-workspace    { grid-template-columns: 1fr; gap: 14px; }
+  .gold-price-grid     { grid-template-columns: repeat(2, 1fr); }
+  .fx-panel .gold-price-grid { grid-template-columns: repeat(3, 1fr); }
+  .gold-table-head, .gold-table-row { grid-template-columns: 2fr 1fr 1fr; }
+  .gold-table-head span:nth-child(4), .gold-table-head span:nth-child(5),
+  .gold-row-spread, .gold-row-trend { display: none; }
+  .gold-world-hero     { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .account-summary     { grid-template-columns: repeat(2, 1fr); }
+  .trading-layout      { grid-template-columns: 1fr; }
+  .portfolio-section   { grid-template-columns: 1fr; }
+  .method              { grid-template-columns: 1fr; }
+  .method > div        { border-right: 0; border-bottom: 1px solid var(--line); }
+  .cic-layout          { grid-template-columns: 1fr; }
+  .cic-v2-layout       { grid-template-columns: 1fr; gap: 20px; }
+  .cic-result-col      { position: static; }
+  .cic-group-grid      { grid-template-columns: repeat(2, 1fr); }
+  .panel-heading       { flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .panel-heading h2    { font-size: 17px; }
+  .intent-chip         { align-self: flex-start; }
+  .result-panel > strong { font-size: 26px; }
+  .gold-chart-head     { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .gold-chart-controls { flex-wrap: wrap; }
+}
+
+@container panel (max-width: 480px) {
+  .fx-pair-grid        { grid-template-columns: 1fr; }
+  .fx-swap-button      { justify-self: center; transform: rotate(90deg); }
+  .fx-swap-button:hover { transform: rotate(270deg); }
+  .fx-cost-grid        { grid-template-columns: 1fr; }
+  .fx-panel .gold-price-grid { grid-template-columns: repeat(2, 1fr); }
+  .gold-price-grid     { grid-template-columns: repeat(2, 1fr); }
+  .gold-result-grid    { grid-template-columns: 1fr; }
+  .cic-group-grid      { grid-template-columns: 1fr; }
+  .calculator-layout   { padding: 14px; gap: 12px; }
+  .market-workspace    { padding: 14px; }
+  .panel-heading h2    { font-size: 16px; }
+  .result-panel > strong { font-size: 24px; }
+  .money-chips         { flex-wrap: wrap; gap: 5px; }
+  .stock-row           { grid-template-columns: 52px 1fr 96px; }
+  .stock-volume        { display: none; }
+}
+
+@container panel (max-width: 360px) {
+  .account-summary     { grid-template-columns: 1fr; }
+  .gold-result-grid    { grid-template-columns: 1fr; }
+  .panel-heading h2    { font-size: 15px; }
+  .result-panel > strong { font-size: 21px; }
+  .chip-btn            { font-size: 10px; padding: 4px 0; }
+  .calculator-layout   { padding: 12px; }
+}
+
+/* 4. Touch targets — larger hit areas on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  input[type="range"]  { height: 28px; }
+  .chip-btn            { padding: 9px 0; font-size: 12px; min-height: 36px; }
+  .tool-item           { padding: 12px 10px; }
+  .money-input-row input[type="number"] { min-height: 44px; padding: 10px 12px; font-size: 15px; }
+  select               { min-height: 44px; font-size: 15px; }
+  .primary-action      { min-height: 48px; font-size: 14px; }
+  .trade-button        { min-height: 48px; font-size: 14px; }
+  .quick-values button { padding: 10px 6px; font-size: 12px; }
+  .segmented-control button { padding: 11px 8px; }
+  .quantity-control button  { width: 44px; height: 44px; font-size: 22px; }
+  .quantity-control input   { font-size: 15px; }
+  .gold-table-row      { padding: 14px 16px; }
+  .fx-swap-button      { width: 44px; height: 44px; }
+  .stock-row           { padding: 11px 14px; }
+}
+
+/* 5. Embed mode — hide page chrome, compact layout */
+body.embed-mode .site-header  { display: none; }
+body.embed-mode .method       { display: none; }
+body.embed-mode .lab          { min-height: unset; padding: 12px 14px 20px; }
+body.embed-mode .tool-workspace { max-width: none; margin: 0; }
