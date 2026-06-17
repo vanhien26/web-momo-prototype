@@ -718,6 +718,80 @@
       .benefit,.benefit:nth-child(2){min-width:82vw}
       .menu-grid{gap:8px}.dish-photo{height:92px}.dish-copy{padding:8px}
     }
+
+    /* ===== MERCHANT TOUR ===== */
+    body.tour-active { overflow:hidden }
+    body.tour-active .topbar { z-index:1 }
+    body.tour-active .tour-target {
+      position:relative;
+      z-index:10001;
+      border-radius:14px;
+      box-shadow:0 0 0 3px #d82d8b, 0 0 0 7px rgba(216,45,139,.22), 0 16px 40px rgba(0,0,0,.25);
+      transform:scale(1.025);
+      transition:transform .35s cubic-bezier(.4,0,.2,1), box-shadow .35s;
+    }
+    @keyframes tour-ring-pulse {
+      0%,100% { box-shadow:0 0 0 3px #d82d8b, 0 0 0 7px rgba(216,45,139,.22), 0 16px 40px rgba(0,0,0,.25) }
+      50%      { box-shadow:0 0 0 3px #a50064, 0 0 0 14px rgba(216,45,139,.08), 0 16px 40px rgba(0,0,0,.25) }
+    }
+    body.tour-active .tour-target { animation:tour-ring-pulse 1.8s ease-in-out infinite }
+    #tour-overlay {
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:10000;
+      background:rgba(8,6,18,.62);
+      backdrop-filter:blur(3px);
+      align-items:flex-end;
+      justify-content:center;
+      padding:0 16px 28px;
+    }
+    #tour-overlay.visible { display:flex }
+    #tour-card {
+      width:min(420px,100%);
+      background:#fff;
+      border-radius:22px;
+      padding:22px 24px 18px;
+      box-shadow:0 24px 64px rgba(0,0,0,.28);
+      animation:tour-card-in .32s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes tour-card-in {
+      from { transform:translateY(18px); opacity:0 }
+      to   { transform:translateY(0);    opacity:1 }
+    }
+    #tour-card-icon { font-size:34px; line-height:1; margin-bottom:10px }
+    #tour-card-kicker { font-size:10px; font-weight:800; color:#d82d8b; text-transform:uppercase; letter-spacing:.1em; margin-bottom:4px }
+    #tour-card-title { font-size:19px; font-weight:900; letter-spacing:-.025em; color:#171b24; margin:0 0 8px }
+    #tour-card-desc { font-size:13px; color:#667085; line-height:1.58; margin:0 0 20px }
+    .tour-nav { display:flex; align-items:center; gap:10px }
+    .tour-dots { display:flex; gap:5px; flex:1 }
+    .tour-dot { width:7px; height:7px; border-radius:50%; background:#e8e9ed; transition:width .25s, background .25s, border-radius .25s }
+    .tour-dot.on { width:22px; border-radius:4px; background:#d82d8b }
+    #tour-skip { font-size:12px; font-weight:600; color:#98a2b3; background:none; border:none; cursor:pointer; padding:8px 4px; white-space:nowrap }
+    #tour-next { background:#d82d8b; color:#fff; border:none; border-radius:11px; padding:11px 22px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; transition:background .18s }
+    #tour-next:hover { background:#a50064 }
+    #tour-replay {
+      position:fixed;
+      bottom:24px;
+      right:20px;
+      z-index:500;
+      background:#fff;
+      border:1px solid #e8e9ed;
+      border-radius:999px;
+      padding:8px 14px 8px 10px;
+      font-size:12px;
+      font-weight:700;
+      color:#667085;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(0,0,0,.10);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      transition:box-shadow .18s, color .18s;
+    }
+    #tour-replay:hover { color:#d82d8b; box-shadow:0 6px 20px rgba(0,0,0,.14) }
+    #tour-replay:before { content:"👁"; font-size:14px }
+    body.tour-active #tour-replay { display:none }
   </style>
 </head>
 <body>
@@ -1311,6 +1385,104 @@
         if(event.key==='Enter'||event.key===' '){event.preventDefault();openRecommendation()}
       });
     });
+
+    /* ===== MERCHANT TOUR ===== */
+    const TOUR_STEPS = [
+      {
+        sel:'.merchant-mark',
+        icon:'🏪',
+        title:'Logo quán',
+        desc:'Mỗi merchant trên MoMo có logo nhận diện riêng. Tiệm Mì Chú Cao – thương hiệu mì Hoa quen thuộc Quận 5, TP.HCM.'
+      },
+      {
+        sel:'.quick-item:nth-child(1)',
+        icon:'📍',
+        title:'Địa chỉ',
+        desc:'59 Trần Bình Trọng, Phường Chợ Quán. Tap "Xem bản đồ" để mở chỉ đường Google Maps ngay trong MoMo.'
+      },
+      {
+        sel:'.quick-item:nth-child(2)',
+        icon:'🕐',
+        title:'Giờ mở cửa',
+        desc:'Quán phục vụ 06:00 – 20:00, hằng ngày. Trạng thái đang mở / đã đóng được cập nhật tự động.'
+      },
+      {
+        sel:'.quick-item:nth-child(3)',
+        icon:'💰',
+        title:'Khoảng giá',
+        desc:'Dao động 30.000đ – 50.000đ/người. Biết trước budget để không bất ngờ khi thanh toán.'
+      },
+      {
+        sel:'#menu',
+        icon:'🍜',
+        title:'Menu nổi bật',
+        desc:'Các món được gọi nhiều nhất kèm giá thực tế. Tap để xem chi tiết hoặc thanh toán ngay qua MoMo.'
+      }
+    ];
+
+    let tourStep=0, prevTourTarget=null;
+
+    function startTour(){
+      tourStep=0;
+      document.body.classList.add('tour-active');
+      document.getElementById('tour-overlay').classList.add('visible');
+      showTourStep(0);
+    }
+
+    function showTourStep(idx){
+      if(prevTourTarget){ prevTourTarget.classList.remove('tour-target'); prevTourTarget=null; }
+      const step=TOUR_STEPS[idx];
+      const target=document.querySelector(step.sel);
+      if(target){
+        target.classList.add('tour-target');
+        prevTourTarget=target;
+        setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'center'}),60);
+      }
+      document.getElementById('tour-card-icon').textContent=step.icon;
+      document.getElementById('tour-card-kicker').textContent=`Bước ${idx+1} / ${TOUR_STEPS.length}`;
+      document.getElementById('tour-card-title').textContent=step.title;
+      document.getElementById('tour-card-desc').textContent=step.desc;
+      document.querySelectorAll('.tour-dot').forEach((d,i)=>d.classList.toggle('on',i===idx));
+      document.getElementById('tour-next').textContent=idx===TOUR_STEPS.length-1?'Bắt đầu khám phá ✓':'Tiếp theo →';
+      const card=document.getElementById('tour-card');
+      card.style.animation='none'; void card.offsetHeight; card.style.animation='';
+    }
+
+    function advanceTour(){
+      if(tourStep<TOUR_STEPS.length-1){ tourStep++; showTourStep(tourStep); }
+      else endTour();
+    }
+
+    function endTour(){
+      document.body.classList.remove('tour-active');
+      document.getElementById('tour-overlay').classList.remove('visible');
+      if(prevTourTarget){ prevTourTarget.classList.remove('tour-target'); prevTourTarget=null; }
+      localStorage.setItem('merchant_tour_seen','1');
+    }
+
+    if(!localStorage.getItem('merchant_tour_seen')) setTimeout(startTour,700);
   </script>
+
+  <div id="tour-overlay">
+    <div id="tour-card">
+      <div id="tour-card-icon">🏪</div>
+      <div id="tour-card-kicker">Bước 1 / 5</div>
+      <h3 id="tour-card-title">Logo quán</h3>
+      <p id="tour-card-desc">Mỗi merchant trên MoMo có logo nhận diện riêng.</p>
+      <div class="tour-nav">
+        <div class="tour-dots">
+          <div class="tour-dot on"></div>
+          <div class="tour-dot"></div>
+          <div class="tour-dot"></div>
+          <div class="tour-dot"></div>
+          <div class="tour-dot"></div>
+        </div>
+        <button id="tour-skip" onclick="endTour()">Bỏ qua</button>
+        <button id="tour-next" onclick="advanceTour()">Tiếp theo →</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="tour-replay" onclick="startTour()">Tour quán</button>
 </body>
 </html>
