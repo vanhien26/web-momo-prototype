@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
-  <link rel="stylesheet" href="financial.css?v=5">
+  <link rel="stylesheet" href="financial.css?v=7">
 </head>
 <body>
   <header class="site-header">
@@ -60,50 +60,87 @@
           <div class="panel-heading market-heading">
             <div>
               <span class="panel-kicker">INVESTMENT / GOLD</span>
-              <h2>Giá vàng và sức mua</h2>
-              <p>So sánh giá mua bán, tính lượng vàng có thể mua và mức tăng cần thiết để hòa vốn.</p>
+              <h2>Giá vàng hôm nay</h2>
+              <p>Bảng giá mua bán vàng trong nước và giá thế giới XAU/USD cập nhật tham chiếu.</p>
             </div>
-            <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>09/06/2026</small></span></div>
+            <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small id="goldTimestamp">17/06/2026 · 09:00</small></span></div>
           </div>
 
-          <div class="gold-price-grid" id="goldPriceGrid"></div>
+          <!-- XAU/USD hero -->
+          <div class="gold-world-bar" id="goldWorldBar"></div>
 
-          <div class="market-workspace">
-            <div class="control-section">
-              <div class="section-label"><span>01</span><strong>Tính sức mua</strong></div>
-              <label class="input-label" for="goldBudget">Ngân sách dự kiến</label>
-              <div class="money-input">
-                <input id="goldBudget" type="number" min="1000000" step="1000000" value="100000000">
-                <span>VNĐ</span>
+          <!-- Price chart -->
+          <div class="gold-chart-card">
+            <div class="gold-chart-head">
+              <div>
+                <span class="gold-chart-title" id="goldChartTitle">SJC 1 lượng · 30 ngày</span>
+                <b id="goldChartChange" class="up">+0.00%</b>
               </div>
-              <div class="quick-values" aria-label="Chọn nhanh ngân sách">
-                <button type="button" data-budget="50000000">50 triệu</button>
-                <button type="button" data-budget="100000000" class="active">100 triệu</button>
-                <button type="button" data-budget="200000000">200 triệu</button>
-              </div>
-              <label class="input-label" for="goldProduct">Loại vàng</label>
-              <select id="goldProduct"></select>
-              <label class="input-label" for="goldScenario">Kịch bản giá bán lại</label>
-              <div class="range-row">
-                <input id="goldScenario" type="range" min="-10" max="20" step="1" value="5">
-                <output id="goldScenarioValue">+5%</output>
+              <div class="gold-chart-controls">
+                <div class="segmented-control" id="goldChartProductCtrl"></div>
+                <div class="segmented-control" id="goldChartRangeCtrl">
+                  <button type="button" data-range="1D">1D</button>
+                  <button type="button" data-range="1W">1W</button>
+                  <button type="button" data-range="1M" class="active">1M</button>
+                  <button type="button" data-range="3M">3M</button>
+                </div>
               </div>
             </div>
-
-            <div class="gold-result">
-              <span>SỨC MUA ƯỚC TÍNH</span>
-              <strong id="goldQuantity">0 chỉ</strong>
-              <p id="goldRemainder">Còn lại 0 đ</p>
-              <div class="gold-result-grid">
-                <div><small>Chênh lệch mua bán</small><b id="goldSpread">0 đ</b></div>
-                <div><small>Tăng để hòa vốn</small><b id="goldBreakEven">0%</b></div>
-                <div><small>Giá trị bán theo kịch bản</small><b id="goldFutureValue">0 đ</b></div>
-                <div><small>Lãi/lỗ mô phỏng</small><b id="goldProfit">0 đ</b></div>
-              </div>
-              <div class="insight-box" id="goldInsight"></div>
-            </div>
+            <div class="gold-chart" id="goldChart"></div>
+            <div class="gold-chart-axis" id="goldChartAxis"></div>
           </div>
-          <p class="source-note">Giá tham chiếu từ bảng giá công khai của SJC, đơn vị VNĐ/lượng. Prototype không kết nối dữ liệu thời gian thực và không phải khuyến nghị mua bán.</p>
+
+          <!-- Bảng giá trong nước -->
+          <div class="gold-table-wrap">
+            <div class="gold-table-head">
+              <span>Loại vàng</span>
+              <span>Mua vào</span>
+              <span>Bán ra</span>
+              <span>Chênh lệch</span>
+              <span>Xu hướng</span>
+            </div>
+            <div id="goldPriceTable"></div>
+          </div>
+
+          <!-- Sức mua — secondary -->
+          <details class="gold-calculator-details">
+            <summary>Tính sức mua với ngân sách của bạn</summary>
+            <div class="market-workspace">
+              <div class="control-section">
+                <label class="input-label" for="goldBudget">Ngân sách dự kiến</label>
+                <div class="money-input">
+                  <input id="goldBudget" type="number" min="1000000" step="1000000" value="100000000">
+                  <span>VNĐ</span>
+                </div>
+                <div class="quick-values" aria-label="Chọn nhanh ngân sách">
+                  <button type="button" data-budget="50000000">50 triệu</button>
+                  <button type="button" data-budget="100000000" class="active">100 triệu</button>
+                  <button type="button" data-budget="200000000">200 triệu</button>
+                </div>
+                <label class="input-label" for="goldProduct">Loại vàng</label>
+                <select id="goldProduct"></select>
+                <label class="input-label" for="goldScenario">Kịch bản giá bán lại</label>
+                <div class="range-row">
+                  <input id="goldScenario" type="range" min="-10" max="20" step="1" value="5">
+                  <output id="goldScenarioValue">+5%</output>
+                </div>
+              </div>
+              <div class="gold-result">
+                <span>SỨC MUA ƯỚC TÍNH</span>
+                <strong id="goldQuantity">0 chỉ</strong>
+                <p id="goldRemainder">Còn lại 0 đ</p>
+                <div class="gold-result-grid">
+                  <div><small>Chênh lệch mua bán</small><b id="goldSpread">0 đ</b></div>
+                  <div><small>Tăng để hòa vốn</small><b id="goldBreakEven">0%</b></div>
+                  <div><small>Giá trị bán theo kịch bản</small><b id="goldFutureValue">0 đ</b></div>
+                  <div><small>Lãi/lỗ mô phỏng</small><b id="goldProfit">0 đ</b></div>
+                </div>
+                <div class="insight-box" id="goldInsight"></div>
+              </div>
+            </div>
+          </details>
+
+          <p class="source-note">Giá tham chiếu từ bảng giá công khai của SJC & PNJ, XAU/USD theo Kitco. Prototype không kết nối dữ liệu thời gian thực và không phải khuyến nghị mua bán.</p>
         </section>
 
         <section class="tool-panel stock-panel" id="stockPanel" hidden>
@@ -176,63 +213,52 @@
           <div class="panel-heading">
             <div>
               <span class="panel-kicker">CREDIT / CIC</span>
-              <h2>CIC Score Stimulator</h2>
-              <p>Xem điểm tín dụng của bạn sẽ biến động như thế nào nếu thay đổi từng nhóm hành vi.</p>
-              <div class="formula-box">
-                <b>5 nhóm yếu tố ảnh hưởng điểm CIC:</b> Lịch sử thanh toán (35%) · Tổng dư nợ (30%) · Số lượng tín dụng (15%) · Độ dài lịch sử (10%) · Chất lượng quan hệ (10%)
-              </div>
+              <h2>Tra cứu hạng tín dụng CIC</h2>
+              <p>Kéo slider để xem hạng tín dụng tương ứng và triển vọng vay vốn theo từng mức điểm.</p>
             </div>
             <span class="intent-chip">Informational intent</span>
           </div>
 
-          <div class="cic-layout">
-            <div class="cic-inputs">
-              <div class="cic-score-section">
-                <div class="section-label"><span>00</span><strong>Điểm tín dụng hiện tại</strong></div>
-                <div class="cic-score-row">
-                  <div class="cic-score-badge" id="cicScoreBadge">
-                    <strong id="cicScoreNum">631</strong>
-                    <small id="cicScoreHang">Hạng 4 · Khá</small>
-                  </div>
-                  <input type="range" id="cicCurrentScore" class="cic-score-slider" min="300" max="900" step="10" value="631">
+          <div class="cic-v2-layout">
+            <div class="cic-v2-slider-col">
+              <h3 class="cic-v2-section-title">Kéo mức điểm bạn kỳ vọng</h3>
+
+              <div class="cic-v2-slider-wrap">
+                <div class="cic-v2-tick-row">
+                  <span class="cic-v2-tick-label">Hạng</span>
+                  <div class="cic-v2-ticks" id="cicV2Ticks"></div>
                 </div>
-                <div class="cic-gauge-bar">
-                  <div class="cic-gauge-thumb" id="cicGaugeThumb"></div>
+                <div class="cic-v2-slider-track">
+                  <div class="cic-v2-bubble" id="cicV2Bubble">570</div>
+                  <input type="range" id="cicV2Slider" min="300" max="900" step="10" value="570">
                 </div>
-                <div class="cic-gauge-labels"><span>300 - Kém</span><span>900 - Xuất sắc</span></div>
+                <div class="cic-v2-range-row">
+                  <span class="cic-v2-range-label">Điểm</span>
+                  <span class="cic-v2-range-min" id="cicV2RangeMin">300 điểm</span>
+                  <span class="cic-v2-range-max" id="cicV2RangeMax">900 điểm</span>
+                </div>
               </div>
 
-              <div class="cic-step-section">
-                <div class="section-label"><span>01</span><strong>Chọn nhóm hành vi</strong></div>
-                <div class="cic-group-grid" id="cicGroupGrid"></div>
-              </div>
+              <div class="cic-v2-band-info" id="cicV2BandInfo"></div>
 
-              <div class="cic-step-section">
-                <div class="section-label"><span>02</span><strong>Điểm sẽ như thế nào nếu tôi...</strong></div>
-                <div class="cic-scenarios" id="cicScenarios"></div>
-              </div>
+              <p class="cic-disclaimer">Điểm CIC được chấm và quản lý bởi Trung tâm Thông tin Tín dụng Quốc gia Việt Nam (CIC). Kết quả ở đây mang tính tham khảo theo công thức xếp hạng công khai.</p>
             </div>
 
-            <div class="cic-result-col">
-              <div class="cic-ba-card">
-                <div class="cic-ba-item">
-                  <span class="ba-label">ĐIỂM HIỆN TẠI</span>
-                  <strong class="ba-score" id="cicBeforeVal">631</strong>
-                  <small class="ba-hang" id="cicBeforeHang">Hạng 4 · Khá</small>
-                </div>
-                <div class="cic-delta neu" id="cicDelta">→</div>
-                <div class="cic-ba-item">
-                  <span class="ba-label">ĐIỂM DỰ KIẾN</span>
-                  <strong class="ba-score" id="cicAfterVal">631</strong>
-                  <small class="ba-hang" id="cicAfterHang">Hạng 4 · Khá</small>
+            <div class="cic-v2-phone-col">
+              <div class="cic-v2-phone">
+                <div class="cic-v2-phone-notch"></div>
+                <div class="cic-v2-phone-screen">
+                  <div class="cic-v2-brand">
+                    <strong>CIC</strong><small>CreditINFO</small>
+                  </div>
+                  <div class="cic-v2-gauge" id="cicV2Gauge"></div>
+                  <div class="cic-v2-score-info">
+                    <strong id="cicV2RankLabel">Tín dụng tốt</strong>
+                    <p id="cicV2RankDesc">Hạng tín dụng tốt - một số tổ chức tín dụng có thể xét duyệt với điều kiện.</p>
+                  </div>
+                  <button class="cic-v2-cta" type="button" onclick="momo_track('cta_click',{cta:'view_cic_score',location:'cic_panel'})">Xem điểm CIC thực tế ngay</button>
                 </div>
               </div>
-
-              <div class="cic-rec" id="cicRecommendation">Chọn một hành vi ở bước 2 để xem xu hướng biến động điểm.</div>
-
-              <p class="cic-disclaimer">Kết quả thể hiện xu hướng theo từng tình huống riêng lẻ và không phải dự đoán chính xác tác động đến điểm tín dụng trong tương lai. Điểm CIC được chấm và quản lý bởi Trung tâm Thông tin Tín dụng Quốc gia Việt Nam (CIC).</p>
-
-              <button class="primary-action" type="button" onclick="momo_track('cta_click',{cta:'view_cic_score',location:'cic_panel'})">Xem Điểm CIC thực tế trên MoMo</button>
             </div>
           </div>
         </section>
@@ -344,6 +370,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js?v=8"></script>
+  <script src="financial.js?v=11"></script>
 </body>
 </html>

@@ -529,7 +529,7 @@ function setDetailMode(enabled) {
 
 function syncHash(id) {
   if (location.hash.slice(1) === id) return;
-  history.replaceState(null, '', `#${id}`);
+  try { history.replaceState(null, '', `#${id}`); } catch(e) {}
 }
 
 function selectTool(id, options = {}) {
@@ -547,7 +547,7 @@ function selectTool(id, options = {}) {
   document.getElementById('bankRatePanel').hidden = tool.panel !== 'bank-rate';
   document.getElementById('fxPanel').hidden       = tool.panel !== 'fx';
   if (tool.panel === 'generic')   renderGenericPanel(tool);
-  if (tool.panel === 'gold')      computeGold();
+  if (tool.panel === 'gold')      initGoldPanel();
   if (tool.panel === 'stock')     renderStockTable();
   if (tool.panel === 'cic')       renderCicPanel();
   if (tool.panel === 'bank-rate') computeBankRate();
@@ -653,44 +653,190 @@ function computeGeneric(tool) {
 
 // ─── Gold Panel
 const GOLD_PRODUCTS = [
-  { id: 'sjc-luong',  name: 'SJC 1 lượng',    unit: 'lượng', buy: 121500000, sell: 124000000 },
-  { id: 'sjc-nhan',   name: 'SJC Nhẫn (1 chỉ)', unit: 'chỉ', buy: 12100000,  sell: 12300000  },
-  { id: 'pnj-nhan',   name: 'PNJ Nhẫn (1 chỉ)', unit: 'chỉ', buy: 11900000,  sell: 12200000  },
-  { id: 'pnj-luong',  name: 'PNJ 1 lượng',    unit: 'lượng', buy: 119000000, sell: 122000000 },
+  { id: 'sjc-luong',  name: 'SJC 1 lượng',      brand: 'SJC', unit: 'lượng', buy: 121500000, sell: 124000000, trend: 'up'   },
+  { id: 'sjc-nhan',   name: 'SJC Nhẫn 1 chỉ',   brand: 'SJC', unit: 'chỉ',   buy: 12100000,  sell: 12300000,  trend: 'up'   },
+  { id: 'pnj-luong',  name: 'PNJ 1 lượng',       brand: 'PNJ', unit: 'lượng', buy: 119000000, sell: 122000000, trend: 'flat' },
+  { id: 'pnj-nhan',   name: 'PNJ Nhẫn 1 chỉ',   brand: 'PNJ', unit: 'chỉ',   buy: 11900000,  sell: 12200000,  trend: 'down' },
+  { id: 'doji-luong', name: 'DOJI 1 lượng',      brand: 'DOJI',unit: 'lượng', buy: 120500000, sell: 123500000, trend: 'up'   },
+  { id: 'btmc-luong', name: 'Bảo Tín Minh Châu', brand: 'BTMC',unit: 'lượng', buy: 120000000, sell: 123000000, trend: 'flat' },
 ];
 
-function initGoldPanel() {
-  document.getElementById('goldPriceGrid').innerHTML = GOLD_PRODUCTS.map(p => `
-    <div class="gold-price-card">
-      <span>${p.name}</span>
-      <strong>${fmtM(p.sell)}</strong>
-      <em>Mua vào: ${fmtM(p.buy)}</em>
-    </div>
-  `).join('');
+const GOLD_WORLD = { pair: 'XAU/USD', price: 3312.50, change: +18.30, changePct: +0.56, high: 3328.10, low: 3298.40 };
 
+const TREND_ICON = { up: '▲', down: '▼', flat: '—' };
+const TREND_COLOR = { up: '#12b76a', down: '#f04438', flat: '#98a2b3' };
+
+// Chart state
+let goldChartProductId = 'sjc-luong';
+let goldChartRange = '1M';
+
+// Deterministic pseudo-random based on seed (so chart looks stable per product/range)
+function goldRand(seed) {
+  let x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+// Generate price history for a product over a given range
+function genGoldHistory(product, range) {
+  const config = {
+    '1D':  { points: 24, step: 'h',  label: 'giờ',  trendBias: 0.001 },
+    '1W':  { points: 7,  step: 'd',  label: 'ngày', trendBias: 0.005 },
+    '1M':  { points: 30, step: 'd',  label: 'ngày', trendBias: 0.02  },
+    '3M':  { points: 12, step: 'w',  label: 'tuần', trendBias: 0.05  },
+  }[range];
+  const sellPrice = product.sell;
+  const seedBase = product.id.split('').reduce((s, c) => s + c.charCodeAt(0), 0);
+  const trendDir = product.trend === 'up' ? 1 : product.trend === 'down' ? -1 : 0.3;
+  const points = [];
+  for (let i = 0; i < config.points; i++) {
+    const progress = i / (config.points - 1);
+    const baseTrend = trendDir * config.trendBias * progress;
+    const noise = (goldRand(seedBase + i * 7.3) - 0.5) * config.trendBias * 0.6;
+    const price = sellPrice * (1 - trendDir * config.trendBias + baseTrend + noise);
+    let label;
+    if (config.step === 'h') label = `${String(9 + i).padStart(2, '0')}:00`;
+    else if (config.step === 'd') label = `${config.points - i}${range === '1W' ? 'd' : ''}`;
+    else label = `W${config.points - i}`;
+    points.push({ price, label, i });
+  }
+  // Anchor end point to current price
+  points[points.length - 1].price = sellPrice;
+  return { points, config };
+}
+
+function renderGoldChart() {
+  const product = GOLD_PRODUCTS.find(p => p.id === goldChartProductId) || GOLD_PRODUCTS[0];
+  const { points } = genGoldHistory(product, goldChartRange);
+
+  const min = Math.min(...points.map(p => p.price));
+  const max = Math.max(...points.map(p => p.price));
+  const range = max - min || 1;
+  const width = 720;
+  const height = 160;
+  const pad = 20;
+  const coords = points.map((point, index) => {
+    const x = pad + index * ((width - pad * 2) / (points.length - 1));
+    const y = height - pad - ((point.price - min) / range) * (height - pad * 2);
+    return { ...point, x, y };
+  });
+  const line = coords.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const area = `${line} L${coords[coords.length - 1].x.toFixed(1)},${height - pad} L${coords[0].x.toFixed(1)},${height - pad} Z`;
+  const delta = (points[points.length - 1].price - points[0].price) / points[0].price * 100;
+  const deltaText = `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}%`;
+
+  const rangeLabel = { '1D': '24 giờ', '1W': '7 ngày', '1M': '30 ngày', '3M': '3 tháng' }[goldChartRange];
+  document.getElementById('goldChartTitle').textContent = `${product.name} · ${rangeLabel}`;
+  const changeEl = document.getElementById('goldChartChange');
+  changeEl.textContent = deltaText;
+  changeEl.className = delta >= 0 ? 'up' : 'down';
+
+  document.getElementById('goldChart').innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Biểu đồ giá ${product.name}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="gold-chart-area" d="${area}" fill="url(#goldGrad)"></path>
+      <path class="gold-chart-line" d="${line}"></path>
+    </svg>`;
+
+  const firstLabel = points[0].label;
+  const lastLabel = points[points.length - 1].label;
+  document.getElementById('goldChartAxis').innerHTML =
+    `<span>${firstLabel}</span><b>Thấp ${fmtM(min)} · Cao ${fmtM(max)}</b><span>${lastLabel}</span>`;
+}
+
+function initGoldPanel() {
+  // XAU/USD hero bar
+  const w = GOLD_WORLD;
+  const sign = w.change >= 0 ? '+' : '';
+  const clr = w.change >= 0 ? '#12b76a' : '#f04438';
+  document.getElementById('goldWorldBar').innerHTML = `
+    <div class="gold-world-hero">
+      <div class="gold-world-pair">
+        <span class="gold-world-label">XAU/USD · Vàng thế giới</span>
+        <strong class="gold-world-price">$${w.price.toLocaleString('en-US', {minimumFractionDigits:2})}</strong>
+        <span class="gold-world-change" style="color:${clr}">${sign}${w.change.toFixed(2)} (${sign}${w.changePct.toFixed(2)}%)</span>
+      </div>
+      <div class="gold-world-stats">
+        <div><small>Cao nhất ngày</small><b>$${w.high.toLocaleString('en-US',{minimumFractionDigits:2})}</b></div>
+        <div><small>Thấp nhất ngày</small><b>$${w.low.toLocaleString('en-US',{minimumFractionDigits:2})}</b></div>
+        <div><small>Đơn vị</small><b>Troy ounce</b></div>
+      </div>
+    </div>
+  `;
+
+  // Price table
+  document.getElementById('goldPriceTable').innerHTML = GOLD_PRODUCTS.map(p => {
+    const spread = p.sell - p.buy;
+    const tColor = TREND_COLOR[p.trend];
+    const tIcon  = TREND_ICON[p.trend];
+    return `
+    <div class="gold-table-row">
+      <span class="gold-row-name"><b>${p.brand}</b>${p.name.replace(p.brand, '').trim()}</span>
+      <span class="gold-row-buy">${fmtM(p.buy)}<small>/${p.unit}</small></span>
+      <span class="gold-row-sell">${fmtM(p.sell)}<small>/${p.unit}</small></span>
+      <span class="gold-row-spread">${fmtM(spread)}</span>
+      <span class="gold-row-trend" style="color:${tColor}">${tIcon}</span>
+    </div>`;
+  }).join('');
+
+  // Chart product selector (only lượng-based products to keep prices comparable)
+  const chartProducts = GOLD_PRODUCTS.filter(p => p.unit === 'lượng');
+  document.getElementById('goldChartProductCtrl').innerHTML = chartProducts.map(p =>
+    `<button type="button" data-chart-product="${p.id}"${p.id === goldChartProductId ? ' class="active"' : ''}>${p.brand}</button>`
+  ).join('');
+
+  // Calculator select
   document.getElementById('goldProduct').innerHTML = GOLD_PRODUCTS.map(p =>
     `<option value="${p.id}">${p.name}</option>`
   ).join('');
 
-  ['goldBudget', 'goldProduct', 'goldScenario'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      if (id === 'goldScenario') {
-        const v = +document.getElementById('goldScenario').value;
-        document.getElementById('goldScenarioValue').textContent = (v >= 0 ? '+' : '') + v + '%';
-      }
-      computeGold();
-    });
-  });
+  if (!initGoldPanel._bound) {
+    initGoldPanel._bound = true;
 
-  document.querySelectorAll('[data-budget]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-budget]').forEach(b => b.classList.remove('active'));
+    // Chart product buttons
+    document.getElementById('goldChartProductCtrl').addEventListener('click', e => {
+      const btn = e.target.closest('[data-chart-product]');
+      if (!btn) return;
+      document.querySelectorAll('[data-chart-product]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('goldBudget').value = btn.dataset.budget;
-      computeGold();
+      goldChartProductId = btn.dataset.chartProduct;
+      renderGoldChart();
     });
-  });
 
+    // Chart range buttons
+    document.getElementById('goldChartRangeCtrl').addEventListener('click', e => {
+      const btn = e.target.closest('[data-range]');
+      if (!btn) return;
+      document.querySelectorAll('[data-range]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      goldChartRange = btn.dataset.range;
+      renderGoldChart();
+    });
+    ['goldBudget', 'goldProduct', 'goldScenario'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        if (id === 'goldScenario') {
+          const v = +document.getElementById('goldScenario').value;
+          document.getElementById('goldScenarioValue').textContent = (v >= 0 ? '+' : '') + v + '%';
+        }
+        computeGold();
+      });
+    });
+
+    document.querySelectorAll('[data-budget]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-budget]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('goldBudget').value = btn.dataset.budget;
+        computeGold();
+      });
+    });
+  }
+
+  renderGoldChart();
   computeGold();
 }
 
@@ -955,108 +1101,105 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-// ─── CIC Stimulator Panel
-let cicScore = 631;
-let cicGroup = 'A';
-let cicScenarioId = null;
+// ─── CIC Score Panel
+let cicScore = 570;
 
 function getBand(score) {
   return CIC_BANDS.find(b => score >= b.min && score <= b.max) || CIC_BANDS[CIC_BANDS.length - 1];
 }
 
 function initCicPanel() {
-  const groupGrid = document.getElementById('cicGroupGrid');
-  groupGrid.innerHTML = Object.entries(CIC_BEHAVIORS).map(([key, g]) =>
-    `<button class="cic-group-btn${key === cicGroup ? ' active' : ''}" data-group="${key}">
-      <strong>${key}</strong><span>${g.label}</span><em>${g.sub}</em>
-    </button>`
-  ).join('');
+  // Render rank ticks 10 → 1 (left = worst, right = best)
+  const ticksEl = document.getElementById('cicV2Ticks');
+  ticksEl.innerHTML = [10,9,8,7,6,5,4,3,2,1].map(n => `<span>${n}</span>`).join('');
 
-  groupGrid.addEventListener('click', e => {
-    const btn = e.target.closest('.cic-group-btn');
-    if (!btn) return;
-    cicGroup = btn.dataset.group;
-    cicScenarioId = null;
-    groupGrid.querySelectorAll('.cic-group-btn').forEach(b => b.classList.toggle('active', b === btn));
-    renderCicScenarios();
-    computeCic();
-  });
-
-  document.getElementById('cicScenarios').addEventListener('click', e => {
-    const btn = e.target.closest('.cic-scenario-btn');
-    if (!btn) return;
-    cicScenarioId = btn.dataset.id;
-    document.querySelectorAll('#cicScenarios .cic-scenario-btn').forEach(b => b.classList.toggle('active', b === btn));
-    computeCic();
-  });
-
-  document.getElementById('cicCurrentScore').addEventListener('input', e => {
-    cicScore = +e.target.value;
-    updateCicScoreBadge();
-    computeCic();
-  });
-
-  renderCicScenarios();
-  updateCicScoreBadge();
-  computeCic();
+  const slider = document.getElementById('cicV2Slider');
+  if (!initCicPanel._bound) {
+    initCicPanel._bound = true;
+    slider.addEventListener('input', e => {
+      cicScore = +e.target.value;
+      updateCicV2();
+    });
+  }
+  slider.value = cicScore;
+  updateCicV2();
 }
 
-function updateCicScoreBadge() {
+// SVG semi-circular gauge
+function renderCicGauge(score) {
+  const cx = 110, cy = 110, r = 90;
+  const startAngle = 180, endAngle = 360;
+  const range = endAngle - startAngle;
+  const pct = (score - 300) / 600;
+  const needleAngle = startAngle + pct * range;
+  const rad = a => (a * Math.PI) / 180;
+  const arcPt = (a, radius = r) => `${cx + radius * Math.cos(rad(a))},${cy + radius * Math.sin(rad(a))}`;
+
+  // Build colored arc segments: red 300-540, orange 541-620, yellow 621-700, lightgreen 701-820, green 821-900
+  const segs = [
+    { from: 300, to: 540, color: '#dc2626' },
+    { from: 540, to: 620, color: '#ea580c' },
+    { from: 620, to: 700, color: '#eab308' },
+    { from: 700, to: 820, color: '#84cc16' },
+    { from: 820, to: 900, color: '#16a34a' },
+  ];
+  const arcSegs = segs.map(s => {
+    const a1 = startAngle + ((s.from - 300) / 600) * range;
+    const a2 = startAngle + ((s.to   - 300) / 600) * range;
+    const large = a2 - a1 > 180 ? 1 : 0;
+    return `<path d="M${arcPt(a1)} A${r},${r} 0 ${large} 1 ${arcPt(a2)}" stroke="${s.color}" stroke-width="14" fill="none" stroke-linecap="butt"/>`;
+  }).join('');
+
+  // Needle
+  const needleLen = r - 12;
+  const needleX = cx + needleLen * Math.cos(rad(needleAngle));
+  const needleY = cy + needleLen * Math.sin(rad(needleAngle));
+
+  return `
+    <svg viewBox="0 0 220 130" role="img" aria-label="CIC score gauge">
+      ${arcSegs}
+      <line x1="${cx}" y1="${cy}" x2="${needleX.toFixed(1)}" y2="${needleY.toFixed(1)}" stroke="#1d2939" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="6" fill="#1d2939"/>
+    </svg>
+    <div class="cic-v2-gauge-num"><strong>${score}</strong><small>Hạng ${getBand(score).hang}</small></div>
+  `;
+}
+
+function updateCicV2() {
   const band = getBand(cicScore);
-  document.getElementById('cicScoreNum').textContent  = cicScore;
-  document.getElementById('cicScoreHang').textContent = `Hạng ${band.hang} · ${band.label}`;
-  const badge = document.getElementById('cicScoreBadge');
-  badge.style.borderColor = band.color;
-  badge.style.color = band.color;
-  const pct = Math.round((cicScore - 300) / 600 * 100);
-  const thumb = document.getElementById('cicGaugeThumb');
-  if (thumb) thumb.style.left = pct + '%';
-}
 
-function renderCicScenarios() {
-  const group = CIC_BEHAVIORS[cicGroup];
-  document.getElementById('cicScenarios').innerHTML = group.scenarios.map(s =>
-    `<button class="cic-scenario-btn${s.id === cicScenarioId ? ' active' : ''}" data-id="${s.id}">
-      <span class="scenario-label">${s.label}</span>
-      <span class="scenario-delta ${s.delta > 0 ? 'pos' : s.delta < 0 ? 'neg' : 'neu'}">${s.delta > 0 ? '+' : ''}${s.delta}</span>
-    </button>`
-  ).join('');
-}
+  // Bubble follows slider thumb
+  const bubble = document.getElementById('cicV2Bubble');
+  bubble.textContent = cicScore;
+  const pct = (cicScore - 300) / 600;
+  // Account for thumb width (≈ 20px). We approximate via calc on left position.
+  bubble.style.left = `calc(${(pct * 100).toFixed(1)}% )`;
 
-function computeCic() {
-  const beforeBand = getBand(cicScore);
-  const beforeEl = document.getElementById('cicBeforeVal');
-  beforeEl.textContent = cicScore;
-  beforeEl.style.color = beforeBand.color;
-  document.getElementById('cicBeforeHang').textContent = `Hạng ${beforeBand.hang} · ${beforeBand.label}`;
+  // Band range
+  document.getElementById('cicV2RangeMin').textContent = `${band.min} điểm`;
+  document.getElementById('cicV2RangeMax').textContent = `${band.max} điểm`;
 
-  const group    = CIC_BEHAVIORS[cicGroup];
-  const scenario = cicScenarioId ? group.scenarios.find(s => s.id === cicScenarioId) : null;
-  const after    = scenario ? Math.min(900, Math.max(300, cicScore + scenario.delta)) : cicScore;
-  const afterBand = getBand(after);
+  // Band info
+  const prospect = band.hang <= 2 ? 'Dễ vay, lãi suất ưu đãi tốt nhất'
+    : band.hang <= 4 ? 'Vay được với điều kiện thuận lợi'
+    : band.hang === 5 ? 'Một số tổ chức tín dụng có thể xét duyệt'
+    : band.hang <= 7 ? 'Khó vay, thường cần tài sản đảm bảo'
+    : 'Hầu hết tổ chức tín dụng từ chối';
+  document.getElementById('cicV2BandInfo').innerHTML = `
+    <div class="cic-v2-band-row"><small>HẠNG</small><b style="color:${band.color}">Hạng ${band.hang} · ${band.label}</b></div>
+    <div class="cic-v2-band-row"><small>KHOẢNG ĐIỂM</small><b>${band.min} - ${band.max}</b></div>
+    <div class="cic-v2-band-row"><small>TRIỂN VỌNG VAY VỐN</small><b>${prospect}</b></div>
+  `;
 
-  const afterEl = document.getElementById('cicAfterVal');
-  afterEl.textContent = after;
-  afterEl.style.color = afterBand.color;
-  document.getElementById('cicAfterHang').textContent = `Hạng ${afterBand.hang} · ${afterBand.label}`;
-
-  const d = scenario ? scenario.delta : 0;
-  const deltaEl = document.getElementById('cicDelta');
-  deltaEl.textContent = scenario ? (d > 0 ? '▲ +' + d : d < 0 ? '▼ ' + d : '= 0') : '→';
-  deltaEl.className   = 'cic-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'neu');
-
-  const recEl = document.getElementById('cicRecommendation');
-  recEl.textContent = scenario ? scenario.rec : 'Chọn một hành vi ở bước 2 để xem xu hướng biến động điểm.';
-  recEl.className   = 'cic-rec' + (scenario ? ' active' : '');
+  // Phone gauge + labels
+  document.getElementById('cicV2Gauge').innerHTML = renderCicGauge(cicScore);
+  document.getElementById('cicV2RankLabel').textContent = band.label;
+  document.getElementById('cicV2RankLabel').style.color = band.color;
+  document.getElementById('cicV2RankDesc').textContent = band.desc;
 }
 
 function renderCicPanel() {
-  document.querySelectorAll('#cicGroupGrid .cic-group-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.group === cicGroup)
-  );
-  renderCicScenarios();
-  updateCicScoreBadge();
-  computeCic();
+  updateCicV2();
 }
 
 // ─── Init
