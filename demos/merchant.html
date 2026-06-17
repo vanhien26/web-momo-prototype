@@ -720,74 +720,84 @@
     }
 
     /* ===== MERCHANT TOUR ===== */
-    body.tour-active { overflow:hidden }
-    body.tour-active .topbar { z-index:1 }
-    body.tour-active .tour-target {
-      position:relative;
-      z-index:10001;
-      border-radius:14px;
-      box-shadow:0 0 0 3px #d82d8b, 0 0 0 7px rgba(216,45,139,.22), 0 16px 40px rgba(0,0,0,.25);
-      transform:scale(1.025);
-      transition:transform .35s cubic-bezier(.4,0,.2,1), box-shadow .35s;
-    }
-    @keyframes tour-ring-pulse {
-      0%,100% { box-shadow:0 0 0 3px #d82d8b, 0 0 0 7px rgba(216,45,139,.22), 0 16px 40px rgba(0,0,0,.25) }
-      50%      { box-shadow:0 0 0 3px #a50064, 0 0 0 14px rgba(216,45,139,.08), 0 16px 40px rgba(0,0,0,.25) }
-    }
-    body.tour-active .tour-target { animation:tour-ring-pulse 1.8s ease-in-out infinite }
-    #tour-overlay {
+    /* No overflow:hidden — panels are fixed-position and follow target on scroll */
+
+    /* 4 dark panels that surround the spotlight target */
+    .ts-panel {
       display:none;
       position:fixed;
-      inset:0;
       z-index:10000;
-      background:rgba(8,6,18,.62);
-      backdrop-filter:blur(3px);
-      align-items:flex-end;
-      justify-content:center;
-      padding:0 16px 28px;
+      background:rgba(6,4,14,.72);
+      pointer-events:all;
     }
-    #tour-overlay.visible { display:flex }
-    #tour-card {
-      width:min(420px,100%);
-      background:#fff;
-      border-radius:22px;
-      padding:22px 24px 18px;
-      box-shadow:0 24px 64px rgba(0,0,0,.28);
-      animation:tour-card-in .32s cubic-bezier(.4,0,.2,1);
-    }
-    @keyframes tour-card-in {
-      from { transform:translateY(18px); opacity:0 }
-      to   { transform:translateY(0);    opacity:1 }
-    }
-    #tour-card-icon { font-size:34px; line-height:1; margin-bottom:10px }
-    #tour-card-kicker { font-size:10px; font-weight:800; color:#d82d8b; text-transform:uppercase; letter-spacing:.1em; margin-bottom:4px }
-    #tour-card-title { font-size:19px; font-weight:900; letter-spacing:-.025em; color:#171b24; margin:0 0 8px }
-    #tour-card-desc { font-size:13px; color:#667085; line-height:1.58; margin:0 0 20px }
-    .tour-nav { display:flex; align-items:center; gap:10px }
-    .tour-dots { display:flex; gap:5px; flex:1 }
-    .tour-dot { width:7px; height:7px; border-radius:50%; background:#e8e9ed; transition:width .25s, background .25s, border-radius .25s }
-    .tour-dot.on { width:22px; border-radius:4px; background:#d82d8b }
-    #tour-skip { font-size:12px; font-weight:600; color:#98a2b3; background:none; border:none; cursor:pointer; padding:8px 4px; white-space:nowrap }
-    #tour-next { background:#d82d8b; color:#fff; border:none; border-radius:11px; padding:11px 22px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; transition:background .18s }
-    #tour-next:hover { background:#a50064 }
-    #tour-replay {
+    body.tour-active .ts-panel { display:block }
+
+    /* Pink ring drawn on top of the spotlight area */
+    #tour-ring {
+      display:none;
       position:fixed;
-      bottom:24px;
-      right:20px;
-      z-index:500;
+      z-index:10001;
+      border-radius:16px;
+      border:3px solid #d82d8b;
+      pointer-events:none;
+      box-shadow:0 0 0 5px rgba(216,45,139,.18), 0 12px 32px rgba(0,0,0,.22);
+      animation:tour-ring-pulse 1.8s ease-in-out infinite;
+    }
+    body.tour-active #tour-ring { display:block }
+    @keyframes tour-ring-pulse {
+      0%,100% { box-shadow:0 0 0 5px rgba(216,45,139,.18), 0 12px 32px rgba(0,0,0,.22) }
+      50%      { box-shadow:0 0 0 12px rgba(216,45,139,.05), 0 12px 32px rgba(0,0,0,.22) }
+    }
+
+    /* Floating tooltip card anchored near the target */
+    #tour-card {
+      display:none;
+      position:fixed;
+      z-index:10002;
       background:#fff;
-      border:1px solid #e8e9ed;
-      border-radius:999px;
-      padding:8px 14px 8px 10px;
-      font-size:12px;
-      font-weight:700;
-      color:#667085;
-      cursor:pointer;
-      box-shadow:0 4px 14px rgba(0,0,0,.10);
-      display:flex;
-      align-items:center;
-      gap:6px;
-      transition:box-shadow .18s, color .18s;
+      border-radius:18px;
+      padding:18px 20px 16px;
+      width:300px;
+      box-shadow:0 16px 48px rgba(0,0,0,.28);
+      pointer-events:all;
+    }
+    body.tour-active #tour-card { display:block; animation:tour-card-in .28s cubic-bezier(.4,0,.2,1) }
+    @keyframes tour-card-in {
+      from { transform:translateY(10px) scale(.97); opacity:0 }
+      to   { transform:translateY(0) scale(1);      opacity:1 }
+    }
+    /* Arrow pointing toward highlighted element */
+    #tour-card::before {
+      content:'';
+      position:absolute;
+      left:var(--arrow-left,50%);
+      width:0;
+      height:0;
+      border:9px solid transparent;
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,.12));
+    }
+    #tour-card[data-arrow="up"]::before    { top:-18px;    border-bottom-color:#fff }
+    #tour-card[data-arrow="down"]::before  { bottom:-18px; border-top-color:#fff }
+    #tour-card[data-arrow="none"]::before  { display:none }
+
+    #tour-card-icon   { font-size:28px; line-height:1; margin-bottom:8px }
+    #tour-card-kicker { font-size:10px; font-weight:800; color:#d82d8b; text-transform:uppercase; letter-spacing:.1em; margin-bottom:3px }
+    #tour-card-title  { font-size:17px; font-weight:900; letter-spacing:-.025em; color:#171b24; margin:0 0 7px }
+    #tour-card-desc   { font-size:12.5px; color:#667085; line-height:1.57; margin:0 0 16px }
+    .tour-nav  { display:flex; align-items:center; gap:8px }
+    .tour-dots { display:flex; gap:5px; flex:1 }
+    .tour-dot  { width:6px; height:6px; border-radius:50%; background:#e8e9ed; transition:width .22s, background .22s, border-radius .22s }
+    .tour-dot.on { width:18px; border-radius:3px; background:#d82d8b }
+    #tour-skip { font-size:11.5px; font-weight:600; color:#98a2b3; background:none; border:none; cursor:pointer; padding:6px 2px; white-space:nowrap }
+    #tour-next { background:#d82d8b; color:#fff; border:none; border-radius:10px; padding:10px 18px; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; transition:background .18s }
+    #tour-next:hover { background:#a50064 }
+
+    #tour-replay {
+      position:fixed; bottom:24px; right:20px; z-index:500;
+      background:#fff; border:1px solid #e8e9ed; border-radius:999px;
+      padding:8px 14px 8px 10px; font-size:12px; font-weight:700; color:#667085;
+      cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.10);
+      display:flex; align-items:center; gap:6px; transition:box-shadow .18s, color .18s;
     }
     #tour-replay:hover { color:#d82d8b; box-shadow:0 6px 20px rgba(0,0,0,.14) }
     #tour-replay:before { content:"👁"; font-size:14px }
@@ -1388,64 +1398,83 @@
 
     /* ===== MERCHANT TOUR ===== */
     const TOUR_STEPS = [
-      {
-        sel:'.merchant-mark',
-        icon:'🏪',
-        title:'Logo quán',
-        desc:'Mỗi merchant trên MoMo có logo nhận diện riêng. Tiệm Mì Chú Cao – thương hiệu mì Hoa quen thuộc Quận 5, TP.HCM.'
-      },
-      {
-        sel:'.quick-item:nth-child(1)',
-        icon:'📍',
-        title:'Địa chỉ',
-        desc:'59 Trần Bình Trọng, Phường Chợ Quán. Tap "Xem bản đồ" để mở chỉ đường Google Maps ngay trong MoMo.'
-      },
-      {
-        sel:'.quick-item:nth-child(2)',
-        icon:'🕐',
-        title:'Giờ mở cửa',
-        desc:'Quán phục vụ 06:00 – 20:00, hằng ngày. Trạng thái đang mở / đã đóng được cập nhật tự động.'
-      },
-      {
-        sel:'.quick-item:nth-child(3)',
-        icon:'💰',
-        title:'Khoảng giá',
-        desc:'Dao động 30.000đ – 50.000đ/người. Biết trước budget để không bất ngờ khi thanh toán.'
-      },
-      {
-        sel:'#menu',
-        icon:'🍜',
-        title:'Menu nổi bật',
-        desc:'Các món được gọi nhiều nhất kèm giá thực tế. Tap để xem chi tiết hoặc thanh toán ngay qua MoMo.'
-      }
+      { sel:'.merchant-mark',          icon:'🏪', title:'Logo quán',      desc:'Mỗi merchant trên MoMo có logo nhận diện riêng. Tiệm Mì Chú Cao – thương hiệu mì Hoa quen thuộc Quận 5, TP.HCM.' },
+      { sel:'.quick-item:nth-child(1)',icon:'📍', title:'Địa chỉ',        desc:'59 Trần Bình Trọng, Phường Chợ Quán. Tap "Xem bản đồ" để mở chỉ đường Google Maps ngay trong MoMo.' },
+      { sel:'.quick-item:nth-child(2)',icon:'🕐', title:'Giờ mở cửa',     desc:'Quán phục vụ 06:00 – 20:00, hằng ngày. Trạng thái đang mở / đã đóng được cập nhật tự động.' },
+      { sel:'.quick-item:nth-child(3)',icon:'💰', title:'Khoảng giá',     desc:'Dao động 30.000đ – 50.000đ/người. Biết trước budget để không bất ngờ khi thanh toán.' },
+      { sel:'#menu',                   icon:'🍜', title:'Menu nổi bật',   desc:'Các món được gọi nhiều nhất kèm giá thực tế. Tap để xem chi tiết hoặc thanh toán ngay qua MoMo.' }
     ];
 
-    let tourStep=0, prevTourTarget=null;
+    const PAD=14, CARD_W=300, CARD_H=230;
+    let tourStep=0, tourActive=false, tourRaf=null;
 
-    function startTour(){
-      tourStep=0;
-      document.body.classList.add('tour-active');
-      document.getElementById('tour-overlay').classList.add('visible');
-      showTourStep(0);
+    function $t(id){ return document.getElementById(id) }
+
+    function placePanels(r){
+      const p=PAD, vh=window.innerHeight, vw=window.innerWidth;
+      $t('ts-top').style.cssText=   `top:0;left:0;right:0;height:${Math.max(0,r.top-p)}px`;
+      $t('ts-bottom').style.cssText=`top:${r.bottom+p}px;left:0;right:0;bottom:0`;
+      $t('ts-left').style.cssText=  `top:${r.top-p}px;left:0;width:${Math.max(0,r.left-p)}px;height:${r.height+p*2}px`;
+      $t('ts-right').style.cssText= `top:${r.top-p}px;left:${r.right+p}px;right:0;height:${r.height+p*2}px`;
+      $t('tour-ring').style.cssText=`top:${r.top-p}px;left:${r.left-p}px;width:${r.width+p*2}px;height:${r.height+p*2}px`;
     }
 
-    function showTourStep(idx){
-      if(prevTourTarget){ prevTourTarget.classList.remove('tour-target'); prevTourTarget=null; }
-      const step=TOUR_STEPS[idx];
-      const target=document.querySelector(step.sel);
-      if(target){
-        target.classList.add('tour-target');
-        prevTourTarget=target;
-        setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'center'}),60);
-      }
-      document.getElementById('tour-card-icon').textContent=step.icon;
-      document.getElementById('tour-card-kicker').textContent=`Bước ${idx+1} / ${TOUR_STEPS.length}`;
-      document.getElementById('tour-card-title').textContent=step.title;
-      document.getElementById('tour-card-desc').textContent=step.desc;
+    function placeCard(r){
+      const vw=window.innerWidth, vh=window.innerHeight, p=PAD, gap=12;
+      const card=$t('tour-card');
+      let top, arrowDir='none';
+      if(vh-r.bottom-p-gap>=CARD_H){    top=r.bottom+p+gap; arrowDir='up'; }
+      else if(r.top-p-gap>=CARD_H){     top=r.top-p-gap-CARD_H; arrowDir='down'; }
+      else {                             top=Math.max(gap,vh-CARD_H-gap); }
+      let left=r.left+r.width/2-CARD_W/2;
+      left=Math.max(16,Math.min(vw-CARD_W-16,left));
+      const arrowLeft=Math.round(Math.min(Math.max(r.left+r.width/2-left,24),CARD_W-24));
+      card.style.top=top+'px'; card.style.left=left+'px'; card.style.width=CARD_W+'px';
+      card.style.setProperty('--arrow-left',arrowLeft+'px');
+      card.dataset.arrow=arrowDir;
+    }
+
+    function updateContent(idx){
+      const s=TOUR_STEPS[idx];
+      $t('tour-card-icon').textContent=s.icon;
+      $t('tour-card-kicker').textContent=`Bước ${idx+1} / ${TOUR_STEPS.length}`;
+      $t('tour-card-title').textContent=s.title;
+      $t('tour-card-desc').textContent=s.desc;
       document.querySelectorAll('.tour-dot').forEach((d,i)=>d.classList.toggle('on',i===idx));
-      document.getElementById('tour-next').textContent=idx===TOUR_STEPS.length-1?'Bắt đầu khám phá ✓':'Tiếp theo →';
-      const card=document.getElementById('tour-card');
-      card.style.animation='none'; void card.offsetHeight; card.style.animation='';
+      $t('tour-next').textContent=idx===TOUR_STEPS.length-1?'Bắt đầu khám phá ✓':'Tiếp theo →';
+    }
+
+    function reposition(){
+      if(!tourActive) return;
+      const target=document.querySelector(TOUR_STEPS[tourStep].sel);
+      if(target){ const r=target.getBoundingClientRect(); placePanels(r); placeCard(r); }
+    }
+
+    /* scroll listener — reposition panels to follow target */
+    window.addEventListener('scroll',()=>{
+      if(!tourActive) return;
+      if(tourRaf) cancelAnimationFrame(tourRaf);
+      tourRaf=requestAnimationFrame(()=>{ tourRaf=null; reposition(); });
+    },{passive:true});
+
+    function showTourStep(idx){
+      updateContent(idx);
+      const target=document.querySelector(TOUR_STEPS[idx].sel);
+      if(!target) return;
+      /* scroll first (body overflow is normal), then place after settle */
+      target.scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(()=>{
+        reposition();
+        const card=$t('tour-card');
+        card.style.animation='none'; void card.offsetHeight;
+        card.style.animation='tour-card-in .28s cubic-bezier(.4,0,.2,1)';
+      },480);
+    }
+
+    function startTour(){
+      tourStep=0; tourActive=true;
+      document.body.classList.add('tour-active');
+      showTourStep(0);
     }
 
     function advanceTour(){
@@ -1454,32 +1483,37 @@
     }
 
     function endTour(){
+      tourActive=false;
       document.body.classList.remove('tour-active');
-      document.getElementById('tour-overlay').classList.remove('visible');
-      if(prevTourTarget){ prevTourTarget.classList.remove('tour-target'); prevTourTarget=null; }
       localStorage.setItem('merchant_tour_seen','1');
     }
 
     if(!localStorage.getItem('merchant_tour_seen')) setTimeout(startTour,700);
   </script>
 
-  <div id="tour-overlay">
-    <div id="tour-card">
-      <div id="tour-card-icon">🏪</div>
-      <div id="tour-card-kicker">Bước 1 / 5</div>
-      <h3 id="tour-card-title">Logo quán</h3>
-      <p id="tour-card-desc">Mỗi merchant trên MoMo có logo nhận diện riêng.</p>
-      <div class="tour-nav">
-        <div class="tour-dots">
-          <div class="tour-dot on"></div>
-          <div class="tour-dot"></div>
-          <div class="tour-dot"></div>
-          <div class="tour-dot"></div>
-          <div class="tour-dot"></div>
-        </div>
-        <button id="tour-skip" onclick="endTour()">Bỏ qua</button>
-        <button id="tour-next" onclick="advanceTour()">Tiếp theo →</button>
+  <!-- Tour: 4 dark panels surrounding spotlight -->
+  <div id="ts-top"    class="ts-panel"></div>
+  <div id="ts-bottom" class="ts-panel"></div>
+  <div id="ts-left"   class="ts-panel"></div>
+  <div id="ts-right"  class="ts-panel"></div>
+  <!-- Tour: pink ring drawn over target -->
+  <div id="tour-ring"></div>
+  <!-- Tour: tooltip card anchored near target -->
+  <div id="tour-card" data-arrow="none">
+    <div id="tour-card-icon">🏪</div>
+    <div id="tour-card-kicker">Bước 1 / 5</div>
+    <h3 id="tour-card-title">Logo quán</h3>
+    <p id="tour-card-desc">Mỗi merchant trên MoMo có logo nhận diện riêng.</p>
+    <div class="tour-nav">
+      <div class="tour-dots">
+        <div class="tour-dot on"></div>
+        <div class="tour-dot"></div>
+        <div class="tour-dot"></div>
+        <div class="tour-dot"></div>
+        <div class="tour-dot"></div>
       </div>
+      <button id="tour-skip" onclick="endTour()">Bỏ qua</button>
+      <button id="tour-next" onclick="advanceTour()">Tiếp theo →</button>
     </div>
   </div>
 
