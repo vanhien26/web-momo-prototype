@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Thanh toán & Nạp tiền — MoMo</title>
+  <meta name="description" content="Hub thanh toán đa dịch vụ: Điện thoại, Điện lực, Nước, Internet, Vé Metro HCM.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --pk:#a50064;--pk2:#c8007a;--pk-bg:#fff0f7;
+      --ink:#111827;--sub:#6b7280;--muted:#9ca3af;
+      --line:#e5e7eb;--bg:#f3f4f6;--white:#fff;
+      --green:#059669;--green-bg:#ecfdf5;
+      --amber:#d97706;--amber-bg:#fffbeb;
+      --red:#dc2626;--red-bg:#fef2f2;
+    }
+    body{
+      font-family:'Be Vietnam Pro',system-ui,sans-serif;
+      background:var(--bg);color:var(--ink);
+      min-height:100vh;-webkit-font-smoothing:antialiased;
+    }
+    button,select,input{font-family:inherit;cursor:pointer}
+
+    /* ─── TOPBAR ─────────────────────────────────────── */
+    .topbar{
+      background:var(--pk);padding:0 16px;height:52px;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:20;
+    }
+    .tb-left{display:flex;align-items:center;gap:10px}
+    .tb-logo{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.15);display:grid;place-items:center;overflow:hidden}
+    .tb-logo img{width:80%;height:80%;object-fit:contain;display:block}
+    .tb-title{color:#fff;font-size:15px;font-weight:800}
+    .tb-back{color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none}
+    .tb-back:hover{color:#fff}
+
+    /* ─── CATEGORY NAV ───────────────────────────────── */
+    .cat-nav-wrap{
+      background:var(--white);border-bottom:1px solid var(--line);
+      position:sticky;top:52px;z-index:15;
+      box-shadow:0 1px 4px rgba(0,0,0,.06);
+    }
+    .cat-nav{display:flex;overflow-x:auto;padding:0 8px;scrollbar-width:none}
+    .cat-nav::-webkit-scrollbar{display:none}
+    .cat-tab{
+      flex-shrink:0;display:flex;flex-direction:column;align-items:center;
+      gap:5px;padding:10px 14px;
+      border:none;background:transparent;
+      border-bottom:2.5px solid transparent;
+      transition:.15s;min-width:76px;
+    }
+    .cat-tab:hover{background:var(--pk-bg)}
+    .cat-tab.active{border-bottom-color:var(--pk)}
+    .cat-ico{font-size:22px;line-height:1}
+    .cat-lbl{font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap}
+    .cat-tab.active .cat-lbl{color:var(--pk)}
+
+    /* ─── PAGE ───────────────────────────────────────── */
+    .page{max-width:460px;margin:0 auto;padding:16px 14px 60px}
+
+    /* ─── PANEL ──────────────────────────────────────── */
+    .panel{display:none;animation:panelIn .2s ease}
+    .panel.active{display:block}
+    @keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .panel-title{font-size:14px;font-weight:800;color:var(--ink);margin:0 0 12px}
+    .panel-title span{color:var(--pk)}
+
+    /* ─── SUB-TABS (Trả trước / Trả sau) ────────────── */
+    .subtab-row{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:14px}
+    .subtab{flex:1;height:34px;border:none;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--sub);background:transparent;transition:.15s}
+    .subtab.active{background:var(--white);color:var(--pk);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+
+    /* ─── FORM CARD ──────────────────────────────────── */
+    .form-card{background:var(--white);border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;margin-bottom:12px}
+    .form-row{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+    .form-row:last-child{border-bottom:none}
+    .form-lbl{font-size:11px;font-weight:700;color:var(--muted);width:90px;flex-shrink:0}
+    .form-row select,.form-row input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);background:transparent}
+    .form-row input::placeholder{color:var(--muted);font-weight:500}
+
+    /* ─── AMOUNT CHIPS ───────────────────────────────── */
+    .chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+    .chip{height:38px;border:1.5px solid var(--line);border-radius:10px;background:var(--white);font-size:12px;font-weight:700;color:var(--sub);transition:.15s}
+    .chip:hover{border-color:var(--pk);color:var(--pk)}
+    .chip.selected{border-color:var(--pk);background:var(--pk-bg);color:var(--pk)}
+
+    /* ─── TICKET TYPE CHIPS ──────────────────────────── */
+    .ticket-chips{display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;scrollbar-width:none}
+    .ticket-chips::-webkit-scrollbar{display:none}
+    .t-chip{
+      flex-shrink:0;border:1.5px solid var(--line);border-radius:10px;
+      background:var(--white);padding:9px 13px;
+      display:flex;flex-direction:column;align-items:center;
+      transition:.15s;min-width:74px;
+    }
+    .t-chip:hover{border-color:var(--pk)}
+    .t-chip.selected{border-color:var(--pk);background:var(--pk-bg)}
+    .t-name{font-size:11px;font-weight:800;color:var(--ink)}
+    .t-price{font-size:10px;font-weight:600;color:var(--sub);margin-top:2px}
+    .t-chip.selected .t-name{color:var(--pk)}
+    .t-chip.selected .t-price{color:var(--pk2)}
+
+    /* ─── FARE DISPLAY ───────────────────────────────── */
+    .fare-display{
+      background:var(--white);border-radius:14px;
+      box-shadow:0 1px 6px rgba(0,0,0,.07);
+      padding:14px 16px;margin-bottom:12px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .fare-lbl{font-size:11px;font-weight:700;color:var(--sub)}
+    .fare-note{font-size:10px;color:var(--muted);margin-top:2px}
+    .fare-val{font-size:26px;font-weight:900;color:var(--pk);letter-spacing:-.02em}
+
+    /* ─── CTA BUTTON ─────────────────────────────────── */
+    .btn-main{
+      width:100%;height:50px;border:none;border-radius:14px;
+      background:var(--pk);color:#fff;
+      font-size:15px;font-weight:800;letter-spacing:.02em;
+      transition:.15s;margin-bottom:12px;
+    }
+    .btn-main:hover{background:var(--pk2)}
+    .btn-main:active{transform:scale(.98)}
+
+    /* ─── RESULT CARD ────────────────────────────────── */
+    .result-card{background:var(--white);border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.07);overflow:hidden;display:none;animation:slideUp .25s ease}
+    .result-card.show{display:block}
+    @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    .rc-header{background:var(--pk);padding:14px 15px;display:flex;align-items:center;gap:11px}
+    .rc-h-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+    .rc-h-name{color:#fff;font-size:14px;font-weight:800}
+    .rc-h-code{color:rgba(255,255,255,.65);font-size:11px;margin-top:1px}
+
+    .rc-customer{padding:12px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+    .rc-cust-name{font-size:14px;font-weight:700}
+    .rc-cust-sub{font-size:11px;color:var(--sub);margin-top:1px}
+    .rc-pill{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+    .rc-pill.due{background:var(--amber-bg);color:var(--amber)}
+    .rc-pill.late{background:var(--red-bg);color:var(--red)}
+    .rc-pill.ok{background:var(--green-bg);color:var(--green)}
+
+    .rc-amount-block{padding:20px 16px 16px;text-align:center;border-bottom:1px solid var(--line)}
+    .rc-amt-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+    .rc-amt{font-size:36px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+    .rc-due{margin-top:6px;font-size:12px;color:var(--sub)}
+    .rc-due b{color:var(--ink);font-weight:700}
+
+    .rc-meta{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+    .rc-meta-item{padding:11px 15px}
+    .rc-meta-item:first-child{border-right:1px solid var(--line)}
+    .rc-meta-lbl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+    .rc-meta-val{font-size:13px;font-weight:700;color:var(--ink)}
+
+    .rc-actions{padding:13px 15px;display:flex;flex-direction:column;gap:8px}
+    .btn-pay{width:100%;height:50px;border:none;border-radius:14px;background:var(--pk);color:#fff;font-size:15px;font-weight:800;transition:.15s}
+    .btn-pay:hover{background:var(--pk2)}
+    .btn-remind{width:100%;height:42px;border:1.5px solid var(--line);border-radius:14px;background:transparent;color:var(--sub);font-size:13px;font-weight:700;transition:.15s}
+    .btn-remind:hover{border-color:var(--pk);color:var(--pk)}
+
+    /* ─── QR SUCCESS ─────────────────────────────────── */
+    .qr-success{background:var(--white);border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.07);overflow:hidden;display:none;animation:slideUp .25s ease}
+    .qr-success.show{display:block}
+
+    .qr-s-head{background:var(--pk);padding:14px 15px;display:flex;align-items:center;gap:10px}
+    .qr-s-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:22px;flex-shrink:0}
+    .qr-s-name{color:#fff;font-size:14px;font-weight:800}
+    .qr-s-sub{color:rgba(255,255,255,.7);font-size:11px;margin-top:1px}
+
+    .qr-body{padding:18px 16px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px}
+    .qr-blocks{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:76px;height:76px;flex-shrink:0}
+    .qr-bl{background:#111827;border-radius:2px;animation:qrFade .4s ease both}
+    @keyframes qrFade{from{opacity:0}to{opacity:1}}
+    .qr-meta{flex:1}
+    .qr-id{font-size:13px;font-weight:800;color:var(--ink);letter-spacing:.04em;font-family:ui-monospace,monospace}
+    .qr-sub{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.45}
+    .qr-ok{display:inline-flex;align-items:center;gap:5px;margin-top:9px;background:var(--green-bg);color:var(--green);font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px}
+
+    .qr-info{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+    .qi{padding:10px 15px}
+    .qi:nth-child(odd){border-right:1px solid var(--line)}
+    .qi:nth-child(3),.qi:nth-child(4){border-top:1px solid var(--line)}
+    .qi-l{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+    .qi-v{font-size:12px;font-weight:700;color:var(--ink)}
+
+    .qr-actions{padding:13px 15px;display:flex;flex-direction:column;gap:8px}
+    .btn-qr-main{width:100%;height:50px;border:none;border-radius:14px;background:var(--pk);color:#fff;font-size:14px;font-weight:800;transition:.15s}
+    .btn-qr-main:hover{background:var(--pk2)}
+    .btn-qr-sec{width:100%;height:42px;border:1.5px solid var(--line);border-radius:14px;background:transparent;color:var(--sub);font-size:13px;font-weight:700;transition:.15s}
+    .btn-qr-sec:hover{border-color:var(--pk);color:var(--pk)}
+
+    /* ─── MISC ───────────────────────────────────────── */
+    .disclaimer{margin-top:20px;font-size:11px;color:var(--muted);text-align:center;line-height:1.6}
+    @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+    @media(prefers-reduced-motion:reduce){.panel,.result-card,.qr-success{animation:none}.qr-bl{animation:none;opacity:1}}
+  </style>
+</head>
+<body>
+
+<!-- ── Topbar ──────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+    </div>
+    <span class="tb-title">Thanh toán & Nạp tiền</span>
+  </div>
+  <a href="/lab.html" target="_top" class="tb-back">← Lab</a>
+</div>
+
+<!-- ── Category Nav ────────────────────────────────────── -->
+<div class="cat-nav-wrap">
+  <nav class="cat-nav" role="tablist">
+    <button class="cat-tab active" data-panel="phone" onclick="switchCat(this)" role="tab">
+      <span class="cat-ico">📱</span>
+      <span class="cat-lbl">Điện thoại</span>
+    </button>
+    <button class="cat-tab" data-panel="dien" onclick="switchCat(this)" role="tab">
+      <span class="cat-ico">⚡</span>
+      <span class="cat-lbl">Điện lực</span>
+    </button>
+    <button class="cat-tab" data-panel="nuoc" onclick="switchCat(this)" role="tab">
+      <span class="cat-ico">💧</span>
+      <span class="cat-lbl">Nước</span>
+    </button>
+    <button class="cat-tab" data-panel="internet" onclick="switchCat(this)" role="tab">
+      <span class="cat-ico">🌐</span>
+      <span class="cat-lbl">Internet</span>
+    </button>
+    <button class="cat-tab" data-panel="metro" onclick="switchCat(this)" role="tab">
+      <span class="cat-ico">🚇</span>
+      <span class="cat-lbl">Metro HCM</span>
+    </button>
+  </nav>
+</div>
+
+<div class="page">
+
+  <!-- ════════════════════════════════════════════════════
+       PHONE PANEL
+  ════════════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-phone">
+    <p class="panel-title">Nạp tiền & trả cước <span>di động</span></p>
+
+    <div class="subtab-row">
+      <button class="subtab active" onclick="switchPhoneType('prepaid',this)">Trả trước</button>
+      <button class="subtab" onclick="switchPhoneType('postpaid',this)">Trả sau</button>
+    </div>
+
+    <!-- Prepaid -->
+    <div id="prepaid-content">
+      <div class="form-card">
+        <div class="form-row">
+          <span class="form-lbl">Số điện thoại</span>
+          <input id="phoneNum" type="tel" placeholder="09xx xxx xxx">
+        </div>
+        <div class="form-row">
+          <span class="form-lbl">Nhà mạng</span>
+          <select id="phoneOp">
+            <option>Viettel</option><option>MobiFone</option>
+            <option>Vinaphone</option><option>Vietnamobile</option><option>Gmobile</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <span class="form-lbl">Mệnh giá</span>
+          <span id="selectedAmt" style="font-size:14px;font-weight:700;color:var(--pk)">Chưa chọn</span>
+        </div>
+      </div>
+      <div class="chip-grid" id="amtChips"></div>
+      <button class="btn-main" onclick="doRecharge()">Nạp ngay →</button>
+    </div>
+
+    <!-- Postpaid -->
+    <div id="postpaid-content" style="display:none">
+      <div class="form-card">
+        <div class="form-row">
+          <span class="form-lbl">Số điện thoại</span>
+          <input id="postpaidNum" type="tel" placeholder="09xx xxx xxx">
+        </div>
+        <div class="form-row">
+          <span class="form-lbl">Nhà mạng</span>
+          <select id="postpaidOp">
+            <option value="mobifone">MobiFone</option><option value="viettel">Viettel</option>
+            <option value="vinaphone">Vinaphone</option><option value="vnmobile">Vietnamobile</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-main" onclick="lookupPostpaid()">Tra cước →</button>
+      <div class="result-card" id="postpaidResult">
+        <div class="rc-header">
+          <div class="rc-h-icon">📱</div>
+          <div>
+            <div class="rc-h-name" id="ppName">MobiFone</div>
+            <div class="rc-h-code" id="ppCode">MBF-0903-5512</div>
+          </div>
+        </div>
+        <div class="rc-customer">
+          <div>
+            <div class="rc-cust-name">Phạm Thị D</div>
+            <div class="rc-cust-sub">Trả sau · Tháng 6/2026</div>
+          </div>
+          <span class="rc-pill late">Đến hạn hôm nay</span>
+        </div>
+        <div class="rc-amount-block">
+          <div class="rc-amt-label">Cước phải trả</div>
+          <div class="rc-amt">179.000 đ</div>
+          <div class="rc-due">Hạn thanh toán: <b>17/06/2026</b></div>
+        </div>
+        <div class="rc-actions">
+          <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
+          <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       ELECTRICITY PANEL
+  ════════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-dien">
+    <p class="panel-title">Tra cứu & thanh toán <span>hóa đơn điện</span></p>
+    <div class="form-card">
+      <div class="form-row">
+        <span class="form-lbl">Nhà cung cấp</span>
+        <select id="dienSel">
+          <option value="evn-hcm">EVN HCM</option>
+          <option value="evn-hn">EVN Hà Nội</option>
+          <option value="evn-mt">EVN Miền Trung</option>
+          <option value="evn-mn">EVN Miền Nam</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <span class="form-lbl">Mã khách hàng</span>
+        <input id="dienCode" type="text" placeholder="Nhập mã khách hàng EVN">
+      </div>
+    </div>
+    <button class="btn-main" onclick="lookupBill('dien')">Tra cứu hóa đơn →</button>
+    <div class="result-card" id="dienResult">
+      <div class="rc-header">
+        <div class="rc-h-icon">⚡</div>
+        <div>
+          <div class="rc-h-name">EVN HCM</div>
+          <div class="rc-h-code">EVN-2406-0182</div>
+        </div>
+      </div>
+      <div class="rc-customer">
+        <div>
+          <div class="rc-cust-name">Nguyễn Văn A</div>
+          <div class="rc-cust-sub">Quận 7, TP.HCM · Tháng 6/2026</div>
+        </div>
+        <span class="rc-pill due">Sắp đến hạn</span>
+      </div>
+      <div class="rc-amount-block">
+        <div class="rc-amt-label">Số tiền cần trả</div>
+        <div class="rc-amt">1.284.000 đ</div>
+        <div class="rc-due">Hạn thanh toán: <b>18/06/2026</b></div>
+      </div>
+      <div class="rc-meta">
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Loại dịch vụ</div>
+          <div class="rc-meta-val">Điện sinh hoạt</div>
+        </div>
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Còn lại</div>
+          <div class="rc-meta-val">4 ngày</div>
+        </div>
+      </div>
+      <div class="rc-actions">
+        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
+        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       WATER PANEL
+  ════════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-nuoc">
+    <p class="panel-title">Tra cứu & thanh toán <span>hóa đơn nước</span></p>
+    <div class="form-card">
+      <div class="form-row">
+        <span class="form-lbl">Nhà cung cấp</span>
+        <select id="nuocSel">
+          <option>SAWACO (TP.HCM)</option>
+          <option>HAWACO (Hà Nội)</option>
+          <option>Đà Nẵng Water</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <span class="form-lbl">Mã khách hàng</span>
+        <input id="nuocCode" type="text" placeholder="Nhập mã khách hàng">
+      </div>
+    </div>
+    <button class="btn-main" onclick="lookupBill('nuoc')">Tra cứu hóa đơn →</button>
+    <div class="result-card" id="nuocResult">
+      <div class="rc-header">
+        <div class="rc-h-icon">💧</div>
+        <div>
+          <div class="rc-h-name">SAWACO</div>
+          <div class="rc-h-code">SAWACO-2206-8831</div>
+        </div>
+      </div>
+      <div class="rc-customer">
+        <div>
+          <div class="rc-cust-name">Trần Thị B</div>
+          <div class="rc-cust-sub">Quận 1, TP.HCM · Tháng 6/2026</div>
+        </div>
+        <span class="rc-pill ok">Chưa đến hạn</span>
+      </div>
+      <div class="rc-amount-block">
+        <div class="rc-amt-label">Số tiền cần trả</div>
+        <div class="rc-amt">224.000 đ</div>
+        <div class="rc-due">Hạn thanh toán: <b>22/06/2026</b></div>
+      </div>
+      <div class="rc-meta">
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Loại dịch vụ</div>
+          <div class="rc-meta-val">Nước sinh hoạt</div>
+        </div>
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Còn lại</div>
+          <div class="rc-meta-val">8 ngày</div>
+        </div>
+      </div>
+      <div class="rc-actions">
+        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
+        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       INTERNET PANEL
+  ════════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-internet">
+    <p class="panel-title">Tra cứu & thanh toán <span>Internet / Cáp TV</span></p>
+    <div class="form-card">
+      <div class="form-row">
+        <span class="form-lbl">Nhà cung cấp</span>
+        <select id="netSel">
+          <option>VNPT</option><option>FPT Telecom</option>
+          <option>Viettel</option><option>SPT</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <span class="form-lbl">Mã hợp đồng</span>
+        <input id="netCode" type="text" placeholder="Nhập mã hợp đồng">
+      </div>
+    </div>
+    <button class="btn-main" onclick="lookupBill('net')">Tra cứu hóa đơn →</button>
+    <div class="result-card" id="netResult">
+      <div class="rc-header">
+        <div class="rc-h-icon">🌐</div>
+        <div>
+          <div class="rc-h-name">VNPT</div>
+          <div class="rc-h-code">VNPT-2026-06</div>
+        </div>
+      </div>
+      <div class="rc-customer">
+        <div>
+          <div class="rc-cust-name">Lê Văn C</div>
+          <div class="rc-cust-sub">Bình Thạnh, TP.HCM · Tháng 6/2026</div>
+        </div>
+        <span class="rc-pill due">Cần thanh toán</span>
+      </div>
+      <div class="rc-amount-block">
+        <div class="rc-amt-label">Số tiền cần trả</div>
+        <div class="rc-amt">265.000 đ</div>
+        <div class="rc-due">Hạn thanh toán: <b>20/06/2026</b></div>
+      </div>
+      <div class="rc-meta">
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Gói dịch vụ</div>
+          <div class="rc-meta-val">Internet Home Fiber</div>
+        </div>
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Còn lại</div>
+          <div class="rc-meta-val">6 ngày</div>
+        </div>
+      </div>
+      <div class="rc-actions">
+        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
+        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       METRO PANEL
+  ════════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-metro">
+    <p class="panel-title">Mua vé <span>Metro HCM Line 1</span></p>
+
+    <div id="metro-form">
+      <div class="form-card">
+        <div class="form-row">
+          <span class="form-lbl">Ga đi</span>
+          <select id="metroFrom"></select>
+        </div>
+        <div class="form-row">
+          <span class="form-lbl">Ga đến</span>
+          <select id="metroTo"></select>
+        </div>
+      </div>
+
+      <div class="ticket-chips" id="ticketChips"></div>
+
+      <div class="fare-display">
+        <div>
+          <div class="fare-lbl">Giá vé ước tính</div>
+          <div class="fare-note" id="fareNote">1 lượt · Trong ngày</div>
+        </div>
+        <div class="fare-val" id="fareVal">12.000 đ</div>
+      </div>
+
+      <button class="btn-main" onclick="buyTicket()">Mua vé metro →</button>
+    </div>
+
+    <!-- QR Success -->
+    <div class="qr-success" id="qrSuccess">
+      <div class="qr-s-head">
+        <div class="qr-s-icon">🎫</div>
+        <div>
+          <div class="qr-s-name">Vé Metro đã sẵn sàng</div>
+          <div class="qr-s-sub" id="qrSubLine">Line 1 · Bến Thành - Suối Tiên</div>
+        </div>
+      </div>
+      <div class="qr-body">
+        <div class="qr-blocks" id="qrBlocks"></div>
+        <div class="qr-meta">
+          <div class="qr-id" id="qrId">MOO-240001</div>
+          <div class="qr-sub" id="qrSub">1 lượt · Bến Thành → Thủ Đức</div>
+          <div class="qr-ok">✓ Đã thanh toán</div>
+        </div>
+      </div>
+      <div class="qr-info">
+        <div class="qi"><div class="qi-l">Loại vé</div><div class="qi-v" id="qi-type">1 lượt</div></div>
+        <div class="qi"><div class="qi-l">Giá</div><div class="qi-v" id="qi-price">12.000 đ</div></div>
+        <div class="qi"><div class="qi-l">Hạn dùng</div><div class="qi-v" id="qi-valid">Trong ngày</div></div>
+        <div class="qi"><div class="qi-l">Trạng thái</div><div class="qi-v" style="color:var(--green)">Kích hoạt</div></div>
+      </div>
+      <div class="qr-actions">
+        <button class="btn-qr-main" onclick="toast('Đã lưu vé vào Ví vé MoMo ✓')">Lưu vào Ví vé</button>
+        <button class="btn-qr-sec" onclick="resetMetro()">Mua thêm vé</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">Prototype mô phỏng — dữ liệu không kết nối API thực.</p>
+</div>
+
+<script>
+  // ─── Helpers ──────────────────────────────────────────
+  const fmt = n => new Intl.NumberFormat('vi-VN').format(n) + ' đ';
+
+  function toast(msg) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    Object.assign(t.style, {
+      position:'fixed', bottom:'24px', left:'50%',
+      transform:'translateX(-50%)',
+      background:'#111827', color:'#fff',
+      padding:'11px 20px', borderRadius:'12px',
+      fontSize:'13px', fontWeight:'700',
+      fontFamily:'inherit',
+      boxShadow:'0 4px 20px rgba(0,0,0,.18)',
+      zIndex:'999', whiteSpace:'nowrap',
+      animation:'fadeUp .2s ease',
+    });
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+
+  function showResult(id) {
+    const card = document.getElementById(id);
+    card.classList.remove('show');
+    void card.offsetWidth;
+    card.classList.add('show');
+    setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+  }
+
+  // ─── Category switching ────────────────────────────────
+  function switchCat(btn) {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  }
+
+  // ─── Phone ────────────────────────────────────────────
+  const AMOUNTS = [10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000];
+  let selectedAmt = null;
+
+  (function initChips() {
+    const grid = document.getElementById('amtChips');
+    AMOUNTS.forEach(a => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = fmt(a);
+      btn.onclick = () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedAmt = a;
+        document.getElementById('selectedAmt').textContent = fmt(a);
+      };
+      grid.appendChild(btn);
+    });
+  })();
+
+  function switchPhoneType(type, btn) {
+    document.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('prepaid-content').style.display = type === 'prepaid' ? '' : 'none';
+    document.getElementById('postpaid-content').style.display = type === 'postpaid' ? '' : 'none';
+    document.getElementById('postpaidResult').classList.remove('show');
+  }
+
+  function doRecharge() {
+    const num = document.getElementById('phoneNum').value.trim();
+    if (!num) { toast('Nhập số điện thoại'); return; }
+    if (!selectedAmt) { toast('Chọn mệnh giá'); return; }
+    const op = document.getElementById('phoneOp').value;
+    toast('Đã nạp ' + fmt(selectedAmt) + ' cho ' + num + ' (' + op + ') ✓');
+  }
+
+  function lookupPostpaid() {
+    const op = document.getElementById('postpaidOp').value;
+    document.getElementById('ppName').textContent = op;
+    document.getElementById('ppCode').textContent = op.substring(0,3).toUpperCase() + '-0909-1234';
+    showResult('postpaidResult');
+  }
+
+  // ─── Bill lookup (Điện / Nước / Internet) ─────────────
+  function lookupBill(type) {
+    const map = { dien:'dienResult', nuoc:'nuocResult', net:'netResult' };
+    showResult(map[type]);
+  }
+
+  // ─── Metro ─────────────────────────────────────────────
+  const STATIONS = [
+    'Bến Thành','Nhà hát Thành phố','Ba Son','Văn Thánh',
+    'Tân Cảng','Thảo Điền','An Phú','Rạch Chiếc',
+    'Phước Long','Bình Thái','Thủ Đức','Khu CNC',
+    'ĐH Quốc gia','Suối Tiên',
+  ];
+
+  const TICKETS = [
+    { id:'single',    name:'1 lượt',  base:12000,  validity:'Trong ngày', surcharge:true  },
+    { id:'roundtrip', name:'Khứ hồi', base:22000,  validity:'Trong ngày', surcharge:true  },
+    { id:'day',       name:'1 ngày',  base:35000,  validity:'24 giờ',     surcharge:false },
+    { id:'3day',      name:'3 ngày',  base:70000,  validity:'72 giờ',     surcharge:false },
+    { id:'month',     name:'30 ngày', base:280000, validity:'30 ngày',    surcharge:false },
+  ];
+
+  let selTicket = TICKETS[0];
+
+  (function initMetro() {
+    const fromSel = document.getElementById('metroFrom');
+    const toSel   = document.getElementById('metroTo');
+    STATIONS.forEach(s => {
+      fromSel.add(new Option(s, s));
+      toSel.add(new Option(s, s));
+    });
+    toSel.value = 'Thủ Đức';
+    fromSel.onchange = toSel.onchange = updateFare;
+
+    const chips = document.getElementById('ticketChips');
+    TICKETS.forEach((t, i) => {
+      const btn = document.createElement('button');
+      btn.className = 't-chip' + (i === 0 ? ' selected' : '');
+      btn.innerHTML = `<span class="t-name">${t.name}</span><span class="t-price">${fmt(t.base)}</span>`;
+      btn.onclick = () => {
+        document.querySelectorAll('.t-chip').forEach(c => c.classList.remove('selected'));
+        btn.classList.add('selected');
+        selTicket = t;
+        updateFare();
+      };
+      chips.appendChild(btn);
+    });
+
+    updateFare();
+  })();
+
+  function calcFare() {
+    const from = document.getElementById('metroFrom').value;
+    const to   = document.getElementById('metroTo').value;
+    const segs = Math.max(1, Math.abs(STATIONS.indexOf(from) - STATIONS.indexOf(to)));
+    const extra = selTicket.surcharge ? Math.max(0, segs - 4) * 1500 : 0;
+    return selTicket.base + extra;
+  }
+
+  function updateFare() {
+    document.getElementById('fareVal').textContent  = fmt(calcFare());
+    document.getElementById('fareNote').textContent = selTicket.name + ' · ' + selTicket.validity;
+  }
+
+  function buyTicket() {
+    const from = document.getElementById('metroFrom').value;
+    const to   = document.getElementById('metroTo').value;
+    if (from === to) { toast('Ga đi và ga đến phải khác nhau'); return; }
+
+    const price = calcFare();
+    const ticketId = 'MOO-' + Date.now().toString().slice(-6);
+
+    // QR grid: 16 blocks with random pattern
+    const wrap = document.getElementById('qrBlocks');
+    wrap.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+      const bl = document.createElement('div');
+      bl.className = 'qr-bl';
+      bl.style.cssText = `animation-delay:${i*0.03}s;opacity:${Math.random() > 0.35 ? 1 : 0.12}`;
+      wrap.appendChild(bl);
+    }
+
+    document.getElementById('qrId').textContent   = ticketId;
+    document.getElementById('qrSub').textContent   = selTicket.name + ' · ' + from + ' → ' + to;
+    document.getElementById('qrSubLine').textContent = 'Line 1 · ' + from + ' - ' + to;
+    document.getElementById('qi-type').textContent  = selTicket.name;
+    document.getElementById('qi-price').textContent = fmt(price);
+    document.getElementById('qi-valid').textContent = selTicket.validity;
+
+    document.getElementById('metro-form').style.display = 'none';
+    const qr = document.getElementById('qrSuccess');
+    qr.classList.remove('show');
+    void qr.offsetWidth;
+    qr.classList.add('show');
+    setTimeout(() => qr.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+  }
+
+  function resetMetro() {
+    document.getElementById('metro-form').style.display = '';
+    document.getElementById('qrSuccess').classList.remove('show');
+  }
+</script>
+</body>
+</html>

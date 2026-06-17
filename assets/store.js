@@ -144,7 +144,7 @@ const PROTOTYPES = [
   {
     id: 'worldcup',
     name: 'World Cup 2026 Predictor',
-    category: 'Widget',
+    category: 'Other',
     maturity: 'Data experience',
     description: 'Trải nghiệm dữ liệu thể thao dễ hiểu cho đại chúng, dùng sự kiện mùa vụ để tạo traffic, repeat visit và bề mặt activation.',
     jtbd: 'So sánh cơ hội đội tuyển yêu thích',
@@ -172,19 +172,19 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/metro-ticket',
   },
   {
-    id: 'bill-lookup',
-    name: 'Bill Lookup',
+    id: 'payments',
+    name: 'Thanh toán & Nạp tiền',
     category: 'Widget',
-    maturity: 'Lookup',
-    description: 'Tra cứu hóa đơn điện, nước, internet và di động theo mã khách hàng hoặc số hợp đồng, rồi đi thẳng tới bước thanh toán.',
-    jtbd: 'Biết cần trả gì, khi nào đến hạn, và trả ngay',
-    northStar: 'Bill lookup completion',
-    loop: 'Lookup → Verify → Pay',
-    hypothesis: 'Bill lookup surface giảm friction cho thanh toán định kỳ và tạo intent rõ trước khi chuyển đổi.',
-    value: 'Mở bề mặt cho utilities, recurring payment và nhắc hạn thanh toán.',
-    gate: 'Đo lookup success, pay CTA, reminder opt-in và repeat usage.',
-    src: 'demos/bill-lookup.html',
-    address: 'web-momo-prototype.vercel.app/bill-lookup',
+    maturity: 'Interactive',
+    description: 'Hub thanh toán đa dịch vụ kiểu Paytm: category tabs ngang (Điện thoại, Điện, Nước, Internet, Metro HCM), mỗi tab switch form/flow tương ứng - tra cứu hóa đơn, nạp tiền trả trước, và mua vé metro với QR output.',
+    jtbd: 'Thanh toán đúng dịch vụ, đúng nhà cung cấp, trong một surface duy nhất',
+    northStar: 'Service payment completion',
+    loop: 'Select category → Input → Lookup/Buy → Pay',
+    hypothesis: 'Hub đa dịch vụ với category nav giảm context switch so với từng mini-app riêng lẻ, tăng cross-service discovery và repeat usage.',
+    value: 'Một surface phủ toàn bộ utility payments + transit - có thể mở rộng thêm category mà không cần page mới.',
+    gate: 'Đo category switch rate, lookup success, pay CTA và Metro ticket purchase completion.',
+    src: 'demos/payments.html',
+    address: 'web-momo-prototype.vercel.app/payments',
   },
   {
     id: 'scam-check',
@@ -313,31 +313,50 @@ const CAT_COLOR = {
   'Discovery':  { bg: '#fffbeb', text: '#b45309' },
   'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
   'Transit':    { bg: '#eef2ff', text: '#4338ca' },
+  'Other':      { bg: '#f1f5f9', text: '#475569' },
 };
 
-const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform'];
+const GROUP_LABEL = {
+  MoSpark: 'MoSpark Platform',
+  Widget: 'Widget Store',
+  Platform: 'PLG Project',
+  Other: 'Other',
+};
+
+function displayGroupName(groupName) {
+  return GROUP_LABEL[groupName] || groupName;
+}
+
+const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform', 'Other'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
-  Widget: ['financial', 'bill-lookup', 'scam-check', 'worldcup', 'metro'],
+  Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi-ha-noi', 'universal-search', 'cinema-film-detail', 'merchant-discovery', 'merchant'],
+  Other: ['worldcup'],
 };
 
 const GROUP_SUMMARY = {
   MoSpark: {
-    eyebrow: 'MoSpark',
-    title: 'GenAI / Content / Chatbot / Ads',
+    eyebrow: 'MoSpark Platform',
+    title: 'MoSpark Platform',
     description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
     examples: 'GenAI Orchestrator · Agentic Hub · SEO/GEO Dashboard · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager · Blog Category · Blog Article',
   },
   Widget: {
-    eyebrow: 'Widget',
-    title: 'Financial / Planning / Transit',
+    eyebrow: 'Widget Store',
+    title: 'Widget Store',
     description: 'Nhóm tool và lookup ngắn để Dev implement nhanh, rõ input, output và trạng thái an toàn.',
     examples: 'Financial (18 tools) · Bill lookup · Scam check · Metro',
   },
+  Other: {
+    eyebrow: 'Other',
+    title: 'Other',
+    description: 'Prototype theo sự kiện mùa vụ hoặc không thuộc nhóm platform, widget hay PLG.',
+    examples: 'World Cup 2026 Predictor',
+  },
   Platform: {
-    eyebrow: 'Use Case',
-    title: 'Use Case',
+    eyebrow: 'PLG Project',
+    title: 'PLG Project',
     description: 'Nhóm prototype cho các trang Use Case: pSEO lookup, service detail, discovery và search surfaces của MoMo.',
     examples: 'Phạt Nguội Hà Nội (pSEO) · Universal Search · Cinema Film Detail · Merchant Discovery · Merchant',
   },
@@ -350,6 +369,7 @@ const MAT_COLOR = {
 };
 
 const MOSPARK_SOURCE_URL = 'https://mospark-intro.vercel.app/';
+const MOSPARK_LOGO_URL = 'https://static.momocdn.net/app/img/web-platform/logo-mospark-dark.svg';
 
 const MOSPARK_PAIN_POINTS = [
   {
@@ -528,7 +548,7 @@ function renderNav() {
           <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
           <span class="proto-nav-label">
             <strong>${p.name}</strong>
-            <small>${p.category}</small>
+            <small>${displayGroupName(p.category)}</small>
           </span>
           ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
         </button>
@@ -537,7 +557,7 @@ function renderNav() {
     }).join('');
 
     return `<section class="proto-nav-section">
-      <p class="nav-section-label">${groupName}</p>
+      <p class="nav-section-label">${displayGroupName(groupName)}</p>
       ${itemsHtml}
     </section>`;
   }).join('');
@@ -566,6 +586,7 @@ const GROUP_PRIMARY = {
   MoSpark: 'orchestrator',
   Widget: 'financial',
   Platform: 'momo-services',
+  Other: 'worldcup',
 };
 
 const MOSPARK_HOME_CAPABILITIES = [
@@ -597,19 +618,22 @@ const MOSPARK_HOME_CAPABILITIES = [
 ];
 
 const MOSPARK_PRODUCTION_STEPS = [
-  { icon: '💡', name: 'Ideation', oldTime: '2 weeks', oldText: 'Brief thủ công', newTime: '2 days', newText: 'AI concept từ market gap' },
-  { icon: '🔎', name: 'Research', oldTime: '3 weeks', oldText: 'Keyword rời rạc', newTime: '1 week', newText: 'Inventory và registry' },
-  { icon: '✍️', name: 'Production', oldTime: '8 weeks', oldText: 'Viết tay, sửa nhiều vòng', newTime: '2 weeks', newText: 'Outline, draft, FAQ, embed' },
-  { icon: '🛡️', name: 'Gate', oldTime: '2 weeks', oldText: 'Review không nhất quán', newTime: '2 days', newText: 'SEO/GEO score và PM approve' },
-  { icon: '🧩', name: 'Widget Sync', oldTime: '3 weeks', oldText: 'Nhờ Dev nhúng CTA', newTime: '3 days', newText: 'Component sẵn để embed' },
-  { icon: '📊', name: 'Measure', oldTime: '4 weeks', oldText: 'Pageview rời rạc', newTime: '1 week', newText: 'Web-to-App và transaction' },
+  { icon: '💡', name: 'Ideation', oldTime: '1 week', oldText: 'Brief thủ công', newTime: '2 days', newText: 'AI concept từ market gap' },
+  { icon: '🔎', name: 'Research', oldTime: '2 weeks', oldText: 'Keyword rời rạc', newTime: '1 week', newText: 'Inventory và registry' },
+  { icon: '✍️', name: 'Production', oldTime: '7 weeks', oldText: 'Viết tay, sửa nhiều vòng', newTime: '2 weeks', newText: 'Outline, draft, FAQ, embed' },
+  { icon: '🛡️', name: 'Gate', oldTime: '1 week', oldText: 'Review không nhất quán', newTime: '2 days', newText: 'SEO/GEO score và PM approve' },
+  { icon: '🧩', name: 'Widget Sync', oldTime: '2 weeks', oldText: 'Nhờ Dev nhúng CTA', newTime: '3 days', newText: 'Component sẵn để embed' },
+  { icon: '📊', name: 'Measure', oldTime: '3 weeks', oldText: 'Pageview rời rạc', newTime: '1 week', newText: 'Web-to-App và transaction' },
 ];
 
 function buildMoSparkHomeIntro() {
   return `
     <section class="mh-hero">
       <div class="mh-copy">
-        <span class="mh-kicker">MoSpark · Web Growth Platform</span>
+        <div class="mh-brand-row">
+          <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="mh-logo" decoding="async">
+          <span>Web Growth Platform</span>
+        </div>
         <h1>Product Led Growth trên Web MoMo</h1>
         <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
         <div class="mh-actions">
@@ -650,7 +674,7 @@ function buildMoSparkHomeIntro() {
       <div class="mh-timeline">
         <div class="mh-timeline-head">
           <b>Without MoSpark</b>
-          <strong>Total time: 22 weeks → 5 weeks · 77% faster</strong>
+          <strong>Total time: 16 weeks → 5 weeks · 69% faster</strong>
         </div>
         <div class="mh-lane mh-lane-old">
           <div class="mh-lane-label">Cách cũ</div>
@@ -684,7 +708,10 @@ function buildHomeHero() {
     <div class="hl-page-wrap">
       <div class="hl-page-header">
         <div class="hl-page-header-left">
-          <span class="hl-page-kicker">Internal · Prototype Directory</span>
+          <div class="hl-brand-line">
+            <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="hl-mospark-logo" decoding="async">
+            <span class="hl-page-kicker">Internal · Prototype Directory</span>
+          </div>
           <h1 class="hl-page-title">Prototype Lab</h1>
           <p class="hl-page-sub">${PROTOTYPES.length} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
         </div>
@@ -693,7 +720,7 @@ function buildHomeHero() {
             const count = getGroupCount(g);
             const col = CAT_COLOR[g] || { bg: '#f1f5f9', text: '#475569' };
             return `<div class="hl-stat-chip" style="background:${col.bg};color:${col.text}">
-              <strong>${count}</strong>${g}
+              <strong>${count}</strong>${displayGroupName(g)}
             </div>`;
           }).join('')}
         </div>
@@ -719,7 +746,7 @@ function buildHomeHero() {
         return `
           <section class="hl-section">
             <div class="hl-sec-head">
-              <span class="hl-sec-badge" style="background:${col.bg};color:${col.text}">${groupName}</span>
+              <span class="hl-sec-badge" style="background:${col.bg};color:${col.text}">${displayGroupName(groupName)}</span>
               <h2 class="hl-sec-title">${info.title}</h2>
               <span class="hl-sec-count">${count} project${count !== 1 ? 's' : ''}</span>
               <p class="hl-sec-desc">${info.description}</p>
@@ -813,7 +840,7 @@ function buildProtoView(proto) {
     <div class="ws-breadcrumb">
       <button class="menu-toggle" id="menuToggle">☰</button>
       <button class="ws-back-btn" id="backHomeBtn">← Home</button>
-      <span class="ws-cat-tag" style="background:${cat.bg};color:${cat.text}">${proto.category}</span>
+      <span class="ws-cat-tag" style="background:${cat.bg};color:${cat.text}">${displayGroupName(proto.category)}</span>
       <span class="ws-bc-sep">/</span>
       <span class="ws-bc-cur">${proto.name}</span>
     </div>
