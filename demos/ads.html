@@ -3,435 +3,496 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MoMo Ads Manager — Prototype</title>
+<title>MoSpark Ads Manager — Prototype</title>
 <style>
-:root{--momo:#a50064;--momo-light:#fff0f7;--momo-2:#d82d8b;--ink:#1d2939;--muted:#667085;--line:#e4e7ec;--bg:#f2f4f7;--white:#fff;--green:#027a48;--green-bg:#d1fadf;--amber:#b45309;--amber-bg:#fef3c7;--red:#b42318;--red-bg:#fee4e2;--blue:#1d4ed8;--blue-bg:#eff6ff;--purple:#6d28d9;--purple-bg:#f5f3ff}
+:root{
+  --bg:#f2f4f7;--panel:#ffffff;--card:#f9fafb;--card2:#f3f4f6;
+  --line:#e4e7ec;--line2:#d1d5db;
+  --ink:#1d2939;--t2:#667085;--t3:#98a2b3;
+  --pk:#a50064;--pk-l:#fff0f7;--pk-2:#d82d8b;--pk-g:rgba(165,0,100,.1);
+  --green:#027a48;--gbg:#d1fadf;
+  --amber:#b45309;--abg:#fef3c7;
+  --blue:#1d4ed8;--bbg:#eff6ff;
+  --red:#b42318;--rbg:#fee4e2;
+  --purple:#6d28d9;--pbg:#f5f3ff;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;height:100vh;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:14px;height:100vh;overflow:hidden}
 
-.site-header{height:52px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:20}
+/* TOPBAR */
+.topbar{height:50px;background:var(--panel);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:30}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
-.brand-mark{width:32px;height:32px;background:var(--momo);border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900;color:#fff;line-height:1;text-align:center}
-.brand strong{font-size:13px}.brand small{font-size:10px;color:var(--muted);display:block}
-.header-right{display:flex;align-items:center;gap:10px}
-.nav-back{font-size:12px;color:var(--muted);text-decoration:none}.nav-back:hover{color:var(--momo)}
-.status-pill{font-size:11px;font-weight:700;background:var(--momo-light);color:var(--momo);padding:4px 10px;border-radius:99px}
+.brand-logo{width:30px;height:30px;border-radius:7px;background:var(--pk);display:grid;place-items:center;overflow:hidden}
+.brand strong{font-size:13px;font-weight:800}
+.brand small{font-size:10px;color:var(--t2);display:block}
+.tp-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--pk-l);color:var(--pk-2);border:1px solid var(--pk)}
+.tp-nav{font-size:11px;color:var(--t2);text-decoration:none}.tp-nav:hover{color:var(--ink)}
 
-.ads-shell{display:grid;grid-template-columns:380px 1fr;height:calc(100vh - 52px);overflow:hidden}
-.setup-panel{background:var(--white);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+/* SPLIT */
+.main-split{display:grid;grid-template-columns:400px 1fr;height:calc(100vh - 50px);overflow:hidden}
 
-.step-tabs{display:flex;border-bottom:1px solid var(--line);padding:0 14px;flex-shrink:0}
-.step-tab{padding:13px 10px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:12px;font-weight:700;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit}
-.step-tab.active{color:var(--momo);border-bottom-color:var(--momo)}
-.step-num{width:18px;height:18px;border-radius:99px;background:var(--line);color:var(--muted);font-size:10px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
-.step-tab.active .step-num{background:var(--momo);color:#fff}
-.step-tab.done .step-num{background:var(--green);color:#fff}
+/* LEFT */
+.control-panel{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.mod-nav{display:flex;border-bottom:1px solid var(--line);padding:0 2px;flex-shrink:0;background:var(--bg)}
+.mod-btn{padding:11px 8px;border:none;background:none;color:var(--t3);font-size:10.5px;font-weight:700;
+  cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;font-family:inherit;
+  letter-spacing:.2px;transition:.15s;display:flex;align-items:center;gap:4px;flex:1;justify-content:center}
+.mod-btn.active{color:var(--pk-2);border-bottom-color:var(--pk)}
+.mod-btn:hover:not(.active){color:var(--t2)}
 
-.step-content{display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:14px}
-.step-content.active{display:flex}
+.mod-content{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.mod-panel{display:none}.mod-panel.active{display:contents}
 
-.form-group{display:flex;flex-direction:column;gap:6px}
-.form-label{font-size:12px;font-weight:700;color:var(--ink)}
-.form-hint{font-size:11px;color:var(--muted)}
-.form-input{border:1.5px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px;outline:none;font-family:inherit;background:#fff;width:100%;transition:.15s}
-.form-input:focus{border-color:var(--momo);box-shadow:0 0 0 3px #a5006418}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:10px;font-weight:800;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
+.fh{font-size:10px;color:var(--t3);line-height:1.4}
+.fi{background:var(--card);border:1.5px solid var(--line2);border-radius:8px;padding:8px 11px;
+  font-size:13px;color:var(--ink);font-family:inherit;outline:none;width:100%;transition:.15s}
+.fi:focus{border-color:var(--pk);box-shadow:0 0 0 3px var(--pk-g)}
+.fi::placeholder{color:var(--t3)}
+.fsel{appearance:none;padding-right:28px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a4c6a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;cursor:pointer}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
-.obj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.obj-btn{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:10px 6px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.15s;font-family:inherit}
-.obj-btn:hover,.obj-btn.active{border-color:var(--momo);background:var(--momo-light)}
-.obj-icon{font-size:18px}.obj-name{font-size:11px;font-weight:700}.obj-desc{font-size:9px;color:var(--muted);line-height:1.4}
+/* WIZARD STEPS */
+.wizard-track{display:flex;align-items:center;gap:0;margin-bottom:4px;padding:0 2px}
+.wt-step{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;position:relative}
+.wt-num{width:20px;height:20px;border-radius:99px;background:var(--card2);font-size:9px;
+  font-weight:800;display:grid;place-items:center;color:var(--t3);flex-shrink:0;transition:.2s}
+.wt-step.active .wt-num{background:var(--pk);color:#fff}
+.wt-step.done .wt-num{background:var(--green);color:#000}
+.wt-label{font-size:9px;font-weight:700;color:var(--t3);white-space:nowrap}
+.wt-step.active .wt-label{color:var(--pk-2)}
+.wt-step.done .wt-label{color:var(--green)}
+.wt-line{flex:1;height:1px;background:var(--line);max-width:20px}
 
-/* Project cards */
-.project-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.proj-card{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:12px;cursor:pointer;transition:.18s;display:flex;flex-direction:column;gap:5px}
-.proj-card:hover{border-color:var(--momo);background:var(--momo-light)}
-.proj-card.selected{border-color:var(--momo);background:var(--momo-light);box-shadow:0 0 0 3px #a5006418}
-.proj-card-top{display:flex;align-items:center;justify-content:space-between}
-.proj-icon{font-size:18px;line-height:1}
-.proj-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--line);display:grid;place-items:center;flex-shrink:0;transition:.15s;color:transparent}
-.proj-card.selected .proj-check{background:var(--momo);border-color:var(--momo)}
-.proj-check::after{content:'✓';font-size:10px;font-weight:900;color:#fff;display:none}
-.proj-card.selected .proj-check::after{display:block}
-.proj-name{font-size:12px;font-weight:800;color:var(--ink)}
-.proj-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:4px;width:fit-content}
-.proj-stats{font-size:10px;color:var(--muted);display:flex;gap:8px;margin-top:2px}
-.t-entertainment{background:#fef3c7;color:#b45309}
-.t-discovery{background:var(--blue-bg);color:var(--blue)}
-.t-utility{background:var(--purple-bg);color:var(--purple)}
-.t-content{background:var(--green-bg);color:var(--green)}
-.t-homepage{background:var(--momo-light);color:var(--momo)}
+.step-body{display:none;flex-direction:column;gap:12px}.step-body.active{display:flex}
+.step-nav{border-top:1px solid var(--line);padding:10px 14px;display:flex;
+  justify-content:space-between;align-items:center;flex-shrink:0;background:var(--panel)}
+.btn{border:1.5px solid var(--line2);border-radius:8px;background:var(--card);padding:8px 16px;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--t2);transition:.15s}
+.btn:hover{border-color:var(--t3);color:var(--ink)}
+.btn-pk{background:var(--pk);color:#fff;border-color:var(--pk)}
+.btn-pk:hover{background:var(--pk-2);border-color:var(--pk-2);color:#fff}
+.btn-green{background:var(--green);color:#000;border-color:var(--green)}
+.btn-green:hover{opacity:.9;color:#000}
 
-/* Placement cards */
-.section-head{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;margin-top:2px}
-.placement-group{display:flex;flex-direction:column;gap:5px}
-.placement-card{border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:.15s;background:#fff}
-.placement-card:hover{border-color:var(--momo);background:#fff9fd}
-.placement-card.selected{border-color:var(--momo);background:var(--momo-light)}
-.placement-card input[type=checkbox]{accent-color:var(--momo);width:15px;height:15px;flex-shrink:0;cursor:pointer}
-.placement-info{flex:1;min-width:0}
-.placement-name{font-size:12px;font-weight:700}
-.placement-meta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.pbadge{font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px}
-.pb-native{background:var(--blue-bg);color:var(--blue)}
-.pb-banner{background:var(--green-bg);color:var(--green)}
-.pb-popup{background:var(--red-bg);color:var(--red)}
-.pb-float{background:var(--amber-bg);color:var(--amber)}
-.pb-display{background:#f3f4f6;color:#374151}
-.placement-imp{font-size:11px;font-weight:700;color:var(--momo);text-align:right;flex-shrink:0;white-space:nowrap}
-.placement-imp small{display:block;font-weight:500;color:var(--muted);font-size:9px}
-.vr-badge{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;background:#f0fdf4;color:var(--green)}
-.no-pages-note{font-size:11px;color:var(--muted);text-align:center;padding:16px;border:1.5px dashed var(--line);border-radius:8px;background:#f9fafb}
-.pd-note{font-size:11px;color:var(--amber);background:var(--amber-bg);border:1px solid #fde68a;border-radius:7px;padding:8px 10px;margin-bottom:6px}
+/* FORMAT CARDS */
+.fmt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fmt-card{background:var(--card);border:1.5px solid var(--line2);border-radius:10px;padding:14px 10px;
+  cursor:pointer;text-align:center;transition:.18s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.fmt-card:hover{border-color:var(--t3)}
+.fmt-card.sel{border-color:var(--pk);background:var(--pk-l);box-shadow:0 0 0 3px var(--pk-g)}
+.fmt-icon{font-size:24px;line-height:1}
+.fmt-name{font-size:12px;font-weight:800}
+.fmt-desc{font-size:9px;color:var(--t2);line-height:1.4}
 
-/* Forecast */
-.summary-box{background:var(--bg);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:8px}
-.sum-row{display:flex;justify-content:space-between;align-items:center}
-.sum-label{font-size:11px;color:var(--muted)}.sum-value{font-size:12px;font-weight:700}
-.sum-value.momo{color:var(--momo)}
-.forecast-hero{background:linear-gradient(135deg,var(--momo),var(--momo-2));border-radius:10px;padding:16px;color:#fff;text-align:center}
-.forecast-hero .num{font-size:32px;font-weight:900;display:block}
-.forecast-hero .label{font-size:11px;opacity:.85;margin-top:2px}
-.review-list{display:flex;flex-direction:column;gap:5px}
-.review-item{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;display:flex;align-items:center;gap:9px}
-.rv-info{flex:1}.rv-name{font-size:12px;font-weight:700}.rv-sub{font-size:10px;color:var(--muted);margin-top:1px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-.rv-imp{font-size:11px;font-weight:700;color:var(--momo);flex-shrink:0}
-.empty-note{text-align:center;color:var(--muted);font-size:12px;padding:20px}
-.publish-btn{border:none;border-radius:10px;background:linear-gradient(135deg,var(--momo),var(--momo-2));color:#fff;font-size:14px;font-weight:800;padding:13px;cursor:pointer;width:100%;font-family:inherit}
-.publish-btn:hover{opacity:.9}
+/* TAGS */
+.tag-area{background:var(--card);border:1.5px solid var(--line2);border-radius:8px;
+  padding:6px;display:flex;flex-wrap:wrap;gap:4px;cursor:text;min-height:40px;transition:.15s}
+.tag-area:focus-within{border-color:var(--pk);box-shadow:0 0 0 3px var(--pk-g)}
+.tag-chip{background:var(--pk-l);border:1px solid var(--pk);color:var(--pk-2);font-size:10px;
+  font-weight:700;padding:3px 7px;border-radius:4px;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.tag-chip.url-chip{background:var(--bbg);border-color:var(--blue);color:var(--blue)}
+.tag-chip button{background:none;border:none;color:inherit;cursor:pointer;font-size:11px;padding:0;line-height:1;opacity:.7}
+.tag-chip button:hover{opacity:1}
+.tag-input{background:none;border:none;outline:none;color:var(--ink);font-family:inherit;font-size:12px;min-width:100px;flex:1;padding:1px 4px}
+.tag-input::placeholder{color:var(--t3)}
+.quick-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.qchip{font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;
+  background:var(--card2);border:1px solid var(--line2);color:var(--t2);transition:.13s}
+.qchip:hover{border-color:var(--t3);color:var(--ink)}
 
-.step-nav{border-top:1px solid var(--line);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.btn-prev,.btn-next{border:1.5px solid var(--line);border-radius:8px;background:#fff;padding:8px 15px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
-.btn-next{background:var(--momo);color:#fff;border-color:var(--momo)}
-.btn-prev:hover{border-color:var(--muted)}.btn-next:hover{opacity:.9}
+/* UTM */
+.utm-box{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;
+  font-size:10px;font-family:monospace;line-height:2}
+.uk{color:var(--blue)}.uv{color:var(--green)}
 
-/* Right panel */
-.viz-panel{display:flex;flex-direction:column;overflow:hidden}
-.viz-toolbar{background:var(--white);border-bottom:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px}
-.viz-toolbar-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow:hidden}
-.viz-toolbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+/* OBJECTIVE */
+.obj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.obj-btn{border:1.5px solid var(--line2);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:.15s;background:var(--card);display:flex;flex-direction:column;align-items:center;gap:3px}
+.obj-btn:hover{border-color:var(--pk);background:var(--pk-l)}
+.obj-btn.active{border-color:var(--pk);background:var(--pk-l);box-shadow:0 0 0 2px var(--pk-g)}
+.obj-icon{font-size:22px;line-height:1}
+.obj-name{font-size:11px;font-weight:800;color:var(--ink)}
+.obj-desc{font-size:9px;color:var(--t2);line-height:1.3}
+/* PRIORITY */
+.pri-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pri-opt{background:var(--card);border:1.5px solid var(--line2);border-radius:8px;padding:10px;
+  cursor:pointer;text-align:center;transition:.15s}
+.pri-opt.sel{border-color:var(--pk);background:var(--pk-l)}
+.pri-opt-name{font-size:11px;font-weight:800}
+.pri-opt-val{font-size:22px;font-weight:900;color:var(--pk-2);margin:2px 0}
+.pri-opt-desc{font-size:9px;color:var(--t2)}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:var(--line2);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:99px;background:var(--pk);cursor:pointer;box-shadow:0 0 0 3px var(--pk-g)}
+.score-preview{background:var(--card);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.score-row{display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.score-row span:first-child{color:var(--t2)}
+.score-row span:last-child{font-weight:700}
+.score-total-row{border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.score-total-row span:last-child{font-size:15px;font-weight:900;color:var(--pk-2)}
 
-.proj-tabs{display:flex;gap:4px;flex-shrink:0}
-.proj-tab{border:1.5px solid var(--line);border-radius:6px;background:#fff;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;white-space:nowrap;transition:.13s}
-.proj-tab:hover{border-color:var(--momo);color:var(--momo)}
-.proj-tab.active{background:var(--momo);color:#fff;border-color:var(--momo)}
+/* REVIEW */
+.review-card{background:var(--card);border:1.5px solid var(--line2);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.rc-head{display:flex;align-items:center;justify-content:space-between}
+.rc-title{font-size:15px;font-weight:800}
+.rc-row{display:flex;gap:6px;font-size:11px;align-items:baseline}
+.rc-row .rk{color:var(--t2);width:86px;flex-shrink:0}
+.rc-row .rv{color:var(--ink);font-weight:600}
 
-.url-tabs{display:flex;gap:3px;overflow-x:auto}
-.url-tab{border:1px solid var(--line);border-radius:5px;background:#fff;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;white-space:nowrap;transition:.13s;flex-shrink:0}
-.url-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* BADGE */
+.badge{font-size:8.5px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.b-balloon{background:var(--bbg);color:var(--blue)}
+.b-popup{background:var(--rbg);color:var(--red)}
+.b-calculator{background:var(--pbg);color:var(--purple)}
+.b-purchase{background:var(--gbg);color:var(--green)}
+.b-global{background:var(--abg);color:var(--amber)}
+.b-division{background:var(--card2);color:var(--t2)}
 
-.device-switcher{display:flex;gap:4px}
-.dev-btn{border:1.5px solid var(--line);border-radius:7px;background:#fff;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;transition:.13s}
-.dev-btn.active{border-color:var(--momo);background:var(--momo-light);color:var(--momo)}
+/* CAMPAIGNS LIST */
+.campaign-list{display:flex;flex-direction:column;gap:6px}
+.cc{background:var(--card);border:1.5px solid var(--line2);border-radius:9px;padding:10px 12px;
+  display:flex;align-items:center;gap:9px;transition:.15s;cursor:pointer}
+.cc:hover{border-color:var(--line2);background:var(--card2)}
+.cc-dot{width:8px;height:8px;border-radius:99px;flex-shrink:0}
+.cc-info{flex:1;min-width:0}
+.cc-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-meta{font-size:10px;color:var(--t2);margin-top:2px;display:flex;gap:5px;align-items:center}
+.cc-actions{display:flex;gap:4px}
+.cc-act-btn{background:none;border:1px solid var(--line);border-radius:5px;color:var(--t3);
+  font-size:10px;padding:2px 7px;cursor:pointer;font-family:inherit;transition:.13s}
+.cc-act-btn:hover{border-color:var(--t2);color:var(--ink)}
+.cc-act-btn.del:hover{border-color:var(--red);color:var(--red)}
 
-.viz-scroll{flex:1;overflow:auto;padding:20px;display:flex;align-items:flex-start;justify-content:center;background:var(--bg)}
+/* REGISTRY TABLE */
+.reg-wrap{overflow-x:auto}
+.reg-table{width:100%;border-collapse:collapse;font-size:11px}
+.reg-table th{font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;
+  padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.reg-table td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.reg-table tr:hover td{background:var(--card2)}
+.sdot{width:7px;height:7px;border-radius:99px;display:inline-block;margin-right:5px}
+.s-empty{background:var(--green)}.s-occ{background:var(--amber)}.s-full{background:var(--red)}
+.ft{font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;display:inline-block;margin:1px}
+.ft-balloon{background:var(--bbg);color:var(--blue)}
+.ft-popup{background:var(--rbg);color:var(--red)}
+.ft-calculator{background:var(--pbg);color:var(--purple)}
+.ft-purchase{background:var(--gbg);color:var(--green)}
+.ft-balloon,.ft-popup,.ft-calculator,.ft-purchase{cursor:default}
 
-/* Desktop frame */
-.desktop-frame{background:var(--white);border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.1);width:840px;min-height:560px;display:flex;flex-direction:column;overflow:hidden;position:relative}
-.browser-bar{background:#f2f4f7;border-bottom:1px solid var(--line);padding:7px 11px;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.bdots{display:flex;gap:4px}.bdots i{width:8px;height:8px;border-radius:99px;display:block}
-.bdots i:nth-child(1){background:#ff5f57}.bdots i:nth-child(2){background:#febc2e}.bdots i:nth-child(3){background:#28c840}
-.burl{background:#fff;border:1px solid var(--line);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--muted);flex:1;font-family:monospace}
+/* CONFLICT ENGINE */
+.url-tester-box{background:var(--card);border:1.5px solid var(--line2);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.url-input-row{display:flex;gap:7px}
+.url-fi{flex:1}
+.btn-check{background:var(--pk);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:800;
+  padding:8px 14px;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.btn-check:hover{background:var(--pk-2)}
+.preset-urls{display:flex;flex-wrap:wrap;gap:4px}
+.pu{font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;
+  background:var(--card2);border:1px solid var(--line2);color:var(--t2);font-family:monospace;transition:.13s}
+.pu:hover{border-color:var(--blue);color:var(--blue)}
 
-/* Ad zones */
-.ad-zone{position:relative;border:2px dashed #d0d5dd;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;transition:.2s;cursor:pointer;background:#f9fafb}
-.ad-zone:hover{border-color:#e8a1c8;background:#fff8fd}
-.ad-zone.active{border:2px solid var(--momo);background:var(--momo-light)}
-.az-label{font-size:9px;font-weight:800;color:#98a2b3;text-transform:uppercase;letter-spacing:.5px;text-align:center;line-height:1.3}
-.ad-zone.active .az-label{color:var(--momo)}
-.az-dim{font-size:8px;color:#c0c7d0}.ad-zone.active .az-dim{color:#d8a1c8}
-@keyframes zone-flash{0%{box-shadow:0 0 0 0 rgba(165,0,100,.5)}60%{box-shadow:0 0 0 8px rgba(165,0,100,0)}100%{box-shadow:0 0 0 0 rgba(165,0,100,0)}}
-.ad-zone.flash{animation:zone-flash .55s ease-out}
+.conflict-list{display:flex;flex-direction:column;gap:8px}
+.cf-item{background:var(--card);border:1.5px solid var(--line2);border-radius:9px;padding:11px 13px;position:relative;overflow:hidden;transition:.3s}
+.cf-item.winner{border-color:var(--pk);box-shadow:0 0 0 3px var(--pk-g)}
+.cf-item.blocked{opacity:.55}
+.cf-winner-tag{position:absolute;top:7px;right:7px;font-size:8px;font-weight:900;
+  background:var(--pk);color:#fff;padding:2px 7px;border-radius:4px}
+.cf-blocked-tag{position:absolute;top:7px;right:7px;font-size:8px;font-weight:900;
+  background:var(--rbg);color:var(--red);border:1px solid var(--red);padding:2px 7px;border-radius:4px}
+.cf-score{display:flex;align-items:baseline;gap:3px;margin-bottom:4px}
+.cf-score .num{font-size:22px;font-weight:900;color:var(--pk-2);line-height:1}
+.cf-score .unit{font-size:9px;color:var(--t2)}
+.cf-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.cf-factors{display:flex;gap:4px;flex-wrap:wrap}
+.cff{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
+.cff-base{background:var(--bbg);color:var(--blue)}
+.cff-url{background:var(--gbg);color:var(--green)}
+.cff-tag{background:var(--pbg);color:var(--purple)}
+.cff-retarget{background:var(--abg);color:var(--amber)}
+.guardrail-box{background:var(--abg);border:1px solid var(--amber);border-radius:8px;
+  padding:9px 11px;font-size:10px;color:var(--amber);line-height:1.5}
+.no-match{text-align:center;color:var(--t3);font-size:12px;padding:20px;
+  border:1.5px dashed var(--line2);border-radius:8px}
 
-/* Universal overlay zones */
-.u-topbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:10;border-left:none;border-right:none;border-top:none}
-.u-sticky{position:absolute;bottom:0;left:0;right:0;height:34px;z-index:10;border-left:none;border-right:none;border-bottom:none}
-.u-float{position:absolute;bottom:50px;right:14px;width:48px;height:48px;border-radius:50%;z-index:10}
-.u-popup{position:absolute;inset:0;z-index:20;display:none;border-radius:inherit}
-.u-popup.active{display:flex}
+/* A/B TEST */
+.ab-variants{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ab-var{background:var(--card);border:1.5px solid var(--line2);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ab-head{font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
+.ab-badge{width:22px;height:22px;border-radius:5px;display:grid;place-items:center;font-size:11px;font-weight:900}
+.var-a .ab-badge{background:var(--bbg);color:var(--blue)}
+.var-b .ab-badge{background:var(--pbg);color:var(--purple)}
+.win-chip{font-size:9px;font-weight:800;background:var(--green);color:#000;padding:1px 6px;border-radius:3px;margin-left:auto}
 
-/* Page nav skeleton */
-.l-nav{height:40px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 14px;flex-shrink:0}
-.l-logo{width:22px;height:22px;border-radius:5px;background:var(--momo)}
-.l-links{display:flex;gap:12px}
-.l-links span{width:32px;height:6px;background:var(--line);border-radius:3px}
-.l-links span.hi{background:var(--momo);opacity:.5}
-.l-cta{margin-left:auto;width:52px;height:22px;background:var(--momo);border-radius:4px;opacity:.7}
-.l-bar{height:6px;background:var(--line);border-radius:3px}
-.l-bar.w100{width:100%}.l-bar.w80{width:80%}.l-bar.w60{width:60%}.l-bar.w90{width:90%}
+.ratio-wrap{display:flex;flex-direction:column;gap:6px}
+.ratio-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--t2)}
+.ratio-track{height:12px;border-radius:6px;background:var(--pbg);overflow:hidden;position:relative;cursor:pointer;border:1px solid var(--line2)}
+.ratio-fill{height:100%;background:var(--bbg);border-right:2px solid var(--ink);transition:width .2s;position:relative}
+.ratio-fill::after{content:'A';position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:8px;font-weight:800;color:var(--blue)}
+.ratio-track::after{content:'B';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:8px;font-weight:800;color:var(--purple)}
 
-/* Cinema */
-.cinema-billboard{height:115px;border-radius:0;border-left:none;border-right:none}
-.cinema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
-.cinema-card-el{background:#f5f5f8;border-radius:6px;overflow:hidden}
-.cinema-poster{height:70px;background:var(--line)}
-.cinema-card-info{padding:5px;display:flex;flex-direction:column;gap:3px}
-.cinema-native-zone{height:108px}
+.ab-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.ab-stat{background:var(--bg);border-radius:6px;padding:7px;text-align:center}
+.ab-stat-val{font-size:14px;font-weight:900}
+.ab-stat-key{font-size:8px;color:var(--t2);margin-top:1px}
+.declare-winner-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.btn-declare{border:1.5px solid var(--line2);border-radius:8px;background:var(--card);padding:8px;
+  font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--t2);transition:.15s;text-align:center}
+.btn-declare.a:hover{border-color:var(--blue);color:var(--blue);background:var(--bbg)}
+.btn-declare.b:hover{border-color:var(--purple);color:var(--purple);background:var(--pbg)}
+.declared-winner{background:var(--gbg);border:1px solid var(--green);border-radius:8px;
+  padding:10px;font-size:11px;color:var(--green);text-align:center}
 
-/* Merchant */
-.merchant-frame{display:flex;flex:1;overflow:hidden}
-.merchant-sidebar{width:170px;background:#1a2535;border-right:1px solid #2d3f55;flex-shrink:0;padding:10px 9px;display:flex;flex-direction:column;gap:7px;position:relative}
-.ms-logo{width:32px;height:32px;background:var(--momo);border-radius:7px;margin-bottom:6px}
-.ms-item{height:26px;border-radius:5px;background:rgba(255,255,255,.07);display:flex;align-items:center;padding:0 8px;gap:6px}
-.ms-item span{height:5px;flex:1;background:rgba(255,255,255,.18);border-radius:3px}
-.ms-item.hi{background:var(--momo)}
-.ms-item.hi span{background:rgba(255,255,255,.7)}
-.ms-lock{position:absolute;bottom:9px;left:9px;right:9px;font-size:8px;color:rgba(255,255,255,.4);text-align:center;line-height:1.5;background:rgba(255,255,255,.05);border-radius:5px;padding:5px}
-.merchant-main{flex:1;padding:11px;overflow:hidden}
-.deal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
-.deal-card-el{background:#f9fafb;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.deal-img{height:48px;background:var(--line)}
-.deal-info{padding:5px;display:flex;flex-direction:column;gap:3px}
-.deal-inline-zone{height:70px}
+/* RIGHT PANEL */
+.preview-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.preview-toolbar{background:var(--panel);border-bottom:1px solid var(--line);padding:7px 14px;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.pt-url{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+  padding:4px 10px;font-size:10px;color:var(--t2);font-family:monospace;display:flex;align-items:center;gap:5px;min-width:180px}
+.pt-pages{display:flex;gap:3px}
+.pt-pg{border:1px solid var(--line);border-radius:5px;background:var(--card);padding:4px 9px;
+  font-size:10px;font-weight:700;cursor:pointer;color:var(--t2);font-family:inherit;white-space:nowrap;transition:.13s}
+.pt-pg.active{background:var(--pk);color:#fff;border-color:var(--pk)}
+.dev-sw{display:flex;gap:3px}
+.dev-btn{border:1.5px solid var(--line);border-radius:6px;background:var(--card);
+  padding:4px 9px;font-size:13px;cursor:pointer;font-family:inherit;transition:.13s}
+.dev-btn.active{border-color:var(--pk);background:var(--pk-l)}
 
-/* Credit / Insurance */
-.credit-layout{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}
-.credit-pre-zone{height:86px;border-radius:7px}
-.credit-form-box{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:7px}
-.credit-field{height:26px;background:#fff;border:1px solid var(--line);border-radius:5px}
-.credit-cta{height:30px;background:var(--momo);border-radius:5px;margin-top:2px}
-.credit-result-box{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:7px}
-.credit-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.credit-result-cell{background:#fff;border:1px solid var(--line);border-radius:5px;padding:7px}
-.credit-result-cell small{font-size:8px;color:var(--muted);display:block;margin-bottom:2px}
-.credit-result-cell strong{font-size:13px;font-weight:800;color:var(--momo)}
-.credit-result-zone{height:64px;border-radius:5px}
+.preview-scroll{flex:1;overflow:auto;padding:20px;display:flex;align-items:flex-start;justify-content:center;
+  background:var(--bg)}
+.device-wrap{position:relative}
 
-/* Content */
-.content-layout{display:flex;flex-direction:column;flex:1}
-.content-billboard-zone{height:106px;border-radius:0;border-left:none;border-right:none}
-.content-body{display:grid;grid-template-columns:1fr 210px;flex:1;padding:12px;gap:11px}
-.content-article{display:flex;flex-direction:column;gap:7px}
-.content-img{height:90px;background:var(--line);border-radius:4px}
-.content-infeed-zone{height:62px;border-radius:5px}
-.content-sidebar{display:flex;flex-direction:column;gap:8px}
-.content-sb-med{height:96px;border-radius:5px}
-.content-sb-lg{height:170px;border-radius:5px}
+/* MOBILE SHELL */
+.mobile-shell{width:340px;background:#1a1a2e;border-radius:38px;padding:3px;
+  box-shadow:0 0 0 1px #0f0f1a,0 24px 60px rgba(0,0,0,.25),inset 0 0 0 1px rgba(255,255,255,.06)}
+.mobile-screen{background:#f0f0f0;border-radius:35px;overflow:hidden;position:relative;min-height:640px}
+.mobile-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:110px;height:24px;background:#1a1a2e;border-radius:0 0 15px 15px;z-index:20}
 
-/* Homepage */
-.home-layout{display:flex;flex-direction:column;flex:1}
-.home-hero-zone{height:126px;border-radius:0;border-left:none;border-right:none}
-.home-body{padding:14px;display:flex;flex-direction:column;gap:10px}
-.home-svc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.home-svc-item{display:flex;flex-direction:column;align-items:center;gap:3px}
-.home-svc-circle{width:34px;height:34px;border-radius:50%;background:var(--line)}
-.home-svc-label{width:26px;height:4px;background:var(--line);border-radius:2px}
-.home-grid-zone{height:62px;border-radius:5px}
+/* DESKTOP SHELL */
+.desktop-shell{background:#fff;border-radius:8px;width:780px;min-height:520px;
+  box-shadow:0 4px 32px rgba(0,0,0,.5);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.browser-chrome{height:34px;background:#f1f3f5;border-bottom:1px solid #dde1e7;
+  display:flex;align-items:center;gap:8px;padding:0 12px;flex-shrink:0}
+.bc-dots{display:flex;gap:4px}
+.bc-dots i{width:8px;height:8px;border-radius:99px;display:block}
+.bc-dots i:nth-child(1){background:#ff5f57}
+.bc-dots i:nth-child(2){background:#febc2e}
+.bc-dots i:nth-child(3){background:#28c840}
+.bc-url{background:#fff;border:1px solid #dde1e7;border-radius:4px;padding:2px 10px;
+  font-size:10px;color:#555;font-family:monospace;flex:1}
 
-/* Mobile frame */
-.mobile-wrapper{display:flex;justify-content:center}
-.mobile-phone{width:292px;background:#1a2535;border-radius:34px;padding:10px 7px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
-.mobile-notch{height:24px;display:flex;align-items:center;justify-content:center}
-.mobile-notch div{width:68px;height:16px;background:#1a2535;border-radius:99px}
-.mobile-screen{background:#fff;border-radius:24px;overflow:hidden;height:530px;display:flex;flex-direction:column;position:relative}
-.mob-nav{height:36px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 10px;flex-shrink:0}
-.mob-logo{width:18px;height:18px;background:var(--momo);border-radius:4px}
-.mob-title{width:50px;height:5px;background:var(--line);border-radius:3px}
-.mob-icon{width:17px;height:17px;border-radius:4px;background:var(--line);margin-left:auto}
-.mob-topbar{height:28px;flex-shrink:0;border-radius:0;border-left:none;border-right:none;border-top:none}
-.mob-sticky{height:28px;flex-shrink:0;border-radius:0;border-left:none;border-right:none;border-bottom:none}
-.mob-float{position:absolute;bottom:38px;right:10px;width:36px;height:36px;border-radius:50%;z-index:10}
-.mob-popup{position:absolute;inset:0;z-index:20;border-radius:24px;display:none;align-items:center;justify-content:center;flex-direction:column;gap:6px}
-.mob-popup.active{display:flex}
-.mob-content{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:0}
-.mob-feed-item{padding:8px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-.mob-img{height:48px;background:var(--line);border-radius:4px;margin-bottom:2px}
-.mob-bar{height:5px;background:var(--line);border-radius:3px}
-.mob-bar.w80{width:80%}.mob-bar.w60{width:60%}
-.mob-infeed{height:44px;margin:0 10px;border-radius:5px;flex-shrink:0}
-.mob-inline{height:38px;margin:6px 10px;border-radius:5px;flex-shrink:0}
+/* PAGE MOCKUPS */
+.page-mockup{position:relative;background:#fff;overflow:hidden}
+.m-nav{height:44px;background:#fff;border-bottom:1px solid #eee;display:flex;align-items:center;
+  gap:10px;padding:0 14px;flex-shrink:0;position:sticky;top:0;z-index:10}
+.m-logo{width:24px;height:24px;border-radius:5px;background:#a50064;flex-shrink:0}
+.m-links{display:flex;gap:10px}
+.m-links span{height:6px;background:#eee;border-radius:3px;display:block}
+.m-cta{margin-left:auto;width:60px;height:26px;background:#a50064;border-radius:4px;opacity:.8}
+.m-bar{height:7px;background:#eee;border-radius:3px;margin-bottom:8px}
+.m-bar.w100{width:100%}.m-bar.w80{width:80%}.m-bar.w60{width:60%}.m-bar.w90{width:90%}
 
-/* Empty state */
-.viz-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;color:var(--muted);text-align:center}
-.viz-empty-icon{font-size:44px}
-.viz-empty-title{font-size:14px;font-weight:700;color:var(--ink)}
-.viz-empty-sub{font-size:12px;max-width:260px;line-height:1.6}
+/* BLOG */
+.pg-blog .hero{height:120px;background:linear-gradient(135deg,#7c1d5f,#e61b7a);
+  display:flex;align-items:flex-end;padding:12px;position:relative;overflow:hidden}
+.pg-blog .hero-text{font-size:12px;font-weight:800;color:#fff;line-height:1.3;z-index:1}
+.pg-blog .hero::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.3)}
+.pg-blog .body{padding:14px}
+.pg-blog .tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;
+  background:#fef9c3;color:#92400e;display:inline-block;margin-bottom:8px}
+.pg-blog .title{font-size:15px;font-weight:800;color:#111;line-height:1.3;margin-bottom:10px}
 
-/* Metrics */
-.metrics-bar{background:var(--white);border-top:1px solid var(--line);padding:10px 20px;display:flex;gap:18px;align-items:center;flex-shrink:0}
-.metric{display:flex;flex-direction:column;gap:1px}
-.m-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.m-value{font-size:16px;font-weight:800}
-.m-value.momo{color:var(--momo)}
-.msep{width:1px;height:28px;background:var(--line)}
+/* HUB */
+.pg-hub .hero{height:90px;background:linear-gradient(135deg,#1a1f6e,#a50064);
+  padding:12px;display:flex;align-items:center}
+.pg-hub .hero-title{font-size:16px;font-weight:900;color:#fff}
+.pg-hub .hero-sub{font-size:10px;color:rgba(255,255,255,.7);margin-top:3px}
+.pg-hub .body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.hub-card{background:#f9f9fb;border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px}
+.hub-card-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#a50064,#e61b7a);flex-shrink:0}
+.hub-card-title{font-size:12px;font-weight:700;color:#111}
+.hub-card-sub{font-size:10px;color:#666;margin-top:2px}
 
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:#1d2939;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;transition:.3s;white-space:nowrap;z-index:999}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* HOME */
+.pg-home .hero{height:100px;background:linear-gradient(135deg,#a50064,#e61b7a);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800}
+.pg-home .body{padding:12px}
+.service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.svc-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.svc-icon{width:36px;height:36px;border-radius:10px;background:#f0f0f0}
+.svc-icon.pk{background:linear-gradient(135deg,#a50064,#e61b7a)}
+.svc-icon.bl{background:#3b82f6}
+.svc-icon.gr{background:#22c55e}
+.svc-icon.or{background:#f59e0b}
+.svc-label{font-size:8px;color:#666;text-align:center}
 
-/* CTR badges */
-.ctr-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
-.ctr-high{background:#d1fadf;color:#027a48}
-.ctr-avg{background:#f3f4f6;color:#374151}
-.ctr-low{background:#fef3c7;color:#b45309}
-/* Slot availability */
-.slot-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
-.slot-avail{background:#d1fadf;color:#027a48}
-.slot-low{background:#fef3c7;color:#b45309}
-.slot-full{background:#fee4e2;color:#b42318}
-/* Unavailable placement */
-.placement-card.unavailable{opacity:.55;cursor:not-allowed;pointer-events:none}
-/* Proj slot summary */
-.proj-avail{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;margin-top:3px;width:fit-content}
-.proj-avail.ok{background:#d1fadf;color:#027a48}
-.proj-avail.low{background:#fef3c7;color:#b45309}
-.proj-avail.out{background:#fee4e2;color:#b42318}
-/* Conflict warning */
-.conflict-warn{font-size:11px;color:var(--amber);background:var(--amber-bg);border:1px solid #fde68a;border-radius:7px;padding:8px 10px;margin-bottom:8px;display:none;line-height:1.5}
-.conflict-warn.show{display:block}
-/* Freq cap hint */
-.freq-row{display:grid;grid-template-columns:1fr 120px;gap:6px}
-/* Page-format inventory block */
-.inv-block{background:var(--bg);border-radius:7px;padding:8px 10px;margin-bottom:8px}
-.inv-section-label{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
-.inv-pages{display:flex;flex-direction:column;gap:3px;margin-bottom:7px}
-.inv-page{display:flex;align-items:center;gap:6px;font-size:10px}
-.inv-page-label{font-weight:700;color:var(--ink);flex-shrink:0}
-.inv-url-text{font-size:9px;font-family:monospace;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.inv-views{font-size:9px;font-weight:700;color:var(--muted);flex-shrink:0}
-.inv-formats{display:flex;flex-wrap:wrap;gap:4px;padding-top:6px;border-top:1px solid var(--line)}
-.fmt-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px}
-/* Format tags on project card */
-.proj-fmt-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
-.fmt-tag{font-size:8px;font-weight:700;padding:2px 5px;border-radius:4px}
+/* AD OVERLAYS */
+/* Balloon */
+.ad-balloon{position:absolute;bottom:60px;right:12px;z-index:30;animation:balloon-in .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes balloon-in{from{transform:scale(0) translateY(20px);opacity:0}to{transform:scale(1);opacity:1}}
+.balloon-body{width:58px;height:58px;border-radius:99px;background:linear-gradient(135deg,#a50064,#e61b7a);
+  box-shadow:0 4px 18px rgba(165,0,100,.5);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;flex-direction:column;gap:1px}
+.balloon-icon{font-size:22px;color:#fff}
+.balloon-txt{font-size:7px;font-weight:800;color:#fff;white-space:nowrap}
+.balloon-pulse{position:absolute;inset:-5px;border-radius:99px;background:rgba(165,0,100,.2);animation:bpulse 2s infinite}
+@keyframes bpulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.18);opacity:0}}
+.balloon-card{position:absolute;bottom:68px;right:2px;background:#fff;border-radius:10px;padding:10px 11px;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:150px;animation:balloon-in .4s .1s both}
+.balloon-card-title{font-size:11px;font-weight:800;color:#111;margin-bottom:3px}
+.balloon-card-sub{font-size:9px;color:#666;margin-bottom:7px;line-height:1.4}
+.balloon-card-btn{background:linear-gradient(135deg,#a50064,#e61b7a);color:#fff;border:none;
+  border-radius:6px;padding:5px 10px;font-size:10px;font-weight:800;cursor:pointer;width:100%;font-family:inherit}
+.balloon-close{position:absolute;top:-4px;right:-4px;width:17px;height:17px;background:#666;
+  border-radius:99px;border:none;color:#fff;font-size:8px;cursor:pointer;display:grid;place-items:center;z-index:5}
+
+/* Popup */
+.ad-popup{position:absolute;inset:0;background:rgba(0,0,0,.65);z-index:40;display:flex;align-items:flex-end;animation:fade-in .3s ease both}
+.ad-popup.desktop{align-items:center;justify-content:center}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+.popup-sheet{background:#fff;border-radius:20px 20px 0 0;padding:18px 16px 24px;width:100%;animation:sheet-up .35s cubic-bezier(.34,1.2,.64,1) both;position:relative}
+.popup-sheet.desktop-box{border-radius:14px;max-width:320px;animation:popup-zoom .3s cubic-bezier(.34,1.2,.64,1) both}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes popup-zoom{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.popup-x{position:absolute;top:10px;right:10px;width:24px;height:24px;background:#f0f0f0;
+  border-radius:99px;border:none;font-size:12px;cursor:pointer;display:grid;place-items:center}
+.popup-handle{width:40px;height:4px;background:#eee;border-radius:2px;margin:0 auto 12px}
+.popup-hero{height:75px;border-radius:10px;background:linear-gradient(135deg,#a50064,#e61b7a);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-bottom:10px}
+.popup-title{font-size:14px;font-weight:800;color:#111;margin-bottom:5px}
+.popup-desc{font-size:11px;color:#666;line-height:1.5;margin-bottom:12px}
+.popup-btn{background:linear-gradient(135deg,#a50064,#e61b7a);color:#fff;border:none;border-radius:10px;
+  padding:11px;font-size:13px;font-weight:800;cursor:pointer;width:100%;font-family:inherit}
+
+/* Calculator Widget */
+.ad-calculator{margin:12px;background:#fff;border:2px solid #a50064;border-radius:12px;overflow:hidden;animation:slide-in .4s cubic-bezier(.34,1.1,.64,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.calc-hd{background:linear-gradient(135deg,#a50064,#e61b7a);padding:9px 12px;display:flex;align-items:center;gap:6px}
+.calc-hd span{font-size:12px;font-weight:800;color:#fff}
+.calc-bd{padding:12px}
+.calc-field{margin-bottom:9px}
+.calc-field label{font-size:9px;font-weight:700;color:#666;text-transform:uppercase;display:block;margin-bottom:3px}
+.calc-fi{width:100%;border:1.5px solid #eee;border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none}
+.calc-result{background:#f9f9fb;border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.calc-rk{font-size:9px;color:#666;font-weight:700}
+.calc-rv{font-size:14px;font-weight:900;color:#a50064}
+.calc-cta{background:linear-gradient(135deg,#a50064,#e61b7a);color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:800;cursor:pointer;width:100%;font-family:inherit}
+
+/* Purchase Component */
+.ad-purchase{margin:12px;background:#fff;border:2px solid #a50064;border-radius:12px;overflow:hidden;animation:slide-in .4s cubic-bezier(.34,1.1,.64,1) both}
+.purch-hd{background:linear-gradient(135deg,#a50064,#e61b7a);padding:9px 12px;display:flex;align-items:center;gap:6px}
+.purch-hd span{font-size:12px;font-weight:800;color:#fff}
+.purch-bd{padding:12px}
+.purch-product{display:flex;align-items:center;gap:10px;background:#f9f9fb;border-radius:8px;padding:9px;margin-bottom:11px}
+.purch-img{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#a50064,#e61b7a);flex-shrink:0}
+.purch-name{font-size:12px;font-weight:700;color:#111}
+.purch-price{font-size:14px;font-weight:900;color:#a50064;margin-top:2px}
+.purch-btn{background:linear-gradient(135deg,#a50064,#e61b7a);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;width:100%;font-family:inherit}
+
+/* METRICS BAR */
+.metrics-bar{background:var(--panel);border-top:1px solid var(--line);display:flex;align-items:center;padding:7px 16px;gap:14px;flex-shrink:0}
+.metric{display:flex;align-items:center;gap:5px}
+.m-l{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px}
+.m-v{font-size:12px;font-weight:800;color:var(--ink)}
+.m-v.pk{color:var(--pk-2)}
+.msep{width:1px;height:14px;background:var(--line);flex-shrink:0}
+
+/* MISC */
+.section-head{font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.sep{height:1px;background:var(--line);margin:2px -14px;width:calc(100% + 28px)}
+
+/* FORMAT GALLERY (builder right panel) */
+.format-gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px;width:100%;max-width:720px;margin:0 auto;align-content:start}
+.fg-card{border:2px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:.18s;background:var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.fg-card:hover:not(.sel){border-color:var(--t3);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.fg-card.sel{border-color:var(--pk);box-shadow:0 0 0 3px var(--pk-g),0 4px 12px rgba(0,0,0,.1)}
+.fg-preview{height:200px;background:#f4f5f7;position:relative;overflow:hidden;pointer-events:none}
+.fg-foot{padding:10px 12px;display:flex;align-items:flex-start;gap:8px;border-top:1px solid var(--line)}
+.fg-foot-icon{font-size:18px;flex-shrink:0;line-height:1;margin-top:1px}
+.fg-foot-name{font-size:12px;font-weight:800;color:var(--ink)}
+.fg-foot-desc{font-size:9px;color:var(--t2);margin-top:2px;line-height:1.4}
+.builder-rp-header{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+.builder-rp-title{font-size:11px;font-weight:700;color:var(--t2)}
+.builder-rp-hint{font-size:10px;color:var(--t3)}
+.empty-note{text-align:center;color:var(--t3);font-size:11px;padding:20px;border:1.5px dashed var(--line2);border-radius:8px}
+.log-box{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px;font-family:monospace;font-size:10px;color:var(--green);line-height:1.8}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--card);border:1px solid var(--line2);
+  border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;z-index:9999;
+  transform:translateY(80px);opacity:0;transition:.3s;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.toast.show{transform:none;opacity:1}
+.toast.t-green{border-left:3px solid var(--green)}
+.toast.t-pk{border-left:3px solid var(--pk)}
+.error-bar{font-size:11px;color:var(--red);background:var(--rbg);border:1px solid var(--red);
+  border-radius:7px;padding:8px 10px;margin-bottom:4px;display:none}
+.error-bar.show{display:block}
 </style>
 </head>
 <body>
 
-<header class="site-header">
+<header class="topbar">
   <a class="brand" href="/lab.html" target="_top">
-    <span class="brand-mark"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block"></span>
-    <span><strong>Ads Manager</strong><small>Placement Prototype</small></span>
+    <span class="brand-logo"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block"></span>
+    <span><strong>MoSpark Ads Manager</strong><small>Prototype v1.0 · GPD</small></span>
   </a>
-  <div class="header-right">
-    <a class="nav-back" href="/lab.html" target="_top">← Lab</a>
-    <span class="status-pill">Research prototype</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <a class="tp-nav" href="/lab.html" target="_top">← Lab</a>
+    <span class="tp-badge">Research Prototype</span>
   </div>
 </header>
 
-<div class="ads-shell">
+<div class="main-split">
+  <!-- ─── LEFT CONTROL ──────────────────────────────────────────────────── -->
+  <aside class="control-panel">
+    <nav class="mod-nav">
+      <button class="mod-btn active" id="mbtn-builder" onclick="showMod('builder')">⚙️ Campaign Builder</button>
+      <button class="mod-btn" id="mbtn-registry" onclick="showMod('registry')">📋 Registry</button>
+      <button class="mod-btn" id="mbtn-engine" onclick="showMod('engine')">⚡ Conflict Engine</button>
+      <button class="mod-btn" id="mbtn-abtest" onclick="showMod('abtest')">🔬 A/B Test</button>
+    </nav>
 
-  <!-- LEFT -->
-  <aside class="setup-panel">
-    <div class="step-tabs">
-      <button class="step-tab active" data-step="0"><span class="step-num">1</span>Campaign</button>
-      <button class="step-tab" data-step="1"><span class="step-num">2</span>Placements</button>
-      <button class="step-tab" data-step="2"><span class="step-num">3</span>Forecast</button>
+    <div class="mod-content" id="modContent">
+      <!-- Content injected by JS -->
     </div>
 
-    <!-- Step 1 -->
-    <div class="step-content active" id="s0">
-      <div class="form-group">
-        <label class="form-label">Tên chiến dịch</label>
-        <input class="form-input" id="campName" type="text" value="MoMo Credit Awareness Q3 2026">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mục tiêu</label>
-        <div class="obj-grid">
-          <button class="obj-btn active" data-obj="awareness"><span class="obj-icon">📢</span><span class="obj-name">Nhận biết</span><span class="obj-desc">Brand awareness</span></button>
-          <button class="obj-btn" data-obj="engagement"><span class="obj-icon">🎯</span><span class="obj-name">Engagement</span><span class="obj-desc">Tương tác, click</span></button>
-          <button class="obj-btn" data-obj="product"><span class="obj-icon">💳</span><span class="obj-name">Sản phẩm</span><span class="obj-desc">Quảng bá tính năng</span></button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Thời gian chạy</label>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" style="font-weight:500;color:var(--muted)">Bắt đầu</label>
-            <input class="form-input" id="campStart" type="date" value="2026-07-01">
-          </div>
-          <div class="form-group">
-            <label class="form-label" style="font-weight:500;color:var(--muted)">Kết thúc</label>
-            <input class="form-input" id="campEnd" type="date" value="2026-07-31">
-          </div>
-        </div>
-        <span class="form-hint" id="daysHint">30 ngày chạy</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Dự án</label>
-        <span class="form-hint">Chọn dự án để apply toàn bộ URL thuộc project. Có thể chọn nhiều.</span>
-        <div class="project-grid" id="projectGrid"></div>
-      </div>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="step-content" id="s1">
-      <div id="conflictWarn" class="conflict-warn">
-        ⚠️ <strong>Cảnh báo overload:</strong> Popup kết hợp Top Bar hoặc Sticky Bottom trên cùng trang làm tăng UX friction đáng kể — người dùng bị chặn bởi 2+ lớp overlay. Cân nhắc chỉ dùng 1 vị trí intrusive mỗi session.
-      </div>
-      <div>
-        <div class="section-head">Universal — toàn site</div>
-        <div class="form-hint" style="margin-bottom:8px">Không phụ thuộc UI trang — overlay, fixed position.</div>
-        <div class="placement-group" id="universalList"></div>
-      </div>
-      <div id="contextualWrap">
-        <div class="no-pages-note">← Chọn ít nhất một Dự án ở bước 1 để xem Contextual Placements.</div>
-      </div>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step-content" id="s2">
-      <div class="forecast-hero">
-        <span class="num" id="rvTotalImp">—</span>
-        <span class="label">TỔNG IMPRESSION DỰ KIẾN</span>
-      </div>
-      <div class="form-group">
-        <div class="section-head">Chiến dịch</div>
-        <div class="summary-box">
-          <div class="sum-row"><span class="sum-label">Tên</span><strong class="sum-value" id="rvName">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Mục tiêu</span><strong class="sum-value" id="rvObj">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Thời gian</span><strong class="sum-value" id="rvDates">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Dự án</span><strong class="sum-value" id="rvProjects">—</strong></div>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="section-head">Vị trí đã chọn (<span id="rvCount">0</span>)</div>
-        <div class="review-list" id="rvList"><div class="empty-note">Chưa chọn vị trí nào</div></div>
-      </div>
-      <div class="form-group">
-        <div class="section-head">Forecast chi tiết</div>
-        <div class="summary-box">
-          <div class="sum-row"><span class="sum-label">Tổng imp/ngày</span><strong class="sum-value momo" id="rvDaily">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Projected clicks/ngày</span><strong class="sum-value" style="color:var(--green)" id="rvClicks">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Avg CTR (weighted)</span><strong class="sum-value" id="rvAvgCtr">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Universal</span><strong class="sum-value" id="rvUniv">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Contextual</span><strong class="sum-value" id="rvCtx">—</strong></div>
-          <div class="sum-row"><span class="sum-label">Số ngày</span><strong class="sum-value" id="rvDays">—</strong></div>
-        </div>
-      </div>
-      <button class="publish-btn" id="publishBtn">🚀 Tạo chiến dịch</button>
-    </div>
-
-    <div class="step-nav">
-      <button class="btn-prev" id="btnPrev" style="visibility:hidden">← Trước</button>
-      <button class="btn-next" id="btnNext">Tiếp theo →</button>
+    <div class="step-nav" id="stepNav" style="display:none">
+      <button class="btn" id="btnPrev" style="visibility:hidden" onclick="prevStep()">← Trước</button>
+      <span id="stepIndicator" style="font-size:10px;color:var(--t3)">Bước 1/5</span>
+      <button class="btn btn-pk" id="btnNext" onclick="nextStep()">Tiếp →</button>
     </div>
   </aside>
 
-  <!-- RIGHT -->
-  <div class="viz-panel">
-    <div class="viz-toolbar">
-      <div class="viz-toolbar-left">
-        <div class="proj-tabs" id="projTabs"></div>
-        <div class="url-tabs" id="urlTabs"></div>
+  <!-- ─── RIGHT PREVIEW ──────────────────────────────────────────────────── -->
+  <div class="preview-panel">
+    <div class="preview-toolbar">
+      <div class="pt-url">
+        <span style="opacity:.5">🔒</span>
+        <span id="ptUrlText">momo.vn/blog/bao-hiem-xe-may-2026</span>
       </div>
-      <div class="viz-toolbar-right">
-        <div class="device-switcher">
-          <button class="dev-btn active" data-device="desktop">🖥</button>
-          <button class="dev-btn" data-device="mobile">📱</button>
-        </div>
+      <div class="pt-pages" id="ptPages">
+        <button class="pt-pg active" onclick="setPage('blog')">Blog</button>
+        <button class="pt-pg" onclick="setPage('hub')">Vay Nhanh</button>
+        <button class="pt-pg" onclick="setPage('home')">Homepage</button>
+      </div>
+      <div class="dev-sw">
+        <button class="dev-btn active" id="btnMobile" onclick="setDevice('mobile')">📱</button>
+        <button class="dev-btn" id="btnDesktop" onclick="setDevice('desktop')">🖥️</button>
       </div>
     </div>
-    <div class="viz-scroll" id="vizScroll"></div>
+    <div class="preview-scroll" id="previewScroll">
+      <div class="device-wrap" id="deviceWrap"></div>
+    </div>
     <div class="metrics-bar">
-      <div class="metric"><span class="m-label">Vị trí</span><span class="m-value" id="mCount">0</span></div>
+      <div class="metric"><span class="m-l">Format</span><span class="m-v" id="mFormat">—</span></div>
       <div class="msep"></div>
-      <div class="metric"><span class="m-label">Imp/ngày</span><span class="m-value momo" id="mDaily">—</span></div>
+      <div class="metric"><span class="m-l">Chiến dịch</span><span class="m-v pk" id="mCampaign">—</span></div>
       <div class="msep"></div>
-      <div class="metric"><span class="m-label">Universal</span><span class="m-value" id="mUniv">—</span></div>
-      <div class="msep"></div>
-      <div class="metric"><span class="m-label">Contextual</span><span class="m-value" id="mCtx">—</span></div>
-      <div class="msep"></div>
-      <div class="metric"><span class="m-label">Tổng campaign</span><span class="m-value" id="mTotal">—</span></div>
+      <div class="metric"><span class="m-l">Tổng campaigns</span><span class="m-v" id="mTotal">0</span></div>
     </div>
   </div>
 </div>
@@ -439,763 +500,882 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DATA
-const PROJECTS = [
-  {
-    id:'cinema', name:'Cinema', icon:'🎬', type:'Entertainment', tc:'t-entertainment',
-    urls:[
-      {id:'cinema-list',   label:'Listing',     url:'momo.vn/phim-rap',          views:380000, mobRatio:.76},
-      {id:'cinema-detail', label:'Movie Detail', url:'momo.vn/phim-rap/avengers', views:145000, mobRatio:.82},
-    ],
-    contextual:['cinema-billboard','cinema-card-native'],
-    pdNote:null,
-  },
-  {
-    id:'merchant', name:'Merchant', icon:'🛍', type:'Discovery', tc:'t-discovery',
-    urls:[
-      {id:'merchant-list',   label:'Merchant Discovery', url:'momo.vn/merchant-discovery', views:115000, mobRatio:.88},
-      {id:'merchant-detail', label:'Merchant Detail',    url:'momo.vn/merchant/abc',       views:67000,  mobRatio:.85},
-    ],
-    contextual:['merchant-inline'],
-    pdNote:'Frequency guardrail: tối đa 1 Sponsored Card sau 3 - 5 Merchant trong production, frequency cap 2 impression/session',
-  },
-  {
-    id:'credit', name:'Credit', icon:'💳', type:'Utility', tc:'t-utility',
-    urls:[
-      {id:'credit-hub',  label:'Hub',        url:'momo.vn/vay-nhanh',      views:83000, mobRatio:.65},
-      {id:'credit-calc', label:'Calculator', url:'momo.vn/vay-nhanh/tinh', views:54000, mobRatio:.68},
-    ],
-    contextual:['credit-preform','credit-result'],
-    pdNote:'Single-column calculator layout — không có Billboard hoặc Sidebar',
-  },
-  {
-    id:'insurance', name:'Bảo hiểm', icon:'🛡', type:'Utility', tc:'t-utility',
-    urls:[
-      {id:'ins-hub',   label:'Hub',      url:'momo.vn/bao-hiem',        views:62000, mobRatio:.70},
-      {id:'ins-motor', label:'Xe máy',   url:'momo.vn/bao-hiem/xe-may', views:38000, mobRatio:.72},
-    ],
-    contextual:['ins-preform','ins-comparison'],
-    pdNote:null,
-  },
-  {
-    id:'content', name:'Tin tức', icon:'📰', type:'Content', tc:'t-content',
-    urls:[
-      {id:'news-list',    label:'Listing', url:'momo.vn/tin-tuc',          views:148000, mobRatio:.68},
-      {id:'news-article', label:'Article', url:'momo.vn/tin-tuc/bai-viet', views:72000,  mobRatio:.71},
-    ],
-    contextual:['content-billboard','content-sidebar-med','content-sidebar-lg','content-infeed'],
-    pdNote:null,
-  },
-  {
-    id:'homepage', name:'Homepage', icon:'🏠', type:'Homepage', tc:'t-homepage',
-    urls:[
-      {id:'home', label:'Homepage', url:'momo.vn', views:520000, mobRatio:.72},
-    ],
-    contextual:['home-hero','home-grid-native'],
-    pdNote:null,
-  },
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════════════════════════ */
+const DIVISIONS = ['Insurance','BNPL','VayNhanh','Cinema','CIC','Platform','Other'];
+const FORMAT_DEFS = {
+  balloon:    {icon:'🫧', name:'Balloon / Float',  desc:'Icon nổi góc màn hình, expand khi click'},
+  popup:      {icon:'🪟', name:'Popup / Sheet',     desc:'Modal full-screen hoặc Bottom Sheet'},
+  calculator: {icon:'🧮', name:'Calculator Widget', desc:'Form tính toán nhúng vào bài viết'},
+  purchase:   {icon:'🛍️', name:'Purchase Component',desc:'Form đăng ký nhanh tích hợp vào page'},
+};
+const OBJECTIVES = [
+  {id:'awareness', icon:'📢', name:'Nhận biết',  desc:'Brand awareness'},
+  {id:'engagement',icon:'🎯', name:'Engagement', desc:'Tương tác, click'},
+  {id:'product',   icon:'💳', name:'Sản phẩm',   desc:'Quảng bá tính năng'},
 ];
 
-const CTR_BENCH = {Banner:.003, Native:.008, Display:.004, Popup:.025, Float:.006};
-
-const UNIVERSAL = [
-  {id:'u-topbar', name:'Top Bar',       dims:'Full-width × 48px', format:'Banner', fillRate:.93, ctr:.009, slots:3, booked:2, desc:'Fixed top, không push layout xuống'},
-  {id:'u-sticky', name:'Sticky Bottom', dims:'728×90 / 320×50',  format:'Banner', fillRate:.82, ctr:.011, slots:2, booked:1, desc:'Fixed bottom bar'},
-  {id:'u-float',  name:'Float Button',  dims:'60×60px',           format:'Float',  fillRate:.71, ctr:.008, slots:1, booked:0, desc:'Corner overlay, bottom-right'},
-  {id:'u-popup',  name:'Popup',         dims:'Full-screen',        format:'Popup',  fillRate:.96, ctr:.032, slots:2, booked:2, desc:'Trigger khi vào trang hoặc chuyển trang'},
+const PROJECT_REGISTRY = [
+  {id:'bao-hiem',  name:'Bảo hiểm Xe Máy', div:'Insurance', page:'blog', url:'momo.vn/bao-hiem/xe-may',    cmsTags:['bao-hiem-xe-may','bao-hiem'], urlPatterns:['/bao-hiem/*','/blog/bao-hiem*']},
+  {id:'bhyt',      name:'BHYT',            div:'Insurance', page:'blog', url:'momo.vn/bao-hiem-y-te',       cmsTags:['bao-hiem-y-te','bao-hiem'],  urlPatterns:['/bao-hiem-y-te','/blog/bhyt*']},
+  {id:'vay-nhanh', name:'Vay Nhanh',       div:'VayNhanh',  page:'hub',  url:'momo.vn/vay-nhanh',           cmsTags:['vay-tieu-dung','tai-chinh'], urlPatterns:['/vay-nhanh','/vay-nhanh/*']},
+  {id:'bnpl',      name:'Ví Trả Sau',      div:'BNPL',      page:'home', url:'momo.vn/vi-tra-sau',          cmsTags:['bnpl','merchant'],           urlPatterns:['/vi-tra-sau','/merchant/*']},
+  {id:'cic',       name:'CIC Score',       div:'CIC',       page:'blog', url:'momo.vn/cic-score',           cmsTags:['tai-chinh','tin-dung'],      urlPatterns:['/cic-score','/blog/tai-chinh*']},
+  {id:'cinema',    name:'Cinema',          div:'Cinema',    page:'blog', url:'momo.vn/phim-rap',            cmsTags:['cinema','giai-tri'],         urlPatterns:['/phim-rap','/phim-rap/*']},
+  {id:'homepage',  name:'Homepage',        div:'Platform',  page:'home', url:'momo.vn',                     cmsTags:[],                            urlPatterns:['/']},
 ];
 
-const CONTEXTUAL = {
-  'cinema-billboard':   {name:'Cinema Hero Billboard', dims:'970×250',   format:'Banner',  fillRate:.88, ctr:.004, slots:2, booked:0, desc:'Dưới nav, trên danh sách phim'},
-  'cinema-card-native': {name:'Movie Card Native',     dims:'Linh hoạt', format:'Native',  fillRate:.85, ctr:.012, slots:2, booked:1, desc:'Blend vào movie card grid'},
-  'merchant-inline':    {name:'Sponsored Swipe Card',  dims:'Linh hoạt', format:'Native',  fillRate:.80, ctr:.014, slots:2, booked:0, desc:'Card tài trợ đan xen trong swipe feed, có disclosure và frequency cap'},
-  'credit-preform':     {name:'Pre-form Banner',       dims:'300×250',   format:'Display', fillRate:.76, ctr:.006, slots:2, booked:0, desc:'Trên form tính vay'},
-  'credit-result':      {name:'Result Native',         dims:'Linh hoạt', format:'Native',  fillRate:.83, ctr:.018, slots:1, booked:1, desc:'Blend vào kết quả sau khi tính'},
-  'ins-preform':        {name:'Pre-form Banner',       dims:'300×250',   format:'Display', fillRate:.74, ctr:.005, slots:2, booked:1, desc:'Trên form báo giá BH'},
-  'ins-comparison':     {name:'Comparison Native',     dims:'Linh hoạt', format:'Native',  fillRate:.81, ctr:.016, slots:1, booked:0, desc:'Blend vào bảng so sánh gói BH'},
-  'content-billboard':  {name:'Billboard',             dims:'970×250',   format:'Banner',  fillRate:.88, ctr:.0035,slots:3, booked:2, desc:'Hero dưới nav bài viết'},
-  'content-sidebar-med':{name:'Sidebar 300×250',       dims:'300×250',   format:'Display', fillRate:.78, ctr:.0028,slots:2, booked:2, desc:'Sidebar phải, trên fold'},
-  'content-sidebar-lg': {name:'Sidebar 300×600',       dims:'300×600',   format:'Display', fillRate:.61, ctr:.0018,slots:2, booked:0, desc:'Sidebar phải, dưới fold'},
-  'content-infeed':     {name:'In-article Native',     dims:'Linh hoạt', format:'Native',  fillRate:.85, ctr:.011, slots:2, booked:1, desc:'Blend vào bài viết'},
-  'home-hero':          {name:'Hero Banner',            dims:'970×250',   format:'Banner',  fillRate:.90, ctr:.015, slots:3, booked:3, desc:'Hero section chính trang chủ'},
-  'home-grid-native':   {name:'Service Grid Native',   dims:'Linh hoạt', format:'Native',  fillRate:.86, ctr:.022, slots:2, booked:0, desc:'Blend vào service icon grid'},
+const SEED_CAMPAIGNS = [
+  {id:'c1',name:'Vay Nhanh Summer Boost',division:'VayNhanh',format:'balloon',
+   urlPatterns:['/vay-nhanh','/blog/tai-chinh*','/'],cmsTags:['vay-tieu-dung','tai-chinh'],
+   ctaUrl:'momo.vn/vay-nhanh',priority:'global',active:true,isRetargeting:false},
+  {id:'c2',name:'BH Xe Máy Flash Sale',division:'Insurance',format:'popup',
+   urlPatterns:['/blog/bao-hiem*','/bao-hiem','/bao-hiem/xe-may'],cmsTags:['bao-hiem-xe-may','bao-hiem'],
+   ctaUrl:'momo.vn/bao-hiem/xe-may',priority:'global',active:true,isRetargeting:false},
+  {id:'c3',name:'BNPL Checkout Promo',division:'BNPL',format:'purchase',
+   urlPatterns:['/vi-tra-sau','/merchant/*','/blog/mua-sam*'],cmsTags:['bnpl','merchant'],
+   ctaUrl:'momo.vn/vi-tra-sau',priority:'division',active:true,isRetargeting:false},
+  {id:'c4',name:'CIC Score Calculator',division:'CIC',format:'calculator',
+   urlPatterns:['/blog/*','/blog/tai-chinh*'],cmsTags:['tai-chinh','vay-tieu-dung'],
+   ctaUrl:'momo.vn/cic-score',priority:'division',active:true,isRetargeting:false},
+  {id:'c5',name:'Homepage Hero Popup',division:'Platform',format:'popup',
+   urlPatterns:['/'],cmsTags:[],
+   ctaUrl:'momo.vn',priority:'global',active:true,isRetargeting:false},
+  {id:'c6',name:'BHYT Retargeting Q3',division:'Insurance',format:'popup',
+   urlPatterns:['/blog/*','/bao-hiem*'],cmsTags:['bao-hiem'],
+   ctaUrl:'momo.vn/bao-hiem-y-te',priority:'global',active:true,isRetargeting:true},
+];
+
+const PLACEMENTS = [
+  {id:'p1',name:'Blog Right Balloon',urlScope:'/blog/*',formats:['balloon'],status:'occupied',campaignId:'c1'},
+  {id:'p2',name:'Blog Popup Slot',urlScope:'/blog/*',formats:['popup'],status:'occupied',campaignId:'c2'},
+  {id:'p3',name:'Blog Calculator Embed',urlScope:'/blog/*',formats:['calculator'],status:'occupied',campaignId:'c4'},
+  {id:'p4',name:'Home Float Balloon',urlScope:'/',formats:['balloon','popup'],status:'occupied',campaignId:'c1'},
+  {id:'p5',name:'BH Hub Popup',urlScope:'/bao-hiem*',formats:['popup'],status:'empty',campaignId:null},
+  {id:'p6',name:'VayNhanh Calculator',urlScope:'/vay-nhanh*',formats:['calculator'],status:'empty',campaignId:null},
+  {id:'p7',name:'Merchant Purchase Slot',urlScope:'/merchant/*',formats:['purchase'],status:'occupied',campaignId:'c3'},
+];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════════════════ */
+let campaigns = [...SEED_CAMPAIGNS];
+let currentMod = 'builder';
+let builderStep = 0;
+let builderState = {
+  name:'', division:'Insurance', objective:'awareness',
+  startDate:'2026-07-01', endDate:'2026-07-31', priority:'global',
+  adName:'', projectId:'', format:'balloon',
+  urlPatterns:[], cmsTags:[], ctaUrl:'',
 };
+let device = 'mobile';
+let previewPage = 'blog';
+let previewCampaign = null;
+let abState = {ratio:50,declared:null,running:false};
 
-// ── STATE
-let step = 0;
-let selectedProjects = new Set();
-let selectedPlacements = new Set();
-let vizProjectId = null;
-let vizUrlId = null;
-let device = 'desktop';
-
-// ── UTILS
-const fmtN = n => {
-  if (!n || n === 0) return '—';
-  if (n >= 1e6) return (n/1e6).toFixed(1).replace('.0','') + 'M';
-  if (n >= 1e3) return Math.round(n/1e3) + 'K';
-  return n.toLocaleString('vi-VN');
-};
-function calcDays() {
-  const s = document.getElementById('campStart').value;
-  const e = document.getElementById('campEnd').value;
-  return s && e ? Math.max(1, Math.round((new Date(e)-new Date(s))/86400000)) : 30;
-}
-function projViews(p) { return p.urls.reduce((s,u)=>s+u.views,0); }
-
-function calcUnivImp(uid) {
-  const u = UNIVERSAL.find(x=>x.id===uid); if(!u) return 0;
-  let t = 0;
-  selectedProjects.forEach(pid=>{
-    const p = PROJECTS.find(x=>x.id===pid); if(!p) return;
-    p.urls.forEach(u2=>t+=Math.round(u2.views*u.fillRate));
-  });
-  return t;
-}
-function calcCtxImp(cid) {
-  const c = CONTEXTUAL[cid]; if(!c) return 0;
-  let t = 0;
-  PROJECTS.forEach(p=>{
-    if(!selectedProjects.has(p.id)||!p.contextual.includes(cid)) return;
-    p.urls.forEach(u=>t+=Math.round(u.views*c.fillRate));
-  });
-  return t;
-}
-function calcWeightedCtr() {
-  let totalImp=0, totalClicks=0;
-  selectedPlacements.forEach(id=>{
-    const isU=id.startsWith('u-');
-    const d=isU?UNIVERSAL.find(x=>x.id===id):CONTEXTUAL[id]; if(!d) return;
-    const imp=isU?calcUnivImp(id):calcCtxImp(id);
-    totalImp+=imp; totalClicks+=imp*d.ctr;
-  });
-  return {avgCtr: totalImp>0?totalClicks/totalImp:0, dailyClicks:Math.round(totalClicks)};
-}
-function ctrRatingClass(ctr, format) {
-  const bench = CTR_BENCH[format]||0.004;
-  return ctr >= bench*1.3 ? 'ctr-high' : ctr >= bench*0.7 ? 'ctr-avg' : 'ctr-low';
-}
-function ctrRatingLabel(ctr, format) {
-  const bench = CTR_BENCH[format]||0.004;
-  return ctr >= bench*1.3 ? '↑ Cao' : ctr >= bench*0.7 ? '= TB' : '↓ Thấp';
-}
-function totalImp() {
-  let univ=0, ctx=0;
-  selectedPlacements.forEach(id=>{
-    if(id.startsWith('u-')) univ+=calcUnivImp(id);
-    else ctx+=calcCtxImp(id);
-  });
-  return {univ,ctx,total:univ+ctx};
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODULE SWITCHER
+═══════════════════════════════════════════════════════════════════════════ */
+function showMod(mod) {
+  currentMod = mod;
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mbtn-'+mod).classList.add('active');
+  const nav = document.getElementById('stepNav');
+  if (mod === 'builder') {
+    nav.style.display = 'flex';
+    renderBuilder();
+    renderBuilderRightPanel();
+  } else {
+    nav.style.display = 'none';
+    renderPreviewToolbar();
+    updateLivePreview();
+    if (mod === 'registry') renderRegistry();
+    else if (mod === 'engine') renderEngine();
+    else if (mod === 'abtest') renderAbTest();
+  }
 }
 
-// ── PROJECT GRID
-function fmtGroups(p) {
-  const g = {};
-  p.contextual.forEach(cid=>{
-    const c=CONTEXTUAL[cid]; if(!c) return;
-    if(!g[c.format]) g[c.format]={avail:0,total:0};
-    g[c.format].total++;
-    if(c.slots-c.booked>0) g[c.format].avail++;
-  });
-  return g;
+function renderPreviewToolbar() {
+  document.querySelector('.preview-toolbar').innerHTML = `
+    <div class="pt-url"><span style="opacity:.5">🔒</span><span id="ptUrlText">${PAGE_URLS[previewPage]}</span></div>
+    <div class="pt-pages">
+      <button class="pt-pg${previewPage==='blog'?' active':''}" onclick="setPage('blog')">Blog</button>
+      <button class="pt-pg${previewPage==='hub'?' active':''}" onclick="setPage('hub')">Vay Nhanh</button>
+      <button class="pt-pg${previewPage==='home'?' active':''}" onclick="setPage('home')">Homepage</button>
+    </div>
+    <div class="dev-sw">
+      <button class="dev-btn${device==='mobile'?' active':''}" id="btnMobile" onclick="setDevice('mobile')">📱</button>
+      <button class="dev-btn${device==='desktop'?' active':''}" id="btnDesktop" onclick="setDevice('desktop')">🖥️</button>
+    </div>`;
 }
 
-function projFormatTags(p) {
-  const g = fmtGroups(p);
-  if(!Object.keys(g).length) return '';
-  return `<div class="proj-fmt-tags">${Object.entries(g).map(([fmt,{avail,total}])=>{
-    const cls=avail===0?'slot-full':avail<total?'slot-low':'slot-avail';
-    const icon=avail===0?'✗':avail<total?'◑':'✓';
-    return `<span class="fmt-tag ${cls}">${icon} ${fmt}</span>`;
-  }).join('')}</div>`;
+function renderBuilderRightPanel() {
+  document.querySelector('.preview-toolbar').innerHTML = `
+    <div class="builder-rp-header" style="width:100%">
+      <span class="builder-rp-title">Ad Format Reference</span>
+      <span class="builder-rp-hint">Click format để chọn & sync với bước 2</span>
+    </div>`;
+  const scroll = document.getElementById('previewScroll');
+  scroll.style.alignItems = 'flex-start';
+  scroll.innerHTML = `<div class="format-gallery">
+    ${Object.entries(FORMAT_DEFS).map(([k,v]) => `
+      <div class="fg-card${builderState.format===k?' sel':''}" data-f="${k}" onclick="setFormat('${k}')">
+        <div class="fg-preview">${miniFormatPreview(k)}</div>
+        <div class="fg-foot">
+          <span class="fg-foot-icon">${v.icon}</span>
+          <div><div class="fg-foot-name">${v.name}</div><div class="fg-foot-desc">${v.desc}</div></div>
+        </div>
+      </div>`).join('')}
+  </div>`;
 }
 
-function projPageInventory(p) {
-  if(!p.contextual.length) return '';
-  const g = fmtGroups(p);
-  return `<div class="inv-block">
-    <div class="inv-section-label">Trang áp dụng</div>
-    <div class="inv-pages">
-      ${p.urls.map(u=>`<div class="inv-page">
-        <span class="inv-page-label">📄 ${u.label}</span>
-        <span class="inv-url-text">${u.url}</span>
-        <span class="inv-views">${fmtN(u.views)}/ngày</span>
+function miniFormatPreview(fmt) {
+  const nav = `<div style="height:24px;background:#a50064;display:flex;align-items:center;gap:5px;padding:0 8px;flex-shrink:0">
+    <div style="width:12px;height:12px;background:rgba(255,255,255,.3);border-radius:3px"></div>
+    <div style="flex:1"></div>
+    <div style="width:44px;height:16px;background:rgba(255,255,255,.25);border-radius:3px"></div>
+  </div>`;
+  const lines = (ws) => ws.map(w=>`<div style="height:5px;background:#e8eaed;border-radius:2px;width:${w}%;margin-bottom:5px"></div>`).join('');
+
+  if (fmt === 'balloon') return `<div style="background:#fff;height:100%;display:flex;flex-direction:column">
+    ${nav}
+    <div style="padding:10px;flex:1">${lines([90,75,85,60,80,70])}</div>
+    <div style="position:absolute;bottom:9px;right:9px">
+      <div style="background:#fff;border-radius:8px;padding:7px 9px;box-shadow:0 2px 10px rgba(0,0,0,.14);margin-bottom:5px;min-width:110px">
+        <div style="font-size:8px;font-weight:800;color:#111;margin-bottom:3px">Ưu đãi đặc biệt</div>
+        <div style="height:4px;background:#f0f0f0;border-radius:2px;width:80%;margin-bottom:5px"></div>
+        <div style="background:#a50064;color:#fff;font-size:7px;font-weight:800;border-radius:4px;padding:3px 8px;text-align:center">Xem ngay →</div>
+      </div>
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a50064,#e61b7a);display:flex;align-items:center;justify-content:center;font-size:16px;margin-left:auto;box-shadow:0 3px 10px rgba(165,0,100,.4)">💡</div>
+    </div>
+  </div>`;
+
+  if (fmt === 'popup') return `<div style="background:#fff;height:100%;display:flex;flex-direction:column;position:relative">
+    ${nav}
+    <div style="padding:10px;opacity:.35">${lines([90,75,60])}</div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.52);display:flex;align-items:flex-end">
+      <div style="background:#fff;border-radius:14px 14px 0 0;padding:12px 13px 14px;width:100%">
+        <div style="width:28px;height:3px;background:#ddd;border-radius:2px;margin:0 auto 9px"></div>
+        <div style="height:38px;border-radius:8px;background:linear-gradient(135deg,#a50064,#e61b7a);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-bottom:8px">🎉 Ưu đãi hôm nay</div>
+        <div style="font-size:10px;font-weight:800;color:#111;margin-bottom:2px">BH Xe Máy Flash Sale</div>
+        <div style="height:4px;background:#f0f0f0;border-radius:2px;width:80%;margin-bottom:8px"></div>
+        <div style="background:#a50064;color:#fff;font-size:9px;font-weight:800;border-radius:7px;padding:7px;text-align:center">Đăng ký ngay →</div>
+      </div>
+    </div>
+  </div>`;
+
+  if (fmt === 'calculator') return `<div style="background:#fff;height:100%;display:flex;flex-direction:column">
+    ${nav}
+    <div style="padding:10px">${lines([90,72])}</div>
+    <div style="margin:0 10px;border:2px solid #a50064;border-radius:10px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#a50064,#e61b7a);padding:7px 10px;display:flex;align-items:center;gap:5px">
+        <span style="font-size:11px">🧮</span>
+        <span style="font-size:9px;font-weight:800;color:#fff">Tính lãi vay</span>
+      </div>
+      <div style="padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+        <div>
+          <div style="font-size:7px;color:#888;font-weight:700;margin-bottom:2px">SỐ TIỀN VAY</div>
+          <div style="border:1.5px solid #eee;border-radius:5px;padding:4px 7px;font-size:9px;color:#333">10,000,000 đ</div>
+        </div>
+        <div style="background:#f8f9fb;border-radius:6px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:7px;color:#888;font-weight:700">LÃI SUẤT ƯỚC TÍNH</span>
+          <span style="font-size:11px;font-weight:900;color:#a50064">~1.2%</span>
+        </div>
+        <div style="background:#a50064;color:#fff;font-size:8px;font-weight:800;border-radius:6px;padding:5px;text-align:center">Xem kết quả đầy đủ →</div>
+      </div>
+    </div>
+  </div>`;
+
+  if (fmt === 'purchase') return `<div style="background:#fff;height:100%;display:flex;flex-direction:column">
+    ${nav}
+    <div style="padding:10px">${lines([90,72])}</div>
+    <div style="margin:0 10px;border:2px solid #a50064;border-radius:10px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#a50064,#e61b7a);padding:7px 10px">
+        <span style="font-size:9px;font-weight:800;color:#fff">🛍️ Đăng ký nhanh</span>
+      </div>
+      <div style="padding:9px 10px;display:flex;flex-direction:column;gap:7px">
+        <div style="background:#f8f9fb;border-radius:7px;padding:7px 8px;display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#a50064,#e61b7a);flex-shrink:0"></div>
+          <div>
+            <div style="font-size:9px;font-weight:700;color:#111">BH Xe Máy cơ bản</div>
+            <div style="font-size:11px;font-weight:900;color:#a50064;margin-top:1px">199,000 đ/năm</div>
+          </div>
+        </div>
+        <div style="background:#a50064;color:#fff;font-size:9px;font-weight:800;border-radius:6px;padding:7px;text-align:center">Mua ngay →</div>
+      </div>
+    </div>
+  </div>`;
+  return '';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CAMPAIGN BUILDER
+═══════════════════════════════════════════════════════════════════════════ */
+const STEP_LABELS = ['Thông tin Campaign','Ads Content'];
+
+function renderBuilder() {
+  const wrap = document.getElementById('modContent');
+  wrap.innerHTML = `
+    <div class="wizard-track">${STEP_LABELS.map((l,i) => `
+      ${i>0?'<div class="wt-line"></div>':''}
+      <div class="wt-step${i===builderStep?' active':i<builderStep?' done':''}" id="wts-${i}">
+        <div class="wt-num">${i<builderStep?'✓':i+1}</div>
+        <span class="wt-label">${l}</span>
       </div>`).join('')}
     </div>
-    <div class="inv-formats">
-      ${Object.entries(g).map(([fmt,{avail,total}])=>{
-        const cls=avail===0?'slot-full':avail<total?'slot-low':'slot-avail';
-        const lbl=avail===0?`${fmt} Hết slot`:avail<total?`${fmt} ${avail}/${total} slot trống`:`${fmt} ${avail} slot trống`;
-        return `<span class="fmt-pill ${cls}">${lbl}</span>`;
-      }).join('')}
+    <div class="error-bar" id="errorBar"></div>
+    <div id="stepBody"></div>
+  `;
+  renderStep(builderStep);
+  updateBuilderNav();
+  if (builderStep === 0) renderBuilderRightPanel();
+  else renderAdsContentPreview();
+}
+
+function campaignCard(c) {
+  const f = FORMAT_DEFS[c.format];
+  const dotColor = {balloon:'#60a5fa',popup:'#f87171',calculator:'#a78bfa',purchase:'#22c55e'}[c.format];
+  return `<div class="cc" onclick="previewCampaignId('${c.id}')">
+    <div class="cc-dot" style="background:${dotColor}"></div>
+    <div class="cc-info">
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-meta">
+        <span class="badge b-${c.format}">${f.icon} ${f.name}</span>
+        <span class="badge b-${c.priority}">${c.priority==='global'?'🌐 Global':'🏢 Division'}</span>
+      </div>
+    </div>
+    <div class="cc-actions">
+      <button class="cc-act-btn del" onclick="event.stopPropagation();deleteCampaign('${c.id}')">✕</button>
     </div>
   </div>`;
 }
 
-function projSlotSummary(p) {
-  let total=0, avail=0;
-  p.contextual.forEach(cid=>{const c=CONTEXTUAL[cid];if(!c)return;total++;if(c.slots-c.booked>0)avail++;});
-  if(total===0) return '';
-  const cls = avail===0?'out':avail<total?'low':'ok';
-  const lbl = avail===0?'✗ Hết vị trí':`✓ ${avail}/${total} vị trí trống`;
-  return `<span class="proj-avail ${cls}">${lbl}</span>`;
-}
-
-function renderProjectGrid() {
-  document.getElementById('projectGrid').innerHTML = PROJECTS.map(p => {
-    const sel = selectedProjects.has(p.id);
-    return `<div class="proj-card${sel?' selected':''}" data-pid="${p.id}">
-      <div class="proj-card-top"><span class="proj-icon">${p.icon}</span><span class="proj-check"></span></div>
-      <div class="proj-name">${p.name}</div>
-      <span class="proj-type ${p.tc}">${p.type}</span>
-      ${projSlotSummary(p)}
-      ${projFormatTags(p)}
-      <div class="proj-stats">
-        <span>📄 ${p.urls.length} trang</span>
-        <span>👁 ${fmtN(projViews(p))}/ngày</span>
-      </div>
-    </div>`;
-  }).join('');
-  document.querySelectorAll('.proj-card').forEach(c=>c.addEventListener('click',()=>toggleProject(c.dataset.pid)));
-}
-
-function toggleProject(id) {
-  selectedProjects.has(id) ? selectedProjects.delete(id) : selectedProjects.add(id);
-  renderProjectGrid();
-  renderContextual();
-  renderVizTabs();
-  if (!vizProjectId || !selectedProjects.has(vizProjectId)) {
-    vizProjectId = [...selectedProjects][0] || null;
-    const p = PROJECTS.find(x=>x.id===vizProjectId);
-    vizUrlId = p?.urls[0]?.id || null;
+/* ── SCREEN 1: Campaign Basics ─────────────────────────────────────────── */
+function renderStep(n) {
+  const sb = document.getElementById('stepBody');
+  if (!sb) return;
+  if (n === 0) {
+    sb.innerHTML = stepBasics();
+    if (builderState.name) document.getElementById('campName').value = builderState.name;
+    document.querySelectorAll('.obj-btn').forEach(b => b.classList.toggle('active', b.dataset.obj === builderState.objective));
+    document.querySelector(`.pri-opt[data-p="${builderState.priority}"]`)?.classList.add('sel');
+  } else if (n === 1) {
+    sb.innerHTML = stepAdsContent();
+    setTimeout(() => { updateUtm(); }, 10);
   }
-  renderViz();
-  updateMetrics();
 }
 
-// ── PLACEMENTS
-const BADGE = {Native:'pb-native',Banner:'pb-banner',Popup:'pb-popup',Float:'pb-float',Display:'pb-display'};
-
-function plCard(data, imp) {
-  const {id, name, dims, format, ctr, slots, booked, desc} = data;
-  const sel = selectedPlacements.has(id);
-  const avail = slots - booked;
-  const unavail = avail <= 0;
-  const rc = ctrRatingClass(ctr, format);
-  const rl = ctrRatingLabel(ctr, format);
-  const sc = avail===0?'slot-full':avail===1?'slot-low':'slot-avail';
-  const sl = avail===0?'Hết slot':`${avail} slot trống`;
-  return `<div class="placement-card${sel?' selected':''}${unavail?' unavailable':''}" data-plid="${id}">
-    <input type="checkbox" data-plid="${id}"${sel?' checked':''}${unavail?' disabled':''}>
-    <div class="placement-info">
-      <div class="placement-name">${name}${unavail?' <span style="color:var(--red);font-size:10px;font-weight:600">(Hết slot)</span>':''}</div>
-      <div class="placement-meta">
-        <span class="pbadge ${BADGE[format]||'pb-display'}">${format}</span>
-        <span>${dims}</span>
-        <span class="ctr-badge ${rc}">CTR ${(ctr*100).toFixed(1)}% ${rl}</span>
-        <span class="slot-badge ${sc}">◉ ${sl}</span>
-        <span style="color:var(--muted)">${desc}</span>
+function stepBasics() {
+  return `
+  <div class="fg">
+    <div class="fl">Tên chiến dịch <span style="color:var(--red)">*</span></div>
+    <input class="fi" id="campName" placeholder="VD: BH Xe Máy Q3 2026" value="${builderState.name}" oninput="builderState.name=this.value">
+  </div>
+  <div class="fg">
+    <div class="fl">Division</div>
+    <select class="fi fsel" id="campDiv" onchange="builderState.division=this.value">
+      ${DIVISIONS.map(d=>`<option value="${d}"${builderState.division===d?' selected':''}>${d}</option>`).join('')}
+    </select>
+  </div>
+  <div class="fg">
+    <div class="fl">Mục tiêu</div>
+    <div class="obj-grid">
+      ${OBJECTIVES.map(o=>`
+        <div class="obj-btn${builderState.objective===o.id?' active':''}" data-obj="${o.id}" onclick="builderState.objective='${o.id}';document.querySelectorAll('.obj-btn').forEach(b=>b.classList.toggle('active',b.dataset.obj==='${o.id}'))">
+          <span class="obj-icon">${o.icon}</span>
+          <span class="obj-name">${o.name}</span>
+          <span class="obj-desc">${o.desc}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+  <div class="fg">
+    <div class="fl">Thời gian chạy</div>
+    <div class="frow">
+      <div class="fg">
+        <div class="fl" style="font-weight:500;text-transform:none;letter-spacing:0">Bắt đầu</div>
+        <input class="fi" type="date" value="${builderState.startDate}" onchange="builderState.startDate=this.value">
+      </div>
+      <div class="fg">
+        <div class="fl" style="font-weight:500;text-transform:none;letter-spacing:0">Kết thúc</div>
+        <input class="fi" type="date" value="${builderState.endDate}" onchange="builderState.endDate=this.value">
       </div>
     </div>
-    <div class="placement-imp">${unavail?'<span style="color:var(--red);font-size:10px">—</span>':fmtN(imp)}<small>${unavail?'':' imp/ngày'}</small></div>
+  </div>
+  <div class="fg">
+    <div class="fl">Priority</div>
+    <div class="pri-toggle">
+      <div class="pri-opt${builderState.priority==='global'?' sel':''}" data-p="global" onclick="setPriority('global')">
+        <div class="pri-opt-name">🌐 Global</div>
+        <div class="pri-opt-val">100</div>
+        <div class="pri-opt-desc">Cross-division</div>
+      </div>
+      <div class="pri-opt${builderState.priority==='division'?' sel':''}" data-p="division" onclick="setPriority('division')">
+        <div class="pri-opt-name">🏢 Division</div>
+        <div class="pri-opt-val">50</div>
+        <div class="pri-opt-desc">Nội bộ division</div>
+      </div>
+    </div>
   </div>`;
 }
 
-function attachPlCards(container) {
-  container.querySelectorAll('.placement-card').forEach(c=>{
-    c.addEventListener('click',e=>{if(e.target.tagName==='INPUT')return;togglePlacement(c.dataset.plid);});
-  });
-  container.querySelectorAll('input[type=checkbox]').forEach(cb=>{
-    cb.addEventListener('change',()=>togglePlacement(cb.dataset.plid));
-  });
+function setPriority(p) {
+  builderState.priority = p;
+  document.querySelectorAll('.pri-opt').forEach(el => el.classList.toggle('sel', el.dataset.p===p));
 }
 
-function renderUniversal() {
-  const el = document.getElementById('universalList');
-  el.innerHTML = UNIVERSAL.map(u=>plCard(u, calcUnivImp(u.id))).join('');
-  attachPlCards(el);
+/* ── SCREEN 2: Ads Content ─────────────────────────────────────────────── */
+function stepAdsContent() {
+  return `
+  <div class="fg">
+    <div class="fl">Tên quảng cáo <span style="color:var(--red)">*</span></div>
+    <input class="fi" id="adName" placeholder="VD: Banner ưu đãi xe máy" value="${builderState.adName}" oninput="builderState.adName=this.value">
+  </div>
+  <div class="fg">
+    <div class="fl">Dự án / Placement</div>
+    <select class="fi fsel" id="adProject" onchange="selectBuilderProject(this.value)">
+      <option value="">-- Chọn dự án --</option>
+      ${PROJECT_REGISTRY.map(p=>`<option value="${p.id}"${builderState.projectId===p.id?' selected':''}>${p.name} · ${p.div}</option>`).join('')}
+    </select>
+    ${builderState.projectId ? `<div class="fh" id="projHint"></div>` : ''}
+  </div>
+  <div class="fg">
+    <div class="fl">Format</div>
+    <div class="fmt-grid">
+      ${Object.entries(FORMAT_DEFS).map(([k,v])=>`
+        <div class="fmt-card${builderState.format===k?' sel':''}" data-f="${k}" onclick="setFormat('${k}')">
+          <div class="fmt-icon">${v.icon}</div>
+          <div class="fmt-name">${v.name}</div>
+          <div class="fmt-desc">${v.desc}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+  <div class="fg">
+    <div class="fl">CTA URL</div>
+    <input class="fi" id="ctaUrl" placeholder="momo.vn/bao-hiem/xe-may" value="${builderState.ctaUrl}" oninput="builderState.ctaUrl=this.value;updateUtm();updateAdsPreview()">
+  </div>
+  <div class="fg">
+    <div class="fl">UTM (auto-generated)</div>
+    <div class="utm-box" id="utmBox"></div>
+  </div>`;
 }
 
-function renderContextual() {
-  const wrap = document.getElementById('contextualWrap');
-  if (!selectedProjects.size) {
-    wrap.innerHTML = '<div class="no-pages-note">← Chọn ít nhất một Dự án ở bước 1 để xem Contextual Placements.</div>';
+function selectBuilderProject(id) {
+  const proj = PROJECT_REGISTRY.find(p => p.id === id);
+  builderState.projectId = id;
+  if (!proj) return;
+  builderState.ctaUrl = proj.url;
+  builderState.cmsTags = [...proj.cmsTags];
+  builderState.urlPatterns = [...proj.urlPatterns];
+  const ctaEl = document.getElementById('ctaUrl');
+  if (ctaEl) ctaEl.value = proj.url;
+  updateUtm();
+  previewPage = proj.page;
+  renderAdsContentPreview();
+}
+
+function setFormat(f) {
+  builderState.format = f;
+  document.querySelectorAll('.fmt-card').forEach(el => el.classList.toggle('sel', el.dataset.f === f));
+  document.querySelectorAll('.fg-card').forEach(el => el.classList.toggle('sel', el.dataset.f === f));
+  if (builderStep === 1) updateAdsPreview();
+}
+
+function updateUtm() {
+  const box = document.getElementById('utmBox');
+  if (!box) return;
+  const slug = (builderState.name || builderState.adName || 'campaign').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const base = builderState.ctaUrl || 'momo.vn/...';
+  box.innerHTML = `<span class="uk">utm_source</span>=<span class="uv">mospark_ads</span><br><span class="uk">utm_medium</span>=<span class="uv">${builderState.format}</span><br><span class="uk">utm_campaign</span>=<span class="uv">${slug}</span><br><span style="color:var(--t3);font-size:9px">${base}?utm_source=mospark_ads&utm_medium=${builderState.format}&utm_campaign=${slug}</span>`;
+}
+
+function renderAdsContentPreview() {
+  const toolbar = document.querySelector('.preview-toolbar');
+  const proj = PROJECT_REGISTRY.find(p => p.id === builderState.projectId);
+  toolbar.innerHTML = `
+    <div class="pt-url"><span style="opacity:.5">🔒</span><span id="ptUrlText">${proj ? proj.url : PAGE_URLS[previewPage]}</span></div>
+    <div class="dev-sw">
+      <button class="dev-btn${device==='mobile'?' active':''}" onclick="setDevice('mobile')">📱</button>
+      <button class="dev-btn${device==='desktop'?' active':''}" onclick="setDevice('desktop')">🖥️</button>
+    </div>`;
+  // restore device wrap if format gallery replaced it
+  const scroll = document.getElementById('previewScroll');
+  if (scroll && !document.getElementById('deviceWrap')) {
+    scroll.innerHTML = '<div id="deviceWrap"></div>';
+  }
+  updateAdsPreview();
+}
+
+function updateAdsPreview() {
+  const wrap = document.getElementById('deviceWrap');
+  const scroll = document.getElementById('previewScroll');
+  if (!wrap || !scroll) return;
+  scroll.style.alignItems = 'center';
+  const mockCamp = { name: builderState.adName || builderState.name || 'Ad Preview', format: builderState.format, division: builderState.division, ctaUrl: builderState.ctaUrl || 'momo.vn' };
+  const pageHtml = buildPageMockup(previewPage);
+  const adHtml   = buildAdOverlay(builderState.format, mockCamp);
+  if (device === 'mobile') {
+    wrap.innerHTML = `<div class="mobile-shell"><div class="mobile-screen"><div class="mobile-notch"></div>${pageHtml}${adHtml}</div></div>`;
+  } else {
+    wrap.innerHTML = `<div class="desktop-shell"><div class="browser-chrome"><div class="bc-dots"><i></i><i></i><i></i></div><div class="bc-url">${builderState.ctaUrl || PAGE_URLS[previewPage]}</div></div><div style="position:relative;flex:1;overflow:hidden">${pageHtml}${adHtml}</div></div>`;
+  }
+}
+
+/* ── NAV ───────────────────────────────────────────────────────────────── */
+function updateBuilderNav() {
+  const prev = document.getElementById('btnPrev');
+  const next = document.getElementById('btnNext');
+  const ind  = document.getElementById('stepIndicator');
+  if (!prev) return;
+  prev.style.visibility = builderStep === 0 ? 'hidden' : 'visible';
+  if (builderStep === 1) {
+    next.textContent = '💾 Lưu Campaign';
+    next.className = 'btn btn-green';
+    next.onclick = saveCampaign;
+  } else {
+    next.textContent = 'Tiếp → Ads Content';
+    next.className = 'btn btn-pk';
+    next.onclick = nextStep;
+  }
+  ind.textContent = `Màn hình ${builderStep + 1} / 2`;
+}
+
+function nextStep() {
+  const err = document.getElementById('errorBar');
+  if (err) { err.classList.remove('show'); err.textContent = ''; }
+  builderState.name = document.getElementById('campName')?.value.trim() || builderState.name;
+  if (!builderState.name) { showError('Vui lòng nhập tên chiến dịch'); return; }
+  if (builderStep < 1) { builderStep++; renderBuilder(); }
+}
+function prevStep() {
+  if (builderStep > 0) { builderStep--; renderBuilder(); }
+}
+function showError(msg) {
+  const bar = document.getElementById('errorBar');
+  if (bar) { bar.textContent = '⚠ ' + msg; bar.classList.add('show'); }
+}
+
+function saveCampaign() {
+  if (!builderState.adName && !builderState.name) { showError('Vui lòng nhập tên quảng cáo'); return; }
+  const id = 'c' + Date.now();
+  campaigns.push({
+    id, name: builderState.adName || builderState.name,
+    division: builderState.division, format: builderState.format,
+    urlPatterns: [...builderState.urlPatterns], cmsTags: [...builderState.cmsTags],
+    ctaUrl: builderState.ctaUrl, priority: builderState.priority,
+    active: true, isRetargeting: false,
+  });
+  builderState = { name:'', division:'Insurance', objective:'awareness', startDate:'2026-07-01', endDate:'2026-07-31', priority:'global', adName:'', projectId:'', format:'balloon', urlPatterns:[], cmsTags:[], ctaUrl:'' };
+  builderStep = 0;
+  showToast('✓ Campaign đã được lưu', 't-green');
+  updateMetrics();
+  renderBuilder();
+}
+
+function deleteCampaign(id) {
+  campaigns = campaigns.filter(c=>c.id!==id);
+  updateMetrics();
+  if (currentMod==='builder') renderBuilder();
+  else if (currentMod==='registry') renderRegistry();
+  showToast('Campaign đã xóa');
+}
+
+function previewCampaignId(id) {
+  const c = campaigns.find(x=>x.id===id);
+  if (!c) return;
+  previewCampaign = c;
+  updateLivePreview();
+  document.getElementById('mCampaign').textContent = c.name;
+  document.getElementById('mFormat').textContent = FORMAT_DEFS[c.format].icon+' '+FORMAT_DEFS[c.format].name;
+  showToast('👁 Preview: '+c.name,'t-pk');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLACEMENT REGISTRY
+═══════════════════════════════════════════════════════════════════════════ */
+function renderRegistry() {
+  const wrap = document.getElementById('modContent');
+  const getCampaignName = id => campaigns.find(c=>c.id===id)?.name||'—';
+  wrap.innerHTML = `
+    <div class="section-head">Campaigns (${campaigns.length})</div>
+    <div class="campaign-list">${campaigns.map(c=>campaignCard(c)).join('')}</div>
+    <div class="sep"></div>
+    <div class="section-head">Placement Slots (${PLACEMENTS.length})</div>
+    <div class="reg-wrap">
+    <table class="reg-table">
+      <thead><tr>
+        <th>Tên Slot</th><th>URL Scope</th><th>Formats</th><th>Status</th><th>Campaign</th>
+      </tr></thead>
+      <tbody>${PLACEMENTS.map(p=>`
+        <tr>
+          <td><strong>${p.name}</strong></td>
+          <td><code style="font-size:9px;color:var(--blue)">${p.urlScope}</code></td>
+          <td>${p.formats.map(f=>`<span class="ft ft-${f}">${f}</span>`).join('')}</td>
+          <td><span class="sdot ${p.status==='empty'?'s-empty':'s-occ'}"></span>${p.status==='empty'?'Trống':'Đang chiếm'}</td>
+          <td style="font-size:10px;color:var(--t2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.campaignId?getCampaignName(p.campaignId):'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>
+    <div style="margin-top:8px;font-size:10px;color:var(--t3)">📝 Registry là mock-data. Trong production sẽ được quản lý bởi Platform Admin.</div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONFLICT ENGINE
+═══════════════════════════════════════════════════════════════════════════ */
+function renderEngine() {
+  const wrap = document.getElementById('modContent');
+  wrap.innerHTML = `
+    <div class="url-tester-box">
+      <div class="section-head">🔍 URL Tester — nhập URL để giả lập phân xử</div>
+      <div class="url-input-row">
+        <input class="fi url-fi" id="engineUrl" placeholder="VD: /blog/bao-hiem-xe-may-2026" onkeydown="if(event.key==='Enter')checkUrl()">
+        <button class="btn-check" onclick="checkUrl()">Kiểm tra</button>
+      </div>
+      <div class="section-head" style="margin-top:4px">Thử nhanh</div>
+      <div class="preset-urls">
+        ${['/blog/bao-hiem-xe-may-2026','/vay-nhanh','/blog/tai-chinh-ca-nhan','/','/merchant/abc','/bao-hiem'].map(u=>`<span class="pu" onclick="setPresetUrl('${u}')">${u}</span>`).join('')}
+      </div>
+    </div>
+    <div id="conflictResults"></div>
+  `;
+}
+
+function setPresetUrl(u) {
+  document.getElementById('engineUrl').value = u;
+  checkUrl();
+}
+
+function matchUrl(pattern, url) {
+  const p = pattern.trim();
+  if (p === '/') return url === '/' || url === '';
+  if (p.endsWith('*')) return url.startsWith(p.slice(0,-1));
+  return url === p;
+}
+
+function calcScore(campaign, url, testTags) {
+  let score = campaign.priority==='global'?100:50;
+  const factors = [{label:'Base '+campaign.priority, cls:'cff-base', val: score}];
+  const urlMatch = campaign.urlPatterns.some(p=>matchUrl(p,url));
+  if (urlMatch) { score+=10; factors.push({label:'+10 URL Match',cls:'cff-url',val:10}); }
+  const tagMatches = campaign.cmsTags.filter(t=>testTags.includes(t));
+  if (tagMatches.length) { score+=30; factors.push({label:'+30 Tag: '+tagMatches[0],cls:'cff-tag',val:30}); }
+  if (campaign.isRetargeting) { score+=50; factors.push({label:'+50 Retargeting',cls:'cff-retarget',val:50}); }
+  return {score, factors, urlMatch};
+}
+
+function checkUrl() {
+  const raw = (document.getElementById('engineUrl')?.value||'').trim();
+  if (!raw) return;
+  // normalize: strip domain
+  const url = raw.startsWith('http') ? '/'+raw.split('/').slice(3).join('/') : (raw.startsWith('/')?raw:'/'+raw);
+
+  // infer CMS tags from URL
+  const inferredTags = [];
+  if (url.includes('bao-hiem')) { inferredTags.push('bao-hiem'); if (url.includes('xe-may')) inferredTags.push('bao-hiem-xe-may'); }
+  if (url.includes('vay')||url.includes('tai-chinh')) { inferredTags.push('vay-tieu-dung','tai-chinh'); }
+  if (url.includes('merchant')) inferredTags.push('merchant','bnpl');
+
+  const matches = campaigns.filter(c=>c.active && c.urlPatterns.some(p=>matchUrl(p,url)));
+  if (!matches.length) {
+    document.getElementById('conflictResults').innerHTML = `<div class="no-match">🚫 Không có campaign nào khớp URL này.<br><span style="font-size:10px;color:var(--t3)">Thử: /blog/bao-hiem-xe-may-2026</span></div>`;
     return;
   }
-  let html = '';
-  PROJECTS.forEach(p=>{
-    if(!selectedProjects.has(p.id)) return;
-    html += `<div style="margin-top:14px">
-      <div class="section-head">${p.icon} ${p.name} — Contextual</div>
-      ${p.pdNote?`<div class="pd-note">${p.pdNote}</div>`:''}
-      ${projPageInventory(p)}
-      <div class="placement-group">
-        ${p.contextual.map(cid=>{
-          const c=CONTEXTUAL[cid]; if(!c) return '';
-          return plCard(c, calcCtxImp(cid));
-        }).join('')}
-      </div>
-    </div>`;
-  });
-  wrap.innerHTML = html;
-  attachPlCards(wrap);
-}
 
-function checkConflict() {
-  const hasPopup = selectedPlacements.has('u-popup');
-  const hasTopbar = selectedPlacements.has('u-topbar');
-  const hasSticky = selectedPlacements.has('u-sticky');
-  const warn = document.getElementById('conflictWarn');
-  if (warn) warn.classList.toggle('show', hasPopup && (hasTopbar || hasSticky));
-}
+  const scored = matches.map(c=>({...c,...calcScore(c,url,inferredTags)})).sort((a,b)=>b.score-a.score);
 
-function togglePlacement(id) {
-  const isU = id.startsWith('u-');
-  const d = isU ? UNIVERSAL.find(x=>x.id===id) : CONTEXTUAL[id];
-  if (d && (d.slots - d.booked) <= 0 && !selectedPlacements.has(id)) {
-    showToast('Vị trí này đã hết slot — không thể đặt thêm.'); return;
-  }
-  const adding = !selectedPlacements.has(id);
-  adding ? selectedPlacements.add(id) : selectedPlacements.delete(id);
-
-  // Auto-switch viz to the project that owns this contextual placement
-  if (adding && !id.startsWith('u-')) {
-    const owner = PROJECTS.find(p => p.contextual.includes(id));
-    if (owner && vizProjectId !== owner.id) {
-      vizProjectId = owner.id;
-      vizUrlId = owner.urls[0].id;
-      renderVizTabs();
-      renderViz();
+  // Apply guardrails: max 1 popup per render
+  let popupUsed = false;
+  const guardrailMessages = [];
+  const results = scored.map((c,i) => {
+    let blocked = false, reason = '';
+    if (c.format==='popup') {
+      if (popupUsed) { blocked=true; reason='Guardrail: đã có 1 Popup — chặn để tránh UX friction'; guardrailMessages.push(reason+` (fallback: ${c.name})`); }
+      else popupUsed = true;
     }
-  }
-
-  renderUniversal();
-  renderContextual();
-  updateVizZones();
-  updateMetrics();
-  checkConflict();
-  if (adding) {
-    const z = document.querySelector(`[data-zone="${id}"]`);
-    if(z){z.classList.remove('flash');void z.offsetWidth;z.classList.add('flash');}
-  }
-}
-
-// ── VIZ TABS
-function renderVizTabs() {
-  const pt = document.getElementById('projTabs');
-  const ut = document.getElementById('urlTabs');
-  if (!selectedProjects.size) {
-    pt.innerHTML = '<span style="font-size:11px;color:var(--muted)">Chọn dự án để preview →</span>';
-    ut.innerHTML = ''; return;
-  }
-  pt.innerHTML = [...selectedProjects].map(pid=>{
-    const p=PROJECTS.find(x=>x.id===pid);
-    return `<button class="proj-tab${vizProjectId===pid?' active':''}" data-ptid="${pid}">${p.icon} ${p.name}</button>`;
-  }).join('');
-  pt.querySelectorAll('.proj-tab').forEach(t=>t.addEventListener('click',()=>{
-    vizProjectId=t.dataset.ptid;
-    const p=PROJECTS.find(x=>x.id===vizProjectId);
-    vizUrlId=p?.urls[0]?.id||null;
-    renderVizTabs(); renderViz();
-  }));
-  const proj = PROJECTS.find(p=>p.id===vizProjectId);
-  if(proj && proj.urls.length>1){
-    ut.innerHTML = proj.urls.map(u=>`<button class="url-tab${vizUrlId===u.id?' active':''}" data-utid="${u.id}">${u.label}</button>`).join('');
-    ut.querySelectorAll('.url-tab').forEach(t=>t.addEventListener('click',()=>{vizUrlId=t.dataset.utid;renderVizTabs();renderViz();}));
-  } else { ut.innerHTML=''; }
-}
-
-// ── VIZ RENDER
-function renderViz() {
-  const scroll = document.getElementById('vizScroll');
-  if (!vizProjectId) {
-    scroll.innerHTML = `<div class="viz-empty">
-      <div class="viz-empty-icon">🗂</div>
-      <div class="viz-empty-title">Chọn dự án để xem preview</div>
-      <div class="viz-empty-sub">Mỗi dự án có layout riêng phản ánh UI thực tế — Merchant khác Content khác Utility</div>
-    </div>`; return;
-  }
-  const proj = PROJECTS.find(p=>p.id===vizProjectId);
-  const url  = proj.urls.find(u=>u.id===vizUrlId)||proj.urls[0];
-  scroll.innerHTML = device==='mobile' ? renderMobile(proj,url) : renderDesktop(proj,url);
-  document.querySelectorAll('[data-zone]').forEach(z=>{
-    z.addEventListener('click',()=>{ const id=z.dataset.zone; if(id) togglePlacement(id); });
+    return {...c, blocked, reason, rank:i+1};
   });
-  updateVizZones();
-}
 
-function nav() {
-  return `<div class="l-nav">
-    <div class="l-logo"></div>
-    <div class="l-links"><span class="hi"></span><span></span><span></span></div>
-    <div class="l-cta"></div>
-  </div>`;
-}
-function browserBar(url) {
-  return `<div class="browser-bar">
-    <div class="bdots"><i></i><i></i><i></i></div>
-    <div class="burl">🔒 ${url.url}</div>
-  </div>`;
-}
-function univOverlays() {
-  return `
-  <div class="ad-zone u-topbar" data-zone="u-topbar"><span class="az-label">Top Bar · Full-width×48</span></div>
-  <div class="ad-zone u-sticky" data-zone="u-sticky"><span class="az-label">Sticky Bottom</span></div>
-  <div class="ad-zone u-float" data-zone="u-float"><span class="az-label" style="font-size:7px">Float</span></div>
-  <div class="ad-zone u-popup" data-zone="u-popup"><span class="az-label">Popup / Interstitial</span><span class="az-dim">Full-screen overlay</span></div>`;
-}
-
-function renderDesktop(proj, url) {
-  let body = '';
-  switch(proj.id) {
-    case 'cinema':
-      body = `${nav()}
-      <div class="ad-zone cinema-billboard" data-zone="cinema-billboard">
-        <span class="az-label">Cinema Hero Billboard</span><span class="az-dim">970×250</span>
-      </div>
-      <div class="cinema-grid">
-        ${[0,1,2].map(()=>`<div class="cinema-card-el"><div class="cinema-poster"></div><div class="cinema-card-info"><div class="l-bar l-bar.w100"></div><div class="l-bar w80" style="margin-top:3px"></div></div></div>`).join('')}
-        <div class="ad-zone cinema-native-zone" data-zone="cinema-card-native">
-          <span class="az-label">Movie Card Native</span><span class="az-dim">Linh hoạt</span>
-        </div>
-        ${[0,1,2,3].map(()=>`<div class="cinema-card-el"><div class="cinema-poster"></div><div class="cinema-card-info"><div class="l-bar" style="width:100%"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
-      </div>`;
-      break;
-    case 'merchant':
-      body = `<div class="merchant-frame">
-        <div class="merchant-sidebar">
-          <div class="ms-logo"></div>
-          ${[0,1,2,3,4].map((i,idx)=>`<div class="ms-item${idx===1?' hi':''}"><span></span></div>`).join('')}
-          <div class="ms-lock">🔒 Sidebar cố định<br>Product Design</div>
-        </div>
-        <div class="merchant-main">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:10px;font-weight:700">Merchant Discovery</div>
-            <div style="width:55px;height:20px;background:var(--momo-light);border-radius:4px"></div>
-          </div>
-          <div class="deal-grid">
-            ${[0,1].map(()=>`<div class="deal-card-el"><div class="deal-img"></div><div class="deal-info"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
-            <div class="ad-zone deal-inline-zone" data-zone="merchant-inline">
-              <span class="az-label">Sponsored Swipe Card</span><span class="az-dim">Linh hoạt</span>
-            </div>
-            ${[0,1,2].map(()=>`<div class="deal-card-el"><div class="deal-img"></div><div class="deal-info"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:3px"></div></div></div>`).join('')}
-          </div>
-        </div>
-      </div>`;
-      break;
-    case 'credit':
-      body = `${nav()}<div class="credit-layout">
-        <div class="ad-zone credit-pre-zone" data-zone="credit-preform">
-          <span class="az-label">Pre-form Banner</span><span class="az-dim">300×250</span>
-        </div>
-        <div class="credit-form-box">
-          <div style="font-size:11px;font-weight:700">Tính số tiền vay</div>
-          <div class="credit-field"></div><div class="credit-field"></div><div class="credit-field"></div>
-          <div class="credit-cta"></div>
-        </div>
-        <div class="credit-result-box">
-          <div style="font-size:11px;font-weight:700">Kết quả</div>
-          <div class="credit-result-grid">
-            <div class="credit-result-cell"><small>Kỳ hạn</small><strong>24 tháng</strong></div>
-            <div class="credit-result-cell"><small>Lãi suất</small><strong>1.5%/tháng</strong></div>
-          </div>
-          <div class="ad-zone credit-result-zone" data-zone="credit-result">
-            <span class="az-label">Result Native</span>
-          </div>
-        </div>
-      </div>`;
-      break;
-    case 'insurance':
-      body = `${nav()}<div class="credit-layout">
-        <div class="ad-zone credit-pre-zone" data-zone="ins-preform">
-          <span class="az-label">Pre-form Banner</span><span class="az-dim">300×250</span>
-        </div>
-        <div class="credit-form-box">
-          <div style="font-size:11px;font-weight:700">Báo giá BH xe máy</div>
-          <div class="credit-field"></div><div class="credit-field"></div>
-          <div class="credit-cta"></div>
-        </div>
-        <div class="credit-result-box">
-          <div style="font-size:11px;font-weight:700">So sánh gói BH</div>
-          ${[0,1].map(()=>`<div style="background:#fff;border:1px solid var(--line);border-radius:5px;padding:8px;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:4px"><div class="l-bar w80"></div><div class="l-bar w60" style="margin-top:2px"></div></div><div style="width:46px;height:20px;background:var(--momo);border-radius:4px;opacity:.7"></div></div>`).join('')}
-          <div class="ad-zone credit-result-zone" data-zone="ins-comparison">
-            <span class="az-label">Comparison Native</span>
-          </div>
-        </div>
-      </div>`;
-      break;
-    case 'content':
-      body = `${nav()}
-      <div class="content-layout">
-        <div class="ad-zone content-billboard-zone" data-zone="content-billboard">
-          <span class="az-label">Billboard</span><span class="az-dim">970×250</span>
-        </div>
-        <div class="content-body">
-          <div class="content-article">
-            <div class="l-bar" style="width:65%;height:9px"></div>
-            <div class="content-img"></div>
-            <div class="l-bar l-bar.w100"></div><div class="l-bar w90" style="margin-top:5px"></div><div class="l-bar w80" style="margin-top:5px"></div>
-            <div class="ad-zone content-infeed-zone" data-zone="content-infeed">
-              <span class="az-label">In-article Native</span>
-            </div>
-            <div class="l-bar" style="width:100%"></div><div class="l-bar w80" style="margin-top:5px"></div>
-          </div>
-          <div class="content-sidebar">
-            <div class="ad-zone content-sb-med" data-zone="content-sidebar-med">
-              <span class="az-label">Sidebar</span><span class="az-dim">300×250</span>
-            </div>
-            <div class="ad-zone content-sb-lg" data-zone="content-sidebar-lg">
-              <span class="az-label">Half Page</span><span class="az-dim">300×600</span>
-            </div>
-          </div>
-        </div>
-      </div>`;
-      break;
-    case 'homepage':
-      body = `${nav()}
-      <div class="home-layout">
-        <div class="ad-zone home-hero-zone" data-zone="home-hero">
-          <span class="az-label">Hero Banner</span><span class="az-dim">970×250</span>
-        </div>
-        <div class="home-body">
-          <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Dịch vụ</div>
-          <div class="home-svc-grid">
-            ${[0,1,2,3,4,5].map(()=>`<div class="home-svc-item"><div class="home-svc-circle"></div><div class="home-svc-label"></div></div>`).join('')}
-          </div>
-          <div class="ad-zone home-grid-zone" data-zone="home-grid-native">
-            <span class="az-label">Service Grid Native</span>
-          </div>
-          <div class="home-svc-grid">
-            ${[0,1,2,3,4,5].map(()=>`<div class="home-svc-item"><div class="home-svc-circle"></div><div class="home-svc-label"></div></div>`).join('')}
-          </div>
-        </div>
-      </div>`;
-      break;
-  }
-  return `<div class="desktop-frame">${browserBar(url)}${univOverlays()}${body}</div>`;
-}
-
-function renderMobile(proj, url) {
-  let body = '';
-  switch(proj.id) {
-    case 'cinema':
-      body = `<div class="mob-content" style="padding:8px;overflow:hidden;gap:6px">
-        <div class="ad-zone" style="height:48px;border-radius:5px;flex-shrink:0" data-zone="cinema-billboard">
-          <span class="az-label">Billboard · 320×120</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;overflow:hidden">
-          ${[0,1,2].map(()=>`<div style="background:#f5f5f8;border-radius:6px;overflow:hidden"><div style="height:56px;background:var(--line)"></div><div style="padding:4px"><div class="mob-bar w80"></div></div></div>`).join('')}
-          <div class="ad-zone" style="border-radius:6px;min-height:72px" data-zone="cinema-card-native">
-            <span class="az-label">Card Native</span>
-          </div>
-        </div>
-      </div>`;
-      break;
-    case 'merchant':
-      body = `<div class="mob-content" style="padding:0;overflow:hidden">
-        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
-        <div class="ad-zone mob-inline" data-zone="merchant-inline"><span class="az-label">Sponsored Swipe Card</span></div>
-        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
-        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div></div>
-      </div>`;
-      break;
-    case 'credit':
-      body = `<div class="mob-content" style="padding:8px;gap:7px;overflow:hidden">
-        <div class="ad-zone" style="height:54px;border-radius:5px;flex-shrink:0" data-zone="credit-preform">
-          <span class="az-label">Pre-form Banner</span>
-        </div>
-        <div style="background:#f9fafb;border:1px solid var(--line);border-radius:7px;padding:8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0">
-          <div style="height:22px;background:#fff;border:1px solid var(--line);border-radius:4px"></div>
-          <div style="height:22px;background:#fff;border:1px solid var(--line);border-radius:4px"></div>
-          <div style="height:26px;background:var(--momo);border-radius:4px"></div>
-        </div>
-        <div class="ad-zone" style="height:46px;border-radius:5px;flex-shrink:0" data-zone="credit-result">
-          <span class="az-label">Result Native</span>
-        </div>
-      </div>`;
-      break;
-    case 'insurance':
-      body = `<div class="mob-content" style="padding:8px;gap:7px;overflow:hidden">
-        <div class="ad-zone" style="height:54px;border-radius:5px;flex-shrink:0" data-zone="ins-preform">
-          <span class="az-label">Pre-form Banner</span>
-        </div>
-        <div style="background:#f9fafb;border:1px solid var(--line);border-radius:7px;padding:8px;flex-shrink:0">
-          <div style="height:22px;background:#fff;border:1px solid var(--line);border-radius:4px;margin-bottom:5px"></div>
-          <div style="height:26px;background:var(--momo);border-radius:4px"></div>
-        </div>
-        <div class="ad-zone" style="height:46px;border-radius:5px;flex-shrink:0" data-zone="ins-comparison">
-          <span class="az-label">Comparison Native</span>
-        </div>
-      </div>`;
-      break;
-    case 'content':
-      body = `<div class="mob-content" style="padding:0;overflow:hidden">
-        <div class="ad-zone" style="height:36px;flex-shrink:0;border-radius:0;border-left:none;border-right:none;border-top:none" data-zone="content-billboard">
-          <span class="az-label">Billboard · 320×100</span>
-        </div>
-        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>
-        <div class="ad-zone mob-infeed" data-zone="content-infeed"><span class="az-label">In-article Native</span></div>
-        <div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div></div>
-      </div>`;
-      break;
-    case 'homepage':
-      body = `<div class="mob-content" style="padding:8px;overflow:hidden;gap:7px">
-        <div class="ad-zone" style="height:64px;border-radius:5px;flex-shrink:0" data-zone="home-hero">
-          <span class="az-label">Hero Banner</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex-shrink:0">
-          ${[0,1,2,3,4,5,6,7].map(()=>`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:28px;height:28px;border-radius:50%;background:var(--line)"></div><div style="width:22px;height:4px;background:var(--line);border-radius:2px"></div></div>`).join('')}
-        </div>
-        <div class="ad-zone" style="height:40px;border-radius:5px;flex-shrink:0" data-zone="home-grid-native">
-          <span class="az-label">Grid Native</span>
-        </div>
-      </div>`;
-      break;
-    default:
-      body = `<div class="mob-content">
-        ${[0,1,2].map(()=>`<div class="mob-feed-item"><div class="mob-img"></div><div class="mob-bar w80"></div><div class="mob-bar w60"></div></div>`).join('')}
-      </div>`;
+  const winner = results.find(r=>!r.blocked);
+  if (winner) {
+    // update preview with winner
+    previewCampaign = campaigns.find(c=>c.id===winner.id);
+    updateLivePreview();
+    document.getElementById('mCampaign').textContent = winner.name;
+    document.getElementById('mFormat').textContent = FORMAT_DEFS[winner.format].icon+' '+FORMAT_DEFS[winner.format].name;
   }
 
-  return `<div class="mobile-wrapper"><div class="mobile-phone">
-    <div class="mobile-notch"><div></div></div>
-    <div class="mobile-screen">
-      <div class="ad-zone mob-popup" data-zone="u-popup">
-        <span class="az-label">Popup</span><span class="az-dim">Full-screen</span>
-      </div>
-      <div class="ad-zone mob-topbar" data-zone="u-topbar">
-        <span class="az-label">Top Bar · 320×50</span>
-      </div>
-      <div class="mob-nav">
-        <div class="mob-logo"></div><div class="mob-title"></div><div class="mob-icon"></div>
-      </div>
-      ${body}
-      <div class="ad-zone mob-float" data-zone="u-float">
-        <span class="az-label" style="font-size:6px">Float</span>
-      </div>
-      <div class="ad-zone mob-sticky" data-zone="u-sticky">
-        <span class="az-label">Sticky · 320×50</span>
+  // Update URL in toolbar
+  document.getElementById('ptUrlText').textContent = 'momo.vn'+url;
+
+  document.getElementById('conflictResults').innerHTML = `
+    <div class="section-head">📊 Kết quả phân xử — ${results.length} candidates</div>
+    ${guardrailMessages.length?`<div class="guardrail-box">⚠️ <strong>Guardrail kích hoạt:</strong> ${guardrailMessages.join('<br>')}</div>`:''}
+    <div class="conflict-list">
+      ${results.map(r=>`
+        <div class="cf-item${r.id===winner?.id?' winner':r.blocked?' blocked':''}">
+          ${r.id===winner?.id?'<div class="cf-winner-tag">WINNER</div>':''}
+          ${r.blocked?'<div class="cf-blocked-tag">BLOCKED</div>':''}
+          <div class="cf-score"><span class="num">${r.score}</span><span class="unit">pts</span></div>
+          <div class="cf-name">${r.name} <span style="font-size:10px;color:var(--t2)">· ${r.division}</span></div>
+          <div class="cf-factors">
+            ${r.factors.map(f=>`<span class="cff ${f.cls}">${f.label}</span>`).join('')}
+          </div>
+          ${r.blocked?`<div style="font-size:9px;color:var(--red);margin-top:6px">🚫 ${r.reason}</div>`:''}
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   A/B TEST
+═══════════════════════════════════════════════════════════════════════════ */
+const AB_MOCK = {
+  a:{pv:12400,clicks:620,ctr:5.0,dismiss:18.2},
+  b:{pv:12600,clicks:756,ctr:6.0,dismiss:14.8},
+};
+
+function renderAbTest() {
+  const r = abState.ratio;
+  const wrap = document.getElementById('modContent');
+  wrap.innerHTML = `
+    <div class="fg">
+      <div class="fl">Campaign cho A/B Test</div>
+      <select class="fi fsel" id="abCampaign">
+        ${campaigns.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="fg">
+      <div class="fl">Variant A — Landing Page</div>
+      <input class="fi" id="urlA" placeholder="momo.vn/bao-hiem/xe-may" value="momo.vn/bao-hiem/xe-may">
+    </div>
+    <div class="fg">
+      <div class="fl">Variant B — Landing Page</div>
+      <input class="fi" id="urlB" placeholder="momo.vn/bao-hiem/xe-may?variant=v2" value="momo.vn/bao-hiem/xe-may?variant=v2">
+    </div>
+    <div class="fg">
+      <div class="fl">Split Ratio</div>
+      <div class="ratio-wrap">
+        <div class="ratio-labels"><span>Variant A: ${r}%</span><span>Variant B: ${100-r}%</span></div>
+        <div class="ratio-track" id="ratioTrack" onclick="handleRatioClick(event)">
+          <div class="ratio-fill" id="ratioFill" style="width:${r}%"></div>
+        </div>
+        <input type="range" min="10" max="90" value="${r}" id="ratioRange" oninput="setRatio(this.value)">
       </div>
     </div>
-    <div style="height:8px"></div>
-  </div></div>`;
+    <button class="btn btn-pk" style="width:100%" onclick="launchAbTest()">🚀 Launch A/B Test</button>
+    <div class="sep"></div>
+    <div class="section-head">Mock Analytics — 7 ngày</div>
+    <div class="ab-variants">
+      <div class="ab-var var-a">
+        <div class="ab-head"><div class="ab-badge">A</div>Variant A
+          ${abState.declared==='a'?'<span class="win-chip">🏆 WINNER</span>':''}
+        </div>
+        <div class="ab-stat-grid">
+          <div class="ab-stat"><div class="ab-stat-val">${fmtK(AB_MOCK.a.pv)}</div><div class="ab-stat-key">Pageviews</div></div>
+          <div class="ab-stat"><div class="ab-stat-val">${fmtK(AB_MOCK.a.clicks)}</div><div class="ab-stat-key">Clicks</div></div>
+          <div class="ab-stat"><div class="ab-stat-val" style="color:var(--blue)">${AB_MOCK.a.ctr}%</div><div class="ab-stat-key">CTR</div></div>
+          <div class="ab-stat"><div class="ab-stat-val" style="color:var(--amber)">${AB_MOCK.a.dismiss}%</div><div class="ab-stat-key">Dismiss</div></div>
+        </div>
+      </div>
+      <div class="ab-var var-b">
+        <div class="ab-head"><div class="ab-badge">B</div>Variant B
+          ${abState.declared==='b'?'<span class="win-chip">🏆 WINNER</span>':''}
+        </div>
+        <div class="ab-stat-grid">
+          <div class="ab-stat"><div class="ab-stat-val">${fmtK(AB_MOCK.b.pv)}</div><div class="ab-stat-key">Pageviews</div></div>
+          <div class="ab-stat"><div class="ab-stat-val">${fmtK(AB_MOCK.b.clicks)}</div><div class="ab-stat-key">Clicks</div></div>
+          <div class="ab-stat"><div class="ab-stat-val" style="color:var(--purple)">${AB_MOCK.b.ctr}%</div><div class="ab-stat-key">CTR</div></div>
+          <div class="ab-stat"><div class="ab-stat-val" style="color:var(--green)">${AB_MOCK.b.dismiss}%</div><div class="ab-stat-key">Dismiss</div></div>
+        </div>
+      </div>
+    </div>
+    ${abState.declared
+      ? `<div class="declared-winner">✅ Đã chọn Variant ${abState.declared.toUpperCase()} làm phiên bản chính thức.</div>`
+      : `<div class="declare-winner-row">
+          <button class="btn-declare a" onclick="declareWinner('a')">Chọn Variant A</button>
+          <button class="btn-declare b" onclick="declareWinner('b')">Chọn Variant B ↑ CTR</button>
+        </div>`}
+  `;
 }
 
-function updateVizZones() {
-  document.querySelectorAll('[data-zone]').forEach(el=>{
-    const id = el.dataset.zone;
-    const on = selectedPlacements.has(id);
-    el.classList.toggle('active', on);
-    if(id==='u-popup'){
-      if(el.classList.contains('mob-popup')) el.style.display = on?'flex':'none';
-      else el.style.display = on?'flex':'none';
-    }
-  });
+function setRatio(v) {
+  abState.ratio = +v;
+  const fill = document.getElementById('ratioFill');
+  if (fill) fill.style.width = v+'%';
+  document.querySelector('.ratio-labels').innerHTML = `<span>Variant A: ${v}%</span><span>Variant B: ${100-v}%</span>`;
+}
+function handleRatioClick(e) {
+  const t = e.currentTarget;
+  const r = Math.round((e.offsetX/t.offsetWidth)*100);
+  document.getElementById('ratioRange').value = r;
+  setRatio(Math.max(10,Math.min(90,r)));
+}
+function launchAbTest() {
+  abState.running = true;
+  showToast('🚀 A/B Test đã khởi chạy!','t-pk');
+}
+function declareWinner(v) {
+  abState.declared = v;
+  showToast(`🏆 Variant ${v.toUpperCase()} được chọn làm winner!`,'t-green');
+  renderAbTest();
 }
 
-// ── METRICS
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIVE PREVIEW
+═══════════════════════════════════════════════════════════════════════════ */
+const PAGE_URLS = {blog:'momo.vn/blog/bao-hiem-xe-may-2026', hub:'momo.vn/vay-nhanh', home:'momo.vn'};
+
+function setDevice(d) {
+  device = d;
+  document.getElementById('btnMobile').classList.toggle('active',d==='mobile');
+  document.getElementById('btnDesktop').classList.toggle('active',d==='desktop');
+  updateLivePreview();
+}
+function setPage(p) {
+  previewPage = p;
+  document.querySelectorAll('.pt-pg').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(p==='blog'?'blog':p==='hub'?'vay':'home')));
+  document.getElementById('ptUrlText').textContent = PAGE_URLS[p];
+  updateLivePreview();
+}
+
+function updateLivePreview() {
+  const wrap = document.getElementById('deviceWrap');
+  if (!wrap) return;
+  const c = previewCampaign || (campaigns.length?campaigns[0]:null);
+  const pageHtml = buildPageMockup(previewPage);
+  const adHtml = c ? buildAdOverlay(c.format, c) : '';
+
+  if (device==='mobile') {
+    wrap.innerHTML = `<div class="mobile-shell"><div class="mobile-screen">
+      <div class="mobile-notch"></div>
+      ${pageHtml}
+      ${adHtml}
+    </div></div>`;
+  } else {
+    wrap.innerHTML = `<div class="desktop-shell">
+      <div class="browser-chrome">
+        <div class="bc-dots"><i></i><i></i><i></i></div>
+        <div class="bc-url">${PAGE_URLS[previewPage]}</div>
+      </div>
+      <div style="position:relative;flex:1;overflow:hidden">
+        ${pageHtml}
+        ${adHtml}
+      </div>
+    </div>`;
+  }
+  document.getElementById('mTotal').textContent = campaigns.length;
+  if (c) {
+    document.getElementById('mFormat').textContent = FORMAT_DEFS[c.format].icon+' '+FORMAT_DEFS[c.format].name;
+    document.getElementById('mCampaign').textContent = c.name;
+  }
+}
+
+function buildPageMockup(page) {
+  const nav = `<div class="m-nav"><div class="m-logo"></div><div class="m-links"><span style="width:30px"></span><span style="width:40px"></span><span style="width:25px" class="hi"></span></div><div class="m-cta"></div></div>`;
+  if (page==='blog') return `<div class="page-mockup pg-blog">${nav}
+    <div class="hero"><div class="hero-text">Kinh nghiệm mua bảo hiểm xe máy<br>cho người lần đầu</div></div>
+    <div class="body">
+      <span class="tag">bảo-hiểm-xe-máy</span>
+      <div class="title">Bảo hiểm xe máy 2026: So sánh 5 gói phổ biến nhất</div>
+      ${['w100','w90','w80','w100','w60','w90','w80','w100'].map(w=>`<div class="m-bar ${w}"></div>`).join('')}
+    </div>
+  </div>`;
+  if (page==='hub') return `<div class="page-mockup pg-hub">${nav}
+    <div class="hero"><div><div class="hero-title">Vay Nhanh</div><div class="hero-sub">Vay tiêu dùng linh hoạt qua MoMo</div></div></div>
+    <div class="body">
+      ${[{t:'Tính lãi vay',s:'Nhập số tiền & kỳ hạn'},{t:'Đăng ký vay ngay',s:'Duyệt trong 5 phút'},{t:'Kiểm tra điều kiện',s:'Cần gì để được duyệt?'}].map(x=>`
+      <div class="hub-card"><div class="hub-card-icon"></div><div><div class="hub-card-title">${x.t}</div><div class="hub-card-sub">${x.s}</div></div></div>`).join('')}
+    </div>
+  </div>`;
+  // home
+  return `<div class="page-mockup pg-home">${nav}
+    <div class="hero">Web MoMo</div>
+    <div class="body">
+      <div class="service-grid">
+        <div class="svc-item"><div class="svc-icon pk"></div><div class="svc-label">Vay tiền</div></div>
+        <div class="svc-item"><div class="svc-icon bl"></div><div class="svc-label">Bảo hiểm</div></div>
+        <div class="svc-item"><div class="svc-icon gr"></div><div class="svc-label">Đầu tư</div></div>
+        <div class="svc-item"><div class="svc-icon or"></div><div class="svc-label">Điện nước</div></div>
+      </div>
+      ${['w100','w80','w60','w90','w70'].map(w=>`<div class="m-bar ${w}"></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function buildAdOverlay(format, c) {
+  const name = c?.name||'Campaign';
+  const cta  = c?.ctaUrl||'momo.vn';
+  if (format==='balloon') return `
+    <div class="ad-balloon">
+      <div class="balloon-card">
+        <div class="balloon-card-title">${name}</div>
+        <div class="balloon-card-sub">Ưu đãi độc quyền dành riêng cho bạn</div>
+        <button class="balloon-card-btn" onclick="logCta('${cta}','balloon')">Tìm hiểu ngay →</button>
+      </div>
+      <div class="balloon-body" onclick="logCta('${cta}','balloon')">
+        <div class="balloon-pulse"></div>
+        <div class="balloon-icon">💡</div>
+        <div class="balloon-txt">Ưu đãi</div>
+      </div>
+    </div>`;
+  if (format==='popup') return `
+    <div class="ad-popup${device==='desktop'?' desktop':''}">
+      <div class="popup-sheet${device==='desktop'?' desktop-box':''}">
+        <button class="popup-x" onclick="this.closest('.ad-popup').remove()">✕</button>
+        ${device!=='desktop'?'<div class="popup-handle"></div>':''}
+        <div class="popup-hero">🎉 ${c?.division||''} Special Offer</div>
+        <div class="popup-title">${name}</div>
+        <div class="popup-desc">Ưu đãi giới hạn — dành cho người dùng Web MoMo. Đăng ký ngay hôm nay!</div>
+        <button class="popup-btn" onclick="logCta('${cta}','popup')">Đăng ký ngay →</button>
+      </div>
+    </div>`;
+  if (format==='calculator') return `
+    <div class="ad-calculator">
+      <div class="calc-hd"><span>🧮</span><span>${name}</span></div>
+      <div class="calc-bd">
+        <div class="calc-field"><label>Số tiền cần vay</label><input class="calc-fi" value="10,000,000 đ" oninput="updateCalcResult()"></div>
+        <div class="calc-field"><label>Kỳ hạn</label><input class="calc-fi" value="12 tháng"></div>
+        <div class="calc-result"><span class="calc-rk">Lãi suất ước tính</span><span class="calc-rv" id="calcRv">~1.2%/tháng</span></div>
+        <button class="calc-cta" onclick="logCta('${cta}','calculator')">Xem kết quả đầy đủ →</button>
+      </div>
+    </div>`;
+  if (format==='purchase') return `
+    <div class="ad-purchase">
+      <div class="purch-hd"><span>🛍️</span><span>${name}</span></div>
+      <div class="purch-bd">
+        <div class="purch-product">
+          <div class="purch-img"></div>
+          <div><div class="purch-name">${c?.division||'Sản phẩm'} — Gói cơ bản</div><div class="purch-price">199,000 đ/năm</div></div>
+        </div>
+        <button class="purch-btn" onclick="logCta('${cta}','purchase')">Mua ngay →</button>
+      </div>
+    </div>`;
+  return '';
+}
+
+function logCta(url, format) {
+  const slug = url.replace(/\W+/g,'_');
+  showToast(`↗ CTA: ${url} [utm_medium=${format}]`,'t-pk');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════════════════════════════ */
+function fmtK(n) { return n>=1000?(n/1000).toFixed(1)+'K':n; }
 function updateMetrics() {
-  const {univ,ctx,total} = totalImp();
-  const days = calcDays();
-  document.getElementById('mCount').textContent = selectedPlacements.size;
-  document.getElementById('mDaily').textContent = fmtN(total);
-  document.getElementById('mUniv').textContent  = fmtN(univ);
-  document.getElementById('mCtx').textContent   = fmtN(ctx);
-  document.getElementById('mTotal').textContent = fmtN(total*days);
+  document.getElementById('mTotal').textContent = campaigns.length;
+}
+function showToast(msg,cls='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show '+(cls||'');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ── REVIEW
-function renderReview() {
-  const name  = document.getElementById('campName').value||'—';
-  const start = document.getElementById('campStart').value;
-  const end   = document.getElementById('campEnd').value;
-  const obj   = document.querySelector('.obj-btn.active .obj-name')?.textContent||'—';
-  const days  = calcDays();
-  const {univ,ctx,total} = totalImp();
-  const projs = PROJECTS.filter(p=>selectedProjects.has(p.id));
-  document.getElementById('rvName').textContent     = name;
-  document.getElementById('rvObj').textContent      = obj;
-  document.getElementById('rvDates').textContent    = start&&end?`${start} → ${end} (${days} ngày)`:'—';
-  document.getElementById('rvProjects').textContent = projs.length?projs.map(p=>p.name).join(', '):'—';
-  document.getElementById('rvCount').textContent    = selectedPlacements.size;
-  const {avgCtr, dailyClicks} = calcWeightedCtr();
-  document.getElementById('rvTotalImp').textContent = fmtN(total*days);
-  document.getElementById('rvDaily').textContent    = fmtN(total)+'/ngày';
-  document.getElementById('rvClicks').textContent   = dailyClicks>0?fmtN(dailyClicks)+'/ngày':'—';
-  document.getElementById('rvAvgCtr').textContent   = avgCtr>0?(avgCtr*100).toFixed(2)+'%':'—';
-  document.getElementById('rvUniv').textContent     = fmtN(univ)+'/ngày';
-  document.getElementById('rvCtx').textContent      = fmtN(ctx)+'/ngày';
-  document.getElementById('rvDays').textContent     = days+' ngày';
-  const sel=[...selectedPlacements];
-  document.getElementById('rvList').innerHTML = sel.length
-    ? sel.map(id=>{
-        const isU=id.startsWith('u-');
-        const p=isU?UNIVERSAL.find(x=>x.id===id):CONTEXTUAL[id]; if(!p) return '';
-        const imp=isU?calcUnivImp(id):calcCtxImp(id);
-        const rc=ctrRatingClass(p.ctr,p.format);
-        return `<div class="review-item">
-          <span>${isU?'🌐':'📄'}</span>
-          <div class="rv-info">
-            <div class="rv-name">${p.name}</div>
-            <div class="rv-sub">
-              <span>${p.dims}</span>
-              <span class="pbadge ${BADGE[p.format]||'pb-display'}">${p.format}</span>
-              <span class="ctr-badge ${rc}">CTR ${(p.ctr*100).toFixed(1)}%</span>
-              <span class="slot-badge ${p.slots-p.booked>0?'slot-avail':'slot-full'}">${p.slots-p.booked} slot trống</span>
-            </div>
-          </div>
-          <span class="rv-imp">${fmtN(imp)}/ngày</span>
-        </div>`;
-      }).join('')
-    : '<div class="empty-note">Chưa chọn vị trí nào</div>';
-}
-
-// ── STEP
-function goStep(n) {
-  step=Math.max(0,Math.min(2,n));
-  ['s0','s1','s2'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===step));
-  document.querySelectorAll('.step-tab').forEach((t,i)=>{t.classList.toggle('active',i===step);t.classList.toggle('done',i<step);});
-  document.getElementById('btnPrev').style.visibility=step===0?'hidden':'';
-  document.getElementById('btnNext').style.display=step===2?'none':'';
-  if(step===1){renderUniversal();renderContextual();}
-  if(step===2) renderReview();
-}
-
-// ── INIT
-document.addEventListener('DOMContentLoaded', ()=>{
-  // Pre-select all projects so viz shows immediately on load
-  PROJECTS.forEach(p => selectedProjects.add(p.id));
-  vizProjectId = 'homepage';
-  vizUrlId = PROJECTS.find(p=>p.id==='homepage').urls[0].id;
-
-  renderProjectGrid();
-  renderUniversal();
-  renderVizTabs();
-  renderViz();
-  updateMetrics();
-
-  document.getElementById('btnNext').addEventListener('click',()=>goStep(step+1));
-  document.getElementById('btnPrev').addEventListener('click',()=>goStep(step-1));
-  document.querySelectorAll('.step-tab').forEach(t=>t.addEventListener('click',()=>goStep(+t.dataset.step)));
-  document.querySelectorAll('.obj-btn').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('.obj-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  }));
-  document.querySelectorAll('.dev-btn').forEach(b=>b.addEventListener('click',()=>{
-    device=b.dataset.device;
-    document.querySelectorAll('.dev-btn').forEach(x=>x.classList.toggle('active',x===b));
-    renderViz();
-  }));
-  const updateDays=()=>{document.getElementById('daysHint').textContent=`${calcDays()} ngày chạy`;};
-  document.getElementById('campStart').addEventListener('change',updateDays);
-  document.getElementById('campEnd').addEventListener('change',updateDays);
-  document.getElementById('publishBtn').addEventListener('click',()=>{
-    if(!selectedPlacements.size){showToast('Vui lòng chọn ít nhất một vị trí.');return;}
-    showToast('🎉 Chiến dịch "'+document.getElementById('campName').value+'" đã được tạo!');
-  });
-});
-
-let toastT;
-function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800);}
+/* ═══════════════════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════════════════ */
+showMod('builder');
 </script>
 </body>
 </html>
