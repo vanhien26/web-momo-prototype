@@ -61,27 +61,54 @@ const TOOLS = [
   {
     id: 'vay-nhanh', name: 'Vay Nhanh', category: 'Credit', abbr: 'VN',
     intent: 'Transactional intent', panel: 'generic',
-    description: 'Tính số tiền trả hàng tháng theo khoản vay, lãi suất và kỳ hạn.',
-    formula: 'Trả/tháng = <b>P × r(1+r)ⁿ ÷ [(1+r)ⁿ−1]</b><br><em>P = số tiền vay &nbsp;·&nbsp; r = lãi suất/tháng &nbsp;·&nbsp; n = số kỳ thanh toán</em>',
-    resultLabel: 'ƯỚC TÍNH TRẢ MỖI THÁNG',
+    description: 'Hạn mức 3 - 100 triệu, kỳ hạn 6 - 48 tháng, lãi suất 23 - 45%/năm. Tính theo công thức dư nợ giảm dần, cộng phí thu hộ 20.000đ/tháng.',
+    jtbd: 'Tôi đang cần một khoản tiền gấp nhưng phân vân không biết vay bao nhiêu, kỳ hạn nào sẽ phù hợp. Cần thấy ngay <b>EMI hàng tháng và tổng lãi phải trả</b> cho từng kịch bản số tiền và kỳ hạn, để chọn được khoản vay <b>vừa đủ tiêu vừa trả nổi mà không gãy ngân sách hàng tháng</b>.',
+    formula: 'Gốc + Lãi/kỳ = <b>P₀ × r ÷ (1 − (1+r)⁻ⁿ)</b> &nbsp;·&nbsp; Lãi kỳ n = <b>B<sub>n-1</sub> × r</b><br><em>P₀ = số tiền vay &nbsp;·&nbsp; r = lãi suất năm / 12 &nbsp;·&nbsp; n = số kỳ &nbsp;·&nbsp; B = dư nợ gốc &nbsp;·&nbsp; EMI = Gốc + Lãi + Phí thu hộ 20.000đ</em>',
+    resultLabel: 'TỔNG PHẢI TRẢ MỖI THÁNG',
     fields: [
-      { id: 'loanAmount',   label: 'Số tiền vay',      type: 'money',  min: 1000000, max: 500000000, step: 500000, value: 20000000, chips: [5000000, 20000000, 50000000] },
-      { id: 'interestRate', label: 'Lãi suất/năm',     type: 'range',  min: 6, max: 60, step: 0.5, value: 24, unit: '%' },
-      { id: 'loanTerm',     label: 'Kỳ hạn',           type: 'select', options: [
-        {value:3,label:'3 tháng'},{value:6,label:'6 tháng'},
-        {value:12,label:'12 tháng'},{value:18,label:'18 tháng'},
-        {value:24,label:'24 tháng'},{value:36,label:'36 tháng'},
-      ], value: 12 },
+      { id: 'loanAmount',   label: 'Số tiền vay',  type: 'money',  min: 3000000, max: 100000000, step: 500000, value: 8000000, chips: [3000000, 8000000, 30000000, 100000000] },
+      { id: 'interestRate', label: 'Lãi suất/năm', type: 'range',  min: 23, max: 45, step: 0.5, value: 28, unit: '%' },
+      { id: 'loanTerm',     label: 'Kỳ hạn',       type: 'select', options: [
+        {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},
+        {value:18,label:'18 tháng'},{value:24,label:'24 tháng'},
+        {value:36,label:'36 tháng'},{value:48,label:'48 tháng'},
+      ], value: 6 },
     ],
     compute(v) {
+      const FEE = 20000;
       const r = v.interestRate / 100 / 12, n = v.loanTerm, P = v.loanAmount;
-      const mo = r === 0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
-      const total = mo * n;
-      return { result: fmt(mo), details: [
-        { label: 'Tổng tiền trả', value: fmt(total) },
-        { label: 'Tổng lãi phát sinh', value: fmt(total - P) },
-        { label: 'Lãi suất/tháng', value: (v.interestRate/12).toFixed(2) + '%' },
-      ]};
+      const emi = r === 0 ? P/n : P * r / (1 - Math.pow(1+r, -n));
+      const schedule = [];
+      let balance = P;
+      let totalInterest = 0;
+      for (let k = 1; k <= n; k++) {
+        const interest = balance * r;
+        const principal = emi - interest;
+        balance = balance - principal;
+        if (k === n) balance = 0;
+        totalInterest += interest;
+        schedule.push({
+          period: k,
+          interest, principal,
+          emi, fee: FEE,
+          total: emi + FEE,
+          balance: Math.max(balance, 0),
+        });
+      }
+      const totalPay = (emi + FEE) * n;
+      return {
+        result: fmt(emi + FEE),
+        details: [
+          { label: 'Gốc + Lãi/tháng (EMI)', value: fmt(emi) },
+          { label: 'Phí thu hộ/tháng', value: fmt(FEE) },
+          { label: 'Lãi suất/tháng', value: (v.interestRate/12).toFixed(2) + '%' },
+          { label: 'Tổng tiền phải trả', value: fmt(totalPay) },
+          { label: 'Tổng lãi phát sinh', value: fmt(totalInterest) },
+          { label: 'Tổng phí thu hộ', value: fmt(FEE * n) },
+        ],
+        schedule,
+        insight: 'Duyệt 1 phút, giải ngân vào ví MoMo. 4 đối tác cho vay: EVF, MCredit, VietCredit, Modern VN Bank. Khách mới: 0% lãi tháng đầu cho khoản vay ≤ 3 triệu.',
+      };
     },
   },
   {
@@ -116,6 +143,7 @@ const TOOLS = [
     id: 'cic-score', name: 'CIC Score', category: 'Credit', abbr: 'CIC',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tra cứu hạng tín dụng CIC theo điểm số và xem điều kiện vay vốn tương ứng.',
+    jtbd: 'Tôi vừa biết điểm CIC của mình nhưng chưa rõ điểm này tương ứng hạng tín dụng nào và triển vọng vay vốn ra sao. Cần biết ngay <b>mình đang ở hạng nào và có vay được không</b>, để <b>chuẩn bị phương án vay phù hợp trước khi đi nộp hồ sơ</b>.',
     formula: '<b>5 yếu tố ảnh hưởng điểm CIC:</b><br>Lịch sử thanh toán (35%) &nbsp;·&nbsp; Tổng dư nợ (30%) &nbsp;·&nbsp; Số lượng tín dụng (15%) &nbsp;·&nbsp; Độ dài lịch sử (10%) &nbsp;·&nbsp; Chất lượng quan hệ (10%)',
     resultLabel: 'XẾP HẠNG TÍN DỤNG',
     fields: [
@@ -540,6 +568,7 @@ function selectTool(id, options = {}) {
   setDetailMode(detail);
   if (updateHash) syncHash(id);
   renderSidebar();
+  renderRelatedTools();
   document.getElementById('genericPanel').hidden = tool.panel !== 'generic';
   document.getElementById('goldPanel').hidden    = tool.panel !== 'gold';
   document.getElementById('stockPanel').hidden   = tool.panel !== 'stock';
@@ -554,6 +583,52 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'fx')        computeFx();
 }
 
+// ─── Related Tools (bottom-of-page navigation)
+function renderRelatedTools() {
+  const grid = document.getElementById('relatedToolsGrid');
+  if (!grid) return;
+  const current = TOOLS.find(t => t.id === currentToolId);
+  const others = TOOLS.filter(t => t.id !== currentToolId);
+  const titleEl = document.getElementById('relatedToolsTitle');
+  const subEl = document.getElementById('relatedToolsSub');
+  if (titleEl && current) titleEl.textContent = `Khám phá utilities khác ngoài ${current.name}`;
+  if (subEl) subEl.textContent = `Còn ${others.length} công cụ tài chính khác trong Money Lab cho các quyết định khác của bạn.`;
+  const categories = [...new Set(others.map(t => t.category))];
+  grid.innerHTML = categories.map(cat => {
+    const items = others.filter(t => t.category === cat);
+    return `<div class="related-tool-group">
+      <div class="related-tool-group-head"><span>${cat}</span><b>${items.length}</b></div>
+      <div class="related-tool-group-items">
+        ${items.map(t => `
+          <button class="related-tool-card" data-id="${t.id}" type="button">
+            <span class="related-tool-icon">${t.abbr}</span>
+            <span class="related-tool-meta">
+              <strong>${t.name}</strong>
+              <small>${(t.description || '').slice(0, 60).replace(/\.\s.*$/, '') || t.category}</small>
+            </span>
+            <span class="related-tool-arrow" aria-hidden="true">→</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function bindRelatedTools() {
+  const grid = document.getElementById('relatedToolsGrid');
+  if (!grid || grid.dataset.bound === '1') return;
+  grid.dataset.bound = '1';
+  grid.addEventListener('click', event => {
+    const btn = event.target.closest('.related-tool-card');
+    if (!btn || !grid.contains(btn)) return;
+    event.preventDefault();
+    const fromId = currentToolId;
+    selectTool(btn.dataset.id);
+    document.getElementById('top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    momo_track('related_tool_click', { from: fromId, to: btn.dataset.id });
+  });
+}
+
 // ─── Generic Panel
 function renderGenericPanel(tool) {
   document.getElementById('genericCategory').textContent    = tool.category.toUpperCase();
@@ -564,6 +639,16 @@ function renderGenericPanel(tool) {
   if (formulaEl) {
     if (tool.formula) { formulaEl.innerHTML = tool.formula; formulaEl.style.display = ''; }
     else formulaEl.style.display = 'none';
+  }
+  const jtbdEl = document.getElementById('genericJtbd');
+  if (jtbdEl) {
+    const body = jtbdEl.querySelector('p');
+    if (tool.jtbd && body) {
+      body.innerHTML = tool.jtbd;
+      jtbdEl.style.display = '';
+    } else {
+      jtbdEl.style.display = 'none';
+    }
   }
 
   const container = document.getElementById('genericFields');
@@ -647,6 +732,50 @@ function computeGeneric(tool) {
   if (insightEl) {
     if (res.insight) { insightEl.textContent = res.insight; insightEl.style.display = ''; }
     else insightEl.style.display = 'none';
+  }
+  const scheduleEl = document.getElementById('amortizationSchedule');
+  if (scheduleEl) {
+    if (res.schedule && res.schedule.length) {
+      scheduleEl.style.display = '';
+      scheduleEl.innerHTML = `
+        <div class="amortization-head">
+          <div>
+            <strong>Lịch trả nợ - Dư nợ giảm dần</strong>
+            <small>${res.schedule.length} kỳ · Phí thu hộ cố định 20.000đ/tháng</small>
+          </div>
+          <span class="amortization-tag">Reducing Balance</span>
+        </div>
+        <div class="amortization-table-wrap">
+          <table class="amortization-table">
+            <thead><tr>
+              <th class="col-period">Kỳ</th>
+              <th>Lãi trong kỳ</th>
+              <th>Gốc trong kỳ</th>
+              <th>Gốc + Lãi</th>
+              <th>Phí thu hộ</th>
+              <th class="col-emi">Tổng EMI</th>
+              <th>Số gốc còn lại</th>
+            </tr></thead>
+            <tbody>
+              ${res.schedule.map(s => `
+                <tr>
+                  <td class="col-period">${s.period}</td>
+                  <td>${fmt(s.interest)}</td>
+                  <td>${fmt(s.principal)}</td>
+                  <td>${fmt(s.emi)}</td>
+                  <td>${fmt(s.fee)}</td>
+                  <td class="col-emi"><strong>${fmt(s.total)}</strong></td>
+                  <td>${fmt(s.balance)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } else {
+      scheduleEl.style.display = 'none';
+      scheduleEl.innerHTML = '';
+    }
   }
   momo_track('tool_calculate', { tool_id: tool.id, tool_name: tool.name, tool_category: tool.category });
 }
@@ -1295,7 +1424,7 @@ function initFxPanel() {
     `<div class="gold-price-card fx-card" data-code="${r.code}" style="cursor:pointer">
       <span>${r.flag} ${r.code}</span>
       <strong>${new Intl.NumberFormat('vi-VN').format(r.sell / r.per)}</strong>
-      <em>Mid: ${new Intl.NumberFormat('vi-VN').format(r.ref / r.per)} đ</em>
+      <em>Mua: ${new Intl.NumberFormat('vi-VN').format(r.buy / r.per)} đ</em>
     </div>`
   ).join('');
   document.querySelectorAll('.fx-card').forEach(card => {
@@ -1433,21 +1562,49 @@ function computeFx() {
   const midRate = getPairRate(fxFrom, fxTo, 'mid');
   const received = Math.max(0, amount * bankRate);
   const effectiveRate = amount > 0 ? received / amount : 0;
-  const midNoFee = amount * midRate;
-  const midLoss = Math.max(0, midNoFee - received);
-  const bankGapPct = midRate > 0 ? Math.abs((bankRate - midRate) / midRate * 100) : 0;
   const displayRates = getFxDisplayRates(fxFrom, fxTo, bankRate, midRate, effectiveRate);
-  const insight = `Đổi ${formatFxCurrency(amount, fxFrom)} lấy ${formatFxCurrency(received, fxTo)}. Bank route đang lệch ${bankGapPct.toFixed(2)}% so với mid-market; phần chênh này là chi phí nằm trong tỷ giá.`;
+
+  // Direction context: VND → foreign means bank applies "sell" rate; foreign → VND applies "buy" rate
+  const direction = fxFrom === 'VND' ? 'sell' : 'buy';
+  const foreignCode = fxFrom === 'VND' ? fxTo : fxFrom;
+  const foreignData = FX_RATES.find(r => r.code === foreignCode);
 
   document.getElementById('fxResultLabel').textContent = `NHẬN ĐƯỢC (${fxTo})`;
   document.getElementById('fxResultValue').textContent = formatFxCurrency(received, fxTo);
-  document.getElementById('fxBuyRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.bank)} ${displayRates.quote}`;
-  document.getElementById('fxSellRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.mid)} ${displayRates.quote}`;
-  document.getElementById('fxSpread').textContent = bankGapPct.toFixed(2) + '%';
   document.getElementById('fxRef').textContent = `${fxFrom}/${fxTo}`;
-  document.getElementById('fxInsight').textContent  = insight;
-  document.getElementById('fxEffectiveRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.effective)} ${displayRates.quote}`;
-  document.getElementById('fxMidDelta').textContent = formatFxCurrency(midLoss, fxTo);
+
+  if (foreignData) {
+    const buyVnd = foreignData.buy / foreignData.per;
+    const sellVnd = foreignData.sell / foreignData.per;
+    document.getElementById('fxBuyDisplay').textContent = formatFxRate(buyVnd) + ' đ';
+    document.getElementById('fxSellDisplay').textContent = formatFxRate(sellVnd) + ' đ';
+    const usedLabel = direction === 'sell' ? 'giá bán' : 'giá mua';
+    document.getElementById('fxAppliedRate').textContent =
+      `Tỷ giá áp dụng: 1 ${foreignCode} = ${formatFxRate(direction === 'sell' ? sellVnd : buyVnd)} đ (${usedLabel})`;
+  } else {
+    document.getElementById('fxBuyDisplay').textContent = '--';
+    document.getElementById('fxSellDisplay').textContent = '--';
+    document.getElementById('fxAppliedRate').textContent = `Tỷ giá áp dụng: 1 ${displayRates.base} = ${formatFxRate(displayRates.bank)} ${displayRates.quote}`;
+  }
+
+  // 7-day trend insight
+  const seed = (fxFrom + fxTo).split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 11;
+  const firstFactor = FX_HISTORY_FACTORS[0].factor + Math.sin(1 * (seed + 1)) * 0.004;
+  const trendPct = (-firstFactor) * 100;
+  let trendText, rec;
+  if (Math.abs(trendPct) < 0.4) {
+    trendText = 'ít biến động';
+    rec = 'có thể đổi bất cứ lúc nào.';
+  } else if (trendPct > 0) {
+    trendText = `tăng ${trendPct.toFixed(1)}%`;
+    rec = 'đang ở vùng cao, nếu chưa gấp có thể chờ thêm.';
+  } else {
+    trendText = `giảm ${Math.abs(trendPct).toFixed(1)}%`;
+    rec = 'đang ở vùng thấp, thời điểm tốt để đổi.';
+  }
+  document.getElementById('fxInsight').textContent =
+    `Đổi ${formatFxCurrency(amount, fxFrom)} lấy ${formatFxCurrency(received, fxTo)}. Tỷ giá ${foreignCode}/VND ${trendText} trong 7 ngày qua, ${rec}`;
+
   renderFxChart(displayRates);
 }
 
@@ -1489,6 +1646,8 @@ function renderFxChart(displayRates) {
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
   bindToolList();
+  renderRelatedTools();
+  bindRelatedTools();
   renderGenericPanel(TOOLS[0]);
   initGoldPanel();
   initStockPanel();
