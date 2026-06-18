@@ -124,14 +124,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 .obj-icon{font-size:22px;line-height:1}
 .obj-name{font-size:11px;font-weight:800;color:var(--ink)}
 .obj-desc{font-size:9px;color:var(--t2);line-height:1.3}
-/* PRIORITY */
-.pri-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.pri-opt{background:var(--card);border:1.5px solid var(--line2);border-radius:8px;padding:10px;
-  cursor:pointer;text-align:center;transition:.15s}
-.pri-opt.sel{border-color:var(--pk);background:var(--pk-l)}
-.pri-opt-name{font-size:11px;font-weight:800}
-.pri-opt-val{font-size:22px;font-weight:900;color:var(--pk-2);margin:2px 0}
-.pri-opt-desc{font-size:9px;color:var(--t2)}
 input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:var(--line2);outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:99px;background:var(--pk);cursor:pointer;box-shadow:0 0 0 3px var(--pk-g)}
 .score-preview{background:var(--card);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px}
@@ -557,6 +549,32 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .error-bar{font-size:11px;color:var(--red);background:var(--rbg);border:1px solid var(--red);
   border-radius:7px;padding:8px 10px;margin-bottom:4px;display:none}
 .error-bar.show{display:block}
+
+@media (max-width:900px){
+  body{height:auto;min-height:100vh;overflow:auto}
+  .main-split{grid-template-columns:minmax(0,1fr);height:auto;min-height:calc(100vh - 50px);overflow:visible}
+  .control-panel{min-height:calc(100vh - 50px);border-right:0;overflow:visible}
+  .mod-content{overflow:visible}
+  .wizard-track{justify-content:flex-start;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+  .wizard-track::-webkit-scrollbar{display:none}
+  .wt-step{flex:0 0 auto;min-width:92px}
+  .wt-line{flex:0 0 12px}
+  .step-nav{position:sticky;bottom:0;z-index:20}
+  .preview-panel{min-height:560px;border-top:1px solid var(--line)}
+}
+
+@media (max-width:600px){
+  .topbar{padding:0 12px}
+  .tp-badge{display:none}
+  .mod-content{padding:12px}
+  .preview-panel{display:none}
+  .frow,.kv-grid,.review-actions{grid-template-columns:1fr}
+  .obj-grid{grid-template-columns:1fr}
+  .obj-btn{align-items:flex-start;text-align:left}
+  .fmt-grid{grid-template-columns:1fr 1fr}
+  .step-nav{padding:10px 12px}
+  .step-nav .btn{padding:8px 12px}
+}
 </style>
 </head>
 <body>
@@ -576,10 +594,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <!-- ─── LEFT CONTROL ──────────────────────────────────────────────────── -->
   <aside class="control-panel">
     <nav class="mod-nav">
-      <button class="mod-btn active" id="mbtn-builder" onclick="showMod('builder')">⚙️ Campaign Builder</button>
-      <button class="mod-btn" id="mbtn-registry" onclick="showMod('registry')">📋 Registry</button>
-      <button class="mod-btn" id="mbtn-engine" onclick="showMod('engine')">⚡ Conflict Engine</button>
-      <button class="mod-btn" id="mbtn-abtest" onclick="showMod('abtest')">🔬 A/B Test</button>
+      <button class="mod-btn active" id="mbtn-builder" onclick="showMod('builder')">⚙️ Set Ads</button>
+      <button class="mod-btn" id="mbtn-engine" onclick="showMod('engine')">⚡ Delivery Rules</button>
+      <button class="mod-btn" id="mbtn-abtest" onclick="showMod('abtest')">🧪 Optimize</button>
     </nav>
 
     <div class="mod-content" id="modContent">
@@ -645,6 +662,29 @@ const FORMAT_DEFS = {
   purchase:   {icon:'🛍️', name:'Purchase Component',  desc:'Form đăng ký nhanh tích hợp vào page'},
 };
 
+const FIXED_CONTENT_FORMATS = new Set(['calculator', 'purchase']);
+const WIDGET_SOURCE_NAMES = {
+  calculator: 'Financial Utilities · Calculator Widget',
+  purchase: 'Product Component · Purchase Flow',
+};
+
+function isEditableContentFormat(format) {
+  return !FIXED_CONTENT_FORMATS.has(format);
+}
+
+function getWidgetSourceName(format) {
+  return WIDGET_SOURCE_NAMES[format] || FORMAT_DEFS[format]?.name || 'Source component';
+}
+
+function getDefaultContentTitle(format, project) {
+  const formatName = FORMAT_DEFS[format]?.name || 'Ads';
+  return `${formatName} · ${project?.name || 'MoMo'}`;
+}
+
+function getContentModeLabel(format) {
+  return isEditableContentFormat(format) ? 'Editable creative' : 'Locked widget source';
+}
+
 const FORMAT_COLORS = {
   masthead:'#b45309', banner:'#1d4ed8', inline:'#3730a3', native:'#027a48',
   sticky:'#be123c', sidebar:'#475569', video:'#c2410c', carousel:'#be185d',
@@ -669,31 +709,31 @@ const PROJECT_REGISTRY = [
 const SEED_CAMPAIGNS = [
   {id:'c1',name:'Vay Nhanh Summer Boost',division:'VayNhanh',format:'balloon',
    urlPatterns:['/vay-nhanh','/blog/tai-chinh*','/'],cmsTags:['vay-tieu-dung','tai-chinh'],
-   ctaUrl:'momo.vn/vay-nhanh',priority:'global',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn/vay-nhanh',active:true,isRetargeting:false},
   {id:'c2',name:'BH Xe Máy Flash Sale',division:'Insurance',format:'popup',
    urlPatterns:['/blog/bao-hiem*','/bao-hiem','/bao-hiem/xe-may'],cmsTags:['bao-hiem-xe-may','bao-hiem'],
-   ctaUrl:'momo.vn/bao-hiem/xe-may',priority:'global',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn/bao-hiem/xe-may',active:true,isRetargeting:false},
   {id:'c3',name:'BNPL Checkout Promo',division:'BNPL',format:'purchase',
    urlPatterns:['/vi-tra-sau','/merchant/*','/blog/mua-sam*'],cmsTags:['bnpl','merchant'],
-   ctaUrl:'momo.vn/vi-tra-sau',priority:'division',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn/vi-tra-sau',active:true,isRetargeting:false},
   {id:'c4',name:'CIC Score Calculator',division:'CIC',format:'calculator',
    urlPatterns:['/blog/*','/blog/tai-chinh*'],cmsTags:['tai-chinh','vay-tieu-dung'],
-   ctaUrl:'momo.vn/cic-score',priority:'division',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn/cic-score',active:true,isRetargeting:false},
   {id:'c5',name:'Homepage Hero Popup',division:'Platform',format:'popup',
    urlPatterns:['/'],cmsTags:[],
-   ctaUrl:'momo.vn',priority:'global',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn',active:true,isRetargeting:false},
   {id:'c6',name:'BHYT Retargeting Q3',division:'Insurance',format:'popup',
    urlPatterns:['/blog/*','/bao-hiem*'],cmsTags:['bao-hiem'],
-   ctaUrl:'momo.vn/bao-hiem-y-te',priority:'global',active:true,isRetargeting:true},
+   ctaUrl:'momo.vn/bao-hiem-y-te',active:true,isRetargeting:true},
   {id:'c7',name:'Cinema Native Pick',division:'Cinema',format:'native',
    urlPatterns:['/phim-rap','/phim-rap/*','/blog/giai-tri*'],cmsTags:['cinema','giai-tri'],
-   ctaUrl:'momo.vn/phim-rap',priority:'division',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn/phim-rap',active:true,isRetargeting:false},
   {id:'c8',name:'Insurance Sticky Anchor',division:'Insurance',format:'sticky',
    urlPatterns:['/blog/bao-hiem*','/bao-hiem/*'],cmsTags:['bao-hiem-xe-may','bao-hiem'],
-   ctaUrl:'momo.vn/bao-hiem/xe-may',priority:'division',active:true,isRetargeting:false},
+   ctaUrl:'momo.vn/bao-hiem/xe-may',active:true,isRetargeting:false},
   {id:'c9',name:'Merchant Sponsored Carousel',division:'BNPL',format:'carousel',
    urlPatterns:['/merchant/*','/vi-tra-sau'],cmsTags:['bnpl','merchant'],
-   ctaUrl:'momo.vn/vi-tra-sau',priority:'division',active:true,isRetargeting:true},
+   ctaUrl:'momo.vn/vi-tra-sau',active:true,isRetargeting:true},
 ];
 
 const PLACEMENTS = [
@@ -727,9 +767,9 @@ let currentMod = 'builder';
 let builderStep = 0;
 let builderState = {
   name:'', owner:'GPD Growth', division:'Insurance', objective:'awareness',
-  startDate:'2026-07-01', endDate:'2026-07-31', priority:'global',
+  startDate:'2026-07-01', endDate:'2026-07-31',
   adName:'', projectId:'', placementId:'', format:'balloon',
-  creativeTitle:'', creativeBody:'Ưu đãi độc quyền dành riêng cho bạn', ctaLabel:'Tìm hiểu ngay',
+  creativeBody:'Ưu đãi độc quyền dành riêng cho bạn', ctaLabel:'Tìm hiểu ngay',
   urlPatterns:[], cmsTags:[], ctaUrl:'',
   audience:'all', frequencyCap:'1_per_day', suppression:'converted_30d',
   isRetargeting:false, requiresApproval:true,
@@ -738,6 +778,18 @@ let device = 'mobile';
 let previewPage = 'blog';
 let previewCampaign = null;
 let abState = {ratio:50,declared:null,running:false};
+
+function syncGlobals() {
+  window.builderState = builderState;
+  window.campaigns = campaigns;
+  window.placements = placements;
+  window.currentMod = currentMod;
+  window.builderStep = builderStep;
+  window.device = device;
+  window.previewPage = previewPage;
+  window.previewCampaign = previewCampaign;
+  window.abState = abState;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    MODULE SWITCHER
@@ -754,10 +806,10 @@ function showMod(mod) {
     nav.style.display = 'none';
     renderPreviewToolbar();
     updateLivePreview();
-    if (mod === 'registry') renderRegistry();
-    else if (mod === 'engine') renderEngine();
+    if (mod === 'engine') renderEngine();
     else if (mod === 'abtest') renderAbTest();
   }
+  syncGlobals();
 }
 
 function renderPreviewToolbar() {
@@ -987,6 +1039,7 @@ function renderBuilder() {
   updateBuilderNav();
   if (builderStep === 0) renderBuilderRightPanel();
   else renderAdsContentPreview();
+  syncGlobals();
 }
 
 function campaignCard(c) {
@@ -1000,7 +1053,6 @@ function campaignCard(c) {
       <div class="cc-name">${c.name}</div>
       <div class="cc-meta">
         <span class="badge b-${c.format}">${f.icon} ${f.name}</span>
-        <span class="badge b-${c.priority}">${c.priority==='global'?'🌐 Global':'🏢 Division'}</span>
         <span class="status-badge st-${status}">${statusText}</span>
       </div>
     </div>
@@ -1014,134 +1066,133 @@ function campaignCard(c) {
 function renderStep(n) {
   const sb = document.getElementById('stepBody');
   if (!sb) return;
-  const steps = [stepAdsCampaign, stepAdsContent, stepPlacement, stepOverview, stepSubmission];
-  sb.innerHTML = steps[n]();
+  const steps = [buildCampaignStepHtml, buildAdsContentStepHtml, buildPlacementStepHtml, buildOverviewStepHtml, buildSubmissionStepHtml];
+  const html = steps[n] ? steps[n]() : '';
+  sb.innerHTML = html || `<div class="builder-note">Không render được nội dung bước này. Vui lòng reload trang.</div>`;
   setTimeout(() => {
     document.querySelectorAll('.obj-btn').forEach(b => b.classList.toggle('active', b.dataset.obj === builderState.objective));
-    document.querySelectorAll('.pri-opt').forEach(el => el.classList.toggle('sel', el.dataset.p === builderState.priority));
     updateUtm();
   }, 10);
 }
 
-function stepAdsCampaign() {
-  return `
-  <div class="fg">
-    <div class="fl">Tên chiến dịch <span style="color:var(--red)">*</span></div>
-    <input class="fi" id="campName" placeholder="VD: BH Xe Máy Q3 2026" value="${builderState.name}" oninput="builderState.name=this.value">
-  </div>
-  <div class="fg">
-    <div class="fl">Owner</div>
-    <input class="fi" id="campOwner" placeholder="VD: GPD Growth" value="${builderState.owner}" oninput="builderState.owner=this.value">
-  </div>
-  <div class="fg">
-    <div class="fl">Mục tiêu</div>
-    <div class="obj-grid">
-      ${OBJECTIVES.map(o=>`
-        <div class="obj-btn${builderState.objective===o.id?' active':''}" data-obj="${o.id}" onclick="builderState.objective='${o.id}';document.querySelectorAll('.obj-btn').forEach(b=>b.classList.toggle('active',b.dataset.obj==='${o.id}'))">
+function buildCampaignStepHtml() {
+  return [
+    `<div class="fg">
+      <div class="fl">Tên chiến dịch <span style="color:var(--red)">*</span></div>
+      <input class="fi" id="campName" placeholder="VD: BH Xe Máy Q3 2026" value="${builderState.name}" oninput="builderState.name=this.value">
+    </div>`,
+    `<div class="fg">
+      <div class="fl">Owner</div>
+      <input class="fi" id="campOwner" placeholder="VD: GPD Growth" value="${builderState.owner}" oninput="builderState.owner=this.value">
+    </div>`,
+    `<div class="fg">
+      <div class="fl">Mục tiêu</div>
+      <div class="obj-grid">
+        ${OBJECTIVES.map(o => `<div class="obj-btn${builderState.objective===o.id?' active':''}" data-obj="${o.id}" onclick="builderState.objective='${o.id}';document.querySelectorAll('.obj-btn').forEach(b=>b.classList.toggle('active',b.dataset.obj==='${o.id}'))">
           <span class="obj-icon">${o.icon}</span>
           <span class="obj-name">${o.name}</span>
           <span class="obj-desc">${o.desc}</span>
         </div>`).join('')}
-    </div>
-  </div>
-  <div class="fg">
-    <div class="fl">Priority</div>
-    <div class="pri-toggle">
-      <div class="pri-opt${builderState.priority==='global'?' sel':''}" data-p="global" onclick="setPriority('global')">
-        <div class="pri-opt-name">🌐 Global</div>
-        <div class="pri-opt-val">100</div>
-        <div class="pri-opt-desc">Cross-division</div>
       </div>
-      <div class="pri-opt${builderState.priority==='division'?' sel':''}" data-p="division" onclick="setPriority('division')">
-        <div class="pri-opt-name">🏢 Division</div>
-        <div class="pri-opt-val">50</div>
-        <div class="pri-opt-desc">Nội bộ project</div>
-      </div>
-    </div>
-  </div>
-  <div class="builder-note">Ads Campaign là lớp khai báo mục tiêu, owner và mức ưu tiên. Nội dung ads, project và thời gian chạy được khai báo ở bước tiếp theo.</div>`;
+    </div>`,
+    `<div class="builder-note">Ads Campaign chỉ là metadata quản lý: mục tiêu, owner và phạm vi vận hành. Nội dung hiển thị nằm ở bước Ads Content và có thể bị khóa nếu format là widget cố định.</div>`
+  ].join('');
 }
 
-function stepAdsContent() {
+function buildAdsContentStepHtml() {
   const project = getBuilderProject();
-  return `
-  <div class="fg">
-    <div class="fl">Tên ads <span style="color:var(--red)">*</span></div>
-    <input class="fi" id="adName" placeholder="VD: Banner ưu đãi xe máy" value="${builderState.adName}" oninput="builderState.adName=this.value;updateAdsPreview()">
-  </div>
-  <div class="fg">
-    <div class="fl">Format</div>
-    <div class="fmt-grid">
-      ${Object.entries(FORMAT_DEFS).map(([k,v]) => {
-        const slotCount = project ? getFormatSlotCount(k, project) : null;
-        const disabled = project && slotCount === 0;
-        return `
-        <div class="fmt-card${builderState.format===k?' sel':''}${disabled?' disabled':''}" data-f="${k}" onclick="${disabled ? `showError('Format ${v.name} chưa có slot trong Project ${project.name}')` : `setFormat('${k}')`}">
-          <div class="fmt-icon">${v.icon}</div>
-          <div class="fmt-name">${v.name}</div>
-          <div class="fmt-desc">${v.desc}</div>
-          <div class="fmt-avail">${project ? `${slotCount} slot` : 'Chọn Project'}</div>
-        </div>`;
-      }).join('')}
-    </div>
-    <div class="fh">${project ? `Đang kiểm tra format theo inventory của ${project.name}. Format 0 slot chỉ để xem gap, không thể chọn.` : 'Chọn Project để biết format nào có inventory thật.'}</div>
-  </div>
-  <div class="fg">
-    <div class="fl">Project <span style="color:var(--red)">*</span></div>
-    <select class="fi fsel" id="adProject" onchange="selectBuilderProject(this.value)">
-      <option value="">-- Chọn project --</option>
-      ${PROJECT_REGISTRY.map(p=>`<option value="${p.id}"${builderState.projectId===p.id?' selected':''}>${p.name} · ${p.div}</option>`).join('')}
-    </select>
-  </div>
-  <div class="fg">
-    <div class="fl">Thời gian chạy</div>
-    <div class="frow">
-      <div class="fg">
-        <div class="fl" style="font-weight:500;text-transform:none;letter-spacing:0">Bắt đầu</div>
-        <input class="fi" type="date" value="${builderState.startDate}" onchange="builderState.startDate=this.value">
+  const contentEditable = isEditableContentFormat(builderState.format);
+  const formatCards = Object.entries(FORMAT_DEFS).map(([k, v]) => {
+    const slotCount = project ? getFormatSlotCount(k, project) : null;
+    const disabled = !!project && slotCount === 0;
+    const clickHandler = disabled ? `showError('Format ${v.name} chưa có slot trong Project ${project.name}')` : `setFormat('${k}')`;
+    return `<div class="fmt-card${builderState.format===k?' sel':''}${disabled?' disabled':''}" data-f="${k}" onclick="${clickHandler}">
+      <div class="fmt-icon">${v.icon}</div>
+      <div class="fmt-name">${v.name}</div>
+      <div class="fmt-desc">${v.desc}</div>
+      <div class="fmt-avail">${project ? `${slotCount} slot` : 'Chọn Project'}</div>
+    </div>`;
+  }).join('');
+  const projectOptions = PROJECT_REGISTRY.map(p => `<option value="${p.id}"${builderState.projectId===p.id?' selected':''}>${p.name} · ${p.div}</option>`).join('');
+  return [
+    `<div class="fg">
+      <div class="fl">Tên ads <span style="color:var(--red)">*</span></div>
+      <input class="fi" id="adName" placeholder="VD: Banner ưu đãi xe máy" value="${builderState.adName}" oninput="builderState.adName=this.value;updateAdsPreview()">
+    </div>`,
+    `<div class="fg">
+      <div class="fl">Format <span style="color:var(--red)">*</span></div>
+      <div class="fmt-grid">${formatCards}</div>
+      <div class="fh">${project ? `Đang kiểm tra format theo inventory của ${project.name}. Format 0 slot chỉ để xem gap, không thể chọn.` : 'Chọn Project để biết format nào có inventory thật.'}</div>
+    </div>`,
+    `<div class="fg">
+      <div class="fl">Dự án cần đặt (Microsite) <span style="color:var(--red)">*</span></div>
+      <select class="fi fsel" id="adProject" onchange="selectBuilderProject(this.value)">
+        <option value="">-- Chọn project --</option>
+        ${projectOptions}
+      </select>
+    </div>`,
+    `<div class="fg">
+      <div class="fl">Thời gian hiển thị</div>
+      <div class="frow">
+        <div class="fg">
+          <div class="fl" style="font-weight:500;text-transform:none;letter-spacing:0">Bắt đầu</div>
+          <input class="fi" type="date" value="${builderState.startDate}" onchange="builderState.startDate=this.value">
+        </div>
+        <div class="fg">
+          <div class="fl" style="font-weight:500;text-transform:none;letter-spacing:0">Kết thúc</div>
+          <input class="fi" type="date" value="${builderState.endDate}" onchange="builderState.endDate=this.value">
+        </div>
       </div>
+    </div>`,
+    `<div class="builder-note">Vị trí đặt được chọn ở bước Placement tiếp theo. Hệ thống chỉ hiển thị slot còn trống, phù hợp với Project và Format hiện tại.</div>`,
+    contentEditable ? `
       <div class="fg">
-        <div class="fl" style="font-weight:500;text-transform:none;letter-spacing:0">Kết thúc</div>
-        <input class="fi" type="date" value="${builderState.endDate}" onchange="builderState.endDate=this.value">
+        <div class="fl">Content body</div>
+        <textarea class="fi" rows="3" placeholder="Nội dung hiển thị trên ads" oninput="builderState.creativeBody=this.value;updateAdsPreview()">${builderState.creativeBody || ''}</textarea>
       </div>
-    </div>
-  </div>
-  <div class="fg">
-    <div class="fl">Tiêu đề component</div>
-    <input class="fi" placeholder="VD: Bảo hiểm xe máy giảm 20%" value="${builderState.creativeTitle}" oninput="builderState.creativeTitle=this.value;updateAdsPreview()">
-  </div>
-  <div class="fg">
-    <div class="fl">Mô tả ngắn</div>
-    <textarea class="fi" rows="3" placeholder="Nội dung hiển thị trong ads" oninput="builderState.creativeBody=this.value;updateAdsPreview()">${builderState.creativeBody}</textarea>
-  </div>
-  <div class="frow">
-    <div class="fg">
-      <div class="fl">CTA Label</div>
-      <input class="fi" value="${builderState.ctaLabel}" oninput="builderState.ctaLabel=this.value;updateAdsPreview()">
-    </div>
-    <div class="fg">
-      <div class="fl">CTA URL</div>
-      <input class="fi" id="ctaUrl" placeholder="momo.vn/bao-hiem/xe-may" value="${builderState.ctaUrl}" oninput="builderState.ctaUrl=this.value;updateUtm();updateAdsPreview()">
-    </div>
-  </div>
-  <div class="fg">
-    <div class="fl">UTM auto generated</div>
-    <div class="utm-box" id="utmBox"></div>
-  </div>`;
+      <div class="frow">
+        <div class="fg">
+          <div class="fl">CTA Label</div>
+          <input class="fi" value="${builderState.ctaLabel}" oninput="builderState.ctaLabel=this.value;updateAdsPreview()">
+        </div>
+        <div class="fg">
+          <div class="fl">CTA URL</div>
+          <input class="fi" id="ctaUrl" placeholder="momo.vn/bao-hiem/xe-may" value="${builderState.ctaUrl}" oninput="builderState.ctaUrl=this.value;updateUtm();updateAdsPreview()">
+        </div>
+      </div>
+    ` : `
+      <div class="rule-card">
+        <div class="rule-title">Widget content fixed</div>
+        <div class="rule-desc">Format này lấy content và CTA từ source module. Flow Set Ads chỉ cho chọn project, thời gian và vị trí đặt.</div>
+      </div>
+    `,
+    `<div class="fg">
+      <div class="fl">UTM auto generated</div>
+      <div class="utm-box" id="utmBox"></div>
+    </div>`
+  ].join('');
 }
 
-function stepPlacement() {
+function buildPlacementStepHtml() {
   const proj = getBuilderProject();
   const slots = eligiblePlacements();
   const format = FORMAT_DEFS[builderState.format];
   return `
   <div class="fg">
-    <div class="fl">Inventory Slot <span style="color:var(--red)">*</span></div>
+    <div class="fl">Available Slot <span style="color:var(--red)">*</span></div>
     ${proj ? `<div class="slot-grid">
       ${slots.length ? slots.map(p=>slotCard(p)).join('') : `<div class="empty-note">Không có vị trí nào phù hợp với ${format.name} trong project ${proj.name}. Quay lại Ads Content để đổi format hoặc tạo thêm slot mới cho project này.</div>`}
     </div>` : `<div class="empty-note">Chọn Project ở bước Ads Content trước để xem slot phù hợp.</div>`}
   </div>
-  ${proj ? `<div class="builder-note">Đang lọc vị trí theo Project: ${proj.name}, Format: ${format.name}. Mỗi slot đại diện cho một UI surface khác nhau trong project.</div>` : ''}`;
+  ${proj ? `<div class="builder-note">Hệ thống đã lọc sẵn slot khả dụng theo Project: ${proj.name} và Format: ${format.name}. Chọn trực tiếp vị trí đặt, không cần màn inventory riêng.</div>` : ''}`;
+}
+
+function buildOverviewStepHtml() {
+  return stepOverview();
+}
+
+function buildSubmissionStepHtml() {
+  return stepSubmission();
 }
 
 function stepOverview() {
@@ -1163,21 +1214,6 @@ function stepOverview() {
     </div>
     <div class="rc-row"><span class="rk">Duration</span><span class="rv">${builderState.startDate} → ${builderState.endDate}</span></div>
     <div class="rc-row"><span class="rk">CTA</span><span class="rv">${builderState.ctaUrl || 'Chưa có'}</span></div>
-  </div>
-  <div class="fg">
-    <div class="fl">Priority</div>
-    <div class="pri-toggle">
-      <div class="pri-opt${builderState.priority==='global'?' sel':''}" data-p="global" onclick="setPriority('global')">
-        <div class="pri-opt-name">🌐 Global</div>
-        <div class="pri-opt-val">100</div>
-        <div class="pri-opt-desc">Cross-division</div>
-      </div>
-      <div class="pri-opt${builderState.priority==='division'?' sel':''}" data-p="division" onclick="setPriority('division')">
-        <div class="pri-opt-name">🏢 Division</div>
-        <div class="pri-opt-val">50</div>
-        <div class="pri-opt-desc">Nội bộ division</div>
-      </div>
-    </div>
   </div>
   <div class="frow">
     <div class="fg">
@@ -1233,6 +1269,7 @@ function stepSubmission() {
   const ready = getReadiness();
   const project = getBuilderProject();
   const placement = getSelectedPlacement();
+  const contentEditable = isEditableContentFormat(builderState.format);
   const status = ready.blockers.length ? 'blocked' : builderState.requiresApproval || ready.warnings.length ? 'pending' : 'active';
   const statusText = status === 'active' ? 'Active' : status === 'pending' ? 'Pending approval' : 'Blocked';
   return `
@@ -1244,11 +1281,11 @@ function stepSubmission() {
     </div>
     <div class="kv-grid">
       <div class="kv-tile"><div class="kv-key">Campaign</div><div class="kv-val">${builderState.name || 'Chưa chọn'}</div></div>
-      <div class="kv-tile"><div class="kv-key">Ads</div><div class="kv-val">${builderState.adName || 'Chưa chọn'}</div></div>
+      <div class="kv-tile"><div class="kv-key">Content title</div><div class="kv-val">${contentEditable ? (builderState.adName || 'Chưa chọn') : getWidgetSourceName(builderState.format)}</div></div>
       <div class="kv-tile"><div class="kv-key">Project</div><div class="kv-val">${project?.name || 'Chưa chọn'}</div></div>
       <div class="kv-tile"><div class="kv-key">Placement</div><div class="kv-val">${placement?.name || 'Chưa chọn'}</div></div>
     </div>
-    <div class="rc-row"><span class="rk">CTA</span><span class="rv">${builderState.ctaUrl || 'Chưa có'}</span></div>
+    <div class="rc-row"><span class="rk">CTA</span><span class="rv">${contentEditable ? (builderState.ctaUrl || 'Chưa có') : 'Locked by widget source'}</span></div>
     <div class="rc-row"><span class="rk">Tracking</span><span class="rv">utm_source=mospark_ads, utm_medium=${builderState.format}</span></div>
   </div>
   <div class="fg">
@@ -1261,13 +1298,16 @@ function stepSubmission() {
 function selectBuilderProject(id) {
   const proj = PROJECT_REGISTRY.find(p => p.id === id);
   builderState.projectId = id;
-  if (!proj) return;
+  builderState.placementId = '';
+  if (!proj) {
+    renderBuilder();
+    syncGlobals();
+    return;
+  }
   builderState.division = proj.div;
   builderState.ctaUrl = proj.url;
   builderState.cmsTags = [...proj.cmsTags];
   builderState.urlPatterns = [...proj.urlPatterns];
-  builderState.creativeTitle = builderState.creativeTitle || proj.name;
-  builderState.adName = builderState.adName || proj.name + ' Ads';
   const ctaEl = document.getElementById('ctaUrl');
   if (ctaEl) ctaEl.value = proj.url;
   previewPage = proj.page;
@@ -1275,25 +1315,27 @@ function selectBuilderProject(id) {
   if (availableFormats.length && !availableFormats.includes(builderState.format)) {
     builderState.format = availableFormats[0];
   }
-  const slots = eligiblePlacements();
-  if (!slots.some(p => p.id === builderState.placementId)) {
-    const preferred = slots.find(p => p.status === 'empty') || slots[0];
-    builderState.placementId = preferred?.id || '';
+  if (isEditableContentFormat(builderState.format) && !builderState.adName) {
+    builderState.adName = getDefaultContentTitle(builderState.format, proj);
+  }
+  if (!isEditableContentFormat(builderState.format)) {
+    builderState.ctaUrl = '';
   }
   renderBuilder();
+  syncGlobals();
 }
 
 function selectPlacement(id) {
   const slot = placements.find(p => p.id === id);
   if (!slot) return;
+  if (slot.status !== 'empty') {
+    showError(`Slot ${slot.name} không còn khả dụng`);
+    return;
+  }
   builderState.placementId = id;
   if (!slot.formats.includes(builderState.format)) builderState.format = slot.formats[0];
   renderBuilder();
-}
-
-function setPriority(p) {
-  builderState.priority = p;
-  document.querySelectorAll('.pri-opt').forEach(el => el.classList.toggle('sel', el.dataset.p===p));
+  syncGlobals();
 }
 
 function setFormat(f) {
@@ -1303,19 +1345,24 @@ function setFormat(f) {
     return;
   }
   builderState.format = f;
+  if (!isEditableContentFormat(f)) {
+    builderState.ctaUrl = '';
+  } else if (!builderState.adName) {
+    builderState.adName = getDefaultContentTitle(f, project);
+  }
   if (builderState.placementId && !allowedFormatsForSelectedSlot().includes(f)) {
-    const nextSlot = eligiblePlacements().find(p => p.status === 'empty') || eligiblePlacements()[0];
-    builderState.placementId = nextSlot?.id || '';
+    builderState.placementId = '';
   }
   document.querySelectorAll('.fmt-card').forEach(el => el.classList.toggle('sel', el.dataset.f === f));
   document.querySelectorAll('.fg-card').forEach(el => el.classList.toggle('sel', el.dataset.f === f));
   if (builderStep >= 1) updateAdsPreview();
+  syncGlobals();
 }
 
 function updateUtm() {
   const box = document.getElementById('utmBox');
   if (!box) return;
-  const slug = (builderState.name || builderState.adName || 'campaign').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const slug = (builderState.name || 'campaign').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
   const base = builderState.ctaUrl || 'momo.vn/...';
   box.innerHTML = `<span class="uk">utm_source</span>=<span class="uv">mospark_ads</span><br><span class="uk">utm_medium</span>=<span class="uv">${builderState.format}</span><br><span class="uk">utm_campaign</span>=<span class="uv">${slug}</span><br><span style="color:var(--t3);font-size:9px">${base}?utm_source=mospark_ads&utm_medium=${builderState.format}&utm_campaign=${slug}</span>`;
 }
@@ -1343,10 +1390,11 @@ function updateAdsPreview() {
   if (!wrap || !scroll) return;
   scroll.style.alignItems = 'center';
   const mockCamp = {
-    name: builderState.creativeTitle || builderState.adName || builderState.name || 'Ad Preview',
+    name: builderState.name || 'Draft campaign',
     format: builderState.format,
     division: builderState.division,
     ctaUrl: builderState.ctaUrl || 'momo.vn',
+    contentTitle: isEditableContentFormat(builderState.format) ? builderState.adName : getWidgetSourceName(builderState.format),
     creativeBody: builderState.creativeBody,
     ctaLabel: builderState.ctaLabel,
   };
@@ -1359,7 +1407,7 @@ function updateAdsPreview() {
   }
   document.getElementById('mTotal').textContent = campaigns.length;
   document.getElementById('mFormat').textContent = FORMAT_DEFS[builderState.format].icon+' '+FORMAT_DEFS[builderState.format].name;
-  document.getElementById('mCampaign').textContent = mockCamp.name;
+  document.getElementById('mCampaign').textContent = builderState.name || 'Draft setup';
 }
 
 /* ── NAV ───────────────────────────────────────────────────────────────── */
@@ -1385,11 +1433,14 @@ function nextStep() {
   const err = document.getElementById('errorBar');
   if (err) { err.classList.remove('show'); err.textContent = ''; }
   const validation = validateStep(builderStep);
-  if (!validation.ok) { showError(validation.msg); return; }
-  if (builderStep < STEP_LABELS.length - 1) { builderStep++; renderBuilder(); }
+  if (!validation.ok) {
+    showError(validation.msg);
+    return;
+  }
+  if (builderStep < STEP_LABELS.length - 1) { builderStep++; renderBuilder(); syncGlobals(); }
 }
 function prevStep() {
-  if (builderStep > 0) { builderStep--; renderBuilder(); }
+  if (builderStep > 0) { builderStep--; renderBuilder(); syncGlobals(); }
 }
 function showError(msg) {
   const bar = document.getElementById('errorBar');
@@ -1399,22 +1450,34 @@ function showError(msg) {
 function saveCampaign() {
   const ready = getReadiness();
   if (ready.blockers.length) { showError('Còn blocker: ' + ready.blockers[0]); return; }
+  const selectedSlot = getSelectedPlacement();
+  if (!selectedSlot || selectedSlot.status !== 'empty') {
+    showError('Slot đã thay đổi trạng thái. Vui lòng chọn lại vị trí khả dụng.');
+    builderStep = 2;
+    renderBuilder();
+    return;
+  }
   const id = 'c' + Date.now();
   const status = builderState.requiresApproval || ready.warnings.length ? 'pending' : 'active';
   campaigns.push({
-    id, name: builderState.adName || builderState.name,
+    id, name: builderState.name,
     division: builderState.division, format: builderState.format,
     urlPatterns: [...builderState.urlPatterns], cmsTags: [...builderState.cmsTags],
-    ctaUrl: builderState.ctaUrl, priority: builderState.priority,
+    ctaUrl: builderState.ctaUrl,
     active: status === 'active', isRetargeting: builderState.isRetargeting,
     status, owner: builderState.owner, objective: builderState.objective,
     placementId: builderState.placementId,
     audience: builderState.audience, frequencyCap: builderState.frequencyCap,
     suppression: builderState.suppression,
+    contentTitle: isEditableContentFormat(builderState.format) ? builderState.adName : getWidgetSourceName(builderState.format),
+    creativeBody: builderState.creativeBody,
+    ctaLabel: builderState.ctaLabel,
+    contentMode: getContentModeLabel(builderState.format),
   });
   placements = placements.map(p => p.id === builderState.placementId ? {...p, status: status === 'active' ? 'occupied' : 'reserved', campaignId:id} : p);
   builderState = getDefaultBuilderState();
   builderStep = 0;
+  syncGlobals();
   showToast(status === 'active' ? '✓ Campaign đã submit và active' : '✓ Campaign đã submit pending approval', 't-green');
   updateMetrics();
   renderBuilder();
@@ -1423,9 +1486,9 @@ function saveCampaign() {
 function getDefaultBuilderState() {
   return {
     name:'', owner:'GPD Growth', division:'Insurance', objective:'awareness',
-    startDate:'2026-07-01', endDate:'2026-07-31', priority:'global',
+    startDate:'2026-07-01', endDate:'2026-07-31',
     adName:'', projectId:'', placementId:'', format:'balloon',
-    creativeTitle:'', creativeBody:'Ưu đãi độc quyền dành riêng cho bạn', ctaLabel:'Tìm hiểu ngay',
+    creativeBody:'Ưu đãi độc quyền dành riêng cho bạn', ctaLabel:'Tìm hiểu ngay',
     urlPatterns:[], cmsTags:[], ctaUrl:'',
     audience:'all', frequencyCap:'1_per_day', suppression:'converted_30d',
     isRetargeting:false, requiresApproval:true,
@@ -1458,12 +1521,12 @@ function scopeMatchesProject(slot, project) {
 function eligiblePlacements() {
   const project = getBuilderProject();
   if (!project) return [];
-  return placements.filter(p => scopeMatchesProject(p, project) && p.formats.includes(builderState.format));
+  return placements.filter(p => p.status === 'empty' && scopeMatchesProject(p, project) && p.formats.includes(builderState.format));
 }
 
 function getFormatSlotCount(format, project = getBuilderProject()) {
   if (!project) return 0;
-  return placements.filter(p => scopeMatchesProject(p, project) && p.formats.includes(format)).length;
+  return placements.filter(p => p.status === 'empty' && scopeMatchesProject(p, project) && p.formats.includes(format)).length;
 }
 
 function getAvailableFormatsForProject(project = getBuilderProject()) {
@@ -1506,12 +1569,14 @@ function validateStep(step) {
     if (!builderState.owner.trim()) return {ok:false,msg:'Vui lòng nhập owner'};
   }
   if (step === 1) {
-    if (!builderState.adName.trim()) return {ok:false,msg:'Vui lòng nhập tên quảng cáo'};
     if (!builderState.projectId) return {ok:false,msg:'Vui lòng chọn Project'};
     const project = getBuilderProject();
     if (project && getFormatSlotCount(builderState.format, project) === 0) return {ok:false,msg:`Format ${FORMAT_DEFS[builderState.format].name} chưa có slot trong Project ${project.name}`};
     if (builderState.endDate < builderState.startDate) return {ok:false,msg:'Ngày kết thúc phải sau ngày bắt đầu'};
-    if (!builderState.ctaUrl.trim()) return {ok:false,msg:'Vui lòng nhập CTA URL'};
+    if (isEditableContentFormat(builderState.format)) {
+      if (!builderState.adName.trim()) return {ok:false,msg:'Vui lòng nhập content title'};
+      if (!builderState.ctaUrl.trim()) return {ok:false,msg:'Vui lòng nhập CTA URL'};
+    }
   }
   if (step === 2) {
     if (!builderState.placementId) return {ok:false,msg:'Vui lòng chọn inventory slot'};
@@ -1526,15 +1591,18 @@ function validateStep(step) {
 function getBuilderCandidate() {
   return {
     id:'draft',
-    name:builderState.adName || builderState.name || 'Draft campaign',
+    name:builderState.name || 'Draft campaign',
     division:builderState.division,
     format:builderState.format,
     urlPatterns:[...builderState.urlPatterns],
     cmsTags:[...builderState.cmsTags],
     ctaUrl:builderState.ctaUrl,
-    priority:builderState.priority,
     active:true,
     isRetargeting:builderState.isRetargeting,
+    contentTitle:isEditableContentFormat(builderState.format) ? builderState.adName : getWidgetSourceName(builderState.format),
+    creativeBody:builderState.creativeBody,
+    ctaLabel:builderState.ctaLabel,
+    contentMode:getContentModeLabel(builderState.format),
   };
 }
 
@@ -1576,13 +1644,16 @@ function getReadiness() {
   if (!slot) blockers.push('Chưa chọn inventory slot');
   else {
     passes.push('Đã chọn inventory slot');
-    if (slot.status === 'occupied') warnings.push('Slot đang có campaign chạy');
-    if (slot.status === 'reserved') warnings.push('Slot đang được giữ bởi campaign pending');
+    if (slot.status !== 'empty') blockers.push('Inventory slot không còn khả dụng');
   }
-  if (!builderState.adName.trim()) blockers.push('Thiếu tên ads content');
-  else passes.push('Ads content đã có tên');
-  if (!builderState.ctaUrl.trim()) blockers.push('Thiếu CTA URL');
-  else passes.push('CTA URL đã sẵn sàng');
+  if (isEditableContentFormat(builderState.format)) {
+    if (!builderState.adName.trim()) blockers.push('Thiếu content title');
+    else passes.push('Ads content đã có tên');
+    if (!builderState.ctaUrl.trim()) blockers.push('Thiếu CTA URL');
+    else passes.push('CTA URL đã sẵn sàng');
+  } else {
+    passes.push(`Content locked by ${getWidgetSourceName(builderState.format)}`);
+  }
   if (slot && !slot.formats.includes(builderState.format)) blockers.push('Format không khớp inventory slot');
   else passes.push('Format khớp slot');
   if (builderState.endDate < builderState.startDate) blockers.push('Thời gian chạy không hợp lệ');
@@ -1627,8 +1698,8 @@ function deleteCampaign(id) {
   placements = placements.map(p => p.campaignId === id ? {...p,status:'empty',campaignId:null} : p);
   updateMetrics();
   if (currentMod==='builder') renderBuilder();
-  else if (currentMod==='registry') renderRegistry();
   showToast('Campaign đã xóa');
+  syncGlobals();
 }
 
 function previewCampaignId(id) {
@@ -1639,36 +1710,7 @@ function previewCampaignId(id) {
   document.getElementById('mCampaign').textContent = c.name;
   document.getElementById('mFormat').textContent = FORMAT_DEFS[c.format].icon+' '+FORMAT_DEFS[c.format].name;
   showToast('👁 Preview: '+c.name,'t-pk');
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   PLACEMENT REGISTRY
-═══════════════════════════════════════════════════════════════════════════ */
-function renderRegistry() {
-  const wrap = document.getElementById('modContent');
-  const getCampaignName = id => campaigns.find(c=>c.id===id)?.name||'—';
-  wrap.innerHTML = `
-    <div class="section-head">Campaigns (${campaigns.length})</div>
-    <div class="campaign-list">${campaigns.map(c=>campaignCard(c)).join('')}</div>
-    <div class="sep"></div>
-    <div class="section-head">Placement Slots (${placements.length})</div>
-    <div class="reg-wrap">
-    <table class="reg-table">
-      <thead><tr>
-        <th>Tên Slot</th><th>URL Scope</th><th>Formats</th><th>Status</th><th>Campaign</th>
-      </tr></thead>
-      <tbody>${placements.map(p=>`
-        <tr>
-          <td><strong>${p.name}</strong></td>
-          <td><code style="font-size:9px;color:var(--blue)">${p.urlScope}</code></td>
-          <td>${p.formats.map(f=>`<span class="ft ft-${f}">${f}</span>`).join('')}</td>
-          <td><span class="sdot ${p.status==='empty'?'s-empty':p.status==='reserved'?'s-reserved':'s-occ'}"></span>${slotStatusLabel(p.status)}</td>
-          <td style="font-size:10px;color:var(--t2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.campaignId?getCampaignName(p.campaignId):'—'}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table></div>
-    <div style="margin-top:8px;font-size:10px;color:var(--t3)">📝 Registry là mock-data. Trong production sẽ được quản lý bởi Platform Admin.</div>
-  `;
+  syncGlobals();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1705,8 +1747,8 @@ function matchUrl(pattern, url) {
 }
 
 function calcScore(campaign, url, testTags) {
-  let score = campaign.priority==='global'?100:50;
-  const factors = [{label:'Base '+campaign.priority, cls:'cff-base', val: score}];
+  let score = 60;
+  const factors = [{label:'Base match', cls:'cff-base', val: score}];
   const urlMatch = campaign.urlPatterns.some(p=>matchUrl(p,url));
   if (urlMatch) { score+=10; factors.push({label:'+10 URL Match',cls:'cff-url',val:10}); }
   const tagMatches = campaign.cmsTags.filter(t=>testTags.includes(t));
@@ -1841,13 +1883,14 @@ function renderAbTest() {
         </div>
       </div>
     </div>
-    ${abState.declared
+  ${abState.declared
       ? `<div class="declared-winner">✅ Đã chọn Variant ${abState.declared.toUpperCase()} làm phiên bản chính thức.</div>`
       : `<div class="declare-winner-row">
-          <button class="btn-declare a" onclick="declareWinner('a')">Chọn Variant A</button>
-          <button class="btn-declare b" onclick="declareWinner('b')">Chọn Variant B ↑ CTR</button>
+          <button class="btn-declare a" data-winner="a" onclick="declareWinner('a')">Chọn Variant A</button>
+          <button class="btn-declare b" data-winner="b" onclick="declareWinner('b')">Chọn Variant B ↑ CTR</button>
         </div>`}
   `;
+  syncGlobals();
 }
 
 function setRatio(v) {
@@ -1855,6 +1898,7 @@ function setRatio(v) {
   const fill = document.getElementById('ratioFill');
   if (fill) fill.style.width = v+'%';
   document.querySelector('.ratio-labels').innerHTML = `<span>Variant A: ${v}%</span><span>Variant B: ${100-v}%</span>`;
+  syncGlobals();
 }
 function handleRatioClick(e) {
   const t = e.currentTarget;
@@ -1865,11 +1909,13 @@ function handleRatioClick(e) {
 function launchAbTest() {
   abState.running = true;
   showToast('🚀 A/B Test đã khởi chạy!','t-pk');
+  syncGlobals();
 }
 function declareWinner(v) {
   abState.declared = v;
   showToast(`🏆 Variant ${v.toUpperCase()} được chọn làm winner!`,'t-green');
   renderAbTest();
+  syncGlobals();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1882,12 +1928,14 @@ function setDevice(d) {
   document.getElementById('btnMobile').classList.toggle('active',d==='mobile');
   document.getElementById('btnDesktop').classList.toggle('active',d==='desktop');
   updateLivePreview();
+  syncGlobals();
 }
 function setPage(p) {
   previewPage = p;
   document.querySelectorAll('.pt-pg').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(p==='blog'?'blog':p==='hub'?'vay':'home')));
   document.getElementById('ptUrlText').textContent = PAGE_URLS[p];
   updateLivePreview();
+  syncGlobals();
 }
 
 function updateLivePreview() {
@@ -1920,6 +1968,7 @@ function updateLivePreview() {
     document.getElementById('mFormat').textContent = FORMAT_DEFS[c.format].icon+' '+FORMAT_DEFS[c.format].name;
     document.getElementById('mCampaign').textContent = c.name;
   }
+  syncGlobals();
 }
 
 function buildPageMockup(page) {
@@ -2109,6 +2158,35 @@ function showToast(msg,cls='') {
    INIT
 ═══════════════════════════════════════════════════════════════════════════ */
 showMod('builder');
+Object.assign(window, {
+  showMod,
+  renderBuilder,
+  renderStep,
+  nextStep,
+  prevStep,
+  showError,
+  setFormat,
+  selectBuilderProject,
+  selectPlacement,
+  updateUtm,
+  updateAdsPreview,
+  saveCampaign,
+  previewCampaignId,
+  deleteCampaign,
+  setDevice,
+  setPage,
+  renderEngine,
+  setPresetUrl,
+  checkUrl,
+  renderAbTest,
+  setRatio,
+  handleRatioClick,
+  launchAbTest,
+  declareWinner,
+  updateLivePreview,
+  logCta,
+});
+syncGlobals();
 </script>
 </body>
 </html>
