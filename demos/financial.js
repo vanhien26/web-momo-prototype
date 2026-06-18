@@ -115,6 +115,7 @@ const TOOLS = [
     id: 'tra-gop', name: 'Trả Góp', category: 'Credit', abbr: 'TG',
     intent: 'Commercial intent', panel: 'generic',
     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.',
+    jtbd: 'Tôi đang muốn mua một món hàng vượt ngân sách hiện tại và phân vân chia bao nhiêu kỳ thì hợp lý. Cần thấy ngay <b>số tiền trả mỗi tháng và tổng chi phí tài chính</b> cho từng kỳ hạn, để <b>chọn được phương án vừa mua được vừa không khô túi mỗi tháng</b>.',
     formula: 'Vốn gốc = <b>Giá × (100% − Trả trước%)</b><br>Trả/tháng = <b>Vốn gốc ÷ n + Vốn gốc × Lãi suất/12</b><br><em>Áp dụng phương pháp lãi phẳng (flat rate)</em>',
     resultLabel: 'TRẢ MỖI THÁNG ƯỚC TÍNH',
     fields: [
@@ -170,23 +171,26 @@ const TOOLS = [
   {
     id: 'bao-hiem-o-to', name: 'BH Ô Tô', category: 'Insurance', abbr: 'BH',
     intent: 'Commercial intent', panel: 'generic',
-    description: 'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí.',
-    formula: 'Phí BH/năm = <b>Giá trị xe × Tỷ lệ phí (%)</b><br><em>Tỷ lệ phí tham chiếu theo Thông tư 04/2021/TT-BTC: xe con đến 6 chỗ từ 1,56% – 2,10%</em>',
+    description: 'Mô phỏng phí bảo hiểm vật chất ô tô (BHVC tự nguyện) theo giá trị xe và độ tuổi xe. Tỷ lệ tham chiếu thị trường 2026 từ Bảo Việt, PJICO, OPES, MIC: 1,4% - 2% giá trị xe.',
+    jtbd: 'Tôi sắp mua hoặc gia hạn bảo hiểm vật chất cho xe và muốn biết phải trả bao nhiêu. Cần biết ngay <b>phí bảo hiểm năm dự kiến theo giá trị xe và độ tuổi xe của mình</b>, để <b>dự trù ngân sách và so sánh giữa các gói trước khi quyết định mua</b>.',
+    formula: 'Phí BHVC/năm = <b>Giá trị xe × Tỷ lệ phí (%)</b> + <b>VAT 10%</b><br><em>Tỷ lệ thị trường: xe con dưới 3 năm 1,4% &nbsp;·&nbsp; 3-6 năm 1,6% &nbsp;·&nbsp; trên 6 năm 1,8% &nbsp;·&nbsp; SUV/Pickup +0,2%</em>',
     resultLabel: 'PHÍ BẢO HIỂM NĂM',
     fields: [
-      { id: 'carValue',      label: 'Giá trị xe',            type: 'money',  min: 100000000, max: 5000000000, step: 10000000, value: 500000000, chips: [200000000, 500000000, 1000000000] },
-      { id: 'insuranceRate', label: 'Tỷ lệ phí bảo hiểm',   type: 'select', options: [
-        {value:0.55,label:'0.55% - Xe con ≤9 chỗ'},
-        {value:0.8, label:'0.80% - Xe tải ≤2 tấn'},
-        {value:1.1, label:'1.10% - Xe pickup / SUV'},
-      ], value: 0.55 },
+      { id: 'carValue',      label: 'Giá trị xe',  type: 'money',  min: 100000000, max: 5000000000, step: 10000000, value: 500000000, chips: [200000000, 500000000, 1000000000] },
+      { id: 'insuranceRate', label: 'Loại xe và độ tuổi', type: 'select', options: [
+        {value:1.4, label:'1,40% - Xe con dưới 3 năm'},
+        {value:1.6, label:'1,60% - Xe con 3-6 năm SUV/Pickup mới'},
+        {value:1.8, label:'1,80% - Xe con trên 6 năm hoặc SUV/Pickup 3-6 năm'},
+        {value:2.0, label:'2,00% - SUV/Pickup trên 6 năm'},
+      ], value: 1.4 },
     ],
     compute(v) {
       const p = v.carValue * v.insuranceRate / 100, vat = p * 0.1;
       return { result: fmt(p + vat), details: [
         { label: 'Phí bảo hiểm thuần', value: fmt(p) },
-        { label: 'Thuế VAT (10%)', value: fmt(vat) },
+        { label: 'VAT (10%)', value: fmt(vat) },
         { label: 'Bồi thường tối đa', value: fmtM(v.carValue) },
+        { label: 'Tỷ lệ phí áp dụng', value: v.insuranceRate.toFixed(2) + '%' },
       ]};
     },
   },
@@ -194,6 +198,7 @@ const TOOLS = [
     id: 'bhxh', name: 'BHXH', category: 'Insurance', abbr: 'XH',
     intent: 'Transactional intent', panel: 'generic',
     description: 'Tính mức đóng BHXH tự nguyện qua MoMo: 22% mức lương làm căn cứ, trừ hỗ trợ Nhà nước 66.000đ/tháng.',
+    jtbd: 'Tôi đang cân nhắc tham gia BHXH tự nguyện để có lương hưu sau này. Cần thấy ngay <b>mức thực đóng mỗi tháng và tổng cam kết tài chính theo số tháng tham gia</b>, để <b>biết có cân đối được dòng tiền dài hạn để duy trì đóng đủ năm</b>.',
     formula: 'Phí thực đóng = <b>22% × Lương căn cứ − 66.000đ</b><br><em>66.000đ = hỗ trợ Nhà nước cố định cho mức lương căn cứ tối thiểu (theo Nghị định 134/2015/NĐ-CP)</em>',
     resultLabel: 'THỰC ĐÓNG QUA MOMO/THÁNG',
     fields: [
@@ -224,6 +229,7 @@ const TOOLS = [
     id: 'luong-huu', name: 'Lương Hưu', category: 'Insurance', abbr: 'LH',
     intent: 'Informational intent', panel: 'generic',
     description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương làm căn cứ.',
+    jtbd: 'Tôi sắp về hưu hoặc đang lập kế hoạch nghỉ hưu sớm và muốn biết lương hưu sẽ là bao nhiêu. Cần ước tính ngay <b>mức lương hưu hàng tháng theo số năm đóng và mức lương căn cứ của mình</b>, để <b>biết có đủ sống và cần đầu tư thêm bao nhiêu để bù khoảng thiếu</b>.',
     formula: 'Lương hưu = <b>Tỷ lệ hưởng × Mức bình quân lương/tháng</b><br>Nữ ≥15 năm: 45% → +2%/năm &nbsp;|&nbsp; Nam ≥20 năm: 45% → +2%/năm<br>Nam 15–19 năm: 40% → +1%/năm &nbsp;|&nbsp; <em>Tối đa 75%</em>',
     resultLabel: 'LƯƠNG HƯU ƯỚC TÍNH/THÁNG',
     fields: [
@@ -264,10 +270,65 @@ const TOOLS = [
     },
   },
   {
+    id: 'bhxh-1-lan', name: 'BHXH 1 Lần', category: 'Insurance', abbr: 'B1',
+    intent: 'Transactional intent', panel: 'generic',
+    description: 'Ước tính số tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024. Nhập mức lương đóng BHXH hiện tại, tool tự ước tính MBQTL (Mức bình quân tiền lương) theo số năm đã đóng và hệ số trượt giá CPI. Để có số chính xác, tra cứu trong sổ BHXH cá nhân tại ứng dụng VssID.',
+    jtbd: 'Tôi đang phân vân giữa rút BHXH một lần hay giữ tiếp để nhận lương hưu sau này. Cần biết ngay <b>số tiền có thể rút theo mức lương đóng và số năm đã đóng của mình</b>, để <b>quyết định đúng giữa cầm tiền ngay hay an sinh dài hạn</b>.',
+    formula: 'MBQTL ≈ <b>Lương đóng × Hệ số trượt giá</b> (auto ước tính theo số năm đóng)<br>Mức hưởng = <b>(1,5 × MBQTL × Năm trước 2014)</b> + <b>(2 × MBQTL × Năm từ 2014)</b><br><em>MBQTL = Mức bình quân tiền lương tháng đóng BHXH đã điều chỉnh CPI. Tháng lẻ 01-06 = nửa năm · 07-11 = 1 năm.</em>',
+    resultLabel: 'BHXH 1 LẦN ƯỚC TÍNH',
+    fields: [
+      { id: 'monthlySalary',  label: 'Mức lương đóng BHXH/tháng (hiện tại)', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
+      { id: 'yearsPre2014',   label: 'Số năm đóng trước 2014',                type: 'range', min: 0, max: 25, step: 0.5, value: 0,  unit: ' năm' },
+      { id: 'yearsPost2014',  label: 'Số năm đóng từ 2014',                   type: 'range', min: 0, max: 15, step: 0.5, value: 10, unit: ' năm' },
+      { id: 'joinedAfter725', label: 'Thời điểm tham gia BHXH lần đầu',       type: 'select', options: [
+        {value:0, label:'Trước 01/07/2025 (được rút 1 lần)'},
+        {value:1, label:'Sau 01/07/2025 (không được rút, trừ trường hợp đặc biệt)'},
+      ], value: 0 },
+    ],
+    compute(v) {
+      const totalYears = v.yearsPre2014 + v.yearsPost2014;
+      // Auto-estimate MBQTL: lương quá khứ thấp hơn hiện tại, đã được CPI bù một phần.
+      // Empirical factor: 1.0 (≤1 năm) giảm xuống 0.7 (≥20 năm).
+      const mbqtlFactor = Math.max(0.7, 1 - totalYears * 0.015);
+      const mbqtl = v.monthlySalary * mbqtlFactor;
+      const pre = 1.5 * mbqtl * v.yearsPre2014;
+      const post = 2 * mbqtl * v.yearsPost2014;
+      const total = pre + post;
+      let pensionRate = 0;
+      if (totalYears >= 15) {
+        pensionRate = Math.min(75, 45 + Math.max(0, totalYears - 15) * 2) / 100;
+      }
+      const monthlyPension = pensionRate * mbqtl;
+      const restricted = v.joinedAfter725 === 1;
+      let insight;
+      if (restricted) {
+        insight = `Tham gia BHXH sau 01/07/2025 không được rút 1 lần (trừ trường hợp đặc biệt: bệnh nặng, suy giảm KNLĐ ≥81%, đủ tuổi hưu mà chưa đủ 15 năm). Tiếp tục đóng để nhận lương hưu ${pensionRate > 0 ? '~' + fmt(monthlyPension) + '/tháng' : '(cần đủ 15 năm)'}.`;
+      } else if (monthlyPension > 0) {
+        const breakEvenMonths = Math.round(total / monthlyPension);
+        const breakEvenYears = (breakEvenMonths / 12).toFixed(1);
+        insight = `Rút 1 lần được ${fmt(total)}. Nếu giữ tiếp để hưởng lương hưu (~${fmt(monthlyPension)}/tháng), sau ${breakEvenMonths} tháng (${breakEvenYears} năm) nhận hưu, tổng tiền hưu sẽ vượt khoản 1 lần này.`;
+      } else {
+        insight = `Bạn chưa đủ 15 năm đóng để hưởng lương hưu. Có thể rút ${fmt(total)} hoặc đóng tiếp đến đủ 15 năm để có lương hưu suốt đời.`;
+      }
+      return {
+        result: fmt(total),
+        details: [
+          { label: `MBQTL ước tính (hệ số ${mbqtlFactor.toFixed(2)}×)`, value: fmt(mbqtl) + '/tháng' },
+          { label: 'Phần trước 2014 (1,5 × MBQTL)',                       value: fmt(pre) },
+          { label: 'Phần từ 2014 (2 × MBQTL)',                            value: fmt(post) },
+          { label: 'Tổng số năm đóng',                                      value: totalYears.toFixed(1) + ' năm' },
+          { label: 'Lương hưu nếu giữ tiếp',                                value: pensionRate > 0 ? fmt(monthlyPension) + '/tháng' : 'Chưa đủ 15 năm' },
+        ],
+        insight,
+      };
+    },
+  },
+  {
     id: 'tiet-kiem', name: 'Tiết Kiệm', category: 'Savings', abbr: 'TK',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',
-    formula: 'Lãi = <b>Gốc × Lãi suất/năm × Kỳ hạn (tháng) ÷ 12</b><br>Tổng nhận = <b>Gốc + Lãi</b> &nbsp;|&nbsp; <em>Áp dụng lãi đơn cuối kỳ (không ghép lãi)</em>',
+    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất. Lãi tiết kiệm cá nhân tại TCTD được miễn thuế TNCN theo Điều 4 Luật Thuế TNCN.',
+    jtbd: 'Tôi có một khoản tiền nhàn rỗi và muốn ước tính nhận được bao nhiêu lãi nếu gửi tiết kiệm. Cần biết ngay <b>số tiền thực nhận khi đáo hạn theo lãi suất và kỳ hạn</b>, để <b>so sánh với gửi MoMo, mua vàng hoặc đầu tư khác trước khi quyết định</b>.',
+    formula: 'Lãi = <b>Gốc × Lãi suất/năm × Kỳ hạn (tháng) ÷ 12</b><br>Tổng nhận = <b>Gốc + Lãi</b><br><em>Áp dụng lãi đơn cuối kỳ (không ghép lãi). Lãi tiết kiệm cá nhân được miễn thuế TNCN.</em>',
     resultLabel: 'NHẬN KHI ĐÁO HẠN',
     fields: [
       { id: 'principal', label: 'Số tiền gửi',    type: 'money',  min: 1000000, max: 2000000000, step: 1000000, value: 50000000, chips: [10000000, 50000000, 200000000] },
@@ -279,19 +340,19 @@ const TOOLS = [
     ],
     compute(v) {
       const interest = v.principal * v.rate / 100 / 12 * v.term;
-      const tax = interest * 0.05;
-      return { result: fmt(v.principal + interest - tax), details: [
+      return { result: fmt(v.principal + interest), details: [
         { label: 'Tiền gốc', value: fmt(v.principal) },
-        { label: 'Lãi trước thuế', value: fmt(interest) },
-        { label: 'Thuế TNCN lãi (5%)', value: fmt(tax) },
+        { label: 'Lãi nhận', value: fmt(interest) },
+        { label: 'Thuế TNCN', value: 'Miễn (Điều 4 Luật TNCN)' },
       ]};
     },
   },
   {
     id: 'thue-tncn', name: 'Thuế TNCN', category: 'Tax', abbr: 'TC',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến, chiết khấu gia cảnh và người phụ thuộc.',
-    formula: 'Thu nhập chịu thuế = <b>Lương gross − BHXH/BHYT/BHTN − 11 triệu − NTT × 4,4 triệu</b><br>Thuế = <b>Thu nhập chịu thuế × Biểu lũy tiến 7 bậc (5% → 35%)</b>',
+    description: 'Ước tính thuế TNCN theo Luật Thuế TNCN sửa đổi 2025 và Nghị quyết 110/2025/UBTVQH15 (hiệu lực 01/01/2026): biểu lũy tiến 5 bậc, giảm trừ bản thân 15,5 triệu, NPT 6,2 triệu.',
+    jtbd: 'Tôi muốn biết với mức lương gross của mình thì sau thuế nhận được bao nhiêu, có người phụ thuộc thì giảm trừ ra sao. Cần thấy ngay <b>thuế phải đóng và lương net hàng tháng theo biểu lũy tiến 5 bậc mới 2026</b>, để <b>biết mức sống thực tế và đàm phán lương gross/net với nhà tuyển dụng</b>.',
+    formula: 'Thu nhập chịu thuế = <b>Lương gross − BHXH/BHYT/BHTN − 15,5 triệu − NPT × 6,2 triệu</b><br>Thuế = <b>Thu nhập chịu thuế × Biểu lũy tiến 5 bậc</b><br><em>Bậc 1: đến 10tr (5%) · Bậc 2: 10-30tr (10%) · Bậc 3: 30-60tr (20%) · Bậc 4: 60-100tr (30%) · Bậc 5: trên 100tr (35%)</em>',
     resultLabel: 'THUẾ TNCN MỖI THÁNG',
     fields: [
       { id: 'grossSalary', label: 'Lương gross/tháng',    type: 'money',  min: 5000000, max: 200000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000] },
@@ -302,11 +363,14 @@ const TOOLS = [
     ],
     compute(v) {
       const gross = v.grossSalary;
-      const bhxh = Math.min(gross * 0.105, 29400000 * 0.105);
-      const personal = 11000000, dep = v.dependents * 4400000;
+      // Mức trần BHXH bắt buộc từ 01/07/2026: 50,6 triệu/tháng
+      const bhxh = Math.min(gross, 50600000) * 0.105;
+      // Giảm trừ gia cảnh theo NQ 110/2025/UBTVQH15
+      const personal = 15500000, dep = v.dependents * 6200000;
       const taxable = Math.max(0, gross - bhxh - personal - dep);
-      const brackets = [5e6, 10e6, 18e6, 32e6, 52e6, 80e6, Infinity];
-      const rates    = [.05, .10, .15, .20, .25, .30, .35];
+      // Biểu lũy tiến 5 bậc theo Luật Thuế TNCN sửa đổi 2025
+      const brackets = [10e6, 20e6, 30e6, 40e6, Infinity];
+      const rates    = [.05,  .10,  .20,  .30,  .35];
       let tax = 0, prev = 0;
       for (let i = 0; i < brackets.length; i++) {
         if (taxable <= prev) break;
@@ -315,15 +379,110 @@ const TOOLS = [
       }
       return { result: fmt(tax), details: [
         { label: 'BHXH/BHYT/BHTN (10.5%)', value: fmt(bhxh) },
+        { label: 'Giảm trừ gia cảnh', value: fmt(personal + dep) },
         { label: 'Thu nhập chịu thuế', value: fmt(taxable) },
         { label: 'Lương NET nhận về', value: fmt(gross - bhxh - tax) },
       ]};
     },
   },
   {
+    id: 'quyet-toan-tncn', name: 'Quyết Toán TNCN', category: 'Tax', abbr: 'QT',
+    intent: 'Transactional intent', panel: 'generic',
+    description: 'Quyết toán thuế TNCN cuối năm theo Luật Thuế TNCN sửa đổi 2025 và NQ 110/2025/UBTVQH15: tính chênh lệch giữa thuế cả năm và thuế đã tạm đóng để biết phải nộp thêm hay được hoàn. Hạn nộp 30/04 năm sau.',
+    jtbd: 'Đến kỳ quyết toán thuế cuối năm tôi không biết phải nộp thêm hay được hoàn lại. Cần biết ngay <b>tổng thuế cả năm và chênh lệch so với số đã tạm đóng</b>, để <b>chuẩn bị tiền nộp trước hạn 30/04 hoặc làm thủ tục hoàn thuế nếu nộp thừa</b>.',
+    formula: 'Giảm trừ năm = <b>(15,5tr + NPT × 6,2tr) × 12</b><br>Thu nhập tính thuế = <b>Tổng lương − BHXH − Giảm trừ năm</b><br>Thuế cả năm = <b>Thu nhập tính thuế × Biểu lũy tiến 5 bậc theo năm</b><br>Chênh lệch = <b>Thuế cả năm − Thuế đã tạm đóng</b> <em>(dương = nộp thêm · âm = được hoàn)</em>',
+    resultLabel: 'CHÊNH LỆCH QUYẾT TOÁN',
+    fields: [
+      { id: 'annualGross', label: 'Tổng thu nhập từ lương cả năm', type: 'money',  min: 60000000, max: 5000000000, step: 10000000, value: 240000000, chips: [180000000, 360000000, 600000000] },
+      { id: 'annualBhxh',  label: 'Tổng BHXH/BHYT/BHTN đã đóng',   type: 'money',  min: 0, max: 200000000, step: 1000000, value: 25200000, chips: [12000000, 25200000, 50000000] },
+      { id: 'annualDeps',  label: 'Số người phụ thuộc trung bình', type: 'select', options: [
+        {value:0,label:'0 người'},{value:1,label:'1 người'},
+        {value:2,label:'2 người'},{value:3,label:'3 người'},
+      ], value: 0 },
+      { id: 'annualPaid',  label: 'Thuế TNCN đã tạm đóng cả năm',  type: 'money',  min: 0, max: 500000000, step: 100000, value: 5000000, chips: [0, 5000000, 30000000] },
+    ],
+    compute(v) {
+      const personalYear = 15500000 * 12;
+      const depYear = v.annualDeps * 6200000 * 12;
+      const taxable = Math.max(0, v.annualGross - v.annualBhxh - personalYear - depYear);
+      // Biểu lũy tiến năm = biểu lũy tiến tháng × 12
+      const brackets = [120e6, 240e6, 360e6, 480e6, Infinity];
+      const rates    = [.05,   .10,   .20,   .30,   .35];
+      let tax = 0, prev = 0;
+      for (let i = 0; i < brackets.length; i++) {
+        if (taxable <= prev) break;
+        tax += Math.min(taxable - prev, brackets[i]) * rates[i];
+        prev += brackets[i];
+      }
+      const balance = tax - v.annualPaid;
+      const isRefund = balance < 0;
+      const isEven = balance === 0;
+      const insight = isEven
+        ? 'Số thuế tạm đóng vừa đúng, không phát sinh nghĩa vụ nộp thêm hoặc được hoàn.'
+        : isRefund
+          ? `Nộp thừa ${fmt(Math.abs(balance))}. Làm thủ tục hoàn thuế qua thuedientu.gdt.gov.vn (mẫu 02/QTT-TNCN). Hạn nộp hồ sơ 30/04 năm sau, không bị phạt nếu chậm.`
+          : `Phải nộp thêm ${fmt(balance)} trước 30/04 năm sau qua thuedientu.gdt.gov.vn (mẫu 02/QTT-TNCN). Quá hạn bị tính tiền chậm nộp 0,03%/ngày.`;
+      return {
+        result: (isEven ? 'Cân bằng' : (isRefund ? 'Hoàn ' : 'Nộp thêm ') + fmt(Math.abs(balance))),
+        details: [
+          { label: 'Giảm trừ gia cảnh cả năm', value: fmt(personalYear + depYear) },
+          { label: 'Thu nhập chịu thuế', value: fmt(taxable) },
+          { label: 'Thuế TNCN cả năm', value: fmt(tax) },
+          { label: 'Đã tạm đóng cả năm', value: fmt(v.annualPaid) },
+          { label: isRefund ? 'Được hoàn lại' : isEven ? 'Số dư' : 'Cần nộp thêm', value: fmt(Math.abs(balance)) },
+        ],
+        insight,
+      };
+    },
+  },
+  {
+    id: 'thue-tndn-sme', name: 'Thuế TNDN SME', category: 'Tax', abbr: 'TD',
+    intent: 'Transactional intent', panel: 'generic',
+    description: 'Tính thuế TNDN cho doanh nghiệp nhỏ và vừa theo Luật Thuế TNDN 2025 (hiệu lực 01/10/2025): 15% (doanh thu ≤ 3 tỷ), 17% (3-50 tỷ), 20% (>50 tỷ). DN mới thành lập sau 01/10/2025 được miễn 3 năm đầu.',
+    jtbd: 'Tôi vận hành SME hoặc hộ kinh doanh và cần dự trù thuế TNDN cuối năm. Cần biết ngay <b>thuế suất ưu đãi theo doanh thu và số thuế phải nộp năm nay</b>, để <b>lập kế hoạch dòng tiền và biết lợi nhuận thực sau thuế</b>.',
+    formula: 'Thu nhập chịu thuế = <b>Doanh thu − Chi phí được trừ</b><br>Thuế suất: <b>15%</b> (DT ≤ 3 tỷ) &nbsp;·&nbsp; <b>17%</b> (3-50 tỷ) &nbsp;·&nbsp; <b>20%</b> (>50 tỷ)<br>Thuế TNDN = <b>Thu nhập chịu thuế × Thuế suất</b><br><em>DN mới thành lập sau 01/10/2025 được miễn thuế 3 năm đầu (Luật 67/2025/QH15)</em>',
+    resultLabel: 'THUẾ TNDN PHẢI NỘP/NĂM',
+    fields: [
+      { id: 'tndnRevenue',  label: 'Doanh thu năm',          type: 'money',  min: 100000000, max: 200000000000, step: 100000000, value: 2000000000, chips: [1000000000, 3000000000, 30000000000] },
+      { id: 'tndnExpenses', label: 'Chi phí được trừ',       type: 'money',  min: 0, max: 200000000000, step: 100000000, value: 1500000000, chips: [500000000, 1500000000, 20000000000] },
+      { id: 'tndnStatus',   label: 'Tình trạng doanh nghiệp', type: 'select', options: [
+        {value:0,label:'Đang hoạt động bình thường'},
+        {value:1,label:'Mới thành lập sau 01/10/2025 (miễn 3 năm)'},
+      ], value: 0 },
+    ],
+    compute(v) {
+      const taxable = Math.max(0, v.tndnRevenue - v.tndnExpenses);
+      let rate, rateLabel, segment;
+      if (v.tndnRevenue <= 3e9) { rate = 0.15; rateLabel = '15%'; segment = 'SME nhỏ'; }
+      else if (v.tndnRevenue <= 50e9) { rate = 0.17; rateLabel = '17%'; segment = 'SME vừa'; }
+      else { rate = 0.20; rateLabel = '20%'; segment = 'DN lớn'; }
+      const exempted = v.tndnStatus === 1;
+      const tax = exempted ? 0 : taxable * rate;
+      const profit = taxable - tax;
+      const effective = taxable > 0 ? (tax / taxable * 100).toFixed(2) + '%' : '0%';
+      const saving = v.tndnRevenue <= 3e9 ? taxable * 0.05 : v.tndnRevenue <= 50e9 ? taxable * 0.03 : 0;
+      const insight = exempted
+        ? `DN mới thành lập sau 01/10/2025 được miễn thuế TNDN 3 năm đầu theo Luật 67/2025/QH15. Mức ${rateLabel} (${segment}) sẽ áp dụng từ năm thứ 4. Lưu hồ sơ chứng nhận SME tại Cục Thuế để được hưởng ưu đãi.`
+        : v.tndnRevenue <= 50e9
+          ? `${segment} hưởng thuế suất ưu đãi ${rateLabel}. Tiết kiệm ${fmt(saving)} so với thuế chuẩn 20%.`
+          : `${segment} áp dụng thuế suất chuẩn 20%. Cân nhắc tách công ty con để các đơn vị nhỏ hơn được hưởng ưu đãi SME nếu phù hợp với chiến lược kinh doanh.`;
+      return {
+        result: fmt(tax),
+        details: [
+          { label: 'Thu nhập chịu thuế', value: fmt(taxable) },
+          { label: 'Thuế suất áp dụng', value: `${rateLabel} (${segment})` },
+          { label: 'Lợi nhuận sau thuế', value: fmt(profit) },
+          { label: 'Tỷ suất thuế hiệu dụng', value: effective },
+        ],
+        insight,
+      };
+    },
+  },
+  {
     id: 'chung-chi-quy', name: 'Chứng Chỉ Quỹ', category: 'Investment', abbr: 'CCQ',
     intent: 'Informational intent', panel: 'generic',
     description: 'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',
+    jtbd: 'Tôi muốn bắt đầu đầu tư định kỳ vào chứng chỉ quỹ nhưng không rõ sau X năm sẽ có bao nhiêu. Cần thấy ngay <b>giá trị tài khoản kỳ vọng theo lợi suất và thời gian đầu tư</b>, để <b>biết bao lâu thì đạt mục tiêu tài chính và có nên DCA hàng tháng hay không</b>.',
     formula: 'FV = <b>PMT × [(1 + r)ⁿ − 1] ÷ r</b><br><em>PMT = số tiền đầu tư định kỳ/tháng &nbsp;·&nbsp; r = lợi suất/tháng &nbsp;·&nbsp; n = số tháng</em>',
     resultLabel: 'GIÁ TRỊ SAU ĐẦU TƯ',
     fields: [
@@ -361,6 +520,7 @@ const TOOLS = [
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Planning', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',
+    jtbd: 'Tôi muốn xây quỹ dự phòng cho 3 đến 12 tháng chi tiêu nhưng không biết cần bao nhiêu. Cần ước tính ngay <b>mục tiêu quỹ dự phòng và khoảng còn thiếu so với tiết kiệm hiện có</b>, để <b>biết phải gửi thêm bao nhiêu mỗi tháng để hoàn thành mục tiêu trong thời gian mong muốn</b>.',
     formula: 'Quỹ cần có = <b>Chi tiêu/tháng × Số tháng an toàn</b><br>Còn thiếu = <b>Quỹ cần có − Tiết kiệm hiện có</b>',
     resultLabel: 'QUỸ DỰ PHÒNG CẦN CÓ',
     fields: [
@@ -386,6 +546,7 @@ const TOOLS = [
     id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính', category: 'Planning', abbr: 'FI',
     intent: 'Informational intent', panel: 'generic',
     description: 'Lập kế hoạch FIRE theo chi tiêu tương lai đã tính lạm phát, tỷ lệ rút vốn an toàn, lợi suất đầu tư và dòng tiền góp hàng tháng.',
+    jtbd: 'Tôi muốn nghỉ hưu sớm và sống bằng tài sản đầu tư nhưng không biết cần tích lũy bao nhiêu. Cần biết ngay <b>số tài sản mục tiêu, dòng góp hàng tháng và năm có thể FIRE theo lạm phát và lợi suất kỳ vọng</b>, để <b>có lộ trình cụ thể từ vị trí hiện tại đến tự do tài chính</b>.',
     formula: 'Chi tiêu tương lai = <b>Chi tiêu hiện tại × (1 + lạm phát)ⁿ</b><br>FIRE Number = <b>Chi tiêu tương lai/năm ÷ Tỷ lệ rút vốn an toàn</b><br>Danh mục dự kiến = <b>Tài sản hiện có × (1+r/12)ⁿ + Góp tháng × [((1+r/12)ⁿ - 1) ÷ (r/12)]</b><br><em>Quy tắc 4% chỉ là mốc tham chiếu. Nên stress test với 3-3,5% nếu muốn an toàn hơn hoặc nghỉ hưu dài hơn 30 năm.</em>',
     resultLabel: 'SỐ TIỀN CẦN ĐỂ FIRE',
     fields: [
@@ -436,6 +597,7 @@ const TOOLS = [
     id: 'dam-cuoi', name: 'Kế Hoạch Đám Cưới', category: 'Planning', abbr: 'DC',
     intent: 'Informational intent', panel: 'generic',
     description: 'Lập kế hoạch tiền cưới theo số khách, chi phí bàn tiệc, chi phí cố định, tiền mừng dự kiến, quỹ dự phòng và lãi gửi tích lũy.',
+    jtbd: 'Tôi sắp cưới và đang lo không biết chuẩn bị bao nhiêu tiền là đủ. Cần ước tính ngay <b>tổng chi phí cưới, tiền mừng dự kiến nhận được và mức để dành thêm mỗi tháng</b>, để <b>cưới đúng kế hoạch tài chính mà không bị áp lực hay phải vay nợ sau cưới</b>.',
     formula: 'Số bàn = <b>Làm tròn lên(Số khách ÷ 10)</b><br>Tổng chi phí = <b>Số bàn × Chi phí/bàn + Chi phí cố định</b><br>Dự phòng = <b>Tổng chi phí × Tỷ lệ dự phòng</b><br>Tiền mặt cần chuẩn bị = <b>max(0, Tổng chi phí + Dự phòng - Tiền mừng dự kiến) + Quỹ sau cưới</b><br>Góp/tháng = <b>PMT để đạt mục tiêu sau n tháng, có tính lãi gửi tích lũy</b><br><em>Không nên xem tiền mừng là chắc chắn. Quỹ sau cưới giúp tránh cưới xong bị hụt dòng tiền.</em>',
     resultLabel: 'CẦN ĐỂ DÀNH MỖI THÁNG',
     fields: [
@@ -485,6 +647,7 @@ const TOOLS = [
     id: 'hoc-phi', name: 'Học Phí Tương Lai', category: 'Planning', abbr: 'HP',
     intent: 'Informational intent', panel: 'generic',
     description: 'Ước tính học phí thực tế theo lạm phát học phí và tính số tiền cần chuẩn bị từ hôm nay.',
+    jtbd: 'Tôi muốn dành tiền cho con đi học nhưng không biết X năm nữa học phí sẽ tăng bao nhiêu. Cần ước tính ngay <b>học phí tương lai sau lạm phát và khoản chênh so với hiện tại</b>, để <b>chuẩn bị quỹ giáo dục đúng lộ trình mà không bị bất ngờ khi đến năm con cần dùng</b>.',
     formula: 'Học phí tương lai = <b>Học phí hiện tại × (1 + Lạm phát/năm)ⁿ</b><br><em>n = số năm đến khi cần dùng</em>',
     resultLabel: 'HỌC PHÍ TƯƠNG LAI ƯỚC TÍNH',
     fields: [
@@ -1371,11 +1534,11 @@ function computeBankRate() {
   const sorted = [...BANK_RATES].sort((a, b) => b.rates[term] - a.rates[term]);
   const maxRate = sorted[0].rates[term];
   document.getElementById('bankRateTable').innerHTML =
-    `<div class="bank-rate-header"><span>Ngân hàng</span><span>Lãi suất/năm</span><span>Thực nhận (sau thuế)</span></div>` +
+    `<div class="bank-rate-header"><span>Ngân hàng</span><span>Lãi suất/năm</span><span>Lợi nhuận / Tổng nhận</span></div>` +
     sorted.map((b, i) => {
       const rate = b.rates[term];
       const interest = principal * rate / 100 / 12 * term;
-      const net = interest * 0.95;
+      const total = principal + interest;
       const isBest = i === 0;
       return `<div class="bank-rate-row${isBest ? ' best' : ''}">
         <div class="bank-name">
@@ -1386,7 +1549,10 @@ function computeBankRate() {
         <div class="bank-rate-pct">${rate.toFixed(1)}%
           <div class="rate-bar"><div class="rate-fill" style="width:${(rate / maxRate * 100).toFixed(0)}%"></div></div>
         </div>
-        <div class="bank-net">${fmtM(principal + net)}</div>
+        <div class="bank-net">
+          <strong class="bank-net-profit">+${fmtM(interest)}</strong>
+          <small class="bank-net-total">Tổng: ${fmtM(total)}</small>
+        </div>
       </div>`;
     }).join('');
 }
