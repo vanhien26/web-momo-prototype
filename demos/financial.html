@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
-  <link rel="stylesheet" href="financial.css?v=8">
+  <link rel="stylesheet" href="financial.css?v=12">
 </head>
 <body>
   <header class="site-header">
@@ -41,6 +41,10 @@
             </div>
             <span class="intent-chip" id="genericIntent">Transactional intent</span>
           </div>
+          <aside class="jtbd-frame" id="genericJtbd" style="display:none">
+            <span class="jtbd-kicker">Jobs to be Done</span>
+            <p></p>
+          </aside>
           <div class="calculator-layout">
             <div class="input-panel">
               <div class="dynamic-fields" id="genericFields"></div>
@@ -54,6 +58,7 @@
               <button class="primary-action" type="button" onclick="momo_track('cta_click',{cta:'view_solution',location:'generic_result'})">Xem giải pháp phù hợp trên MoMo</button>
             </div>
           </div>
+          <div id="amortizationSchedule" class="amortization-schedule" style="display:none"></div>
         </section>
 
         <section class="tool-panel gold-panel" id="goldPanel" hidden>
@@ -65,6 +70,11 @@
             </div>
             <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small id="goldTimestamp">17/06/2026 · 09:00</small></span></div>
           </div>
+
+          <aside class="jtbd-frame">
+            <span class="jtbd-kicker">Jobs to be Done</span>
+            <p>Tôi đang theo dõi vàng và phân vân hôm nay nên mua hay chờ. Cần thấy ngay <b>giá mua/bán hiện tại của SJC, PNJ, XAU/USD cùng xu hướng 30 ngày</b>, và <b>tính trước sức mua theo ngân sách của mình</b>, để quyết định vào tiền hay đứng ngoài trước khi giá đảo chiều.</p>
+          </aside>
 
           <!-- XAU/USD hero -->
           <div class="gold-world-bar" id="goldWorldBar"></div>
@@ -219,6 +229,11 @@
             <span class="intent-chip">Informational intent</span>
           </div>
 
+          <aside class="jtbd-frame">
+            <span class="jtbd-kicker">Jobs to be Done</span>
+            <p>Tôi muốn hiểu mức điểm CIC nào sẽ vay được với điều kiện tốt nhất. Cần <b>kéo qua các mức điểm để xem hạng tín dụng và triển vọng vay vốn tương ứng</b>, để biết <b>mình cần bao nhiêu điểm để được duyệt vay với lãi suất ưu đãi</b>.</p>
+          </aside>
+
           <div class="cic-v2-layout">
             <div class="cic-v2-slider-col">
               <h3 class="cic-v2-section-title">Kéo mức điểm bạn kỳ vọng</h3>
@@ -273,6 +288,11 @@
             <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
           </div>
 
+          <aside class="jtbd-frame">
+            <span class="jtbd-kicker">Jobs to be Done</span>
+            <p>Tôi có tiền nhàn rỗi và đang phân vân chọn ngân hàng. Cần thấy ngay <b>ai trả lãi cao nhất cho số tiền và kỳ hạn của mình</b>, để gửi đúng chỗ <b>trong 1 phút mà không cần tra từng website</b>.</p>
+          </aside>
+
           <div class="market-workspace" style="align-items:flex-start">
             <div class="control-section">
               <div class="section-label"><span>01</span><strong>Số tiền gửi</strong></div>
@@ -304,10 +324,15 @@
             <div>
               <span class="panel-kicker">FOREIGN EXCHANGE</span>
               <h2>Tỷ giá đổi tiền</h2>
-              <p>Converter A → B: chọn cặp tiền, đảo chiều, xem số nhận ròng, tỷ giá hiệu dụng và chart biến động.</p>
+              <p>Chọn cặp tiền và số tiền, xem ngay số nhận được theo tỷ giá ngân hàng và xu hướng 7 ngày.</p>
             </div>
             <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
           </div>
+
+          <aside class="jtbd-frame">
+            <span class="jtbd-kicker">Jobs to be Done</span>
+            <p>Tôi sắp đổi tiền cho chuyến đi, du học hoặc giao dịch và cần biết quy đổi nhanh. Cần thấy ngay <b>số tiền nhận được theo tỷ giá ngân hàng hiện tại cùng xu hướng 7 ngày</b>, để <b>quyết định đổi ngay hay chờ thêm</b> mà không cần mở app ngân hàng để tra.</p>
+          </aside>
 
           <div class="gold-price-grid" id="fxRateGrid"></div>
 
@@ -338,21 +363,17 @@
             </div>
 
             <div class="gold-result">
-              <span id="fxResultLabel">NHẬN ĐƯỢC (THEO TỶ GIÁ BÁN)</span>
-              <strong id="fxResultValue" style="font-size:22px">--</strong>
+              <span id="fxResultLabel">NHẬN ĐƯỢC</span>
+              <strong id="fxResultValue" style="font-size:26px">--</strong>
+              <p class="fx-applied-rate" id="fxAppliedRate">--</p>
               <div class="gold-result-grid" style="margin-top:12px">
-                <div><small>Bank route</small><b id="fxBuyRate">--</b></div>
-                <div><small>Mid-market</small><b id="fxSellRate">--</b></div>
-                <div><small>Lệch bank-mid</small><b id="fxSpread">--</b></div>
+                <div><small>Giá mua</small><b id="fxBuyDisplay">--</b></div>
+                <div><small>Giá bán</small><b id="fxSellDisplay">--</b></div>
                 <div><small>Cặp tiền</small><b id="fxRef">--</b></div>
-              </div>
-              <div class="fx-cost-grid">
-                <div><small>Tỷ giá hiệu dụng</small><b id="fxEffectiveRate">--</b></div>
-                <div><small>Lệch so với mid-market</small><b id="fxMidDelta">--</b></div>
               </div>
               <div class="fx-chart-card">
                 <div class="fx-chart-head">
-                  <span id="fxChartTitle">Rate history</span>
+                  <span id="fxChartTitle">Tỷ giá 7 ngày</span>
                   <b id="fxChartChange">--</b>
                 </div>
                 <div class="fx-chart" id="fxChart"></div>
@@ -367,9 +388,18 @@
       </div>
     </section>
 
+    <section class="related-tools" id="relatedTools" aria-label="Khám phá công cụ khác">
+      <div class="related-tools-head">
+        <span class="related-tools-kicker">Money Lab Utilities</span>
+        <h3 id="relatedToolsTitle">Khám phá công cụ khác</h3>
+        <p id="relatedToolsSub">Các utilities còn lại trong Money Lab cho mọi quyết định tài chính.</p>
+      </div>
+      <div class="related-tools-grid" id="relatedToolsGrid"></div>
+    </section>
+
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js?v=11"></script>
+  <script src="financial.js?v=15"></script>
 </body>
 </html>
