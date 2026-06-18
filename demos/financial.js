@@ -115,6 +115,7 @@ const TOOLS = [
     id: 'tra-gop', name: 'Trả Góp', category: 'Credit', abbr: 'TG',
     intent: 'Commercial intent', panel: 'generic',
     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.',
+    jtbd: 'Tôi đang muốn mua một món đồ giá trị nhưng chưa đủ tiền trả ngay, phân vân nên trả trước bao nhiêu và chọn kỳ hạn nào. Cần thấy ngay <b>số tiền trả mỗi tháng và tổng chi phí tài chính phát sinh thêm</b> cho từng kịch bản trả trước và kỳ hạn, để chọn được phương án <b>trả nổi mỗi tháng mà không đội giá quá nhiều so với mua thẳng</b>.',
     formula: 'Vốn gốc = <b>Giá × (100% − Trả trước%)</b><br>Trả/tháng = <b>Vốn gốc ÷ n + Vốn gốc × Lãi suất/12</b><br><em>Áp dụng phương pháp lãi phẳng (flat rate)</em>',
     resultLabel: 'TRẢ MỖI THÁNG ƯỚC TÍNH',
     fields: [
