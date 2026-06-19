@@ -225,8 +225,8 @@ header{
 .kw-table{border-top:1px solid var(--sf-line)}
 .kw-th,.kw-row{
   display:grid;
-  grid-template-columns:16px 1fr 62px 52px 58px 122px 72px;
-  padding:7px 14px 7px 14px;
+  grid-template-columns:14px minmax(0,1fr) 70px 46px 48px 96px 68px;
+  padding:7px 12px 7px 12px;
   align-items:center;gap:4px;
 }
 .kw-th{background:var(--sf-2);border-bottom:1px solid var(--sf-line);padding-top:6px;padding-bottom:6px}
@@ -236,13 +236,28 @@ header{
 .kw-row:hover{background:var(--sf-2)}
 
 /* primary indicator */
-.kw-primary-dot{width:6px;height:6px;border-radius:50%;background:var(--pk);flex-shrink:0}
-.kw-secondary-dot{width:6px;height:6px;border-radius:50%;background:var(--sf-3);flex-shrink:0}
+.kw-row-group{display:block}
+.kw-row-group > .kw-row, .kw-row-group > .kw-sub-wrap{width:100%}
+.kw-expand{font-size:8px;color:var(--t3);transition:transform .18s;text-align:center}
+.kw-row-expandable{cursor:pointer}
+.kw-row-expandable:hover .kw-expand{color:var(--pk)}
+.kw-row-group.open > .kw-row > .kw-expand{transform:rotate(90deg);color:var(--pk)}
+.kw-sec-count{font-size:8px;font-weight:800;background:var(--sf-3);color:var(--t2);padding:1px 5px;border-radius:10px;flex-shrink:0;margin-left:2px}
+.kw-row-group.open .kw-sec-count{background:var(--pk-bg);color:var(--pk)}
+.kw-sub-wrap{max-height:0;overflow:hidden;transition:max-height .24s ease;background:var(--sf-2)}
+.kw-row-group.open .kw-sub-wrap{max-height:600px}
+.kw-sub-row{display:grid;grid-template-columns:14px 20px minmax(0,1fr) 76px;align-items:center;gap:6px;padding:5px 12px 5px 12px;border-bottom:1px dashed var(--sf-line);font-size:10.5px}
+.kw-sub-row:last-child{border-bottom:none}
+.kw-sub-bullet{color:var(--t3);font-size:11px;text-align:center}
+.kw-sub-name{color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kw-sub-vol{font-size:10.5px;font-weight:600;color:var(--t3);text-align:right}
 
-.kw-name-wrap{min-width:0}
-.kw-name{font-size:11px;font-weight:600;color:var(--sf-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.kw-name-wrap{min-width:0;overflow:hidden}
+.kw-name{font-size:11px;font-weight:600;color:var(--sf-ink);display:flex;align-items:center;gap:5px;min-width:0}
+.kw-name > span:not(.kw-primary-tag):not(.kw-sec-count){white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .kw-primary-tag{font-size:7.5px;font-weight:800;letter-spacing:.3px;padding:1px 5px;border-radius:10px;background:var(--pk-bg);color:var(--pk);white-space:nowrap;flex-shrink:0}
-.kw-vol{font-size:11px;font-weight:700;color:var(--t2);text-align:right}
+.kw-vol{font-size:11px;font-weight:700;color:var(--t2);text-align:right;display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
+.kw-vol-sub{font-size:8.5px;font-weight:500;color:var(--t3);margin-top:1px}
 .kw-intent{font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:20px;width:fit-content;justify-self:center}
 .kw-intent.info{background:var(--blue-bg);color:var(--blue)}
 .kw-intent.comm{background:var(--amber-bg);color:var(--amber)}
@@ -461,17 +476,51 @@ const PROJECTS = [
     priority:'P0', microsite:'momo.vn/phat-nguoi', vol:1500000, sov:null, targetSov:40,
     clusters:[
       { id:'ph-t1', name:'Kiến thức phạt nguội', funnel:'tofu', vol:890000, keywords:[
-        {kw:'phạt nguội là gì',          vol:245000, intent:'info', status:'published', rank:null,  isPrimary:true},
-        {kw:'cách tra cứu phạt nguội',   vol:380000, intent:'info', status:'published', rank:3.8,  isPrimary:false},
-        {kw:'phạt nguội bao lâu cập nhật',vol:265000, intent:'info', status:'published', rank:null, isPrimary:false},
+        {kw:'phạt nguội là gì', vol:245000, intent:'info', status:'published', rank:null, secondaries:[
+          {kw:'phạt nguội nghĩa là gì', vol:8500},
+          {kw:'phạt nguội tiếng anh là gì', vol:1200},
+          {kw:'phạt nguội khác phạt nóng thế nào', vol:6400},
+          {kw:'phạt nguội có bị giam xe không', vol:14200},
+        ]},
+        {kw:'cách tra cứu phạt nguội', vol:380000, intent:'info', status:'published', rank:3.8, secondaries:[
+          {kw:'hướng dẫn tra cứu phạt nguội', vol:22000},
+          {kw:'tra cứu phạt nguội bằng số CMND', vol:5400},
+          {kw:'tra cứu phạt nguội qua website', vol:11500},
+          {kw:'làm sao biết mình bị phạt nguội', vol:18000},
+        ]},
+        {kw:'phạt nguội bao lâu cập nhật', vol:265000, intent:'info', status:'published', rank:null, secondaries:[
+          {kw:'bao lâu có thông báo phạt nguội', vol:9200},
+          {kw:'phạt nguội cập nhật mất bao lâu', vol:4500},
+          {kw:'sau bao lâu thì biết bị phạt nguội', vol:6800},
+        ]},
       ]},
       { id:'ph-m1', name:'So sánh cách tra cứu', funnel:'mofu', vol:310000, keywords:[
-        {kw:'tra phạt nguội online vs trực tiếp', vol:135000, intent:'comm', status:'published', rank:5.1,  isPrimary:true},
-        {kw:'app tra cứu phạt nguội uy tín',      vol:175000, intent:'comm', status:'published', rank:null, isPrimary:false},
+        {kw:'tra phạt nguội online vs trực tiếp', vol:135000, intent:'comm', status:'published', rank:5.1, secondaries:[
+          {kw:'tra phạt nguội ở đâu nhanh nhất', vol:12000},
+          {kw:'có nên tra phạt nguội online không', vol:4200},
+          {kw:'so sánh app tra phạt nguội và CSGT', vol:2800},
+        ]},
+        {kw:'app tra cứu phạt nguội uy tín', vol:175000, intent:'comm', status:'published', rank:null, secondaries:[
+          {kw:'app tra cứu phạt nguội', vol:35000},
+          {kw:'ứng dụng tra phạt nguội', vol:8400},
+          {kw:'app tra phạt nguội', vol:18500},
+          {kw:'app tra cứu phạt nguội miễn phí', vol:9800},
+          {kw:'app tra phạt nguội tốt nhất', vol:5600},
+        ]},
       ]},
       { id:'ph-b1', name:'Tra cứu phạt nguội ngay', funnel:'bofu', vol:300000, keywords:[
-        {kw:'tra phạt nguội MoMo',              vol:185000, intent:'trans', status:'published', rank:2.4,  isPrimary:true},
-        {kw:'kiểm tra phạt nguội biển số xe',   vol:115000, intent:'trans', status:'published', rank:7.2,  isPrimary:false},
+        {kw:'tra phạt nguội MoMo', vol:185000, intent:'trans', status:'published', rank:2.4, secondaries:[
+          {kw:'tra phạt nguội bằng MoMo', vol:8800},
+          {kw:'kiểm tra phạt nguội trên MoMo', vol:6200},
+          {kw:'MoMo có tra phạt nguội không', vol:4400},
+          {kw:'hướng dẫn tra phạt nguội qua MoMo', vol:3200},
+        ]},
+        {kw:'kiểm tra phạt nguội biển số xe', vol:115000, intent:'trans', status:'published', rank:7.2, secondaries:[
+          {kw:'tra phạt nguội theo biển số', vol:24000},
+          {kw:'kiểm tra phạt nguội xe máy', vol:18500},
+          {kw:'kiểm tra phạt nguội ô tô', vol:15600},
+          {kw:'tra phạt nguội biển số xe máy', vol:9800},
+        ]},
       ]},
     ]
   },
@@ -656,6 +705,7 @@ const STATUS_LABEL = {
 /* ─── STATE ─────────────────────────────────────────────────────────────────── */
 let selectedProject = null;
 let openClusters    = {};
+let openKeywords    = {};
 let aiContext       = null; // { pid, cid, ki }
 
 /* ─── UTILS ─────────────────────────────────────────────────────────────────── */
@@ -730,7 +780,7 @@ function buildDetail(p) {
   const sc  = getSovClass(p.sov);
   const totalClusterVol = p.clusters.reduce((s,c) => s + c.vol, 0);
   const totalKw = tot;
-  const primaryKw = p.clusters.reduce((s,c) => s + c.keywords.filter(k => k.isPrimary).length, 0);
+  const secondaryKw = p.clusters.reduce((s,c) => s + c.keywords.reduce((ss,k) => ss + (k.secondaries?.length || 0), 0), 0);
   const ctx = PROJECT_CONTEXT[p.id] || {};
 
   const groups = {
@@ -758,24 +808,41 @@ function buildDetail(p) {
         const rLbl   = rankLabel(k.rank);
         const aiMode = k.status === 'none' ? 'outline' : k.status === 'outline-review' ? 'draft' : null;
         const aiLabel = aiMode === 'outline' ? '✦ Outline' : aiMode === 'draft' ? '✦ Viết bài' : '';
-        return `<div class="kw-row">
-          <div class="${k.isPrimary ? 'kw-primary-dot' : 'kw-secondary-dot'}"></div>
-          <div class="kw-name-wrap">
-            <div class="kw-name">
-              ${k.isPrimary ? '<span class="kw-primary-tag">PRIMARY</span>' : ''}
-              <span title="${k.kw}">${k.kw}</span>
+        const secs = k.secondaries || [];
+        const secCount = secs.length;
+        const secVolSum = secs.reduce((s,x) => s + (x.vol||0), 0);
+        const totalVol = k.vol + secVolSum;
+        const kwKey = `${c.id}-${ki}`;
+        const isKwOpen = !!openKeywords[kwKey];
+        const expandable = secCount > 0;
+        const secRows = expandable ? secs.map(s => `
+          <div class="kw-sub-row">
+            <div></div>
+            <div class="kw-sub-bullet">↳</div>
+            <div class="kw-sub-name" title="${s.kw}">${s.kw}</div>
+            <div class="kw-sub-vol">${fmtVol(s.vol)}</div>
+          </div>`).join('') : '';
+        return `<div class="kw-row-group${isKwOpen?' open':''}" id="kwg-${kwKey}">
+          <div class="kw-row${expandable?' kw-row-expandable':''}"${expandable?` onclick="toggleKeyword('${kwKey}', event)"`:''}>
+            <div class="kw-expand">${expandable ? '▶' : ''}</div>
+            <div class="kw-name-wrap">
+              <div class="kw-name">
+                <span title="${k.kw}">${k.kw}</span>
+                ${expandable ? `<span class="kw-sec-count" title="${secCount} secondary keywords">+${secCount}</span>` : ''}
+              </div>
+            </div>
+            <div class="kw-vol">${fmtVol(totalVol)}${expandable ? `<small class="kw-vol-sub">(P ${fmtVol(k.vol)})</small>` : ''}</div>
+            <span class="kw-intent ${k.intent}">${k.intent.toUpperCase()}</span>
+            <span class="rank-tag ${rCls}">${rLbl}</span>
+            <button class="${sCls}" id="st-${c.id}-${ki}"
+              onclick="event.stopPropagation();cycleStatus('${p.id}','${c.id}',${ki},this)">
+              ${sLabel}
+            </button>
+            <div id="ai-cell-${c.id}-${ki}">
+              ${aiLabel ? `<button class="kw-ai" onclick="event.stopPropagation();openAIPanel('${p.id}','${c.id}',${ki},'${aiMode}')">${aiLabel}</button>` : ''}
             </div>
           </div>
-          <div class="kw-vol">${fmtVol(k.vol)}</div>
-          <span class="kw-intent ${k.intent}">${k.intent.toUpperCase()}</span>
-          <span class="rank-tag ${rCls}">${rLbl}</span>
-          <button class="${sCls}" id="st-${c.id}-${ki}"
-            onclick="cycleStatus('${p.id}','${c.id}',${ki},this)">
-            ${sLabel}
-          </button>
-          <div id="ai-cell-${c.id}-${ki}">
-            ${aiLabel ? `<button class="kw-ai" onclick="openAIPanel('${p.id}','${c.id}',${ki},'${aiMode}')">${aiLabel}</button>` : ''}
-          </div>
+          ${secRows ? `<div class="kw-sub-wrap">${secRows}</div>` : ''}
         </div>`;
       }).join('');
 
@@ -889,7 +956,7 @@ function buildDetail(p) {
               <div class="inv-item">
                 <div class="inv-label">Keywords</div>
                 <div class="inv-val">${totalKw}</div>
-                <div class="inv-sub">${primaryKw} primary</div>
+                <div class="inv-sub">+${secondaryKw} secondaries</div>
               </div>
             </div>
             <div class="inv-url">URL: <a href="https://${p.microsite}" target="_blank">${p.microsite}</a></div>
@@ -908,7 +975,7 @@ function buildDetail(p) {
       <div class="prog-stats">
         <div class="ps"><span class="ps-n">${p.clusters.length}</span><span class="ps-l">Clusters</span></div>
         <div class="ps"><span class="ps-n">${tot}</span><span class="ps-l">Keywords</span></div>
-        <div class="ps"><span class="ps-n">${primaryKw}</span><span class="ps-l">Primary</span></div>
+        <div class="ps"><span class="ps-n">+${secondaryKw}</span><span class="ps-l">Secondaries</span></div>
         <div class="ps"><span class="ps-n">${fmtVol(totalClusterVol)}</span><span class="ps-l">Vol/tháng</span></div>
       </div>
     </div>
@@ -931,6 +998,14 @@ function toggleCluster(cid) {
   openClusters[cid] = !openClusters[cid];
   const card = document.getElementById('cc-' + cid);
   if (card) card.classList.toggle('open', !!openClusters[cid]);
+}
+
+/* ─── TOGGLE KEYWORD (expand secondaries) ───────────────────────────────── */
+function toggleKeyword(key, evt) {
+  if (evt) evt.stopPropagation();
+  openKeywords[key] = !openKeywords[key];
+  const grp = document.getElementById('kwg-' + key);
+  if (grp) grp.classList.toggle('open', !!openKeywords[key]);
 }
 
 /* ─── CYCLE STATUS ───────────────────────────────────────────────────────── */
