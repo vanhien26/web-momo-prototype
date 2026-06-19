@@ -37,24 +37,65 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'esim-du-lich',
+    name: 'eSIM Du Lịch',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'Interactive',
+    description: 'Trip-first commerce flow giúp user chọn điểm đến, thời gian chuyến đi, gói data và kiểm tra thiết bị trước khi tiếp tục mua eSIM trên MoMo.',
+    jtbd: 'Có mạng ngay khi hạ cánh mà không phải tìm SIM tại điểm đến',
+    northStar: 'Qualified eSIM checkout rate',
+    loop: 'Destination → Trip → Plan → Device check → Checkout',
+    hypothesis: 'Đề xuất gói theo chuyến đi và kiểm tra tương thích trước checkout sẽ giảm sai gói, giảm lỗi kích hoạt và tăng tỷ lệ mua hoàn tất.',
+    value: 'Biến trang thông tin eSIM thành acquisition surface có intent rõ, thu tín hiệu điểm đến và đưa user sang giao dịch trong ứng dụng MoMo.',
+    gate: 'Đo destination selection, plan selection, compatibility check, checkout intent, activation support và purchase completion.',
+    src: 'demos/esim-du-lich.html',
+    address: 'web-momo-prototype.vercel.app/esim-du-lich',
+    tools: [
+      {id:'destination-detail',name:'Destination Detail',category:'Child Page',description:'Một template trang con dùng query parameter để render quốc gia hoặc khu vực đã chọn.',jtbd:'Chọn gói, kiểm tra thiết bị và hiểu cách kích hoạt tại điểm đến',src:'demos/esim/destination.html?destination=thailand',address:'web-momo-prototype.vercel.app/esim/destination?destination=thailand'},
+    ],
+  },
+  {
     id: 'merchant',
     name: 'Merchant',
     category: 'Platform',
-    maturity: 'Interaction',
-    description: 'Merchant network đa ngành của MoMo: khám phá nơi ăn uống, mua sắm, sức khỏe, giải trí và di chuyển; xem dịch vụ, chi nhánh, ưu đãi, phương thức thanh toán rồi đi tới hành động phù hợp.',
-    jtbd: 'Tìm merchant phù hợp, biết có gì và dùng dịch vụ ngay',
-    northStar: 'Qualified merchant action rate',
-    loop: 'Discover → Evaluate merchant → Use service → Pay',
-    hypothesis: 'Trang merchant có cấu trúc theo loại hình giúp MoMo chuyển từ danh sách deal sang lớp discovery và transaction cho toàn bộ mạng lưới chấp nhận thanh toán.',
-    value: 'Tăng khả năng khám phá merchant, sử dụng dịch vụ, redemption ưu đãi và payment volume trên nhiều ngành hàng.',
-    gate: 'Đo merchant detail view, service CTA, direction, save, deal eligibility check và payment initiation theo loại hình merchant.',
-    src: 'demos/merchant.html',
+    ownerGroup: 'Web Platform',
+    maturity: 'Hub',
+    description: 'Hub Merchant của MoMo - cửa hàng chấp nhận Ví Trả Sau và voucher. Listing theo khu vực kèm bản đồ (Airbnb/Groupon style), kết nối tới Merchant Discovery (card stack swipe) và Merchant Detail (trang chi tiết). User vào Hub thấy nhanh quán quanh đây, deep-link xuống sub-page khi cần khám phá hoặc xem chi tiết.',
+    jtbd: 'Tìm merchant phù hợp trong khu vực và dùng dịch vụ ngay',
+    northStar: 'Voucher redeem rate per Hub session',
+    loop: 'Browse hub map → Discovery/Detail → Redeem voucher → Pay',
+    hypothesis: 'Hub gom 3 pattern khám phá (map listing, swipe stack, detail) vào một surface giúp user chuyển intent linh hoạt theo bối cảnh sử dụng, tăng coverage so với 3 trang đứng riêng.',
+    value: 'Single hub cho toàn bộ Merchant journey: từ duyệt khu vực có voucher → swipe khám phá thêm → đọc detail → đi tới quán + thanh toán + redeem.',
+    gate: 'Đo: Hub session length, sub-page CTR (Discovery + Detail), card→detail rate, voucher view-to-redeem rate, pin click vs swipe.',
+    src: 'demos/merchants.html',
     address: 'web-momo-prototype.vercel.app/merchant',
+    tools: [
+      {
+        id: 'merchant-discovery',
+        name: 'Merchant Discovery',
+        category: 'Sub-page',
+        description: 'Card stack mobile-first để swipe Merchant theo nhu cầu: bỏ qua hoặc lưu lựa chọn, xem nhanh rating, giá, địa chỉ, Ví Trả Sau và Sponsored Card từ Ads Placement.',
+        jtbd: 'Lưu Merchant phù hợp mà không phải đọc danh sách dài',
+        src: 'demos/merchant-discovery.html',
+        address: 'web-momo-prototype.vercel.app/merchant/discovery',
+      },
+      {
+        id: 'merchant-detail',
+        name: 'Merchant Detail',
+        category: 'Sub-page',
+        description: 'Trang chi tiết một merchant (ví dụ Tiệm Mì Chú Cao): storefront signboard, menu, AI Summary từ Google Reviews, MoMo Review, FAQ, gợi ý merchant tương tự, CTA thanh toán.',
+        jtbd: 'Đánh giá merchant trước khi đến và thanh toán bằng MoMo',
+        src: 'demos/merchant.html',
+        address: 'web-momo-prototype.vercel.app/merchant/detail',
+      },
+    ],
   },
   {
     id: 'cinema-film-detail',
     name: 'Cinema Film Detail',
     category: 'Platform',
+    ownerGroup: 'Cell Team',
     maturity: 'Campaign Page',
     description: 'Film Detail page cho Summer Campaign 2026 — tích hợp Hero campaign, Game Mở Khoá (Mua vé → Check-in → Review), Bundle Banner, Thông tin phim, Lịch chiếu và Đánh giá.',
     jtbd: 'Mua vé và tham gia campaign ngay từ trang phim',
@@ -65,21 +106,6 @@ const PROTOTYPES = [
     gate: 'Đo mission completion rate (1→2→3), ticket CTA CTR, check-in activation và review submission.',
     src: 'demos/cinema-film-detail.html',
     address: 'web-momo-prototype.vercel.app/cinema/nghi-he-so-nghi-huu',
-  },
-  {
-    id: 'merchant-discovery',
-    name: 'Merchant Discovery',
-    category: 'Platform',
-    maturity: 'Interactive',
-    description: 'Trải nghiệm khám phá Merchant theo nhu cầu bằng card stack: swipe để bỏ qua hoặc lưu, xem nhanh rating, giá, địa chỉ, Ví Trả Sau và Sponsored Card được phân phối từ Ads Placement.',
-    jtbd: 'Tìm và lưu Merchant phù hợp mà không phải đọc một danh sách dài',
-    northStar: 'Qualified merchant save rate',
-    loop: 'Choose category → Swipe → Save → View Merchant',
-    hypothesis: 'Card stack giảm tải lựa chọn trên mobile và biến merchant discovery thành hành vi khám phá chủ động thay vì lọc danh sách tĩnh.',
-    value: 'Tạo entry surface mới cho mạng lưới Merchant, đồng thời thu tín hiệu sở thích để cải thiện recommendation và Ads Placement.',
-    gate: 'Đo swipe depth, save rate, Merchant Detail CTR, ad impression/interest, frequency cap và saved-to-visit intent.',
-    src: 'demos/merchant-discovery.html',
-    address: 'web-momo-prototype.vercel.app/merchant-discovery',
   },
   {
     id: 'ads-manager',
@@ -130,6 +156,7 @@ const PROTOTYPES = [
     id: 'universal-search',
     name: 'Universal Search',
     category: 'Platform',
+    ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Google-style federated search cho toàn bộ domain MoMo: dịch vụ, bài viết, merchant và công cụ tài chính trong một trang — với AI Answer box, content-type tabs và related queries.',
     jtbd: 'Tìm bất kỳ thứ gì trên MoMo mà không cần biết nó nằm ở đâu',
@@ -265,6 +292,7 @@ const PROTOTYPES = [
     id: 'phat-nguoi-ha-noi',
     name: 'Phạt Nguội Hà Nội',
     category: 'Platform',
+    ownerGroup: 'Cell Team',
     maturity: 'pSEO',
     description: 'Trang pSEO Tra cứu Phạt Nguội theo Tỉnh/Thành — demo Hà Nội: Hero H1 + Lookup biển số, kết quả CSGT có/không vi phạm, Đề xuất tỉnh/thành + dịch vụ liên quan, Content SEO dạng card (mức phạt, quy trình, timeline, FAQ).',
     jtbd: 'Tra cứu vi phạm giao thông theo biển số xe tại Hà Nội, biết mức phạt và quy trình xử lý',
@@ -299,6 +327,8 @@ const CAT_COLOR = {
   'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
   'Transit':    { bg: '#eef2ff', text: '#4338ca' },
   'Other':      { bg: '#f1f5f9', text: '#475569' },
+  'Destination':{ bg: '#fff0f7', text: '#a50064' },
+  'Child Page':  { bg: '#fff0f7', text: '#a50064' },
 };
 
 const GROUP_LABEL = {
@@ -313,10 +343,11 @@ function displayGroupName(groupName) {
 }
 
 const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform', 'Other'];
+const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi-ha-noi', 'universal-search', 'cinema-film-detail', 'merchant-discovery', 'merchant'],
+  Platform: ['phat-nguoi-ha-noi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
   Other: ['worldcup'],
 };
 
@@ -342,8 +373,8 @@ const GROUP_SUMMARY = {
   Platform: {
     eyebrow: 'PLG Project',
     title: 'PLG Project',
-    description: 'Nhóm prototype cho các trang Use Case: pSEO lookup, service detail, discovery và search surfaces của MoMo.',
-    examples: 'Phạt Nguội Hà Nội (pSEO) · Universal Search · Cinema Film Detail · Merchant Discovery · Merchant',
+    description: 'Cell Team triển khai các use case theo ngành hàng; Web Platform xây các surface dùng chung cho Merchant và Search.',
+    examples: 'Cell Team: Phạt Nguội · eSIM · Cinema | Web Platform: Search · Merchant Discovery · Merchant',
   },
 };
 
@@ -512,7 +543,7 @@ function renderNav() {
       });
     if (!groupItems.length) return '';
 
-    const itemsHtml = groupItems.map((p, i) => {
+    const renderNavItem = (p, i) => {
       const isActive   = activeProtoId === p.id && !activeToolId;
       const isExpanded = expanded.has(p.id);
 
@@ -533,13 +564,24 @@ function renderNav() {
           <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
           <span class="proto-nav-label">
             <strong>${p.name}</strong>
-            <small>${displayGroupName(p.category)}</small>
+            <small>${p.ownerGroup || displayGroupName(p.category)}</small>
           </span>
           ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
         </button>
         ${toolsHtml}
       </div>`;
-    }).join('');
+    };
+
+    const itemsHtml = groupName === 'Platform'
+      ? PLG_OWNER_ORDER.map(owner => {
+          const ownerItems = groupItems.filter(item => item.ownerGroup === owner);
+          if (!ownerItems.length) return '';
+          return `<div class="proto-owner-group">
+            <p class="proto-owner-label">${owner}</p>
+            ${ownerItems.map(item => renderNavItem(item, groupItems.indexOf(item))).join('')}
+          </div>`;
+        }).join('')
+      : groupItems.map((item, index) => renderNavItem(item, index)).join('');
 
     return `<section class="proto-nav-section">
       <p class="nav-section-label">${displayGroupName(groupName)}</p>
@@ -688,6 +730,29 @@ function buildMoSparkHomeIntro() {
   `;
 }
 
+function buildHomeCard(proto) {
+  const matCol = MAT_COLOR[proto.maturity] || { bg: '#f1f5f9', text: '#475569' };
+  return `<article class="hl-card" data-open-proto="${proto.id}">
+    <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${proto.maturity}</span>
+    <h3 class="hl-card-name">${proto.name}</h3>
+    <button class="hl-open-btn" type="button">Preview ↗</button>
+  </article>`;
+}
+
+function buildHomeGroupCards(groupName, groupItems) {
+  if (groupName !== 'Platform') {
+    return `<div class="hl-cards">${groupItems.map(buildHomeCard).join('')}</div>`;
+  }
+  return `<div class="hl-owner-layout">${PLG_OWNER_ORDER.map(owner => {
+    const ownerItems = groupItems.filter(item => item.ownerGroup === owner);
+    if (!ownerItems.length) return '';
+    return `<section class="hl-owner-section">
+      <div class="hl-owner-heading"><span>${owner}</span><strong>${ownerItems.length} projects</strong></div>
+      <div class="hl-cards">${ownerItems.map(buildHomeCard).join('')}</div>
+    </section>`;
+  }).join('')}</div>`;
+}
+
 function buildHomeHero() {
   return `
     <div class="hl-page-wrap">
@@ -736,19 +801,7 @@ function buildHomeHero() {
               <span class="hl-sec-count">${count} project${count !== 1 ? 's' : ''}</span>
               <p class="hl-sec-desc">${info.description}</p>
             </div>
-            <div class="hl-cards">
-              ${groupItems.map(p => {
-                const matCol = MAT_COLOR[p.maturity] || { bg: '#f1f5f9', text: '#475569' };
-                const slug = '/' + p.address.replace(/^.*vercel\.app\//, '');
-                return `
-                  <article class="hl-card" data-open-proto="${p.id}">
-                    <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${p.maturity}</span>
-                    <h3 class="hl-card-name">${p.name}</h3>
-                    <button class="hl-open-btn" type="button">Preview ↗</button>
-                  </article>
-                `;
-              }).join('')}
-            </div>
+            ${buildHomeGroupCards(groupName, groupItems)}
           </section>
         `;
       }).join('')}
@@ -857,6 +910,7 @@ function buildToolView(proto, tool) {
   const tc  = CAT_COLOR[tool.category]  || {};
   const src = tool.src || `demos/financial.html#${tool.id}`;
   const preview = previewSrc(src);
+  const address = tool.address || `${proto.address}#${tool.id}`;
 
   return `
   <div class="ws-topbar">
@@ -887,7 +941,7 @@ function buildToolView(proto, tool) {
       <div class="browser-frame" id="browserFrame">
         <div class="browser-bar">
           <div class="browser-dots"><i></i><i></i><i></i></div>
-          <div class="address-pill">🔒 ${proto.address}#${tool.id}</div>
+          <div class="address-pill">🔒 ${address}</div>
           <button class="reload-btn" id="reloadBtn">↺</button>
         </div>
         <iframe id="demoFrame" src="${preview}" data-src="${src}" title="${tool.name}"></iframe>
