@@ -2,6 +2,14 @@
 
 const PROTOTYPES = [
   {
+    id: 'mini-web-overview',
+    name: 'Mini Web Overview',
+    category: 'MiniWeb',
+    maturity: 'Inventory',
+    description: 'Danh mục toàn bộ MiniWeb trên momo.vn, tổng hợp theo Division, Use Case, Product và Page Type.',
+    view: 'mini-web-overview',
+  },
+  {
     id: 'financial',
     name: 'Financial Utilities Lab',
     category: 'Widget',
@@ -310,6 +318,7 @@ const PROTOTYPES = [
 
 const CAT_COLOR = {
   'MoSpark':    { bg: '#fff0f7', text: '#a50064' },
+  'MiniWeb':    { bg: '#eef2ff', text: '#4338ca' },
   'Widget':     { bg: '#eff6ff', text: '#1d4ed8' },
   'Platform':   { bg: '#f0f9ff', text: '#0369a1' },
   'Credit':     { bg: '#eff6ff', text: '#1d4ed8' },
@@ -333,6 +342,7 @@ const CAT_COLOR = {
 
 const GROUP_LABEL = {
   MoSpark: 'MoSpark Platform',
+  MiniWeb: 'Mini Web Overview',
   Widget: 'Widget Store',
   Platform: 'PLG Project',
   Other: 'Other',
@@ -342,10 +352,11 @@ function displayGroupName(groupName) {
   return GROUP_LABEL[groupName] || groupName;
 }
 
-const GROUP_ORDER = ['MoSpark', 'Widget', 'Platform', 'Other'];
+const GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other'];
 const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi-ha-noi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
   Other: ['worldcup'],
@@ -357,6 +368,12 @@ const GROUP_SUMMARY = {
     title: 'MoSpark Platform',
     description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
     examples: 'GenAI Orchestrator · Agentic Hub · SEO/GEO Dashboard · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager · Blog Category · Blog Article',
+  },
+  MiniWeb: {
+    eyebrow: 'Mini Web Overview',
+    title: 'Mini Web Overview',
+    description: 'Inventory toàn bộ MiniWeb trên momo.vn, có thể lọc theo Division, Use Case và Page Type.',
+    examples: '113 MiniWeb thuộc 6 Division và 50 Use Case',
   },
   Widget: {
     eyebrow: 'Widget Store',
@@ -382,7 +399,16 @@ const MAT_COLOR = {
   'Interactive':    { bg: '#f0fdf4', text: '#15803d' },
   'Interaction':    { bg: '#f0fdf4', text: '#15803d' },
   'Data experience':{ bg: '#eff6ff', text: '#1d4ed8' },
+  'Inventory':      { bg: '#eef2ff', text: '#4338ca' },
 };
+
+const MINI_WEB_ROWS = Array.isArray(window.MINI_WEB_DATA) ? window.MINI_WEB_DATA : [];
+const MINI_WEB_SEARCH_MARKETS = Array.isArray(window.MINI_WEB_SEARCH_MARKETS) ? window.MINI_WEB_SEARCH_MARKETS : [];
+const MINI_WEB_VOLUME_BY_URL = new Map();
+MINI_WEB_SEARCH_MARKETS.forEach(item => {
+  item.urls.forEach(url => MINI_WEB_VOLUME_BY_URL.set(url, { market: item.market, volume: item.volume }));
+});
+const MINI_WEB_VOLUME_FORMATTER = new Intl.NumberFormat('en-US');
 
 const MOSPARK_SOURCE_URL = 'https://mospark-intro.vercel.app/';
 const MOSPARK_LOGO_URL = 'https://static.momocdn.net/app/img/web-platform/logo-mospark-dark.svg';
@@ -606,11 +632,17 @@ function renderNav() {
 }
 
 function getGroupCount(groupName) {
+  if (groupName === 'MiniWeb') return MINI_WEB_ROWS.length;
   return PROTOTYPES.filter(proto => proto.category === groupName).length;
+}
+
+function getTotalSurfaceCount() {
+  return PROTOTYPES.length - 1 + MINI_WEB_ROWS.length;
 }
 
 const GROUP_PRIMARY = {
   MoSpark: 'orchestrator',
+  MiniWeb: 'mini-web-overview',
   Widget: 'financial',
   Platform: 'momo-services',
   Other: 'worldcup',
@@ -763,7 +795,7 @@ function buildHomeHero() {
             <span class="hl-page-kicker">Internal · Prototype Directory</span>
           </div>
           <h1 class="hl-page-title">Prototype Lab</h1>
-          <p class="hl-page-sub">${PROTOTYPES.length} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
+          <p class="hl-page-sub">${getTotalSurfaceCount()} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
         </div>
         <div class="hl-page-header-stats">
           ${GROUP_ORDER.map(g => {
@@ -791,14 +823,14 @@ function buildHomeHero() {
             if (ib === -1) return -1;
             return ia - ib;
           });
-        const count = groupItems.length;
+        const count = getGroupCount(groupName);
 
         return `
           <section class="hl-section">
             <div class="hl-sec-head">
               <span class="hl-sec-badge" style="background:${col.bg};color:${col.text}">${displayGroupName(groupName)}</span>
               <h2 class="hl-sec-title">${info.title}</h2>
-              <span class="hl-sec-count">${count} project${count !== 1 ? 's' : ''}</span>
+              <span class="hl-sec-count">${groupName === 'MiniWeb' ? `${count} MiniWeb` : `${count} project${count !== 1 ? 's' : ''}`}</span>
               <p class="hl-sec-desc">${info.description}</p>
             </div>
             ${buildHomeGroupCards(groupName, groupItems)}
@@ -819,7 +851,7 @@ function buildHomeView() {
         <span class="ws-bc-cur">All Prototypes</span>
       </div>
       <div class="ws-topbar-right">
-        <span class="hl-total-count">${PROTOTYPES.length} prototypes</span>
+        <span class="hl-total-count">${getTotalSurfaceCount()} surfaces</span>
       </div>
     </div>
 
@@ -845,6 +877,176 @@ function selectTool(protoId, toolId) {
   closeSidebar();
 }
 
+function escapeMiniWebHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;',
+  })[char]);
+}
+
+function normalizeMiniWebText(value) {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLocaleLowerCase('vi');
+}
+
+function miniWebOptions(field) {
+  return [...new Set(MINI_WEB_ROWS.map(row => row[field]).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'vi'))
+    .map(value => `<option value="${escapeMiniWebHtml(value)}">${escapeMiniWebHtml(value)}</option>`)
+    .join('');
+}
+
+function buildMiniWebOverviewView() {
+  const divisions = new Set(MINI_WEB_ROWS.map(row => row.Division).filter(Boolean)).size;
+  const useCases = new Set(MINI_WEB_ROWS.map(row => row['Use Case']).filter(Boolean)).size;
+  const totalVolume = MINI_WEB_SEARCH_MARKETS.reduce((sum, item) => sum + item.volume, 0);
+
+  return `
+    <div class="ws-topbar">
+      <div class="ws-breadcrumb">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <button class="ws-back-btn" id="backHomeBtn">← Home</button>
+        <span class="ws-cat-tag" style="background:#eef2ff;color:#4338ca">Mini Web Overview</span>
+      </div>
+      <div class="ws-topbar-right">
+        <span class="hl-total-count">${MINI_WEB_ROWS.length} MiniWeb</span>
+      </div>
+    </div>
+
+    <main class="mw-page">
+      <header class="mw-header">
+        <div>
+          <span class="mw-kicker">Web inventory 2026</span>
+          <h1>Mini Web Overview</h1>
+          <p>Danh mục MiniWeb trên momo.vn được nhập đầy đủ từ file CSV nguồn.</p>
+        </div>
+        <dl class="mw-stats" aria-label="Thống kê Mini Web">
+          <div><dt>MiniWeb</dt><dd>${MINI_WEB_ROWS.length}</dd></div>
+          <div><dt>Division</dt><dd>${divisions}</dd></div>
+          <div><dt>Use Case</dt><dd>${useCases}</dd></div>
+          <div class="mw-total-volume"><dt>Total Volume</dt><dd title="${MINI_WEB_VOLUME_FORMATTER.format(totalVolume)} lượt tìm kiếm mỗi tháng">${MINI_WEB_VOLUME_FORMATTER.format(totalVolume)}</dd></div>
+        </dl>
+      </header>
+
+      <section class="mw-panel" aria-labelledby="miniWebTableTitle">
+        <div class="mw-filter-bar">
+          <label class="mw-search">
+            <span>Tìm MiniWeb</span>
+            <input id="miniWebSearch" type="search" placeholder="Tên dịch vụ, product hoặc URL" autocomplete="off">
+          </label>
+          <label>
+            <span>Division</span>
+            <select id="miniWebDivision"><option value="">Tất cả Division</option>${miniWebOptions('Division')}</select>
+          </label>
+          <label>
+            <span>Use Case</span>
+            <select id="miniWebUseCase"><option value="">Tất cả Use Case</option>${miniWebOptions('Use Case')}</select>
+          </label>
+          <label>
+            <span>Page Type</span>
+            <select id="miniWebPageType"><option value="">Tất cả Page Type</option>${miniWebOptions('Page Type')}</select>
+          </label>
+          <button class="mw-clear" id="miniWebClear" type="button">Xóa filter</button>
+        </div>
+
+        <div class="mw-result-bar">
+          <h2 id="miniWebTableTitle">Danh sách MiniWeb</h2>
+          <p id="miniWebResultCount" aria-live="polite"></p>
+        </div>
+
+        <div class="mw-table-wrap">
+          <table class="mw-table">
+            <thead>
+              <tr>
+                <th scope="col">Division</th>
+                <th scope="col">Use Case</th>
+                <th scope="col">Product</th>
+                <th scope="col">Service Name</th>
+                <th scope="col">URL</th>
+                <th scope="col">Page Type</th>
+                <th scope="col">Volume/tháng</th>
+              </tr>
+            </thead>
+            <tbody id="miniWebRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  `;
+}
+
+function wireMiniWebOverview(ws) {
+  const search = ws.querySelector('#miniWebSearch');
+  const division = ws.querySelector('#miniWebDivision');
+  const useCase = ws.querySelector('#miniWebUseCase');
+  const pageType = ws.querySelector('#miniWebPageType');
+  const rowsTarget = ws.querySelector('#miniWebRows');
+  const resultCount = ws.querySelector('#miniWebResultCount');
+  let filterFrame = null;
+
+  const renderRows = () => {
+    const query = normalizeMiniWebText(search.value.trim());
+    const filtered = MINI_WEB_ROWS.filter(row => {
+      const volumeInfo = MINI_WEB_VOLUME_BY_URL.get(row.URL);
+      const matchesQuery = !query || normalizeMiniWebText(`${Object.values(row).join(' ')} ${volumeInfo?.market || ''}`).includes(query);
+      return matchesQuery
+        && (!division.value || row.Division === division.value)
+        && (!useCase.value || row['Use Case'] === useCase.value)
+        && (!pageType.value || row['Page Type'] === pageType.value);
+    });
+
+    resultCount.textContent = `Hiển thị ${filtered.length} / ${MINI_WEB_ROWS.length}`;
+    rowsTarget.innerHTML = filtered.length ? filtered.map(row => {
+      const url = String(row.URL || '');
+      const safeHref = /^https?:\/\//i.test(url) ? escapeMiniWebHtml(url) : '#';
+      const displayUrl = escapeMiniWebHtml(url.replace(/^https?:\/\//i, ''));
+      const volumeInfo = MINI_WEB_VOLUME_BY_URL.get(url);
+      const volumeCell = volumeInfo
+        ? `<span class="mw-volume"><strong>${MINI_WEB_VOLUME_FORMATTER.format(volumeInfo.volume)}</strong><small>${escapeMiniWebHtml(volumeInfo.market)}</small></span>`
+        : '<span class="mw-volume-pending">Đang cập nhật</span>';
+      return `<tr>
+        <td><span class="mw-division">${escapeMiniWebHtml(row.Division)}</span></td>
+        <td>${escapeMiniWebHtml(row['Use Case'])}</td>
+        <td>${escapeMiniWebHtml(row.Product)}</td>
+        <td><strong>${escapeMiniWebHtml(row['Service Name'])}</strong></td>
+        <td><a class="mw-url" href="${safeHref}" target="_blank" rel="noopener" title="${escapeMiniWebHtml(url)}">${displayUrl}<span aria-hidden="true"> ↗</span></a></td>
+        <td><span class="mw-chip">${escapeMiniWebHtml(row['Page Type'])}</span></td>
+        <td>${volumeCell}</td>
+      </tr>`;
+    }).join('') : '<tr><td class="mw-no-results" colspan="7">Không có MiniWeb phù hợp với bộ lọc hiện tại.</td></tr>';
+  };
+
+  const scheduleRender = () => {
+    if (filterFrame) cancelAnimationFrame(filterFrame);
+    filterFrame = requestAnimationFrame(renderRows);
+  };
+
+  search.addEventListener('input', scheduleRender);
+  [division, useCase, pageType].forEach(select => select.addEventListener('change', renderRows));
+  ws.querySelector('#miniWebClear').addEventListener('click', () => {
+    search.value = '';
+    division.value = '';
+    useCase.value = '';
+    pageType.value = '';
+    renderRows();
+    search.focus();
+  });
+
+  ws.querySelector('#menuToggle')?.addEventListener('click', openSidebar);
+  ws.querySelector('#backHomeBtn')?.addEventListener('click', () => {
+    activeProtoId = null;
+    activeToolId = null;
+    renderNav();
+    renderWorkspace();
+    closeSidebar();
+  });
+
+  renderRows();
+}
+
 // ─── Workspace ────────────────────────────────────────────────────────────────
 
 function renderWorkspace() {
@@ -859,6 +1061,12 @@ function renderWorkspace() {
 
   const proto = PROTOTYPES.find(p => p.id === activeProtoId);
   if (!proto) return;
+
+  if (proto.view === 'mini-web-overview') {
+    ws.innerHTML = buildMiniWebOverviewView();
+    wireMiniWebOverview(ws);
+    return;
+  }
 
   if (activeToolId && proto.tools) {
     const tool = proto.tools.find(t => t.id === activeToolId);
