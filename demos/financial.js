@@ -517,6 +517,12 @@ const TOOLS = [
     id: 'ty-gia',   name: 'Tỷ Giá',              category: 'FX',      abbr: 'FX', panel: 'fx',
   },
   {
+    id: 'fx-compare', name: 'So Sánh Tỷ Giá NH', category: 'FX',     abbr: 'CMP', panel: 'fx-compare',
+  },
+  {
+    id: 'travel-budget', name: 'Budget Du Lịch', category: 'FX',     abbr: 'TB',  panel: 'travel-budget',
+  },
+  {
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Planning', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',
@@ -738,12 +744,16 @@ function selectTool(id, options = {}) {
   document.getElementById('cicPanel').hidden      = tool.panel !== 'cic';
   document.getElementById('bankRatePanel').hidden = tool.panel !== 'bank-rate';
   document.getElementById('fxPanel').hidden       = tool.panel !== 'fx';
+  document.getElementById('fxComparePanel').hidden     = tool.panel !== 'fx-compare';
+  document.getElementById('travelBudgetPanel').hidden  = tool.panel !== 'travel-budget';
   if (tool.panel === 'generic')   renderGenericPanel(tool);
   if (tool.panel === 'gold')      initGoldPanel();
   if (tool.panel === 'stock')     renderStockTable();
   if (tool.panel === 'cic')       renderCicPanel();
   if (tool.panel === 'bank-rate') computeBankRate();
   if (tool.panel === 'fx')        computeFx();
+  if (tool.panel === 'fx-compare') initFxComparePanel();
+  if (tool.panel === 'travel-budget') initTravelBudgetPanel();
 }
 
 // ─── Related Tools (bottom-of-page navigation)
@@ -1809,6 +1819,304 @@ function renderFxChart(displayRates) {
     `<span>${points[0].label}</span><b>Effective: ${formatFxRate(displayRates.effective)} ${displayRates.quote}</b><span>${points[points.length - 1].label}</span>`;
 }
 
+// ─── FX Compare Panel
+const BANK_FX_DATA = [
+  { id: 'vcb',   name: 'Vietcombank', abbr: 'VCB',  type: 'bank',   spread: 0    },
+  { id: 'bidv',  name: 'BIDV',        abbr: 'BIDV', type: 'bank',   spread: 0.001},
+  { id: 'tcb',   name: 'Techcombank', abbr: 'TCB',  type: 'bank',   spread:-0.001},
+  { id: 'acb',   name: 'ACB',         abbr: 'ACB',  type: 'bank',   spread: 0.002},
+  { id: 'mb',    name: 'MB Bank',     abbr: 'MB',   type: 'bank',   spread:-0.002},
+  { id: 'eib',   name: 'Eximbank',    abbr: 'EIB',  type: 'bank',   spread: 0.003},
+  { id: 'agri',  name: 'Agribank',    abbr: 'AGR',  type: 'bank',   spread: 0.001},
+  { id: 'hatrung', name: 'Hà Trung (HN)',  abbr: 'HT', type: 'market', spread:-0.005},
+  { id: 'sgsq',    name: 'Saigon Square', abbr: 'SQ', type: 'market', spread:-0.004},
+];
+
+const FXC_STATE = { currency:'USD', side:'sell', amount:1000 };
+
+function initFxComparePanel() {
+  const fxcCurCtrl = document.getElementById('fxcCurrencyControl');
+  if (fxcCurCtrl) {
+    fxcCurCtrl.onclick = e => {
+      const btn = e.target.closest('button[data-cur]');
+      if (!btn) return;
+      FXC_STATE.currency = btn.dataset.cur;
+      fxcCurCtrl.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.cur === FXC_STATE.currency));
+      document.getElementById('fxcAmountUnit').textContent = FXC_STATE.currency;
+      renderFxCompare();
+    };
+  }
+  const fxcSideCtrl = document.getElementById('fxcSideControl');
+  if (fxcSideCtrl) {
+    fxcSideCtrl.onclick = e => {
+      const btn = e.target.closest('button[data-side]');
+      if (!btn) return;
+      FXC_STATE.side = btn.dataset.side;
+      fxcSideCtrl.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.side === FXC_STATE.side));
+      document.getElementById('fxcAmountLabel').textContent = FXC_STATE.side === 'sell' ? 'Số ngoại tệ cần mua' : 'Số ngoại tệ cần bán';
+      renderFxCompare();
+    };
+  }
+  const fxcAmt = document.getElementById('fxcAmount');
+  if (fxcAmt) {
+    fxcAmt.oninput = () => { FXC_STATE.amount = +fxcAmt.value || 0; renderFxCompare(); };
+  }
+  const fxcQuick = document.getElementById('fxcQuickValues');
+  if (fxcQuick) {
+    fxcQuick.onclick = e => {
+      const btn = e.target.closest('button[data-fxc]');
+      if (!btn) return;
+      FXC_STATE.amount = +btn.dataset.fxc;
+      fxcAmt.value = FXC_STATE.amount;
+      fxcQuick.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.fxc === FXC_STATE.amount));
+      renderFxCompare();
+    };
+  }
+  renderFxCompare();
+}
+
+function renderFxCompare() {
+  const ref = FX_RATES.find(r => r.code === FXC_STATE.currency);
+  if (!ref) return;
+  const baseBuy  = ref.buy  / ref.per;
+  const baseSell = ref.sell / ref.per;
+  const rows = BANK_FX_DATA.map(src => {
+    // Positive spread = wider gap (conservative): lower buy, higher sell
+    // Negative spread = competitive (market venues): higher buy, lower sell
+    const buy  = Math.round(baseBuy  * (1 - (src.spread || 0)));
+    const sell = Math.round(baseSell * (1 + (src.spread || 0)));
+    return { ...src, buy, sell, spreadPct: ((sell - buy) / sell * 100) };
+  });
+  // best for user
+  const target = FXC_STATE.side; // 'sell' = mua (so user pays bank's sell rate, want lowest) ; 'buy' = bán (want highest)
+  const sorted = [...rows].sort((a, b) => target === 'sell' ? a.sell - b.sell : b.buy - a.buy);
+  const bestId = sorted[0].id;
+  const worstId = sorted[sorted.length - 1].id;
+  const bestRate = target === 'sell' ? sorted[0].sell : sorted[0].buy;
+  const worstRate = target === 'sell' ? sorted[sorted.length - 1].sell : sorted[sorted.length - 1].buy;
+  const savings = Math.abs(worstRate - bestRate) * FXC_STATE.amount;
+
+  const html = `
+    <div class="fxc-summary">
+      <div class="fxc-summary-item">
+        <small>Giá tốt nhất hôm nay</small>
+        <strong>1 ${FXC_STATE.currency} = ${formatFxRate(bestRate)} đ <span class="fxc-best-src">@ ${sorted[0].abbr}</span></strong>
+      </div>
+      <div class="fxc-summary-item">
+        <small>Tiết kiệm so với nơi đắt nhất</small>
+        <strong class="fxc-save">${savings.toLocaleString('vi-VN')} đ</strong>
+      </div>
+    </div>
+    <table class="fxc-table">
+      <thead>
+        <tr><th>Nguồn</th><th>Giá mua (VND)</th><th>Giá bán (VND)</th><th>Spread</th><th>Tổng giao dịch</th></tr>
+      </thead>
+      <tbody>
+        ${sorted.map(r => {
+          const isBest = r.id === bestId;
+          const isWorst = r.id === worstId;
+          const useRate = target === 'sell' ? r.sell : r.buy;
+          const totalVnd = useRate * FXC_STATE.amount;
+          return `<tr class="${isBest?'fxc-best-row':isWorst?'fxc-worst-row':''}">
+            <td><strong>${r.name}</strong><br><small style="color:#888">${r.type==='market'?'Điểm đổi tiền tự do':'Ngân hàng'}</small></td>
+            <td>${formatFxRate(r.buy)}</td>
+            <td>${formatFxRate(r.sell)}</td>
+            <td><small>${r.spreadPct.toFixed(2)}%</small></td>
+            <td>${totalVnd.toLocaleString('vi-VN')} đ ${isBest?'<span class="fxc-tag fxc-tag-best">RẺ NHẤT</span>':isWorst?'<span class="fxc-tag fxc-tag-worst">ĐẮT NHẤT</span>':''}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('fxcResults').innerHTML = html;
+}
+
+// ─── Travel Budget Panel
+const TRAVEL_DESTINATIONS = [
+  { code:'TH', name:'Thái Lan',   flag:'🇹🇭', currency:'THB', dailyVND:{ budget:800000, mid:1800000, luxury:4500000 },
+    momo: { coverage:75, tier:'high', network:'AliPay+',
+            places:['7-Eleven, FamilyMart — QR thanh toán', 'BigC, Lotus\'s, Central, Robinson — scan QR', 'Klook / KKday — thanh toán tour qua MoMo', 'Street food, taxi Bangkok có biển AliPay+'] } },
+  { code:'SG', name:'Singapore',  flag:'🇸🇬', currency:'SGD', dailyVND:{ budget:2000000, mid:4500000, luxury:10000000 },
+    momo: { coverage:65, tier:'high', network:'NETS QR / AliPay+',
+            places:['Hawker centres — NETS QR', 'MRT/Bus — SimplyGo QR', 'Shopping mall — biển AliPay+', 'Klook — vé tham quan'] } },
+  { code:'MY', name:'Malaysia',   flag:'🇲🇾', currency:'MYR', dailyVND:{ budget:1000000, mid:2300000, luxury:5500000 },
+    momo: { coverage:60, tier:'high', network:'TNG eWallet / AliPay+',
+            places:['Touch \'n Go QR — khắp KL', 'Sunway, Pavilion, KLCC mall', 'Grab ride + GrabFood', 'Genting cable car — quầy QR'] } },
+  { code:'CN', name:'Trung Quốc', flag:'🇨🇳', currency:'CNY', dailyVND:{ budget:1500000, mid:3500000, luxury:8500000 },
+    momo: { coverage:85, tier:'high', network:'AliPay direct',
+            places:['AliPay QR khắp cửa hàng', 'Didi — taxi/xe', '12306 — vé tàu cao tốc', 'Tourist sites, restaurant, conbini'] } },
+  { code:'JP', name:'Nhật Bản',   flag:'🇯🇵', currency:'JPY', dailyVND:{ budget:2500000, mid:5500000, luxury:13000000 },
+    momo: { coverage:35, tier:'medium', network:'AliPay+',
+            places:['Don Quijote, BicCamera, Yodobashi', 'Conbini chains (7-Eleven, FamilyMart, Lawson)', 'Lotte / Tokyo Skytree shops', 'Tourist hot spot có biển AliPay+'] } },
+  { code:'KR', name:'Hàn Quốc',   flag:'🇰🇷', currency:'KRW', dailyVND:{ budget:2200000, mid:4800000, luxury:11000000 },
+    momo: { coverage:35, tier:'medium', network:'AliPay+ / Naver Pay',
+            places:['Olive Young, ARITAUM — cosmetic', 'Lotte / Shilla duty free', 'Myeongdong, Hongdae shops', 'Klook — vé tour Seoul'] } },
+  { code:'TW', name:'Đài Loan',   flag:'🇹🇼', currency:'TWD', dailyVND:{ budget:1800000, mid:3800000, luxury:9000000 },
+    momo: { coverage:30, tier:'medium', network:'AliPay+',
+            places:['7-Eleven, FamilyMart — QR', 'Shin Kong Mitsukoshi mall', 'Taipei 101 shops', 'Klook — night market tour'] } },
+  { code:'US', name:'Mỹ',         flag:'🇺🇸', currency:'USD', dailyVND:{ budget:3500000, mid:7500000, luxury:18000000 },
+    momo: { coverage:0, tier:'none', network:null, places:[] } },
+  { code:'AU', name:'Úc',         flag:'🇦🇺', currency:'AUD', dailyVND:{ budget:3200000, mid:7000000, luxury:16500000 },
+    momo: { coverage:0, tier:'none', network:null, places:[] } },
+  { code:'FR', name:'Pháp',       flag:'🇫🇷', currency:'EUR', dailyVND:{ budget:3000000, mid:6500000, luxury:15500000 },
+    momo: { coverage:5, tier:'low', network:'AliPay+ (limited)', places:['Luxury brands ở Champs-Élysées — limited acceptance'] } },
+];
+
+const TRAVEL_BREAKDOWN = {
+  lodging: { name:'Lưu trú',    weight:0.40, icon:'🏨' },
+  food:    { name:'Ăn uống',    weight:0.25, icon:'🍜' },
+  transport:{ name:'Di chuyển', weight:0.15, icon:'🚇' },
+  activity:{ name:'Tham quan',  weight:0.15, icon:'🎟️' },
+  misc:    { name:'Chi khác',   weight:0.05, icon:'🛍️' },
+};
+
+const TB_STATE = { destCode:'JP', days:7, tier:'mid' };
+
+function initTravelBudgetPanel() {
+  const sel = document.getElementById('tbDestination');
+  if (sel) {
+    sel.innerHTML = TRAVEL_DESTINATIONS.map(d => `<option value="${d.code}">${d.flag} ${d.name} · ${d.currency}</option>`).join('');
+    sel.value = TB_STATE.destCode;
+    sel.onchange = () => { TB_STATE.destCode = sel.value; renderTravelBudget(); };
+  }
+  const dayInput = document.getElementById('tbDays');
+  if (dayInput) {
+    dayInput.oninput = () => { TB_STATE.days = +dayInput.value || 1; renderTravelBudget(); };
+  }
+  const quick = dayInput?.parentElement?.parentElement?.querySelector('.quick-values');
+  if (quick) {
+    quick.onclick = e => {
+      const btn = e.target.closest('button[data-tbd]');
+      if (!btn) return;
+      TB_STATE.days = +btn.dataset.tbd;
+      dayInput.value = TB_STATE.days;
+      quick.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.tbd === TB_STATE.days));
+      renderTravelBudget();
+    };
+  }
+  const tierCtrl = document.getElementById('tbTierControl');
+  if (tierCtrl) {
+    tierCtrl.onclick = e => {
+      const btn = e.target.closest('button[data-tier]');
+      if (!btn) return;
+      TB_STATE.tier = btn.dataset.tier;
+      tierCtrl.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.tier === TB_STATE.tier));
+      renderTravelBudget();
+    };
+  }
+  renderTravelBudget();
+}
+
+function renderTravelBudget() {
+  const dest = TRAVEL_DESTINATIONS.find(d => d.code === TB_STATE.destCode);
+  if (!dest) return;
+  const dailyVnd = dest.dailyVND[TB_STATE.tier];
+  const total = dailyVnd * TB_STATE.days;
+  document.getElementById('tbTotal').textContent = fmtM(total);
+  // approx USD conversion
+  const usd = total / 25500;
+  document.getElementById('tbTotalUsd').textContent = `≈ ${Math.round(usd).toLocaleString('en-US')} USD · ${dest.flag} ${dest.name} · ${TB_STATE.days} ngày`;
+
+  const breakdownHtml = Object.entries(TRAVEL_BREAKDOWN).map(([k, v]) => {
+    const amt = total * v.weight;
+    return `<div class="tb-row">
+      <span class="tb-icon">${v.icon}</span>
+      <span class="tb-name">${v.name}</span>
+      <div class="tb-bar"><div class="tb-bar-fill" style="width:${v.weight*100}%"></div></div>
+      <strong class="tb-amt">${fmtM(amt)}</strong>
+    </div>`;
+  }).join('');
+  document.getElementById('tbBreakdown').innerHTML = breakdownHtml;
+
+  // Payment hierarchy — MoMo as primary source of fund
+  renderTbPayment(dest, total);
+}
+
+function renderTbPayment(dest, total) {
+  const m = dest.momo || { coverage:0, tier:'none', network:null, tips:[] };
+  const box = document.getElementById('tbCashMix');
+  if (!box) return;
+
+  if (m.tier === 'none') {
+    const cardPct = 60, cashPct = 40;
+    box.classList.add('tb-pay-fallback');
+    box.innerHTML = `
+      <div class="tb-pay-unsupported">
+        <strong>🚫 MoMo chưa thanh toán được tại ${dest.name}</strong>
+        <p>Network chưa cover. Dùng thẻ + cash thay thế:</p>
+      </div>
+      <div class="tb-pay-backup tb-pay-backup-primary">
+        <div class="tb-pay-row">
+          <div class="tb-pay-icon">💳</div>
+          <div class="tb-pay-info">
+            <strong>Card quốc tế (chính)</strong>
+            <small>Visa / Master / Amex — hotel, mall, online booking</small>
+          </div>
+          <div class="tb-pay-amount"><b>${cardPct}%</b><small>${fmtM(total * cardPct / 100)}</small></div>
+        </div>
+        <div class="tb-pay-row">
+          <div class="tb-pay-icon">💵</div>
+          <div class="tb-pay-info">
+            <strong>Cash (dự phòng)</strong>
+            <small>Tip, taxi, market nhỏ — đổi tại NH/Hà Trung trước chuyến</small>
+          </div>
+          <div class="tb-pay-amount"><b>${cashPct}%</b><small>${fmtM(total * cashPct / 100)}</small></div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  let momoPct, cardPct, cashPct;
+  if (m.tier === 'high')   { momoPct = 60; cardPct = 25; cashPct = 15; }
+  else if (m.tier === 'medium') { momoPct = 35; cardPct = 30; cashPct = 35; }
+  else /* low */            { momoPct = 15; cardPct = 35; cashPct = 50; }
+
+  const momoAmt = total * momoPct / 100;
+  const cardAmt = total * cardPct / 100;
+  const cashAmt = total * cashPct / 100;
+
+  box.classList.remove('tb-pay-fallback');
+  box.innerHTML = `
+    <div class="tb-pay-primary">
+      <div class="tb-pay-primary-head">
+        <div class="tb-pay-logo">💚</div>
+        <div class="tb-pay-primary-info">
+          <strong>MoMo Wallet · Primary</strong>
+          <small>${dest.flag} ${dest.name} · Coverage <b>${m.coverage}%</b>${m.network?` · qua ${m.network}`:''}</small>
+        </div>
+        <div class="tb-pay-primary-amount">
+          <b>${momoPct}%</b>
+          <small>${fmtM(momoAmt)}</small>
+        </div>
+      </div>
+      <div class="tb-pay-places-label">Thanh toán được tại</div>
+      <ul class="tb-pay-tips">
+        ${m.places.map(p => `<li>✓ ${p}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="tb-pay-backup">
+      <small class="tb-pay-backup-label">Card + Cash cho phần MoMo chưa cover</small>
+      <div class="tb-pay-row">
+        <div class="tb-pay-icon">💳</div>
+        <div class="tb-pay-info">
+          <strong>Card quốc tế</strong>
+          <small>Hotel, premium mall, online booking ngoài MoMo network</small>
+        </div>
+        <div class="tb-pay-amount"><b>${cardPct}%</b><small>${fmtM(cardAmt)}</small></div>
+      </div>
+      <div class="tb-pay-row">
+        <div class="tb-pay-icon">💵</div>
+        <div class="tb-pay-info">
+          <strong>Cash local</strong>
+          <small>Tip, taxi không-app, chợ truyền thống, đền/chùa</small>
+        </div>
+        <div class="tb-pay-amount"><b>${cashPct}%</b><small>${fmtM(cashAmt)}</small></div>
+      </div>
+    </div>
+  `;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
   bindToolList();
@@ -1820,6 +2128,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCicPanel();
   initBankRatePanel();
   initFxPanel();
+  initFxComparePanel();
+  initTravelBudgetPanel();
   const hash = location.hash.slice(1);
   if (hash) {
     const tool = TOOLS.find(t => t.id === hash);
