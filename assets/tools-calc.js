@@ -235,6 +235,66 @@ const CALCS = {
       progress: Math.min(100, (years / 18) * 100),
     });
   },
+
+  childPlanner() {
+    const locEl = document.getElementById('location');
+    const eduEl = document.getElementById('education');
+    const age = val('age');
+    if (!locEl || !eduEl || age > 18) return;
+    
+    const location = locEl.value;
+    const education = eduEl.value;
+    
+    let baseCost = 0;
+    let eduCost = 0;
+    
+    if (location === 'city') {
+      baseCost = 4000000;
+      if (education === 'public') eduCost = 1500000;
+      else if (education === 'private') eduCost = 6000000;
+      else eduCost = 20000000;
+    } else {
+      baseCost = 2500000;
+      if (education === 'public') eduCost = 800000;
+      else if (education === 'private') eduCost = 3000000;
+      else eduCost = 10000000;
+    }
+    
+    const monthlyCost = baseCost + eduCost;
+    const yearsLeft = Math.max(0, 18 - age);
+    
+    let totalCost = 0;
+    const inflation = 0.05;
+    for (let t = 0; t < yearsLeft; t++) {
+      totalCost += (monthlyCost * 12) * Math.pow(1 + inflation, t);
+    }
+    
+    const uniCostToday = eduCost * 12 * 4;
+    const uniCostFuture = uniCostToday * Math.pow(1 + inflation, yearsLeft);
+    
+    let monthlySave = 0;
+    if (yearsLeft > 0) {
+      const r = 0.06 / 12;
+      const N = yearsLeft * 12;
+      monthlySave = uniCostFuture * r / (Math.pow(1 + r, N) - 1);
+    }
+    
+    setResult({
+      main: fmtM(totalCost), mainLabel: 'TỔNG CHI PHÍ ĐẾN 18 TUỔI',
+      second: fmt(monthlySave), secondLabel: 'CẦN TÍCH LŨY / THÁNG (Cho ĐH)',
+      progress: Math.min(100, (age / 18) * 100)
+    });
+    
+    const insightEl = document.getElementById('savingInsight');
+    if (insightEl) {
+      if (yearsLeft > 0) {
+        insightEl.innerHTML = `🎯 Quỹ Đại học dự kiến khi con 18 tuổi là <strong>${fmtM(uniCostFuture)}</strong>. Tiết kiệm ngay từ bây giờ giúp bạn tối ưu chi phí tích lũy nhờ lãi kép.`;
+        insightEl.style.display = 'block';
+      } else {
+        insightEl.style.display = 'none';
+      }
+    }
+  },
 };
 
 function runCalc() {

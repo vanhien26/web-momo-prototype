@@ -602,6 +602,76 @@ const TOOLS = [
     },
   },
   {
+    id: 'nuoi-con', name: 'Kế Hoạch Nuôi Con', category: 'Savings', abbr: 'NC',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Ước tính chi phí nuôi dạy con đến 18 tuổi và số tiền cần tích lũy hằng tháng cho quỹ đại học.',
+    jtbd: 'Tôi chuẩn bị sinh con hoặc có con nhỏ và muốn biết dự toán tổng chi phí để nuôi con lớn lên. Cần biết ngay <b>tổng số tiền cần thiết đến khi con 18 tuổi và số tiền tích lũy mỗi tháng cho con đi đại học</b>, để <b>lập kế hoạch ngân sách gia đình hợp lý</b>.',
+    formula: 'Tổng chi phí = <b>Tích lũy chi phí sinh hoạt & học tập hàng năm</b> (đã tính lạm phát giáo dục 5%/năm).<br>Tích lũy đại học/tháng = <b>Dự phòng 4 năm học phí khi con 18 tuổi</b> (lợi suất đầu tư tích lũy giả định 6%/năm).',
+    resultLabel: 'TỔNG CHI PHÍ ĐẾN 18 TUỔI',
+    fields: [
+      { id: 'location', label: 'Nơi sinh sống', type: 'select', options: [
+        {value:'city',label:'Thành phố lớn (Hà Nội, TP.HCM...)'},
+        {value:'other',label:'Tỉnh, thành phố khác'},
+      ], value: 'city' },
+      { id: 'education', label: 'Lộ trình học tập mong muốn', type: 'select', options: [
+        {value:'public',label:'Trường công lập (Cơ bản)'},
+        {value:'private',label:'Trường tư thục / Chất lượng cao'},
+        {value:'international',label:'Trường quốc tế (Cao cấp)'},
+      ], value: 'private' },
+      { id: 'age', label: 'Tuổi hiện tại của con', type: 'range', min: 0, max: 18, step: 1, value: 1, unit: 'tuổi', chips: [1, 3, 6, 12, 15] },
+    ],
+    compute(v) {
+      const location = v.location;
+      const education = v.education;
+      const age = v.age;
+      
+      let baseCost = 0;
+      let eduCost = 0;
+      
+      if (location === 'city') {
+        baseCost = 4000000;
+        if (education === 'public') eduCost = 1500000;
+        else if (education === 'private') eduCost = 6000000;
+        else eduCost = 20000000;
+      } else {
+        baseCost = 2500000;
+        if (education === 'public') eduCost = 800000;
+        else if (education === 'private') eduCost = 3000000;
+        else eduCost = 10000000;
+      }
+      
+      const monthlyCost = baseCost + eduCost;
+      const yearsLeft = Math.max(0, 18 - age);
+      
+      let totalCost = 0;
+      const inflation = 0.05;
+      for (let t = 0; t < yearsLeft; t++) {
+        totalCost += (monthlyCost * 12) * Math.pow(1 + inflation, t);
+      }
+      
+      const uniCostToday = eduCost * 12 * 4;
+      const uniCostFuture = uniCostToday * Math.pow(1 + inflation, yearsLeft);
+      
+      let monthlySave = 0;
+      if (yearsLeft > 0) {
+        const r = 0.06 / 12;
+        const N = yearsLeft * 12;
+        monthlySave = uniCostFuture * r / (Math.pow(1 + r, N) - 1);
+      }
+      
+      return {
+        result: fmtM(totalCost),
+        details: [
+          { label: 'Chi phí cơ bản/tháng', value: fmt(baseCost) },
+          { label: 'Học phí dự kiến/tháng', value: fmt(eduCost) },
+          { label: 'Tổng quỹ ĐH khi 18 tuổi', value: fmtM(uniCostFuture) },
+          { label: 'Tiền tích lũy ĐH/tháng', value: fmt(monthlySave) },
+        ],
+        insight: yearsLeft > 0 ? `💡 Cần tích lũy khoảng <b>${fmt(monthlySave)}</b>/tháng vào danh mục đầu tư (lợi suất kỳ vọng 6%/năm) từ hôm nay để chuẩn bị sẵn quỹ đại học ${fmtM(uniCostFuture)} cho con.` : '💡 Con đã đủ tuổi hoặc lớn hơn 18 tuổi. Hãy bắt đầu lập kế hoạch tài chính cho tương lai tự lập của con.',
+      };
+    },
+  },
+  {
     id: 'thue-tncn', name: 'Thuế TNCN', category: 'Tax', abbr: 'TC',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính thuế TNCN cho 4 loại thu nhập theo Luật Thuế TNCN sửa đổi 2025: Lương từ HĐLĐ (biểu lũy tiến 5 bậc + giảm trừ gia cảnh 15,5tr/NPT 6,2tr), Cộng tác viên/Freelance (10% tại nguồn), Đầu tư vốn/Cổ tức (5% cố định), Trúng thưởng/Quà tặng (10% phần vượt 10tr).',
