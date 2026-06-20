@@ -120,13 +120,51 @@ const CALCS = {
   retirement() {
     const expense = val('expense'), years = val('years'), inflation = val('inflation') / 100;
     const retireYears = val('retireYears') || 20;
+    const returnRate = (val('returnRate') || 0) / 100;
+    
+    // Tỷ suất sinh lời thực tế (Real rate of return) sau lạm phát
+    const r = (1 + returnRate) / (1 + inflation) - 1;
     const futureCost = expense * Math.pow(1 + inflation, years);
-    const totalNeeded = futureCost * 12 * retireYears;
+    
+    // Công thức tính Giá trị hiện tại của dòng tiền đều (Annuity Present Value) trong thời kỳ hưu trí
+    let totalNeeded = 0;
+    const n_months = retireYears * 12;
+    if (Math.abs(r) < 1e-6) {
+      totalNeeded = futureCost * n_months;
+    } else {
+      const r_month = Math.pow(1 + r, 1/12) - 1;
+      totalNeeded = futureCost * (1 - Math.pow(1 + r_month, -n_months)) / r_month;
+    }
+
+    // Tính số tiền cần tiết kiệm mỗi tháng trước khi nghỉ hưu (Future Value of Annuity)
+    let monthlySave = 0;
+    if (years > 0) {
+      const r_save_month = returnRate / 12;
+      const n_save_months = years * 12;
+      if (r_save_month === 0) {
+        monthlySave = totalNeeded / n_save_months;
+      } else {
+        monthlySave = totalNeeded * r_save_month / (Math.pow(1 + r_save_month, n_save_months) - 1);
+      }
+    }
+
+    // Cập nhật kết quả chính và phụ
     setResult({
-      main: fmt(futureCost), mainLabel: 'CHI PHÍ SỐNG KHI HƯU/THÁNG',
-      second: fmtM(totalNeeded), secondLabel: 'TỔNG VỐN CẦN TÍCH LŨY',
+      main: fmtM(totalNeeded), mainLabel: 'TỔNG VỐN CẦN TÍCH LŨY',
+      second: fmt(futureCost), secondLabel: 'CHI PHÍ KHI HƯU/THÁNG',
       progress: Math.min(100, (years / 40) * 100),
     });
+
+    // Hiển thị phần tiết kiệm bổ sung
+    const insightEl = document.getElementById('savingInsight');
+    if (insightEl) {
+      if (years > 0) {
+        insightEl.innerHTML = `🎯 Để đạt mục tiêu này, bạn cần tiết kiệm khoảng <strong>${fmt(monthlySave)}</strong>/tháng từ nay đến khi nghỉ hưu (giả định lợi suất đầu tư đạt ${val('returnRate')}%/năm).`;
+        insightEl.style.display = 'block';
+      } else {
+        insightEl.style.display = 'none';
+      }
+    }
   },
 
   emergency() {

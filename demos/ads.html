@@ -707,6 +707,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .svc-icon.bl{background:#3b82f6}
 .svc-icon.gr{background:#22c55e}
 .svc-icon.or{background:#f59e0b}
+
+/* ── Preview device variants (Step 4: Xem trước) ── */
+.m-burger{margin-left:auto;display:none;flex-direction:column;gap:3px;cursor:pointer}
+.m-burger i{display:block;width:18px;height:2px;border-radius:2px;background:#9aa0ab}
+/* MOBILE: thu gọn nav, layout dồn 1-2 cột, ad xếp dọc */
+.pm-mobile .m-links,.pm-mobile .m-cta{display:none}
+.pm-mobile .m-burger{display:flex}
+.pm-mobile .service-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+.pm-mobile .svc-icon{width:42px;height:42px}
+.pm-mobile .pg-home .hero{height:82px}
+.pm-mobile .pg-blog .hero{height:92px}
+.pm-mobile .ad-banner{flex-direction:column;align-items:flex-start;gap:8px}
+.pm-mobile .ad-banner .banner-btn{width:100%}
+.pm-mobile .ad-video{flex-direction:column}
+.pm-mobile .ad-masthead{padding:14px 16px}
+/* DESKTOP: nav đầy đủ, nhiều cột, layout rộng */
+.pm-desktop .m-burger{display:none}
+.pm-desktop .m-links{display:flex;gap:16px}
+.pm-desktop .m-links span{width:48px!important;height:7px}
+.pm-desktop .m-nav{height:50px;padding:0 22px}
+.pm-desktop .service-grid{grid-template-columns:repeat(4,1fr);gap:16px}
+.pm-desktop .pg-home .hero{height:124px;font-size:15px}
+.pm-desktop .pg-hub .body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pm-desktop .pg-blog .hero{height:150px}
+.pm-desktop .pg-blog .hero-text{font-size:15px}
+.pm-desktop .pg-blog .body{columns:2;column-gap:26px;padding:18px 22px}
+.pm-desktop .pg-blog .tag,.pm-desktop .pg-blog .title{column-span:all}
+.pm-desktop .pg-blog .title{font-size:18px}
 .svc-label{font-size:8px;color:#666;text-align:center}
 
 /* AD OVERLAYS */
@@ -1734,7 +1762,7 @@ function mountPreviewIntoStep4() {
   const pageCtx = slotToPage(getSelectedPlacement());
   const pageHtml = buildPageMockup(pageCtx);
   const adHtml   = buildAdOverlay(builderState.format, mockCamp);
-  mount.innerHTML = `<div style="position:relative;min-height:380px">${pageHtml}${adHtml}</div>`;
+  mount.innerHTML = `<div class="pm-scope pm-${device}" style="position:relative;min-height:380px">${pageHtml}${adHtml}</div>`;
 }
 
 function buildCampaignStepHtml() {
@@ -3170,7 +3198,7 @@ function updateLivePreview() {
 }
 
 function buildPageMockup(page) {
-  const nav = `<div class="m-nav"><div class="m-logo"></div><div class="m-links"><span style="width:30px"></span><span style="width:40px"></span><span style="width:25px" class="hi"></span></div><div class="m-cta"></div></div>`;
+  const nav = `<div class="m-nav"><div class="m-logo"></div><div class="m-links"><span style="width:30px"></span><span style="width:40px"></span><span style="width:25px" class="hi"></span></div><div class="m-burger"><i></i><i></i><i></i></div><div class="m-cta"></div></div>`;
   if (page==='blog') return `<div class="page-mockup pg-blog">${nav}
     <div class="hero"><div class="hero-text">Kinh nghiệm mua bảo hiểm xe máy<br>cho người lần đầu</div></div>
     <div class="body">

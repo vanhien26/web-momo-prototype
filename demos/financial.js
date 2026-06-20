@@ -420,15 +420,10 @@ const TOOLS = [
       { id: 'lhBirthYear', label: 'Năm sinh',          type: 'range', min: 1960,    max: 2005,     step: 1,      value: 1980,      unit: '', chips: [1970, 1980, 1990, 2000] },
       { id: 'lhYears',     label: 'Số năm đã đóng BHXH', type: 'range', min: 1,       max: 40,       step: 1,      value: 20,        unit: 'năm', chips: [15, 20, 30, 35] },
       { id: 'lhSalary',    label: 'Lương đóng BHXH/tháng (hiện tại)', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
-      { id: 'lhJoined725', label: 'Thời điểm tham gia BHXH lần đầu', type: 'select', options: [
-        {value:0, label:'Trước 01/07/2025'},
-        {value:1, label:'Từ 01/07/2025 trở đi'},
-      ], value: 0 },
     ],
     compute(v) {
       const yrs = v.lhYears;
       const isFemale = v.lhGender === 0;
-      const joinedAfter = v.lhJoined725 === 1;
 
       // Tuổi nghỉ hưu theo BLLĐ 2019 (Điều 169) + Nghị định 135/2020/NĐ-CP
       // Nam: 60 từ 2020, +3 tháng/năm, max 62 (2028) · Nữ: 55 từ 2020, +4 tháng/năm, max 60 (2035)
@@ -472,12 +467,7 @@ const TOOLS = [
         if (yrs < 15) {
           rate = 0;
         } else if (yrs < 20) {
-          if (joinedAfter) {
-            rate = 0.40 + (yrs - 15) * 0.01;
-          } else {
-            rate = 0;
-            warning = `Tham gia BHXH trước 01/07/2025 cần đóng đủ 20 năm để nhận lương hưu hằng tháng. Đóng ${yrs} năm chỉ được rút BHXH 1 lần hoặc đóng tiếp đến đủ 20 năm.`;
-          }
+          rate = 0.40 + (yrs - 15) * 0.01;
         } else {
           const ratableYrs = Math.min(yrs, 35);
           rate = 0.45 + (ratableYrs - 20) * 0.02;
