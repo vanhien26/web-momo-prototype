@@ -245,21 +245,26 @@ const CALCS = {
     const location = locEl.value;
     const education = eduEl.value;
     
-    let baseCost = 0;
-    let eduCost = 0;
+    let baseCost = val('customBase');
+    let eduCost = val('customEdu');
     
-    if (location === 'city') {
-      baseCost = 4000000;
-      if (education === 'public') eduCost = 1500000;
-      else if (education === 'private') eduCost = 6000000;
-      else eduCost = 20000000;
-    } else {
-      baseCost = 2500000;
-      if (education === 'public') eduCost = 800000;
-      else if (education === 'private') eduCost = 3000000;
-      else eduCost = 10000000;
+    if (baseCost <= 0) {
+      baseCost = (location === 'city') ? 4000000 : 2500000;
     }
     
+    if (eduCost <= 0) {
+      if (location === 'city') {
+        if (education === 'public') eduCost = 1500000;
+        else if (education === 'private') eduCost = 6000000;
+        else eduCost = 20000000;
+      } else {
+        if (education === 'public') eduCost = 800000;
+        else if (education === 'private') eduCost = 3000000;
+        else eduCost = 10000000;
+      }
+    }
+    
+    const returnRate = (val('customReturn') || 6) / 100;
     const monthlyCost = baseCost + eduCost;
     const yearsLeft = Math.max(0, 18 - age);
     
@@ -274,9 +279,9 @@ const CALCS = {
     
     let monthlySave = 0;
     if (yearsLeft > 0) {
-      const r = 0.06 / 12;
+      const r = returnRate / 12;
       const N = yearsLeft * 12;
-      monthlySave = uniCostFuture * r / (Math.pow(1 + r, N) - 1);
+      monthlySave = r === 0 ? uniCostFuture / N : uniCostFuture * r / (Math.pow(1 + r, N) - 1);
     }
     
     setResult({
@@ -288,7 +293,7 @@ const CALCS = {
     const insightEl = document.getElementById('savingInsight');
     if (insightEl) {
       if (yearsLeft > 0) {
-        insightEl.innerHTML = `🎯 Quỹ Đại học dự kiến khi con 18 tuổi là <strong>${fmtM(uniCostFuture)}</strong>. Tiết kiệm ngay từ bây giờ giúp bạn tối ưu chi phí tích lũy nhờ lãi kép.`;
+        insightEl.innerHTML = `🎯 Quỹ Đại học dự kiến khi con 18 tuổi là <strong>${fmtM(uniCostFuture)}</strong>. Tiết kiệm ngay từ bây giờ giúp bạn tối ưu chi phí tích lũy nhờ lãi kép (giả định tỷ suất sinh lời ${returnRate * 100}%/năm).`;
         insightEl.style.display = 'block';
       } else {
         insightEl.style.display = 'none';

@@ -619,27 +619,39 @@ const TOOLS = [
         {value:'international',label:'Trường quốc tế (Cao cấp)'},
       ], value: 'private' },
       { id: 'age', label: 'Tuổi hiện tại của con', type: 'range', min: 0, max: 18, step: 1, value: 1, unit: 'tuổi', chips: [1, 3, 6, 12, 15] },
+      { id: 'customConfig', label: 'Tùy chỉnh chi tiết số liệu', type: 'pills', options: [
+        {value: 'no', label: 'Mặc định (đề xuất)'},
+        {value: 'yes', label: 'Tùy biến chi phí'}
+      ], value: 'no' },
+      { id: 'customBase', label: 'Chi phí sinh hoạt của con/tháng', type: 'money', min: 0, max: 50000000, step: 500000, value: 0, chips: [2000000, 4000000, 8000000], condition: { field: 'customConfig', value: 'yes' } },
+      { id: 'customEdu', label: 'Học phí trung bình/tháng', type: 'money', min: 0, max: 100000000, step: 1000000, value: 0, chips: [1500000, 6000000, 20000000], condition: { field: 'customConfig', value: 'yes' } },
+      { id: 'customReturn', label: 'Lợi suất đầu tư tích lũy/năm', type: 'range', min: 1, max: 15, step: 0.5, value: 6, unit: '%', chips: [4, 6, 8, 10, 12], condition: { field: 'customConfig', value: 'yes' } },
     ],
     compute(v) {
       const location = v.location;
       const education = v.education;
       const age = v.age;
       
-      let baseCost = 0;
-      let eduCost = 0;
+      let baseCost = v.customConfig === 'yes' ? v.customBase : 0;
+      let eduCost = v.customConfig === 'yes' ? v.customEdu : 0;
       
-      if (location === 'city') {
-        baseCost = 4000000;
-        if (education === 'public') eduCost = 1500000;
-        else if (education === 'private') eduCost = 6000000;
-        else eduCost = 20000000;
-      } else {
-        baseCost = 2500000;
-        if (education === 'public') eduCost = 800000;
-        else if (education === 'private') eduCost = 3000000;
-        else eduCost = 10000000;
+      if (baseCost <= 0) {
+        baseCost = (location === 'city') ? 4000000 : 2500000;
       }
       
+      if (eduCost <= 0) {
+        if (location === 'city') {
+          if (education === 'public') eduCost = 1500000;
+          else if (education === 'private') eduCost = 6000000;
+          else eduCost = 20000000;
+        } else {
+          if (education === 'public') eduCost = 800000;
+          else if (education === 'private') eduCost = 3000000;
+          else eduCost = 10000000;
+        }
+      }
+      
+      const returnRate = (v.customConfig === 'yes' ? v.customReturn : 6) / 100;
       const monthlyCost = baseCost + eduCost;
       const yearsLeft = Math.max(0, 18 - age);
       
@@ -654,9 +666,9 @@ const TOOLS = [
       
       let monthlySave = 0;
       if (yearsLeft > 0) {
-        const r = 0.06 / 12;
+        const r = returnRate / 12;
         const N = yearsLeft * 12;
-        monthlySave = uniCostFuture * r / (Math.pow(1 + r, N) - 1);
+        monthlySave = r === 0 ? uniCostFuture / N : uniCostFuture * r / (Math.pow(1 + r, N) - 1);
       }
       
       return {
@@ -667,7 +679,7 @@ const TOOLS = [
           { label: 'Tổng quỹ ĐH khi 18 tuổi', value: fmtM(uniCostFuture) },
           { label: 'Tiền tích lũy ĐH/tháng', value: fmt(monthlySave) },
         ],
-        insight: yearsLeft > 0 ? `💡 Cần tích lũy khoảng <b>${fmt(monthlySave)}</b>/tháng vào danh mục đầu tư (lợi suất kỳ vọng 6%/năm) từ hôm nay để chuẩn bị sẵn quỹ đại học ${fmtM(uniCostFuture)} cho con.` : '💡 Con đã đủ tuổi hoặc lớn hơn 18 tuổi. Hãy bắt đầu lập kế hoạch tài chính cho tương lai tự lập của con.',
+        insight: yearsLeft > 0 ? `💡 Cần tích lũy khoảng <b>${fmt(monthlySave)}</b>/tháng vào danh mục đầu tư (lợi suất kỳ vọng ${(returnRate*100).toFixed(1)}%/năm) từ hôm nay để chuẩn bị sẵn quỹ đại học ${fmtM(uniCostFuture)} cho con.` : '💡 Con đã đủ tuổi hoặc lớn hơn 18 tuổi. Hãy bắt đầu lập kế hoạch tài chính cho tương lai tự lập của con.',
       };
     },
   },
