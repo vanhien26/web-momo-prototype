@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tra cứu phạt nguội Hà Nội 2026 – Kiểm tra biển số xe miễn phí | MoMo</title>
-<meta name="description" content="Tra cứu phạt nguội Hà Nội theo biển số ô tô, xe máy. Dữ liệu chính xác từ Cục CSGT, miễn phí, cập nhật mới nhất 2026.">
+<title>Tra cứu phạt nguội Hà Nội – Demo prototype | MoMo</title>
+<meta name="description" content="Demo prototype tra cứu phạt nguội tại Hà Nội: form lookup, kết quả vi phạm, navigate tỉnh thành khác và các dịch vụ liên quan.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -53,9 +53,18 @@ button{font-family:inherit;cursor:pointer}
 .plate-input::placeholder{font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:14px}
 .plate-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:26px;height:26px;background:var(--line);border:none;border-radius:50%;color:var(--sub);font-size:12px;display:none;align-items:center;justify-content:center}
 .plate-input:not(:placeholder-shown) ~ .plate-clear{display:flex}
-.vtype-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.vtype-btn{height:46px;border:1.5px solid var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font-size:13px;font-weight:700;color:var(--sub);transition:all .15s}
+.vtype-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.vtype-btn{height:44px;border:1.5px solid var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:700;color:var(--sub);transition:all .15s;padding:0 6px;white-space:nowrap}
 .vtype-btn.on{border-color:var(--pk);background:var(--pk-bg);color:var(--pk)}
+.plate-hint{font-size:11px;color:var(--sub);margin:-4px 0 10px;line-height:1.45}
+.plate-hint b{color:var(--ink);font-weight:700}
+.save-plate{display:flex;align-items:center;gap:7px;margin-bottom:12px;cursor:pointer;user-select:none}
+.save-plate input{width:16px;height:16px;accent-color:var(--pk);cursor:pointer}
+.save-plate label{font-size:12px;color:var(--sub);font-weight:600;cursor:pointer}
+.save-plate label b{color:var(--ink);font-weight:700}
+.social-proof{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;padding:10px 0 4px;font-size:11.5px;color:var(--sub);font-weight:600}
+.social-proof b{color:var(--ink);font-weight:800;letter-spacing:-.01em}
+.social-proof .sp-dot{width:3px;height:3px;border-radius:50%;background:var(--muted)}
 .search-btn{width:100%;height:52px;background:var(--pk);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;margin-bottom:14px}
 .search-btn:hover{background:var(--pk2)}
 .search-btn:active{transform:scale(.98)}
@@ -255,21 +264,32 @@ button{font-family:inherit;cursor:pointer}
     <div class="lookup-card">
       <div class="lookup-label">Nhập biển số xe</div>
       <div class="plate-input-wrap">
-        <input type="text" class="plate-input" id="plateInput" placeholder="VD: 29A-12345" maxlength="12" oninput="onPlateInput(this)" onkeydown="if(event.key==='Enter')doSearch()">
+        <input type="text" class="plate-input" id="plateInput" placeholder="VD: 29A12345" maxlength="12" oninput="onPlateInput(this)" onkeydown="if(event.key==='Enter')doSearch()">
         <button class="plate-clear" onclick="clearPlate()">✕</button>
       </div>
+      <div class="plate-hint">💡 Ví dụ: <b>29A-123.45</b> nhập là <b>29A12345</b> (bỏ dấu chấm, gạch ngang).</div>
       <div class="vtype-row">
         <button class="vtype-btn on" id="vt-oto" onclick="setVType('oto')">🚗 Ô tô</button>
         <button class="vtype-btn" id="vt-xemay" onclick="setVType('xemay')">🏍️ Xe máy</button>
+        <button class="vtype-btn" id="vt-xedien" onclick="setVType('xedien')">🛵 Xe máy điện</button>
       </div>
+      <label class="save-plate" for="savePlateChk">
+        <input type="checkbox" id="savePlateChk">
+        <label for="savePlateChk"><b>Lưu biển số</b> để tra nhanh lần sau</label>
+      </label>
       <button class="search-btn" onclick="doSearch()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Tra cứu ngay
+        Tra cứu miễn phí
       </button>
       <div class="trust-row">
-        <div class="trust-item"><div class="trust-ico">✅</div>Dữ liệu CSGT</div>
+        <div class="trust-item"><div class="trust-ico">✅</div>Cục CSGT &amp; Đăng kiểm</div>
         <div class="trust-item"><div class="trust-ico">⚡</div>Kết quả 3 giây</div>
         <div class="trust-item"><div class="trust-ico">🆓</div>Miễn phí 100%</div>
+      </div>
+      <div class="social-proof">
+        <span>📸 <b>1.800+</b> Camera AI</span><span class="sp-dot"></span>
+        <span>👥 <b>1M+</b> người dùng</span><span class="sp-dot"></span>
+        <span>🔄 <b>500K+</b> lượt/tháng</span>
       </div>
     </div>
   </div>
@@ -304,7 +324,7 @@ button{font-family:inherit;cursor:pointer}
     <a class="province-chip" href="#">⛵ Khánh Hoà</a>
     <a class="province-chip" href="#">🌾 Long An</a>
   </div>
-  <div class="mini-label">Dịch vụ liên quan</div>
+  <div class="mini-label">Liên quan đến phạt nguội</div>
   <div class="related-grid">
     <a class="related-card" href="#">
       <div class="related-ico" style="background:#fff0f7">💳</div>
@@ -314,24 +334,24 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </a>
     <a class="related-card" href="#">
-      <div class="related-ico" style="background:#eff6ff">📋</div>
-      <div>
-        <div class="related-name">Đăng kiểm xe</div>
-        <div class="related-desc">Kiểm tra hạn đăng kiểm</div>
-      </div>
-    </a>
-    <a class="related-card" href="#">
-      <div class="related-ico" style="background:#f0fdf4">🛡️</div>
-      <div>
-        <div class="related-name">Bảo hiểm TNDS</div>
-        <div class="related-desc">Mua bảo hiểm bắt buộc</div>
-      </div>
-    </a>
-    <a class="related-card" href="#">
       <div class="related-ico" style="background:#fffbeb">🔔</div>
       <div>
         <div class="related-name">Nhận cảnh báo</div>
         <div class="related-desc">Alert khi có phạt mới</div>
+      </div>
+    </a>
+    <a class="related-card" href="#">
+      <div class="related-ico" style="background:#eff6ff">📍</div>
+      <div>
+        <div class="related-name">Bản đồ camera HN</div>
+        <div class="related-desc">600+ vị trí AI giám sát</div>
+      </div>
+    </a>
+    <a class="related-card" href="#">
+      <div class="related-ico" style="background:#f0fdf4">📋</div>
+      <div>
+        <div class="related-name">Tra cứu mức phạt</div>
+        <div class="related-desc">Theo NĐ 168/2024</div>
       </div>
     </a>
   </div>

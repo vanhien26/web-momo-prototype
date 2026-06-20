@@ -36,7 +36,7 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 
 | Prototype | File | Mô tả |
 |---|---|---|
-| Financial Utilities Lab | `demos/financial.html` | 19 công cụ tài chính: Credit, Insurance, Savings, Investment, Tax, Planning |
+| Financial Utilities | `demos/financial.html` | 18 công cụ tài chính: Credit, Insurance, Savings, Investment, Tax, Planning |
 | Bill Lookup | `demos/bill-lookup.html` | Tra cứu hóa đơn điện/nước/internet |
 | Scam Check | `demos/scam-check.html` | Kiểm tra số tài khoản/SĐT lừa đảo |
 | World Cup 2026 Predictor | `demos/world-cup.html` | Dự đoán kết quả World Cup 2026 |

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
-  <link rel="stylesheet" href="financial.css?v=15">
+  <link rel="stylesheet" href="financial.css?v=18">
 </head>
 <body>
   <header class="site-header">
@@ -44,6 +44,7 @@
             <span class="jtbd-kicker">Jobs to be Done</span>
             <p></p>
           </aside>
+          <div class="highlights-row" id="genericHighlights" style="display:none"></div>
           <div class="calculator-layout">
             <div class="input-panel">
               <div class="dynamic-fields" id="genericFields"></div>
@@ -54,10 +55,12 @@
               <strong id="resultValue">0 đ</strong>
               <div class="result-details" id="resultDetails"></div>
               <div class="insight-box" id="resultInsight" style="display:none"></div>
-              <button class="primary-action" type="button" onclick="momo_track('cta_click',{cta:'view_solution',location:'generic_result'})">Xem giải pháp phù hợp trên MoMo</button>
+              <button class="primary-action" id="genericCta" type="button">Xem giải pháp phù hợp trên MoMo</button>
+              <p class="generic-disclaimer" id="genericDisclaimer" style="display:none"></p>
             </div>
           </div>
           <div id="amortizationSchedule" class="amortization-schedule" style="display:none"></div>
+          <div class="partners-row" id="genericPartners" style="display:none"></div>
           <div id="genericFormula" class="formula-box" style="display:none"></div>
         </section>
 
@@ -130,9 +133,14 @@
                 <label class="input-label" for="goldProduct">Loại vàng</label>
                 <select id="goldProduct"></select>
                 <label class="input-label" for="goldScenario">Kịch bản giá bán lại</label>
-                <div class="range-row">
-                  <input id="goldScenario" type="range" min="-10" max="20" step="1" value="5">
-                  <output id="goldScenarioValue">+5%</output>
+                <input id="goldScenario" type="hidden" value="5">
+                <div class="gold-scenario-chips" id="goldScenarioChips">
+                  <button type="button" data-pct="-10">-10%</button>
+                  <button type="button" data-pct="-5">-5%</button>
+                  <button type="button" data-pct="0">0%</button>
+                  <button type="button" data-pct="5" class="active">+5%</button>
+                  <button type="button" data-pct="10">+10%</button>
+                  <button type="button" data-pct="20">+20%</button>
                 </div>
               </div>
               <div class="gold-result">
@@ -262,6 +270,48 @@
               <div class="cic-v2-band-info" id="cicV2BandInfo"></div>
 
               <p class="cic-disclaimer">Điểm CIC được chấm và quản lý bởi Trung tâm Thông tin Tín dụng Quốc gia Việt Nam (CIC). Kết quả ở đây mang tính tham khảo theo công thức xếp hạng công khai.</p>
+
+              <section class="npl-section" aria-labelledby="nplSectionTitle">
+                <div class="npl-section-head">
+                  <div>
+                    <h3 id="nplSectionTitle">Lịch sử nợ xấu ảnh hưởng thế nào?</h3>
+                    <p>Chọn nhóm nợ hiện tại của bạn để xem ảnh hưởng đến khả năng vay vốn và lộ trình khắc phục.</p>
+                  </div>
+                  <span class="npl-source-chip">Thông tư 11/2021/TT-NHNN</span>
+                </div>
+
+                <div class="npl-selector" id="nplSelector" role="tablist" aria-label="Chọn nhóm nợ"></div>
+
+                <div class="npl-impact" id="nplImpact" role="tabpanel">
+                  <div class="npl-impact-header">
+                    <span class="npl-badge" id="nplBadge">NHÓM 1</span>
+                    <strong id="nplGroupLabel">Nợ đủ tiêu chuẩn</strong>
+                    <span class="npl-tag" id="nplTag">Nợ tốt</span>
+                  </div>
+                  <p class="npl-summary" id="nplSummary"></p>
+
+                  <div class="npl-impact-grid">
+                    <div class="npl-impact-cell">
+                      <small>QUÁ HẠN</small>
+                      <strong id="nplOverdue">-</strong>
+                    </div>
+                    <div class="npl-impact-cell">
+                      <small>ĐIỂM CIC TƯƠNG ỨNG</small>
+                      <strong id="nplScore">-</strong>
+                    </div>
+                    <div class="npl-impact-cell">
+                      <small>THỜI GIAN LƯU CIC</small>
+                      <strong id="nplDuration">-</strong>
+                    </div>
+                  </div>
+
+                  <h4 class="npl-block-title">Khả năng tiếp cận tín dụng</h4>
+                  <div class="npl-access" id="nplAccess"></div>
+
+                  <h4 class="npl-block-title">Lộ trình khắc phục</h4>
+                  <ol class="npl-roadmap" id="nplRoadmap"></ol>
+                </div>
+              </section>
             </div>
 
             <div class="cic-v2-phone-col">
@@ -510,6 +560,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js?v=22"></script>
+  <script src="financial.js?v=29"></script>
 </body>
 </html>

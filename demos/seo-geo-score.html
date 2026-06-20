@@ -668,6 +668,10 @@ function merchantKeywordCount(merchant) {
   return 1 + merchant.secondaries.length;
 }
 
+function merchantTopicCluster(merchant) {
+  return merchant.topicCluster || `${merchant.name}: thương hiệu, sản phẩm và thanh toán`;
+}
+
 const PROJECTS = [
   {
     id:'phat-nguoi', name:'Phạt Nguội', division:'VTTI', pillar:'P3', pillarName:'Dịch vụ Công & Tiện ích',
@@ -976,6 +980,7 @@ let openMerchantTopics = {};
 let aiContext       = null; // { pid, cid, ki }
 let crudContext     = null;
 const CRUD_STORAGE_KEY = 'mospark-topic-inventory-v1';
+const MERCHANT_STORAGE_KEY = 'mospark-merchant-inventory-v1';
 
 /* ─── UTILS ─────────────────────────────────────────────────────────────────── */
 function fmtVol(n) {
@@ -1083,6 +1088,29 @@ function persistAndRender(project, message) {
   saveProjectData(project);
   renderProjectList();
   document.getElementById('projectDetail').innerHTML = buildDetail(project);
+  showToast(message, 't-green');
+}
+
+function restoreMerchantData(project) {
+  try {
+    const stored = JSON.parse(localStorage.getItem(MERCHANT_STORAGE_KEY) || 'null');
+    if (!Array.isArray(stored)) return false;
+    project.merchants = stored;
+    project._merchantCrudReady = true;
+    project.vol = stored.reduce((sum, merchant) => sum + merchantInventory(merchant), 0);
+    return true;
+  } catch { return false; }
+}
+
+function saveMerchantData(project) {
+  localStorage.setItem(MERCHANT_STORAGE_KEY, JSON.stringify(project.merchants));
+}
+
+function persistAndRenderMerchant(project, message) {
+  project.vol = project.merchants.reduce((sum, merchant) => sum + merchantInventory(merchant), 0);
+  saveMerchantData(project);
+  renderProjectList();
+  document.getElementById('projectDetail').innerHTML = buildMerchantDirectory(project);
   showToast(message, 't-green');
 }
 
@@ -1212,6 +1240,10 @@ function selectProject(id) {
   if (!selectedProject.isDistributed && !selectedProject._crudReady) {
     if (!restoreProjectData(selectedProject)) prepareProjectForCrud(selectedProject);
   }
+  if (selectedProject.isDistributed && !selectedProject._merchantCrudReady) {
+    restoreMerchantData(selectedProject);
+    selectedProject._merchantCrudReady = true;
+  }
   openThemes = {};
   openClusters = {};
   openMerchantTopics = {};
@@ -1224,37 +1256,69 @@ function selectProject(id) {
     : buildDetail(selectedProject);
 }
 
-function buildMerchantRows(merchants) {
-  if (!merchants.length) {
-    return `<div class="cp-empty">Không tìm thấy Merchant Topic Cluster phù hợp.</div>`;
-  }
-  return merchants.map(merchant => {
-    const isOpen = !!openMerchantTopics[merchant.id];
-    const keywords = [
-      {role:'Primary', ...merchant.primary},
-      ...merchant.secondaries.map(keyword => ({role:'Secondary', ...keyword}))
-    ];
-    const keywordRows = keywords.map(keyword => `<div class="mp-kw-row">
-      <span class="mp-kw-role${keyword.role === 'Secondary' ? ' secondary' : ''}">${keyword.role}</span>
-      <strong>${keyword.kw}</strong>
-      <span>${fmtVol(keyword.vol)}/tháng</span>
-      <span>${keyword.role === 'Primary' ? 'Bài viết chính' : 'Cùng bài viết'}</span>
-    </div>`).join('');
-    return `<div class="mp-row-group${isOpen ? ' open' : ''}" id="mpr-${merchant.id}">
-      <div class="mp-row" onclick="toggleMerchantKeywords('${merchant.id}')">
-        <div class="mp-merchant">
-          <span class="mp-expand">▶</span>
-          <div class="mp-name"><strong>${merchant.name}</strong><span>${merchant.category}</span></div>
-        </div>
-        <div><div class="mp-num">${merchant.primary.kw}</div><div class="mp-meta">1 Merchant = 1 Primary Keyword</div></div>
-        <div><div class="mp-num">${fmtVol(merchantInventory(merchant))}</div><div class="mp-meta">Primary ${fmtVol(merchant.primary.vol)}</div></div>
-        <div><div class="mp-num">${merchant.secondaries.length}</div><div class="mp-meta">supporting keywords</div></div>
-        <span class="mp-content-status ${merchant.contentStatus}">${MERCHANT_STATUS_LABEL[merchant.contentStatus]}</span>
-        <button class="mp-manage" onclick="event.stopPropagation();advanceMerchantContentInline('${merchant.id}')" ${merchant.contentStatus === 'published' ? 'disabled' : ''}>${MERCHANT_ACTION_LABEL[merchant.contentStatus]}</button>
+function buildMerchantRows(merchants, project) {
+  if (!merchants.length) return '<div class="cp-empty">Chưa có Merchant nào trong Content Plan.</div>';
+  return merchants.map((merchant, index) => {
+    const merchantOpen = openMerchantTopics[merchant.id] ?? index === 0;
+    const articleId = `merchant-${merchant.id}`;
+    const articleOpen = !!openClusters[articleId];
+    const totalVolume = merchantInventory(merchant);
+    const status = merchant.contentStatus || 'none';
+    const actionLabel = status === 'published' ? 'Xem Bài' : MERCHANT_ACTION_LABEL[status];
+    const secondaryRows = merchant.secondaries.map((keyword, keywordIndex) => `<div class="ti-keyword-row">
+      <span></span>
+      <span></span>
+      <span class="ti-keyword-name">${escapeHTML(keyword.kw)}</span>
+      <span class="ti-keyword-volume">${Number(keyword.vol).toLocaleString('en-US')}</span>
+      <div class="ti-row-actions">
+        <span class="ti-secondary-role">Cùng bài viết</span>
+        <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchantKeyword('${merchant.id}',${keywordIndex})" title="Sửa Secondary Keyword">✎</button>
+        <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchantKeyword('${merchant.id}',${keywordIndex})" title="Xóa Secondary Keyword">×</button>
       </div>
-      <div class="mp-keyword-list">
-        <div class="mp-kw-head"><span>Role</span><span>Keyword</span><span>Volume</span><span>Content Mapping</span></div>
-        ${keywordRows}
+    </div>`).join('');
+
+    return `<div class="ti-theme${merchantOpen ? ' open' : ''}" id="merchant-theme-${merchant.id}">
+      <div class="ti-theme-row" onclick="toggleMerchantKeywords('${merchant.id}')">
+        <div class="ti-theme-main">
+          <span class="ti-arrow">▶</span>
+          <span class="ti-theme-name" title="${escapeHTML(merchant.name)}">${escapeHTML(merchant.name)}</span>
+          <span class="ti-theme-tools">
+            <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchant('${merchant.id}')" title="Sửa Merchant">✎</button>
+            <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchant('${merchant.id}')" title="Xóa Merchant">×</button>
+          </span>
+        </div>
+        <span class="ti-count">1 topic cluster</span>
+        <span class="ti-count">1 bài viết AI</span>
+        <span class="ti-volume">${totalVolume.toLocaleString('en-US')}</span>
+        <span class="ti-article-meta"><strong>${status === 'published' ? '1/1' : '0/1'}</strong> đã xuất bản</span>
+      </div>
+      <div class="ti-theme-body">
+        <div class="ti-cluster${articleOpen ? ' open' : ''}" id="cc-${articleId}">
+          <div class="ti-cluster-row" onclick="toggleCluster('${articleId}')">
+            <span class="ti-cluster-indent">└</span>
+            <div class="ti-cluster-main">
+              <span class="ti-arrow">▶</span>
+              <span class="ti-cluster-name" title="${escapeHTML(merchantTopicCluster(merchant))}">${escapeHTML(merchantTopicCluster(merchant))}</span>
+            </div>
+            <div class="ti-primary">
+              <strong>${escapeHTML(merchant.primary.kw)}</strong>
+              <small>Primary ${Number(merchant.primary.vol).toLocaleString('en-US')} · ${merchant.secondaries.length} Secondary Keywords</small>
+            </div>
+            <span class="ti-volume">${totalVolume.toLocaleString('en-US')}</span>
+            <div class="ti-row-actions">
+              <button class="ti-action${status === 'published' ? ' published' : ''}" onclick="event.stopPropagation();advanceMerchantContentInline('${merchant.id}')">${actionLabel}</button>
+              <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchant('${merchant.id}')" title="Sửa Merchant">✎</button>
+              <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchant('${merchant.id}')" title="Xóa Merchant">×</button>
+            </div>
+          </div>
+          <div class="ti-keywords">
+            <div class="ti-secondary-toolbar">
+              <span>${merchant.secondaries.length} Secondary Keywords trong cùng bài</span>
+              <button class="ti-add-secondary" onclick="openCreateMerchantKeyword('${merchant.id}')">+ Secondary Keyword</button>
+            </div>
+            ${secondaryRows || '<div class="cp-empty">Bài viết này chưa có Secondary Keyword.</div>'}
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1263,69 +1327,57 @@ function buildMerchantRows(merchants) {
 function buildMerchantDirectory(project) {
   const merchants = project.merchants;
   const published = merchants.filter(merchant => merchant.contentStatus === 'published').length;
+  const keywordCount = merchants.reduce((sum, merchant) => sum + merchantKeywordCount(merchant), 0);
   return `<div class="merchant-project">
     <div class="dh">
-      <div class="dh-top">
-        <div>
-          <h2 class="dh-title">${project.name}</h2>
-        </div>
-      </div>
+      <div class="dh-top"><div><h2 class="dh-title">${project.name}</h2></div></div>
     </div>
     ${buildProjectOverview(project)}
-    <div class="mp-directory">
-      <div class="mp-kpis">
-        <div class="mp-kpi"><span>Merchants</span><strong>${merchants.length}</strong><small>topic clusters cần quản lý</small></div>
-        <div class="mp-kpi"><span>Primary Keywords</span><strong>${merchants.length}</strong><small>1 primary keyword/merchant</small></div>
-        <div class="mp-kpi"><span>Total Search Volume</span><strong>${fmtVol(project.vol)}</strong><small>primary + secondary/tháng</small></div>
-        <div class="mp-kpi"><span>Published Articles</span><strong>${published}/${merchants.length}</strong><small>1 primary keyword = 1 bài</small></div>
-      </div>
-      <div class="mp-toolbar">
-        <input id="merchantSearch" class="mp-search" type="search" placeholder="Tìm theo Merchant hoặc Primary Keyword" oninput="filterMerchantDirectory()" aria-label="Tìm Merchant Topic Cluster">
-        <select id="merchantContentStatus" class="mp-filter" onchange="filterMerchantDirectory()" aria-label="Lọc theo trạng thái viết bài">
-          <option value="">Tất cả trạng thái</option>
-          <option value="none">Chưa bắt đầu</option>
-          <option value="outline">Outline</option>
-          <option value="outline-review">Outline Review</option>
-          <option value="draft">Draft</option>
-          <option value="draft-review">Draft Review</option>
-          <option value="published">Published</option>
-        </select>
-        <span class="mp-result-count" id="merchantResultCount">${merchants.length} topic clusters</span>
-      </div>
-      <div class="mp-table">
-        <div class="mp-th"><span>Merchant</span><span>Primary Keyword</span><span>Search Volume</span><span>Secondaries</span><span>Writing Status</span><span>Action</span></div>
-        <div id="merchantRows">${buildMerchantRows(merchants)}</div>
-      </div>
+    <div class="cp-body">
+      <section class="topic-overview">
+        <div class="topic-head">
+          <div>
+            <span class="topic-title">Merchant Content Plan</span>
+            <div class="topic-source">1 Brand = 1 Topic Cluster đặc thù = 1 Primary Keyword = 1 bài viết AI</div>
+          </div>
+          <div class="topic-actions">
+            <div class="topic-summary">
+              <span>Merchants <strong>${merchants.length}</strong></span>
+              <span>AI Articles <strong>${published}/${merchants.length}</strong></span>
+              <span>Keywords <strong>${keywordCount.toLocaleString('en-US')}</strong></span>
+              <span>Total Volume <strong>${Number(project.vol).toLocaleString('en-US')}/tháng</strong></span>
+            </div>
+            <button class="topic-create" onclick="openCreateMerchant()">+ Thêm Merchant</button>
+          </div>
+        </div>
+        <div class="theme-inventory">
+          <div class="ti-head">
+            <span>Merchant</span><span>Topic Cluster</span><span>Primary Keyword</span><span>Volume</span><span>AI Article</span>
+          </div>
+          ${buildMerchantRows(merchants, project)}
+        </div>
+      </section>
     </div>
   </div>`;
 }
 
-function filterMerchantDirectory() {
-  const project = PROJECTS.find(item => item.id === 'merchant');
-  const query = (document.getElementById('merchantSearch')?.value || '').trim().toLowerCase();
-  const status = document.getElementById('merchantContentStatus')?.value || '';
-  const filtered = project.merchants.filter(merchant => {
-    const searchable = `${merchant.name} ${merchant.primary.kw} ${merchant.secondaries.map(keyword => keyword.kw).join(' ')}`.toLowerCase();
-    return (!query || searchable.includes(query)) && (!status || merchant.contentStatus === status);
-  });
-  document.getElementById('merchantRows').innerHTML = buildMerchantRows(filtered);
-  document.getElementById('merchantResultCount').textContent = `${filtered.length} topic clusters`;
-}
-
 function toggleMerchantKeywords(merchantId) {
-  openMerchantTopics[merchantId] = !openMerchantTopics[merchantId];
-  const rowGroup = document.getElementById(`mpr-${merchantId}`);
-  if (rowGroup) rowGroup.classList.toggle('open', !!openMerchantTopics[merchantId]);
+  const section = document.getElementById(`merchant-theme-${merchantId}`);
+  const isOpen = !section?.classList.contains('open');
+  openMerchantTopics[merchantId] = isOpen;
+  if (section) section.classList.toggle('open', isOpen);
 }
 
 function advanceMerchantContentInline(merchantId) {
   const project = PROJECTS.find(item => item.id === 'merchant');
   const merchant = project.merchants.find(item => item.id === merchantId);
-  const currentIndex = MERCHANT_STATUS_CYCLE.indexOf(merchant.contentStatus);
-  if (currentIndex >= MERCHANT_STATUS_CYCLE.length - 1) return;
+  if (merchant.contentStatus === 'published') {
+    showToast(`Mở bài viết: "${merchant.primary.kw}"`, 't-pk');
+    return;
+  }
+  const currentIndex = MERCHANT_STATUS_CYCLE.indexOf(merchant.contentStatus || 'none');
   merchant.contentStatus = MERCHANT_STATUS_CYCLE[currentIndex + 1];
-  document.getElementById('projectDetail').innerHTML = buildMerchantDirectory(project);
-  showToast(`${merchant.name}: ${MERCHANT_STATUS_LABEL[merchant.contentStatus]}`, merchant.contentStatus === 'published' ? 't-ok' : 't-pk');
+  persistAndRenderMerchant(project, `${merchant.name}: ${MERCHANT_STATUS_LABEL[merchant.contentStatus]}`);
 }
 
 /* ─── BUILD DETAIL ───────────────────────────────────────────────────────── */
@@ -1553,8 +1605,8 @@ function crudField(name, label, value = '', type = 'text', full = false) {
   </div>`;
 }
 
-function openCrudModal({title, mode, projectId, clusterId = null, keywordIndex = null, theme = null, fields = '', warning = '', destructive = false}) {
-  crudContext = {mode, projectId, clusterId, keywordIndex, theme};
+function openCrudModal({title, mode, projectId, clusterId = null, merchantId = null, keywordIndex = null, theme = null, fields = '', warning = '', destructive = false}) {
+  crudContext = {mode, projectId, clusterId, merchantId, keywordIndex, theme};
   document.getElementById('crudTitle').textContent = title;
   document.getElementById('crudFields').innerHTML = fields || `<div class="crud-warning">${escapeHTML(warning)}</div>`;
   const submit = document.getElementById('crudSubmit');
@@ -1654,16 +1706,113 @@ function openDeleteTheme(projectId, encodedTheme) {
   });
 }
 
+function openCreateMerchant() {
+  openCrudModal({
+    title:'Thêm Merchant và bài viết AI', mode:'create-merchant', projectId:'merchant',
+    fields:[
+      crudField('merchant','Merchant','','text',true),
+      crudField('topicCluster','Topic Cluster','','text',true),
+      crudField('volume','Primary Volume','0','number'),
+      crudField('keyword','Primary Keyword','','text',true),
+    ].join(''),
+  });
+}
+
+function openEditMerchant(merchantId) {
+  const project = PROJECTS.find(item => item.id === 'merchant');
+  const merchant = project.merchants.find(item => item.id === merchantId);
+  openCrudModal({
+    title:'Sửa Merchant và Primary Keyword', mode:'edit-merchant', projectId:'merchant', merchantId,
+    fields:[
+      crudField('merchant','Merchant',merchant.name,'text',true),
+      crudField('topicCluster','Topic Cluster',merchantTopicCluster(merchant),'text',true),
+      crudField('volume','Primary Volume',merchant.primary.vol,'number'),
+      crudField('keyword','Primary Keyword',merchant.primary.kw,'text',true),
+    ].join(''),
+  });
+}
+
+function openDeleteMerchant(merchantId) {
+  const project = PROJECTS.find(item => item.id === 'merchant');
+  const merchant = project.merchants.find(item => item.id === merchantId);
+  openCrudModal({
+    title:'Xóa Merchant', mode:'delete-merchant', projectId:'merchant', merchantId, destructive:true,
+    warning:`Merchant “${merchant.name}”, Primary Keyword và toàn bộ Secondary Keywords sẽ bị xóa.`,
+  });
+}
+
+function openCreateMerchantKeyword(merchantId) {
+  openCrudModal({
+    title:'Thêm Secondary Keyword', mode:'create-merchant-keyword', projectId:'merchant', merchantId,
+    fields:[crudField('keyword','Secondary Keyword','','text',true),crudField('volume','Volume','0','number')].join(''),
+  });
+}
+
+function openEditMerchantKeyword(merchantId, keywordIndex) {
+  const project = PROJECTS.find(item => item.id === 'merchant');
+  const keyword = project.merchants.find(item => item.id === merchantId).secondaries[keywordIndex];
+  openCrudModal({
+    title:'Sửa Secondary Keyword', mode:'edit-merchant-keyword', projectId:'merchant', merchantId, keywordIndex,
+    fields:[crudField('keyword','Secondary Keyword',keyword.kw,'text',true),crudField('volume','Volume',keyword.vol,'number')].join(''),
+  });
+}
+
+function openDeleteMerchantKeyword(merchantId, keywordIndex) {
+  const project = PROJECTS.find(item => item.id === 'merchant');
+  const keyword = project.merchants.find(item => item.id === merchantId).secondaries[keywordIndex];
+  openCrudModal({
+    title:'Xóa Secondary Keyword', mode:'delete-merchant-keyword', projectId:'merchant', merchantId, keywordIndex, destructive:true,
+    warning:`Secondary Keyword “${keyword.kw}” sẽ bị xóa khỏi bài viết Merchant này.`,
+  });
+}
+
 function submitCrud(event) {
   event.preventDefault();
   if (!crudContext) return;
   const values = Object.fromEntries(new FormData(event.currentTarget).entries());
-  const {mode, projectId, clusterId, keywordIndex, theme} = crudContext;
+  const {mode, projectId, clusterId, merchantId, keywordIndex, theme} = crudContext;
   const project = PROJECTS.find(item => item.id === projectId);
   const cluster = clusterId ? project.clusters.find(item => item.id === clusterId) : null;
+  const merchant = merchantId ? project.merchants.find(item => item.id === merchantId) : null;
   let message = 'Đã lưu thay đổi';
 
-  if (mode === 'create-cluster') {
+  if (mode === 'create-merchant') {
+    const id = `merchant-${Date.now()}`;
+    project.merchants.push({
+      id, name:values.merchant.trim(), topicCluster:values.topicCluster.trim(),
+      primary:{kw:values.keyword.trim(),vol:Number(values.volume)}, secondaries:[], contentStatus:'none', context:'',
+    });
+    openMerchantTopics[id] = true;
+    openClusters[`merchant-${id}`] = true;
+    message = 'Đã tạo Merchant và bài viết AI mới';
+  } else if (mode === 'edit-merchant') {
+    merchant.name = values.merchant.trim();
+    merchant.topicCluster = values.topicCluster.trim();
+    merchant.primary.kw = values.keyword.trim();
+    merchant.primary.vol = Number(values.volume);
+    message = 'Đã cập nhật Merchant và Primary Keyword';
+  } else if (mode === 'delete-merchant') {
+    project.merchants = project.merchants.filter(item => item.id !== merchantId);
+    delete openMerchantTopics[merchantId];
+    delete openClusters[`merchant-${merchantId}`];
+    message = 'Đã xóa Merchant';
+  } else if (mode === 'create-merchant-keyword') {
+    merchant.secondaries.push({kw:values.keyword.trim(),vol:Number(values.volume)});
+    openMerchantTopics[merchantId] = true;
+    openClusters[`merchant-${merchantId}`] = true;
+    message = 'Đã thêm Secondary Keyword';
+  } else if (mode === 'edit-merchant-keyword') {
+    merchant.secondaries[keywordIndex].kw = values.keyword.trim();
+    merchant.secondaries[keywordIndex].vol = Number(values.volume);
+    openMerchantTopics[merchantId] = true;
+    openClusters[`merchant-${merchantId}`] = true;
+    message = 'Đã cập nhật Secondary Keyword';
+  } else if (mode === 'delete-merchant-keyword') {
+    merchant.secondaries.splice(keywordIndex, 1);
+    openMerchantTopics[merchantId] = true;
+    openClusters[`merchant-${merchantId}`] = true;
+    message = 'Đã xóa Secondary Keyword';
+  } else if (mode === 'create-cluster') {
     const id = `custom-${Date.now()}`;
     project.clusters.push({
       id, theme:values.theme.trim(), name:values.cluster.trim(), vol:Number(values.volume),
@@ -1705,7 +1854,8 @@ function submitCrud(event) {
   }
 
   closeCrudModal();
-  persistAndRender(project, message);
+  if (project.isDistributed) persistAndRenderMerchant(project, message);
+  else persistAndRender(project, message);
 }
 
 /* ─── TOGGLE THEME / CLUSTER ─────────────────────────────────────────────── */

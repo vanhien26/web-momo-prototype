@@ -56,27 +56,184 @@ const CIC_BEHAVIORS = {
   ]},
 };
 
+// ─── Nhóm nợ CIC (theo Thông tư 11/2021/TT-NHNN, sửa đổi Thông tư 31/2024)
+const NPL_GROUPS = [
+  {
+    nhom: 1,
+    label: 'Nợ đủ tiêu chuẩn',
+    tag: 'Nợ tốt',
+    color: '#027a48',
+    overdue: '0-9 ngày',
+    scoreRange: [700, 900],
+    snapScore: 800,
+    duration: 'Không lưu lịch sử xấu',
+    isNPL: false,
+    summary: 'Thanh toán đúng hạn hoặc trễ dưới 10 ngày. Đây là trạng thái lý tưởng cho mọi khoản vay.',
+    access: [
+      { type: 'NH Quốc doanh (VCB, BIDV, VTB)', status: 'good',    note: 'Lãi ưu đãi 6-10%/năm, hạn mức cao' },
+      { type: 'NH TMCP (TCB, ACB, MB)',         status: 'good',    note: 'Mọi sản phẩm, duyệt nhanh' },
+      { type: 'Công ty tài chính',              status: 'good',    note: 'Lãi tốt 12-22%/năm' },
+      { type: 'Fintech / Vay nhanh',            status: 'good',    note: 'Duyệt 1-3 phút, giải ngân ngay' },
+      { type: 'Thẻ tín dụng',                   status: 'good',    note: 'Hạn mức 3-6 lần thu nhập tháng' },
+    ],
+    roadmap: [
+      'Duy trì thanh toán đúng hạn để giữ điểm cao.',
+      'Có thể yêu cầu tăng hạn mức để tối ưu tỷ lệ sử dụng dưới 30%.',
+      'Đa dạng hoá: 1 vay tiêu dùng + 1 thẻ TD = quan hệ tín dụng phong phú.',
+    ],
+  },
+  {
+    nhom: 2,
+    label: 'Nợ cần chú ý',
+    tag: 'Quá hạn nhẹ',
+    color: '#ca8a04',
+    overdue: '10-90 ngày',
+    scoreRange: [540, 700],
+    snapScore: 620,
+    duration: '12 tháng sau khi tất toán',
+    isNPL: false,
+    summary: 'Chưa phải nợ xấu nhưng đã quá hạn - là tín hiệu cảnh báo sớm. Tất cả TCTD lớn đều thấy thông tin này.',
+    access: [
+      { type: 'NH Quốc doanh',         status: 'bad',     note: 'Phần lớn từ chối hoặc yêu cầu TS đảm bảo' },
+      { type: 'NH TMCP',               status: 'partial', note: 'Vay được nhưng lãi cao hơn 2-4%/năm' },
+      { type: 'Công ty tài chính',     status: 'partial', note: 'Duyệt được, lãi 20-35%/năm' },
+      { type: 'Fintech / Vay nhanh',   status: 'good',    note: 'Vẫn duyệt cho khoản nhỏ (3-15tr)' },
+      { type: 'Thẻ tín dụng',          status: 'partial', note: 'Hạn mức thấp 5-20tr, có thể bị giảm hạn' },
+    ],
+    roadmap: [
+      'Thanh toán ngay khoản quá hạn để dừng tích luỹ số ngày trễ.',
+      'Sau khi tất toán, đợi 12 tháng để CIC reset trạng thái về Nhóm 1.',
+      'Trong thời gian chờ: trả đúng hạn các khoản còn lại để build lịch sử mới.',
+      'Không xin vay thêm trong 6 tháng đầu - mỗi hard inquiry sẽ giảm thêm điểm.',
+    ],
+  },
+  {
+    nhom: 3,
+    label: 'Nợ dưới tiêu chuẩn',
+    tag: 'Nợ xấu',
+    color: '#dc2626',
+    overdue: '91-180 ngày',
+    scoreRange: [380, 540],
+    snapScore: 460,
+    duration: '5 năm sau khi tất toán',
+    isNPL: true,
+    summary: 'Bắt đầu được phân loại là NỢ XẤU. TCTD phải trích lập dự phòng 20% giá trị khoản nợ. Ảnh hưởng nghiêm trọng lịch sử CIC.',
+    access: [
+      { type: 'NH Quốc doanh',         status: 'bad',     note: 'Từ chối hoàn toàn, vào danh sách hạn chế' },
+      { type: 'NH TMCP',               status: 'bad',     note: 'Từ chối hoàn toàn' },
+      { type: 'Công ty tài chính',     status: 'bad',     note: 'Phần lớn từ chối' },
+      { type: 'Fintech / Vay nhanh',   status: 'partial', note: 'Một số bên còn xét cho khoản nhỏ, lãi 30-60%/năm' },
+      { type: 'Thẻ tín dụng',          status: 'bad',     note: 'Khoá tất cả thẻ hiện có, không mở thẻ mới' },
+    ],
+    roadmap: [
+      'Tất toán toàn bộ nợ xấu càng sớm càng tốt (gốc + lãi + phạt quá hạn).',
+      'Lấy Giấy xác nhận tất toán từ TCTD + đối chiếu với CIC sau 30 ngày.',
+      'Đợi 5 năm kể từ ngày tất toán để CIC xoá lịch sử nhóm 3.',
+      'Trong 5 năm chờ: dùng tiền mặt + ví điện tử, tránh phát sinh khoản nợ mới.',
+      'Có thể yêu cầu cơ cấu lại nợ với TCTD nếu chứng minh được khó khăn tạm thời.',
+    ],
+  },
+  {
+    nhom: 4,
+    label: 'Nợ nghi ngờ',
+    tag: 'Nợ xấu',
+    color: '#b91c1c',
+    overdue: '181-360 ngày',
+    scoreRange: [320, 420],
+    snapScore: 370,
+    duration: '5 năm sau khi tất toán',
+    isNPL: true,
+    summary: 'Nợ xấu mức nghi ngờ mất vốn. TCTD trích lập dự phòng 50%. Có nguy cơ bị chuyển hồ sơ sang VAMC hoặc khởi kiện thu hồi.',
+    access: [
+      { type: 'NH Quốc doanh',         status: 'bad', note: 'Từ chối + ghi nhận vào hệ thống' },
+      { type: 'NH TMCP',               status: 'bad', note: 'Từ chối hoàn toàn' },
+      { type: 'Công ty tài chính',     status: 'bad', note: 'Từ chối hoàn toàn' },
+      { type: 'Fintech / Vay nhanh',   status: 'bad', note: 'Hầu hết từ chối, chỉ còn tín dụng đen' },
+      { type: 'Thẻ tín dụng',          status: 'bad', note: 'Thu hồi + đòi tất toán nhanh' },
+    ],
+    roadmap: [
+      'Liên hệ ngay TCTD để thoả thuận tất toán hoặc cơ cấu lại nợ.',
+      'Yêu cầu giảm lãi phạt nếu cam kết thanh toán 1 lần - nhiều TCTD chấp nhận.',
+      'Lưu ý: TCTD có quyền khởi kiện đòi nợ - xử lý sớm để tránh án phí thi hành án.',
+      'Sau khi tất toán: đợi 5 năm để xoá lịch sử CIC, không có cách rút ngắn.',
+      'Cân nhắc tham vấn luật sư nếu khoản nợ có dấu hiệu lãi suất vượt quy định.',
+    ],
+  },
+  {
+    nhom: 5,
+    label: 'Nợ có khả năng mất vốn',
+    tag: 'Nợ xấu',
+    color: '#7f1d1d',
+    overdue: 'Trên 360 ngày',
+    scoreRange: [300, 360],
+    snapScore: 320,
+    duration: '5 năm sau khi tất toán',
+    isNPL: true,
+    summary: 'Mức nợ xấu nặng nhất. TCTD trích lập dự phòng 100%, đã chuyển sang VAMC hoặc đang trong quá trình tố tụng thu hồi.',
+    access: [
+      { type: 'NH Quốc doanh',         status: 'bad', note: 'Từ chối + có thể bị đưa vào danh sách đen liên ngân hàng' },
+      { type: 'NH TMCP',               status: 'bad', note: 'Từ chối hoàn toàn' },
+      { type: 'Công ty tài chính',     status: 'bad', note: 'Từ chối hoàn toàn' },
+      { type: 'Fintech / Vay nhanh',   status: 'bad', note: 'Từ chối hoàn toàn' },
+      { type: 'Thẻ tín dụng',          status: 'bad', note: 'Đã thu hồi từ Nhóm 3-4' },
+    ],
+    roadmap: [
+      'Tra cứu ngay tình trạng pháp lý: nợ đã chuyển VAMC, đã khởi kiện, hay đã có bản án.',
+      'Đàm phán phương án: trả 1 lần được giảm phạt, hoặc cơ cấu lại 5-10 năm.',
+      'Nếu có bản án: thi hành án sẽ phong toả tài khoản và tài sản. Trả nợ theo phán quyết.',
+      'Trường hợp khách quan (thiên tai, dịch bệnh, TCTD vi phạm): có thể yêu cầu xoá CIC sớm với hồ sơ chứng minh.',
+      'Sau khi tất toán/thanh lý: đợi 5 năm để xoá CIC, song song build điểm mới qua thẻ trả trước hoặc tài khoản ngân hàng.',
+    ],
+  },
+];
+
+// ─── Lookup lãi suất Vay Nhanh theo (amount, term) — empirical từ momo.vn (range 2,20% - 4,08%/tháng)
+function lookupVayNhanhRate(amount, term) {
+  const M = amount / 1000000;
+  let rate;
+  if (M <= 10)      rate = 4.08 - (M - 3) / 7  * 0.28;  // 3-10tr:  4.08% → 3.80%
+  else if (M <= 25) rate = 3.80 - (M - 10) / 15 * 0.56; // 10-25tr: 3.80% → 3.24%
+  else if (M <= 50) rate = 3.24 - (M - 25) / 25 * 0.54; // 25-50tr: 3.24% → 2.70%
+  else              rate = 2.70 - (M - 50) / 50 * 0.50; // 50-100tr: 2.70% → 2.20%
+  const termAdj = (term - 6) / 42 * 0.15; // +0.00 → +0.15% theo kỳ hạn dài
+  return Math.max(2.20, Math.min(4.08, rate + termAdj));
+}
+
 // ─── Tool Catalog
 const TOOLS = [
   {
     id: 'vay-nhanh', name: 'Vay Nhanh', category: 'Credit', abbr: 'VN',
     intent: 'Transactional intent', panel: 'generic',
-    description: 'Hạn mức 3 - 100 triệu, kỳ hạn 6 - 48 tháng, lãi suất 23 - 45%/năm. Tính theo công thức dư nợ giảm dần, cộng phí thu hộ 20.000đ/tháng.',
-    jtbd: 'Tôi đang cần một khoản tiền gấp nhưng phân vân không biết vay bao nhiêu, kỳ hạn nào sẽ phù hợp. Cần thấy ngay <b>EMI hàng tháng và tổng lãi phải trả</b> cho từng kịch bản số tiền và kỳ hạn, để chọn được khoản vay <b>vừa đủ tiêu vừa trả nổi mà không gãy ngân sách hàng tháng</b>.',
-    formula: 'Gốc + Lãi/kỳ = <b>P₀ × r ÷ (1 − (1+r)⁻ⁿ)</b> &nbsp;·&nbsp; Lãi kỳ n = <b>B<sub>n-1</sub> × r</b><br><em>P₀ = số tiền vay &nbsp;·&nbsp; r = lãi suất năm / 12 &nbsp;·&nbsp; n = số kỳ &nbsp;·&nbsp; B = dư nợ gốc &nbsp;·&nbsp; EMI = Gốc + Lãi + Phí thu hộ 20.000đ</em>',
-    resultLabel: 'TỔNG PHẢI TRẢ MỖI THÁNG',
+    description: 'Hạn mức đến 100 triệu, kỳ hạn 6 - 48 tháng. Lãi suất 2,20% - 4,08%/tháng (tự động theo gói vay). Tính theo dư nợ giảm dần, cộng phí thu hộ 20.000đ/tháng.',
+    jtbd: 'Tôi đang cần một khoản tiền gấp nhưng phân vân không biết vay bao nhiêu, kỳ hạn nào sẽ phù hợp. Cần thấy ngay <b>tiền trả mỗi tháng và lãi suất áp dụng cho gói vay của mình</b>, để chọn được khoản vay <b>vừa đủ tiêu vừa trả nổi mà không gãy ngân sách hàng tháng</b>.',
+    highlights: [
+      { icon: '📅', text: 'Trả góp đến 48 tháng' },
+      { icon: '⚡', text: 'Duyệt trong 1 phút' },
+      { icon: '📄', text: 'Không cần CM thu nhập' },
+      { icon: '🌐', text: '100% online' },
+    ],
+    partners: [
+      { abbr: 'EVF', name: 'EVN Finance',  color: '#0f766e' },
+      { abbr: 'MCR', name: 'MCredit',      color: '#dc2626' },
+      { abbr: 'VCR', name: 'VietCredit',   color: '#1d4ed8' },
+      { abbr: 'MBV', name: 'MB Shinsei',   color: '#7c3aed' },
+    ],
+    ctaText: 'KIỂM TRA NGAY',
+    disclaimer: 'Lãi suất trên chỉ áp dụng cho một số khách hàng thỏa mãn điều kiện. Vui lòng mở Vay Nhanh trên ứng dụng MoMo để kiểm tra gói vay chính xác.',
+    formula: 'Gốc + Lãi/kỳ = <b>P₀ × r ÷ (1 − (1+r)⁻ⁿ)</b> &nbsp;·&nbsp; Lãi kỳ n = <b>B<sub>n-1</sub> × r</b><br><em>P₀ = số tiền vay &nbsp;·&nbsp; r = lãi suất tháng &nbsp;·&nbsp; n = số kỳ &nbsp;·&nbsp; B = dư nợ gốc &nbsp;·&nbsp; EMI = Gốc + Lãi + Phí thu hộ 20.000đ &nbsp;·&nbsp; Lãi suất tháng tự tính theo gói vay (số tiền + kỳ hạn).</em>',
+    resultLabel: 'TIỀN TRẢ MỖI THÁNG',
     fields: [
-      { id: 'loanAmount',   label: 'Số tiền vay',  type: 'money',  min: 3000000, max: 100000000, step: 500000, value: 8000000, chips: [3000000, 8000000, 30000000, 100000000] },
-      { id: 'interestRate', label: 'Lãi suất/năm', type: 'range',  min: 23, max: 45, step: 0.5, value: 28, unit: '%' },
-      { id: 'loanTerm',     label: 'Kỳ hạn',       type: 'select', options: [
-        {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},
-        {value:18,label:'18 tháng'},{value:24,label:'24 tháng'},
-        {value:36,label:'36 tháng'},{value:48,label:'48 tháng'},
-      ], value: 6 },
+      { id: 'loanAmount', label: 'Bạn muốn vay', type: 'money', min: 3000000, max: 100000000, step: 500000, value: 25000000, chips: [5000000, 10000000, 25000000, 50000000, 100000000] },
+      { id: 'loanTerm',   label: 'Kỳ hạn vay',  type: 'pills', options: [
+        {value:6,  label:'6 tháng'},  {value:9,  label:'9 tháng'},  {value:12, label:'12 tháng'},
+        {value:15, label:'15 tháng'}, {value:18, label:'18 tháng'}, {value:21, label:'21 tháng'},
+        {value:24, label:'24 tháng'}, {value:36, label:'36 tháng'}, {value:48, label:'48 tháng'},
+      ], value: 12 },
     ],
     compute(v) {
       const FEE = 20000;
-      const r = v.interestRate / 100 / 12, n = v.loanTerm, P = v.loanAmount;
+      const monthlyRatePct = lookupVayNhanhRate(v.loanAmount, v.loanTerm);
+      const r = monthlyRatePct / 100, n = v.loanTerm, P = v.loanAmount;
       const emi = r === 0 ? P/n : P * r / (1 - Math.pow(1+r, -n));
       const schedule = [];
       let balance = P;
@@ -96,18 +253,19 @@ const TOOLS = [
         });
       }
       const totalPay = (emi + FEE) * n;
+      const perDay = (emi + FEE) / 30;
       return {
         result: fmt(emi + FEE),
         details: [
-          { label: 'Gốc + Lãi/tháng (EMI)', value: fmt(emi) },
-          { label: 'Phí thu hộ/tháng', value: fmt(FEE) },
-          { label: 'Lãi suất/tháng', value: (v.interestRate/12).toFixed(2) + '%' },
-          { label: 'Tổng tiền phải trả', value: fmt(totalPay) },
-          { label: 'Tổng lãi phát sinh', value: fmt(totalInterest) },
-          { label: 'Tổng phí thu hộ', value: fmt(FEE * n) },
+          { label: 'Lãi suất trên dư nợ gốc', value: monthlyRatePct.toFixed(2) + '%/tháng' },
+          { label: 'Tương đương',             value: fmt(perDay) + '/ngày' },
+          { label: 'Gốc + Lãi/tháng (EMI)',   value: fmt(emi) },
+          { label: 'Phí thu hộ/tháng',        value: fmt(FEE) },
+          { label: 'Tổng tiền phải trả',      value: fmt(totalPay) },
+          { label: 'Tổng lãi phát sinh',      value: fmt(totalInterest) },
         ],
         schedule,
-        insight: 'Duyệt 1 phút, giải ngân vào ví MoMo. 4 đối tác cho vay: EVF, MCredit, VietCredit, Modern VN Bank. Khách mới: 0% lãi tháng đầu cho khoản vay ≤ 3 triệu.',
+        insight: `Gói vay ${fmtM(v.loanAmount)} × ${v.loanTerm} tháng được áp lãi suất <b>${monthlyRatePct.toFixed(2)}%/tháng</b> (tương đương ${(monthlyRatePct * 12).toFixed(2)}%/năm). Duyệt 1 phút, giải ngân vào ví MoMo.`,
       };
     },
   },
@@ -120,7 +278,7 @@ const TOOLS = [
     resultLabel: 'TRẢ MỖI THÁNG ƯỚC TÍNH',
     fields: [
       { id: 'productPrice',    label: 'Giá sản phẩm',   type: 'money',  min: 1000000, max: 500000000, step: 100000, value: 15000000, chips: [5000000, 15000000, 50000000] },
-      { id: 'downPaymentPct',  label: 'Trả trước',       type: 'range',  min: 0, max: 50, step: 5, value: 20, unit: '%' },
+      { id: 'downPaymentPct',  label: 'Trả trước',       type: 'range',  min: 0, max: 50, step: 5, value: 20, unit: '%', chips: [0, 10, 20, 30, 50] },
       { id: 'installmentTerm', label: 'Kỳ hạn trả góp', type: 'select', options: [
         {value:3,label:'3 tháng (0%)'},{value:6,label:'6 tháng (0%)'},
         {value:12,label:'12 tháng (1.5%/tháng)'},{value:24,label:'24 tháng (1.5%/tháng)'},
@@ -148,7 +306,7 @@ const TOOLS = [
     formula: '<b>5 yếu tố ảnh hưởng điểm CIC:</b><br>Lịch sử thanh toán (35%) &nbsp;·&nbsp; Tổng dư nợ (30%) &nbsp;·&nbsp; Số lượng tín dụng (15%) &nbsp;·&nbsp; Độ dài lịch sử (10%) &nbsp;·&nbsp; Chất lượng quan hệ (10%)',
     resultLabel: 'XẾP HẠNG TÍN DỤNG',
     fields: [
-      { id: 'cicScore', label: 'Điểm CIC của bạn', type: 'range', min: 300, max: 900, step: 10, value: 570, unit: ' điểm' },
+      { id: 'cicScore', label: 'Điểm CIC của bạn', type: 'range', min: 300, max: 900, step: 10, value: 570, unit: 'điểm', chips: [400, 570, 700, 820] },
     ],
     compute(v) {
       const band = CIC_BANDS.find(b => v.cicScore >= b.min && v.cicScore <= b.max) || CIC_BANDS[CIC_BANDS.length - 1];
@@ -197,76 +355,175 @@ const TOOLS = [
   {
     id: 'bhxh', name: 'BHXH', category: 'Insurance', abbr: 'XH',
     intent: 'Transactional intent', panel: 'generic',
-    description: 'Tính mức đóng BHXH tự nguyện qua MoMo: 22% mức lương làm căn cứ, trừ hỗ trợ Nhà nước 66.000đ/tháng.',
-    jtbd: 'Tôi đang cân nhắc tham gia BHXH tự nguyện để có lương hưu sau này. Cần thấy ngay <b>mức thực đóng mỗi tháng và tổng cam kết tài chính theo số tháng tham gia</b>, để <b>biết có cân đối được dòng tiền dài hạn để duy trì đóng đủ năm</b>.',
-    formula: 'Phí thực đóng = <b>22% × Lương căn cứ − 66.000đ</b><br><em>66.000đ = hỗ trợ Nhà nước cố định cho mức lương căn cứ tối thiểu (theo Nghị định 134/2015/NĐ-CP)</em>',
+    description: 'Tính phí đóng BHXH tự nguyện hàng tháng theo Luật BHXH 2024. Bạn TỰ CHỌN mức lương để đóng (1,5 triệu - 46,8 triệu/tháng). Phí thực đóng = 22% × mức tự chọn − hỗ trợ Nhà nước (33k đến 99k tùy nhóm, chỉ áp dụng 10 năm đầu).',
+    jtbd: 'Tôi đang cân nhắc tham gia BHXH tự nguyện để có lương hưu sau này. Cần thấy ngay <b>phí đóng mỗi tháng theo mức tôi tự chọn và mức hỗ trợ Nhà nước</b>, để <b>biết có cân đối được dòng tiền dài hạn để duy trì đóng đủ năm</b>.',
+    formula: 'Phí thực đóng/tháng = <b>22% × Mức đóng tự chọn − Hỗ trợ Nhà nước</b><br>Hỗ trợ Nhà nước (tối đa 10 năm đầu):<br>· Hộ nghèo: <b>99.000đ/tháng</b> = 30% × 22% × 1,5tr<br>· Hộ cận nghèo: <b>82.500đ/tháng</b> = 25% × 22% × 1,5tr<br>· Đối tượng khác: <b>33.000đ/tháng</b> = 10% × 22% × 1,5tr<br><em>Mức đóng tự chọn: tối thiểu 1,5tr (chuẩn nghèo nông thôn), tối đa 46,8tr (20 × lương cơ sở 2,34tr). Hỗ trợ Nhà nước cap 120 tháng theo NĐ 134/2015 Điều 14 Khoản 3. Từ tháng 121 trở đi đóng full 22%.</em>',
     resultLabel: 'THỰC ĐÓNG QUA MOMO/THÁNG',
     fields: [
-      { id: 'salary',  label: 'Mức lương làm căn cứ đóng', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 5000000, chips: [2000000, 5000000, 10000000] },
-      { id: 'months',  label: 'Số tháng tham gia',         type: 'range', min: 12, max: 360, step: 12, value: 120, unit: ' tháng' },
+      { id: 'salary',        label: 'Mức bạn muốn đóng/tháng (tự chọn)', type: 'money', min: 1500000, max: 46800000, step: 100000, value: 5000000, chips: [1500000, 5000000, 10000000, 20000000] },
+      { id: 'months',        label: 'Số tháng dự kiến tham gia',          type: 'range', min: 12, max: 360, step: 12, value: 240, unit: 'tháng', chips: [60, 120, 240, 360] },
+      { id: 'subsidyGroup',  label: 'Nhóm đối tượng hỗ trợ',              type: 'select', options: [
+        {value:'normal',    label:'👤 Đối tượng khác (hỗ trợ 33.000đ/tháng)'},
+        {value:'near-poor', label:'🏠 Hộ cận nghèo (hỗ trợ 82.500đ/tháng)'},
+        {value:'poor',      label:'🆘 Hộ nghèo (hỗ trợ 99.000đ/tháng)'},
+      ], value: 'normal' },
     ],
     compute(v) {
-      const gross   = v.salary * 0.22;
-      const subsidy = 66000;
-      const net     = Math.max(0, gross - subsidy);
-      const yrs     = v.months / 12;
-      const totalPaid = net * v.months;
-      const rateYrs = Math.min(yrs, 20) * 0.015 + Math.max(0, yrs - 20) * 0.02;
-      const pension = Math.min(rateYrs, 0.75) * v.salary;
-      const insight = net < gross * 0.1
-        ? 'Mức hỗ trợ 66.000đ gần bằng toàn bộ phí — thu nhập căn cứ thấp nhất.'
-        : `Tiết kiệm ${fmt(subsidy)}/tháng nhờ hỗ trợ Nhà nước. Tổng tiết kiệm ${fmtM(subsidy * v.months)} sau ${yrs.toFixed(0)} năm.`;
-      return { result: fmt(net), details: [
-        { label: '22% lương căn cứ', value: fmt(gross) },
-        { label: 'Hỗ trợ Nhà nước', value: '- ' + fmt(subsidy) },
-        { label: 'Đóng hàng năm', value: fmtM(net * 12) },
-        { label: 'Tổng thực đóng ' + yrs.toFixed(0) + ' năm', value: fmtM(totalPaid) },
-        { label: 'Lương hưu ước tính', value: fmt(pension) + '/tháng' },
-      ], insight};
+      const subsidies = { 'poor': 99000, 'near-poor': 82500, 'normal': 33000 };
+      const subsidy = subsidies[v.subsidyGroup] || 33000;
+      const gross = v.salary * 0.22;
+      const net   = Math.max(0, gross - subsidy);
+      const yrs   = v.months / 12;
+      const subsidyMonths  = Math.min(v.months, 120);
+      const fullPriceMonths = Math.max(0, v.months - 120);
+      const totalPaid    = net * subsidyMonths + gross * fullPriceMonths;
+      const totalSubsidy = subsidy * subsidyMonths;
+      const eligibleForPension = yrs >= 15;
+      const subsidyName = { 'poor': 'hộ nghèo', 'near-poor': 'hộ cận nghèo', 'normal': 'đối tượng thường' }[v.subsidyGroup];
+
+      let insight;
+      if (!eligibleForPension) {
+        const monthsNeeded = 180 - v.months;
+        insight = `Chưa đủ điều kiện hưởng lương hưu. Cần đóng tối thiểu <b>15 năm (180 tháng)</b>, còn thiếu <b>${monthsNeeded} tháng</b>. Nếu không đủ năm có thể rút BHXH 1 lần khi đủ tuổi nghỉ hưu.`;
+      } else if (v.months <= 120) {
+        insight = `Đủ điều kiện hưởng lương hưu (≥15 năm). Bạn đang được Nhà nước hỗ trợ <b>${fmt(subsidy)}/tháng</b> (áp dụng tối đa 10 năm đầu). Xem tool <b>Lương Hưu</b> để ước lương hưu chi tiết.`;
+      } else {
+        insight = `Hỗ trợ Nhà nước đã hết sau 10 năm đầu (tổng nhận: ${fmtM(totalSubsidy)}). Từ tháng thứ 121 đóng full <b>${fmt(gross)}/tháng</b>. Xem tool <b>Lương Hưu</b> để ước hưu chi tiết theo giới tính & năm sinh.`;
+      }
+
+      return {
+        result: fmt(net),
+        details: [
+          { label: '22% mức đóng tự chọn',                    value: fmt(gross) },
+          { label: `Hỗ trợ NN (${subsidyName})`,               value: '- ' + fmt(subsidy) + ' (tối đa 10 năm)' },
+          { label: 'Thực đóng 10 năm đầu',                      value: fmt(net) + '/tháng' },
+          { label: 'Thực đóng từ năm 11',                       value: fmt(gross) + '/tháng' },
+          { label: `Tổng đóng ${yrs.toFixed(0)} năm`,           value: fmtM(totalPaid) },
+          { label: 'Tổng hỗ trợ NN nhận được',                  value: fmtM(totalSubsidy) },
+          { label: 'Đủ điều kiện hưởng lương hưu (≥15 năm)',   value: eligibleForPension ? '✓ Đủ' : `✗ Cần thêm ${(15 - yrs).toFixed(1)} năm` },
+        ],
+        insight,
+      };
     },
   },
   {
     id: 'luong-huu', name: 'Lương Hưu', category: 'Insurance', abbr: 'LH',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương làm căn cứ.',
-    jtbd: 'Tôi sắp về hưu hoặc đang lập kế hoạch nghỉ hưu sớm và muốn biết lương hưu sẽ là bao nhiêu. Cần ước tính ngay <b>mức lương hưu hàng tháng theo số năm đóng và mức lương căn cứ của mình</b>, để <b>biết có đủ sống và cần đầu tư thêm bao nhiêu để bù khoảng thiếu</b>.',
-    formula: 'Lương hưu = <b>Tỷ lệ hưởng × Mức bình quân lương/tháng</b><br>Nữ ≥15 năm: 45% → +2%/năm &nbsp;|&nbsp; Nam ≥20 năm: 45% → +2%/năm<br>Nam 15–19 năm: 40% → +1%/năm &nbsp;|&nbsp; <em>Tối đa 75%</em>',
+    description: 'Ước tính lương hưu hằng tháng theo Luật BHXH 2024 (hiệu lực 01/07/2025) và tuổi nghỉ hưu theo BLLĐ 2019. Tự động tính: tuổi nghỉ hưu cụ thể, MBQTL điều chỉnh CPI, trợ cấp 1 lần khi đóng vượt 30 năm (nữ) / 35 năm (nam), tổng lương hưu nhận đến 80 tuổi.',
+    jtbd: 'Tôi đang lên kế hoạch nghỉ hưu và phân vân giữa đóng tiếp hay rút BHXH 1 lần. Cần biết ngay <b>lương hưu hằng tháng, tuổi nghỉ hưu cụ thể, và tổng tiền sẽ nhận đến 80 tuổi</b>, để <b>so sánh với phương án rút 1 lần và quyết định có nên đóng tiếp đủ năm</b>.',
+    formula: 'Lương hưu = <b>Tỷ lệ × MBQTL</b><br>Nữ: ≥15 năm = 45%, +2%/năm, tối đa 75% (đủ 30 năm)<br>Nam: ≥20 năm = 45%, +2%/năm, tối đa 75% (đủ 35 năm)<br>Nam 15-19 năm (chỉ áp dụng nếu tham gia BHXH từ 01/07/2025): 40% + 1%/năm<br>Trợ cấp 1 lần (đóng dư) = <b>0,5 × MBQTL × số năm dư</b><br><em>MBQTL = Mức bình quân tiền lương đã điều chỉnh CPI · Tuổi hưu 2026: Nam 61t6th, Nữ 57t · Lộ trình tăng đến Nam 62t (2028), Nữ 60t (2035) theo BLLĐ 2019.</em>',
     resultLabel: 'LƯƠNG HƯU ƯỚC TÍNH/THÁNG',
     fields: [
       { id: 'lhGender', label: 'Giới tính', type: 'select', options: [
         {value:0,label:'Lao động nữ'},{value:1,label:'Lao động nam'},
       ], value: 0 },
-      { id: 'lhYears',  label: 'Số năm đóng BHXH',           type: 'range', min: 1,       max: 40,       step: 1,      value: 20,        unit: ' năm' },
-      { id: 'lhSalary', label: 'Mức bình quân lương căn cứ', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
+      { id: 'lhBirthYear', label: 'Năm sinh',          type: 'range', min: 1960,    max: 2005,     step: 1,      value: 1980,      unit: '', chips: [1970, 1980, 1990, 2000] },
+      { id: 'lhYears',     label: 'Số năm đã đóng BHXH', type: 'range', min: 1,       max: 40,       step: 1,      value: 20,        unit: 'năm', chips: [15, 20, 30, 35] },
+      { id: 'lhSalary',    label: 'Lương đóng BHXH/tháng (hiện tại)', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
+      { id: 'lhJoined725', label: 'Thời điểm tham gia BHXH lần đầu', type: 'select', options: [
+        {value:0, label:'Trước 01/07/2025'},
+        {value:1, label:'Từ 01/07/2025 trở đi'},
+      ], value: 0 },
     ],
     compute(v) {
       const yrs = v.lhYears;
-      let rate;
-      if (v.lhGender === 0) {
-        // Nữ: 45% tại 15 năm, +2%/năm thêm, tối đa 75%
-        rate = yrs < 15 ? 0 : Math.min(0.45 + (yrs - 15) * 0.02, 0.75);
-      } else {
-        // Nam: 15–19 năm: 40% + 1%/năm; ≥20 năm: 45% + 2%/năm, tối đa 75%
-        if      (yrs < 15) rate = 0;
-        else if (yrs < 20) rate = 0.40 + (yrs - 15) * 0.01;
-        else               rate = Math.min(0.45 + (yrs - 20) * 0.02, 0.75);
+      const isFemale = v.lhGender === 0;
+      const joinedAfter = v.lhJoined725 === 1;
+
+      // Tuổi nghỉ hưu theo BLLĐ 2019 (Điều 169) + Nghị định 135/2020/NĐ-CP
+      // Nam: 60 từ 2020, +3 tháng/năm, max 62 (2028) · Nữ: 55 từ 2020, +4 tháng/năm, max 60 (2035)
+      const getRetireAge = (atYear) => {
+        if (!isFemale) {
+          const m = Math.min(Math.max(0, (atYear - 2020) * 3), 24);
+          return 60 + m / 12;
+        }
+        const m = Math.min(Math.max(0, (atYear - 2020) * 4), 60);
+        return 55 + m / 12;
+      };
+      let retireYear = v.lhBirthYear + (isFemale ? 55 : 60);
+      let retireAge = getRetireAge(retireYear);
+      for (let y = retireYear; y <= v.lhBirthYear + 65; y++) {
+        if (y - v.lhBirthYear >= getRetireAge(y)) { retireYear = y; retireAge = getRetireAge(y); break; }
       }
-      const pension  = rate * v.lhSalary;
-      const ratePct  = (rate * 100).toFixed(0);
+      const currentYear = 2026;
+      const currentAge = currentYear - v.lhBirthYear;
+      const yearsToRetire = retireYear - currentYear;
+      const fmtAge = (a) => {
+        const yy = Math.floor(a);
+        const mm = Math.round((a - yy) * 12);
+        return mm === 0 ? `${yy} tuổi` : `${yy} tuổi ${mm} tháng`;
+      };
+
+      // Auto-estimate MBQTL theo số năm đóng (hệ số 0,7 - 1,0 giống BHXH 1 Lần)
+      const mbqtlFactor = Math.max(0.7, 1 - yrs * 0.015);
+      const mbqtl = v.lhSalary * mbqtlFactor;
+
+      // Tỷ lệ hưởng theo Điều 66 Luật BHXH 2024
+      let rate = 0, bonusYears = 0, warning = '';
+      if (isFemale) {
+        if (yrs < 15) {
+          rate = 0;
+        } else {
+          const ratableYrs = Math.min(yrs, 30);
+          rate = 0.45 + (ratableYrs - 15) * 0.02;
+          bonusYears = Math.max(0, yrs - 30);
+        }
+      } else {
+        if (yrs < 15) {
+          rate = 0;
+        } else if (yrs < 20) {
+          if (joinedAfter) {
+            rate = 0.40 + (yrs - 15) * 0.01;
+          } else {
+            rate = 0;
+            warning = `Tham gia BHXH trước 01/07/2025 cần đóng đủ 20 năm để nhận lương hưu hằng tháng. Đóng ${yrs} năm chỉ được rút BHXH 1 lần hoặc đóng tiếp đến đủ 20 năm.`;
+          }
+        } else {
+          const ratableYrs = Math.min(yrs, 35);
+          rate = 0.45 + (ratableYrs - 20) * 0.02;
+          bonusYears = Math.max(0, yrs - 35);
+        }
+      }
+
+      const pension = rate * mbqtl;
+      const bonus1Lan = bonusYears * 0.5 * mbqtl;
+      const monthsTo80 = Math.max(0, Math.round((80 - retireAge) * 12));
+      const totalTo80 = pension * monthsTo80 + bonus1Lan;
+      const ratePct = (rate * 100).toFixed(0);
+
       let insight;
-      if (rate === 0) {
-        insight = `Chưa đủ điều kiện. Cần đóng thêm ${15 - yrs} năm nữa để đạt mức tối thiểu 15 năm.`;
+      if (warning) {
+        insight = warning;
+      } else if (rate === 0) {
+        insight = `Chưa đủ điều kiện hưởng lương hưu hằng tháng. Cần đóng thêm ${15 - yrs} năm nữa để đạt mức tối thiểu 15 năm.`;
+      } else if (bonusYears > 0) {
+        insight = `Đã đạt tỷ lệ tối đa 75% từ năm thứ ${isFemale ? 30 : 35}. ${bonusYears} năm đóng dư được tính trợ cấp 1 lần khi nghỉ hưu = ${fmt(bonus1Lan)} (0,5 × MBQTL × ${bonusYears} năm).`;
       } else if (rate >= 0.75) {
-        insight = `Đã đạt tỷ lệ hưởng tối đa 75%. Đóng thêm không tăng lương hưu.`;
+        insight = `Vừa đạt tỷ lệ tối đa 75%. Mỗi năm đóng thêm sẽ được trợ cấp 1 lần = ${fmt(0.5 * mbqtl)}/năm khi nghỉ hưu.`;
       } else {
-        const max = v.lhSalary * 0.75;
-        insight = `Tỷ lệ ${ratePct}%. Mức tối đa 75% = ${fmtM(max)}/tháng — còn chênh ${fmtM(max - pension)}.`;
+        const yrsToMax = isFemale ? (30 - yrs) : (35 - yrs);
+        insight = `Còn ${yrsToMax} năm nữa đạt tỷ lệ tối đa 75%. Mỗi năm đóng thêm = <b>+2% lương hưu</b> (+${fmt(0.02 * mbqtl)}/tháng).`;
       }
-      return { result: rate > 0 ? fmt(pension) : 'Chưa đủ ĐK', details: [
-        { label: 'Tỷ lệ hưởng',              value: ratePct + '%' },
-        { label: 'Mức bình quân lương căn cứ', value: fmt(v.lhSalary) + '/tháng' },
-        { label: 'Lương hưu/năm ước tính',   value: rate > 0 ? fmtM(pension * 12) : '-' },
-      ], insight };
+
+      const details = [];
+      if (yearsToRetire > 0) {
+        details.push({ label: 'Tuổi hiện tại', value: `${currentAge} tuổi (sinh ${v.lhBirthYear})` });
+        details.push({ label: 'Tuổi nghỉ hưu (BLLĐ 2019)', value: `${fmtAge(retireAge)} - năm ${retireYear}` });
+        details.push({ label: 'Còn lại đến nghỉ hưu', value: `${yearsToRetire} năm` });
+      } else {
+        details.push({ label: 'Tuổi nghỉ hưu', value: `${fmtAge(retireAge)} - đã đủ tuổi từ ${retireYear}` });
+      }
+      details.push({ label: `MBQTL ước tính (hệ số ${mbqtlFactor.toFixed(2)}×)`, value: `${fmt(mbqtl)}/tháng` });
+      details.push({ label: 'Tỷ lệ hưởng', value: `${ratePct}%` });
+      if (rate > 0) {
+        details.push({ label: 'Lương hưu/năm', value: fmtM(pension * 12) });
+        if (bonus1Lan > 0) {
+          details.push({ label: 'Trợ cấp 1 lần khi nghỉ hưu', value: fmt(bonus1Lan) });
+        }
+        details.push({ label: `Tổng nhận đến 80 tuổi (${(monthsTo80/12).toFixed(0)} năm hưu)`, value: fmtM(totalTo80) });
+      }
+
+      return { result: rate > 0 ? fmt(pension) : 'Chưa đủ ĐK', details, insight };
     },
   },
   {
@@ -278,8 +535,8 @@ const TOOLS = [
     resultLabel: 'BHXH 1 LẦN ƯỚC TÍNH',
     fields: [
       { id: 'monthlySalary',  label: 'Mức lương đóng BHXH/tháng (hiện tại)', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
-      { id: 'yearsPre2014',   label: 'Số năm đóng trước 2014',                type: 'range', min: 0, max: 25, step: 0.5, value: 0,  unit: ' năm' },
-      { id: 'yearsPost2014',  label: 'Số năm đóng từ 2014',                   type: 'range', min: 0, max: 15, step: 0.5, value: 10, unit: ' năm' },
+      { id: 'yearsPre2014',   label: 'Số năm đóng trước 2014',                type: 'range', min: 0, max: 25, step: 0.5, value: 0,  unit: 'năm', chips: [0, 5, 10, 15, 20] },
+      { id: 'yearsPost2014',  label: 'Số năm đóng từ 2014',                   type: 'range', min: 0, max: 15, step: 0.5, value: 10, unit: 'năm', chips: [0, 5, 10, 15] },
       { id: 'joinedAfter725', label: 'Thời điểm tham gia BHXH lần đầu',       type: 'select', options: [
         {value:0, label:'Trước 01/07/2025 (được rút 1 lần)'},
         {value:1, label:'Sau 01/07/2025 (không được rút, trừ trường hợp đặc biệt)'},
@@ -332,7 +589,7 @@ const TOOLS = [
     resultLabel: 'NHẬN KHI ĐÁO HẠN',
     fields: [
       { id: 'principal', label: 'Số tiền gửi',    type: 'money',  min: 1000000, max: 2000000000, step: 1000000, value: 50000000, chips: [10000000, 50000000, 200000000] },
-      { id: 'rate',      label: 'Lãi suất/năm',  type: 'range',  min: 2, max: 8, step: 0.1, value: 5.5, unit: '%' },
+      { id: 'rate',      label: 'Lãi suất/năm',  type: 'range',  min: 2, max: 8, step: 0.1, value: 5.5, unit: '%', chips: [4, 5, 6, 7] },
       { id: 'term',      label: 'Kỳ hạn',         type: 'select', options: [
         {value:1,label:'1 tháng'},{value:3,label:'3 tháng'},
         {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},{value:24,label:'24 tháng'},
@@ -350,39 +607,127 @@ const TOOLS = [
   {
     id: 'thue-tncn', name: 'Thuế TNCN', category: 'Tax', abbr: 'TC',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Ước tính thuế TNCN theo Luật Thuế TNCN sửa đổi 2025 và Nghị quyết 110/2025/UBTVQH15 (hiệu lực 01/01/2026): biểu lũy tiến 5 bậc, giảm trừ bản thân 15,5 triệu, NPT 6,2 triệu.',
-    jtbd: 'Tôi muốn biết với mức lương gross của mình thì sau thuế nhận được bao nhiêu, có người phụ thuộc thì giảm trừ ra sao. Cần thấy ngay <b>thuế phải đóng và lương net hàng tháng theo biểu lũy tiến 5 bậc mới 2026</b>, để <b>biết mức sống thực tế và đàm phán lương gross/net với nhà tuyển dụng</b>.',
-    formula: 'Thu nhập chịu thuế = <b>Lương gross − BHXH/BHYT/BHTN − 15,5 triệu − NPT × 6,2 triệu</b><br>Thuế = <b>Thu nhập chịu thuế × Biểu lũy tiến 5 bậc</b><br><em>Bậc 1: đến 10tr (5%) · Bậc 2: 10-30tr (10%) · Bậc 3: 30-60tr (20%) · Bậc 4: 60-100tr (30%) · Bậc 5: trên 100tr (35%)</em>',
-    resultLabel: 'THUẾ TNCN MỖI THÁNG',
+    description: 'Tính thuế TNCN cho 4 loại thu nhập theo Luật Thuế TNCN sửa đổi 2025: Lương từ HĐLĐ (biểu lũy tiến 5 bậc + giảm trừ gia cảnh 15,5tr/NPT 6,2tr), Cộng tác viên/Freelance (10% tại nguồn), Đầu tư vốn/Cổ tức (5% cố định), Trúng thưởng/Quà tặng (10% phần vượt 10tr).',
+    jtbd: 'Tôi có thu nhập từ nhiều nguồn khác nhau (lương, freelance, cổ tức, trúng thưởng) và cần biết thuế cụ thể cho từng loại. Cần thấy ngay <b>cách tính thuế đúng theo loại thu nhập + tách rõ BHXH/BHYT/BHTN nếu là lương</b>, để <b>quản lý nghĩa vụ thuế chính xác và lập kế hoạch tài chính</b>.',
+    formula: '<b>Lương HĐLĐ</b>: (Gross − BHXH 8% − BHYT 1,5% − BHTN 1% − 15,5tr − NPT × 6,2tr) × Biểu lũy tiến 5 bậc<br><b>CTV / Freelance ≥ 2tr</b>: Khấu trừ 10% tại nguồn<br><b>Đầu tư / Cổ tức</b>: 5% cố định, không giảm trừ<br><b>Trúng thưởng / Quà tặng</b>: 10% trên phần vượt 10tr<br><em>Trần đóng BH: BHXH/BHYT 50,6tr · BHTN 93,6tr (vùng I) · Bậc thuế: đến 10tr 5% · 10-30 10% · 30-60 20% · 60-100 30% · trên 100 35%</em>',
+    resultLabel: 'THUẾ TNCN ƯỚC TÍNH',
     fields: [
-      { id: 'grossSalary', label: 'Lương gross/tháng',    type: 'money',  min: 5000000, max: 200000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000] },
-      { id: 'dependents',  label: 'Số người phụ thuộc',  type: 'select', options: [
+      { id: 'incomeType', label: 'Loại thu nhập', type: 'select', options: [
+        {value:'luong-hd',     label:'💼 Lương từ HĐLĐ (biểu lũy tiến 5 bậc)'},
+        {value:'ctv',          label:'🧑‍💻 CTV / Freelance (khấu trừ 10% tại nguồn)'},
+        {value:'dau-tu',       label:'📈 Đầu tư vốn / Cổ tức (5% cố định)'},
+        {value:'trung-thuong', label:'🎁 Trúng thưởng / Quà tặng (10% vượt 10tr)'},
+      ], value: 'luong-hd' },
+      { id: 'grossSalary', label: 'Thu nhập/tháng', type: 'money', min: 1000000, max: 500000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000] },
+      { id: 'salaryBh',    label: 'Lương đóng BH/tháng (HĐLĐ) - để trống nếu = lương gross', type: 'money', min: 0, max: 100000000, step: 500000, value: 0, chips: [0, 5000000, 10000000, 15000000], condition: { field: 'incomeType', value: 'luong-hd' } },
+      { id: 'dependents',  label: 'Số người phụ thuộc', type: 'select', options: [
         {value:0,label:'0 người'},{value:1,label:'1 người'},
         {value:2,label:'2 người'},{value:3,label:'3 người'},
-      ], value: 0 },
+      ], value: 0, condition: { field: 'incomeType', value: 'luong-hd' } },
     ],
     compute(v) {
-      const gross = v.grossSalary;
-      // Mức trần BHXH bắt buộc từ 01/07/2026: 50,6 triệu/tháng
-      const bhxh = Math.min(gross, 50600000) * 0.105;
-      // Giảm trừ gia cảnh theo NQ 110/2025/UBTVQH15
-      const personal = 15500000, dep = v.dependents * 6200000;
-      const taxable = Math.max(0, gross - bhxh - personal - dep);
-      // Biểu lũy tiến 5 bậc theo Luật Thuế TNCN sửa đổi 2025
-      const brackets = [10e6, 20e6, 30e6, 40e6, Infinity];
-      const rates    = [.05,  .10,  .20,  .30,  .35];
-      let tax = 0, prev = 0;
-      for (let i = 0; i < brackets.length; i++) {
-        if (taxable <= prev) break;
-        tax += Math.min(taxable - prev, brackets[i]) * rates[i];
-        prev += brackets[i];
+      const type = v.incomeType || 'luong-hd';
+      const income = v.grossSalary;
+      // ── Lương từ HĐLĐ
+      if (type === 'luong-hd') {
+        const bhxhCap = 50600000, bhtnCap = 93600000; // 20× lương cơ sở / 20× lương tối thiểu vùng I
+        // Lương đóng BH: nếu user nhập > 0 và < lương gross, dùng giá trị đó; ngược lại dùng lương gross
+        const salaryBh = (v.salaryBh > 0 && v.salaryBh < income) ? v.salaryBh : income;
+        const bhDiff = income - salaryBh;
+        const bhxh = Math.min(salaryBh, bhxhCap) * 0.08;
+        const bhyt = Math.min(salaryBh, bhxhCap) * 0.015;
+        const bhtn = Math.min(salaryBh, bhtnCap) * 0.01;
+        const totalBh = bhxh + bhyt + bhtn;
+        const personal = 15500000, depAmt = v.dependents * 6200000;
+        const taxable = Math.max(0, income - totalBh - personal - depAmt);
+        const brackets = [10e6, 20e6, 30e6, 40e6, Infinity];
+        const rates    = [.05,  .10,  .20,  .30,  .35];
+        let tax = 0, prev = 0;
+        for (let i = 0; i < brackets.length; i++) {
+          if (taxable <= prev) break;
+          tax += Math.min(taxable - prev, brackets[i]) * rates[i];
+          prev += brackets[i];
+        }
+        const net = income - totalBh - tax;
+        const details = [];
+        if (bhDiff > 0) {
+          details.push(
+            { label: 'Lương gross / tháng',          value: fmt(income) },
+            { label: 'Lương đóng BH (HĐLĐ)',         value: fmt(salaryBh) },
+            { label: 'Phần không đóng BH (phụ cấp/thưởng)', value: fmt(bhDiff) },
+          );
+        }
+        details.push(
+          { label: 'BHXH (8% × Lương BH)',         value: fmt(bhxh) },
+          { label: 'BHYT (1,5% × Lương BH)',       value: fmt(bhyt) },
+          { label: 'BHTN (1% × Lương BH)',         value: fmt(bhtn) },
+          { label: 'Tổng đóng bảo hiểm',           value: fmt(totalBh) },
+          { label: 'Giảm trừ gia cảnh (BT + NPT)', value: fmt(personal + depAmt) },
+          { label: 'Thu nhập chịu thuế',           value: fmt(taxable) },
+          { label: 'Lương NET nhận về',            value: fmt(net) },
+        );
+        const taxRatio = income > 0 ? (tax / income * 100).toFixed(1) : 0;
+        const insight = bhDiff > 0
+          ? `Lương đóng BH ${fmt(salaryBh)} thấp hơn lương gross ${fmt(income)} (chênh ${fmt(bhDiff)} là phụ cấp/thưởng). User đóng BH ít hơn (${fmt(totalBh)}) nhưng thuế cao hơn vì phần chênh không trừ BH trước thuế. Lương NET ${fmt(net)} · tỷ trọng thuế ${taxRatio}%.`
+          : `Lương NET ${fmt(net)} sau khi đóng BH ${fmt(totalBh)} (BHXH 8% + BHYT 1,5% + BHTN 1%) và thuế ${fmt(tax)}. Tỷ trọng thuế ${taxRatio}% trên lương gross.`;
+        return { result: fmt(tax), details, insight };
       }
-      return { result: fmt(tax), details: [
-        { label: 'BHXH/BHYT/BHTN (10.5%)', value: fmt(bhxh) },
-        { label: 'Giảm trừ gia cảnh', value: fmt(personal + dep) },
-        { label: 'Thu nhập chịu thuế', value: fmt(taxable) },
-        { label: 'Lương NET nhận về', value: fmt(gross - bhxh - tax) },
-      ]};
+      // ── CTV / Freelance
+      if (type === 'ctv') {
+        if (income < 2000000) {
+          return {
+            result: fmt(0),
+            details: [
+              { label: 'Thu nhập từng lần', value: fmt(income) },
+              { label: 'Quy định',          value: '< 2 triệu/lần: miễn khấu trừ' },
+              { label: 'Thực nhận',         value: fmt(income) },
+            ],
+            insight: 'Thu nhập từng lần dưới 2 triệu (không có HĐLĐ chính thức) không bị khấu trừ tại nguồn. Cuối năm có thể không cần khai báo nếu chỉ phát sinh < 100 triệu/năm.',
+          };
+        }
+        const withheld = income * 0.10;
+        return {
+          result: fmt(withheld),
+          details: [
+            { label: 'Thu nhập từng lần',         value: fmt(income) },
+            { label: 'Thuế suất',                 value: '10% (cố định tại nguồn)' },
+            { label: 'Khấu trừ tại nguồn (10%)',  value: fmt(withheld) },
+            { label: 'Thực nhận',                 value: fmt(income - withheld) },
+          ],
+          insight: 'HĐ dịch vụ/CTV ≥ 2tr/lần: tổ chức trả thu nhập khấu trừ 10% tại nguồn (Thông tư 111/2013/TT-BTC). Cuối năm quyết toán theo biểu lũy tiến nếu tổng thu nhập > giảm trừ - dùng tool Quyết Toán TNCN để biết được hoàn lại hay phải nộp thêm.',
+        };
+      }
+      // ── Đầu tư vốn / Cổ tức
+      if (type === 'dau-tu') {
+        const tax = income * 0.05;
+        return {
+          result: fmt(tax),
+          details: [
+            { label: 'Thu nhập đầu tư',  value: fmt(income) },
+            { label: 'Thuế suất',        value: '5% (cố định)' },
+            { label: 'Thuế phải nộp',    value: fmt(tax) },
+            { label: 'Thực nhận sau thuế', value: fmt(income - tax) },
+          ],
+          insight: 'Thu nhập từ đầu tư vốn (cổ tức, lợi tức trái phiếu doanh nghiệp, lãi từ vay vốn cá nhân) chịu thuế cố định 5%, khấu trừ tại nguồn - không tính theo biểu lũy tiến, không có giảm trừ gia cảnh. Lãi tiết kiệm tại NH thì được miễn thuế (Điều 4 Luật TNCN).',
+        };
+      }
+      // ── Trúng thưởng / Quà tặng
+      const exempt = 10000000;
+      const taxable = Math.max(0, income - exempt);
+      const tax = taxable * 0.10;
+      return {
+        result: fmt(tax),
+        details: [
+          { label: 'Giá trị nhận',           value: fmt(income) },
+          { label: 'Miễn thuế (10tr đầu)',   value: fmt(Math.min(income, exempt)) },
+          { label: 'Phần chịu thuế',         value: fmt(taxable) },
+          { label: 'Thuế suất',              value: '10% (trên phần vượt)' },
+          { label: 'Thực nhận sau thuế',     value: fmt(income - tax) },
+        ],
+        insight: income <= exempt
+          ? 'Trúng thưởng / quà tặng dưới 10 triệu được miễn thuế TNCN hoàn toàn.'
+          : `Trúng thưởng / quà tặng vượt 10 triệu: phần vượt chịu thuế 10%. Thường được khấu trừ tại nguồn bởi đơn vị trao thưởng. Áp dụng cho xổ số, casino, khuyến mại, quà tặng kèm điều kiện.`,
+      };
     },
   },
   {
@@ -487,7 +832,7 @@ const TOOLS = [
     resultLabel: 'GIÁ TRỊ SAU ĐẦU TƯ',
     fields: [
       { id: 'monthly',      label: 'Đầu tư định kỳ/tháng', type: 'money',  min: 100000, max: 50000000, step: 100000, value: 2000000, chips: [1000000, 2000000, 5000000] },
-      { id: 'annualReturn', label: 'Lợi suất kỳ vọng/năm', type: 'range',  min: 5, max: 20, step: 0.5, value: 12, unit: '%' },
+      { id: 'annualReturn', label: 'Lợi suất kỳ vọng/năm', type: 'range',  min: 5, max: 20, step: 0.5, value: 12, unit: '%', chips: [8, 12, 15, 18] },
       { id: 'years',        label: 'Thời gian đầu tư',      type: 'select', options: [
         {value:3,label:'3 năm'},{value:5,label:'5 năm'},
         {value:10,label:'10 năm'},{value:15,label:'15 năm'},{value:20,label:'20 năm'},
@@ -561,9 +906,9 @@ const TOOLS = [
         {value:5,label:'5 năm'},{value:10,label:'10 năm'},{value:15,label:'15 năm'},
         {value:20,label:'20 năm'},{value:25,label:'25 năm'},
       ], value: 15 },
-      { id: 'fireInflation',    label: 'Lạm phát chi tiêu/năm',   type: 'range', min: 0, max: 10, step: 0.5, value: 4, unit: '%' },
-      { id: 'fireRate',         label: 'Tỷ lệ rút vốn an toàn',   type: 'range', min: 2.5, max: 5.5, step: 0.25, value: 3.5, unit: '%' },
-      { id: 'fireReturn',       label: 'Lợi suất đầu tư kỳ vọng', type: 'range', min: 0, max: 15, step: 0.5, value: 8, unit: '%' },
+      { id: 'fireInflation',    label: 'Lạm phát chi tiêu/năm',   type: 'range', min: 0, max: 10, step: 0.5, value: 4, unit: '%', chips: [3, 4, 5, 6] },
+      { id: 'fireRate',         label: 'Tỷ lệ rút vốn an toàn',   type: 'range', min: 2.5, max: 5.5, step: 0.25, value: 3.5, unit: '%', chips: [3, 3.5, 4, 5] },
+      { id: 'fireReturn',       label: 'Lợi suất đầu tư kỳ vọng', type: 'range', min: 0, max: 15, step: 0.5, value: 8, unit: '%', chips: [6, 8, 10, 12] },
       { id: 'fireAssets',       label: 'Tài sản đầu tư hiện có',  type: 'money', min: 0, max: 50000000000, step: 10000000, value: 500000000, chips: [0, 500000000, 2000000000] },
       { id: 'fireContribution', label: 'Đầu tư thêm mỗi tháng',   type: 'money', min: 0, max: 500000000, step: 1000000, value: 10000000, chips: [3000000, 10000000, 30000000] },
     ],
@@ -607,14 +952,14 @@ const TOOLS = [
     formula: 'Số bàn = <b>Làm tròn lên(Số khách ÷ 10)</b><br>Tổng chi phí = <b>Số bàn × Chi phí/bàn + Chi phí cố định</b><br>Dự phòng = <b>Tổng chi phí × Tỷ lệ dự phòng</b><br>Tiền mặt cần chuẩn bị = <b>max(0, Tổng chi phí + Dự phòng - Tiền mừng dự kiến) + Quỹ sau cưới</b><br>Góp/tháng = <b>PMT để đạt mục tiêu sau n tháng, có tính lãi gửi tích lũy</b><br><em>Không nên xem tiền mừng là chắc chắn. Quỹ sau cưới giúp tránh cưới xong bị hụt dòng tiền.</em>',
     resultLabel: 'CẦN ĐỂ DÀNH MỖI THÁNG',
     fields: [
-      { id: 'weddingGuests',       label: 'Số khách dự kiến',       type: 'range', min: 50, max: 600, step: 10, value: 220, unit: ' khách' },
+      { id: 'weddingGuests',       label: 'Số khách dự kiến',       type: 'range', min: 50, max: 600, step: 10, value: 220, unit: 'khách', chips: [100, 200, 350, 500] },
       { id: 'weddingTableCost',    label: 'Chi phí một bàn 10 khách', type: 'money', min: 2000000, max: 30000000, step: 500000, value: 6500000, chips: [4000000, 6500000, 10000000] },
       { id: 'weddingFixedCost',    label: 'Chi phí cố định',        type: 'money', min: 0, max: 1000000000, step: 1000000, value: 90000000, chips: [50000000, 90000000, 150000000] },
       { id: 'weddingGiftPerGuest', label: 'Tiền mừng dự kiến/khách', type: 'money', min: 0, max: 5000000, step: 50000, value: 500000, chips: [300000, 500000, 800000] },
-      { id: 'weddingContingency',  label: 'Dự phòng phát sinh',     type: 'range', min: 0, max: 25, step: 1, value: 10, unit: '%' },
+      { id: 'weddingContingency',  label: 'Dự phòng phát sinh',     type: 'range', min: 0, max: 25, step: 1, value: 10, unit: '%', chips: [0, 10, 15, 20] },
       { id: 'weddingBuffer',       label: 'Quỹ sau cưới muốn giữ',  type: 'money', min: 0, max: 500000000, step: 1000000, value: 30000000, chips: [0, 30000000, 80000000] },
       { id: 'weddingSavings',      label: 'Tiết kiệm hiện có',      type: 'money', min: 0, max: 1000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 150000000] },
-      { id: 'weddingReturn',       label: 'Lãi gửi kỳ vọng/năm',    type: 'range', min: 0, max: 8, step: 0.5, value: 4.5, unit: '%' },
+      { id: 'weddingReturn',       label: 'Lãi gửi kỳ vọng/năm',    type: 'range', min: 0, max: 8, step: 0.5, value: 4.5, unit: '%', chips: [3, 4.5, 6, 7] },
       { id: 'weddingMonths',  label: 'Số tháng còn lại',       type: 'select', options: [
         {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},{value:18,label:'18 tháng'},
         {value:24,label:'24 tháng'},{value:36,label:'36 tháng'},
@@ -662,7 +1007,7 @@ const TOOLS = [
         {value:1,label:'1 năm'},{value:3,label:'3 năm'},{value:5,label:'5 năm'},
         {value:10,label:'10 năm'},{value:15,label:'15 năm'},{value:18,label:'18 năm'},
       ], value: 5 },
-      { id: 'feeInflation', label: 'Tăng học phí/năm',       type: 'range',  min: 3, max: 20, step: 0.5, value: 8, unit: '%' },
+      { id: 'feeInflation', label: 'Tăng học phí/năm',       type: 'range',  min: 3, max: 20, step: 0.5, value: 8, unit: '%', chips: [5, 8, 12, 15] },
     ],
     compute(v) {
       const future = v.currentFee * Math.pow(1 + v.feeInflation / 100, v.yearsUntil);
@@ -824,10 +1169,62 @@ function renderGenericPanel(tool) {
     }
   }
 
+  // Highlights row (4 icons)
+  const hlEl = document.getElementById('genericHighlights');
+  if (hlEl) {
+    if (tool.highlights && tool.highlights.length) {
+      hlEl.innerHTML = tool.highlights.map(h => `
+        <div class="highlight-item">
+          <span class="highlight-icon">${h.icon}</span>
+          <span class="highlight-text">${h.text}</span>
+        </div>
+      `).join('');
+      hlEl.style.display = '';
+    } else {
+      hlEl.style.display = 'none';
+    }
+  }
+
+  // Partners row
+  const partEl = document.getElementById('genericPartners');
+  if (partEl) {
+    if (tool.partners && tool.partners.length) {
+      partEl.innerHTML = `
+        <div class="partners-title">Đối tác Vay Nhanh</div>
+        <div class="partners-grid">
+          ${tool.partners.map(p => `
+            <div class="partner-card">
+              <span class="partner-abbr" style="background:${p.color}">${p.abbr}</span>
+              <span class="partner-name">${p.name}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      partEl.style.display = '';
+    } else {
+      partEl.style.display = 'none';
+    }
+  }
+
+  // Disclaimer
+  const discEl = document.getElementById('genericDisclaimer');
+  if (discEl) {
+    if (tool.disclaimer) { discEl.textContent = tool.disclaimer; discEl.style.display = ''; }
+    else discEl.style.display = 'none';
+  }
+
+  // CTA text
+  const ctaEl = document.getElementById('genericCta');
+  if (ctaEl) {
+    ctaEl.textContent = tool.ctaText || 'Xem giải pháp phù hợp trên MoMo';
+    ctaEl.onclick = () => momo_track('cta_click', { cta: tool.ctaText ? 'check_now' : 'view_solution', tool_id: tool.id });
+  }
+
   const container = document.getElementById('genericFields');
+  const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
   container.innerHTML = tool.fields.map(f => {
     if (f.type === 'money') {
-      return `<div class="field-group" data-field="${f.id}">
+      return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${f.label}</label>
         <div class="money-input-row">
           <input type="number" id="${f.id}" value="${f.value}" min="${f.min || 0}" max="${f.max || ''}" step="${f.step || 1000000}">
@@ -839,45 +1236,119 @@ function renderGenericPanel(tool) {
       </div>`;
     }
     if (f.type === 'range') {
-      return `<div class="field-group">
-        <label class="field-label" for="${f.id}">${f.label}
-          <span class="field-value" id="${f.id}Val">${fmtField(f, f.value)}</span>
-        </label>
-        <input type="range" id="${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.value}">
+      const unitTxt = (f.unit || '').trim();
+      const unitTag = unitTxt ? `<span class="unit-tag">${unitTxt}</span>` : '';
+      const chips = f.chips || autoChips(f);
+      return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
+        <label class="field-label" for="${f.id}">${f.label}</label>
+        <div class="num-input-row">
+          <button type="button" class="num-step" data-target="${f.id}" data-dir="-1" aria-label="Giảm">−</button>
+          <input type="number" id="${f.id}" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}">
+          ${unitTag}
+          <button type="button" class="num-step" data-target="${f.id}" data-dir="1" aria-label="Tăng">+</button>
+        </div>
+        ${chips.length ? `<div class="num-chips">
+          ${chips.map(c => `<button type="button" class="chip-btn${+c === +f.value ? ' active' : ''}" data-val="${c}">${formatChip(c, f)}</button>`).join('')}
+        </div>` : ''}
+      </div>`;
+    }
+    if (f.type === 'pills') {
+      return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
+        <label class="field-label" for="${f.id}">${f.label}</label>
+        <input type="hidden" id="${f.id}" value="${f.value}">
+        <div class="pills-grid">
+          ${f.options.map(o => `<button type="button" class="pill-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}">${o.label}</button>`).join('')}
+        </div>
       </div>`;
     }
     const opts = f.options.map(o => `<option value="${o.value}"${String(o.value) === String(f.value) ? ' selected' : ''}>${o.label}</option>`).join('');
-    return `<div class="field-group">
+    return `<div class="field-group"${condAttr(f)}>
       <label class="field-label" for="${f.id}">${f.label}</label>
       <select id="${f.id}">${opts}</select>
     </div>`;
   }).join('');
 
+  // Conditional field visibility based on data-cond-field/value
+  applyConditionalFields();
+
   tool.fields.forEach(f => {
     const el = document.getElementById(f.id);
     el.addEventListener('input', () => {
-      if (f.type === 'range') {
-        document.getElementById(f.id + 'Val').textContent = fmtField(f, el.value);
-      } else if (f.type === 'money') {
+      if (f.type === 'range' || f.type === 'money') {
         document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
           btn.classList.toggle('active', +btn.dataset.val === +el.value);
         });
       }
+      if (f.type === 'pills') {
+        document.querySelectorAll(`[data-field="${f.id}"] .pill-btn`).forEach(btn => {
+          btn.classList.toggle('active', String(btn.dataset.val) === String(el.value));
+        });
+      }
+      applyConditionalFields();
       computeGeneric(tool);
     });
-    if (f.type === 'money') {
+    if (f.type === 'money' || f.type === 'range') {
       document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
         btn.addEventListener('click', () => {
           el.value = btn.dataset.val;
-          document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          computeGeneric(tool);
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      });
+    }
+    if (f.type === 'range') {
+      document.querySelectorAll(`[data-field="${f.id}"] .num-step`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          const dir = +btn.dataset.dir;
+          const step = f.step || 1;
+          const current = +el.value || f.min;
+          const newVal = current + dir * step;
+          const clamped = Math.max(f.min, Math.min(f.max, newVal));
+          el.value = +clamped.toFixed(4);
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      });
+    }
+    if (f.type === 'pills') {
+      document.querySelectorAll(`[data-field="${f.id}"] .pill-btn`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          el.value = btn.dataset.val;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
         });
       });
     }
   });
 
   computeGeneric(tool);
+}
+
+function autoChips(f) {
+  const range = f.max - f.min;
+  const raw = [f.min + range * 0.25, f.min + range * 0.5, f.min + range * 0.75];
+  return raw.map(v => {
+    const stepped = Math.round(v / f.step) * f.step;
+    return +stepped.toFixed(4);
+  });
+}
+
+function formatChip(val, f) {
+  const unit = (f.unit || '').trim();
+  if (unit === '%') return val + '%';
+  if (unit === 'điểm') return val + ' đ';
+  if (unit === 'năm') return val + ' năm';
+  if (unit === 'tháng') return val + ' tháng';
+  if (unit === 'khách') return val + ' khách';
+  if (val >= 1e9) return (val / 1e9 % 1 === 0 ? val / 1e9 : +(val / 1e9).toFixed(1)) + ' tỷ';
+  if (val >= 1e6) return (val / 1e6 % 1 === 0 ? val / 1e6 : +(val / 1e6).toFixed(1)) + ' tr';
+  return val + (unit ? ' ' + unit : '');
+}
+
+function applyConditionalFields() {
+  document.querySelectorAll('[data-cond-field]').forEach(el => {
+    const fieldId = el.dataset.condField;
+    const allowed = (el.dataset.condValue || '').split(',');
+    const current = document.getElementById(fieldId)?.value;
+    el.style.display = allowed.includes(String(current)) ? '' : 'none';
+  });
 }
 
 function fmtField(f, val) {
@@ -894,7 +1365,11 @@ function fmtChip(val) {
 
 function computeGeneric(tool) {
   const vals = {};
-  tool.fields.forEach(f => { vals[f.id] = +document.getElementById(f.id).value; });
+  tool.fields.forEach(f => {
+    const raw = document.getElementById(f.id).value;
+    const num = +raw;
+    vals[f.id] = (raw !== '' && !isNaN(num)) ? num : raw;
+  });
   const res = tool.compute(vals);
   document.getElementById('resultLabel').textContent  = tool.resultLabel;
   document.getElementById('resultValue').textContent  = res.result;
@@ -903,7 +1378,7 @@ function computeGeneric(tool) {
   ).join('');
   const insightEl = document.getElementById('resultInsight');
   if (insightEl) {
-    if (res.insight) { insightEl.textContent = res.insight; insightEl.style.display = ''; }
+    if (res.insight) { insightEl.innerHTML = res.insight; insightEl.style.display = ''; }
     else insightEl.style.display = 'none';
   }
   const scheduleEl = document.getElementById('amortizationSchedule');
@@ -1118,12 +1593,16 @@ function initGoldPanel() {
       goldChartRange = btn.dataset.range;
       renderGoldChart();
     });
-    ['goldBudget', 'goldProduct', 'goldScenario'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => {
-        if (id === 'goldScenario') {
-          const v = +document.getElementById('goldScenario').value;
-          document.getElementById('goldScenarioValue').textContent = (v >= 0 ? '+' : '') + v + '%';
-        }
+    ['goldBudget', 'goldProduct'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => computeGold());
+      document.getElementById(id).addEventListener('change', () => computeGold());
+    });
+
+    document.querySelectorAll('#goldScenarioChips button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#goldScenarioChips button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('goldScenario').value = btn.dataset.pct;
         computeGold();
       });
     });
@@ -1405,6 +1884,7 @@ function showToast(msg) {
 
 // ─── CIC Score Panel
 let cicScore = 570;
+let selectedNplGroup = 1;
 
 function getBand(score) {
   return CIC_BANDS.find(b => score >= b.min && score <= b.max) || CIC_BANDS[CIC_BANDS.length - 1];
@@ -1425,6 +1905,77 @@ function initCicPanel() {
   }
   slider.value = cicScore;
   updateCicV2();
+  renderNplSelector();
+  renderNplImpact(selectedNplGroup);
+}
+
+// ─── NPL (Nhóm nợ) Section
+function renderNplSelector() {
+  const wrap = document.getElementById('nplSelector');
+  if (!wrap) return;
+  wrap.innerHTML = NPL_GROUPS.map(g => `
+    <button class="npl-pill${g.nhom === selectedNplGroup ? ' active' : ''}"
+            type="button"
+            role="tab"
+            aria-selected="${g.nhom === selectedNplGroup}"
+            data-nhom="${g.nhom}"
+            style="--npl-dot:${g.color}; --npl-bg:${hexToRgba(g.color, 0.08)}">
+      <span class="npl-pill-dot"></span>
+      <span class="npl-pill-num">NHÓM ${g.nhom}</span>
+      <span class="npl-pill-label">${g.label}</span>
+    </button>
+  `).join('');
+  wrap.querySelectorAll('.npl-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nhom = +btn.dataset.nhom;
+      selectedNplGroup = nhom;
+      const g = NPL_GROUPS.find(x => x.nhom === nhom);
+      renderNplSelector();
+      renderNplImpact(nhom);
+      // Auto-snap slider to typical score for this group
+      cicScore = g.snapScore;
+      const slider = document.getElementById('cicV2Slider');
+      if (slider) slider.value = cicScore;
+      updateCicV2();
+      momo_track('npl_group_select', { nhom, label: g.label });
+    });
+  });
+}
+
+function renderNplImpact(nhom) {
+  const g = NPL_GROUPS.find(x => x.nhom === nhom);
+  if (!g) return;
+  const impact = document.getElementById('nplImpact');
+  if (!impact) return;
+  impact.style.setProperty('--npl-dot', g.color);
+  impact.style.setProperty('--npl-bg', hexToRgba(g.color, 0.08));
+
+  document.getElementById('nplBadge').textContent = `NHÓM ${g.nhom}`;
+  document.getElementById('nplGroupLabel').textContent = g.label;
+  document.getElementById('nplTag').textContent = g.tag;
+  document.getElementById('nplSummary').textContent = g.summary;
+  document.getElementById('nplOverdue').textContent = g.overdue;
+  document.getElementById('nplScore').textContent = `${g.scoreRange[0]} - ${g.scoreRange[1]}`;
+  document.getElementById('nplDuration').textContent = g.duration;
+
+  const iconMap = { good: '✓', partial: '△', bad: '✗' };
+  document.getElementById('nplAccess').innerHTML = g.access.map(a => `
+    <div class="npl-access-row">
+      <span class="npl-access-icon ${a.status}">${iconMap[a.status]}</span>
+      <span class="npl-access-type">${a.type}</span>
+      <span class="npl-access-note">${a.note}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('nplRoadmap').innerHTML = g.roadmap.map(r => `<li>${r}</li>`).join('');
+}
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 // SVG semi-circular gauge
@@ -1502,6 +2053,8 @@ function updateCicV2() {
 
 function renderCicPanel() {
   updateCicV2();
+  renderNplSelector();
+  renderNplImpact(selectedNplGroup);
 }
 
 // ─── Init

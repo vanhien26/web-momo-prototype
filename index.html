@@ -62,39 +62,32 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
 
 /* Before/After */
 .ba-shell{position:relative;border-radius:22px;overflow:hidden;border:1px solid #e4e7ec;box-shadow:0 24px 60px rgba(16,24,40,.08)}
-.ba-shell::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-120%);animation:ba-sweep 5.8s ease-in-out infinite;pointer-events:none;z-index:3}
-.ba-speed-pill{position:relative;overflow:hidden;box-shadow:0 12px 30px rgba(165,0,100,.18);animation:ba-pulse 2.8s ease-in-out infinite}
-.ba-speed-pill::after{content:"";position:absolute;inset:-40% -30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);transform:rotate(12deg) translateX(-120%);animation:ba-pill-shine 3.4s ease-in-out infinite}
-.ba-speed-pill span,.ba-speed-pill svg{position:relative;z-index:1}
-.ba-old-lane,.ba-new-lane{position:relative}
+.ba-speed-pill{position:relative;box-shadow:0 12px 30px rgba(165,0,100,.18)}
+.ba-old-lane,.ba-new-lane{position:relative;--flow-duration:16s;--flow-color:#ef4444;--flow-glow:rgba(239,68,68,.13)}
 .ba-new-lane{background:radial-gradient(circle at 12% 0%,rgba(165,0,100,.16),transparent 38%),linear-gradient(160deg,#0e0b14 0%,#0f0f1a 100%)}
-.bef-step,.aft-step{position:relative;overflow:hidden;animation:ba-step-in .7s ease both}
-.bef-step{padding:16px 14px;border-right:1px solid #f1f5f9;display:flex;flex-direction:column;gap:4px;background:linear-gradient(180deg,#fff,#fbfcff)}
-.bef-step::before{content:"";position:absolute;left:0;top:0;height:3px;width:0;background:#ef4444;animation:ba-old-line 4.8s ease-in-out infinite}
+.ba-new-lane{--flow-duration:5s;--flow-color:#10b981;--flow-glow:rgba(16,185,129,.17)}
+.ba-stage-grid{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.ba-flow-track{position:absolute;z-index:4;top:17px;left:8.333%;right:8.333%;height:4px;border-radius:999px;background:var(--flow-glow);pointer-events:none}
+.ba-flow-progress{position:absolute;inset:0;border-radius:inherit;background:var(--flow-color);box-shadow:0 0 14px var(--flow-color);transform:scaleX(0);transform-origin:left center;animation:ba-flow-fill var(--flow-duration) linear infinite}
+.ba-flow-head{position:absolute;top:50%;left:0;width:13px;height:13px;border:3px solid #fff;border-radius:50%;background:var(--flow-color);box-shadow:0 0 0 4px var(--flow-glow),0 0 18px var(--flow-color);transform:translate(-50%,-50%);animation:ba-flow-head var(--flow-duration) linear infinite}
+.bef-step,.aft-step{position:relative;min-width:0;padding:38px 14px 16px;border-right:1px solid;display:flex;flex-direction:column;gap:4px;animation:ba-stage-pass var(--flow-duration) linear infinite;animation-delay:var(--stage-delay,0s)}
+.bef-step{border-color:#f1f5f9;background:linear-gradient(180deg,#fff,#fbfcff)}
+.bef-step::after,.aft-step::after{content:"";position:absolute;z-index:5;top:12px;left:50%;width:12px;height:12px;border:3px solid #fff;border-radius:50%;background:var(--flow-color);box-shadow:0 0 0 3px var(--flow-glow);transform:translateX(-50%)}
 .bef-icon{width:32px;height:32px;border-radius:8px;background:#f3f4f6;color:#9ca3af;display:flex;align-items:center;justify-content:center;margin-bottom:4px;flex-shrink:0;transition:transform .25s ease}
 .bef-step b{font-size:11px;font-weight:800;color:#374151}
 .bef-step strong{font-size:12px;font-weight:900;color:#ef4444;letter-spacing:-.01em}
 .bef-step p{font-size:10px;color:#9ca3af;line-height:1.5;margin-top:2px}
-.aft-step{padding:16px 14px;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:4px}
-.aft-step::before{content:"";position:absolute;left:0;top:0;height:3px;width:0;background:#10b981;box-shadow:0 0 18px rgba(16,185,129,.65);animation:ba-new-line 4.8s ease-in-out infinite}
-.aft-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;flex-shrink:0;transition:transform .25s ease;animation:ba-icon-float 3s ease-in-out infinite}
+.aft-step{border-color:rgba(255,255,255,.05)}
+.aft-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;flex-shrink:0;transition:transform .25s ease}
 .aft-step b{font-size:11px;font-weight:800;color:#fff}
 .aft-step strong{font-size:12px;font-weight:900;color:#34d399;letter-spacing:-.01em}
 .aft-step p{font-size:10px;color:rgba(255,255,255,.38);line-height:1.5;margin-top:2px}
 .bef-step:hover .bef-icon,.aft-step:hover .aft-icon{transform:translateY(-3px) scale(1.04)}
-.bef-step:nth-child(1),.aft-step:nth-child(1){animation-delay:.02s}.bef-step:nth-child(1)::before,.aft-step:nth-child(1)::before{animation-delay:.05s}
-.bef-step:nth-child(2),.aft-step:nth-child(2){animation-delay:.08s}.bef-step:nth-child(2)::before,.aft-step:nth-child(2)::before{animation-delay:.2s}.aft-step:nth-child(2) .aft-icon{animation-delay:.2s}
-.bef-step:nth-child(3),.aft-step:nth-child(3){animation-delay:.14s}.bef-step:nth-child(3)::before,.aft-step:nth-child(3)::before{animation-delay:.35s}.aft-step:nth-child(3) .aft-icon{animation-delay:.4s}
-.bef-step:nth-child(4),.aft-step:nth-child(4){animation-delay:.2s}.bef-step:nth-child(4)::before,.aft-step:nth-child(4)::before{animation-delay:.5s}.aft-step:nth-child(4) .aft-icon{animation-delay:.6s}
-.bef-step:nth-child(5),.aft-step:nth-child(5){animation-delay:.26s}.bef-step:nth-child(5)::before,.aft-step:nth-child(5)::before{animation-delay:.65s}.aft-step:nth-child(5) .aft-icon{animation-delay:.8s}
-.bef-step:nth-child(6),.aft-step:nth-child(6){animation-delay:.32s}.bef-step:nth-child(6)::before,.aft-step:nth-child(6)::before{animation-delay:.8s}.aft-step:nth-child(6) .aft-icon{animation-delay:1s}
-@keyframes ba-step-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes ba-old-line{0%,8%{width:0;opacity:.5}42%,70%{width:58%;opacity:1}100%{width:0;opacity:.45}}
-@keyframes ba-new-line{0%,8%{width:0;opacity:.5}42%,70%{width:88%;opacity:1}100%{width:0;opacity:.45}}
-@keyframes ba-sweep{0%,58%{transform:translateX(-120%)}76%,100%{transform:translateX(120%)}}
-@keyframes ba-pulse{0%,100%{transform:translateY(0);box-shadow:0 12px 30px rgba(165,0,100,.18)}50%{transform:translateY(-2px);box-shadow:0 18px 38px rgba(165,0,100,.28)}}
-@keyframes ba-pill-shine{0%,48%{transform:rotate(12deg) translateX(-120%)}72%,100%{transform:rotate(12deg) translateX(120%)}}
-@keyframes ba-icon-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.ba-old-lane .bef-step:nth-child(2){--stage-delay:0s}.ba-old-lane .bef-step:nth-child(3){--stage-delay:2.4s}.ba-old-lane .bef-step:nth-child(4){--stage-delay:4.8s}.ba-old-lane .bef-step:nth-child(5){--stage-delay:7.2s}.ba-old-lane .bef-step:nth-child(6){--stage-delay:9.6s}.ba-old-lane .bef-step:nth-child(7){--stage-delay:12s}
+.ba-new-lane .aft-step:nth-child(2){--stage-delay:0s}.ba-new-lane .aft-step:nth-child(3){--stage-delay:.75s}.ba-new-lane .aft-step:nth-child(4){--stage-delay:1.5s}.ba-new-lane .aft-step:nth-child(5){--stage-delay:2.25s}.ba-new-lane .aft-step:nth-child(6){--stage-delay:3s}.ba-new-lane .aft-step:nth-child(7){--stage-delay:3.75s}
+@keyframes ba-flow-fill{0%{transform:scaleX(0)}92%,100%{transform:scaleX(1)}}
+@keyframes ba-flow-head{0%{left:0;opacity:0}2%{opacity:1}92%{left:100%;opacity:1}96%,100%{left:100%;opacity:0}}
+@keyframes ba-stage-pass{0%,2%,20%,100%{box-shadow:none}7%,16%{box-shadow:inset 0 0 0 1px var(--flow-color),inset 0 0 42px var(--flow-glow)}}
 
 /* AI model cards */
 .ai-model-card{padding:14px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);transition:border-color .2s,background .2s;cursor:default}
@@ -118,35 +111,44 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
 .workflow-case-badge strong{display:block;margin-bottom:4px;color:#101828;font-size:16px;font-weight:900}
 .workflow-case-badge span{display:block;color:#667085;font-size:11px;line-height:1.65}
 .workflow-shell{display:grid;grid-template-columns:minmax(300px,.86fr) minmax(0,1.14fr);overflow:hidden;border:1px solid #e4e7ec;border-radius:24px;background:#fff;box-shadow:0 20px 50px rgba(16,24,40,.07)}
-.workflow-steps{display:grid;gap:8px;padding:18px;border-right:1px solid #eef0f4;background:#fff}
-.workflow-step{width:100%;display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;padding:13px;border:1px solid transparent;border-radius:15px;background:#f8fafc;color:#344054;text-align:left;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
+.workflow-steps{display:grid;grid-template-rows:repeat(7,minmax(78px,1fr));gap:8px;padding:18px;border-right:1px solid #eef0f4;background:#fff}
+.workflow-step{position:relative;width:100%;min-height:78px;display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:center;overflow:hidden;padding:13px;border:1px solid transparent;border-radius:15px;background:#f8fafc;color:#344054;text-align:left;cursor:pointer;transition:background .18s,border-color .18s,box-shadow .18s}
+.workflow-step:before{content:"";position:absolute;inset:12px auto 12px 0;width:3px;border-radius:0 4px 4px 0;background:#a50064;opacity:0;transform:scaleY(.3);transition:opacity .2s,transform .28s cubic-bezier(.22,1,.36,1)}
 .workflow-step:hover{border-color:rgba(165,0,100,.22);background:#fff}
 .workflow-step.active{border-color:rgba(165,0,100,.46);background:#fff0f7;box-shadow:0 10px 24px rgba(165,0,100,.08)}
+.workflow-step.active:before{opacity:1;transform:scaleY(1)}
 .workflow-step-index{display:grid;height:34px;width:34px;place-items:center;border-radius:12px;background:#fff;color:#98a2b3;font-family:ui-monospace,monospace;font-size:10px;font-weight:900}
-.workflow-step.active .workflow-step-index{background:#a50064;color:#fff}
+.workflow-step.active .workflow-step-index{background:#a50064;color:#fff;animation:workflow-index-in .34s cubic-bezier(.22,1,.36,1)}
+.workflow-step>span:last-child{display:flex;min-width:0;flex-direction:column;justify-content:center}
 .workflow-step h3{margin:0 0 3px;color:#101828;font-size:12px;font-weight:900;line-height:1.25}
 .workflow-step p{margin:0;color:#667085;font-size:10px;line-height:1.5}
 .workflow-step.active p{color:#7a4665}
-.workflow-panel{min-width:0;padding:26px;background:radial-gradient(circle at 88% 0%,rgba(165,0,100,.14),transparent 32%),#10131b;color:#fff}
+.workflow-panel{min-width:0;min-height:720px;display:flex;flex-direction:column;padding:26px;background:radial-gradient(circle at 88% 0%,rgba(165,0,100,.14),transparent 32%),#10131b;color:#fff;contain:layout paint}
+.workflow-panel-content{will-change:transform,opacity}
 .workflow-panel-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
 .workflow-panel-label{font-family:ui-monospace,monospace;font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.45)}
 .workflow-panel-step{padding:6px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.06);color:#ffb9df;font-family:ui-monospace,monospace;font-size:9px;font-weight:800}
-.workflow-panel h3{margin:0;color:#fff;font-size:clamp(24px,3vw,34px);font-weight:900;line-height:1.05;letter-spacing:-.025em}
-.workflow-panel-desc{margin:10px 0 18px;max-width:620px;color:rgba(255,255,255,.62);font-size:12.5px;line-height:1.75}
+.workflow-panel h3{min-height:72px;display:flex;align-items:flex-end;margin:0;color:#fff;font-size:clamp(24px,3vw,34px);font-weight:900;line-height:1.05;letter-spacing:-.025em}
+.workflow-panel-desc{min-height:66px;margin:10px 0 18px;max-width:620px;color:rgba(255,255,255,.62);font-size:12.5px;line-height:1.75}
 .workflow-meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
-.workflow-meta{padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.045)}
+.workflow-meta{min-height:108px;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.045)}
 .workflow-meta small{display:block;margin-bottom:5px;color:rgba(255,255,255,.34);font-family:ui-monospace,monospace;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .workflow-meta span{display:block;color:rgba(255,255,255,.82);font-size:11px;line-height:1.5}
-.workflow-output{padding:18px;border-radius:18px;background:#fff;color:#101828}
+.workflow-output{min-height:184px;padding:18px;border-radius:18px;background:#fff;color:#101828}
 .workflow-output strong{display:block;margin-bottom:10px;font-size:13px;font-weight:900}
 .workflow-output ul{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 .workflow-output li{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:start;color:#475467;font-size:11px;line-height:1.55}
 .workflow-output li:before{content:"";width:8px;height:8px;margin-top:5px;border-radius:50%;background:#a50064}
-.workflow-proof{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px;border-radius:14px;background:rgba(165,0,100,.1);color:#ffd8ec;font-size:11px;line-height:1.6}
+.workflow-proof{min-height:58px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px;border-radius:14px;background:rgba(165,0,100,.1);color:#ffd8ec;font-size:11px;line-height:1.6}
 .workflow-proof b{color:#fff}
-.workflow-flow-map{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}
-.workflow-flow-map span{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.58);font-family:ui-monospace,monospace;font-size:8px;font-weight:800;letter-spacing:.04em}
+.workflow-flow-map{--workflow-progress:0%;position:relative;display:flex;gap:6px;flex-wrap:nowrap;margin-top:auto;padding-top:17px}
+.workflow-flow-map:before,.workflow-flow-map:after{content:"";position:absolute;top:4px;left:0;height:3px;border-radius:999px}
+.workflow-flow-map:before{right:0;background:rgba(255,255,255,.09)}
+.workflow-flow-map:after{width:var(--workflow-progress);background:linear-gradient(90deg,#ff83c6,#a50064);box-shadow:0 0 14px rgba(255,92,180,.42);transition:width .42s cubic-bezier(.22,1,.36,1)}
+.workflow-flow-map span{position:relative;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.58);font-family:ui-monospace,monospace;font-size:8px;font-weight:800;letter-spacing:.04em;white-space:nowrap;transition:background .24s,color .24s,box-shadow .24s,transform .24s}
 .workflow-flow-map span.on{background:#a50064;color:#fff}
+.workflow-flow-map span.current{box-shadow:0 0 0 2px rgba(255,185,223,.32);transform:translateY(-2px)}
+@keyframes workflow-index-in{0%{transform:scale(.7);opacity:.45}100%{transform:scale(1);opacity:1}}
 
 /* Module grid */
 .mod-tag{font-size:9px;font-family:ui-monospace,monospace;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.03em;display:inline-block}
@@ -253,8 +255,10 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
   .workflow-head{grid-template-columns:1fr;gap:16px}
   .workflow-case-badge{justify-self:stretch;max-width:none}
   .workflow-shell{grid-template-columns:1fr}
-  .workflow-steps{border-right:0;border-bottom:1px solid #eef0f4}
+  .workflow-steps{grid-template-rows:repeat(7,minmax(78px,auto));border-right:0;border-bottom:1px solid #eef0f4}
+  .workflow-panel{min-height:900px}
   .workflow-meta-grid{grid-template-columns:1fr}
+  .workflow-meta{min-height:0}
 }
 @media(max-width:640px){
   .workflow-section{padding:52px 0 58px}
@@ -264,7 +268,7 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
   .workflow-steps{padding:12px;max-height:430px;overflow:auto}
   .workflow-step{grid-template-columns:34px 1fr;padding:11px}
   .workflow-step-index{width:30px;height:30px;border-radius:10px}
-  .workflow-panel{padding:18px}
+  .workflow-panel{min-height:860px;padding:18px}
   .workflow-panel-top{align-items:flex-start;flex-direction:column}
   .workflow-flow-map{display:none}
 }
@@ -276,7 +280,10 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
   .ads-card-anim,.chat-u-msg,.chat-dots-anim,.chat-ai-msg,.chat-dots-anim span,
   .seo-bl,.sg-arc,.sg-num-anim,
   .os-mod-dot,.os-feed-scroller,.os-fill{animation:none;opacity:1;transform:none;transition:none;width:100%;stroke-dashoffset:38}
-  .ba-shell::before,.ba-speed-pill,.ba-speed-pill::after,.bef-step,.aft-step,.bef-step::before,.aft-step::before,.aft-icon{animation:none;opacity:1;transform:none;transition:none}
+  .bef-step,.aft-step,.ba-flow-progress,.ba-flow-head{animation:none;opacity:1;transition:none}
+  .ba-flow-progress{transform:scaleX(1)}
+  .ba-flow-head{display:none}
+  .workflow-step,.workflow-step:before,.workflow-step-index,.workflow-flow-map:after,.workflow-flow-map span{animation:none!important;transition:none!important;transform:none!important}
 }
 </style>
 </head>
@@ -711,36 +718,38 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
       </div>
 
       <div class="workflow-panel" role="tabpanel" aria-live="polite">
-        <div class="workflow-panel-top">
-          <span class="workflow-panel-label">Phạt Nguội PLG Project</span>
-          <span class="workflow-panel-step" id="workflowStepCounter">Step 01 / 07</span>
-        </div>
-        <h3 class="momo-display" id="workflowTitle">Business Context / Knowledge Base</h3>
-        <p class="workflow-panel-desc" id="workflowDesc">MoSpark quản lý toàn bộ business context và knowledge base làm Source of Truth cho project.</p>
-
-        <div class="workflow-meta-grid">
-          <div class="workflow-meta">
-            <small>Input</small>
-            <span id="workflowInput">Business objective, compliance note, payment flow, product owner brief.</span>
+        <div class="workflow-panel-content" id="workflowPanelContent">
+          <div class="workflow-panel-top">
+            <span class="workflow-panel-label">Phạt Nguội PLG Project</span>
+            <span class="workflow-panel-step" id="workflowStepCounter">Step 01 / 07</span>
           </div>
-          <div class="workflow-meta">
-            <small>MoSpark role</small>
-            <span id="workflowRole">Chuẩn hóa knowledge base để mọi output sau đó bám đúng policy và mục tiêu.</span>
-          </div>
-          <div class="workflow-meta">
-            <small>Output</small>
-            <span id="workflowPrimaryOutput">Project Source of Truth cho Phạt Nguội.</span>
-          </div>
-        </div>
+          <h3 class="momo-display" id="workflowTitle">Business Context / Knowledge Base</h3>
+          <p class="workflow-panel-desc" id="workflowDesc">MoSpark quản lý toàn bộ business context và knowledge base làm Source of Truth cho project.</p>
 
-        <div class="workflow-output">
-          <strong id="workflowOutputTitle">Deliverables trong case Phạt Nguội</strong>
-          <ul id="workflowOutputList"></ul>
-        </div>
+          <div class="workflow-meta-grid">
+            <div class="workflow-meta">
+              <small>Input</small>
+              <span id="workflowInput">Business objective, compliance note, payment flow, product owner brief.</span>
+            </div>
+            <div class="workflow-meta">
+              <small>MoSpark role</small>
+              <span id="workflowRole">Chuẩn hóa knowledge base để mọi output sau đó bám đúng policy và mục tiêu.</span>
+            </div>
+            <div class="workflow-meta">
+              <small>Output</small>
+              <span id="workflowPrimaryOutput">Project Source of Truth cho Phạt Nguội.</span>
+            </div>
+          </div>
 
-        <div class="workflow-proof" id="workflowProof">
-          <b>Why it matters:</b>
-          <span>Không để GenAI tự suy diễn sai về pháp lý, data source hoặc payment flow.</span>
+          <div class="workflow-output">
+            <strong id="workflowOutputTitle">Deliverables trong case Phạt Nguội</strong>
+            <ul id="workflowOutputList"></ul>
+          </div>
+
+          <div class="workflow-proof" id="workflowProof">
+            <b>Why it matters:</b>
+            <span>Không để GenAI tự suy diễn sai về pháp lý, data source hoặc payment flow.</span>
+          </div>
         </div>
 
         <div class="workflow-flow-map" aria-hidden="true">
@@ -791,7 +800,8 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
           <strong style="font-size:12px;color:#374151;font-weight:800">Cách cũ — Không có MoSpark</strong>
           <span style="margin-left:auto;font-size:10px;font-weight:700;color:#ef4444;background:#fee2e2;padding:3px 10px;border-radius:100px">16 tuần</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr)">
+        <div class="ba-stage-grid">
+          <div class="ba-flow-track" aria-hidden="true"><span class="ba-flow-progress"></span><i class="ba-flow-head"></i></div>
           <div class="bef-step">
             <div class="bef-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9.5 2a6.5 6.5 0 0 1 5 10.64V15a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-2.36A6.5 6.5 0 0 1 9.5 2z"/><path d="M7.5 18h4M8.5 21h3"/></svg></div>
             <b>Ideation</b><strong>1 tuần</strong><p>Brainstorm thủ công, brief rời rạc</p>
@@ -827,7 +837,8 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
           <strong style="font-size:12px;color:#fff;font-weight:800">Với MoSpark</strong>
           <span style="margin-left:auto;font-size:10px;font-weight:700;color:#10b981;background:rgba(16,185,129,.12);padding:3px 10px;border-radius:100px">5 tuần</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr)">
+        <div class="ba-stage-grid">
+          <div class="ba-flow-track" aria-hidden="true"><span class="ba-flow-progress"></span><i class="ba-flow-head"></i></div>
           <div class="aft-step">
             <div class="aft-icon" style="background:rgba(200,0,122,.15);color:#f472b6"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l1.9 5.8h6.1l-4.9 3.6 1.9 5.8L12 14.6l-4.9 3.6 1.9-5.8L4 8.8h6.1z"/></svg></div>
             <b>Ideation</b><strong>2 ngày</strong><p>AI concept từ use case và market gap</p>
@@ -927,7 +938,7 @@ const P=[
   {id:'ads-manager',name:'Ads Placement Manager',cat:'MoSpark',mat:'Interactive',desc:'Tạo chiến dịch, chọn vị trí và preview real-time Desktop / Mobile.',loop:'Setup → Place → Preview → Publish',src:'demos/ads.html'},
   {id:'blog-category',name:'MoSpark Blog Category',cat:'MoSpark',mat:'Listing',desc:'Blog category listing với 8 danh mục Use Case MoMo, featured article, article grid 2-col và filter tabs.',loop:'Browse → Filter → Read → Convert',src:'demos/blog-category.html'},
   {id:'blog',name:'MoSpark Blog Article',cat:'MoSpark',mat:'Article',desc:'Full-width blog với product embed, audio, floating TOC và feedback cuối bài.',loop:'Read → Use product → Convert',src:'demos/blog.html'},
-  {id:'financial',name:'Financial Utilities Lab',cat:'Widget',mat:'Interactive',desc:'18 công cụ tài chính tương tác: vay, CIC, bảo hiểm, tiết kiệm, thuế, đầu tư, planning.',loop:'Search → Utility → App',src:'demos/financial.html'},
+  {id:'financial',name:'Financial Utilities',cat:'Widget',mat:'Interactive',desc:'18 công cụ tài chính tương tác: vay, CIC, bảo hiểm, tiết kiệm, thuế, đầu tư, planning.',loop:'Search → Utility → App',src:'demos/financial.html'},
   {id:'payments',name:'Thanh toán & Nạp tiền',cat:'Widget',mat:'Interactive',desc:'Hub đa dịch vụ cho nạp tiền, tra cứu hóa đơn, thanh toán tiện ích và mua vé Metro.',loop:'Chọn dịch vụ → Tra cứu → Thanh toán',src:'demos/payments.html'},
   {id:'scam-check',name:'Scam Check',cat:'Widget',mat:'Lookup',desc:'Tra số điện thoại, tài khoản, link, QR để phát hiện lừa đảo trước khi chuyển.',loop:'Paste → Score → Warn',src:'demos/scam-check.html'},
   {id:'metro',name:'Mua Vé Metro HCM',cat:'Widget',mat:'Flow',desc:'Luồng mua vé Metro: chọn tuyến, chọn vé, thanh toán, nhận QR.',loop:'Route → Buy → QR',src:'demos/metro-ticket.html'},
@@ -1095,13 +1106,36 @@ const PLG_WORKFLOW_STEPS = [
   }
 ];
 
+let activeWorkflowIndex=0;
+let hasRenderedWorkflow=false;
+
+function animateWorkflowContent(direction=1){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const content=document.getElementById('workflowPanelContent');
+  content.getAnimations?.().forEach(animation=>animation.cancel());
+  content.animate([
+    {opacity:.38,transform:`translateX(${direction*14}px)`},
+    {opacity:1,transform:'translateX(0)'}
+  ],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
+  content.querySelectorAll('.workflow-output li').forEach((item,itemIndex)=>{
+    item.animate([
+      {opacity:0,transform:'translateY(7px)'},
+      {opacity:1,transform:'translateY(0)'}
+    ],{duration:280,delay:70+(itemIndex*38),easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});
+  });
+}
+
 function renderWorkflowStep(index=0){
-  const step=PLG_WORKFLOW_STEPS[index]||PLG_WORKFLOW_STEPS[0];
-  const padded=String(index+1).padStart(2,'0');
+  const safeIndex=Math.max(0,Math.min(index,PLG_WORKFLOW_STEPS.length-1));
+  const step=PLG_WORKFLOW_STEPS[safeIndex];
+  const direction=safeIndex>=activeWorkflowIndex?1:-1;
+  const shouldAnimate=hasRenderedWorkflow&&safeIndex!==activeWorkflowIndex;
+  const padded=String(safeIndex+1).padStart(2,'0');
   document.querySelectorAll('[data-workflow-step]').forEach((button,buttonIndex)=>{
-    const active=buttonIndex===index;
+    const active=buttonIndex===safeIndex;
     button.classList.toggle('active',active);
     button.setAttribute('aria-selected',String(active));
+    button.tabIndex=active?0:-1;
   });
   document.getElementById('workflowStepCounter').textContent=`Step ${padded} / 07`;
   document.getElementById('workflowTitle').textContent=step.title;
@@ -1113,12 +1147,27 @@ function renderWorkflowStep(index=0){
   document.getElementById('workflowOutputList').innerHTML=step.items.map(item=>`<li>${item}</li>`).join('');
   document.getElementById('workflowProof').innerHTML=`<b>Why it matters:</b><span>${step.proof}</span>`;
   document.querySelectorAll('.workflow-flow-map span').forEach((item,itemIndex)=>{
-    item.classList.toggle('on',itemIndex<=index);
+    item.classList.toggle('on',itemIndex<=safeIndex);
+    item.classList.toggle('current',itemIndex===safeIndex);
   });
+  document.querySelector('.workflow-flow-map').style.setProperty('--workflow-progress',`${(safeIndex/(PLG_WORKFLOW_STEPS.length-1))*100}%`);
+  if(shouldAnimate)animateWorkflowContent(direction);
+  activeWorkflowIndex=safeIndex;
+  hasRenderedWorkflow=true;
 }
 
 document.querySelectorAll('[data-workflow-step]').forEach(button=>{
   button.addEventListener('click',()=>renderWorkflowStep(Number(button.dataset.workflowStep)));
+  button.addEventListener('keydown',event=>{
+    if(!['ArrowDown','ArrowRight','ArrowUp','ArrowLeft','Home','End'].includes(event.key))return;
+    event.preventDefault();
+    const current=Number(button.dataset.workflowStep);
+    const next=event.key==='Home'?0:event.key==='End'?PLG_WORKFLOW_STEPS.length-1:
+      current+(event.key==='ArrowDown'||event.key==='ArrowRight'?1:-1);
+    const target=Math.max(0,Math.min(next,PLG_WORKFLOW_STEPS.length-1));
+    renderWorkflowStep(target);
+    document.querySelector(`[data-workflow-step="${target}"]`).focus();
+  });
 });
 renderWorkflowStep(0);
 </script>

@@ -11,8 +11,9 @@ const PROTOTYPES = [
   },
   {
     id: 'financial',
-    name: 'Financial Utilities Lab',
+    name: 'Financial Utilities',
     category: 'Widget',
+    navigationOnly: true,
     maturity: 'Interactive',
     description: 'Biến search intent tài chính thành trải nghiệm tính toán hữu ích, dẫn người dùng đến hành động phù hợp trong hệ sinh thái MoMo.',
     jtbd: 'Tính nhanh, hiểu rõ, hành động ngay',
@@ -31,13 +32,18 @@ const PROTOTYPES = [
       { id: 'bao-hiem-o-to',   name: 'Bảo Hiểm Ô Tô',     category: 'Insurance',  description: 'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí.',                          jtbd: 'Ước tính phí bảo hiểm trước khi quyết định mua' },
       { id: 'bhxh',            name: 'BHXH',               category: 'Insurance',  description: 'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.',                  jtbd: 'Hiểu quyền lợi BHXH để quyết định đóng tự nguyện' },
       { id: 'luong-huu',       name: 'Lương Hưu',          category: 'Insurance',  description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.', jtbd: 'Biết trước lương hưu để lập kế hoạch nghỉ hưu' },
+      { id: 'bhxh-1-lan',      name: 'BHXH 1 Lần',         category: 'Insurance',  description: 'Ước tính số tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024: 1,5 tháng MBQTL/năm trước 2014, 2 tháng/năm từ 2014, auto trượt giá CPI.', jtbd: 'Cân nhắc rút BHXH một lần hay giữ tiếp để lương hưu' },
       { id: 'tiet-kiem',       name: 'Tiết Kiệm',          category: 'Savings',    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',                 jtbd: 'Biết trước lợi tức để chọn kỳ hạn tiết kiệm phù hợp' },
       { id: 'lai-suat',        name: 'Lãi Suất Ngân Hàng', category: 'Savings',    description: 'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận theo số tiền và kỳ hạn.', jtbd: 'Chọn ngân hàng và kỳ hạn cho lãi suất tốt nhất' },
-      { id: 'thue-tncn',       name: 'Thuế TNCN',          category: 'Tax',        description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến, chiết khấu gia cảnh.',           jtbd: 'Tính nhanh thuế TNCN để lập kế hoạch tài chính' },
+      { id: 'thue-tncn',       name: 'Thuế TNCN',          category: 'Tax',        description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến 5 bậc và giảm trừ gia cảnh 15,5tr (Luật 2025).', jtbd: 'Tính nhanh thuế TNCN để lập kế hoạch tài chính' },
+      { id: 'quyet-toan-tncn', name: 'Quyết Toán TNCN',    category: 'Tax',        description: 'Quyết toán thuế TNCN cuối năm: chênh lệch giữa thuế cả năm và thuế đã tạm đóng, biết phải nộp thêm hay được hoàn trước 30/04.', jtbd: 'Biết phải nộp thêm hay được hoàn cuối kỳ' },
+      { id: 'thue-tndn-sme',   name: 'Thuế TNDN SME',      category: 'Tax',        description: 'Tính thuế TNDN cho SME theo Luật 67/2025/QH15: 15% (DT ≤ 3 tỷ) / 17% (3-50 tỷ) / 20% (>50 tỷ), miễn 3 năm cho DN mới.', jtbd: 'Dự trù thuế TNDN năm cho doanh nghiệp SME' },
       { id: 'chung-chi-quy',   name: 'Chứng Chỉ Quỹ',     category: 'Investment', description: 'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',        jtbd: 'Hiểu tốc độ tăng trưởng đầu tư định kỳ trước khi bắt đầu' },
       { id: 'gold',            name: 'Giá Vàng',           category: 'Investment', description: 'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và hòa vốn theo kịch bản.',          jtbd: 'Đánh giá có nên mua vàng tích lũy không' },
       { id: 'stock',           name: 'Chứng Khoán',        category: 'Investment', description: 'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.',         jtbd: 'Làm quen thị trường chứng khoán không rủi ro' },
       { id: 'ty-gia',          name: 'Tỷ Giá',             category: 'FX',         description: 'Converter A/B: chọn cặp tiền, đảo chiều, xem chart, chênh lệch bank-mid, tỷ giá hiệu dụng và số nhận ròng.', jtbd: 'Biết đổi từ tiền nào sang tiền nào, rate đang biến động ra sao và nhận ròng bao nhiêu' },
+      { id: 'fx-compare',      name: 'So Sánh Tỷ Giá NH',  category: 'FX',         description: 'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ, highlight rate tốt nhất / kém nhất, sort theo best rate.', jtbd: 'Chọn ngân hàng đổi tiền có rate tốt nhất' },
+      { id: 'travel-budget',   name: 'Budget Du Lịch',     category: 'FX',         description: 'Lập ngân sách chuyến đi cho 10 điểm đến × 3 tier (budget/mid/luxury) × N ngày, breakdown theo lưu trú / ăn / di chuyển / hoạt động / dự phòng.', jtbd: 'Biết cần mang bao nhiêu tiền cho chuyến đi' },
       { id: 'quy-du-phong',    name: 'Quỹ Dự Phòng',      category: 'Planning',   description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',       jtbd: 'Xác định đúng mức quỹ dự phòng cần tích lũy' },
       { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính',   category: 'Planning',   description: 'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư, tỷ lệ rút vốn an toàn và dòng tiền góp hàng tháng.', jtbd: 'Biết mình cần bao nhiêu, tốc độ góp có đủ không và thiếu ở đâu' },
       { id: 'dam-cuoi',        name: 'Kế Hoạch Đám Cưới', category: 'Planning',   description: 'Lập ngân sách cưới theo số khách, bàn tiệc, chi phí cố định, tiền mừng dự kiến, dự phòng và quỹ sau cưới.', jtbd: 'Biết cần chuẩn bị bao nhiêu tiền mặt để cưới xong không hụt dòng tiền' },
@@ -210,14 +216,14 @@ const PROTOTYPES = [
     id: 'scam-check',
     name: 'Scam Check',
     category: 'Widget',
-    maturity: 'Lookup',
-    description: 'Tra cứu số điện thoại, tài khoản, link hoặc QR để phát hiện tín hiệu lừa đảo trước khi chuyển tiền.',
-    jtbd: 'Biết có nên tin trước khi bấm chuyển',
-    northStar: 'Risk check completion',
-    loop: 'Paste → Score → Warn',
-    hypothesis: 'Safety lookup surface giúp giảm gian lận và tăng niềm tin cho thanh toán số.',
-    value: 'Tạo lớp bảo vệ cho P2P, QR, chuyển khoản và social payment.',
-    gate: 'Đo risk-check completion, warning CTR, abort rate và report intent.',
+    maturity: 'Safety Hub',
+    description: 'An Toàn MoMo - chống lừa đảo end-to-end: (1) Tra cứu rủi ro SĐT/STK/link/QR trước khi chuyển, (2) Báo cáo lừa đảo ẩn danh 3 bước, (3) Cơ chế 4 bước xử lý phối hợp ngân hàng & cơ quan chức năng, (4) Impact stats cộng đồng (1.245.678+ user bảo vệ, 320 tỷ chặn), (5) Feature bảo vệ bền vững (sinh trắc học, AI 24/7, cảnh báo số xấu).',
+    jtbd: 'Phòng và chống lừa đảo: kiểm tra trước, báo cáo sau, bảo vệ cộng đồng',
+    northStar: 'Anonymous report + risk-check completion combined',
+    loop: 'Trigger → Lookup OR Report → Community alert → App download',
+    hypothesis: 'Kết hợp lookup (defense) + report (community impact) trên cùng surface tăng cả conversion checking và submission rate so với tách 2 page.',
+    value: 'Single safety hub: bảo vệ user trước transaction, thu fraud signals từ cộng đồng, cross-sell tải app cho lớp bảo mật sinh trắc/AI.',
+    gate: 'Đo: lookup completion, scenario CTR, report 3-step funnel, abort vs submit ratio, app download CTR sau impact stats.',
     src: 'demos/scam-check.html',
     address: 'web-momo-prototype.vercel.app/scam-check',
   },
@@ -265,6 +271,21 @@ const PROTOTYPES = [
     gate: 'Đo preset selections, workflow completions, output panel engagement và open-in-tab rate.',
     src: 'demos/orchestrator.html',
     address: 'web-momo-prototype.vercel.app/genai-orchestrator',
+  },
+  {
+    id: 'genai-image',
+    name: 'GenAI Image Studio',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Tạo key visual theo Page Type và template đã khóa size, vùng an toàn, logo, pattern, color token và responsive crop. Demo chi tiết dùng Landing Page Hero Banner 1920 x 600.',
+    jtbd: 'Tạo ảnh campaign đúng brand và lắp được ngay vào Page Builder mà không phải sửa layout thủ công',
+    northStar: 'Template compliant asset approval rate',
+    loop: 'Page Type → Template Rules → Creative Brief → Generate → Quality Gate',
+    hypothesis: 'Tách AI key visual khỏi lớp copy và brand cố định sẽ giảm lỗi logo, text, safe zone và rút ngắn vòng review giữa Content, Design và Dev.',
+    value: 'Một image pipeline dùng lại cho nhiều Page Type, có template contract, mask, brand reference, variant scoring và audit trail trước khi đưa vào Asset Library.',
+    gate: 'Đo generation completion, Brand Fit, rule pass rate, số vòng regenerate, approval time và tỷ lệ asset được dùng trong Page Builder.',
+    src: 'demos/genai-image.html',
+    address: 'web-momo-prototype.vercel.app/genai-image-studio',
   },
   {
     id: 'seo-geo-dashboard',
@@ -354,8 +375,18 @@ function displayGroupName(groupName) {
 
 const GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other'];
 const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
+const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
+const MOSPARK_CLUSTER_ITEMS = {
+  GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+};
+
+function getMoSparkCluster(protoId) {
+  return MOSPARK_CLUSTER_ORDER.find(cluster => MOSPARK_CLUSTER_ITEMS[cluster].includes(protoId)) || 'Modules';
+}
+
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi-ha-noi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
@@ -366,8 +397,8 @@ const GROUP_SUMMARY = {
   MoSpark: {
     eyebrow: 'MoSpark Platform',
     title: 'MoSpark Platform',
-    description: 'Nhóm prototype cho hệ sinh thái tạo nội dung, quality gate, hội thoại và monetization surfaces.',
-    examples: 'GenAI Orchestrator · Agentic Hub · SEO/GEO Dashboard · SEO/GEO Project Hub · MoMo Project Assistant · Ads Placement Manager · Blog Category · Blog Article',
+    description: 'Chia thành 2 cụm rõ vai trò: GenAI cung cấp năng lực tạo sinh và orchestration; Modules cung cấp các bề mặt vận hành, tăng trưởng và phân phối trên Web.',
+    examples: 'GenAI: Orchestrator · Image Studio · Agentic Hub | Modules: SEO/GEO · Assistant · Ads · Blog',
   },
   MiniWeb: {
     eyebrow: 'Mini Web Overview',
@@ -590,7 +621,7 @@ function renderNav() {
           <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
           <span class="proto-nav-label">
             <strong>${p.name}</strong>
-            <small>${p.ownerGroup || displayGroupName(p.category)}</small>
+            <small>${p.navigationOnly ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category)))}</small>
           </span>
           ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
         </button>
@@ -607,7 +638,16 @@ function renderNav() {
             ${ownerItems.map(item => renderNavItem(item, groupItems.indexOf(item))).join('')}
           </div>`;
         }).join('')
-      : groupItems.map((item, index) => renderNavItem(item, index)).join('');
+      : groupName === 'MoSpark'
+        ? MOSPARK_CLUSTER_ORDER.map(cluster => {
+            const clusterItems = groupItems.filter(item => getMoSparkCluster(item.id) === cluster);
+            if (!clusterItems.length) return '';
+            return `<div class="proto-owner-group proto-mospark-cluster cluster-${cluster.toLowerCase()}">
+              <p class="proto-owner-label">${cluster}</p>
+              ${clusterItems.map((item, index) => renderNavItem(item, index)).join('')}
+            </div>`;
+          }).join('')
+        : groupItems.map((item, index) => renderNavItem(item, index)).join('');
 
     return `<section class="proto-nav-section">
       <p class="nav-section-label">${displayGroupName(groupName)}</p>
@@ -621,6 +661,10 @@ function renderNav() {
       const proto = PROTOTYPES.find(p => p.id === id);
       if (proto && proto.tools) {
         if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+        if (proto.navigationOnly) {
+          renderNav();
+          return;
+        }
       }
       selectProto(id);
     });
@@ -649,6 +693,11 @@ const GROUP_PRIMARY = {
 };
 
 const MOSPARK_HOME_CAPABILITIES = [
+  {
+    title: 'GenAI Image',
+    text: 'Sinh key visual theo Page Type và template contract, khóa logo, copy, pattern, safe zone và chỉ mở vùng ảnh cho AI.',
+    proto: 'genai-image',
+  },
   {
     title: 'GenAI Content',
     text: 'Sản xuất outline, article, FAQ và product embed từ Content Plan đã duyệt, có Business Context và quality gate.',
@@ -701,7 +750,7 @@ function buildMoSparkHomeIntro() {
         </div>
       </div>
       <div class="mh-stack">
-        <div><strong>5</strong><span>capabilities</span></div>
+        <div><strong>6</strong><span>capabilities</span></div>
         <div><strong>&lt;1 ngày</strong><span>landing page self-serve</span></div>
         <div><strong>0 ticket</strong><span>cho thay đổi content thường ngày</span></div>
       </div>
@@ -767,11 +816,21 @@ function buildHomeCard(proto) {
   return `<article class="hl-card" data-open-proto="${proto.id}">
     <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${proto.maturity}</span>
     <h3 class="hl-card-name">${proto.name}</h3>
-    <button class="hl-open-btn" type="button">Preview ↗</button>
+    <button class="hl-open-btn" type="button">${proto.navigationOnly ? `Xem ${proto.tools.length} utilities ↓` : 'Preview ↗'}</button>
   </article>`;
 }
 
 function buildHomeGroupCards(groupName, groupItems) {
+  if (groupName === 'MoSpark') {
+    return `<div class="hl-owner-layout hl-mospark-layout">${MOSPARK_CLUSTER_ORDER.map(cluster => {
+      const clusterItems = groupItems.filter(item => getMoSparkCluster(item.id) === cluster);
+      if (!clusterItems.length) return '';
+      return `<section class="hl-owner-section hl-mospark-cluster cluster-${cluster.toLowerCase()}">
+        <div class="hl-owner-heading"><span>${cluster}</span><strong>${clusterItems.length} ${cluster === 'GenAI' ? 'products' : 'modules'}</strong></div>
+        <div class="hl-cards">${clusterItems.map(buildHomeCard).join('')}</div>
+      </section>`;
+    }).join('')}</div>`;
+  }
   if (groupName !== 'Platform') {
     return `<div class="hl-cards">${groupItems.map(buildHomeCard).join('')}</div>`;
   }
@@ -862,6 +921,13 @@ function buildHomeView() {
 // ─── Selection ────────────────────────────────────────────────────────────────
 
 function selectProto(id) {
+  const proto = PROTOTYPES.find(item => item.id === id);
+  if (proto?.navigationOnly) {
+    expanded.add(id);
+    renderNav();
+    if (window.matchMedia('(max-width: 720px)').matches) openSidebar();
+    return;
+  }
   activeProtoId = id;
   activeToolId  = null;
   renderNav();
