@@ -14,6 +14,7 @@ const fmtM = n => {
   if (abs >= 1e6) return sign + new Intl.NumberFormat('vi-VN', {maximumFractionDigits:1}).format(abs/1e6) + ' triệu';
   return fmt(n);
 };
+const parseMoney = s => +String(s).replace(/[^\d]/g, '') || 0;
 
 // ─── CIC Data
 const CIC_BANDS = [
@@ -1216,10 +1217,11 @@ function renderGenericPanel(tool) {
   const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
   container.innerHTML = tool.fields.map(f => {
     if (f.type === 'money') {
+      const formattedInitial = (f.value || 0).toLocaleString('vi-VN');
       return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${f.label}</label>
         <div class="money-input-row">
-          <input type="number" id="${f.id}" value="${f.value}" min="${f.min || 0}" max="${f.max || ''}" step="${f.step || 1000000}">
+          <input type="text" inputmode="numeric" id="${f.id}" value="${formattedInitial}">
           <span class="unit-tag">đ</span>
         </div>
         <div class="money-chips">
@@ -1267,8 +1269,9 @@ function renderGenericPanel(tool) {
     const el = document.getElementById(f.id);
     el.addEventListener('input', () => {
       if (f.type === 'range' || f.type === 'money') {
+        const currentNum = f.type === 'money' ? parseMoney(el.value) : +el.value;
         document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
-          btn.classList.toggle('active', +btn.dataset.val === +el.value);
+          btn.classList.toggle('active', +btn.dataset.val === currentNum);
         });
       }
       if (f.type === 'pills') {
@@ -1279,10 +1282,20 @@ function renderGenericPanel(tool) {
       applyConditionalFields();
       computeGeneric(tool);
     });
+    if (f.type === 'money') {
+      el.addEventListener('blur', () => {
+        const num = parseMoney(el.value);
+        el.value = num.toLocaleString('vi-VN');
+      });
+    }
     if (f.type === 'money' || f.type === 'range') {
       document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
         btn.addEventListener('click', () => {
-          el.value = btn.dataset.val;
+          if (f.type === 'money') {
+            el.value = (+btn.dataset.val).toLocaleString('vi-VN');
+          } else {
+            el.value = btn.dataset.val;
+          }
           el.dispatchEvent(new Event('input', { bubbles: true }));
         });
       });
@@ -1359,8 +1372,12 @@ function computeGeneric(tool) {
   const vals = {};
   tool.fields.forEach(f => {
     const raw = document.getElementById(f.id).value;
-    const num = +raw;
-    vals[f.id] = (raw !== '' && !isNaN(num)) ? num : raw;
+    if (f.type === 'money') {
+      vals[f.id] = parseMoney(raw);
+    } else {
+      const num = +raw;
+      vals[f.id] = (raw !== '' && !isNaN(num)) ? num : raw;
+    }
   });
   const res = tool.compute(vals);
   document.getElementById('resultLabel').textContent  = tool.resultLabel;
