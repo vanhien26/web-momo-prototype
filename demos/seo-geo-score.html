@@ -432,55 +432,177 @@ header{
 .topic-name{font-size:9.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topic-meta{font-size:8px;color:var(--t3);margin-top:3px}
 
-/* ─── AI WRITE PANEL ──────────────────────────────────────────────────────── */
-.ai-overlay{
-  position:absolute;inset:0;background:rgba(20,20,30,.35);
-  z-index:50;display:none;align-items:stretch;justify-content:flex-end;
-}
-.ai-overlay.show{display:flex;animation:fadeIn .18s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.ai-panel{
-  width:420px;background:#fff;border-left:1px solid var(--line);
+/* ─── WRITE WIZARD MODAL (4-stage) ───────────────────────────────────────── */
+.wiz-overlay{position:fixed;inset:0;background:rgba(15,15,25,.42);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)}
+.wiz-overlay.show{display:flex;animation:wizFadeIn .2s ease}
+@keyframes wizFadeIn{from{opacity:0}to{opacity:1}}
+
+.wiz-modal{
+  width:min(880px,100%);max-height:min(720px,calc(100vh - 48px));
+  background:#fff;border-radius:14px;
+  box-shadow:0 24px 80px rgba(20,20,30,.28),0 8px 24px rgba(20,20,30,.12);
   display:flex;flex-direction:column;overflow:hidden;
-  animation:slideIn .22s cubic-bezier(.4,0,.2,1);
+  animation:wizSlideUp .25s cubic-bezier(.34,1.56,.64,1);
 }
-@keyframes slideIn{from{transform:translateX(24px);opacity:0}to{transform:translateX(0);opacity:1}}
-.ai-panel-hd{
-  padding:14px 18px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;background:#fff;
+@keyframes wizSlideUp{from{transform:translateY(20px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+
+/* Wizard header */
+.wiz-hd{padding:14px 22px;border-bottom:1px solid var(--sf-line);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0}
+.wiz-hd-l{display:flex;align-items:center;gap:10px;min-width:0}
+.wiz-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#a50064 0%,#d4006e 100%);display:grid;place-items:center;color:#fff;font-size:14px;flex-shrink:0}
+.wiz-hd-title{font-size:13px;font-weight:800;color:var(--ink);line-height:1.3;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wiz-hd-kw{font-size:11.5px;color:var(--t2);font-weight:600;max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wiz-model-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--pk-bg);color:var(--pk);border:1px solid rgba(165,0,100,.16)}
+.wiz-close{border:none;background:none;color:var(--t3);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1;transition:all .15s}
+.wiz-close:hover{background:var(--sf-2);color:var(--ink)}
+
+/* Stepper - vertical alignment: number on top, label below, connector between numbers */
+.wiz-stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:16px 28px 18px;border-bottom:1px solid var(--sf-line);background:var(--sf-2);flex-shrink:0}
+.wiz-step{display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;font-size:10.5px;font-weight:700;color:var(--t3);min-width:0;text-align:center}
+.wiz-step-num{
+  width:26px;height:26px;border-radius:50%;
+  background:#fff;border:1.5px solid var(--sf-line);color:var(--t3);
+  display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0;
+  transition:all .25s;position:relative;z-index:1;
 }
-.ai-panel-title{font-size:13px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px}
-.ai-model-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--pk-bg);color:var(--pk);border:1px solid rgba(165,0,100,.2)}
-.ai-close{background:none;border:none;font-size:16px;color:var(--t3);padding:4px;cursor:pointer;transition:color .12s;line-height:1}
-.ai-close:hover{color:var(--ink)}
-.ai-kw-info{padding:10px 18px;background:var(--sf-2);border-bottom:1px solid var(--line);flex-shrink:0}
-.ai-kw-label{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
-.ai-kw-name{font-size:14px;font-weight:700;color:var(--ink)}
-.ai-kw-meta{font-size:10px;color:var(--t3);margin-top:2px;display:flex;gap:10px}
-.ai-content-area{flex:1;overflow-y:auto;padding:16px 18px}
-.ai-content-area::-webkit-scrollbar{width:3px}
-.ai-content-area::-webkit-scrollbar-thumb{background:var(--line)}
-.ai-thinking{display:flex;align-items:center;gap:8px;padding:20px 0;color:var(--t3);font-size:12px}
-.ai-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pk);margin:0 2px;animation:dot-bounce .8s ease infinite}
-.ai-dots span:nth-child(2){animation-delay:.16s}
-.ai-dots span:nth-child(3){animation-delay:.32s}
-@keyframes dot-bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-.ai-output{font-size:12px;line-height:1.7;color:var(--ink)}
-.ai-output h2{font-size:14px;font-weight:700;margin:14px 0 6px;color:var(--ink)}
-.ai-output h3{font-size:12px;font-weight:700;margin:12px 0 5px;color:var(--t2)}
-.ai-output p{margin-bottom:10px}
-.ai-output ul{margin:0 0 10px 16px}
-.ai-output li{margin-bottom:4px}
-.ai-output strong{font-weight:700;color:var(--ink)}
-.ai-cursor{display:inline-block;width:2px;height:13px;background:var(--pk);animation:blink .7s step-end infinite;vertical-align:text-bottom}
+.wiz-step-lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.3}
+.wiz-step:not(:last-child)::after{content:'';position:absolute;left:calc(50% + 16px);right:calc(-50% + 16px);top:13px;height:1.5px;background:var(--sf-line);z-index:0}
+.wiz-step.done .wiz-step-num{background:var(--green);border-color:var(--green);color:#fff}
+.wiz-step.done::after{background:var(--green)}
+.wiz-step.done .wiz-step-lbl{color:var(--green-dk)}
+.wiz-step.active .wiz-step-num{background:var(--pk);border-color:var(--pk);color:#fff;box-shadow:0 0 0 3px rgba(165,0,100,.14);transform:scale(1.06)}
+.wiz-step.active .wiz-step-lbl{color:var(--pk);font-weight:800}
+
+/* Body - swappable stages */
+.wiz-body{flex:1;overflow-y:auto;padding:20px 22px;background:#fff}
+.wiz-body::-webkit-scrollbar{width:4px}
+.wiz-body::-webkit-scrollbar-thumb{background:var(--sf-line);border-radius:2px}
+.wiz-stage{display:none}
+.wiz-stage.active{display:block;animation:stageIn .28s ease}
+@keyframes stageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Stage 1 + 3: generating state */
+.wiz-gen-status{display:flex;align-items:center;gap:10px;padding:11px 14px;background:linear-gradient(90deg,rgba(165,0,100,.05) 0%,rgba(165,0,100,.0) 100%);border:1px solid rgba(165,0,100,.16);border-radius:8px;margin-bottom:14px;font-size:12px;color:var(--ink)}
+.wiz-gen-status.done{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.22);color:var(--green-dk)}
+.wiz-gen-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pk);margin:0 2px;animation:dot-bounce .8s ease infinite}
+.wiz-gen-dots span:nth-child(2){animation-delay:.16s}
+.wiz-gen-dots span:nth-child(3){animation-delay:.32s}
+.wiz-content{font-size:12.5px;line-height:1.75;color:var(--ink)}
+.wiz-content h2{font-size:15px;font-weight:800;margin:14px 0 8px;color:var(--ink)}
+.wiz-content h3{font-size:12.5px;font-weight:700;margin:12px 0 5px;color:var(--t2)}
+.wiz-content p{margin-bottom:10px}
+.wiz-content ul{margin:0 0 10px 18px}
+.wiz-content li{margin-bottom:4px}
+.wiz-content strong{font-weight:700;color:var(--ink)}
+.wiz-cursor{display:inline-block;width:2px;height:14px;background:var(--pk);animation:blink .7s step-end infinite;vertical-align:text-bottom}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.ai-panel-ft{padding:10px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-shrink:0}
-.ai-ft-btn{flex:1;padding:8px;font-size:11px;font-weight:700;border-radius:var(--r8);border:none;cursor:pointer;transition:all .15s;font-family:inherit}
-.ai-ft-copy{background:var(--sf-2);color:var(--ink)}
-.ai-ft-copy:hover{background:var(--sf-3)}
-.ai-ft-mark{background:var(--pk);color:#fff}
-.ai-ft-mark:hover{background:var(--pk2)}
+
+/* Stage 2: outline editor */
+.wiz-editor-tip{font-size:11px;color:var(--t3);margin-bottom:12px;padding:8px 12px;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;line-height:1.55}
+.wiz-h1-field{margin-bottom:14px}
+.wiz-h1-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:5px;display:block}
+.wiz-h1-input{
+  width:100%;padding:11px 13px;border:1.5px solid var(--sf-line);border-radius:8px;
+  font:inherit;font-size:14px;font-weight:700;color:var(--ink);outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.wiz-h1-input:focus{border-color:var(--pk);box-shadow:0 0 0 3px rgba(165,0,100,.08)}
+.wiz-h2-section{}
+.wiz-h2-label{display:flex;align-items:center;justify-content:space-between;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:5px}
+.wiz-h2-list{display:flex;flex-direction:column;gap:6px}
+.wiz-h2-row{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;background:var(--sf-2);border:1px solid var(--sf-line);border-radius:8px;transition:border-color .15s,background .15s}
+.wiz-h2-row:hover{background:#fff;border-color:var(--sf-line)}
+.wiz-h2-row:focus-within{border-color:var(--pk);background:#fff}
+.wiz-h2-idx{flex-shrink:0;width:22px;height:22px;border-radius:6px;background:var(--pk-bg);color:var(--pk);font-size:10px;font-weight:800;display:grid;place-items:center;margin-top:5px}
+.wiz-h2-input{
+  flex:1;border:none;background:transparent;outline:none;font:inherit;font-size:12.5px;color:var(--ink);
+  padding:6px 0;line-height:1.5;resize:none;font-family:inherit;
+}
+.wiz-h2-remove{flex-shrink:0;border:none;background:none;color:var(--t3);cursor:pointer;padding:5px 7px;border-radius:5px;font-size:14px;line-height:1;transition:all .12s;margin-top:1px}
+.wiz-h2-remove:hover{background:#fee;color:#dc2626}
+.wiz-h2-add{
+  margin-top:8px;width:100%;padding:9px;border:1.5px dashed var(--sf-line);border-radius:8px;
+  background:transparent;color:var(--t3);font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.wiz-h2-add:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+.wiz-regen{
+  margin-top:14px;padding:10px 14px;border-radius:7px;background:#fff;
+  border:1px solid var(--sf-line);font:inherit;font-size:11px;font-weight:700;color:var(--t2);
+  cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;
+}
+.wiz-regen:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+
+/* Stage 3: draft progress */
+.wiz-draft-summary{padding:10px 14px;background:var(--sf-2);border:1px solid var(--sf-line);border-radius:8px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.wiz-draft-summary-ico{font-size:14px;flex-shrink:0;line-height:1.5}
+.wiz-draft-summary-body{flex:1;min-width:0;font-size:11px;color:var(--t2);line-height:1.55}
+.wiz-draft-summary-body strong{display:block;color:var(--ink);font-size:12px;margin-bottom:2px}
+.wiz-progress{height:3px;background:var(--sf-line);border-radius:2px;overflow:hidden;margin-bottom:14px}
+.wiz-progress-fill{height:100%;background:linear-gradient(90deg,var(--pk) 0%,#d4006e 100%);border-radius:2px;width:0%;transition:width .4s ease}
+
+/* Stage 4: page type chooser */
+.wiz-pt-intro{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:18px}
+.wiz-pt-intro strong{color:var(--ink);font-weight:800}
+.wiz-pt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.wiz-pt-card{
+  position:relative;padding:18px 18px 16px;border:1.5px solid var(--sf-line);border-radius:12px;
+  background:#fff;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:12px;
+  text-align:left;font:inherit;
+}
+.wiz-pt-card:hover{border-color:var(--pk);box-shadow:0 8px 22px rgba(165,0,100,.1);transform:translateY(-2px)}
+.wiz-pt-card.lp{background:linear-gradient(180deg,#fff 60%,#fef9f5 100%)}
+.wiz-pt-card.lp:hover{background:linear-gradient(180deg,#fff 50%,#fcefe2 100%)}
+.wiz-pt-badge{position:absolute;top:14px;right:14px;font-size:8.5px;font-weight:800;padding:3px 7px;border-radius:5px;letter-spacing:.4px;text-transform:uppercase;color:var(--t3);background:var(--sf-2)}
+.wiz-pt-card.lp .wiz-pt-badge{background:#fef0e2;color:#c2410c}
+.wiz-pt-preview{height:100px;border-radius:8px;overflow:hidden;border:1px solid var(--sf-line);background:#fafafa}
+/* Blog preview: stacked article rows */
+.wiz-pt-blog-preview{padding:10px 12px;display:flex;flex-direction:column;gap:5px}
+.wiz-pt-blog-preview .bp-h1{height:7px;width:75%;background:#1c171a;border-radius:2px}
+.wiz-pt-blog-preview .bp-meta{height:4px;width:40%;background:#d4d4d8;border-radius:2px;margin-bottom:3px}
+.wiz-pt-blog-preview .bp-line{height:4px;background:#e4e7ec;border-radius:2px}
+.wiz-pt-blog-preview .bp-line.short{width:65%}
+/* Landing preview: hero + CTA + cards */
+.wiz-pt-lp-preview{padding:8px 10px;display:flex;flex-direction:column;gap:5px;background:linear-gradient(180deg,#fef9f5 0%,#fff 100%)}
+.wiz-pt-lp-preview .lpp-hero{height:14px;width:70%;background:#a50064;border-radius:3px}
+.wiz-pt-lp-preview .lpp-sub{height:4px;width:50%;background:#d4d4d8;border-radius:2px}
+.wiz-pt-lp-preview .lpp-cta{height:9px;width:50px;background:#a50064;border-radius:4px;margin-top:2px}
+.wiz-pt-lp-preview .lpp-cards{display:flex;gap:4px;margin-top:auto}
+.wiz-pt-lp-preview .lpp-cards>div{flex:1;height:18px;background:#fff;border:1px solid #fce7d9;border-radius:3px}
+.wiz-pt-title{font-size:14px;font-weight:800;color:var(--ink);margin:0}
+.wiz-pt-desc{font-size:11.5px;color:var(--t2);line-height:1.55;margin:0;flex:1}
+.wiz-pt-feats{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.wiz-pt-feat{font-size:10.5px;color:var(--t3);display:flex;align-items:center;gap:5px;line-height:1.4}
+.wiz-pt-feat::before{content:'·';color:var(--pk);font-weight:900;font-size:14px;line-height:1}
+.wiz-pt-action{
+  margin-top:6px;padding:9px 12px;border-radius:7px;border:none;cursor:pointer;
+  font:inherit;font-size:11.5px;font-weight:800;text-align:center;transition:all .15s;
+}
+.wiz-pt-card .wiz-pt-action{background:var(--ink);color:#fff}
+.wiz-pt-card:hover .wiz-pt-action{background:var(--pk)}
+.wiz-pt-card.lp .wiz-pt-action{background:#c2410c;color:#fff}
+.wiz-pt-card.lp:hover .wiz-pt-action{background:#9a3412}
+
+/* Wizard footer */
+.wiz-ft{padding:12px 22px;border-top:1px solid var(--sf-line);display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;flex-shrink:0}
+.wiz-ft-info{font-size:11px;color:var(--t3);display:flex;align-items:center;gap:6px}
+.wiz-ft-actions{display:flex;gap:8px}
+.wiz-btn{border:1px solid var(--sf-line);background:#fff;color:var(--t2);padding:9px 16px;border-radius:8px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.wiz-btn:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
+.wiz-btn:disabled{opacity:.42;cursor:not-allowed}
+.wiz-btn.primary{background:var(--pk);border-color:var(--pk);color:#fff}
+.wiz-btn.primary:hover:not(:disabled){background:var(--pk2);border-color:var(--pk2)}
+
+@media (max-width:720px){
+  .wiz-modal{max-height:calc(100vh - 16px);width:100%;border-radius:12px 12px 0 0;margin-bottom:0;align-self:flex-end}
+  .wiz-overlay{align-items:flex-end;padding:8px 0 0}
+  .wiz-stepper{padding:12px 14px 14px;gap:0}
+  .wiz-step-lbl{display:none}
+  .wiz-step:not(:last-child)::after{left:24px;top:11px}
+  .wiz-body{padding:16px 14px}
+  .wiz-ft{padding:11px 14px}
+  .wiz-pt-grid{grid-template-columns:1fr}
+}
 
 /* ─── TOAST ───────────────────────────────────────────────────────────────── */
 .toast{
@@ -564,27 +686,130 @@ header{
   </div>
   <div class="project-detail" id="projectDetail" style="display:none"></div>
 
-  <!-- AI Write Panel -->
-  <div class="ai-overlay" id="aiOverlay" onclick="handleOverlayClick(event)">
-    <div class="ai-panel" id="aiPanel">
-      <div class="ai-panel-hd">
-        <div class="ai-panel-title">
-          ✦ AI Content Writer
-          <span class="ai-model-badge">claude-sonnet-4-6</span>
+  <!-- Write Wizard (4-stage) -->
+  <div class="wiz-overlay" id="wizOverlay" onclick="handleWizOverlayClick(event)">
+    <div class="wiz-modal" id="wizModal" role="dialog" aria-modal="true" aria-labelledby="wizTitle">
+      <div class="wiz-hd">
+        <div class="wiz-hd-l">
+          <div class="wiz-icon">✦</div>
+          <div class="wiz-hd-title">
+            <span id="wizTitle">Viết bài cho</span>
+            <span class="wiz-hd-kw" id="wizKwName">—</span>
+            <span class="wiz-model-badge">claude-sonnet-4-6</span>
+          </div>
         </div>
-        <button class="ai-close" onclick="closeAIPanel()">✕</button>
+        <button class="wiz-close" onclick="closeWizard()" aria-label="Đóng">✕</button>
       </div>
-      <div class="ai-kw-info" id="aiKwInfo"></div>
-      <div class="ai-content-area" id="aiContentArea">
-        <div class="ai-thinking" id="aiThinking">
-          <div class="ai-dots"><span></span><span></span><span></span></div>
-          Đang phân tích keyword và tạo nội dung...
+
+      <div class="wiz-stepper" id="wizStepper">
+        <div class="wiz-step active" data-step="1"><span class="wiz-step-num">1</span><span class="wiz-step-lbl">Outline & Chỉnh sửa</span></div>
+        <div class="wiz-step" data-step="2"><span class="wiz-step-num">2</span><span class="wiz-step-lbl">Bài nháp chi tiết</span></div>
+        <div class="wiz-step" data-step="3"><span class="wiz-step-num">3</span><span class="wiz-step-lbl">Page Type</span></div>
+      </div>
+
+      <div class="wiz-body">
+        <!-- Stage 1: Generate outline + inline editor -->
+        <div class="wiz-stage active" data-stage="1">
+          <div class="wiz-gen-status" id="wizGenStatus1">
+            <div class="wiz-gen-dots"><span></span><span></span><span></span></div>
+            <span id="wizGenText1">Đang phân tích keyword và tạo outline...</span>
+          </div>
+
+          <!-- Streaming preview (visible during generation) -->
+          <div class="wiz-content" id="wizOutlineContent"></div>
+
+          <!-- Inline editor (shown after generation completes) -->
+          <div id="wizOutlineEditor" style="display:none">
+            <p class="wiz-editor-tip">Outline đã tạo xong - bạn có thể chỉnh sửa H1 và các H2 trực tiếp bên dưới trước khi tạo bài nháp chi tiết.</p>
+
+            <div class="wiz-h1-field">
+              <label class="wiz-h1-label" for="wizH1Input">H1 (tiêu đề chính)</label>
+              <input class="wiz-h1-input" id="wizH1Input" type="text" placeholder="Nhập H1...">
+            </div>
+
+            <div class="wiz-h2-section">
+              <div class="wiz-h2-label">
+                <span>H2 (các mục con)</span>
+                <span id="wizH2Count">0 mục</span>
+              </div>
+              <div class="wiz-h2-list" id="wizH2List"></div>
+              <button class="wiz-h2-add" type="button" onclick="addH2Item()">+ Thêm mục H2</button>
+              <button class="wiz-regen" type="button" onclick="regenerateOutline()">↻ Tạo lại bằng AI</button>
+            </div>
+          </div>
         </div>
-        <div class="ai-output" id="aiOutput" style="display:none"></div>
+
+        <!-- Stage 2: Generate draft -->
+        <div class="wiz-stage" data-stage="2">
+          <div class="wiz-draft-summary" id="wizDraftSummary">
+            <div class="wiz-draft-summary-ico">📐</div>
+            <div class="wiz-draft-summary-body">
+              <strong id="wizDraftH1">—</strong>
+              <span id="wizDraftStructure">— H2 sections</span>
+            </div>
+          </div>
+          <div class="wiz-progress"><div class="wiz-progress-fill" id="wizProgressFill"></div></div>
+          <div class="wiz-gen-status" id="wizGenStatus3">
+            <div class="wiz-gen-dots"><span></span><span></span><span></span></div>
+            <span id="wizGenText3">Đang viết bài nháp chi tiết theo outline...</span>
+          </div>
+          <div class="wiz-content" id="wizDraftContent"></div>
+        </div>
+
+        <!-- Stage 3: Page Type chooser -->
+        <div class="wiz-stage" data-stage="3">
+          <p class="wiz-pt-intro">Chọn nơi triển khai bài nháp này. <strong>Blog</strong> phù hợp cho TOFU/MOFU content, share trên social. <strong>Landing Page</strong> dùng cho conversion-focused content với CTA app MoMo, nội dung sẽ được đẩy vào Long Form Content editor.</p>
+          <div class="wiz-pt-grid">
+
+            <button class="wiz-pt-card" type="button" onclick="choosePageType('blog')">
+              <span class="wiz-pt-badge">TOFU · MOFU</span>
+              <div class="wiz-pt-preview"><div class="wiz-pt-blog-preview">
+                <div class="bp-meta"></div>
+                <div class="bp-h1"></div>
+                <div style="height:6px"></div>
+                <div class="bp-line"></div>
+                <div class="bp-line"></div>
+                <div class="bp-line short"></div>
+                <div class="bp-line"></div>
+              </div></div>
+              <h3 class="wiz-pt-title">Blog Article</h3>
+              <p class="wiz-pt-desc">Article template chuẩn SEO với floating TOC, product embed inline và FAQ.</p>
+              <div class="wiz-pt-feats">
+                <span class="wiz-pt-feat">URL: /blog/{slug}</span>
+                <span class="wiz-pt-feat">Schema: Article + FAQPage</span>
+                <span class="wiz-pt-feat">Mục tiêu: traffic organic + read time</span>
+              </div>
+              <span class="wiz-pt-action">Xuất bản Blog →</span>
+            </button>
+
+            <button class="wiz-pt-card lp" type="button" onclick="choosePageType('landing')">
+              <span class="wiz-pt-badge">BOFU · Conversion</span>
+              <div class="wiz-pt-preview"><div class="wiz-pt-lp-preview">
+                <div class="lpp-hero"></div>
+                <div class="lpp-sub"></div>
+                <div class="lpp-cta"></div>
+                <div class="lpp-cards"><div></div><div></div><div></div></div>
+              </div></div>
+              <h3 class="wiz-pt-title">Landing Page</h3>
+              <p class="wiz-pt-desc">Đẩy nội dung vào Long Form Content editor để build landing page với CTA app + widget.</p>
+              <div class="wiz-pt-feats">
+                <span class="wiz-pt-feat">URL: /lp/{slug}</span>
+                <span class="wiz-pt-feat">Schema: WebPage + Product</span>
+                <span class="wiz-pt-feat">Mục tiêu: download/open app, transaction</span>
+              </div>
+              <span class="wiz-pt-action">Input vào Long Form →</span>
+            </button>
+
+          </div>
+        </div>
       </div>
-      <div class="ai-panel-ft" id="aiPanelFt" style="display:none">
-        <button class="ai-ft-btn ai-ft-copy" onclick="copyContent()">⎘ Copy</button>
-        <button class="ai-ft-btn ai-ft-mark" onclick="markPublished()">✓ Đánh dấu Đã xuất bản</button>
+
+      <div class="wiz-ft">
+        <div class="wiz-ft-info" id="wizFtInfo">Bước 1 / 4 - Outline</div>
+        <div class="wiz-ft-actions">
+          <button class="wiz-btn" id="wizBackBtn" onclick="wizBack()" disabled>← Quay lại</button>
+          <button class="wiz-btn primary" id="wizNextBtn" onclick="wizNext()" disabled>Tiếp tục →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -977,7 +1202,7 @@ let openThemes      = {};
 let openClusters    = {};
 let openKeywords    = {};
 let openMerchantTopics = {};
-let aiContext       = null; // { pid, cid, ki }
+// wizState replaces old aiContext (declared in wizard section)
 let crudContext     = null;
 const CRUD_STORAGE_KEY = 'mospark-topic-inventory-v1';
 const MERCHANT_STORAGE_KEY = 'mospark-merchant-inventory-v1';
@@ -2049,66 +2274,257 @@ const AI_TEMPLATES = {
 <p>Button "Thực hiện ngay trên MoMo" → onelink deep link → mở thẳng màn hình tương ứng trong app. Đây là điểm quan trọng nhất của landing page transactional.</p>`,
 };
 
-function openAIPanel(pid, cid, ki, mode) {
+/* ─── WRITE WIZARD (4 stages) ─────────────────────────────────────────────── */
+let wizState = { stage: 1, pid: null, cid: null, ki: null, h1: '', h2List: [], draftHtml: '' };
+
+function openAIPanel(pid, cid, ki) {
   const p = PROJECTS.find(p => p.id === pid);
   const c = p.clusters.find(c => c.id === cid);
   const k = c.keywords[ki];
-  const resolvedMode = mode || (k.status === 'none' ? 'outline' : 'draft');
-  aiContext = { pid, cid, ki, mode: resolvedMode };
+  wizState = { stage: 1, pid, cid, ki, h1: '', h2List: [], draftHtml: '' };
 
-  /* panel title */
-  const modeLabel = resolvedMode === 'outline' ? 'Tạo Outline' : 'Tạo bài nháp chi tiết';
-  document.querySelector('.ai-panel-title').innerHTML =
-    `✦ ${modeLabel} <span class="ai-model-badge">claude-sonnet-4-6</span>`;
+  document.getElementById('wizKwName').textContent = `"${k.kw}" - ${fmtVol(k.vol)}/tháng - ${k.intent.toUpperCase()}`;
+  document.getElementById('wizOverlay').classList.add('show');
 
-  /* populate kw info */
-  document.getElementById('aiKwInfo').innerHTML = `
-    <div class="ai-kw-label">${resolvedMode === 'outline' ? 'Keyword cần Outline' : 'Keyword đang viết bài nháp'}</div>
-    <div class="ai-kw-name">${k.kw}</div>
-    <div class="ai-kw-meta">
-      <span>Vol: <strong>${fmtVol(k.vol)}/tháng</strong></span>
-      <span>Intent: <strong>${k.intent.toUpperCase()}</strong></span>
-      <span>Cluster: <strong>${c.name}</strong></span>
-      ${k.rank ? `<span>Rank: <strong>#${k.rank}</strong></span>` : ''}
-    </div>`;
-
-  /* footer buttons */
-  const advanceLabel = resolvedMode === 'outline' ? '› Xác nhận Outline' : '✓ Xuất bản';
-  document.getElementById('aiPanelFt').innerHTML = `
-    <button class="ai-ft-btn ai-ft-copy" onclick="copyContent()">⎘ Copy</button>
-    <button class="ai-ft-btn ai-ft-mark" onclick="advanceStatus()">${advanceLabel}</button>`;
-
-  /* reset panel */
-  document.getElementById('aiThinking').style.display  = 'flex';
-  document.getElementById('aiOutput').style.display    = 'none';
-  document.getElementById('aiPanelFt').style.display   = 'none';
-  document.getElementById('aiOutput').innerHTML        = '';
-
-  /* show overlay */
-  document.getElementById('aiOverlay').classList.add('show');
-
-  /* simulate generation */
-  setTimeout(() => {
-    const templates = resolvedMode === 'outline' ? AI_OUTLINE_TEMPLATES : AI_TEMPLATES;
-    const template  = templates[k.intent] || templates.info;
-    const content   = template(k.kw, k.vol);
-    document.getElementById('aiThinking').style.display = 'none';
-    const out = document.getElementById('aiOutput');
-    out.style.display = 'block';
-    streamContent(out, content, () => {
-      document.getElementById('aiPanelFt').style.display = 'flex';
-    });
-  }, 1800);
+  setWizStage(1);
+  startOutlineGeneration();
 }
 
-function streamContent(el, html, onDone) {
-  /* simple character streaming simulation */
+function closeWizard() {
+  document.getElementById('wizOverlay').classList.remove('show');
+  wizState = { stage: 1, pid: null, cid: null, ki: null, h1: '', h2List: [], draftHtml: '' };
+}
+
+function handleWizOverlayClick(e) {
+  if (e.target === document.getElementById('wizOverlay')) closeWizard();
+}
+
+function setWizStage(n) {
+  wizState.stage = n;
+  /* stepper visuals */
+  document.querySelectorAll('#wizStepper .wiz-step').forEach(el => {
+    const s = +el.dataset.step;
+    el.classList.toggle('active', s === n);
+    el.classList.toggle('done', s < n);
+  });
+  /* stage panels */
+  document.querySelectorAll('.wiz-stage').forEach(el => {
+    el.classList.toggle('active', +el.dataset.stage === n);
+  });
+  /* footer info */
+  const labels = { 1: 'Outline & Chỉnh sửa', 2: 'Bài nháp chi tiết', 3: 'Chọn Page Type' };
+  document.getElementById('wizFtInfo').textContent = `Bước ${n} / 3 - ${labels[n]}`;
+  /* back btn */
+  document.getElementById('wizBackBtn').disabled = (n === 1 || n === 3);
+  /* next btn config per stage */
+  const nextBtn = document.getElementById('wizNextBtn');
+  if (n === 1) { nextBtn.textContent = 'Approve & Tạo bài nháp →'; nextBtn.disabled = true; }
+  else if (n === 2) { nextBtn.textContent = 'Chọn Page Type →'; nextBtn.disabled = true; }
+  else if (n === 3) { nextBtn.style.display = 'none'; return; }
+  nextBtn.style.display = '';
+}
+
+function wizNext() {
+  if (wizState.stage === 1) {
+    collectOutlineFromEditor();
+    setWizStage(2);
+    startDraftGeneration();
+  } else if (wizState.stage === 2) {
+    setWizStage(3);
+  }
+}
+
+function wizBack() {
+  if (wizState.stage === 2) {
+    setWizStage(1);
+    /* editor already populated, stay editable */
+  }
+}
+
+/* ─── Stage 1: Outline gen + inline editor ────────────────────────────────── */
+function startOutlineGeneration() {
+  const { pid, cid, ki } = wizState;
+  const k = PROJECTS.find(p => p.id === pid).clusters.find(c => c.id === cid).keywords[ki];
+  const template = AI_OUTLINE_TEMPLATES[k.intent] || AI_OUTLINE_TEMPLATES.info;
+  const content = template(k.kw, k.vol);
+
+  const status = document.getElementById('wizGenStatus1');
+  const out = document.getElementById('wizOutlineContent');
+  const editor = document.getElementById('wizOutlineEditor');
+
+  /* reset to streaming state */
+  status.classList.remove('done');
+  status.innerHTML = '<div class="wiz-gen-dots"><span></span><span></span><span></span></div><span>Đang phân tích keyword và tạo outline...</span>';
+  out.style.display = '';
+  out.innerHTML = '';
+  editor.style.display = 'none';
+  document.getElementById('wizNextBtn').disabled = true;
+
+  setTimeout(() => {
+    streamHtml(out, content, () => {
+      status.classList.add('done');
+      status.innerHTML = '✓ Outline đã tạo xong - chỉnh sửa H1 và các H2 bên dưới trước khi tạo bài nháp';
+      /* swap streaming preview → editable form */
+      setTimeout(() => {
+        out.style.display = 'none';
+        editor.style.display = 'block';
+        populateOutlineEditor();
+        document.getElementById('wizNextBtn').disabled = false;
+      }, 350);
+    });
+  }, 1200);
+}
+
+/* ─── Stage 2: Outline editor ─────────────────────────────────────────────── */
+function populateOutlineEditor() {
+  /* parse from rendered outline content */
+  const out = document.getElementById('wizOutlineContent');
+  const headings = out.querySelectorAll('h3');
+  let h1 = '';
+  const h2s = [];
+  headings.forEach(h => {
+    const txt = h.textContent.trim();
+    if (txt.startsWith('H1:')) h1 = txt.replace(/^H1:\s*/, '');
+    else if (txt.startsWith('H2:')) h2s.push(txt.replace(/^H2:\s*\d*\.?\s*/, ''));
+  });
+  if (!wizState.h1) wizState.h1 = h1;
+  if (!wizState.h2List.length) wizState.h2List = h2s.slice();
+
+  document.getElementById('wizH1Input').value = wizState.h1;
+  renderH2List();
+}
+
+function renderH2List() {
+  const list = document.getElementById('wizH2List');
+  list.innerHTML = wizState.h2List.map((h, idx) => `
+    <div class="wiz-h2-row">
+      <span class="wiz-h2-idx">${idx + 1}</span>
+      <input class="wiz-h2-input" type="text" data-idx="${idx}" value="${(h || '').replace(/"/g, '&quot;')}" oninput="updateH2(${idx}, this.value)">
+      <button class="wiz-h2-remove" type="button" onclick="removeH2(${idx})" aria-label="Xoá mục">✕</button>
+    </div>
+  `).join('');
+  document.getElementById('wizH2Count').textContent = `${wizState.h2List.length} mục`;
+}
+
+function updateH2(idx, val) { wizState.h2List[idx] = val; }
+function removeH2(idx) { wizState.h2List.splice(idx, 1); renderH2List(); }
+function addH2Item() { wizState.h2List.push('Mục mới — viết tiêu đề H2 tại đây'); renderH2List(); setTimeout(() => { const inputs = document.querySelectorAll('.wiz-h2-input'); inputs[inputs.length - 1]?.focus(); }, 0); }
+
+function regenerateOutline() {
+  if (!confirm('Tạo lại Outline mới? Chỉnh sửa hiện tại sẽ mất.')) return;
+  wizState.h1 = ''; wizState.h2List = [];
+  setWizStage(1);
+  startOutlineGeneration();
+}
+
+function collectOutlineFromEditor() {
+  wizState.h1 = document.getElementById('wizH1Input').value.trim();
+  /* h2List already kept in sync via updateH2 */
+}
+
+/* ─── Stage 2: Draft generation ───────────────────────────────────────────── */
+function startDraftGeneration() {
+  const { pid, cid, ki, h1, h2List } = wizState;
+  const k = PROJECTS.find(p => p.id === pid).clusters.find(c => c.id === cid).keywords[ki];
+  document.getElementById('wizDraftH1').textContent = h1 || k.kw;
+  document.getElementById('wizDraftStructure').textContent = `${h2List.length} H2 sections - ${k.intent.toUpperCase()}`;
+
+  const status = document.getElementById('wizGenStatus3');
+  const out = document.getElementById('wizDraftContent');
+  const progressFill = document.getElementById('wizProgressFill');
+  /* Reset status DOM fully - innerHTML may have been replaced by previous onDone */
+  status.classList.remove('done');
+  status.innerHTML = `<div class="wiz-gen-dots"><span></span><span></span><span></span></div><span>Đang viết H2 mục 1 / ${h2List.length}...</span>`;
+  progressFill.style.width = '0%';
+  out.innerHTML = '';
+
+  /* build draft per H2 using existing AI_TEMPLATES intro then per-section */
+  const intent = k.intent;
+  const introTemplate = AI_TEMPLATES[intent] || AI_TEMPLATES.info;
+  let html = `<h2>${h1 || k.kw}</h2><p><strong>Search Volume:</strong> ${fmtVol(k.vol)}/tháng · Intent: ${intent.toUpperCase()}</p>`;
+  h2List.forEach((h2, i) => {
+    html += `<h3>${i + 1}. ${h2}</h3>`;
+    html += draftBodyForH2(h2, k, intent);
+  });
+
+  setTimeout(() => {
+    streamHtmlChunked(out, html, h2List.length, (sectionIdx) => {
+      const pct = Math.round(((sectionIdx + 1) / Math.max(h2List.length, 1)) * 100);
+      progressFill.style.width = pct + '%';
+      if (sectionIdx + 1 < h2List.length) {
+        status.querySelector('span:last-child').textContent = `Đang viết H2 mục ${sectionIdx + 2} / ${h2List.length}...`;
+      }
+    }, () => {
+      progressFill.style.width = '100%';
+      status.classList.add('done');
+      status.innerHTML = `✓ Bài nháp ${h2List.length} sections đã xong - chọn Page Type để xuất bản`;
+      document.getElementById('wizNextBtn').disabled = false;
+      wizState.draftHtml = html;
+    });
+  }, 800);
+}
+
+function draftBodyForH2(h2, k, intent) {
+  /* simple synthetic body riêng theo intent - chỉ là prototype, không phải LLM thực */
+  const samples = {
+    info: `<p>Phân tích chi tiết về <strong>${h2.toLowerCase()}</strong> trong bối cảnh ${k.kw}, kèm ví dụ thực tế tại VN và cách thực hiện trên MoMo.</p><ul><li>Điểm chính 1 cho người dùng VN</li><li>Số liệu minh chứng (cần verify)</li><li>So sánh với phương án ngoài thị trường</li></ul>`,
+    comm: `<p>So sánh các lựa chọn cho <strong>${h2.toLowerCase()}</strong>: ưu/nhược điểm khách quan, không thiên vị.</p><ul><li>Tiêu chí đánh giá định lượng</li><li>Use case phù hợp từng nhóm user</li><li>Khuyến nghị theo profile</li></ul>`,
+    trans: `<p>Hướng dẫn nhanh cho <strong>${h2.toLowerCase()}</strong>: các bước cụ thể, deep-link, lưu ý.</p><ol><li>Mở app MoMo, vào tính năng</li><li>Nhập thông tin & xác nhận</li><li>Hoàn thành & nhận biên lai</li></ol>`,
+  };
+  return samples[intent] || samples.info;
+}
+
+/* ─── Stage 4: Page Type choose ───────────────────────────────────────────── */
+function choosePageType(type) {
+  const { pid, cid, ki } = wizState;
+  const p = PROJECTS.find(p => p.id === pid);
+  const c = p.clusters.find(c => c.id === cid);
+  const k = c.keywords[ki];
+
+  if (type === 'blog') {
+    k.status = 'published';
+    k.pageType = 'blog';
+    refreshStatusPill(pid, cid, ki);
+    refreshProjectProgress(p, c);
+    closeWizard();
+    document.getElementById('projectDetail').innerHTML = buildDetail(p);
+    showToast(`✓ Blog "${k.kw}" đã sẵn sàng xuất bản`, 't-green');
+  } else if (type === 'landing') {
+    k.status = 'draft-review';
+    k.pageType = 'landing';
+    refreshStatusPill(pid, cid, ki);
+    closeWizard();
+    document.getElementById('projectDetail').innerHTML = buildDetail(p);
+    showToast(`→ Đã input "${k.kw}" vào Long Form Content cho Landing Page`, 't-pk');
+  }
+}
+
+function refreshProjectProgress(p, c) {
+  const cwc = kwPublished(c), ctot = c.keywords.length;
+  const cpct = ctot > 0 ? Math.round(cwc/ctot*100) : 0;
+  const pfEl = document.getElementById('cpf-' + c.id);
+  const pcEl = document.getElementById('cpc-' + c.id);
+  if (pfEl) pfEl.style.width = `${cpct}%`;
+  if (pcEl) pcEl.textContent = `${cwc}/${ctot} đã xuất bản`;
+  const wc = projKwPublished(p), tot = projKwTotal(p);
+  const pct = tot > 0 ? Math.round(wc/tot*100) : 0;
+  const fracEl = document.getElementById('progFrac');
+  const pctEl  = document.getElementById('progPct');
+  const fillEl = document.getElementById('progFill');
+  if (fracEl) fracEl.textContent = `${wc}/${tot}`;
+  if (pctEl)  pctEl.textContent  = `${pct}%`;
+  if (fillEl) fillEl.style.width = `${pct}%`;
+  renderProjectList();
+}
+
+/* ─── Streaming helpers ───────────────────────────────────────────────────── */
+function streamHtml(el, html, onDone) {
   const chars = html.split('');
   let i = 0;
-  el.innerHTML = '<span class="ai-cursor"></span>';
+  el.innerHTML = '<span class="wiz-cursor"></span>';
   const timer = setInterval(() => {
-    const chunk = Math.min(6, chars.length - i);
-    const cursor = el.querySelector('.ai-cursor');
+    const chunk = Math.min(8, chars.length - i);
+    const cursor = el.querySelector('.wiz-cursor');
     if (cursor) {
       const text = document.createTextNode(chars.slice(i, i + chunk).join(''));
       el.insertBefore(text, cursor);
@@ -2116,72 +2532,39 @@ function streamContent(el, html, onDone) {
     i += chunk;
     if (i >= chars.length) {
       clearInterval(timer);
-      const cursor = el.querySelector('.ai-cursor');
-      if (cursor) cursor.remove();
-      /* parse as HTML properly */
       el.innerHTML = html;
       if (onDone) onDone();
     }
-  }, 12);
+  }, 10);
 }
 
-function closeAIPanel() {
-  document.getElementById('aiOverlay').classList.remove('show');
-  aiContext = null;
+function streamHtmlChunked(el, html, sectionCount, onSection, onDone) {
+  /* simple: stream full html, fire section callbacks at proportional milestones */
+  const chars = html.split('');
+  let i = 0;
+  let lastSection = -1;
+  el.innerHTML = '<span class="wiz-cursor"></span>';
+  const total = chars.length;
+  const timer = setInterval(() => {
+    const chunk = Math.min(12, total - i);
+    const cursor = el.querySelector('.wiz-cursor');
+    if (cursor) {
+      const text = document.createTextNode(chars.slice(i, i + chunk).join(''));
+      el.insertBefore(text, cursor);
+    }
+    i += chunk;
+    const currentSection = Math.min(sectionCount - 1, Math.floor((i / total) * sectionCount));
+    if (currentSection > lastSection) {
+      lastSection = currentSection;
+      onSection(currentSection);
+    }
+    if (i >= total) {
+      clearInterval(timer);
+      el.innerHTML = html;
+      if (onDone) onDone();
+    }
+  }, 6);
 }
-
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('aiOverlay')) closeAIPanel();
-}
-
-function copyContent() {
-  const text = document.getElementById('aiOutput').innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Đã copy nội dung vào clipboard', 't-pk');
-  });
-}
-
-function advanceStatus() {
-  if (!aiContext) return;
-  const { pid, cid, ki, mode } = aiContext;
-  const p = PROJECTS.find(p => p.id === pid);
-  const c = p.clusters.find(c => c.id === cid);
-  const k = c.keywords[ki];
-
-  if (mode === 'outline') {
-    /* Outline approved → state becomes outline-review để vào bước viết Blog detail */
-    k.status = 'outline-review';
-    refreshStatusPill(pid, cid, ki);
-    closeAIPanel();
-    showToast(`Outline "${k.kw}" đã approve — chờ generate Blog`, 't-pk');
-    /* Mở thẳng panel viết Blog detail sau 400ms để flow tiếp diễn liền mạch */
-    setTimeout(() => openAIPanel(pid, cid, ki, 'draft'), 400);
-  } else {
-    k.status = 'published';
-    refreshStatusPill(pid, cid, ki);
-    /* update cluster + project progress */
-    const cwc = kwPublished(c), ctot = c.keywords.length;
-    const cpct = ctot > 0 ? Math.round(cwc/ctot*100) : 0;
-    const pfEl = document.getElementById('cpf-' + cid);
-    const pcEl = document.getElementById('cpc-' + cid);
-    if (pfEl) pfEl.style.width = `${cpct}%`;
-    if (pcEl) pcEl.textContent = `${cwc}/${ctot} đã xuất bản`;
-    const wc = projKwPublished(p), tot = projKwTotal(p);
-    const pct = tot > 0 ? Math.round(wc/tot*100) : 0;
-    const fracEl = document.getElementById('progFrac');
-    const pctEl  = document.getElementById('progPct');
-    const fillEl = document.getElementById('progFill');
-    if (fracEl) fracEl.textContent = `${wc}/${tot}`;
-    if (pctEl)  pctEl.textContent  = `${pct}%`;
-    if (fillEl) fillEl.style.width = `${pct}%`;
-    renderProjectList();
-    closeAIPanel();
-    document.getElementById('projectDetail').innerHTML = buildDetail(p);
-    showToast(`✓ "${k.kw}" đã xuất bản`, 't-green');
-  }
-}
-
-function markPublished() { advanceStatus(); }
 
 /* ─── TOAST ──────────────────────────────────────────────────────────────── */
 let toastTimer = null;
