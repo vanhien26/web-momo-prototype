@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
-  <link rel="stylesheet" href="financial.css?v=18">
+  <link rel="stylesheet" href="financial.css?v=21">
 </head>
 <body>
   <header class="site-header">
@@ -374,67 +374,75 @@
           <p class="source-note">Lãi suất tham chiếu từ bảng công bố chính thức trên website từng ngân hàng tháng 6/2026. Lãi tiết kiệm cá nhân tại TCTD được miễn thuế TNCN theo Điều 4 Luật Thuế TNCN.</p>
         </section>
 
-        <section class="tool-panel fx-panel" id="fxPanel" hidden>
-          <div class="panel-heading market-heading">
+        <section class="tool-panel fire-panel" id="fxPanel" hidden>
+          <div class="panel-heading">
             <div>
               <span class="panel-kicker">FOREIGN EXCHANGE</span>
               <h2>Tỷ giá đổi tiền</h2>
-              <p>Chọn cặp tiền và số tiền, xem ngay số nhận được theo tỷ giá ngân hàng và xu hướng 7 ngày.</p>
+              <p>Chọn cặp tiền và số tiền, xem ngay số nhận được và xu hướng tỷ giá để biết nên đổi ngay hay chờ.</p>
             </div>
             <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
           </div>
 
           <aside class="jtbd-frame">
             <span class="jtbd-kicker">Jobs to be Done</span>
-            <p>Tôi sắp đổi tiền cho chuyến đi, du học hoặc giao dịch và cần biết quy đổi nhanh. Cần thấy ngay <b>số tiền nhận được theo tỷ giá ngân hàng hiện tại cùng xu hướng 7 ngày</b>, để <b>quyết định đổi ngay hay chờ thêm</b> mà không cần mở app ngân hàng để tra.</p>
+            <p>Tôi sắp đổi tiền cho chuyến đi, du học hoặc giao dịch. Cần thấy ngay <b>số tiền nhận được và xu hướng tỷ giá gần đây</b>, để <b>quyết định đổi ngay hay chờ thêm</b> mà không cần mở app ngân hàng để tra.</p>
           </aside>
 
-          <div class="gold-price-grid" id="fxRateGrid"></div>
+          <div class="fire-layout">
+            <div class="fire-inputs">
+              <div class="fire-input-intro">Đổi từ đồng nào sang đồng nào?</div>
 
-          <div class="market-workspace">
-            <div class="control-section">
-              <div class="section-label"><span>01</span><strong>Convert A → B</strong></div>
-              <div class="fx-pair-grid">
-                <label class="fx-currency-field" for="fxFromCurrency">
-                  <span>Bạn có</span>
-                  <select id="fxFromCurrency"></select>
-                </label>
-                <button class="fx-swap-button" id="fxSwap" type="button" aria-label="Đảo chiều cặp tiền">⇄</button>
-                <label class="fx-currency-field" for="fxToCurrency">
-                  <span>Bạn nhận</span>
-                  <select id="fxToCurrency"></select>
-                </label>
+              <div class="fire-field">
+                <label class="fire-label" for="fxFromCurrency">Bạn có</label>
+                <select id="fxFromCurrency" class="fire-select"></select>
               </div>
-              <label class="input-label" for="fxAmount" style="margin-top:14px">Số tiền</label>
-              <div class="money-input" style="margin-top:4px">
-                <input id="fxAmount" type="number" min="0" step="1000000" value="10000000">
-                <span id="fxAmountUnit">VNĐ</span>
+
+              <button class="fx-swap-inline" id="fxSwap" type="button">⇅ Đảo chiều</button>
+
+              <div class="fire-field">
+                <label class="fire-label" for="fxToCurrency">Bạn muốn nhận</label>
+                <select id="fxToCurrency" class="fire-select"></select>
               </div>
-              <div class="quick-values" id="fxQuickValues" style="margin-top:8px">
-                <button type="button" data-fx="5000000">5 triệu</button>
-                <button type="button" data-fx="10000000" class="active">10 triệu</button>
-                <button type="button" data-fx="50000000">50 triệu</button>
+
+              <div class="fire-field">
+                <label class="fire-label" for="fxAmount">Số tiền muốn đổi</label>
+                <div class="fire-money"><input id="fxAmount" type="text" inputmode="numeric" value="10.000.000"><span id="fxAmountUnit">đ</span></div>
+                <div class="fire-chips" id="fxQuickValues"></div>
               </div>
+
+              <details class="fire-advanced">
+                <summary>💱 Bảng tỷ giá 6 ngoại tệ <span>USD · EUR · JPY · CNY · KRW · SGD</span></summary>
+                <div class="fire-adv-body"><div class="fx-rate-list" id="fxRateGrid"></div></div>
+              </details>
             </div>
 
-            <div class="gold-result">
-              <span id="fxResultLabel">NHẬN ĐƯỢC</span>
-              <strong id="fxResultValue" style="font-size:26px">--</strong>
-              <p class="fx-applied-rate" id="fxAppliedRate">--</p>
-              <div class="gold-result-grid" style="margin-top:12px">
-                <div><small>Giá mua</small><b id="fxBuyDisplay">--</b></div>
-                <div><small>Giá bán</small><b id="fxSellDisplay">--</b></div>
-                <div><small>Cặp tiền</small><b id="fxRef">--</b></div>
-              </div>
-              <div class="fx-chart-card">
-                <div class="fx-chart-head">
-                  <span id="fxChartTitle">Tỷ giá 7 ngày</span>
-                  <b id="fxChartChange">--</b>
+            <div class="fire-result">
+              <div class="fire-verdict" id="fxVerdict"></div>
+
+              <div class="fire-stats">
+                <div class="fire-stat target">
+                  <span class="fire-stat-k" id="fxResultLabel">Nhận được</span>
+                  <strong class="fire-stat-v" id="fxResultValue">--</strong>
                 </div>
-                <div class="fx-chart" id="fxChart"></div>
-                <div class="fx-chart-axis" id="fxChartAxis"></div>
+                <div class="fire-stat">
+                  <span class="fire-stat-k">Tỷ giá áp dụng</span>
+                  <strong class="fire-stat-v" id="fxAppliedRate" style="font-size:15px;line-height:1.35">--</strong>
+                </div>
               </div>
-              <div class="insight-box" id="fxInsight" style="margin-top:12px"></div>
+
+              <div class="fire-chart-wrap">
+                <div class="fx-chart-head">
+                  <span id="fxChartTitle" style="font-size:12px;color:var(--muted);font-weight:600">Xu hướng 6 tháng</span>
+                  <b id="fxChartChange" style="font-size:13px;font-weight:800">--</b>
+                </div>
+                <div class="fire-chart" id="fxChart"></div>
+                <div class="fire-chart-legend"><span><i class="fire-leg-line"></i>Tỷ giá tham chiếu</span></div>
+              </div>
+
+              <div class="fire-lever" id="fxInsight"></div>
+
+              <button class="fire-cta" type="button" onclick="momo_track('cta_click',{cta:'fx_exchange',location:'fx_panel'})">Đổi tiền trên MoMo</button>
             </div>
           </div>
           <p class="source-note">Tỷ giá tham chiếu theo bảng giá ngân hàng tháng 6/2026. Prototype không kết nối dữ liệu thời gian thực; chart là dữ liệu mô phỏng để thể hiện UI history.</p>
@@ -545,6 +553,127 @@
           <p class="source-note">Ước lượng dựa trên data crowdsourced từ blog du lịch + Numbeo 06/2026. Giá thực có thể biến động ±20% theo mùa, peak vs off-season. Visa fee, vé máy bay KHÔNG bao gồm.</p>
         </section>
 
+        <section class="tool-panel fire-panel" id="firePanel" hidden>
+          <div class="panel-heading">
+            <div>
+              <span class="panel-kicker">PLANNING / FIRE</span>
+              <h2>Lộ trình tự do tài chính</h2>
+              <p>Nhập 4 điều bạn biết chắc, xem ngay bạn đang ở đâu trên đường đến FIRE và cần chỉnh đòn bẩy nào.</p>
+            </div>
+            <span class="intent-chip">Informational intent</span>
+          </div>
+
+          <aside class="jtbd-frame">
+            <span class="jtbd-kicker">Jobs to be Done</span>
+            <p>Tôi muốn nghỉ hưu sớm và sống bằng tài sản đầu tư. Cần biết ngay <b>mình đang đi đúng hướng chưa, bao giờ tới đích và phải tăng góp bao nhiêu</b>, để <b>có lộ trình cụ thể thay vì chỉ một con số mục tiêu mơ hồ</b>.</p>
+          </aside>
+
+          <div class="fire-layout">
+            <div class="fire-inputs">
+              <div class="fire-input-intro">Chỉ hỏi 4 điều bạn biết chắc</div>
+
+              <div class="fire-field">
+                <label class="fire-label" for="fireMonthlyInp">Chi tiêu mỗi tháng</label>
+                <div class="fire-money"><input id="fireMonthlyInp" type="text" inputmode="numeric" value="20.000.000"><span>đ</span></div>
+                <div class="fire-chips" data-target="fireMonthlyInp">
+                  <button type="button" data-val="10000000">10tr</button>
+                  <button type="button" data-val="20000000">20tr</button>
+                  <button type="button" data-val="40000000">40tr</button>
+                </div>
+              </div>
+
+              <div class="fire-field">
+                <label class="fire-label" for="fireYearsInp">Muốn nghỉ sau</label>
+                <select id="fireYearsInp" class="fire-select">
+                  <option value="5">5 năm</option>
+                  <option value="10">10 năm</option>
+                  <option value="15" selected>15 năm</option>
+                  <option value="20">20 năm</option>
+                  <option value="25">25 năm</option>
+                  <option value="30">30 năm</option>
+                </select>
+              </div>
+
+              <div class="fire-field">
+                <label class="fire-label" for="fireAssetsInp">Tài sản đầu tư đang có</label>
+                <div class="fire-money"><input id="fireAssetsInp" type="text" inputmode="numeric" value="500.000.000"><span>đ</span></div>
+                <div class="fire-chips" data-target="fireAssetsInp">
+                  <button type="button" data-val="0">0đ</button>
+                  <button type="button" data-val="500000000">500tr</button>
+                  <button type="button" data-val="2000000000">2 tỷ</button>
+                </div>
+              </div>
+
+              <div class="fire-field">
+                <label class="fire-label" for="fireContribInp">Góp thêm mỗi tháng</label>
+                <div class="fire-money"><input id="fireContribInp" type="text" inputmode="numeric" value="10.000.000"><span>đ</span></div>
+                <div class="fire-chips" data-target="fireContribInp">
+                  <button type="button" data-val="3000000">3tr</button>
+                  <button type="button" data-val="10000000">10tr</button>
+                  <button type="button" data-val="30000000">30tr</button>
+                </div>
+              </div>
+
+              <details class="fire-advanced">
+                <summary>⚙ Giả định nâng cao <span>Lạm phát 4% · Rút vốn 3,5% · Lợi suất 8%</span></summary>
+                <div class="fire-adv-body">
+                  <div class="fire-adv-row">
+                    <label for="fireInflationInp">Lạm phát chi tiêu/năm</label>
+                    <div class="fire-adv-control">
+                      <input id="fireInflationInp" type="range" min="0" max="10" step="0.5" value="4">
+                      <output id="fireInflationOut">4%</output>
+                    </div>
+                  </div>
+                  <div class="fire-adv-row">
+                    <label for="fireRateInp">Tỷ lệ rút vốn an toàn</label>
+                    <div class="fire-adv-control">
+                      <input id="fireRateInp" type="range" min="2.5" max="5.5" step="0.25" value="3.5">
+                      <output id="fireRateOut">3,5%</output>
+                    </div>
+                  </div>
+                  <div class="fire-adv-row">
+                    <label for="fireReturnInp">Lợi suất đầu tư kỳ vọng</label>
+                    <div class="fire-adv-control">
+                      <input id="fireReturnInp" type="range" min="0" max="15" step="0.5" value="8">
+                      <output id="fireReturnOut">8%</output>
+                    </div>
+                  </div>
+                  <p class="fire-adv-note">Quy tắc 4% chỉ là mốc tham chiếu. Nên stress test với 3-3,5% nếu nghỉ hưu dài hơn 30 năm.</p>
+                </div>
+              </details>
+            </div>
+
+            <div class="fire-result">
+              <div class="fire-verdict" id="fireVerdict"></div>
+
+              <div class="fire-stats">
+                <div class="fire-stat">
+                  <span class="fire-stat-k">Cần để FIRE</span>
+                  <strong class="fire-stat-v" id="fireTargetV">0 đ</strong>
+                </div>
+                <div class="fire-stat">
+                  <span class="fire-stat-k">Dự kiến đạt được</span>
+                  <strong class="fire-stat-v" id="fireProjV">0 đ</strong>
+                </div>
+              </div>
+
+              <div class="fire-chart-wrap">
+                <div class="fire-chart" id="fireChart"></div>
+                <div class="fire-chart-legend">
+                  <span><i class="fire-leg-line"></i>Danh mục dự kiến</span>
+                  <span><i class="fire-leg-dash"></i>Mục tiêu FIRE</span>
+                </div>
+              </div>
+
+              <div class="fire-lever" id="fireLever"></div>
+
+              <button class="fire-cta" type="button" onclick="momo_track('cta_click',{cta:'fire_solution',location:'fire_panel'})">Xem giải pháp đầu tư trên MoMo</button>
+            </div>
+          </div>
+
+          <div class="formula-box" id="fireFormula"></div>
+        </section>
+
       </div>
     </section>
 
@@ -560,6 +689,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js?v=29"></script>
+  <script src="financial.js?v=33"></script>
 </body>
 </html>

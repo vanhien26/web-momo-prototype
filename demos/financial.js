@@ -895,7 +895,7 @@ const TOOLS = [
   },
   {
     id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính', category: 'Planning', abbr: 'FI',
-    intent: 'Informational intent', panel: 'generic',
+    intent: 'Informational intent', panel: 'fire',
     description: 'Lập kế hoạch FIRE theo chi tiêu tương lai đã tính lạm phát, tỷ lệ rút vốn an toàn, lợi suất đầu tư và dòng tiền góp hàng tháng.',
     jtbd: 'Tôi muốn nghỉ hưu sớm và sống bằng tài sản đầu tư nhưng không biết cần tích lũy bao nhiêu. Cần biết ngay <b>số tài sản mục tiêu, dòng góp hàng tháng và năm có thể FIRE theo lạm phát và lợi suất kỳ vọng</b>, để <b>có lộ trình cụ thể từ vị trí hiện tại đến tự do tài chính</b>.',
     formula: 'Chi tiêu tương lai = <b>Chi tiêu hiện tại × (1 + lạm phát)ⁿ</b><br>FIRE Number = <b>Chi tiêu tương lai/năm ÷ Tỷ lệ rút vốn an toàn</b><br>Danh mục dự kiến = <b>Tài sản hiện có × (1+r/12)ⁿ + Góp tháng × [((1+r/12)ⁿ - 1) ÷ (r/12)]</b><br><em>Quy tắc 4% chỉ là mốc tham chiếu. Nên stress test với 3-3,5% nếu muốn an toàn hơn hoặc nghỉ hưu dài hơn 30 năm.</em>',
@@ -1091,6 +1091,7 @@ function selectTool(id, options = {}) {
   document.getElementById('fxPanel').hidden       = tool.panel !== 'fx';
   document.getElementById('fxComparePanel').hidden     = tool.panel !== 'fx-compare';
   document.getElementById('travelBudgetPanel').hidden  = tool.panel !== 'travel-budget';
+  document.getElementById('firePanel').hidden          = tool.panel !== 'fire';
   if (tool.panel === 'generic')   renderGenericPanel(tool);
   if (tool.panel === 'gold')      initGoldPanel();
   if (tool.panel === 'stock')     renderStockTable();
@@ -1099,6 +1100,7 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'fx')        computeFx();
   if (tool.panel === 'fx-compare') initFxComparePanel();
   if (tool.panel === 'travel-budget') initTravelBudgetPanel();
+  if (tool.panel === 'fire')      initFirePanel();
 }
 
 // ─── Related Tools (bottom-of-page navigation)
@@ -2057,6 +2059,124 @@ function renderCicPanel() {
   renderNplImpact(selectedNplGroup);
 }
 
+// ─── FIRE Panel (chart-first)
+const FIRE_PINK = '#af0171';
+let fireBound = false;
+
+function parseFireMoney(s) { return +String(s).replace(/[^\d]/g, '') || 0; }
+function fmtFireMoney(n) { return (Math.round(n) || 0).toLocaleString('vi-VN'); }
+
+function initFirePanel() {
+  if (!fireBound) {
+    fireBound = true;
+    ['fireMonthlyInp', 'fireAssetsInp', 'fireContribInp'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', renderFirePanel);
+      el.addEventListener('blur', () => { el.value = fmtFireMoney(parseFireMoney(el.value)); });
+    });
+    document.getElementById('fireYearsInp').addEventListener('change', renderFirePanel);
+    ['fireInflationInp', 'fireRateInp', 'fireReturnInp'].forEach(id =>
+      document.getElementById(id).addEventListener('input', renderFirePanel));
+    document.querySelectorAll('#firePanel .fire-chips').forEach(group => {
+      const targetId = group.dataset.target;
+      group.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById(targetId).value = fmtFireMoney(+btn.dataset.val);
+          renderFirePanel();
+        });
+      });
+    });
+  }
+  const f = document.getElementById('fireFormula');
+  const cfg = TOOLS.find(t => t.id === 'tu-do-tai-chinh');
+  if (f && cfg) f.innerHTML = cfg.formula;
+  renderFirePanel();
+}
+
+function readFire() {
+  return {
+    monthly: parseFireMoney(document.getElementById('fireMonthlyInp').value),
+    years: +document.getElementById('fireYearsInp').value,
+    assets: parseFireMoney(document.getElementById('fireAssetsInp').value),
+    contribution: parseFireMoney(document.getElementById('fireContribInp').value),
+    inflation: +document.getElementById('fireInflationInp').value,
+    rate: +document.getElementById('fireRateInp').value,
+    ret: +document.getElementById('fireReturnInp').value,
+  };
+}
+
+function renderFirePanel() {
+  const v = readFire();
+  const pct = n => String(n).replace('.', ',') + '%';
+  document.getElementById('fireInflationOut').textContent = pct(v.inflation);
+  document.getElementById('fireRateOut').textContent = pct(v.rate);
+  document.getElementById('fireReturnOut').textContent = pct(v.ret);
+
+  document.querySelectorAll('#firePanel .fire-chips').forEach(group => {
+    const cur = parseFireMoney(document.getElementById(group.dataset.target).value);
+    group.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.val === cur));
+  });
+
+  const months = v.years * 12;
+  const mr = v.ret / 100 / 12;
+  const futureMonthly = v.monthly * Math.pow(1 + v.inflation / 100, v.years);
+  const fireNum = futureMonthly * 12 / (v.rate / 100);
+  const traj = [];
+  for (let y = 0; y <= v.years; y++) {
+    const m = y * 12;
+    const gf = Math.pow(1 + mr, m);
+    const fc = mr === 0 ? v.contribution * m : v.contribution * (gf - 1) / mr;
+    traj.push(v.assets * gf + fc);
+  }
+  const projected = traj[traj.length - 1];
+  const gap = Math.max(0, fireNum - projected);
+  const gfEnd = Math.pow(1 + mr, months);
+  const requiredMonthly = Math.max(0, mr === 0
+    ? (fireNum - v.assets * gfEnd) / months
+    : (fireNum - v.assets * gfEnd) * mr / (gfEnd - 1));
+  const fiRatio = fireNum ? Math.min(999, Math.round(projected / fireNum * 100)) : 100;
+  const extraMonthly = Math.max(0, requiredMonthly - v.contribution);
+  const onTrack = projected >= fireNum;
+
+  document.getElementById('fireVerdict').innerHTML = onTrack
+    ? `<span class="fire-verdict-pill ontrack">✓ Đã đủ điều kiện FIRE</span><span>Dư ~${fmtM(projected - fireNum)} sau ${v.years} năm</span>`
+    : `<span class="fire-verdict-pill behind">Mới đạt ${fiRatio}% mục tiêu</span><span>Còn thiếu ${fmtM(gap)} sau ${v.years} năm</span>`;
+  document.getElementById('fireTargetV').textContent = fmtM(fireNum);
+  document.getElementById('fireProjV').textContent = fmtM(projected);
+  document.getElementById('fireLever').innerHTML = onTrack
+    ? `<span class="fire-lever-ico">🎉</span><span>Bạn đang đi đúng hướng. Giữ tốc độ góp <b>${fmtM(v.contribution)}/tháng</b> là đạt mục tiêu.</span>`
+    : `<span class="fire-lever-ico">💡</span><span>Đòn bẩy nhanh nhất: tăng góp lên <b>${fmtM(requiredMonthly)}/tháng</b> (thêm ${fmtM(extraMonthly)}) để về đích đúng hạn.</span>`;
+
+  drawFireChart(traj, fireNum, v.years);
+}
+
+function drawFireChart(traj, target, years) {
+  const W = 600, H = 240, padL = 14, padR = 14, padT = 20, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const yMax = Math.max(target, ...traj) * 1.12 || 1;
+  const x = i => padL + (i / years) * plotW;
+  const y = val => padT + plotH - (val / yMax) * plotH;
+  const pts = traj.map((val, i) => `${x(i).toFixed(1)},${y(val).toFixed(1)}`);
+  const linePath = 'M' + pts.join(' L');
+  const areaPath = `M${x(0).toFixed(1)},${(padT + plotH).toFixed(1)} L` + pts.join(' L') + ` L${x(years).toFixed(1)},${(padT + plotH).toFixed(1)} Z`;
+  const targetY = y(target), endX = x(years), endY = y(traj[traj.length - 1]);
+  const xticks = [0, Math.round(years / 2), years];
+  const xlabels = xticks.map(t =>
+    `<text x="${x(t).toFixed(1)}" y="${H - 8}" style="font-size:11px;fill:#98a2b3" text-anchor="${t === 0 ? 'start' : t === years ? 'end' : 'middle'}">Năm ${t}</text>`
+  ).join('');
+  document.getElementById('fireChart').innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Lộ trình tích sản so với mục tiêu FIRE">
+      <line x1="${padL}" y1="${(padT + plotH).toFixed(1)}" x2="${W - padR}" y2="${(padT + plotH).toFixed(1)}" stroke="#e4e7ec" stroke-width="1"/>
+      <path d="${areaPath}" fill="${FIRE_PINK}" fill-opacity="0.10"/>
+      <line x1="${padL}" y1="${targetY.toFixed(1)}" x2="${W - padR}" y2="${targetY.toFixed(1)}" stroke="#98a2b3" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="${W - padR}" y="${(targetY - 7).toFixed(1)}" style="font-size:11px;fill:#667085;font-weight:700" text-anchor="end">Mục tiêu ${fmtM(target)}</text>
+      <path d="${linePath}" fill="none" stroke="${FIRE_PINK}" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="5" fill="${FIRE_PINK}"/>
+      <text x="${(endX - 6).toFixed(1)}" y="${(endY - 10).toFixed(1)}" style="font-size:12px;fill:${FIRE_PINK};font-weight:800" text-anchor="end">${fmtM(traj[traj.length - 1])}</text>
+      ${xlabels}
+    </svg>`;
+}
+
 // ─── Init
 // ─── Bank Rate Panel
 const BANK_RATES = [
@@ -2148,12 +2268,14 @@ const FX_HISTORY_FACTORS = [
 let fxFrom = 'VND';
 let fxTo = 'USD';
 
+let fxBound = false;
+
 function initFxPanel() {
   document.getElementById('fxRateGrid').innerHTML = FX_RATES.map(r =>
-    `<div class="gold-price-card fx-card" data-code="${r.code}" style="cursor:pointer">
-      <span>${r.flag} ${r.code}</span>
-      <strong>${new Intl.NumberFormat('vi-VN').format(r.sell / r.per)}</strong>
-      <em>Mua: ${new Intl.NumberFormat('vi-VN').format(r.buy / r.per)} đ</em>
+    `<div class="fx-rate-row fx-card" data-code="${r.code}">
+      <span class="fx-rate-flag">${r.flag}</span>
+      <span class="fx-rate-code">${r.code}<small>${r.name}</small></span>
+      <span class="fx-rate-vals"><b>${new Intl.NumberFormat('vi-VN').format(r.sell / r.per)} đ</b><small>Mua ${new Intl.NumberFormat('vi-VN').format(r.buy / r.per)}</small></span>
     </div>`
   ).join('');
   document.querySelectorAll('.fx-card').forEach(card => {
@@ -2170,32 +2292,32 @@ function initFxPanel() {
   document.getElementById('fxFromCurrency').innerHTML = currencyOptions;
   document.getElementById('fxToCurrency').innerHTML = currencyOptions;
 
-  document.getElementById('fxFromCurrency').addEventListener('change', e => {
-    fxFrom = e.target.value;
-    normalizeFxPair('from');
-    syncFxPairControls({ resetAmount: true });
-  });
-  document.getElementById('fxToCurrency').addEventListener('change', e => {
-    fxTo = e.target.value;
-    normalizeFxPair('to');
-    syncFxPairControls({ resetAmount: false });
-  });
-  document.getElementById('fxSwap').addEventListener('click', () => {
-    [fxFrom, fxTo] = [fxTo, fxFrom];
-    syncFxPairControls({ resetAmount: true });
-  });
-
-  document.querySelectorAll('[data-fx]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-fx]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('fxAmount').value = btn.dataset.fx;
-      computeFx();
+  if (!fxBound) {
+    fxBound = true;
+    document.getElementById('fxFromCurrency').addEventListener('change', e => {
+      fxFrom = e.target.value;
+      normalizeFxPair('from');
+      syncFxPairControls({ resetAmount: true });
     });
-  });
-
-  document.getElementById('fxAmount').addEventListener('input', computeFx);
+    document.getElementById('fxToCurrency').addEventListener('change', e => {
+      fxTo = e.target.value;
+      normalizeFxPair('to');
+      syncFxPairControls({ resetAmount: false });
+    });
+    document.getElementById('fxSwap').addEventListener('click', () => {
+      [fxFrom, fxTo] = [fxTo, fxFrom];
+      syncFxPairControls({ resetAmount: true });
+    });
+    const amt = document.getElementById('fxAmount');
+    amt.addEventListener('input', computeFx);
+    amt.addEventListener('blur', () => { amt.value = fmtFxAmountInput(parseFireMoney(amt.value), fxFrom); });
+  }
   syncFxPairControls({ resetAmount: false });
+}
+
+function fmtFxAmountInput(n, code) {
+  if (code === 'VND') return (Math.round(n) || 0).toLocaleString('vi-VN');
+  return new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(n || 0);
 }
 
 function normalizeFxPair(changed) {
@@ -2221,21 +2343,28 @@ function syncFxPairControls({ resetAmount } = {}) {
 function updateFxQuickValues(resetAmount = false) {
   const values = fxFrom === 'VND'
     ? [
-      { value: 5000000, label: '5 triệu' },
-      { value: 10000000, label: '10 triệu' },
-      { value: 50000000, label: '50 triệu' },
+      { value: 5000000, label: '5tr' },
+      { value: 10000000, label: '10tr' },
+      { value: 50000000, label: '50tr' },
     ]
     : [
       { value: 100, label: '100' },
       { value: 500, label: '500' },
-      { value: 1000, label: '1,000' },
+      { value: 1000, label: '1.000' },
     ];
-  document.querySelectorAll('[data-fx]').forEach((btn, index) => {
-    btn.dataset.fx = values[index].value;
-    btn.textContent = values[index].label;
-    btn.classList.toggle('active', index === 1);
+  const wrap = document.getElementById('fxQuickValues');
+  const amt = document.getElementById('fxAmount');
+  const current = parseFireMoney(amt.value);
+  wrap.innerHTML = values.map(v =>
+    `<button type="button" data-fx="${v.value}">${v.label}</button>`
+  ).join('');
+  wrap.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      amt.value = fmtFxAmountInput(+btn.dataset.fx, fxFrom);
+      computeFx();
+    });
   });
-  if (resetAmount) document.getElementById('fxAmount').value = values[1].value;
+  if (resetAmount) amt.value = fmtFxAmountInput(values[1].value, fxFrom);
 }
 
 function rateToVnd(code, type = 'ref') {
@@ -2286,53 +2415,52 @@ function getFxDisplayRates(from, to, bankRate, midRate, effectiveRate) {
 }
 
 function computeFx() {
-  const amount = +document.getElementById('fxAmount').value || 0;
+  const amount = parseFireMoney(document.getElementById('fxAmount').value);
   const bankRate = getPairRate(fxFrom, fxTo, 'bank');
   const midRate = getPairRate(fxFrom, fxTo, 'mid');
   const received = Math.max(0, amount * bankRate);
   const effectiveRate = amount > 0 ? received / amount : 0;
   const displayRates = getFxDisplayRates(fxFrom, fxTo, bankRate, midRate, effectiveRate);
 
-  // Direction context: VND → foreign means bank applies "sell" rate; foreign → VND applies "buy" rate
   const direction = fxFrom === 'VND' ? 'sell' : 'buy';
   const foreignCode = fxFrom === 'VND' ? fxTo : fxFrom;
   const foreignData = FX_RATES.find(r => r.code === foreignCode);
 
-  document.getElementById('fxResultLabel').textContent = `NHẬN ĐƯỢC (${fxTo})`;
+  document.getElementById('fxResultLabel').textContent = `Nhận được (${fxTo})`;
   document.getElementById('fxResultValue').textContent = formatFxCurrency(received, fxTo);
-  document.getElementById('fxRef').textContent = `${fxFrom}/${fxTo}`;
 
   if (foreignData) {
     const buyVnd = foreignData.buy / foreignData.per;
     const sellVnd = foreignData.sell / foreignData.per;
-    document.getElementById('fxBuyDisplay').textContent = formatFxRate(buyVnd) + ' đ';
-    document.getElementById('fxSellDisplay').textContent = formatFxRate(sellVnd) + ' đ';
     const usedLabel = direction === 'sell' ? 'giá bán' : 'giá mua';
-    document.getElementById('fxAppliedRate').textContent =
-      `Tỷ giá áp dụng: 1 ${foreignCode} = ${formatFxRate(direction === 'sell' ? sellVnd : buyVnd)} đ (${usedLabel})`;
+    document.getElementById('fxAppliedRate').innerHTML =
+      `1 ${foreignCode} = ${formatFxRate(direction === 'sell' ? sellVnd : buyVnd)} đ<br><span style="font-size:11px;font-weight:600;color:var(--muted)">${usedLabel} ngân hàng</span>`;
   } else {
-    document.getElementById('fxBuyDisplay').textContent = '--';
-    document.getElementById('fxSellDisplay').textContent = '--';
-    document.getElementById('fxAppliedRate').textContent = `Tỷ giá áp dụng: 1 ${displayRates.base} = ${formatFxRate(displayRates.bank)} ${displayRates.quote}`;
+    document.getElementById('fxAppliedRate').textContent = `1 ${displayRates.base} = ${formatFxRate(displayRates.bank)} ${displayRates.quote}`;
   }
 
-  // 7-day trend insight
+  // Trend → verdict + lever
   const seed = (fxFrom + fxTo).split('').reduce((s, c) => s + c.charCodeAt(0), 0) % 11;
   const firstFactor = FX_HISTORY_FACTORS[0].factor + Math.sin(1 * (seed + 1)) * 0.004;
   const trendPct = (-firstFactor) * 100;
-  let trendText, rec;
+  let verdictClass, verdictTitle, verdictSub, leverIco, rec;
   if (Math.abs(trendPct) < 0.4) {
-    trendText = 'ít biến động';
-    rec = 'có thể đổi bất cứ lúc nào.';
+    verdictClass = 'ontrack'; verdictTitle = 'Tỷ giá ít biến động';
+    verdictSub = `Dao động ${Math.abs(trendPct).toFixed(1)}% trong 7 ngày`;
+    leverIco = '✓'; rec = 'có thể đổi bất cứ lúc nào, không cần canh thời điểm.';
   } else if (trendPct > 0) {
-    trendText = `tăng ${trendPct.toFixed(1)}%`;
-    rec = 'đang ở vùng cao, nếu chưa gấp có thể chờ thêm.';
+    verdictClass = 'behind'; verdictTitle = 'Tỷ giá đang ở vùng cao';
+    verdictSub = `Tăng ${trendPct.toFixed(1)}% trong 7 ngày`;
+    leverIco = '⏳'; rec = 'nếu chưa gấp có thể chờ thêm để tránh mua đỉnh.';
   } else {
-    trendText = `giảm ${Math.abs(trendPct).toFixed(1)}%`;
-    rec = 'đang ở vùng thấp, thời điểm tốt để đổi.';
+    verdictClass = 'ontrack'; verdictTitle = 'Tỷ giá đang ở vùng thấp';
+    verdictSub = `Giảm ${Math.abs(trendPct).toFixed(1)}% trong 7 ngày`;
+    leverIco = '💡'; rec = 'đang là thời điểm tốt để đổi.';
   }
-  document.getElementById('fxInsight').textContent =
-    `Đổi ${formatFxCurrency(amount, fxFrom)} lấy ${formatFxCurrency(received, fxTo)}. Tỷ giá ${foreignCode}/VND ${trendText} trong 7 ngày qua, ${rec}`;
+  document.getElementById('fxVerdict').innerHTML =
+    `<span class="fire-verdict-pill ${verdictClass}">${verdictTitle}</span><span>${verdictSub}</span>`;
+  document.getElementById('fxInsight').innerHTML =
+    `<span class="fire-lever-ico">${leverIco}</span><span>Đổi <b>${formatFxCurrency(amount, fxFrom)}</b> được <b>${formatFxCurrency(received, fxTo)}</b>. Tỷ giá ${foreignCode}/VND ${rec}</span>`;
 
   renderFxChart(displayRates);
 }
@@ -2344,32 +2472,37 @@ function renderFxChart(displayRates) {
     return { label: item.label, rate: displayRates.mid * (1 + item.factor + wave) };
   });
   points[points.length - 1].rate = displayRates.mid;
-  const min = Math.min(...points.map(p => p.rate), displayRates.effective);
-  const max = Math.max(...points.map(p => p.rate), displayRates.effective);
-  const range = max - min || 1;
-  const width = 320;
-  const height = 122;
-  const pad = 16;
-  const coords = points.map((point, index) => {
-    const x = pad + index * ((width - pad * 2) / (points.length - 1));
-    const y = height - pad - ((point.rate - min) / range) * (height - pad * 2);
-    return { ...point, x, y };
-  });
-  const line = coords.map((p, index) => `${index === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-  const area = `${line} L${coords[coords.length - 1].x.toFixed(1)},${height - pad} L${coords[0].x.toFixed(1)},${height - pad} Z`;
+  const rates = points.map(p => p.rate);
+  const min = Math.min(...rates), max = Math.max(...rates), range = max - min || 1;
+  const W = 600, H = 220, padL = 14, padR = 14, padT = 18, padB = 24;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const x = i => padL + (i / (points.length - 1)) * plotW;
+  const y = rate => padT + plotH - ((rate - min) / range) * plotH;
+  const pts = points.map((p, i) => `${x(i).toFixed(1)},${y(p.rate).toFixed(1)}`);
+  const linePath = 'M' + pts.join(' L');
+  const areaPath = `M${x(0).toFixed(1)},${(padT + plotH).toFixed(1)} L` + pts.join(' L') + ` L${x(points.length - 1).toFixed(1)},${(padT + plotH).toFixed(1)} Z`;
+  const endX = x(points.length - 1), endY = y(points[points.length - 1].rate);
   const delta = (points[points.length - 1].rate - points[0].rate) / points[0].rate * 100;
   const deltaText = `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}%`;
-  document.getElementById('fxChartTitle').textContent = `6 tháng · 1 ${displayRates.base} = ${formatFxRate(displayRates.mid)} ${displayRates.quote}`;
-  document.getElementById('fxChartChange').textContent = deltaText;
-  document.getElementById('fxChartChange').className = delta >= 0 ? 'up' : 'down';
-  document.getElementById('fxChart').innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Chart tỷ giá ${fxFrom} sang ${fxTo}">
-      <path class="fx-chart-area" d="${area}"></path>
-      <path class="fx-chart-line" d="${line}"></path>
-      ${coords.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3"></circle>`).join('')}
+
+  document.getElementById('fxChartTitle').textContent = `Xu hướng 6 tháng · 1 ${displayRates.base} = ${formatFxRate(displayRates.mid)} ${displayRates.quote}`;
+  const chg = document.getElementById('fxChartChange');
+  chg.textContent = deltaText;
+  chg.style.color = delta >= 0 ? '#dc2626' : '#16a34a';
+
+  const xlabels = [0, Math.floor((points.length - 1) / 2), points.length - 1].map(i =>
+    `<text x="${x(i).toFixed(1)}" y="${H - 7}" style="font-size:11px;fill:#98a2b3" text-anchor="${i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle'}">${points[i].label}</text>`
+  ).join('');
+
+  document.getElementById('fxChart').innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Xu hướng tỷ giá ${fxFrom} sang ${fxTo}">
+      <line x1="${padL}" y1="${(padT + plotH).toFixed(1)}" x2="${W - padR}" y2="${(padT + plotH).toFixed(1)}" stroke="#e4e7ec" stroke-width="1"/>
+      <path d="${areaPath}" fill="${FIRE_PINK}" fill-opacity="0.10"/>
+      <path d="${linePath}" fill="none" stroke="${FIRE_PINK}" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="5" fill="${FIRE_PINK}"/>
+      <text x="${(endX - 6).toFixed(1)}" y="${(endY - 10).toFixed(1)}" style="font-size:12px;fill:${FIRE_PINK};font-weight:800" text-anchor="end">${formatFxRate(points[points.length - 1].rate)}</text>
+      ${xlabels}
     </svg>`;
-  document.getElementById('fxChartAxis').innerHTML =
-    `<span>${points[0].label}</span><b>Effective: ${formatFxRate(displayRates.effective)} ${displayRates.quote}</b><span>${points[points.length - 1].label}</span>`;
 }
 
 // ─── FX Compare Panel
@@ -2671,6 +2804,14 @@ function renderTbPayment(dest, total) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  const isEmbed = params.get('embed') === '1';
+  const toolParam = params.get('tool');
+  if (isEmbed) {
+    document.body.classList.add('embed');
+    injectEmbedBadge();
+  }
+
   renderSidebar();
   bindToolList();
   renderRelatedTools();
@@ -2683,9 +2824,21 @@ document.addEventListener('DOMContentLoaded', () => {
   initFxPanel();
   initFxComparePanel();
   initTravelBudgetPanel();
-  const hash = location.hash.slice(1);
-  if (hash) {
-    const tool = TOOLS.find(t => t.id === hash);
-    if (tool) selectTool(tool.id, { updateHash: false, detail: true });
+
+  const target = toolParam || location.hash.slice(1);
+  if (target) {
+    const tool = TOOLS.find(t => t.id === target);
+    if (tool) selectTool(tool.id, { updateHash: !isEmbed, detail: true });
   }
 });
+
+// Powered-by footer for embed/widget contexts
+function injectEmbedBadge() {
+  const ws = document.querySelector('.tool-workspace');
+  if (!ws || document.getElementById('embedBadge')) return;
+  const badge = document.createElement('div');
+  badge.id = 'embedBadge';
+  badge.className = 'embed-badge';
+  badge.innerHTML = `<span>Công cụ cung cấp bởi</span><strong>MoMo Money Lab</strong>`;
+  ws.appendChild(badge);
+}
