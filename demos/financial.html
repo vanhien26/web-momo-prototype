@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
-  <link rel="stylesheet" href="financial.css?v=15">
+  <link rel="stylesheet" href="financial.css?v=16">
 </head>
 <body>
   <header class="site-header">
@@ -66,9 +66,9 @@
             <div>
               <span class="panel-kicker">INVESTMENT / GOLD</span>
               <h2>Giá vàng hôm nay</h2>
-              <p>Bảng giá mua bán vàng trong nước và giá thế giới XAU/USD cập nhật tham chiếu.</p>
+              <p>Bảng giá mua bán vàng trong nước, XAU/USD và chênh lệch SJC vs thế giới — đủ tín hiệu để quyết định mua hay chờ.</p>
             </div>
-            <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small id="goldTimestamp">17/06/2026 · 09:00</small></span></div>
+            <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small id="goldTimestamp">20/06/2026 · 14:35</small></span></div>
           </div>
 
           <aside class="jtbd-frame">
@@ -76,8 +76,14 @@
             <p>Tôi đang theo dõi vàng và phân vân hôm nay nên mua hay chờ. Cần thấy ngay <b>giá mua/bán hiện tại của SJC, PNJ, XAU/USD cùng xu hướng 30 ngày</b>, và <b>tính trước sức mua theo ngân sách của mình</b>, để quyết định vào tiền hay đứng ngoài trước khi giá đảo chiều.</p>
           </aside>
 
+          <!-- Quick market snapshot: Vàng + USD + chứng khoán -->
+          <div class="quick-market" id="quickMarket"></div>
+
           <!-- XAU/USD hero -->
           <div class="gold-world-bar" id="goldWorldBar"></div>
+
+          <!-- Decision panel: Premium VN vs world + 30D position + spread signal -->
+          <div class="gold-decision" id="goldDecision"></div>
 
           <!-- Price chart -->
           <div class="gold-chart-card">
@@ -106,15 +112,18 @@
               <span>Loại vàng</span>
               <span>Mua vào</span>
               <span>Bán ra</span>
-              <span>Chênh lệch</span>
-              <span>Xu hướng</span>
+              <span>Hôm qua (bán)</span>
+              <span>Δ</span>
             </div>
             <div id="goldPriceTable"></div>
           </div>
 
-          <!-- Sức mua — secondary -->
-          <details class="gold-calculator-details">
-            <summary>Tính sức mua với ngân sách của bạn</summary>
+          <!-- Sức mua — primary, không còn collapsed -->
+          <div class="gold-calculator-section">
+            <div class="gold-calculator-head">
+              <strong>Tính sức mua với ngân sách của bạn</strong>
+              <small>Không site nào khác có — chọn ngân sách để xem mua được bao nhiêu và mô phỏng kịch bản bán lại.</small>
+            </div>
             <div class="market-workspace">
               <div class="control-section">
                 <label class="input-label" for="goldBudget">Ngân sách dự kiến</label>
@@ -123,9 +132,10 @@
                   <span>VNĐ</span>
                 </div>
                 <div class="quick-values" aria-label="Chọn nhanh ngân sách">
+                  <button type="button" data-budget="20000000">20 triệu</button>
                   <button type="button" data-budget="50000000">50 triệu</button>
                   <button type="button" data-budget="100000000" class="active">100 triệu</button>
-                  <button type="button" data-budget="200000000">200 triệu</button>
+                  <button type="button" data-budget="500000000">500 triệu</button>
                 </div>
                 <label class="input-label" for="goldProduct">Loại vàng</label>
                 <select id="goldProduct"></select>
@@ -148,9 +158,18 @@
                 <div class="insight-box" id="goldInsight"></div>
               </div>
             </div>
-          </details>
+          </div>
 
-          <p class="source-note">Giá tham chiếu từ bảng giá công khai của SJC & PNJ, XAU/USD theo Kitco. Prototype không kết nối dữ liệu thời gian thực và không phải khuyến nghị mua bán.</p>
+          <!-- News feed -->
+          <div class="gold-news">
+            <div class="gold-news-head">
+              <strong>Tin giá vàng</strong>
+              <small>Cập nhật từ Tuổi Trẻ, 24h, CafeF, Lao Động</small>
+            </div>
+            <div class="gold-news-list" id="goldNewsList"></div>
+          </div>
+
+          <p class="source-note">Giá tham chiếu từ bảng giá công khai SJC, PNJ, DOJI, BTMC, BTMH; XAU/USD theo Kitco; USD/VND theo NHNN. Prototype không kết nối dữ liệu thời gian thực và không phải khuyến nghị mua bán.</p>
         </section>
 
         <section class="tool-panel stock-panel" id="stockPanel" hidden>
@@ -510,6 +529,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="financial.js?v=22"></script>
+  <script src="financial.js?v=23"></script>
 </body>
 </html>
