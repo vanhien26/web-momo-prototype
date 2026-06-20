@@ -9,7 +9,12 @@ const fmtM = n => {
 
 function val(id) {
   const el = document.getElementById(id);
-  return el ? +el.value : 0;
+  if (!el) return 0;
+  const valStr = String(el.value);
+  if (valStr.includes('.') || valStr.includes(',')) {
+    return +valStr.replace(/[^\d]/g, '') || 0;
+  }
+  return +valStr || 0;
 }
 
 function setResult({ main, mainLabel, second, secondLabel, progress = 50 }) {
@@ -39,15 +44,29 @@ const CALCS = {
   },
 
   installment() {
-    const price = val('price'), down = val('down'), n = val('months'), r = val('fee') / 100 / 12;
-    const principal = price - down;
-    if (!principal || !n) { setResult({ main:'—', mainLabel:'TRẢ MỖI THÁNG', second:'—', secondLabel:'TỔNG PHẢI TRẢ', progress:0 }); return; }
-    const mo = r === 0 ? principal / n : principal * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
-    const total = down + mo * n;
+    const amount = val('amount') || val('price');
+    const n = val('months');
+    if (!amount || !n) {
+      setResult({ main: '—', mainLabel: 'TRẢ MỖI THÁNG', second: '—', secondLabel: 'TỔNG PHẢI TRẢ', progress: 0 });
+      return;
+    }
+    if (amount < 100000) {
+      setResult({
+        main: '—', mainLabel: 'SỐ TIỀN TỐI THIỂU 100K',
+        second: '—', secondLabel: 'YÊU CẦU HÓA ĐƠN',
+        progress: 0
+      });
+      return;
+    }
+    const gocMonth = amount / n;
+    const phiMonth = amount * 0.03;
+    const mo = gocMonth + phiMonth;
+    const totalFee = phiMonth * n;
+    const total = amount + totalFee;
     setResult({
-      main: fmt(mo), mainLabel: 'TRẢ MỖI THÁNG',
-      second: fmt(total), secondLabel: 'TỔNG PHẢI TRẢ',
-      progress: price > 0 ? (down / price) * 100 : 0,
+      main: fmt(mo), mainLabel: 'TRẢ MỖI THÁNG (gồm gốc & phí)',
+      second: fmt(total), secondLabel: 'TỔNG PHẢI TRẢ (gốc & phí)',
+      progress: total > 0 ? (totalFee / total) * 100 : 0,
     });
   },
 
@@ -225,6 +244,34 @@ function runCalc() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Auto-format money inputs
+  document.querySelectorAll('[data-input]').forEach(el => {
+    const parent = el.closest('.input-wrap');
+    const noteEl = parent ? parent.querySelector('.note') : null;
+    const isMoney = noteEl && (noteEl.textContent.includes('đ') || noteEl.textContent.includes('Đơn vị: đ'));
+    
+    if (isMoney && el.tagName === 'INPUT') {
+      el.type = 'text';
+      el.inputMode = 'numeric';
+      
+      const formatValue = () => {
+        const num = +String(el.value).replace(/[^\d]/g, '') || 0;
+        el.value = num > 0 ? num.toLocaleString('vi-VN') : '';
+      };
+      
+      formatValue();
+      
+      el.addEventListener('input', () => {
+        let cursor = el.selectionStart;
+        const oldLen = el.value.length;
+        formatValue();
+        const newLen = el.value.length;
+        cursor = cursor + (newLen - oldLen);
+        el.setSelectionRange(cursor, cursor);
+      });
+    }
+  });
+
   // Run on load with default values
   runCalc();
   // Live update on any input change

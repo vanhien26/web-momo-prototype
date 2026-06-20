@@ -271,32 +271,38 @@ const TOOLS = [
     },
   },
   {
-    id: 'tra-gop', name: 'Trả Góp', category: 'Credit', abbr: 'TG',
+    id: 'tra-gop', name: 'Trả Góp Ví Trả Sau', category: 'Credit', abbr: 'TG',
     intent: 'Commercial intent', panel: 'generic',
-    description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.',
-    jtbd: 'Tôi đang muốn mua một món hàng vượt ngân sách hiện tại và phân vân chia bao nhiêu kỳ thì hợp lý. Cần thấy ngay <b>số tiền trả mỗi tháng và tổng chi phí tài chính</b> cho từng kỳ hạn, để <b>chọn được phương án vừa mua được vừa không khô túi mỗi tháng</b>.',
-    formula: 'Vốn gốc = <b>Giá × (100% − Trả trước%)</b><br>Trả/tháng = <b>Vốn gốc ÷ n + Vốn gốc × Lãi suất/12</b><br><em>Áp dụng phương pháp lãi phẳng (flat rate)</em>',
-    resultLabel: 'TRẢ MỖI THÁNG ƯỚC TÍNH',
+    description: 'Ước tính số tiền thanh toán hằng kỳ khi chuyển đổi trả góp dư nợ hoặc giao dịch qua Ví Trả Sau MoMo.',
+    jtbd: 'Tôi đang muốn mua một món hàng trả góp qua Ví Trả Sau và phân vân chọn kỳ hạn nào phù hợp. Cần thấy ngay <b>số tiền gốc và phí trả mỗi tháng</b> cho từng kỳ hạn, để <b>cân đối tài chính cá nhân</b>.',
+    formula: 'Trả mỗi kỳ = <b>(Dư nợ chuyển đổi ÷ Kỳ hạn) + 3% × Dư nợ chuyển đổi</b><br><em>Ví Trả Sau áp dụng phí chuyển đổi cố định 3%/tháng tính trên dư nợ đăng ký trả góp ban đầu.</em>',
+    resultLabel: 'TRẢ MỖI THÁNG (gồm gốc & phí)',
     fields: [
-      { id: 'productPrice',    label: 'Giá sản phẩm',   type: 'money',  min: 1000000, max: 500000000, step: 100000, value: 15000000, chips: [5000000, 15000000, 50000000] },
-      { id: 'downPaymentPct',  label: 'Trả trước',       type: 'range',  min: 0, max: 50, step: 5, value: 20, unit: '%', chips: [0, 10, 20, 30, 50] },
+      { id: 'postpaidAmount', label: 'Số tiền cần trả góp', type: 'money', min: 100000, max: 30000000, step: 100000, value: 3000000, chips: [1000000, 3000000, 10000000] },
       { id: 'installmentTerm', label: 'Kỳ hạn trả góp', type: 'select', options: [
-        {value:3,label:'3 tháng (0%)'},{value:6,label:'6 tháng (0%)'},
-        {value:12,label:'12 tháng (1.5%/tháng)'},{value:24,label:'24 tháng (1.5%/tháng)'},
-      ], value: 12 },
+        {value:3,label:'3 tháng (phí 3%/tháng)'},{value:6,label:'6 tháng (phí 3%/tháng)'},
+        {value:9,label:'9 tháng (phí 3%/tháng)'},{value:12,label:'12 tháng (phí 3%/tháng)'},
+      ], value: 6 },
     ],
     compute(v) {
-      const price = v.productPrice, down = price * v.downPaymentPct / 100;
-      const principal = price - down;
-      const rMap = {3:0, 6:0, 12:0.015, 24:0.015};
-      const r = rMap[v.installmentTerm] || 0, n = v.installmentTerm;
-      const mo = r === 0 ? principal/n : principal * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
-      const total = down + mo * n;
+      const amount = v.postpaidAmount;
+      const n = v.installmentTerm;
+      if (amount < 100000) {
+        return { result: '—', details: [
+          { label: 'Số tiền tối thiểu', value: '100.000 đ' }
+        ], insight: '⚠️ Hóa đơn tối thiểu 100.000 đ mới đủ điều kiện chuyển đổi trả góp.' };
+      }
+      const gocMonth = amount / n;
+      const phiMonth = amount * 0.03;
+      const mo = gocMonth + phiMonth;
+      const totalFee = phiMonth * n;
+      const total = amount + totalFee;
       return { result: fmt(mo), details: [
-        { label: 'Trả trước ngay', value: fmt(down) },
-        { label: 'Tổng phải trả', value: fmt(total) },
-        { label: 'Chi phí tài chính', value: fmt(total - price) },
-      ]};
+        { label: 'Tiền gốc trả/tháng', value: fmt(gocMonth) },
+        { label: 'Phí dịch vụ/tháng', value: fmt(phiMonth) },
+        { label: 'Tổng phí chuyển đổi', value: fmt(totalFee) },
+        { label: 'Tổng tiền phải trả', value: fmt(total) },
+      ], insight: '💡 Phí dịch vụ Ví Trả Sau <b>33.000đ/tháng</b> chỉ phát sinh trong tháng có giao dịch (miễn phí 5 giao dịch đầu tiên sau khi mở ví).' };
     },
   },
   {
