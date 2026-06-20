@@ -1098,7 +1098,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="main-shell">
   <nav class="mod-nav">
     <button class="mod-btn active" id="mbtn-manage" onclick="showMod('manage')">Ads Management</button>
-    <button class="mod-btn" id="mbtn-builder" onclick="showMod('builder')">Set Ads</button>
+    <button class="mod-btn" id="mbtn-builder" onclick="showMod('builder')" style="display:none">Set Ads</button>
     <button class="mod-btn" id="mbtn-engine" onclick="showMod('engine')">Delivery Rules</button>
     <button class="mod-btn" id="mbtn-abtest" onclick="showMod('abtest')">Optimize</button>
   </nav>
@@ -1479,6 +1479,9 @@ function showMod(mod) {
   currentMod = mod;
   document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('mbtn-'+mod).classList.add('active');
+  // Set Ads tab is a sub-flow: only visible while in the builder (entered via "+ Tạo Ads")
+  const builderTab = document.getElementById('mbtn-builder');
+  if (builderTab) builderTab.style.display = (mod === 'builder') ? '' : 'none';
   const nav = document.getElementById('stepNav');
   if (mod === 'builder') {
     nav.style.display = 'block';
