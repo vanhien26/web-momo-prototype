@@ -10,21 +10,6 @@ const PROTOTYPES = [
     view: 'mini-web-overview',
   },
   {
-    id: 'geo-citation-giai-dap',
-    name: 'GEO Citation Page',
-    category: 'MiniWeb',
-    maturity: 'Interactive',
-    description: 'Trang Giải Đáp (/giai-dap) - lớp trang con (child-page) đính kèm dưới từng use-case để đánh chặn AI Query Prompt và lấy Citation cho MoMo. Cho phép tùy biến nội dung theo nhiều Use Case khác nhau.',
-    jtbd: 'Thiết lập layout chuẩn 5 khối để AI RAG Bot quét lấy dữ liệu và trích dẫn URL MoMo làm nguồn.',
-    northStar: 'AI Citation frequency & RAG extraction accuracy',
-    loop: 'User Prompt → Search Engine / AI Overview → MoMo /giai-dap Citation → App CTA',
-    hypothesis: 'Cấu trúc thư mục con /giai-dap dưới use case giúp tập trung Link Equity và gửi tín hiệu Entity mạnh mẽ đến AI Crawler hơn các trang tin tức hay blog chung.',
-    value: 'Tối ưu hóa khả năng được trích dẫn (citation rate) trên ChatGPT, Google Gemini và Perplexity cho các truy vấn tài chính cốt lõi.',
-    gate: 'Đo lường tỉ lệ trích dẫn thành công và tỉ lệ chuyển đổi từ trang giải đáp về trang chủ use case hoặc ứng dụng.',
-    src: 'demos/financial-giai-dap.html',
-    address: 'web-momo-prototype.vercel.app/vi-tra-sau/giai-dap/phi-chuyen-doi-tra-gop',
-  },
-  {
     id: 'financial',
     name: 'Financial Utilities',
     category: 'Widget',
@@ -248,33 +233,29 @@ const PROTOTYPES = [
   },
   {
     id: 'blog-category',
-    name: 'MoSpark Blog Category',
+    name: 'MoSpark Blog',
     category: 'MoSpark',
     maturity: 'Listing',
-    description: 'Blog category listing với 8 danh mục Use Case MoMo, featured article, article grid 2-col, category filter tabs với live count và inline contextual ad.',
-    jtbd: 'Khám phá nội dung theo chủ đề, tìm bài phù hợp nhanh',
-    northStar: 'Article click-through rate',
-    loop: 'Browse → Filter → Read → Convert',
-    hypothesis: 'Category listing có filter theo use case giúp user tìm đúng nội dung nhanh hơn và tăng engagement depth trong content hub MoSpark.',
-    value: 'Tạo bề mặt điều hướng nội dung theo 8 danh mục MoMo, tăng internal linking và time-on-site.',
-    gate: 'Đo category filter usage, article CTR, scroll depth và CTA conversion từ listing sang bài viết.',
+    description: 'Blog Hub-and-Spoke: Category là cha (listing 8 danh mục Use Case + featured article + filter tabs), Article là child page chuyên sâu (full-width + quiz tương tác + floating TOC + inline ads). Pattern Cate → Article giống Investopedia/Cloudflare Learning.',
+    jtbd: 'Khám phá nội dung blog theo danh mục Use Case rồi đi sâu vào bài cụ thể, kiểm tra hiểu biết qua quiz và chuyển đổi sang dịch vụ MoMo.',
+    northStar: 'Category → Article CTR + Article completion + CTA conversion',
+    loop: 'Browse Category → Filter → Click Article → Read → Quiz → Convert',
+    hypothesis: 'Cấu trúc Category (cha) → Article (con) tập trung internal link equity về Hub Category cho từng Use Case, tăng entity authority. Article có quiz + contextual ad theo chủ đề tăng engagement và conversion so với blog phẳng.',
+    value: 'Tạo bề mặt điều hướng nội dung 2 tầng (8 category × N article) cho SEO/GEO, mỗi Category là entity hub củng cố Link Equity, mỗi Article là content depth target từng query.',
+    gate: 'Đo category filter usage, article CTR từ listing, scroll depth article, quiz completion, CTA conversion cả category lẫn article.',
     src: 'demos/blog-category.html',
     address: 'web-momo-prototype.vercel.app/mospark-blog',
-  },
-  {
-    id: 'blog',
-    name: 'MoSpark Blog Article',
-    category: 'MoSpark',
-    maturity: 'Article',
-    description: 'Full-width blog article với quiz tương tác, floating TOC, inline ads (Universal + Contextual), static aggregate rating và progressive reading experience.',
-    jtbd: 'Đọc bài chuyên sâu, kiểm tra kiến thức và chuyển đổi sang dịch vụ MoMo',
-    northStar: 'Article completion + CTA conversion',
-    loop: 'Read → Quiz → Convert',
-    hypothesis: 'Blog article tích hợp quiz và contextual ads theo đúng chủ đề tăng engagement và conversion so với bài viết thuần.',
-    value: 'Tạo bề mặt nội dung chiều sâu cho SEO/GEO, quiz tăng time-on-page, contextual ad phục vụ monetization.',
-    gate: 'Đo scroll depth, quiz completion, CTA CTR từ inline ad và fixed bar, Web-to-App conversion.',
-    src: 'demos/blog.html',
-    address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
+    tools: [
+      {
+        id: 'blog',
+        name: 'Blog Article',
+        category: 'Child Page',
+        description: 'Article child page chuyên sâu: full-width + quiz tương tác + floating TOC + inline ads (Universal + Contextual) + static aggregate rating + progressive reading. Mỗi Article thuộc về 1 Category cha.',
+        jtbd: 'Đọc bài chuyên sâu về chủ đề cụ thể, test hiểu biết qua quiz inline rồi chuyển sang app MoMo nếu phù hợp.',
+        src: 'demos/blog.html',
+        address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
+      },
+    ],
   },
   {
     id: 'orchestrator',
@@ -358,15 +339,26 @@ const PROTOTYPES = [
     category: 'Platform',
     ownerGroup: 'Cell Team',
     maturity: 'GEO',
-    description: 'Trang Giải Đáp /phat-nguoi/giai-dap — hub Q&A + Quiz được thiết kế chuyên biệt cho chiến lược GEO (Generative Engine Optimization). Đánh chặn câu hỏi user trên AI Search (ChatGPT, Gemini, Perplexity) và buộc AI trích dẫn nguồn về cho MoMo.',
-    jtbd: 'Tìm câu trả lời nhanh về phạt nguội (mức phạt, tra cứu, nộp phạt, trễ hạn) trên AI search và được dẫn về MoMo',
-    northStar: 'AI Citation Rate trên 20 target queries',
-    loop: 'User Prompt (ChatGPT/Perplexity) → AI cite MoMo /giai-dap → Click-through → App CTA',
-    hypothesis: 'Trang Q&A có FAQPage schema, direct answers 1-2 câu, citation pháp lý explicit và Quiz tạo unique data sẽ được AI cite top 3 cho cluster phạt nguội. Quiz interactive là anti-LLM moat: AI không scrape được kết quả tương tác.',
-    value: 'Template GEO scalable: mỗi use-case (vay nhanh, BHXH, thuế TNCN) đều có thể có /giai-dap sibling đánh chặn AI search. Đo bằng AI Citation Rate (Profound, Otterly) thay vì ranking truyền thống.',
-    gate: 'Đo AI Citation Rate trên 20 target queries, FAQPage rich snippet impressions, quiz completion, click-through từ AI engine và Web-to-App từ giai-dap page.',
+    description: 'Hub Q&A Directory + Quiz Center centralize cho cluster Phạt Nguội. Hub là điểm vào: TL;DR + thư viện câu hỏi (cards link sang child page) + 4 bộ quiz theo chủ đề. Mỗi câu hỏi user prompt trên AI = 1 child page chuyên sâu. Khác biệt với /blog (long-form articles) - đây là Q&A direct-answer phục vụ AI Citation.',
+    jtbd: 'Khi tôi muốn (A) khám phá thư viện câu hỏi user đã hỏi về phạt nguội để tìm câu liên quan tôi, hoặc (B) kiểm tra hiểu biết của mình với quiz có giải thích trích điều luật, tôi đến trang này như directory + quiz center duy nhất - không phải đọc từng blog rời rạc.',
+    northStar: 'AI Citation Rate (Profound/Otterly) trên top 20 target user prompts cho cluster Phạt Nguội',
+    loop: 'User Prompt (ChatGPT/Perplexity/Gemini) → AI cite child Q&A page → Read → Mini Quiz / CTA app',
+    hypothesis: 'Hub-and-Spoke architecture (1 Hub + N child pages mỗi user prompt) sẽ được AI cite tốt hơn 1 mega-page FAQ. Quiz Center centralize chiếm trust signal "Quiz Phạt Nguội" 1 chỗ thay vì scattered ở blog posts. Mini quiz inline trên child + link về Hub Quiz = cross-pollination engagement.',
+    value: 'Template GEO scalable: thêm Q mới chỉ là thêm 1 child page + 1 card ở Hub. 6 child page hot (mức phạt, tra cứu, nộp qua MoMo...) + Quiz Center 4 sets centralized. Distinction rõ với /blog (long-form) và /ha-noi (utility lookup) - 3 content type complement nhau trong cluster.',
+    gate: 'Đo AI Citation Rate cho 20 target prompts, child page CTR từ Hub directory, Quiz completion per set, Mini quiz answer rate trên child pages, Web-to-App từ CTA.',
     src: 'demos/phat-nguoi-giai-dap.html',
     address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap',
+    tools: [
+      {
+        id: 'phat-nguoi-nop-qua-momo',
+        name: 'Cách nộp phạt qua MoMo',
+        category: 'Child Page',
+        description: 'Pilot child Q&A page (1 user prompt = 1 page). HowTo 5 bước nộp phạt qua MoMo + bảng so sánh 4 kênh + Reviewed by Luật sư + Mini Quiz 3 câu liên quan + Related Q + CTA. Template chuẩn để replicate cho 5 child còn lại.',
+        jtbd: 'Khi tôi vừa biết mình có vi phạm cần nộp và đang thắc mắc nộp qua MoMo cụ thể có làm được không + làm thế nào, tôi muốn câu trả lời thẳng kèm hướng dẫn từng bước thực thi ngay (không phải đọc 1500 chữ blog), để tôi quyết định xong và act trong cùng phiên.',
+        src: 'demos/phat-nguoi-nop-qua-momo.html',
+        address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap/nop-qua-momo',
+      },
+    ],
   },
 ];
 
@@ -413,7 +405,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -421,8 +413,8 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
-  MiniWeb: ['mini-web-overview', 'geo-citation-giai-dap'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category'],
+  MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi-ha-noi', 'phat-nguoi-giai-dap', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
   Other: ['worldcup'],
@@ -736,7 +728,7 @@ const MOSPARK_HOME_CAPABILITIES = [
   {
     title: 'GenAI Content',
     text: 'Sản xuất outline, article, FAQ và product embed từ Content Plan đã duyệt, có Business Context và quality gate.',
-    proto: 'blog',
+    proto: 'blog-category',
   },
   {
     title: 'Ads & Widget',

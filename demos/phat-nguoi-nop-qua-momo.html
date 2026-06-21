@@ -84,13 +84,16 @@
     }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--ink); }
     .brand img { width: 32px; height: 32px; }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: var(--muted); transition: color .15s var(--ease); }
+    .nav-links a:hover { color: var(--momo); }
     .nav-cta {
       font-size: 13px; font-weight: 600;
       padding: 7px 14px; border-radius: var(--r-pill);
-      background: var(--momo); color: var(--ivory);
+      background: var(--momo); color: var(--ivory) !important;
       transition: background .15s var(--ease);
     }
-    .nav-cta:hover { background: var(--momo-hover); }
+    .nav-cta:hover { background: var(--momo-hover); color: var(--ivory) !important; }
 
     /* ── Page wrapper ── */
     .page-wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
@@ -532,6 +535,104 @@
       color: var(--ink);
     }
 
+    /* ── Mini Quiz inline (light variant - sub-section, không phải Hub Quiz Center) ── */
+    .mini-quiz {
+      margin: 36px 0;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 28px;
+    }
+    .mini-quiz-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .mini-quiz-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 600;
+      color: var(--momo);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .mini-quiz-head h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 4px 0 0;
+      color: var(--ink);
+      width: 100%;
+    }
+    .mini-quiz-hub-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--momo);
+      border-bottom: 1px dotted var(--momo);
+    }
+    .mini-quiz-hub-link:hover { border-bottom-style: solid; }
+    .mq-item { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .mq-item:last-child { border-bottom: 0; }
+    .mq-q {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0 0 12px;
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .mq-q-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--momo);
+      font-weight: 600;
+      flex: none;
+    }
+    .mq-opts { display: grid; gap: 8px; }
+    .mq-opt {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      background: var(--ivory);
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: all .15s var(--ease);
+    }
+    .mq-opt:hover:not(:disabled) { border-color: var(--momo); background: var(--momo-tint); }
+    .mq-opt-letter {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--momo-tint-2);
+      color: var(--momo);
+      display: grid; place-items: center;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      flex: none;
+    }
+    .mq-opt.correct { background: var(--sage-tint, #e6f7f0); border-color: var(--sage); color: var(--ink); }
+    .mq-opt.correct .mq-opt-letter { background: var(--sage); color: #fff; }
+    .mq-opt.wrong { background: var(--warn-tint, #f7e9e9); border-color: var(--warn); color: var(--ink); }
+    .mq-opt.wrong .mq-opt-letter { background: var(--warn); color: #fff; }
+    .mq-opt:disabled { cursor: default; }
+    .mq-explain {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: var(--momo-tint);
+      border-left: 3px solid var(--momo);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      display: none;
+    }
+    .mq-explain.show { display: block; }
+    .mq-explain strong { color: var(--momo-deep); }
+
     /* ── Footer ── */
     footer {
       margin: 40px auto 56px;
@@ -547,6 +648,8 @@
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
+      .nav-links { gap: 14px; }
+      .nav-links a:not(.nav-cta):not(:first-child) { display: none; }
       .page-head h1 { font-size: 28px; }
       .tldr { padding: 18px 20px; }
       .tldr p { font-size: 15.5px; }
@@ -572,11 +675,15 @@
 
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/lab.html">
+      <a class="brand" href="/lab.html" target="_top" aria-label="Về Prototype Lab">
         <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
         <span>MoMo</span>
       </a>
-      <a class="nav-cta" href="#cta">Mở MoMo</a>
+      <nav class="nav-links">
+        <a href="/lab.html" target="_top">← Lab</a>
+        <a href="/demos/phat-nguoi-giai-dap.html">Giải đáp</a>
+        <a class="nav-cta" href="#cta">Mở MoMo</a>
+      </nav>
     </div>
   </header>
 
@@ -769,6 +876,47 @@
         </div>
       </section>
 
+      <!-- Mini Quiz inline - 3 câu liên quan trực tiếp Q này, link sang Hub Quiz Center -->
+      <section class="mini-quiz" aria-label="Mini quiz liên quan câu hỏi">
+        <div class="mini-quiz-head">
+          <div>
+            <div class="mini-quiz-eyebrow">Mini Quiz · 3 câu liên quan</div>
+            <h3>Kiểm tra nhanh hiểu biết về nộp phạt</h3>
+          </div>
+          <a class="mini-quiz-hub-link" href="/demos/phat-nguoi-giai-dap.html#quiz">Làm Quiz đầy đủ về Nộp phạt →</a>
+        </div>
+
+        <div class="mq-item">
+          <div class="mq-q"><span class="mq-q-num">01</span>Nộp phạt qua MoMo mất bao lâu để hoàn tất?</div>
+          <div class="mq-opts">
+            <button class="mq-opt" data-q="1" data-i="0" onclick="answerMQ(1,0,0)"><span class="mq-opt-letter">A</span><span>5 phút</span></button>
+            <button class="mq-opt" data-q="1" data-i="1" onclick="answerMQ(1,1,0)"><span class="mq-opt-letter">B</span><span>30 giây</span></button>
+            <button class="mq-opt" data-q="1" data-i="2" onclick="answerMQ(1,2,0)"><span class="mq-opt-letter">C</span><span>15 phút</span></button>
+          </div>
+          <div class="mq-explain" id="mqExp-1"><strong>Đáp án: 30 giây</strong>. Nhập biển số + xác thực PIN/sinh trắc là xong, biên lai điện tử có ngay trong lịch sử giao dịch.</div>
+        </div>
+
+        <div class="mq-item">
+          <div class="mq-q"><span class="mq-q-num">02</span>Biên lai điện tử MoMo có hợp lệ khi đi đăng kiểm xe không?</div>
+          <div class="mq-opts">
+            <button class="mq-opt" data-q="2" data-i="0" onclick="answerMQ(2,0,1)"><span class="mq-opt-letter">A</span><span>Có hợp lệ - tương đương biên lai giấy</span></button>
+            <button class="mq-opt" data-q="2" data-i="1" onclick="answerMQ(2,1,1)"><span class="mq-opt-letter">B</span><span>Không, phải có biên lai giấy</span></button>
+            <button class="mq-opt" data-q="2" data-i="2" onclick="answerMQ(2,2,1)"><span class="mq-opt-letter">C</span><span>Tùy trung tâm đăng kiểm</span></button>
+          </div>
+          <div class="mq-explain" id="mqExp-2"><strong>Đáp án: Có hợp lệ</strong>. Theo NĐ 11/2020 và Luật Giao dịch điện tử 2023, biên lai điện tử có giá trị pháp lý tương đương biên lai giấy.</div>
+        </div>
+
+        <div class="mq-item">
+          <div class="mq-q"><span class="mq-q-num">03</span>Xe không chính chủ có nộp phạt qua MoMo được không?</div>
+          <div class="mq-opts">
+            <button class="mq-opt" data-q="3" data-i="0" onclick="answerMQ(3,0,2)"><span class="mq-opt-letter">A</span><span>Không được</span></button>
+            <button class="mq-opt" data-q="3" data-i="1" onclick="answerMQ(3,1,2)"><span class="mq-opt-letter">B</span><span>Có, nhưng cần giấy ủy quyền</span></button>
+            <button class="mq-opt" data-q="3" data-i="2" onclick="answerMQ(3,2,2)"><span class="mq-opt-letter">C</span><span>Có, không cần ủy quyền</span></button>
+          </div>
+          <div class="mq-explain" id="mqExp-3"><strong>Đáp án: Có, không cần ủy quyền</strong>. Tiền phạt áp lên phương tiện vi phạm, không gắn với người sở hữu xe. Người sử dụng vẫn nộp được bình thường.</div>
+        </div>
+      </section>
+
       <!-- Related questions widget - the M2 Internal Link engine -->
       <section class="related" aria-label="Câu hỏi liên quan">
         <div class="related-head">
@@ -827,6 +975,21 @@
     <div>© 2026 MoMo · Trang prototype phục vụ chiến lược GEO. Nội dung không thay thế tư vấn pháp lý chuyên nghiệp.</div>
     <div><a href="/demos/phat-nguoi-giai-dap.html">← Về Giải Đáp</a></div>
   </footer>
+
+  <script>
+    /* Mini Quiz inline - 3 câu, immediate feedback */
+    function answerMQ(qNum, pickedIdx, correctIdx) {
+      const opts = document.querySelectorAll(`.mq-opt[data-q="${qNum}"]`);
+      // already answered?
+      if ([...opts].some(o => o.disabled)) return;
+      opts.forEach((o, idx) => {
+        o.disabled = true;
+        if (idx === correctIdx) o.classList.add('correct');
+        if (idx === pickedIdx && idx !== correctIdx) o.classList.add('wrong');
+      });
+      document.getElementById(`mqExp-${qNum}`).classList.add('show');
+    }
+  </script>
 
 </body>
 </html>
