@@ -1,611 +1,748 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Dịch Vụ Công MoMo — Mọi thủ tục hành chính trong 1 ứng dụng</title>
-  <meta name="description" content="Governance Hub Dịch Vụ Công MoMo: tra cứu thủ tục, nộp phí online, đổi bằng lái, gia hạn CCCD, khai sinh, kết hôn — nhanh gọn trên MoMo.">
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <style>
-    :root{
-      --momo:#a50064;--momo2:#d82d8b;--momo-light:#fff0f7;--momo-ring:#a5006420;
-      --ink:#1d2939;--sub:#475467;--muted:#98a2b3;--line:#e4e7ec;--bg:#f9fafb;--white:#fff;
-      --green:#027a48;--green-bg:#d1fadf;
-      --amber:#b45309;--amber-bg:#fef3c7;
-      --blue:#1d4ed8;--blue-bg:#eff6ff;
-      --radius:14px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dịch Vụ Công MoMo — Mọi thủ tục hành chính trong 1 ứng dụng</title>
+<meta name="description" content="Governance Hub Dịch Vụ Công MoMo: tra cứu thủ tục, chuẩn bị hồ sơ, nộp phí online — đổi bằng lái, CCCD, hộ chiếu, khai sinh, kết hôn, thuế.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-style:normal;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+</style>
+<style>
+:root{
+  --momo:#a50064;--momo-mid:#c8007a;--momo-dark:#6d0040;
+  --momo-light:rgba(165,0,100,.18);
+  --pk-bg:#fff0f7;
+  --bg:#f5f6f8;--bg2:#fff;--bg3:#f0ece8;
+  --ink:#1a1210;--sub:#6b7280;--muted:#9ca3af;
+  --line:#e5e7eb;--line2:rgba(26,18,16,.14);
+  --green:#059669;--green-bg:#ecfdf5;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --font:'MoMoTrustSans',system-ui,sans-serif;
+  --font-display:'MoMoTrustDisplay','MoMoTrustSans',system-ui,sans-serif;
+  --r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.65}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-    /* ── Nav ── */
-    .nav{height:54px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50}
-    .brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink)}
-    .brand-mark{width:32px;height:32px;background:var(--momo);border-radius:8px;display:grid;place-items:center;font-size:9px;font-weight:900;color:#fff;line-height:1.2;text-align:center}
-    .brand strong{font-size:13px}
-    .nav-right{display:flex;align-items:center;gap:12px}
-    .nav-back{font-size:12px;color:var(--muted);text-decoration:none}.nav-back:hover{color:var(--momo)}
-    .nav-login{font-size:13px;font-weight:700;color:var(--momo);text-decoration:none;padding:7px 14px;border:1.5px solid var(--momo);border-radius:8px;transition:.15s}
-    .nav-login:hover{background:var(--momo-light)}
+/* ── Topbar ── */
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 20px;height:50px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:200}
+.topbar-logo{display:flex;align-items:center;gap:7px;text-decoration:none;flex-shrink:0}
+.topbar-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--momo);display:grid;place-items:center;overflow:hidden}
+.topbar-logo-mark img{width:80%;height:80%;object-fit:contain}
+.topbar-crumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sub);flex:1;min-width:0;overflow:hidden}
+.topbar-crumb a{color:var(--sub);text-decoration:none;white-space:nowrap}.topbar-crumb a:hover{color:var(--momo)}
+.topbar-crumb .sep{color:var(--muted);flex-shrink:0}
+.topbar-crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap}
+.topbar-cta{flex-shrink:0;background:var(--momo);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:700}
+.topbar-cta:hover{background:var(--momo-mid)}
 
-    /* ── Hero ── */
-    .hero{background:linear-gradient(160deg,#a50064 0%,#6d1b7b 50%,#1a237e 100%);color:#fff;padding:72px 24px 64px;text-align:center;position:relative;overflow:hidden}
-    .hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
-    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:700;margin-bottom:20px;backdrop-filter:blur(8px)}
-    .hero h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;max-width:600px;margin:0 auto}
-    .hero h1 span{background:linear-gradient(90deg,#fbbf24,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub{font-size:15px;color:rgba(255,255,255,.8);margin-top:14px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7}
+/* ── Hero ── */
+.hero{background:linear-gradient(155deg,#8a0053 0%,var(--momo-mid) 100%);padding:48px 20px 0;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.04);top:-100px;right:-80px;pointer-events:none}
+.hero-wrap{max-width:600px;margin:0 auto;position:relative;z-index:1}
+.hero h1{font-size:clamp(28px,4vw,42px);font-weight:700;color:#fff;line-height:1.08;margin-bottom:12px;letter-spacing:-.03em;font-family:var(--font-display)}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:28px;max-width:440px}
 
-    /* ── Search Bar ── */
-    .search-wrap{max-width:540px;margin:28px auto 0;position:relative}
-    .search-input{width:100%;padding:16px 52px 16px 20px;font-size:15px;border:none;border-radius:14px;background:rgba(255,255,255,.95);color:var(--ink);outline:none;box-shadow:0 8px 32px rgba(0,0,0,.15);font-family:inherit}
-    .search-input::placeholder{color:var(--muted)}
-    .search-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:10px;border:none;background:var(--momo);color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center;transition:.15s}
-    .search-btn:hover{background:var(--momo2)}
-    .search-suggestions{position:absolute;top:100%;left:0;right:0;background:#fff;border-radius:0 0 14px 14px;box-shadow:0 8px 24px rgba(0,0,0,.1);display:none;z-index:10;overflow:hidden}
-    .search-suggestions.active{display:block}
-    .suggest-item{padding:12px 20px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:10px;color:var(--sub);border-bottom:1px solid var(--line)}
-    .suggest-item:last-child{border-bottom:none}
-    .suggest-item:hover{background:var(--momo-light);color:var(--momo)}
-    .suggest-item .si-icon{font-size:16px;width:24px;text-align:center}
-    .suggest-item .si-vol{margin-left:auto;font-size:11px;color:var(--muted);font-weight:600}
+/* ── Search ── */
+.search-card{background:#fff;border-radius:16px 16px 0 0;padding:22px 20px 0;box-shadow:0 -10px 40px rgba(0,0,0,.14)}
+.search-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
+.search-input-wrap{position:relative;margin-bottom:14px}
+.search-input{width:100%;height:54px;border:2px solid var(--line);border-radius:var(--r);padding:0 50px 0 16px;font-family:var(--font);font-size:15px;font-weight:500;color:var(--ink);transition:border-color .15s;outline:none}
+.search-input:focus{border-color:var(--momo)}
+.search-input::placeholder{color:var(--muted);font-weight:400}
+.search-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:10px;border:none;background:var(--momo);color:#fff;font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.15s}
+.search-btn:hover{background:var(--momo-mid)}
+.search-suggestions{position:absolute;top:100%;left:0;right:0;background:#fff;border-radius:0 0 var(--r) var(--r);box-shadow:0 8px 24px rgba(0,0,0,.1);display:none;z-index:10;overflow:hidden}
+.search-suggestions.active{display:block}
+.suggest-item{padding:11px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--sub);border-bottom:1px solid var(--line)}
+.suggest-item:last-child{border-bottom:none}
+.suggest-item:hover{background:var(--pk-bg);color:var(--momo)}
+.suggest-vol{margin-left:auto;font-size:11px;color:var(--muted);font-weight:600}
+.trust-row{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 0 16px;font-size:11px;color:var(--sub)}
+.trust-row span{display:flex;align-items:center;gap:4px}
+.trust-row strong{color:var(--ink);font-weight:700}
+.trust-sep{width:1px;height:14px;background:var(--line)}
 
-    /* ── Trust Counter ── */
-    .trust-row{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:24px;flex-wrap:wrap}
-    .trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.7)}
-    .trust-item strong{color:#fff;font-weight:800}
+/* ── Content ── */
+.content{max-width:780px;margin:0 auto;padding:0 20px 80px}
 
-    /* ── Quick Actions ── */
-    .section{max-width:1080px;margin:0 auto;padding:56px 24px}
-    .section-tag{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--momo);background:var(--momo-light);border-radius:99px;padding:4px 12px;margin-bottom:12px}
-    .section-title{font-size:26px;font-weight:900;line-height:1.3}
-    .section-sub{font-size:14px;color:var(--sub);margin-top:8px;line-height:1.7;max-width:600px}
+/* ── Section ── */
+.sec{padding:48px 0 0}
+.sec-title{font-size:clamp(20px,3vw,26px);font-weight:700;line-height:1.15;letter-spacing:-.025em;font-family:var(--font-display);margin-bottom:6px}
+.sec-sub{font-size:14px;color:var(--sub);line-height:1.6;max-width:540px;margin-bottom:24px}
 
-    .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:28px}
-    .quick-card{background:var(--white);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px 16px;text-align:center;cursor:pointer;transition:.2s;text-decoration:none;color:var(--ink)}
-    .quick-card:hover{border-color:var(--momo);box-shadow:0 4px 16px var(--momo-ring);transform:translateY(-2px)}
-    .quick-icon{font-size:32px;margin-bottom:10px;display:block}
-    .quick-name{font-size:13px;font-weight:700}
-    .quick-vol{font-size:11px;color:var(--muted);margin-top:4px}
+/* ── Quick Nav ── */
+.quick-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+@media(min-width:640px){.quick-nav{grid-template-columns:repeat(6,1fr)}}
+.qn-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);cursor:pointer;transition:.15s;text-align:center}
+.qn-item:hover{border-color:var(--momo);background:var(--pk-bg)}
+.qn-item.active{border-color:var(--momo);background:var(--pk-bg)}
+.qn-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff}
+.qn-label{font-size:11px;font-weight:600;line-height:1.3}
 
-    /* ── PLG Checklist Tool ── */
-    .checklist-section{background:linear-gradient(135deg,#fff0f7 0%,#fce7f3 100%);border-radius:20px;padding:40px 32px;margin-top:48px}
-    .checklist-header{text-align:center;margin-bottom:32px}
-    .checklist-tool{max-width:640px;margin:0 auto}
-    .cl-step{display:none}
-    .cl-step.active{display:block;animation:fadeIn .3s ease}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .cl-label{font-size:13px;font-weight:700;color:var(--momo);margin-bottom:10px}
-    .cl-options{display:flex;flex-direction:column;gap:8px}
-    .cl-option{padding:14px 18px;background:var(--white);border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;transition:.15s;display:flex;align-items:center;gap:10px}
-    .cl-option:hover{border-color:var(--momo);background:var(--momo-light)}
-    .cl-option.selected{border-color:var(--momo);background:var(--momo-light);color:var(--momo)}
-    .cl-option .cl-emoji{font-size:20px}
+/* ── Service Detail Panel ── */
+.svc-panel{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:16px;display:none}
+.svc-panel.active{display:block;animation:panelIn .25s ease}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.svc-header{padding:20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.svc-header h3{font-size:18px;font-weight:700;font-family:var(--font-display);letter-spacing:-.02em}
+.svc-header-meta{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.5}
+.svc-status{flex-shrink:0;font-size:10px;font-weight:700;padding:4px 10px;border-radius:999px}
+.st-live{background:var(--green-bg);color:var(--green)}
+.st-progress{background:var(--amber-bg);color:var(--amber)}
+.st-ext{background:var(--pk-bg);color:var(--momo)}
+.svc-body{padding:20px}
+.svc-body p{font-size:14px;color:var(--sub);line-height:1.7;margin-bottom:16px}
 
-    .cl-result{background:var(--white);border-radius:16px;padding:28px;border:1.5px solid var(--line)}
-    .cl-result-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-    .cl-result-header h3{font-size:18px;font-weight:800}
-    .cl-checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
-    .cl-checklist li{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--bg);border-radius:10px;font-size:13px;line-height:1.5}
-    .cl-checklist li .cl-check{color:var(--green);font-size:16px;flex-shrink:0;margin-top:1px}
-    .cl-checklist li .cl-warn{color:var(--amber);font-size:16px;flex-shrink:0;margin-top:1px}
-    .cl-info{margin-top:16px;padding:14px;background:var(--blue-bg);border-radius:10px;font-size:12px;color:var(--blue);display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+/* ── Checklist ── */
+.cl-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.cl-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;font-size:13px;line-height:1.55}
+.cl-mark{width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:1px;display:grid;place-items:center;font-size:10px;font-weight:800}
+.cl-ok{background:var(--green-bg);color:var(--green)}
+.cl-warn{background:var(--amber-bg);color:var(--amber)}
 
-    .cl-cta-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
-    .btn-primary{padding:12px 24px;background:var(--momo);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-    .btn-primary:hover{background:var(--momo2)}
-    .btn-secondary{padding:12px 24px;background:var(--white);color:var(--momo);border:1.5px solid var(--momo);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
-    .btn-secondary:hover{background:var(--momo-light)}
-    .btn-reset{padding:8px 16px;background:none;color:var(--muted);border:none;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600}
-    .btn-reset:hover{color:var(--momo)}
+.info-box{padding:12px 14px;border-radius:8px;font-size:12px;line-height:1.65;display:flex;align-items:flex-start;gap:8px;margin-bottom:12px}
+.info-box.blue{background:var(--blue-bg);color:var(--blue)}
+.info-box.amber{background:var(--amber-bg);color:var(--amber)}
+.info-box .info-icon{flex-shrink:0;font-size:14px;margin-top:1px}
 
-    /* ── Service Grid ── */
-    .service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:28px}
-    .service-card{background:var(--white);border:1.5px solid var(--line);border-radius:var(--radius);padding:24px;transition:.2s;cursor:pointer;position:relative;overflow:hidden}
-    .service-card:hover{border-color:var(--momo);box-shadow:0 4px 20px var(--momo-ring)}
-    .service-card.strategic{border-left:4px solid var(--momo)}
-    .service-card.strategic::after{content:'Chiến lược';position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;color:var(--momo);background:var(--momo-light);padding:3px 8px;border-radius:99px}
-    .sc-icon{font-size:28px;margin-bottom:12px}
-    .sc-title{font-size:16px;font-weight:800;margin-bottom:6px}
-    .sc-desc{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px}
-    .sc-meta{display:flex;gap:8px;flex-wrap:wrap}
-    .sc-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px}
-    .sc-badge.live{background:var(--green-bg);color:var(--green)}
-    .sc-badge.progress{background:var(--amber-bg);color:var(--amber)}
-    .sc-badge.plan{background:var(--blue-bg);color:var(--blue)}
-    .sc-badge.consider{background:#f3f4f6;color:var(--muted)}
-    .sc-volume{font-size:11px;color:var(--muted);margin-top:8px}
+.svc-cta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.btn-pk{padding:10px 20px;background:var(--momo);color:#fff;border:none;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-pk:hover{background:var(--momo-mid)}
+.btn-ghost{padding:10px 20px;background:var(--bg2);color:var(--ink);border:1px solid var(--line);border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-ghost:hover{border-color:var(--momo);color:var(--momo)}
 
-    /* ── TTHC Service Pages ── */
-    .tthc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:28px}
-    .tthc-card{background:var(--white);border:1.5px solid var(--line);border-radius:12px;padding:18px;transition:.2s;cursor:pointer;text-decoration:none;color:var(--ink)}
-    .tthc-card:hover{border-color:var(--momo);box-shadow:0 2px 12px var(--momo-ring)}
-    .tthc-icon{font-size:24px;margin-bottom:8px}
-    .tthc-name{font-size:14px;font-weight:700;margin-bottom:4px}
-    .tthc-kw{font-size:11px;color:var(--muted)}
-    .tthc-vol{font-size:11px;color:var(--momo);font-weight:600;margin-top:4px}
+/* ── Steps ── */
+.steps{display:flex;flex-direction:column;gap:0;margin-bottom:16px;counter-reset:step}
+.step{display:grid;grid-template-columns:32px 1fr;gap:12px;padding-bottom:16px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:1px;background:var(--line)}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--sub);position:relative;z-index:1}
+.step-content h4{font-size:14px;font-weight:700;margin-bottom:2px}
+.step-content p{font-size:13px;color:var(--sub);line-height:1.55}
 
-    /* ── Social Proof ── */
-    .proof-section{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:48px 24px}
-    .proof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px;max-width:900px;margin:28px auto 0;text-align:center}
-    .proof-item .proof-num{font-size:32px;font-weight:900;color:var(--momo)}
-    .proof-item .proof-label{font-size:13px;color:var(--sub);margin-top:4px}
+/* ── Checklist Generator ── */
+.gen-section{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:24px}
+.gen-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+.gen-progress{display:flex;align-items:center;gap:0;margin-bottom:20px}
+.gp-dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;border:1.5px solid var(--line);background:var(--bg2);color:var(--muted);transition:.2s}
+.gp-dot.active{border-color:var(--momo);background:var(--momo);color:#fff}
+.gp-dot.done{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.gp-line{width:32px;height:1.5px;background:var(--line)}.gp-line.done{background:var(--green)}
+.gen-step{display:none}.gen-step.active{display:block;animation:panelIn .2s ease}
+.gen-options{display:flex;flex-direction:column;gap:6px}
+.gen-opt{padding:12px 14px;background:var(--bg);border:1.5px solid transparent;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;transition:.12s;display:flex;align-items:center;gap:8px}
+.gen-opt:hover{border-color:var(--line2);background:var(--bg2)}
+.gen-opt.selected{border-color:var(--momo);background:var(--pk-bg);color:var(--momo)}
 
-    /* ── Blog Preview ── */
-    .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:28px}
-    .blog-card{background:var(--white);border:1.5px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.2s;cursor:pointer}
-    .blog-card:hover{border-color:var(--momo);box-shadow:0 4px 16px var(--momo-ring)}
-    .blog-img{height:140px;background:linear-gradient(135deg,var(--momo-light),#e0e7ff);display:grid;place-items:center;font-size:36px}
-    .blog-body{padding:16px}
-    .blog-cat{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--momo);letter-spacing:.3px}
-    .blog-title{font-size:14px;font-weight:700;margin-top:6px;line-height:1.4}
-    .blog-date{font-size:11px;color:var(--muted);margin-top:6px}
+/* ── Portfolio ── */
+.portfolio-grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:20px}
+@media(min-width:640px){.portfolio-grid{grid-template-columns:1fr 1fr}}
+.pf-item{background:var(--bg2);padding:18px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:.12s}
+.pf-item:hover{background:var(--bg)}
+.pf-item.strategic{border-left:3px solid var(--momo)}
+.pf-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.pf-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.pf-desc{font-size:12px;color:var(--sub);line-height:1.5}
+.pf-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;margin-top:6px}
 
-    /* ── App CTA ── */
-    .app-cta{background:linear-gradient(135deg,#a50064,#6d1b7b);color:#fff;padding:48px 24px;text-align:center}
-    .app-cta h2{font-size:24px;font-weight:900;margin-bottom:8px}
-    .app-cta p{font-size:14px;color:rgba(255,255,255,.8);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
-    .app-btn-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
-    .app-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;text-decoration:none;transition:.15s;backdrop-filter:blur(8px)}
-    .app-btn:hover{background:rgba(255,255,255,.25)}
-    .app-btn .ab-icon{font-size:22px}
-    .qr-grid{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:24px}
-    .qr-box{width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:12px;display:grid;place-items:center;font-size:10px;color:rgba(255,255,255,.6);border:1px dashed rgba(255,255,255,.3)}
+/* ── Blog ── */
+.blog-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:20px}
+.blog-item{background:var(--bg2);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:.12s}
+.blog-item:hover{background:var(--bg)}
+.blog-item-title{font-size:14px;font-weight:600;line-height:1.4}
+.blog-item-date{font-size:11px;color:var(--muted);flex-shrink:0}
 
-    /* ── Sticky CTA ── */
-    .sticky-cta{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--line);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:40;box-shadow:0 -2px 12px rgba(0,0,0,.06);transform:translateY(100%);transition:transform .3s}
-    .sticky-cta.show{transform:translateY(0)}
-    .sticky-cta p{font-size:13px;font-weight:600;color:var(--sub)}
-    .sticky-cta .btn-primary{padding:10px 20px;font-size:13px}
+/* ── Sticky CTA ── */
+.fixed-cta{position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--momo);padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:16px;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 20px rgba(165,0,100,.3)}
+.fixed-cta.show{transform:translateY(0)}
+.fixed-cta-text{font-size:12.5px;color:rgba(255,255,255,.88);line-height:1.3}
+.fixed-cta-text strong{color:#fff;font-weight:600;display:block;font-size:13px}
+.fixed-cta-btn{background:#fff;color:var(--momo);font-size:12px;font-weight:600;padding:8px 18px;border-radius:20px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.fixed-cta-x{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
 
-    /* ── Footer ── */
-    .footer{background:var(--ink);color:rgba(255,255,255,.5);padding:32px 24px;text-align:center;font-size:11px;line-height:2}
-    .footer a{color:rgba(255,255,255,.7);text-decoration:none}
+/* ── Footer ── */
+.footer{padding:32px 20px;text-align:center;font-size:11px;color:var(--muted);line-height:2}
 
-    /* ── Security ── */
-    .security-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:24px}
-    .sec-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;align-items:flex-start;gap:10px}
-    .sec-icon{font-size:22px;flex-shrink:0}
-    .sec-title{font-size:13px;font-weight:700;margin-bottom:2px}
-    .sec-desc{font-size:11px;color:var(--muted);line-height:1.5}
-
-    /* ── Progress Steps ── */
-    .progress-bar{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:24px}
-    .pb-step{display:flex;align-items:center;gap:0}
-    .pb-dot{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;border:2px solid var(--line);background:var(--white);color:var(--muted);transition:.2s}
-    .pb-dot.active{border-color:var(--momo);background:var(--momo);color:#fff}
-    .pb-dot.done{border-color:var(--green);background:var(--green-bg);color:var(--green)}
-    .pb-line{width:40px;height:2px;background:var(--line)}
-    .pb-line.done{background:var(--green)}
-
-    @media(max-width:640px){
-      .hero{padding:48px 16px 40px}
-      .hero h1{font-size:26px}
-      .section{padding:40px 16px}
-      .quick-grid{grid-template-columns:repeat(3,1fr);gap:10px}
-      .quick-card{padding:14px 10px}
-      .quick-icon{font-size:24px}
-      .quick-name{font-size:11px}
-      .service-grid{grid-template-columns:1fr}
-      .tthc-grid{grid-template-columns:repeat(2,1fr)}
-      .checklist-section{padding:24px 16px;border-radius:14px}
-      .proof-grid{grid-template-columns:repeat(2,1fr)}
-      .tier-compare{grid-template-columns:1fr}
-      .blog-grid{grid-template-columns:1fr}
-    }
-  </style>
+@media(max-width:640px){
+  .hero{padding:32px 16px 0}
+  .search-card{padding:18px 16px 0}
+  .content{padding:0 16px 60px}
+  .svc-header{flex-direction:column;gap:8px}
+}
+</style>
 </head>
 <body>
 
-<!-- ── Nav ── -->
-<nav class="nav">
-  <a class="brand" href="/lab.html" target="_top">
-    <div class="brand-mark">Mo<br>Mo</div>
-    <strong>Dịch Vụ Công</strong>
+<!-- Topbar -->
+<nav class="topbar">
+  <a class="topbar-logo" href="/lab.html" target="_top">
+    <div class="topbar-logo-mark"><img src="../assets/favicon.svg" alt="MoMo" onerror="this.parentElement.textContent='M'"></div>
   </a>
-  <div class="nav-right">
-    <a class="nav-back" href="/lab.html" target="_top">← Lab</a>
-    <a class="nav-login" href="#">Đăng nhập</a>
+  <div class="topbar-crumb">
+    <a href="/lab.html" target="_top">Lab</a>
+    <span class="sep">/</span>
+    <span class="cur">Dịch Vụ Công</span>
   </div>
+  <button class="topbar-cta" onclick="openApp()">Mở App MoMo</button>
 </nav>
 
-<!-- ── Hero ── -->
+<!-- Hero -->
 <section class="hero">
-  <div class="hero-tag">🏛️ Governance Hub</div>
-  <h1>Mọi thủ tục hành chính<br>trong <span>1 ứng dụng</span></h1>
-  <p class="hero-sub">Tra cứu thủ tục, chuẩn bị hồ sơ và nộp phí online — không cần xếp hàng, không sợ thiếu giấy tờ.</p>
+  <div class="hero-wrap">
+    <h1>Mọi thủ tục hành chính trong 1 ứng dụng</h1>
+    <p class="hero-sub">Tra cứu thủ tục, chuẩn bị hồ sơ và nộp phí online — không cần xếp hàng.</p>
 
-  <div class="search-wrap">
-    <input class="search-input" type="text" id="searchInput" placeholder="Tìm thủ tục: đổi bằng lái, khai sinh, phạt nguội..." autocomplete="off">
-    <button class="search-btn" onclick="handleSearch()">🔍</button>
-    <div class="search-suggestions" id="searchSuggestions"></div>
-  </div>
-
-  <div class="trust-row">
-    <div class="trust-item">🛡️ <strong>11.2%</strong> giao dịch DVCQG</div>
-    <div class="trust-item">📄 <strong>1,900+</strong> thủ tục hỗ trợ</div>
-    <div class="trust-item">👥 <strong>1.46M</strong> giao dịch/năm</div>
-  </div>
-</section>
-
-<!-- ── Quick Actions ── -->
-<section class="section">
-  <div class="section-tag">Dịch vụ phổ biến</div>
-  <h2 class="section-title">Thủ tục được tìm kiếm nhiều nhất</h2>
-  <p class="section-sub">Chọn dịch vụ bạn cần — xem hướng dẫn và nộp phí ngay trên MoMo.</p>
-
-  <div class="quick-grid">
-    <a class="quick-card" href="#phat-nguoi">
-      <span class="quick-icon">🚗</span>
-      <div class="quick-name">Phạt Nguội</div>
-      <div class="quick-vol">2.5M+ searches/tháng</div>
-    </a>
-    <a class="quick-card" href="#doi-bang-lai">
-      <span class="quick-icon">🪪</span>
-      <div class="quick-name">Đổi Bằng Lái</div>
-      <div class="quick-vol">230K searches/tháng</div>
-    </a>
-    <a class="quick-card" href="#cccd">
-      <span class="quick-icon">🆔</span>
-      <div class="quick-name">CCCD</div>
-      <div class="quick-vol">145K searches/tháng</div>
-    </a>
-    <a class="quick-card" href="#thue">
-      <span class="quick-icon">💰</span>
-      <div class="quick-name">Thuế TNCN</div>
-      <div class="quick-vol">50K searches/tháng</div>
-    </a>
-    <a class="quick-card" href="#ho-chieu">
-      <span class="quick-icon">✈️</span>
-      <div class="quick-name">Hộ Chiếu</div>
-      <div class="quick-vol">222K searches/tháng</div>
-    </a>
-    <a class="quick-card" href="#khai-sinh">
-      <span class="quick-icon">👶</span>
-      <div class="quick-name">Khai Sinh</div>
-      <div class="quick-vol">44K searches/tháng</div>
-    </a>
+    <div class="search-card">
+      <div class="search-label">Tìm thủ tục hành chính</div>
+      <div class="search-input-wrap">
+        <input class="search-input" type="text" id="searchInput" placeholder="đổi bằng lái, khai sinh, phạt nguội..." autocomplete="off">
+        <button class="search-btn" onclick="handleSearch()">→</button>
+        <div class="search-suggestions" id="searchSuggestions"></div>
+      </div>
+      <div class="trust-row">
+        <span><strong>11.2%</strong> giao dịch DVCQG</span>
+        <div class="trust-sep"></div>
+        <span><strong>1,900+</strong> TTHC</span>
+        <div class="trust-sep"></div>
+        <span><strong>1.46M</strong> giao dịch/năm</span>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ── PLG Interactive: Smart DVC Checklist Generator ── -->
-<section class="section" style="padding-top:0">
-  <div class="checklist-section">
-    <div class="checklist-header">
-      <div class="section-tag">Công cụ tương tác</div>
-      <h2 class="section-title">Smart Checklist — Chuẩn bị hồ sơ</h2>
-      <p class="section-sub" style="margin:8px auto 0">Trả lời 3 câu hỏi → nhận checklist chuẩn bị hồ sơ 100% chính xác.</p>
+<!-- Content -->
+<div class="content">
+
+  <!-- Quick Nav: Top Services -->
+  <section class="sec">
+    <h2 class="sec-title">Thủ tục phổ biến</h2>
+    <p class="sec-sub">Chọn dịch vụ bạn cần — xem hướng dẫn chi tiết bên dưới.</p>
+
+    <div class="quick-nav" id="quickNav">
+      <div class="qn-item active" onclick="showService('phat-nguoi')">
+        <div class="qn-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444)">PN</div>
+        <div class="qn-label">Phạt Nguội</div>
+      </div>
+      <div class="qn-item" onclick="showService('doi-gplx')">
+        <div class="qn-icon" style="background:linear-gradient(135deg,#0369a1,#0ea5e9)">BL</div>
+        <div class="qn-label">Đổi Bằng Lái</div>
+      </div>
+      <div class="qn-item" onclick="showService('cccd')">
+        <div class="qn-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">CC</div>
+        <div class="qn-label">CCCD</div>
+      </div>
+      <div class="qn-item" onclick="showService('ho-chieu')">
+        <div class="qn-icon" style="background:linear-gradient(135deg,#059669,#34d399)">HC</div>
+        <div class="qn-label">Hộ Chiếu</div>
+      </div>
+      <div class="qn-item" onclick="showService('ket-hon')">
+        <div class="qn-icon" style="background:linear-gradient(135deg,var(--momo),#e879a8)">KH</div>
+        <div class="qn-label">Kết Hôn</div>
+      </div>
+      <div class="qn-item" onclick="showService('khai-sinh')">
+        <div class="qn-icon" style="background:linear-gradient(135deg,#d97706,#fbbf24)">KS</div>
+        <div class="qn-label">Khai Sinh</div>
+      </div>
     </div>
 
-    <div class="checklist-tool" id="checklistTool">
-      <!-- Progress -->
-      <div class="progress-bar" id="progressBar">
-        <div class="pb-step"><div class="pb-dot active" id="pb1">1</div></div>
-        <div class="pb-line" id="pbl1"></div>
-        <div class="pb-step"><div class="pb-dot" id="pb2">2</div></div>
-        <div class="pb-line" id="pbl2"></div>
-        <div class="pb-step"><div class="pb-dot" id="pb3">3</div></div>
+    <!-- Service Detail Panels -->
+
+    <!-- Phạt Nguội → link to existing project -->
+    <div class="svc-panel active" id="svc-phat-nguoi">
+      <div class="svc-header">
+        <div>
+          <h3>Tra cứu Phạt Nguội</h3>
+          <div class="svc-header-meta">Tra cứu vi phạm giao thông theo biển số xe — nộp phạt trực tuyến qua MoMo.</div>
+        </div>
+        <span class="svc-status st-live">LIVE</span>
+      </div>
+      <div class="svc-body">
+        <p>Phạt Nguội có BRD riêng và đã triển khai Phase 1. Cluster search lớn nhất toàn bộ DVC với <strong>2,536,090 searches/tháng</strong>. MoMo dẫn đầu 39% share xét tuyển ĐH và 25% share đổi GPLX trên DVCQG.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Nhập biển số xe</h4>
+              <p>Chọn loại xe (Ô tô / Xe máy / Xe điện) và nhập biển số.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Xem kết quả vi phạm</h4>
+              <p>Hệ thống trả về danh sách vi phạm từ CSGT — mức phạt, địa điểm, ngày vi phạm.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Nộp phạt qua MoMo</h4>
+              <p>Chuyển sang App MoMo để thanh toán — không cần ra kho bạc.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="svc-cta-row">
+          <a class="btn-pk" href="phat-nguoi-ha-noi.html">Tra cứu Phạt Nguội →</a>
+          <button class="btn-ghost" onclick="openApp()">Nộp phạt qua App</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Đổi GPLX -->
+    <div class="svc-panel" id="svc-doi-gplx">
+      <div class="svc-header">
+        <div>
+          <h3>Đổi Giấy phép Lái xe</h3>
+          <div class="svc-header-meta">230,810 searches/tháng · /dich-vu-cong/doi-bang-lai-xe</div>
+        </div>
+        <span class="svc-status st-progress">Đang triển khai</span>
+      </div>
+      <div class="svc-body">
+        <p>Đổi GPLX khi hết hạn, bị mất/hỏng hoặc đổi sang thẻ PET mới theo Thông tư 05/2024. Nộp hồ sơ tại Sở GTVT hoặc qua Cổng DVCQG — lệ phí nộp online qua MoMo.</p>
+
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Hồ sơ cần chuẩn bị</h4>
+        <ul class="cl-list">
+          <li><span class="cl-mark cl-ok">✓</span> CCCD / CMND gốc (còn hiệu lực)</li>
+          <li><span class="cl-mark cl-ok">✓</span> GPLX cũ (bản gốc)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Giấy khám sức khỏe — cơ sở y tế cấp huyện trở lên, trong 6 tháng</li>
+          <li><span class="cl-mark cl-ok">✓</span> Ảnh 3×4 nền trắng (2 tấm)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Đơn đề nghị đổi GPLX (mẫu tại Sở GTVT hoặc dichvucong.gov.vn)</li>
+          <li><span class="cl-mark cl-warn">!</span> Lệ phí: 135.000đ — nộp tại quầy hoặc online qua MoMo</li>
+        </ul>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Khám sức khỏe</h4>
+              <p>Phòng khám đa khoa hoặc bệnh viện cấp huyện. Chi phí ~300.000đ. Giấy khám có hiệu lực 6 tháng.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Nộp hồ sơ</h4>
+              <p>Trực tiếp tại Sở GTVT hoặc online qua dichvucong.gov.vn. Scan/chụp giấy tờ gốc.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Nộp lệ phí 135.000đ</h4>
+              <p>Thanh toán trực tuyến qua MoMo hoặc chuyển khoản. Giữ biên lai.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>Nhận GPLX mới</h4>
+              <p>5 ngày làm việc. Nhận trực tiếp hoặc qua bưu điện (phí ship ~40.000đ).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box amber">
+          <span class="info-icon">⏰</span>
+          <span>Nộp trước ngày hết hạn trên GPLX. Quá hạn trên 3 tháng phải thi lại lý thuyết.</span>
+        </div>
+
+        <div class="svc-cta-row">
+          <button class="btn-pk" onclick="openApp()">Nộp lệ phí qua MoMo</button>
+          <button class="btn-ghost" onclick="window.open('https://dichvucong.gov.vn','_blank')">Nộp hồ sơ online →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CCCD -->
+    <div class="svc-panel" id="svc-cccd">
+      <div class="svc-header">
+        <div>
+          <h3>Gia hạn / Cấp lại CCCD</h3>
+          <div class="svc-header-meta">145,690 searches/tháng · /dich-vu-cong/gia-han-cccd</div>
+        </div>
+        <span class="svc-status st-progress">Đang triển khai</span>
+      </div>
+      <div class="svc-body">
+        <p>Gia hạn CCCD khi hết hạn, cấp lại khi mất, hoặc đổi thông tin (tên, địa chỉ). Nộp tại Công an quận/huyện — cần chụp ảnh và lấy vân tay tại chỗ.</p>
+
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Hồ sơ cần chuẩn bị</h4>
+        <ul class="cl-list">
+          <li><span class="cl-mark cl-ok">✓</span> CCCD cũ (bản gốc, nếu có)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Tờ khai cấp CCCD (mẫu CC01)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Sổ hộ khẩu hoặc Xác nhận nơi cư trú</li>
+          <li><span class="cl-mark cl-warn">!</span> Lệ phí: 25.000đ (đổi) hoặc 50.000đ (cấp lại do mất)</li>
+        </ul>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Chuẩn bị hồ sơ</h4>
+              <p>Mẫu CC01 lấy tại Công an quận/huyện hoặc tải từ VNeID. Khai báo lý do (hết hạn / mất / thay đổi thông tin).</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Nộp hồ sơ tại Công an</h4>
+              <p>Đến trực tiếp Công an quận/huyện. Chụp ảnh chân dung và lấy vân tay tại chỗ — không thể làm online.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Nộp lệ phí</h4>
+              <p>Thanh toán 25.000đ (đổi) hoặc 50.000đ (cấp lại) — tại quầy hoặc qua MoMo.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>Nhận CCCD mới</h4>
+              <p>7–15 ngày làm việc. Nhận tại Công an hoặc qua bưu điện.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box blue">
+          <span class="info-icon">ℹ</span>
+          <span>CCCD gắn chip có thời hạn: dưới 22 tuổi (hạn 22 tuổi), 22–40 tuổi (hạn 40 tuổi), trên 40 tuổi (không hạn).</span>
+        </div>
+
+        <div class="svc-cta-row">
+          <button class="btn-pk" onclick="openApp()">Nộp lệ phí qua MoMo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hộ Chiếu -->
+    <div class="svc-panel" id="svc-ho-chieu">
+      <div class="svc-header">
+        <div>
+          <h3>Làm Hộ chiếu</h3>
+          <div class="svc-header-meta">222,610 searches/tháng · /dich-vu-cong/ho-chieu</div>
+        </div>
+        <span class="svc-status st-progress">Đang triển khai</span>
+      </div>
+      <div class="svc-body">
+        <p>Cấp mới hoặc gia hạn hộ chiếu phổ thông. Nộp tại Phòng Quản lý XNC Công an tỉnh/TP hoặc online qua Cổng DVCQG.</p>
+
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Hồ sơ cần chuẩn bị</h4>
+        <ul class="cl-list">
+          <li><span class="cl-mark cl-ok">✓</span> CCCD gốc (còn hiệu lực)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Tờ khai đề nghị cấp hộ chiếu (mẫu X01)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Ảnh 4×6 nền trắng (2 tấm, chụp trong 6 tháng)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Sổ hộ khẩu hoặc Xác nhận thường trú</li>
+          <li><span class="cl-mark cl-ok">✓</span> Hộ chiếu cũ — nếu gia hạn / cấp lại</li>
+          <li><span class="cl-mark cl-warn">!</span> Lệ phí: 200.000đ (thường) hoặc 400.000đ (cấp nhanh 3 ngày)</li>
+        </ul>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Khai tờ khai X01</h4>
+              <p>Điền online tại dichvucong.gov.vn hoặc lấy mẫu tại Phòng XNC. Khai đầy đủ thông tin cá nhân.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Nộp hồ sơ</h4>
+              <p>Trực tiếp tại Phòng Quản lý XNC Công an tỉnh/TP. Chụp ảnh chân dung tại chỗ (hoặc nộp ảnh).</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Nộp lệ phí</h4>
+              <p>200.000đ (thường, 8–10 ngày) hoặc 400.000đ (nhanh, 3 ngày). Nộp qua MoMo hoặc tại quầy.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>Nhận hộ chiếu</h4>
+              <p>Nhận trực tiếp tại Phòng XNC hoặc qua bưu điện EMS.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box blue">
+          <span class="info-icon">ℹ</span>
+          <span>Hộ chiếu phổ thông có hiệu lực 10 năm. Nếu còn dưới 6 tháng, một số quốc gia không cho nhập cảnh — nên gia hạn sớm.</span>
+        </div>
+
+        <div class="svc-cta-row">
+          <button class="btn-pk" onclick="openApp()">Nộp lệ phí qua MoMo</button>
+          <button class="btn-ghost" onclick="window.open('https://dichvucong.gov.vn','_blank')">Nộp hồ sơ online →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kết Hôn -->
+    <div class="svc-panel" id="svc-ket-hon">
+      <div class="svc-header">
+        <div>
+          <h3>Đăng ký Kết hôn</h3>
+          <div class="svc-header-meta">89,420 searches/tháng · /dich-vu-cong/ket-hon</div>
+        </div>
+        <span class="svc-status st-progress">Đang triển khai</span>
+      </div>
+      <div class="svc-body">
+        <p>Đăng ký kết hôn giữa hai công dân Việt Nam tại UBND xã/phường. Miễn lệ phí, giải quyết trong ngày — cả hai phải có mặt.</p>
+
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Hồ sơ cần chuẩn bị</h4>
+        <ul class="cl-list">
+          <li><span class="cl-mark cl-ok">✓</span> CCCD / CMND của cả hai bên (bản gốc)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Tờ khai đăng ký kết hôn (mẫu tại UBND)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Giấy xác nhận tình trạng hôn nhân — UBND nơi cư trú cấp</li>
+          <li><span class="cl-mark cl-ok">✓</span> Sổ hộ khẩu hoặc Xác nhận nơi cư trú</li>
+        </ul>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Xin Giấy xác nhận tình trạng hôn nhân</h4>
+              <p>Tại UBND xã/phường nơi đăng ký thường trú. Miễn phí, giải quyết trong ngày.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Nộp hồ sơ tại UBND</h4>
+              <p>Cả hai có mặt tại UBND xã/phường. Nộp tờ khai + giấy tờ gốc.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Nhận Giấy chứng nhận kết hôn</h4>
+              <p>Giải quyết trong ngày làm việc. Miễn lệ phí (kết hôn trong nước, cùng quốc tịch VN).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box amber">
+          <span class="info-icon">⚠</span>
+          <span>Kết hôn có yếu tố nước ngoài: nộp tại Sở Tư pháp, lệ phí 1.000.000đ, thời gian 15–25 ngày. Cần bản dịch công chứng + hợp pháp hóa lãnh sự.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Khai Sinh -->
+    <div class="svc-panel" id="svc-khai-sinh">
+      <div class="svc-header">
+        <div>
+          <h3>Đăng ký Khai sinh</h3>
+          <div class="svc-header-meta">44,490 searches/tháng · /dich-vu-cong/khai-sinh</div>
+        </div>
+        <span class="svc-status st-progress">Đang triển khai</span>
+      </div>
+      <div class="svc-body">
+        <p>Đăng ký khai sinh cho trẻ mới sinh tại UBND xã/phường nơi cư trú. Miễn lệ phí, giải quyết trong ngày. Cần nộp trong vòng 60 ngày kể từ ngày sinh.</p>
+
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:8px">Hồ sơ cần chuẩn bị</h4>
+        <ul class="cl-list">
+          <li><span class="cl-mark cl-ok">✓</span> Giấy chứng sinh — do bệnh viện / cơ sở y tế cấp</li>
+          <li><span class="cl-mark cl-ok">✓</span> CCCD / CMND của cha và mẹ</li>
+          <li><span class="cl-mark cl-ok">✓</span> Giấy đăng ký kết hôn của cha mẹ (nếu có)</li>
+          <li><span class="cl-mark cl-ok">✓</span> Sổ hộ khẩu hoặc Xác nhận nơi cư trú</li>
+          <li><span class="cl-mark cl-ok">✓</span> Tờ khai đăng ký khai sinh (mẫu tại UBND)</li>
+        </ul>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Lấy Giấy chứng sinh</h4>
+              <p>Bệnh viện / nhà hộ sinh cấp khi trẻ ra đời. Giữ bản gốc.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Nộp tại UBND xã/phường</h4>
+              <p>Nơi đăng ký thường trú của cha hoặc mẹ. Mang toàn bộ giấy tờ gốc.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Nhận Giấy khai sinh</h4>
+              <p>Giải quyết trong ngày. Miễn lệ phí đăng ký khai sinh.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box amber">
+          <span class="info-icon">⏰</span>
+          <span>Khai sinh quá 60 ngày vẫn được đăng ký nhưng có thể bị phạt hành chính 1–3 triệu đồng theo NĐ 82/2020.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Smart Checklist Generator -->
+  <section class="sec">
+    <h2 class="sec-title">Không biết cần gì? Trả lời 3 câu hỏi</h2>
+    <p class="sec-sub">Chọn loại thủ tục, tỉnh/thành và tình trạng — nhận checklist hồ sơ chính xác.</p>
+
+    <div class="gen-section" id="genTool">
+      <div class="gen-label">Smart Checklist Generator</div>
+      <div class="gen-progress" id="genProgress">
+        <div class="gp-dot active" id="gd1">1</div>
+        <div class="gp-line" id="gl1"></div>
+        <div class="gp-dot" id="gd2">2</div>
+        <div class="gp-line" id="gl2"></div>
+        <div class="gp-dot" id="gd3">3</div>
       </div>
 
-      <!-- Step 1: Service Type -->
-      <div class="cl-step active" id="step1">
-        <div class="cl-label">Bước 1 / 3 — Loại dịch vụ</div>
-        <div class="cl-options">
-          <div class="cl-option" onclick="selectService(this,'doi-gplx')"><span class="cl-emoji">🪪</span> Đổi Giấy phép Lái xe</div>
-          <div class="cl-option" onclick="selectService(this,'cccd')"><span class="cl-emoji">🆔</span> Gia hạn / Cấp lại CCCD</div>
-          <div class="cl-option" onclick="selectService(this,'ho-chieu')"><span class="cl-emoji">✈️</span> Làm Hộ chiếu</div>
-          <div class="cl-option" onclick="selectService(this,'khai-sinh')"><span class="cl-emoji">👶</span> Đăng ký Khai sinh</div>
-          <div class="cl-option" onclick="selectService(this,'ket-hon')"><span class="cl-emoji">💍</span> Đăng ký Kết hôn</div>
-          <div class="cl-option" onclick="selectService(this,'tam-tru')"><span class="cl-emoji">🏠</span> Đăng ký Tạm trú</div>
-          <div class="cl-option" onclick="selectService(this,'thue')"><span class="cl-emoji">💰</span> Nộp Thuế TNCN</div>
-          <div class="cl-option" onclick="selectService(this,'dang-kiem')"><span class="cl-emoji">🔧</span> Đăng kiểm Xe</div>
+      <div class="gen-step active" id="gs1">
+        <div class="gen-options">
+          <div class="gen-opt" onclick="genSelect(this,'doi-gplx',1)">Đổi Giấy phép Lái xe</div>
+          <div class="gen-opt" onclick="genSelect(this,'cccd',1)">Gia hạn / Cấp lại CCCD</div>
+          <div class="gen-opt" onclick="genSelect(this,'ho-chieu',1)">Làm Hộ chiếu</div>
+          <div class="gen-opt" onclick="genSelect(this,'khai-sinh',1)">Đăng ký Khai sinh</div>
+          <div class="gen-opt" onclick="genSelect(this,'ket-hon',1)">Đăng ký Kết hôn</div>
+          <div class="gen-opt" onclick="genSelect(this,'tam-tru',1)">Đăng ký Tạm trú</div>
+          <div class="gen-opt" onclick="genSelect(this,'thue',1)">Nộp Thuế TNCN</div>
+          <div class="gen-opt" onclick="genSelect(this,'dang-kiem',1)">Đăng kiểm Xe</div>
         </div>
       </div>
 
-      <!-- Step 2: Province -->
-      <div class="cl-step" id="step2">
-        <div class="cl-label">Bước 2 / 3 — Tỉnh / Thành phố</div>
-        <div class="cl-options">
-          <div class="cl-option" onclick="selectProvince(this,'hcm')"><span class="cl-emoji">🏙️</span> TP. Hồ Chí Minh</div>
-          <div class="cl-option" onclick="selectProvince(this,'hn')"><span class="cl-emoji">🏯</span> Hà Nội</div>
-          <div class="cl-option" onclick="selectProvince(this,'dn')"><span class="cl-emoji">🌊</span> Đà Nẵng</div>
-          <div class="cl-option" onclick="selectProvince(this,'other')"><span class="cl-emoji">📍</span> Tỉnh / Thành khác</div>
+      <div class="gen-step" id="gs2">
+        <div class="gen-options">
+          <div class="gen-opt" onclick="genSelect(this,'hcm',2)">TP. Hồ Chí Minh</div>
+          <div class="gen-opt" onclick="genSelect(this,'hn',2)">Hà Nội</div>
+          <div class="gen-opt" onclick="genSelect(this,'dn',2)">Đà Nẵng</div>
+          <div class="gen-opt" onclick="genSelect(this,'other',2)">Tỉnh / Thành khác</div>
         </div>
       </div>
 
-      <!-- Step 3: Status -->
-      <div class="cl-step" id="step3">
-        <div class="cl-label">Bước 3 / 3 — Tình trạng hiện tại</div>
-        <div class="cl-options" id="step3Options"></div>
+      <div class="gen-step" id="gs3">
+        <div class="gen-options" id="gs3Opts"></div>
       </div>
 
-      <!-- Result -->
-      <div class="cl-step" id="stepResult"></div>
+      <div class="gen-step" id="gsResult"></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ── Service Grid: 8 BU Services ── -->
-<section class="section">
-  <div class="section-tag">Portfolio Dịch Vụ</div>
-  <h2 class="section-title">8 mảng Dịch Vụ Công MoMo hỗ trợ</h2>
-  <p class="section-sub">3 kênh Web chiến lược được ưu tiên — các mảng còn lại đang cân nhắc theo resources & strategy.</p>
+  <!-- Portfolio 8 BU -->
+  <section class="sec">
+    <h2 class="sec-title">Portfolio Dịch Vụ Công</h2>
+    <p class="sec-sub">3 kênh web chiến lược + 5 mảng đang cân nhắc.</p>
 
-  <div class="service-grid">
-    <div class="service-card strategic">
-      <div class="sc-icon">🏛️</div>
-      <div class="sc-title">Cổng Dịch Vụ Công</div>
-      <div class="sc-desc">Thông tin & hướng dẫn DVC — align đề án Bộ Công An. Checklist thủ tục, quy trình từng bước, nơi nộp hồ sơ.</div>
-      <div class="sc-meta">
-        <span class="sc-badge progress">Đang triển khai</span>
-        <span class="sc-badge live">Web Priority</span>
+    <div class="portfolio-grid">
+      <div class="pf-item strategic" onclick="showService('phat-nguoi')">
+        <div class="pf-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444)">PN</div>
+        <div>
+          <div class="pf-name">Phạt Nguội</div>
+          <div class="pf-desc">Tra cứu vi phạm giao thông + nộp phạt online. 2.5M searches/tháng.</div>
+          <span class="pf-badge" style="background:var(--green-bg);color:var(--green)">LIVE</span>
+        </div>
       </div>
-      <div class="sc-volume">Cluster: 5M+ searches/tháng</div>
-    </div>
-    <div class="service-card strategic">
-      <div class="sc-icon">🚗</div>
-      <div class="sc-title">Phạt Nguội</div>
-      <div class="sc-desc">Utility tra cứu vi phạm giao thông — quản lý độc lập tại BRD riêng. Phase 1 đã LIVE.</div>
-      <div class="sc-meta">
-        <span class="sc-badge live">LIVE</span>
-        <span class="sc-badge live">BRD Riêng</span>
+      <div class="pf-item strategic">
+        <div class="pf-icon" style="background:linear-gradient(135deg,#1e40af,#3b82f6)">DV</div>
+        <div>
+          <div class="pf-name">Cổng Dịch Vụ Công</div>
+          <div class="pf-desc">Info & hướng dẫn DVC — đề án Bộ Công An.</div>
+          <span class="pf-badge" style="background:var(--amber-bg);color:var(--amber)">Đang triển khai</span>
+        </div>
       </div>
-      <div class="sc-volume">2,536,090 searches/tháng</div>
-    </div>
-    <div class="service-card strategic">
-      <div class="sc-icon">🛣️</div>
-      <div class="sc-title">ePass / ETC</div>
-      <div class="sc-desc">Build Foundation — liên kết Payment Gateway MoMo. 1 User ↔ 1 Payment Gateway cho trạm thu phí.</div>
-      <div class="sc-meta">
-        <span class="sc-badge plan">Build Foundation</span>
-        <span class="sc-badge progress">Payment Lane</span>
+      <div class="pf-item strategic">
+        <div class="pf-icon" style="background:linear-gradient(135deg,#059669,#34d399)">EP</div>
+        <div>
+          <div class="pf-name">ePass / ETC</div>
+          <div class="pf-desc">Build Foundation — Payment Gateway liên kết MoMo.</div>
+          <span class="pf-badge" style="background:var(--blue-bg);color:var(--blue)">Build Foundation</span>
+        </div>
+      </div>
+      <div class="pf-item">
+        <div class="pf-icon" style="background:#94a3b8">MT</div>
+        <div><div class="pf-name">Metro</div><div class="pf-desc">Giao thông công cộng — cân nhắc resources.</div></div>
+      </div>
+      <div class="pf-item">
+        <div class="pf-icon" style="background:#94a3b8">BS</div>
+        <div><div class="pf-name">Bus</div><div class="pf-desc">Vé buýt công cộng.</div></div>
+      </div>
+      <div class="pf-item">
+        <div class="pf-icon" style="background:#94a3b8">TX</div>
+        <div><div class="pf-name">Thuế</div><div class="pf-desc">Nộp thuế TNCN, quyết toán thuế.</div></div>
+      </div>
+      <div class="pf-item">
+        <div class="pf-icon" style="background:#94a3b8">BH</div>
+        <div><div class="pf-name">BHXH</div><div class="pf-desc">Bảo hiểm xã hội — overlap BHYT.</div></div>
+      </div>
+      <div class="pf-item">
+        <div class="pf-icon" style="background:#94a3b8">GD</div>
+        <div><div class="pf-name">Giáo dục</div><div class="pf-desc">Xét tuyển ĐH — MoMo dẫn đầu 39% share.</div></div>
       </div>
     </div>
-    <div class="service-card">
-      <div class="sc-icon">🚇</div>
-      <div class="sc-title">Metro</div>
-      <div class="sc-desc">TBD — đang cân nhắc resources & strategy cho mảng giao thông công cộng.</div>
-      <div class="sc-meta"><span class="sc-badge consider">Cân nhắc</span></div>
-    </div>
-    <div class="service-card">
-      <div class="sc-icon">🚌</div>
-      <div class="sc-title">Bus (Vé buýt)</div>
-      <div class="sc-desc">TBD — vé buýt công cộng, phương tiện di chuyển phổ thông.</div>
-      <div class="sc-meta"><span class="sc-badge consider">Cân nhắc</span></div>
-    </div>
-    <div class="service-card">
-      <div class="sc-icon">💰</div>
-      <div class="sc-title">Thuế</div>
-      <div class="sc-desc">TBD — nộp thuế TNCN, quyết toán thuế cuối năm, thuế TNDN SME.</div>
-      <div class="sc-meta"><span class="sc-badge consider">Cân nhắc</span></div>
-    </div>
-    <div class="service-card">
-      <div class="sc-icon">🏥</div>
-      <div class="sc-title">BHXH</div>
-      <div class="sc-desc">TBD — overlap với BHYT, bảo hiểm xã hội tự nguyện.</div>
-      <div class="sc-meta"><span class="sc-badge consider">Cân nhắc</span></div>
-    </div>
-    <div class="service-card">
-      <div class="sc-icon">🎓</div>
-      <div class="sc-title">Giáo dục</div>
-      <div class="sc-desc">TBD — xét tuyển đại học (MoMo dẫn đầu 39% share), đóng học phí online.</div>
-      <div class="sc-meta"><span class="sc-badge consider">Cân nhắc</span></div>
-      <div class="sc-volume">MoMo #1 xét tuyển ĐH (39%)</div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ── TTHC Service Pages ── -->
-<section class="section" style="padding-top:0">
-  <div class="section-tag">Thủ tục hành chính</div>
-  <h2 class="section-title">Tra cứu theo loại thủ tục</h2>
-  <p class="section-sub">Top 10 cluster thủ tục có volume search cao nhất — mỗi trang hướng dẫn checklist + CTA nộp phí.</p>
+  <!-- Blog -->
+  <section class="sec">
+    <h2 class="sec-title">Hướng dẫn mới nhất</h2>
+    <div class="blog-list">
+      <div class="blog-item">
+        <div class="blog-item-title">Hướng dẫn đổi Bằng lái xe online 2026 — checklist đầy đủ</div>
+        <div class="blog-item-date">20/06/2026</div>
+      </div>
+      <div class="blog-item">
+        <div class="blog-item-title">MoMo xử lý 11.2% giao dịch DVCQG — top 3 đơn vị thanh toán</div>
+        <div class="blog-item-date">18/06/2026</div>
+      </div>
+      <div class="blog-item">
+        <div class="blog-item-title">Cách nộp thuế TNCN online qua MoMo — không cần ra cơ quan thuế</div>
+        <div class="blog-item-date">15/06/2026</div>
+      </div>
+    </div>
+  </section>
 
-  <div class="tthc-grid">
-    <a class="tthc-card" href="#doi-bang-lai">
-      <div class="tthc-icon">🪪</div>
-      <div class="tthc-name">Đổi Bằng Lái Xe</div>
-      <div class="tthc-kw">/dich-vu-cong/doi-bang-lai-xe</div>
-      <div class="tthc-vol">230,810/tháng</div>
-    </a>
-    <a class="tthc-card" href="#ho-chieu">
-      <div class="tthc-icon">✈️</div>
-      <div class="tthc-name">Hộ Chiếu</div>
-      <div class="tthc-kw">/dich-vu-cong/ho-chieu</div>
-      <div class="tthc-vol">222,610/tháng</div>
-    </a>
-    <a class="tthc-card" href="#tam-tru">
-      <div class="tthc-icon">🏠</div>
-      <div class="tthc-name">Đăng ký Tạm trú</div>
-      <div class="tthc-kw">/dich-vu-cong/tam-tru</div>
-      <div class="tthc-vol">154,540/tháng</div>
-    </a>
-    <a class="tthc-card" href="#cccd">
-      <div class="tthc-icon">🆔</div>
-      <div class="tthc-name">CCCD</div>
-      <div class="tthc-kw">/dich-vu-cong/gia-han-cccd</div>
-      <div class="tthc-vol">145,690/tháng</div>
-    </a>
-    <a class="tthc-card" href="#ket-hon">
-      <div class="tthc-icon">💍</div>
-      <div class="tthc-name">Đăng ký Kết hôn</div>
-      <div class="tthc-kw">/dich-vu-cong/ket-hon</div>
-      <div class="tthc-vol">89,420/tháng</div>
-    </a>
-    <a class="tthc-card" href="#dang-kiem">
-      <div class="tthc-icon">🔧</div>
-      <div class="tthc-name">Đăng kiểm Xe</div>
-      <div class="tthc-kw">/dich-vu-cong/dang-kiem</div>
-      <div class="tthc-vol">76,870/tháng</div>
-    </a>
-    <a class="tthc-card" href="#thue">
-      <div class="tthc-icon">💰</div>
-      <div class="tthc-name">Nộp Thuế TNCN</div>
-      <div class="tthc-kw">/dich-vu-cong/nop-thue</div>
-      <div class="tthc-vol">50,570/tháng</div>
-    </a>
-    <a class="tthc-card" href="#khai-sinh">
-      <div class="tthc-icon">👶</div>
-      <div class="tthc-name">Khai Sinh</div>
-      <div class="tthc-kw">/dich-vu-cong/khai-sinh</div>
-      <div class="tthc-vol">44,490/tháng</div>
-    </a>
-    <a class="tthc-card" href="#vneid">
-      <div class="tthc-icon">📱</div>
-      <div class="tthc-name">VNeID / Định danh</div>
-      <div class="tthc-kw">/dich-vu-cong/vneid-la-gi</div>
-      <div class="tthc-vol">29,170/tháng</div>
-    </a>
-    <a class="tthc-card" href="#chung-thuc">
-      <div class="tthc-icon">📋</div>
-      <div class="tthc-name">Chứng thực</div>
-      <div class="tthc-kw">/dich-vu-cong/chung-thuc</div>
-      <div class="tthc-vol">27,670/tháng</div>
-    </a>
-  </div>
-</section>
-
-<!-- ── Social Proof ── -->
-<section class="proof-section">
-  <div style="text-align:center">
-    <div class="section-tag">Tin cậy</div>
-    <h2 class="section-title">Con số nói lên tất cả</h2>
-  </div>
-  <div class="proof-grid">
-    <div class="proof-item">
-      <div class="proof-num" id="counter1">0</div>
-      <div class="proof-label">Giao dịch DVC qua MoMo/năm</div>
-    </div>
-    <div class="proof-item">
-      <div class="proof-num" id="counter2">0%</div>
-      <div class="proof-label">Share giao dịch DVCQG</div>
-    </div>
-    <div class="proof-item">
-      <div class="proof-num" id="counter3">0</div>
-      <div class="proof-label">TTHC hỗ trợ thanh toán</div>
-    </div>
-    <div class="proof-item">
-      <div class="proof-num">4.9 ⭐</div>
-      <div class="proof-label">Rating App Store</div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Security & Trust ── -->
-<section class="section">
-  <div class="section-tag">Bảo mật</div>
-  <h2 class="section-title">An toàn — Bảo mật — Đúng quy định</h2>
-  <div class="security-grid">
-    <div class="sec-card">
-      <div class="sec-icon">🔒</div>
-      <div>
-        <div class="sec-title">Mã hóa AES-256</div>
-        <div class="sec-desc">Dữ liệu cá nhân được mã hóa end-to-end theo chuẩn ngân hàng.</div>
-      </div>
-    </div>
-    <div class="sec-card">
-      <div class="sec-icon">🏅</div>
-      <div>
-        <div class="sec-title">ISO 27001</div>
-        <div class="sec-desc">Chứng nhận bảo mật thông tin quốc tế.</div>
-      </div>
-    </div>
-    <div class="sec-card">
-      <div class="sec-icon">📜</div>
-      <div>
-        <div class="sec-title">Nghị định 52/2024</div>
-        <div class="sec-desc">Tuân thủ quy định thanh toán không dùng tiền mặt.</div>
-      </div>
-    </div>
-    <div class="sec-card">
-      <div class="sec-icon">🤝</div>
-      <div>
-        <div class="sec-title">Đối tác DVCQG</div>
-        <div class="sec-desc">Kênh thanh toán chính thức trên Cổng Dịch vụ công Quốc gia.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Blog Preview ── -->
-<section class="section" style="padding-top:0">
-  <div class="section-tag">Tin tức & Hướng dẫn</div>
-  <h2 class="section-title">Bài viết mới nhất</h2>
-  <div class="blog-grid">
-    <div class="blog-card">
-      <div class="blog-img">📝</div>
-      <div class="blog-body">
-        <div class="blog-cat">Thủ tục</div>
-        <div class="blog-title">Hướng dẫn đổi Bằng lái xe online 2026 — Checklist đầy đủ</div>
-        <div class="blog-date">20 tháng 6, 2026</div>
-      </div>
-    </div>
-    <div class="blog-card">
-      <div class="blog-img">🏛️</div>
-      <div class="blog-body">
-        <div class="blog-cat">DVC</div>
-        <div class="blog-title">MoMo xử lý 11.2% giao dịch DVCQG — Top 3 đơn vị thanh toán</div>
-        <div class="blog-date">18 tháng 6, 2026</div>
-      </div>
-    </div>
-    <div class="blog-card">
-      <div class="blog-img">💡</div>
-      <div class="blog-body">
-        <div class="blog-cat">Hướng dẫn</div>
-        <div class="blog-title">Cách nộp thuế TNCN online qua MoMo — Không cần ra cơ quan thuế</div>
-        <div class="blog-date">15 tháng 6, 2026</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── App CTA ── -->
-<section class="app-cta">
-  <h2>Tải MoMo — Nộp phí DVC ngay</h2>
-  <p>Mở App để hoàn thành thủ tục: nộp phạt, đóng thuế, gia hạn BHYT và 1,900+ TTHC khác.</p>
-  <div class="app-btn-row">
-    <a class="app-btn" href="#">
-      <span class="ab-icon">🍎</span>
-      <div><div style="font-size:10px;opacity:.7">Download on</div>App Store</div>
-    </a>
-    <a class="app-btn" href="#">
-      <span class="ab-icon">▶️</span>
-      <div><div style="font-size:10px;opacity:.7">Get it on</div>Google Play</div>
-    </a>
-  </div>
-  <div class="qr-grid">
-    <div class="qr-box">QR<br>Code</div>
-  </div>
-</section>
-
-<!-- ── Sticky CTA ── -->
-<div class="sticky-cta" id="stickyCta">
-  <p>🏛️ Nộp phí thủ tục hành chính ngay trên MoMo</p>
-  <button class="btn-primary" onclick="window.open('#','_blank')">Mở App MoMo</button>
 </div>
 
-<!-- ── Footer ── -->
+<!-- Sticky CTA -->
+<div class="fixed-cta" id="fixedCta">
+  <div class="fixed-cta-text"><strong>Nộp phí DVC qua MoMo</strong>1,900+ thủ tục hành chính</div>
+  <button class="fixed-cta-btn" onclick="openApp()">Mở App</button>
+  <button class="fixed-cta-x" onclick="this.parentElement.classList.remove('show')">×</button>
+</div>
+
+<!-- Footer -->
 <footer class="footer">
   <div>© 2026 MoMo — Ví điện tử hàng đầu Việt Nam</div>
-  <div><a href="#">Điều khoản</a> · <a href="#">Bảo mật</a> · <a href="#">Liên hệ</a></div>
-  <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,.3)">Prototype — Dịch Vụ Công Governance Hub v1.0</div>
+  <div>Prototype — Dịch Vụ Công Governance Hub v1.0</div>
 </footer>
 
 <script>
-// ─── Search Auto-suggest ────────────────────────────────────────────────────
+// ─── Search ─────────────────────────────────────────────────────────────────
 const SEARCH_DATA = [
-  {icon:'🚗',kw:'phạt nguội',vol:'2.5M',url:'/phat-nguoi'},
-  {icon:'🪪',kw:'đổi bằng lái xe',vol:'230K',url:'/dich-vu-cong/doi-bang-lai-xe'},
-  {icon:'✈️',kw:'làm hộ chiếu online',vol:'222K',url:'/dich-vu-cong/ho-chieu'},
-  {icon:'🏠',kw:'đăng ký tạm trú online',vol:'154K',url:'/dich-vu-cong/tam-tru'},
-  {icon:'🆔',kw:'gia hạn cccd',vol:'145K',url:'/dich-vu-cong/gia-han-cccd'},
-  {icon:'💍',kw:'thủ tục đăng ký kết hôn',vol:'89K',url:'/dich-vu-cong/ket-hon'},
-  {icon:'🔧',kw:'đăng kiểm xe',vol:'76K',url:'/dich-vu-cong/dang-kiem'},
-  {icon:'💰',kw:'nộp thuế tncn online',vol:'50K',url:'/dich-vu-cong/nop-thue'},
-  {icon:'👶',kw:'đăng ký khai sinh',vol:'44K',url:'/dich-vu-cong/khai-sinh'},
-  {icon:'📱',kw:'vneid là gì',vol:'29K',url:'/dich-vu-cong/vneid-la-gi'},
-  {icon:'📋',kw:'chứng thực bản sao',vol:'27K',url:'/dich-vu-cong/chung-thuc'},
-  {icon:'🏢',kw:'đăng ký kinh doanh',vol:'',url:'/dich-vu-cong/dang-ky-kinh-doanh'},
+  {kw:'phạt nguội',vol:'2.5M',href:'phat-nguoi-ha-noi.html'},
+  {kw:'đổi bằng lái xe',vol:'230K',svc:'doi-gplx'},
+  {kw:'làm hộ chiếu online',vol:'222K',svc:'ho-chieu'},
+  {kw:'đăng ký tạm trú',vol:'154K',svc:'tam-tru'},
+  {kw:'gia hạn cccd',vol:'145K',svc:'cccd'},
+  {kw:'đăng ký kết hôn',vol:'89K',svc:'ket-hon'},
+  {kw:'đăng kiểm xe',vol:'76K',svc:'dang-kiem'},
+  {kw:'nộp thuế tncn online',vol:'50K',svc:'thue'},
+  {kw:'đăng ký khai sinh',vol:'44K',svc:'khai-sinh'},
+  {kw:'vneid là gì',vol:'29K'},
+  {kw:'chứng thực bản sao',vol:'27K'},
 ];
 
 const searchInput = document.getElementById('searchInput');
@@ -616,416 +753,141 @@ searchInput.addEventListener('input', function(){
   if(!q){ suggestBox.classList.remove('active'); return; }
   const matches = SEARCH_DATA.filter(d => d.kw.includes(q)).slice(0,6);
   if(!matches.length){ suggestBox.classList.remove('active'); return; }
-  suggestBox.innerHTML = matches.map(d =>
-    `<div class="suggest-item" onclick="window.location.hash='${d.kw.replace(/\s/g,'-')}'">
-      <span class="si-icon">${d.icon}</span> ${d.kw}
-      ${d.vol ? `<span class="si-vol">${d.vol}/th</span>` : ''}
-    </div>`
-  ).join('');
+  suggestBox.innerHTML = matches.map(d => {
+    const action = d.href
+      ? `window.location.href='${d.href}'`
+      : d.svc ? `showService('${d.svc}')` : '';
+    return `<div class="suggest-item" onclick="${action}">${d.kw}<span class="suggest-vol">${d.vol}/th</span></div>`;
+  }).join('');
   suggestBox.classList.add('active');
 });
-
 searchInput.addEventListener('blur', ()=> setTimeout(()=> suggestBox.classList.remove('active'), 200));
 function handleSearch(){ searchInput.dispatchEvent(new Event('input')); }
 
-// ─── Smart Checklist Generator ──────────────────────────────────────────────
-const CHECKLIST_DB = {
-  'doi-gplx': {
-    title: 'Đổi Giấy phép Lái xe',
-    statuses: [
-      {emoji:'⏰',label:'GPLX sắp hết hạn',id:'expiring'},
-      {emoji:'💥',label:'GPLX bị hỏng / mất',id:'damaged'},
-      {emoji:'🔄',label:'Đổi từ GPLX cũ sang PET',id:'upgrade'},
-    ],
-    checklists: {
-      expiring: {
-        items: [
-          {type:'check',text:'CCCD/CMND gốc (còn hiệu lực)'},
-          {type:'check',text:'GPLX cũ (bản gốc)'},
-          {type:'check',text:'Giấy khám sức khỏe (trong 6 tháng) — cơ sở y tế cấp huyện trở lên'},
-          {type:'check',text:'Ảnh 3x4 nền trắng (2 tấm)'},
-          {type:'check',text:'Đơn đề nghị đổi GPLX (mẫu tại Sở GTVT hoặc dichvucong.gov.vn)'},
-          {type:'warn',text:'Lệ phí: 135.000đ (nộp tại quầy hoặc online qua MoMo)'},
-        ],
-        info: 'Thời gian xử lý: 5 ngày làm việc. Nộp hồ sơ tại Sở GTVT hoặc qua Cổng DVCQG.',
-        deadline: 'Nộp trước ngày hết hạn trên GPLX. Quá hạn > 3 tháng phải thi lại lý thuyết.'
-      },
-      damaged: {
-        items: [
-          {type:'check',text:'CCCD/CMND gốc (còn hiệu lực)'},
-          {type:'check',text:'Giấy khám sức khỏe (trong 6 tháng)'},
-          {type:'check',text:'Ảnh 3x4 nền trắng (2 tấm)'},
-          {type:'check',text:'Đơn đề nghị cấp lại GPLX (khai báo lý do mất/hỏng)'},
-          {type:'warn',text:'Nếu mất: cần xác nhận của công an (nếu có biên bản)'},
-          {type:'warn',text:'Lệ phí: 135.000đ'},
-        ],
-        info: 'Thời gian xử lý: 5-10 ngày làm việc. Có thể phải xác minh thông tin nếu mất.',
-      },
-      upgrade: {
-        items: [
-          {type:'check',text:'CCCD/CMND gốc'},
-          {type:'check',text:'GPLX cũ (bản giấy/bìa)'},
-          {type:'check',text:'Giấy khám sức khỏe (trong 6 tháng)'},
-          {type:'check',text:'Ảnh 3x4 nền trắng (2 tấm)'},
-          {type:'check',text:'Đơn đề nghị đổi GPLX'},
-          {type:'warn',text:'Lệ phí: 135.000đ'},
-        ],
-        info: 'Đổi sang thẻ PET mới theo Thông tư 05/2024 — vẫn giữ nguyên hạng và thời hạn.',
-      }
-    }
-  },
-  'cccd': {
-    title: 'Gia hạn / Cấp lại CCCD',
-    statuses: [
-      {emoji:'⏰',label:'CCCD sắp hết hạn',id:'expiring'},
-      {emoji:'💥',label:'CCCD bị mất',id:'lost'},
-      {emoji:'📝',label:'Thay đổi thông tin (tên, địa chỉ)',id:'change'},
-    ],
-    checklists: {
-      expiring: {
-        items: [
-          {type:'check',text:'CCCD cũ (bản gốc)'},
-          {type:'check',text:'Tờ khai cấp CCCD (mẫu CC01)'},
-          {type:'check',text:'Sổ hộ khẩu / Xác nhận nơi cư trú'},
-          {type:'warn',text:'Lệ phí: 25.000đ (đổi) hoặc 50.000đ (cấp lại do mất)'},
-        ],
-        info: 'Nộp tại Công an quận/huyện hoặc qua VNeID. Thời gian: 7-15 ngày.',
-      },
-      lost: {
-        items: [
-          {type:'check',text:'Tờ khai cấp CCCD (mẫu CC01) — khai báo mất'},
-          {type:'check',text:'Sổ hộ khẩu / Giấy xác nhận nơi cư trú'},
-          {type:'check',text:'Giấy tờ tùy thân khác (Hộ chiếu, GPLX) nếu có'},
-          {type:'warn',text:'Lệ phí: 50.000đ'},
-        ],
-        info: 'Nộp tại Công an quận/huyện. Cần chụp ảnh và lấy vân tay tại chỗ.',
-      },
-      change: {
-        items: [
-          {type:'check',text:'CCCD cũ (bản gốc)'},
-          {type:'check',text:'Giấy tờ chứng minh thay đổi (Quyết định đổi tên, Giấy đăng ký kết hôn...)'},
-          {type:'check',text:'Tờ khai cấp CCCD (mẫu CC01)'},
-          {type:'warn',text:'Lệ phí: 25.000đ'},
-        ],
-        info: 'Thay đổi thông tin trên CCCD cần giấy tờ gốc chứng minh. Thời gian: 7-15 ngày.',
-      }
-    }
-  },
-  'ho-chieu': {
-    title: 'Làm Hộ chiếu',
-    statuses: [
-      {emoji:'🆕',label:'Cấp mới lần đầu',id:'new'},
-      {emoji:'🔄',label:'Gia hạn / Cấp lại',id:'renew'},
-    ],
-    checklists: {
-      new: {
-        items: [
-          {type:'check',text:'CCCD gốc (còn hiệu lực)'},
-          {type:'check',text:'Tờ khai đề nghị cấp hộ chiếu (mẫu X01)'},
-          {type:'check',text:'Ảnh 4x6 nền trắng (2 tấm, chụp < 6 tháng)'},
-          {type:'check',text:'Sổ hộ khẩu / Xác nhận thường trú'},
-          {type:'warn',text:'Lệ phí: 200.000đ (thường) / 400.000đ (cấp nhanh 3 ngày)'},
-        ],
-        info: 'Nộp tại Phòng Quản lý XNC Công an tỉnh/TP hoặc qua Cổng DVCQG. Thời gian: 8-10 ngày (thường), 3 ngày (nhanh).',
-      },
-      renew: {
-        items: [
-          {type:'check',text:'CCCD gốc'},
-          {type:'check',text:'Hộ chiếu cũ (bản gốc)'},
-          {type:'check',text:'Tờ khai đề nghị cấp hộ chiếu (mẫu X01)'},
-          {type:'check',text:'Ảnh 4x6 nền trắng (2 tấm)'},
-          {type:'warn',text:'Lệ phí: 200.000đ'},
-        ],
-        info: 'Hộ chiếu hết hạn hoặc còn < 6 tháng có thể xin cấp lại.',
-      }
-    }
-  },
-  'khai-sinh': {
-    title: 'Đăng ký Khai sinh',
-    statuses: [
-      {emoji:'👶',label:'Khai sinh trong hạn (< 60 ngày)',id:'ontime'},
-      {emoji:'⏰',label:'Khai sinh quá hạn',id:'late'},
-    ],
-    checklists: {
-      ontime: {
-        items: [
-          {type:'check',text:'Giấy chứng sinh (do bệnh viện cấp)'},
-          {type:'check',text:'CCCD/CMND của cha và mẹ'},
-          {type:'check',text:'Giấy đăng ký kết hôn của cha mẹ (nếu có)'},
-          {type:'check',text:'Sổ hộ khẩu / Xác nhận nơi cư trú'},
-          {type:'check',text:'Tờ khai đăng ký khai sinh (mẫu tại UBND)'},
-        ],
-        info: 'Nộp tại UBND xã/phường nơi cư trú. Miễn lệ phí. Giải quyết trong ngày.',
-      },
-      late: {
-        items: [
-          {type:'check',text:'Giấy chứng sinh (bệnh viện)'},
-          {type:'check',text:'CCCD/CMND của cha và mẹ'},
-          {type:'check',text:'Giấy đăng ký kết hôn (nếu có)'},
-          {type:'check',text:'Sổ hộ khẩu'},
-          {type:'warn',text:'Có thể bị phạt hành chính 1-3 triệu đồng nếu quá hạn'},
-        ],
-        info: 'Khai sinh quá 60 ngày vẫn được đăng ký nhưng có thể bị xử phạt theo NĐ 82/2020.',
-      }
-    }
-  },
-  'ket-hon': {
-    title: 'Đăng ký Kết hôn',
-    statuses: [
-      {emoji:'💍',label:'Hai bên đều là công dân VN',id:'domestic'},
-      {emoji:'🌍',label:'Kết hôn có yếu tố nước ngoài',id:'foreign'},
-    ],
-    checklists: {
-      domestic: {
-        items: [
-          {type:'check',text:'CCCD/CMND của cả hai bên (bản gốc)'},
-          {type:'check',text:'Tờ khai đăng ký kết hôn (mẫu tại UBND)'},
-          {type:'check',text:'Giấy xác nhận tình trạng hôn nhân (do UBND nơi cư trú cấp)'},
-          {type:'check',text:'Sổ hộ khẩu / Xác nhận nơi cư trú'},
-        ],
-        info: 'Nộp tại UBND xã/phường. Miễn lệ phí. Giải quyết trong ngày. Cả hai phải có mặt.',
-      },
-      foreign: {
-        items: [
-          {type:'check',text:'CCCD/CMND bên VN + Hộ chiếu bên nước ngoài'},
-          {type:'check',text:'Giấy xác nhận tình trạng hôn nhân (cả hai bên, hợp pháp hóa lãnh sự)'},
-          {type:'check',text:'Giấy khám sức khỏe (bên nước ngoài)'},
-          {type:'check',text:'Bản dịch công chứng các giấy tờ nước ngoài'},
-          {type:'warn',text:'Lệ phí: 1.000.000đ'},
-        ],
-        info: 'Nộp tại Sở Tư pháp tỉnh/TP. Thời gian: 15-25 ngày làm việc.',
-      }
-    }
-  },
-  'tam-tru': {
-    title: 'Đăng ký Tạm trú',
-    statuses: [
-      {emoji:'🏠',label:'Đăng ký tạm trú mới',id:'new'},
-      {emoji:'🔄',label:'Gia hạn tạm trú',id:'renew'},
-    ],
-    checklists: {
-      new: {
-        items: [
-          {type:'check',text:'CCCD/CMND (bản gốc)'},
-          {type:'check',text:'Phiếu khai báo tạm trú (mẫu CT01)'},
-          {type:'check',text:'Giấy tờ chứng minh chỗ ở hợp pháp (Hợp đồng thuê nhà, Sổ đỏ, Giấy đồng ý cho ở nhờ...)'},
-          {type:'check',text:'CCCD chủ hộ (nếu đăng ký vào hộ khác)'},
-        ],
-        info: 'Nộp tại Công an xã/phường nơi tạm trú. Miễn lệ phí. Giải quyết trong ngày.',
-      },
-      renew: {
-        items: [
-          {type:'check',text:'CCCD/CMND'},
-          {type:'check',text:'Phiếu khai báo tạm trú (mẫu CT01)'},
-          {type:'check',text:'Giấy tờ chỗ ở hợp pháp (gia hạn hợp đồng thuê nếu có)'},
-        ],
-        info: 'Tạm trú có thời hạn tối đa 2 năm, gia hạn nhiều lần. Miễn lệ phí.',
-      }
-    }
-  },
-  'thue': {
-    title: 'Nộp Thuế TNCN',
-    statuses: [
-      {emoji:'💰',label:'Quyết toán thuế hàng năm',id:'annual'},
-      {emoji:'📅',label:'Khai thuế tạm nộp hàng quý',id:'quarterly'},
-    ],
-    checklists: {
-      annual: {
-        items: [
-          {type:'check',text:'MST cá nhân (Mã số thuế)'},
-          {type:'check',text:'Tài khoản thuedientu.gdt.gov.vn hoặc VNeID'},
-          {type:'check',text:'Chứng từ thu nhập năm (từ công ty, freelance...)'},
-          {type:'check',text:'Giấy tờ giảm trừ gia cảnh (nếu có người phụ thuộc)'},
-          {type:'warn',text:'Deadline: 30/04 hàng năm. Chậm nộp bị phạt 0.03%/ngày.'},
-        ],
-        info: 'Khai online tại thuedientu.gdt.gov.vn → Nộp tiền qua MoMo. Luật Thuế TNCN sửa đổi 2025: giảm trừ 15.5tr/tháng.',
-      },
-      quarterly: {
-        items: [
-          {type:'check',text:'MST cá nhân'},
-          {type:'check',text:'Tài khoản thuedientu.gdt.gov.vn'},
-          {type:'check',text:'Tổng thu nhập quý (tổng hợp hóa đơn, hợp đồng)'},
-          {type:'warn',text:'Deadline: ngày 30 tháng đầu quý sau'},
-        ],
-        info: 'Áp dụng cho cá nhân có thu nhập từ kinh doanh, cho thuê tài sản, freelance.',
-      }
-    }
-  },
-  'dang-kiem': {
-    title: 'Đăng kiểm Xe',
-    statuses: [
-      {emoji:'🚗',label:'Đăng kiểm định kỳ',id:'periodic'},
-      {emoji:'🆕',label:'Đăng kiểm lần đầu (xe mới)',id:'new'},
-    ],
-    checklists: {
-      periodic: {
-        items: [
-          {type:'check',text:'Giấy đăng ký xe (bản gốc)'},
-          {type:'check',text:'Giấy chứng nhận BHTNDS còn hiệu lực'},
-          {type:'check',text:'Xe sạch sẽ, hoạt động bình thường (đèn, phanh, khí thải)'},
-          {type:'warn',text:'Phí đăng kiểm: 240.000-560.000đ tùy loại xe'},
-        ],
-        info: 'Xe < 7 chỗ: kiểm định 2 năm/lần (xe mới), 1 năm/lần (xe > 7 năm). Đặt lịch tại dangkiem.vn.',
-      },
-      new: {
-        items: [
-          {type:'check',text:'Giấy đăng ký xe mới'},
-          {type:'check',text:'Hóa đơn mua xe'},
-          {type:'check',text:'Giấy chứng nhận BHTNDS'},
-          {type:'check',text:'Tờ khai đăng kiểm'},
-        ],
-        info: 'Xe mới mua: được miễn đăng kiểm lần đầu nếu có Giấy chứng nhận chất lượng từ nhà sản xuất.',
-      }
-    }
-  }
+// ─── Service Nav ────────────────────────────────────────────────────────────
+function showService(id) {
+  document.querySelectorAll('.svc-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.qn-item').forEach(q => q.classList.remove('active'));
+  const panel = document.getElementById('svc-' + id);
+  if(panel) { panel.classList.add('active'); panel.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  const navItems = document.querySelectorAll('.qn-item');
+  const map = {'phat-nguoi':0,'doi-gplx':1,'cccd':2,'ho-chieu':3,'ket-hon':4,'khai-sinh':5};
+  if(map[id] !== undefined && navItems[map[id]]) navItems[map[id]].classList.add('active');
+}
+
+// ─── Checklist Generator ────────────────────────────────────────────────────
+const GEN_DB = {
+  'doi-gplx':  {label:'Đổi GPLX', statuses:[{id:'expiring',label:'GPLX sắp hết hạn'},{id:'damaged',label:'Mất / Hỏng'},{id:'upgrade',label:'Đổi sang PET'}]},
+  'cccd':      {label:'CCCD', statuses:[{id:'expiring',label:'Hết hạn'},{id:'lost',label:'Mất'},{id:'change',label:'Thay đổi thông tin'}]},
+  'ho-chieu':  {label:'Hộ chiếu', statuses:[{id:'new',label:'Cấp mới lần đầu'},{id:'renew',label:'Gia hạn / Cấp lại'}]},
+  'khai-sinh': {label:'Khai sinh', statuses:[{id:'ontime',label:'Trong hạn (< 60 ngày)'},{id:'late',label:'Quá hạn'}]},
+  'ket-hon':   {label:'Kết hôn', statuses:[{id:'domestic',label:'Hai bên công dân VN'},{id:'foreign',label:'Có yếu tố nước ngoài'}]},
+  'tam-tru':   {label:'Tạm trú', statuses:[{id:'new',label:'Đăng ký mới'},{id:'renew',label:'Gia hạn'}]},
+  'thue':      {label:'Thuế TNCN', statuses:[{id:'annual',label:'Quyết toán năm'},{id:'quarterly',label:'Tạm nộp quý'}]},
+  'dang-kiem': {label:'Đăng kiểm', statuses:[{id:'periodic',label:'Định kỳ'},{id:'new',label:'Lần đầu (xe mới)'}]},
 };
 
-let selectedService = null;
-let selectedProvince = null;
+const GEN_RESULTS = {
+  'doi-gplx-expiring': {items:['CCCD gốc (còn hiệu lực)','GPLX cũ (bản gốc)','Giấy khám sức khỏe — cơ sở cấp huyện, trong 6 tháng','Ảnh 3×4 nền trắng (2 tấm)','Đơn đề nghị đổi GPLX'],fee:'135.000đ',time:'5 ngày làm việc',warn:'Quá hạn > 3 tháng phải thi lại lý thuyết.'},
+  'doi-gplx-damaged':  {items:['CCCD gốc','Giấy khám sức khỏe (6 tháng)','Ảnh 3×4 nền trắng','Đơn khai báo mất/hỏng'],fee:'135.000đ',time:'5–10 ngày',warn:'Nếu mất: cần xác nhận của công an.'},
+  'doi-gplx-upgrade':  {items:['CCCD gốc','GPLX cũ (bìa/giấy)','Giấy khám sức khỏe','Ảnh 3×4','Đơn đổi GPLX'],fee:'135.000đ',time:'5 ngày'},
+  'cccd-expiring':     {items:['CCCD cũ (gốc)','Tờ khai CC01','Sổ hộ khẩu / Xác nhận cư trú'],fee:'25.000đ',time:'7–15 ngày'},
+  'cccd-lost':         {items:['Tờ khai CC01 — khai mất','Sổ hộ khẩu / Xác nhận cư trú','Giấy tờ tùy thân khác (nếu có)'],fee:'50.000đ',time:'7–15 ngày'},
+  'cccd-change':       {items:['CCCD cũ (gốc)','Giấy chứng minh thay đổi (QĐ đổi tên, Giấy kết hôn...)','Tờ khai CC01'],fee:'25.000đ',time:'7–15 ngày'},
+  'ho-chieu-new':      {items:['CCCD gốc','Tờ khai X01','Ảnh 4×6 nền trắng (2 tấm)','Sổ hộ khẩu / Xác nhận thường trú'],fee:'200.000đ (thường) / 400.000đ (nhanh)',time:'8–10 ngày / 3 ngày'},
+  'ho-chieu-renew':    {items:['CCCD gốc','Hộ chiếu cũ','Tờ khai X01','Ảnh 4×6'],fee:'200.000đ',time:'8–10 ngày'},
+  'khai-sinh-ontime':  {items:['Giấy chứng sinh (bệnh viện)','CCCD cha & mẹ','Giấy kết hôn (nếu có)','Sổ hộ khẩu','Tờ khai khai sinh'],fee:'Miễn phí',time:'Trong ngày'},
+  'khai-sinh-late':    {items:['Giấy chứng sinh','CCCD cha & mẹ','Giấy kết hôn (nếu có)','Sổ hộ khẩu'],fee:'Miễn phí',time:'Trong ngày',warn:'Có thể bị phạt 1–3 triệu đồng (NĐ 82/2020).'},
+  'ket-hon-domestic':  {items:['CCCD cả hai bên (gốc)','Tờ khai kết hôn','Giấy xác nhận tình trạng hôn nhân','Sổ hộ khẩu'],fee:'Miễn phí',time:'Trong ngày'},
+  'ket-hon-foreign':   {items:['CCCD bên VN + Hộ chiếu bên nước ngoài','Giấy xác nhận hôn nhân (hợp pháp hóa)','Giấy khám sức khỏe','Bản dịch công chứng'],fee:'1.000.000đ',time:'15–25 ngày'},
+  'tam-tru-new':       {items:['CCCD gốc','Phiếu khai báo CT01','Giấy tờ chỗ ở (Hợp đồng thuê / Sổ đỏ / Đồng ý cho ở nhờ)','CCCD chủ hộ'],fee:'Miễn phí',time:'Trong ngày'},
+  'tam-tru-renew':     {items:['CCCD','Phiếu CT01','Hợp đồng thuê gia hạn'],fee:'Miễn phí',time:'Trong ngày'},
+  'thue-annual':       {items:['Mã số thuế cá nhân','Tài khoản thuedientu.gdt.gov.vn','Chứng từ thu nhập năm','Giấy tờ giảm trừ gia cảnh'],fee:'Theo bảng thuế',time:'Trước 30/04',warn:'Chậm nộp: phạt 0.03%/ngày trên số thuế chậm.'},
+  'thue-quarterly':    {items:['MST cá nhân','Tài khoản thuedientu','Tổng thu nhập quý'],fee:'Theo bảng thuế',time:'Ngày 30 tháng đầu quý sau'},
+  'dang-kiem-periodic':{items:['Giấy đăng ký xe (gốc)','BHTNDS còn hiệu lực','Xe sạch, hoạt động bình thường'],fee:'240.000–560.000đ',time:'Trong ngày'},
+  'dang-kiem-new':     {items:['Giấy đăng ký xe mới','Hóa đơn mua xe','BHTNDS','Tờ khai đăng kiểm'],fee:'240.000–560.000đ',time:'Trong ngày'},
+};
 
-function selectService(el, serviceId) {
-  document.querySelectorAll('#step1 .cl-option').forEach(o => o.classList.remove('selected'));
+let genSvc = null, genProvince = null;
+
+function genSelect(el, val, step) {
+  el.parentElement.querySelectorAll('.gen-opt').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
-  selectedService = serviceId;
-  setTimeout(() => {
-    goToStep(2);
-  }, 200);
+
+  if(step === 1) { genSvc = val; setTimeout(()=> genGoTo(2), 180); }
+  else if(step === 2) { genProvince = val; renderGenStep3(); setTimeout(()=> genGoTo(3), 180); }
+  else if(step === 3) { renderGenResult(val); setTimeout(()=> genGoTo(4), 180); }
 }
 
-function selectProvince(el, province) {
-  document.querySelectorAll('#step2 .cl-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedProvince = province;
-  setTimeout(() => {
-    renderStep3();
-    goToStep(3);
-  }, 200);
-}
-
-function renderStep3() {
-  const svc = CHECKLIST_DB[selectedService];
-  if (!svc) return;
-  const opts = svc.statuses.map(s =>
-    `<div class="cl-option" onclick="selectStatus(this,'${s.id}')"><span class="cl-emoji">${s.emoji}</span> ${s.label}</div>`
+function renderGenStep3() {
+  const svc = GEN_DB[genSvc];
+  if(!svc) return;
+  document.getElementById('gs3Opts').innerHTML = svc.statuses.map(s =>
+    `<div class="gen-opt" onclick="genSelect(this,'${s.id}',3)">${s.label}</div>`
   ).join('');
-  document.getElementById('step3Options').innerHTML = opts;
 }
 
-function selectStatus(el, statusId) {
-  document.querySelectorAll('#step3 .cl-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  setTimeout(() => {
-    renderResult(statusId);
-    goToStep(4);
-  }, 200);
-}
+function renderGenResult(statusId) {
+  const key = genSvc + '-' + statusId;
+  const data = GEN_RESULTS[key];
+  if(!data) { document.getElementById('gsResult').innerHTML = '<p style="color:var(--sub);font-size:13px">Không tìm thấy dữ liệu cho tổ hợp này.</p>'; return; }
 
-function renderResult(statusId) {
-  const svc = CHECKLIST_DB[selectedService];
-  const data = svc.checklists[statusId];
-  if (!data) return;
-
-  const items = data.items.map(i =>
-    `<li><span class="${i.type === 'check' ? 'cl-check' : 'cl-warn'}">${i.type === 'check' ? '✅' : '⚠️'}</span> ${i.text}</li>`
-  ).join('');
-
-  let html = `
-    <div class="cl-result">
-      <div class="cl-result-header">
-        <h3>📋 ${svc.title}</h3>
+  const items = data.items.map(i => `<li><span class="cl-mark cl-ok">✓</span>${i}</li>`).join('');
+  document.getElementById('gsResult').innerHTML = `
+    <div style="background:var(--bg);border-radius:var(--r);padding:16px">
+      <h4 style="font-size:15px;font-weight:700;margin-bottom:12px;font-family:var(--font-display)">${GEN_DB[genSvc].label}</h4>
+      <ul class="cl-list">${items}</ul>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:12px">
+        <span><strong style="color:var(--ink)">Lệ phí:</strong> ${data.fee}</span>
+        <span><strong style="color:var(--ink)">Thời gian:</strong> ${data.time}</span>
       </div>
-      <ul class="cl-checklist">${items}</ul>
-      ${data.info ? `<div class="cl-info">ℹ️ <span>${data.info}</span></div>` : ''}
-      ${data.deadline ? `<div class="cl-info" style="background:var(--amber-bg);color:var(--amber)">⏰ <span>${data.deadline}</span></div>` : ''}
-      <div class="cl-cta-row">
-        <button class="btn-primary" onclick="alert('Mở App MoMo để nộp phí thủ tục')">📱 Nộp phí qua MoMo</button>
-        <button class="btn-secondary" onclick="alert('Mở Cổng DVCQG')">🏛️ Nộp hồ sơ online</button>
-        <button class="btn-reset" onclick="resetChecklist()">↩ Làm lại</button>
+      ${data.warn ? `<div class="info-box amber"><span class="info-icon">⚠</span><span>${data.warn}</span></div>` : ''}
+      <div class="svc-cta-row">
+        <button class="btn-pk" onclick="openApp()">Nộp phí qua MoMo</button>
+        <button class="btn-ghost" onclick="genReset()">Làm lại</button>
       </div>
     </div>
   `;
-  document.getElementById('stepResult').innerHTML = html;
 }
 
-function goToStep(step) {
-  document.querySelectorAll('.cl-step').forEach(s => s.classList.remove('active'));
-  if (step === 4) {
-    document.getElementById('stepResult').classList.add('active');
-  } else {
-    document.getElementById('step' + step).classList.add('active');
+function genGoTo(step) {
+  document.querySelectorAll('.gen-step').forEach(s => s.classList.remove('active'));
+  if(step === 4) document.getElementById('gsResult').classList.add('active');
+  else document.getElementById('gs' + step).classList.add('active');
+
+  for(let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('gd' + i);
+    const line = document.getElementById('gl' + (i - 1));
+    dot.className = 'gp-dot';
+    if(i < step || step === 4) { dot.classList.add('done'); dot.textContent = '✓'; }
+    else if(i === step) dot.classList.add('active');
+    if(line) line.className = (i < step || step === 4) ? 'gp-line done' : 'gp-line';
   }
-  // Update progress dots
-  for (let i = 1; i <= 3; i++) {
-    const dot = document.getElementById('pb' + i);
-    const line = document.getElementById('pbl' + (i - 1));
-    dot.className = 'pb-dot';
-    if (i < step || step === 4) { dot.classList.add('done'); dot.textContent = '✓'; }
-    else if (i === step) { dot.classList.add('active'); }
-    if (line && (i < step || step === 4)) line.classList.add('done');
-  }
-  if (step === 4) {
-    document.getElementById('pb3').classList.add('done');
-    document.getElementById('pb3').textContent = '✓';
-    document.getElementById('pbl2').classList.add('done');
-  }
+  if(step === 4) { document.getElementById('gd3').classList.add('done'); document.getElementById('gd3').textContent = '✓'; document.getElementById('gl2').classList.add('done'); }
 }
 
-function resetChecklist() {
-  selectedService = null;
-  selectedProvince = null;
-  document.querySelectorAll('.cl-option').forEach(o => o.classList.remove('selected'));
-  for (let i = 1; i <= 3; i++) {
-    const dot = document.getElementById('pb' + i);
-    dot.className = 'pb-dot';
-    dot.textContent = i;
-    const line = document.getElementById('pbl' + i);
-    if (line) line.classList.remove('done');
+function genReset() {
+  genSvc = null; genProvince = null;
+  document.querySelectorAll('.gen-opt').forEach(o => o.classList.remove('selected'));
+  for(let i = 1; i <= 3; i++) {
+    document.getElementById('gd' + i).className = 'gp-dot';
+    document.getElementById('gd' + i).textContent = i;
   }
-  document.getElementById('pb1').classList.add('active');
-  document.getElementById('pbl1')?.classList.remove('done');
-  document.getElementById('pbl2')?.classList.remove('done');
-  goToStep(1);
-  document.getElementById('pb1').classList.add('active');
-  document.getElementById('pb1').textContent = '1';
+  document.getElementById('gl1').className = 'gp-line';
+  document.getElementById('gl2').className = 'gp-line';
+  document.getElementById('gd1').classList.add('active');
+  genGoTo(1);
+  document.getElementById('gd1').classList.add('active');
+  document.getElementById('gd1').textContent = '1';
 }
-
-// ─── Counter Animation ──────────────────────────────────────────────────────
-function animateCounter(el, target, suffix = '', duration = 1500) {
-  const start = performance.now();
-  const fmt = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? Math.round(n/1e3).toLocaleString('vi-VN')+'K' : n.toLocaleString('vi-VN');
-  function tick(now) {
-    const p = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    const val = Math.round(target * ease);
-    el.textContent = (typeof target === 'number' && target > 100) ? fmt(val) + suffix : val + suffix;
-    if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = (typeof target === 'number' && target > 100) ? fmt(target) + suffix : target + suffix;
-  }
-  requestAnimationFrame(tick);
-}
-
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      animateCounter(document.getElementById('counter1'), 1462714, '+');
-      animateCounter(document.getElementById('counter2'), 11.2, '%');
-      animateCounter(document.getElementById('counter3'), 1900, '+');
-      counterObserver.disconnect();
-    }
-  });
-}, {threshold: 0.3});
-counterObserver.observe(document.querySelector('.proof-section'));
 
 // ─── Sticky CTA ─────────────────────────────────────────────────────────────
-const sticky = document.getElementById('stickyCta');
+const fixedCta = document.getElementById('fixedCta');
 window.addEventListener('scroll', () => {
-  sticky.classList.toggle('show', window.scrollY > 600);
+  fixedCta.classList.toggle('show', window.scrollY > 500);
 });
 
-// ─── GA4 Mock Tracking ──────────────────────────────────────────────────────
-function momo_track(event, params) {
-  console.log('[DVC Track]', event, params);
-}
+function openApp() { alert('Deep link → momo://dich-vu-cong'); }
 </script>
 </body>
 </html>
