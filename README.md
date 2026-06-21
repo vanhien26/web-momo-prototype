@@ -25,7 +25,8 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 |---|---|---|
 | Ads & Widget Manager | `demos/ads.html` | Setup campaign, chọn placement, preview real-time Desktop/Mobile |
 | MoMo Project Assistant | `demos/chatbot.html` | Chatbot nhúng 6 template UX (Bubble/Popup/Standard/Proactive) + RAG |
-| SEO/GEO Project Hub | `demos/seo-geo-score.html` | Topic-Cluster-Keyword 3 tầng, Keyword Registry, Business Context |
+| SEO/GEO Project Hub | `demos/seo-geo-project.html` | Topic-Cluster-Keyword 3 tầng, Keyword Registry, Business Context |
+| SEO/GEO Content Score | `demos/seo-geo-score.html` | Governance Gate chấm Technical SEO, Content, GEO và Trust trước Publish |
 | SEO/GEO Dashboard | `demos/seo-geo-dashboard.html` | Dashboard theo dõi performance SEO/GEO theo Use Case |
 | GenAI Orchestrator | `demos/orchestrator.html` | Multi-agent pipeline visualization (9 nodes) |
 | Agentic Hub | `demos/agentic-hub.html` | Per-agent model selection (Haiku/Sonnet/Opus), RAG simulation, cost tracking |

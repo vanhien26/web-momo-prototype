@@ -171,6 +171,21 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/seo-geo-project',
   },
   {
+    id: 'seo-geo-score',
+    name: 'SEO/GEO Content Score',
+    category: 'MoSpark',
+    maturity: 'Governance Gate',
+    description: 'Pre-publish scoring system kiểm tra Technical SEO, Content, GEO và Trust. Mỗi rule có evidence, mức độ ưu tiên và hành động sửa; backend Hard Gate bảo vệ domain trước nội dung chưa đạt chuẩn.',
+    jtbd: 'Biết chính xác bài viết đã đủ điều kiện Publish chưa, lỗi nằm ở đâu và cần sửa gì trước',
+    northStar: 'First-pass publish readiness rate',
+    loop: 'Draft → Auto-score → Fix evidence → Governance Gate → Publish',
+    hypothesis: 'Một score có evidence và rule theo JTBD giúp Editor sửa đúng lỗi nhanh hơn checklist nhị phân hoặc review thủ công.',
+    value: 'Chuẩn hóa quality gate cho mọi page type mà không khuyến khích keyword stuffing, wordcount máy móc hoặc số liệu không nguồn.',
+    gate: 'Đo pass rate lần đầu, hard-gate failure, time-to-fix, rule failure distribution và publish override attempt.',
+    src: 'demos/seo-geo-score.html',
+    address: 'web-momo-prototype.vercel.app/seo-geo-score',
+  },
+  {
     id: 'universal-search',
     name: 'Universal Search',
     category: 'Platform',
@@ -442,7 +457,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -450,7 +465,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
