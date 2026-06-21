@@ -46,6 +46,7 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 
 | Prototype | File | Mô tả |
 |---|---|---|
+| Dịch Vụ Công | `demos/dich-vu-cong.html` | Knowledge và Governance Hub: tìm thủ tục, tạo checklist và chuyển sang cổng chính thức |
 | Phạt Nguội | `demos/phat-nguoi.html` | Hub tra cứu toàn quốc, directory địa phương và định tuyến nội dung |
 | Phạt Nguội Hà Nội | `demos/phat-nguoi-ha-noi.html` | Location Detail child-page của Hub Phạt Nguội |
 | Phạt Nguội Giải Đáp | `demos/phat-nguoi-giai-dap.html` | Content Hub con của Phạt Nguội, tập trung Q&A và Quiz Center |
