@@ -851,7 +851,7 @@ function buildHomeHero() {
         <div class="hl-page-header-left">
           <div class="hl-brand-line">
             <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="hl-mospark-logo" decoding="async">
-            <span class="hl-page-kicker">Internal · Prototype Directory</span>
+            <span class="hl-page-kicker">Internal · Web Platform</span>
           </div>
           <h1 class="hl-page-title">Prototype Lab</h1>
           <p class="hl-page-sub">${getTotalSurfaceCount()} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
