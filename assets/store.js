@@ -153,7 +153,7 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/project-assistant',
   },
   {
-    id: 'seo-geo-score',
+    id: 'seo-geo-project',
     name: 'SEO/GEO Project Hub',
     category: 'MoSpark',
     maturity: 'Interactive',
@@ -164,8 +164,8 @@ const PROTOTYPES = [
     hypothesis: 'Tập trung quản lý keyword trong một registry duy nhất với quy tắc 1 keyword = 1 URL sẽ loại bỏ cannibalization và tạo nền tảng vững cho content production quy mô lớn.',
     value: 'Single source of truth cho toàn bộ SEO/GEO portfolio: SoV per use case, funnel TOFU/MOFU/BOFU, Business Context đủ 12 trường là gate bắt buộc trước khi GenAI sản xuất.',
     gate: 'Đo use case coverage (% có keyword đầy đủ), Business Context completeness rate, keyword uniqueness index và GenAI kickoff rate per cluster.',
-    src: 'demos/seo-geo-score.html',
-    address: 'web-momo-prototype.vercel.app/seo-geo-hub',
+    src: 'demos/seo-geo-project.html',
+    address: 'web-momo-prototype.vercel.app/seo-geo-project',
   },
   {
     id: 'universal-search',
@@ -379,7 +379,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -387,7 +387,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi-ha-noi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
@@ -717,7 +717,7 @@ const MOSPARK_HOME_CAPABILITIES = [
   {
     title: 'SEO/GEO Project',
     text: 'Quản lý Use Case, Cluster, Keyword Registry, Business Context và performance trên Google Search lẫn AI Search.',
-    proto: 'seo-geo-score',
+    proto: 'seo-geo-project',
   },
   {
     title: 'Chatbot',
@@ -747,7 +747,7 @@ function buildMoSparkHomeIntro() {
         <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
         <div class="mh-actions">
           <button type="button" class="mh-primary" data-open-proto="blog">Mở demo Phạt Nguội</button>
-          <button type="button" class="mh-secondary" data-open-proto="seo-geo-score">Xem SEO/GEO Project</button>
+          <button type="button" class="mh-secondary" data-open-proto="seo-geo-project">Xem SEO/GEO Project</button>
         </div>
       </div>
       <div class="mh-stack">
