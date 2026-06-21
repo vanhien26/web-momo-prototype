@@ -334,6 +334,186 @@ const TOOLS = [
     panel: 'cic',
   },
   {
+    id: 'net-worth', name: 'Giá Trị Tài Sản Ròng', category: 'Financial Health', abbr: 'NW',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Tổng hợp tài sản và nghĩa vụ nợ để biết vị thế tài chính ròng tại một thời điểm.',
+    jtbd: 'Tôi có nhiều khoản tiền, tài sản và khoản nợ nhưng chưa nhìn được bức tranh tổng thể. Cần biết ngay <b>giá trị tài sản ròng và tỷ lệ nợ trên tài sản</b>, để <b>xác định ưu tiên nên tăng tài sản hay giảm nợ trước</b>.',
+    formula: 'Giá trị tài sản ròng = <b>Tổng tài sản - Tổng nợ phải trả</b><br>Tỷ lệ nợ trên tài sản = <b>Tổng nợ ÷ Tổng tài sản × 100%</b>',
+    resultLabel: 'GIÁ TRỊ TÀI SẢN RÒNG',
+    disclaimer: 'Kết quả là ảnh chụp tài chính tại thời điểm nhập dữ liệu, không phải tư vấn đầu tư hoặc định giá tài sản chuyên nghiệp.',
+    fields: [
+      { id: 'nwCash', label: 'Tiền mặt và tiết kiệm', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 100000000, chips: [20000000, 100000000, 500000000] },
+      { id: 'nwInvestments', label: 'Đầu tư tài chính', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 150000000, chips: [0, 100000000, 500000000] },
+      { id: 'nwProperty', label: 'Nhà, đất và phương tiện', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 1500000000, chips: [0, 1000000000, 3000000000] },
+      { id: 'nwOtherAssets', label: 'Tài sản khác', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 200000000] },
+      { id: 'nwMortgage', label: 'Dư nợ vay nhà, xe', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 900000000, chips: [0, 500000000, 1500000000] },
+      { id: 'nwConsumerDebt', label: 'Dư nợ thẻ và vay tiêu dùng', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 30000000, chips: [0, 30000000, 100000000] },
+      { id: 'nwOtherDebt', label: 'Khoản nợ khác', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 0, chips: [0, 50000000, 200000000] },
+    ],
+    compute(v) {
+      const totalAssets = v.nwCash + v.nwInvestments + v.nwProperty + v.nwOtherAssets;
+      const totalDebt = v.nwMortgage + v.nwConsumerDebt + v.nwOtherDebt;
+      const netWorth = totalAssets - totalDebt;
+      const debtToAssets = totalAssets > 0 ? totalDebt / totalAssets * 100 : 0;
+      const liquidAssets = v.nwCash + v.nwInvestments;
+      const position = netWorth > 0 ? 'Dương' : netWorth < 0 ? 'Âm' : 'Cân bằng';
+      const insight = netWorth < 0
+        ? 'Tổng nợ đang cao hơn tổng tài sản. Ưu tiên kiểm tra các khoản nợ có lãi suất cao và xây kế hoạch trả nợ trước khi tăng mức đầu tư.'
+        : debtToAssets > 50
+          ? 'Tài sản ròng đang dương nhưng hơn một nửa tài sản được tài trợ bằng nợ. Nên theo dõi dòng tiền trả nợ và khả năng thanh khoản.'
+          : 'Tài sản ròng đang dương. Hãy cập nhật định kỳ cùng một cách định giá để theo dõi xu hướng thay vì chỉ nhìn một con số tại một thời điểm.';
+      return { result: fmtM(netWorth), details: [
+        { label: 'Tổng tài sản', value: fmtM(totalAssets) },
+        { label: 'Tổng nợ phải trả', value: fmtM(totalDebt) },
+        { label: 'Tài sản có tính thanh khoản', value: fmtM(liquidAssets) },
+        { label: 'Tỷ lệ nợ trên tài sản', value: totalAssets > 0 ? debtToAssets.toFixed(1) + '%' : 'Không xác định' },
+        { label: 'Vị thế tài chính ròng', value: position },
+      ], insight };
+    },
+  },
+  {
+    id: 'dti', name: 'Tỷ Lệ Nợ Trên Thu Nhập', category: 'Financial Health', abbr: 'DTI',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Đo phần trăm thu nhập gộp hàng tháng đang dùng để thanh toán các nghĩa vụ nợ.',
+    jtbd: 'Tôi đang cân nhắc vay thêm nhưng chưa biết các khoản trả nợ hiện tại đã chiếm bao nhiêu thu nhập. Cần biết ngay <b>DTI và dòng tiền còn lại trước chi phí sinh hoạt</b>, để <b>đánh giá áp lực nợ trước khi nộp hồ sơ vay</b>.',
+    formula: 'DTI = <b>Tổng tiền trả nợ hàng tháng ÷ Thu nhập gộp hàng tháng × 100%</b>',
+    resultLabel: 'TỶ LỆ NỢ TRÊN THU NHẬP',
+    disclaimer: 'DTI chỉ là chỉ báo tham khảo. Mỗi tổ chức và sản phẩm tín dụng có tiêu chí thẩm định khác nhau; kết quả này không phải quyết định phê duyệt khoản vay.',
+    fields: [
+      { id: 'dtiGrossIncome', label: 'Thu nhập gộp hàng tháng', type: 'money', min: 1000000, max: 1000000000, step: 500000, value: 30000000, chips: [15000000, 30000000, 60000000] },
+      { id: 'dtiHousing', label: 'Trả nợ nhà, xe mỗi tháng', type: 'money', min: 0, max: 500000000, step: 100000, value: 6000000, chips: [0, 5000000, 10000000] },
+      { id: 'dtiInstallment', label: 'Trả vay tiêu dùng mỗi tháng', type: 'money', min: 0, max: 500000000, step: 100000, value: 2500000, chips: [0, 2000000, 5000000] },
+      { id: 'dtiCard', label: 'Thanh toán dư nợ thẻ mỗi tháng', type: 'money', min: 0, max: 500000000, step: 100000, value: 1500000, chips: [0, 1000000, 3000000] },
+      { id: 'dtiOther', label: 'Nghĩa vụ nợ khác mỗi tháng', type: 'money', min: 0, max: 500000000, step: 100000, value: 0, chips: [0, 1000000, 3000000] },
+    ],
+    compute(v) {
+      const monthlyDebt = v.dtiHousing + v.dtiInstallment + v.dtiCard + v.dtiOther;
+      if (v.dtiGrossIncome <= 0) {
+        return { result: 'Chưa thể tính', details: [
+          { label: 'Tổng trả nợ hàng tháng', value: fmt(monthlyDebt) },
+          { label: 'Thu nhập gộp hàng tháng', value: 'Cần lớn hơn 0 đ' },
+        ], insight: 'Nhập thu nhập gộp hàng tháng để tính tỷ lệ DTI.' };
+      }
+      const ratio = v.dtiGrossIncome > 0 ? monthlyDebt / v.dtiGrossIncome * 100 : 0;
+      const remaining = v.dtiGrossIncome - monthlyDebt;
+      const status = ratio < 30 ? 'Dư địa tương đối tốt' : ratio <= 40 ? 'Cần theo dõi' : 'Áp lực nợ cao';
+      const insight = ratio < 30
+        ? 'Các nghĩa vụ nợ hiện chiếm dưới 30% thu nhập gộp. Vẫn cần trừ tiếp chi phí sinh hoạt và dự phòng trước khi quyết định vay thêm.'
+        : ratio <= 40
+          ? 'DTI đang ở vùng cần theo dõi. Hãy stress test trường hợp thu nhập giảm hoặc lãi suất tăng trước khi nhận thêm nghĩa vụ nợ.'
+          : 'Hơn 40% thu nhập gộp đang dùng để trả nợ. Ưu tiên giảm dư nợ hoặc tăng thu nhập trước khi cân nhắc khoản vay mới.';
+      return { result: ratio.toFixed(1) + '%', details: [
+        { label: 'Thu nhập gộp hàng tháng', value: fmt(v.dtiGrossIncome) },
+        { label: 'Tổng trả nợ hàng tháng', value: fmt(monthlyDebt) },
+        { label: 'Còn lại trước chi phí sinh hoạt', value: fmt(remaining) },
+        { label: 'Mức tham khảo', value: status },
+      ], insight };
+    },
+  },
+  {
+    id: 'debt-payoff', name: 'Kế Hoạch Trả Nợ', category: 'Financial Health', abbr: 'DP',
+    intent: 'Informational intent', panel: 'generic', ui: 'debt-matrix',
+    description: 'So sánh chiến lược ưu tiên lãi suất cao và ưu tiên dư nợ nhỏ khi trả nhiều khoản nợ.',
+    jtbd: 'Tôi có nhiều khoản nợ và một khoản tiền có thể trả thêm mỗi tháng nhưng chưa biết nên dồn vào đâu trước. Cần biết ngay <b>thời gian trả hết, tổng lãi và khoản nợ ưu tiên</b>, để <b>chọn chiến lược phù hợp và duy trì kế hoạch</b>.',
+    formula: '<b>Giảm tổng lãi (Avalanche):</b> trả thêm vào khoản có lãi suất cao nhất.<br><b>Xóa khoản nhỏ (Snowball):</b> trả thêm vào khoản có dư nợ thấp nhất để thấy tiến độ sớm.',
+    resultLabel: 'THỜI GIAN DỰ KIẾN TRẢ HẾT NỢ',
+    ctaText: 'Khám phá giải pháp giảm áp lực nợ',
+    disclaimer: 'Mô phỏng giả định lãi suất và ngân sách trả nợ không đổi, không gồm phí phạt hoặc khoản vay mới. Hãy đối chiếu lịch thanh toán thực tế với bên cho vay.',
+    fields: [
+      { id: 'dpCardBalance', label: 'Dư nợ hiện tại', type: 'money', min: 0, max: 2000000000, step: 500000, value: 30000000, chips: [0, 20000000, 50000000] },
+      { id: 'dpCardRate', label: 'Lãi suất/năm', type: 'range', min: 0, max: 60, step: 0.5, value: 30, unit: '%', chips: [20, 30, 40] },
+      { id: 'dpCardMin', label: 'Trả tối thiểu/tháng', type: 'money', min: 0, max: 200000000, step: 100000, value: 2000000, chips: [1000000, 2000000, 5000000] },
+      { id: 'dpLoanBalance', label: 'Dư nợ hiện tại', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 60000000, chips: [0, 50000000, 100000000] },
+      { id: 'dpLoanRate', label: 'Lãi suất/năm', type: 'range', min: 0, max: 60, step: 0.5, value: 18, unit: '%', chips: [12, 18, 24] },
+      { id: 'dpLoanMin', label: 'Trả tối thiểu/tháng', type: 'money', min: 0, max: 200000000, step: 100000, value: 3000000, chips: [1000000, 3000000, 5000000] },
+      { id: 'dpOtherBalance', label: 'Dư nợ hiện tại', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 20000000, chips: [0, 20000000, 50000000] },
+      { id: 'dpOtherRate', label: 'Lãi suất/năm', type: 'range', min: 0, max: 60, step: 0.5, value: 12, unit: '%', chips: [0, 12, 18] },
+      { id: 'dpOtherMin', label: 'Trả tối thiểu/tháng', type: 'money', min: 0, max: 200000000, step: 100000, value: 1000000, chips: [500000, 1000000, 3000000] },
+      { id: 'dpExtra', label: 'Trả thêm mỗi tháng', type: 'money', min: 0, max: 500000000, step: 100000, value: 2000000, chips: [0, 2000000, 5000000] },
+      { id: 'dpStrategy', label: 'Bạn ưu tiên điều gì?', type: 'pills', options: [
+        { value: 'avalanche', label: 'Giảm tổng lãi', note: 'Avalanche · Lãi cao trước' },
+        { value: 'snowball', label: 'Xóa khoản nhỏ', note: 'Snowball · Dư nợ thấp trước' },
+      ], value: 'avalanche' },
+    ],
+    compute(v) {
+      const sourceDebts = [
+        { name: 'Thẻ tín dụng', balance: v.dpCardBalance, rate: v.dpCardRate, minimum: v.dpCardMin },
+        { name: 'Vay tiêu dùng', balance: v.dpLoanBalance, rate: v.dpLoanRate, minimum: v.dpLoanMin },
+        { name: 'Dư nợ khác', balance: v.dpOtherBalance, rate: v.dpOtherRate, minimum: v.dpOtherMin },
+      ].filter(d => d.balance > 0);
+      const monthlyBudget = sourceDebts.reduce((sum, d) => sum + d.minimum, 0) + v.dpExtra;
+      const simulate = strategy => {
+        const debts = sourceDebts.map(d => ({ ...d }));
+        let months = 0;
+        let totalInterest = 0;
+        let totalPaid = 0;
+        while (debts.some(d => d.balance > 0.5) && months < 1200) {
+          months += 1;
+          debts.forEach(d => {
+            if (d.balance <= 0.5) return;
+            const interest = d.balance * d.rate / 100 / 12;
+            d.balance += interest;
+            totalInterest += interest;
+          });
+          let remaining = monthlyBudget;
+          debts.forEach(d => {
+            if (d.balance <= 0.5 || remaining <= 0) return;
+            const payment = Math.min(d.minimum, d.balance, remaining);
+            d.balance -= payment;
+            remaining -= payment;
+            totalPaid += payment;
+          });
+          while (remaining > 0.5) {
+            const active = debts.filter(d => d.balance > 0.5);
+            if (!active.length) break;
+            active.sort((a, b) => strategy === 'avalanche' ? b.rate - a.rate || a.balance - b.balance : a.balance - b.balance || b.rate - a.rate);
+            const payment = Math.min(active[0].balance, remaining);
+            active[0].balance -= payment;
+            remaining -= payment;
+            totalPaid += payment;
+          }
+        }
+        return { months, totalInterest, totalPaid, paidOff: !debts.some(d => d.balance > 0.5) };
+      };
+      if (!sourceDebts.length) {
+        return { result: 'Không có dư nợ', details: [
+          { label: 'Tổng dư nợ', value: '0 đ' },
+          { label: 'Ngân sách trả nợ', value: fmt(v.dpExtra) + '/tháng' },
+        ], insight: 'Bạn chưa nhập khoản nợ nào cần lập kế hoạch.' };
+      }
+      if (monthlyBudget <= 0) {
+        return { result: 'Chưa thể tính', details: [
+          { label: 'Tổng dư nợ', value: fmtM(sourceDebts.reduce((sum, d) => sum + d.balance, 0)) },
+          { label: 'Ngân sách trả nợ', value: '0 đ/tháng' },
+        ], insight: 'Cần nhập ít nhất một khoản thanh toán tối thiểu hoặc ngân sách trả thêm mỗi tháng.' };
+      }
+      const selected = simulate(v.dpStrategy);
+      const alternativeStrategy = v.dpStrategy === 'avalanche' ? 'snowball' : 'avalanche';
+      const alternative = simulate(alternativeStrategy);
+      const ordered = [...sourceDebts].sort((a, b) => v.dpStrategy === 'avalanche' ? b.rate - a.rate || a.balance - b.balance : a.balance - b.balance || b.rate - a.rate);
+      const formatDuration = months => `${Math.floor(months / 12)} năm ${months % 12} tháng`;
+      if (!selected.paidOff) {
+        return { result: 'Trên 100 năm', details: [
+          { label: 'Ngân sách trả nợ', value: fmt(monthlyBudget) + '/tháng' },
+          { label: 'Khoản ưu tiên đầu tiên', value: ordered[0].name },
+        ], insight: 'Ngân sách hiện tại chưa đủ để hoàn tất kế hoạch trong thời hạn mô phỏng. Hãy tăng mức trả tối thiểu hoặc ngân sách trả thêm.' };
+      }
+      const comparison = alternative.paidOff
+        ? `${formatDuration(alternative.months)}, lãi ${fmtM(alternative.totalInterest)}`
+        : 'Không hoàn tất trong thời hạn mô phỏng';
+      const strategyLabel = v.dpStrategy === 'avalanche' ? 'Giảm tổng lãi (Avalanche)' : 'Xóa khoản nhỏ (Snowball)';
+      const alternativeLabel = v.dpStrategy === 'avalanche' ? 'Xóa khoản nhỏ' : 'Giảm tổng lãi';
+      return { result: formatDuration(selected.months), details: [
+        { label: 'Tổng dư nợ ban đầu', value: fmtM(sourceDebts.reduce((sum, d) => sum + d.balance, 0)) },
+        { label: 'Ngân sách trả nợ mỗi tháng', value: fmt(monthlyBudget) },
+        { label: 'Tổng lãi dự kiến', value: fmtM(selected.totalInterest) },
+        { label: 'Tổng tiền thanh toán dự kiến', value: fmtM(selected.totalPaid) },
+        { label: 'Khoản ưu tiên đầu tiên', value: ordered[0].name },
+        { label: `So với ${alternativeLabel}`, value: comparison },
+      ], insight: `${strategyLabel} đang ưu tiên <b>${ordered[0].name}</b>. ${v.dpStrategy === 'avalanche' ? 'Phù hợp khi mục tiêu là trả ít tiền lãi hơn.' : 'Phù hợp khi bạn cần thấy một khoản nợ được xóa sớm để duy trì động lực.'}` };
+    },
+  },
+  {
     id: 'bao-hiem-o-to', name: 'BH Ô Tô', category: 'Insurance', abbr: 'BH',
     intent: 'Commercial intent', panel: 'generic',
     description: 'Mô phỏng phí bảo hiểm vật chất ô tô (BHVC tự nguyện) theo giá trị xe và độ tuổi xe. Tỷ lệ tham chiếu thị trường 2026 từ Bảo Việt, PJICO, OPES, MIC: 1,4% - 2% giá trị xe.',
@@ -947,29 +1127,48 @@ const TOOLS = [
     id: 'travel-budget', name: 'Budget Du Lịch', category: 'FX',     abbr: 'TB',  panel: 'travel-budget',
   },
   {
-    id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Planning', abbr: 'QDP',
-    intent: 'Informational intent', panel: 'generic',
-    description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',
-    jtbd: 'Tôi muốn xây quỹ dự phòng cho 3 đến 12 tháng chi tiêu nhưng không biết cần bao nhiêu. Cần ước tính ngay <b>mục tiêu quỹ dự phòng và khoảng còn thiếu so với tiết kiệm hiện có</b>, để <b>biết phải gửi thêm bao nhiêu mỗi tháng để hoàn thành mục tiêu trong thời gian mong muốn</b>.',
-    formula: 'Quỹ cần có = <b>Chi tiêu/tháng × Số tháng an toàn</b><br>Còn thiếu = <b>Quỹ cần có − Tiết kiệm hiện có</b>',
+    id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Financial Health', abbr: 'QDP',
+    intent: 'Informational intent', panel: 'generic', ui: 'goal-planner',
+    description: 'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian hoàn thành và lạm phát dự kiến.',
+    jtbd: 'Tôi muốn xây quỹ dự phòng cho 3 đến 12 tháng chi tiêu nhưng không biết cần bao nhiêu. Cần ước tính ngay <b>mục tiêu quỹ tại thời điểm hoàn thành, tác động của lạm phát và khoảng còn thiếu</b>, để <b>biết phải để dành bao nhiêu mỗi tháng</b>.',
+    formula: 'Chi tiêu tại thời điểm hoàn thành = <b>Chi tiêu hiện tại × (1 + lạm phát)<sup>số tháng ÷ 12</sup></b><br>Quỹ mục tiêu = <b>Chi tiêu tương lai × Số tháng an toàn</b><br>Cần để dành mỗi tháng = <b>(Quỹ mục tiêu − Quỹ hiện có) ÷ Thời gian hoàn thành</b>',
     resultLabel: 'QUỸ DỰ PHÒNG CẦN CÓ',
+    ctaText: 'Khám phá giải pháp tích lũy trên MoMo',
+    disclaimer: 'Lạm phát là giả định để lập kế hoạch và có thể khác thực tế. Mô phỏng chưa tính lãi phát sinh trên khoản tiền đang tích lũy.',
     fields: [
-      { id: 'monthlyExpense', label: 'Chi tiêu hàng tháng',         type: 'money',  min: 1000000, max: 100000000, step: 500000, value: 12000000, chips: [5000000, 12000000, 20000000] },
+      { id: 'monthlyExpense', label: 'Chi tiêu hiện tại/tháng',      type: 'money',  min: 1000000, max: 100000000, step: 500000, value: 12000000, chips: [5000000, 12000000, 20000000] },
       { id: 'safeMonths',     label: 'Số tháng an toàn mục tiêu',   type: 'select', options: [
-        {value:3,label:'3 tháng'},{value:6,label:'6 tháng (khuyến nghị)'},
+        {value:3,label:'3 tháng'},{value:6,label:'6 tháng (phổ biến)'},
         {value:9,label:'9 tháng'},{value:12,label:'12 tháng'},
       ], value: 6 },
-      { id: 'currentSavings', label: 'Tiết kiệm hiện có',           type: 'money',  min: 0, max: 500000000, step: 1000000, value: 10000000, chips: [0, 10000000, 50000000] },
+      { id: 'currentSavings', label: 'Quỹ dự phòng hiện có',        type: 'money',  min: 0, max: 500000000, step: 1000000, value: 10000000, chips: [0, 10000000, 50000000] },
+      { id: 'targetBuildMonths', label: 'Muốn hoàn thành sau',       type: 'select', options: [
+        {value:3,label:'3 tháng'},{value:6,label:'6 tháng'},{value:12,label:'12 tháng'},
+        {value:18,label:'18 tháng'},{value:24,label:'24 tháng'},
+      ], value: 12 },
+      { id: 'expenseInflation', label: 'Lạm phát chi tiêu dự kiến', type: 'range', min: 0, max: 12, step: 0.5, value: 4, unit: '%', chips: [0, 3, 4, 6] },
     ],
     compute(v) {
-      const target = v.monthlyExpense * v.safeMonths;
+      if (v.monthlyExpense <= 0 || v.targetBuildMonths <= 0) {
+        return { result: 'Chưa thể tính', details: [
+          { label: 'Chi tiêu hiện tại', value: 'Cần lớn hơn 0 đ' },
+          { label: 'Thời gian hoàn thành', value: 'Cần lớn hơn 0 tháng' },
+        ], insight: 'Nhập chi tiêu và thời gian hoàn thành để lập mục tiêu quỹ dự phòng.' };
+      }
+      const targetToday = v.monthlyExpense * v.safeMonths;
+      const futureMonthlyExpense = v.monthlyExpense * Math.pow(1 + v.expenseInflation / 100, v.targetBuildMonths / 12);
+      const target = futureMonthlyExpense * v.safeMonths;
       const gap = Math.max(0, target - v.currentSavings);
-      const covered = Math.floor(v.currentSavings / v.monthlyExpense);
+      const covered = v.currentSavings / v.monthlyExpense;
+      const inflationImpact = Math.max(0, target - targetToday);
+      const monthlyContribution = gap / v.targetBuildMonths;
       return { result: fmt(target), details: [
-        { label: 'Hiện đang có', value: fmtM(v.currentSavings) + ' (' + covered + ' tháng)' },
+        { label: 'Mục tiêu theo giá hôm nay', value: fmtM(targetToday) },
+        { label: 'Tác động lạm phát', value: inflationImpact > 0 ? '+ ' + fmtM(inflationImpact) : 'Không đổi' },
+        { label: 'Quỹ hiện có', value: fmtM(v.currentSavings) + ' (' + covered.toFixed(1) + ' tháng)' },
         { label: 'Còn thiếu', value: gap > 0 ? fmtM(gap) : 'Đã đủ ✓' },
-        { label: 'Cần tiết kiệm thêm', value: gap > 0 ? fmt(gap / 6) + '/tháng' : 'Đã đạt mục tiêu' },
-      ]};
+        { label: `Cần để dành trong ${v.targetBuildMonths} tháng`, value: gap > 0 ? fmt(monthlyContribution) + '/tháng' : 'Đã đạt mục tiêu' },
+      ], insight: `Với lạm phát ${v.expenseInflation.toFixed(1)}%/năm, mức chi tiêu ${fmtM(v.monthlyExpense)} hôm nay tương đương <b>${fmtM(futureMonthlyExpense)}/tháng</b> sau ${v.targetBuildMonths} tháng.` };
     },
   },
   {
@@ -1150,7 +1349,12 @@ function setDetailMode(enabled) {
 
 function syncHash(id) {
   if (location.hash.slice(1) === id) return;
-  try { history.replaceState(null, '', `#${id}`); } catch(e) {}
+  try {
+    history.replaceState(null, '', `#${id}`);
+  } catch(e) {
+    location.hash = id;
+  }
+  if (location.hash.slice(1) !== id) location.hash = id;
 }
 
 function selectTool(id, options = {}) {
@@ -1230,6 +1434,11 @@ function bindRelatedTools() {
 
 // ─── Generic Panel
 function renderGenericPanel(tool) {
+  const panelEl = document.getElementById('genericPanel');
+  const calculatorEl = panelEl?.querySelector('.calculator-layout');
+  if (panelEl) panelEl.dataset.ui = tool.ui || 'default';
+  if (calculatorEl) calculatorEl.classList.toggle('debt-payoff-layout', tool.ui === 'debt-matrix');
+  if (calculatorEl) calculatorEl.classList.toggle('goal-planner-layout', tool.ui === 'goal-planner');
   document.getElementById('genericCategory').textContent    = tool.category.toUpperCase();
   document.getElementById('genericTitle').textContent       = tool.name;
   document.getElementById('genericDescription').textContent = tool.description;
@@ -1303,52 +1512,99 @@ function renderGenericPanel(tool) {
 
   const container = document.getElementById('genericFields');
   const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
-  container.innerHTML = tool.fields.map(f => {
+  const renderField = (f, options = {}) => {
+    const compactClass = options.compact ? ' compact-field' : '';
+    const showChips = !options.hideChips;
+    const ariaLabel = options.ariaLabel || f.label;
     if (f.type === 'money') {
       const formattedInitial = (f.value || 0).toLocaleString('vi-VN');
-      return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
+      return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${f.label}</label>
         <div class="money-input-row">
-          <input type="text" inputmode="numeric" id="${f.id}" value="${formattedInitial}">
+          <input type="text" inputmode="numeric" id="${f.id}" value="${formattedInitial}" aria-label="${ariaLabel}">
           <span class="unit-tag">đ</span>
         </div>
-        <div class="money-chips">
+        ${showChips ? `<div class="money-chips">
           ${(f.chips || []).map(c => `<button type="button" class="chip-btn${c === f.value ? ' active' : ''}" data-val="${c}">${fmtChip(c)}</button>`).join('')}
-        </div>
+        </div>` : ''}
       </div>`;
     }
     if (f.type === 'range') {
       const unitTxt = (f.unit || '').trim();
       const unitTag = unitTxt ? `<span class="unit-tag">${unitTxt}</span>` : '';
       const chips = f.chips || autoChips(f);
-      return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
+      return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${f.label}</label>
         <div class="num-input-row">
           <button type="button" class="num-step" data-target="${f.id}" data-dir="-1" aria-label="Giảm">−</button>
-          <input type="number" id="${f.id}" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}">
+          <input type="number" id="${f.id}" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}" aria-label="${ariaLabel}">
           ${unitTag}
           <button type="button" class="num-step" data-target="${f.id}" data-dir="1" aria-label="Tăng">+</button>
         </div>
-        ${chips.length ? `<div class="num-chips">
+        ${showChips && chips.length ? `<div class="num-chips">
           ${chips.map(c => `<button type="button" class="chip-btn${+c === +f.value ? ' active' : ''}" data-val="${c}">${formatChip(c, f)}</button>`).join('')}
         </div>` : ''}
       </div>`;
     }
     if (f.type === 'pills') {
-      return `<div class="field-group" data-field="${f.id}"${condAttr(f)}>
+      return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${f.label}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
-        <div class="pills-grid">
-          ${f.options.map(o => `<button type="button" class="pill-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}">${o.label}</button>`).join('')}
+        <div class="pills-grid" role="group" aria-label="${ariaLabel}">
+          ${f.options.map(o => `<button type="button" class="pill-btn${o.note ? ' pill-btn-explained' : ''}${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}"><span>${o.label}</span>${o.note ? `<small>${o.note}</small>` : ''}</button>`).join('')}
         </div>
       </div>`;
     }
     const opts = f.options.map(o => `<option value="${o.value}"${String(o.value) === String(f.value) ? ' selected' : ''}>${o.label}</option>`).join('');
-    return `<div class="field-group"${condAttr(f)}>
+    return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
       <label class="field-label" for="${f.id}">${f.label}</label>
-      <select id="${f.id}">${opts}</select>
+      <select id="${f.id}" aria-label="${ariaLabel}">${opts}</select>
     </div>`;
-  }).join('');
+  };
+
+  const renderDebtMatrix = () => {
+    const field = id => tool.fields.find(item => item.id === id);
+    const debtRows = [
+      { name: 'Thẻ tín dụng', note: 'Ưu tiên kiểm soát lãi suất cao', fields: ['dpCardBalance', 'dpCardRate', 'dpCardMin'] },
+      { name: 'Vay tiêu dùng', note: 'Khoản vay trả góp đang hoạt động', fields: ['dpLoanBalance', 'dpLoanRate', 'dpLoanMin'] },
+      { name: 'Khoản nợ khác', note: 'Các nghĩa vụ nợ còn lại', fields: ['dpOtherBalance', 'dpOtherRate', 'dpOtherMin'] },
+    ];
+    return `<div class="debt-matrix">
+      <div class="debt-matrix-head">
+        <div><span>CÁC KHOẢN NỢ</span><strong>Nhập dư nợ đang hoạt động</strong></div>
+        <small>Đơn vị: VNĐ và %/năm</small>
+      </div>
+      ${debtRows.map(row => `<section class="debt-entry">
+        <header class="debt-entry-head">
+          <span class="debt-entry-dot" aria-hidden="true"></span>
+          <div><strong>${row.name}</strong><small>${row.note}</small></div>
+        </header>
+        <div class="debt-entry-grid">
+          ${row.fields.map(id => renderField(field(id), { compact: true, hideChips: true, ariaLabel: `${row.name}: ${field(id).label}` })).join('')}
+        </div>
+      </section>`).join('')}
+      <section class="payoff-controls">
+        <div class="payoff-controls-head">
+          <div><span>KẾ HOẠCH THANH TOÁN</span><strong>Chọn cách bạn muốn trả nợ</strong></div>
+          <small>Kết quả cập nhật tức thì</small>
+        </div>
+        <div class="payoff-controls-grid">
+          ${renderField(field('dpExtra'), { compact: true })}
+          ${renderField(field('dpStrategy'), { compact: true })}
+        </div>
+        <div class="strategy-guide">
+          <span><b>Muốn trả ít lãi hơn?</b> Chọn Giảm tổng lãi</span>
+          <span><b>Muốn thấy tiến độ sớm?</b> Chọn Xóa khoản nhỏ</span>
+        </div>
+      </section>
+    </div>`;
+  };
+
+  container.classList.toggle('debt-payoff-fields', tool.ui === 'debt-matrix');
+  container.classList.toggle('goal-planner-fields', tool.ui === 'goal-planner');
+  container.innerHTML = tool.ui === 'debt-matrix'
+    ? renderDebtMatrix()
+    : tool.fields.map(f => renderField(f)).join('');
 
   // Conditional field visibility based on data-cond-field/value
   applyConditionalFields();
@@ -1364,7 +1620,9 @@ function renderGenericPanel(tool) {
       }
       if (f.type === 'pills') {
         document.querySelectorAll(`[data-field="${f.id}"] .pill-btn`).forEach(btn => {
-          btn.classList.toggle('active', String(btn.dataset.val) === String(el.value));
+          const isActive = String(btn.dataset.val) === String(el.value);
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
         });
       }
       applyConditionalFields();
@@ -2960,6 +3218,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tool = TOOLS.find(t => t.id === target);
     if (tool) selectTool(tool.id, { updateHash: !isEmbed, detail: true });
   }
+
+  window.addEventListener('hashchange', () => {
+    const tool = TOOLS.find(t => t.id === location.hash.slice(1));
+    if (tool && tool.id !== currentToolId) selectTool(tool.id, { updateHash: false, detail: true });
+  });
 });
 
 // Powered-by footer for embed/widget contexts
