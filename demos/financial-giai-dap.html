@@ -1,0 +1,1256 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Giải đáp tài chính & Máy tính mô phỏng | MoMo</title>
+  <meta name="description" content="Trang giải đáp chính chủ từ MoMo. Mô phỏng thực tế chi phí, lãi suất và lợi tức các sản phẩm Ví Trả Sau, Vay Nhanh và Túi Thần Tài.">
+  <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --momo: #a50064;
+      --momo-hover: #80004e;
+      --momo-light: #fff0f6;
+      --momo-gradient: linear-gradient(135deg, #a50064 0%, #d82d8b 100%);
+      --ink: #1c1724;
+      --muted: #5c5566;
+      --bg: #faf9fc;
+      --card: #ffffff;
+      --line: #eee7f0;
+      --green: #0f9f6e;
+      --green-light: #f4fbf8;
+      --warn: #ea580c;
+      --warn-light: #fff7ed;
+      --shadow: 0 12px 40px rgba(165, 0, 100, 0.04);
+      --shadow-hover: 0 20px 50px rgba(165, 0, 100, 0.08);
+      --font-display: 'Outfit', 'Inter', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 120px;
+    }
+
+    /* ── Preview Selector Toolbar (Developer Viewport Only) ── */
+    .preview-toolbar {
+      background: #151221;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--momo);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .toolbar-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: #f472b6;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toolbar-options {
+      display: flex;
+      gap: 8px;
+    }
+    .toolbar-btn {
+      background: #252136;
+      border: 1px solid #3c3856;
+      color: #d1cbdc;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toolbar-btn:hover {
+      color: #fff;
+      border-color: var(--momo);
+    }
+    .toolbar-btn.active {
+      background: var(--momo-gradient);
+      border-color: var(--momo);
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(165, 0, 100, 0.3);
+    }
+    .simulated-url {
+      font-family: monospace;
+      color: #a78bfa;
+      background: #090710;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      max-width: 320px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    @media(max-width: 680px) {
+      .preview-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .simulated-url {
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    /* ── Header Nav ── */
+    .nav {
+      position: sticky;
+      top: 61px; /* offset by toolbar height on desktop */
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--line);
+      transition: top 0.2s;
+    }
+    @media(max-width: 680px) {
+      .nav {
+        top: 96px;
+      }
+    }
+    .nav-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 18px;
+    }
+    .logo-img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .nav-back {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-back:hover {
+      color: var(--momo);
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    .breadcrumb a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .breadcrumb a:hover {
+      color: var(--momo);
+    }
+
+    /* ── H1 Title ── */
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      text-wrap: balance;
+    }
+
+    /* ── Khối 1: Core Answer Block (GEO Focused) ── */
+    .core-answer-card {
+      background: linear-gradient(180deg, #fffcfd 0%, #ffffff 100%);
+      border: 2px solid var(--momo-light);
+      border-left: 5px solid var(--momo);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+    .core-answer-card p {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.65;
+    }
+    .core-answer-card strong {
+      color: var(--momo);
+      font-weight: 700;
+    }
+
+    /* ── Section Title ── */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Khối 2: Interactive Simulator Widget ── */
+    .widget-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.3s;
+    }
+    .widget-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+    }
+    @media(max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .input-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .money-input-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .money-input {
+      width: 100%;
+      border: 1.5px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 45px 16px 20px;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      color: var(--momo);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .money-input:focus {
+      border-color: var(--momo);
+      box-shadow: 0 0 0 4px rgba(165, 0, 100, 0.1);
+    }
+    .input-unit {
+      position: absolute;
+      right: 20px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .chip-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .chip-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip-btn:hover {
+      border-color: var(--momo);
+      color: var(--momo);
+    }
+    .chip-btn.active {
+      background: var(--momo-light);
+      border-color: var(--momo);
+      color: var(--momo);
+    }
+
+    /* Term selector pills */
+    .pills-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .pill-btn {
+      border: 1.5px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .pill-btn span {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .pill-btn:hover {
+      border-color: var(--momo);
+    }
+    .pill-btn.active {
+      background: var(--momo);
+      border-color: var(--momo);
+      color: #fff;
+    }
+    .pill-btn.active span {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Results display */
+    .results-panel {
+      background: linear-gradient(130deg, #fff9fb 0%, #faf8ff 100%);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .main-kpi {
+      margin-bottom: 20px;
+    }
+    .main-kpi small {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: block;
+    }
+    .main-kpi strong {
+      display: block;
+      font-size: 30px;
+      font-family: var(--font-display);
+      color: var(--momo);
+      font-weight: 900;
+      margin-top: 4px;
+    }
+    .bar-chart-container {
+      margin: 14px 0;
+    }
+    .bar-chart {
+      height: 12px;
+      border-radius: 999px;
+      background: #efe6ee;
+      overflow: hidden;
+      display: flex;
+    }
+    .bar-goc {
+      height: 100%;
+      background: var(--momo);
+      transition: width 0.3s;
+    }
+    .bar-fee {
+      height: 100%;
+      background: var(--momo-hover);
+      opacity: 0.8;
+      transition: width 0.3s;
+    }
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+    .chart-labels span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .chart-labels span::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .lbl-goc::before { background: var(--momo); }
+    .lbl-fee::before { background: var(--momo-hover); opacity: 0.8; }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed var(--line);
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .detail-row span {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .detail-row strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Advisor text in calculator */
+    .calc-advice {
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: var(--green-light);
+      border-left: 3px solid var(--green);
+      border-radius: 12px;
+      font-size: 11.5px;
+      color: #0b5a3c;
+      font-weight: 500;
+    }
+    .calc-advice.orange-box {
+      background: var(--warn-light);
+      border-left-color: var(--warn);
+      color: #7c2d12;
+    }
+
+    /* ── Khối 3: Fact Sheet Table (LLM optimization) ── */
+    .explain-block {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+    .explain-block p.note {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .table th, .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+    }
+    .table th {
+      font-weight: 700;
+      color: var(--muted);
+      background-color: var(--bg);
+    }
+    .table td strong {
+      color: var(--momo);
+    }
+
+    /* ── Khối 4: Authority badge ── */
+    .authority-badge {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f4fbf8;
+      border: 1px solid #d1f2e5;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .authority-icon {
+      background: #0f9f6e;
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+
+    /* ── Accordion Related Q&As ── */
+    .faq-item {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq-trigger {
+      width: 100%;
+      text-align: left;
+      padding: 18px 24px;
+      background: none;
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      outline: none;
+    }
+    .faq-trigger::after {
+      content: '+';
+      font-size: 20px;
+      color: var(--momo);
+      font-weight: 700;
+      transition: transform 0.2s;
+    }
+    .faq-item.open .faq-trigger::after {
+      content: '−';
+    }
+    .faq-content {
+      padding: 0 24px 20px 24px;
+      font-size: 14px;
+      color: var(--muted);
+      display: none;
+      border-top: 1px dashed var(--line);
+      padding-top: 16px;
+    }
+    .faq-item.open .faq-content {
+      display: block;
+    }
+
+    /* ── Khối 5: Sticky CTA Bar (PLG focused) ── */
+    .cta-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--line);
+      padding: 16px 20px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.03);
+      z-index: 99;
+    }
+    .cta-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      gap: 16px;
+    }
+    .btn {
+      flex: 1;
+      padding: 15px 24px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .btn-primary {
+      background: var(--momo-gradient);
+      color: #fff;
+      border: none;
+      box-shadow: 0 8px 24px rgba(165, 0, 100, 0.2);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 12px 30px rgba(165, 0, 100, 0.35);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: var(--momo);
+      border: 1.5px solid var(--momo);
+    }
+    .btn-secondary:hover {
+      background: var(--momo-light);
+    }
+
+    @media (max-width: 580px) {
+      .cta-inner {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .cta-bar {
+        padding: 12px 16px;
+      }
+      body {
+        padding-bottom: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Preview Selector Toolbar (Interactive Presets) -->
+  <div class="preview-toolbar">
+    <div class="toolbar-title">
+      <span>✨ Trình diễn thiết kế Giải đáp (/giai-dap):</span>
+    </div>
+    <div class="toolbar-options">
+      <button type="button" class="toolbar-btn active" data-uc="vits">Ví Trả Sau</button>
+      <button type="button" class="toolbar-btn" data-uc="vaynhanh">Vay Nhanh</button>
+      <button type="button" class="toolbar-btn" data-uc="tuithantai">Túi Thần Tài</button>
+    </div>
+    <div class="simulated-url" id="simulatedUrl">URL: momo.vn/vi-tra-sau/giai-dap/phi-chuyen-doi-tra-gop</div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/lab.html">
+        <img class="logo-img" src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+        <span id="navBrandText">MoMo Utilities Lab</span>
+      </a>
+      <a href="/lab.html" class="nav-back">← Về trang chủ Lab</a>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" id="breadcrumbArea">
+      <a href="/lab.html">Trang chủ</a> / <a href="javascript:void(0)">Ví Trả Sau</a> / Giải đáp & Phí
+    </div>
+
+    <!-- Conversational H1 -->
+    <h1 id="pageH1">Phí chuyển đổi trả góp Ví Trả Sau MoMo là bao nhiêu?</h1>
+
+    <!-- Khối 1: Core Answer Block (GEO optimized) -->
+    <div class="core-answer-card">
+      <p id="coreAnswerText">
+        <strong>Phí chuyển đổi trả góp Ví Trả Sau MoMo là phí cố định 3%/tháng</strong> tính trên số tiền dư nợ gốc đăng ký trả góp ban đầu (tương đương với mức lãi suất phẳng 0%). Bạn <strong>không phải chịu bất kỳ khoản lãi suất hay phí ẩn nào khác</strong> trong suốt kỳ hạn trả góp.
+      </p>
+    </div>
+
+    <!-- Khối 2: Interactive Simulator Widget -->
+    <h2 class="section-title">📊 Máy tính mô phỏng thực tế</h2>
+    <div class="widget-card">
+      <div class="form-grid">
+        <!-- Form Left -->
+        <div>
+          <div class="input-group">
+            <label class="input-label" id="amountLabel" for="amount">Số tiền cần trả góp</label>
+            <div class="money-input-row">
+              <input type="text" inputmode="numeric" id="amount" class="money-input" value="3.000.000">
+              <span class="input-unit" id="inputUnit">đ</span>
+            </div>
+            <div class="chip-container" id="amountChips">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" id="termLabel">Kỳ hạn trả góp mong muốn</label>
+            <div class="pills-grid" id="termPills">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Right -->
+        <div class="results-panel">
+          <div class="main-kpi">
+            <small id="kpiTitle">Trả mỗi tháng (gốc & phí)</small>
+            <strong id="resultMonthly">590.000 đ</strong>
+          </div>
+
+          <div class="bar-chart-container">
+            <div class="bar-chart">
+              <div id="barGoc" class="bar-goc" style="width: 85%;"></div>
+              <div id="barFee" class="bar-fee" style="width: 15%;"></div>
+            </div>
+            <div class="chart-labels">
+              <span class="lbl-goc" id="chartLblGoc">Tiền gốc</span>
+              <span class="lbl-fee" id="chartLblFee">Phí chuyển đổi</span>
+            </div>
+          </div>
+
+          <div class="details-list" id="detailsList">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Advice box inside calculator -->
+          <div class="calc-advice" id="calcAdviceBox">
+            💡 <strong>Mẹo tài chính:</strong> Chia nhỏ hóa đơn giúp bạn giảm gánh nặng thanh toán ngay mà không mất lãi suất.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Khối 3: Fact Sheet Table (LLM optimized) -->
+    <h2 class="section-title" id="tableTitleText">📋 Bảng tra cứu phí chuyển đổi trả góp</h2>
+    <div class="explain-block">
+      <p class="note" id="tableIntroText">Mức phí chuyển đổi trả góp được áp dụng cố định tùy theo kỳ hạn được quy định chính thức như sau:</p>
+      <table class="table" id="dataTable">
+        <!-- Rendered dynamically -->
+      </table>
+    </div>
+
+    <!-- Khối 4: Authority Badge (Authority verification) -->
+    <div class="authority-badge" id="authorityBadge">
+      <div class="authority-icon">✓</div>
+      <div id="authorityText">
+        <strong>Dữ liệu xác thực nguồn gốc chính chủ</strong><br>
+        Biểu phí và công thức tính toán trên được cập nhật chính thức và có hiệu lực từ ngày 01/01/2026 bởi Công ty Cổ phần Dịch vụ Di động Trực tuyến (MoMo) và ngân hàng đối tác liên kết cung cấp sản phẩm Ví Trả Sau.
+      </div>
+    </div>
+
+    <!-- Related FAQ Accordions -->
+    <h2 class="section-title">❓ Các câu hỏi liên quan</h2>
+    <div id="faqsList">
+      <!-- Rendered dynamically -->
+    </div>
+
+  </div>
+
+  <!-- Khối 5: Sticky CTA Bar -->
+  <div class="cta-bar">
+    <div class="cta-inner" id="ctaContainer">
+      <a href="https://www.momo.vn/vi-tra-sau" id="ctaSecondaryBtn" target="_blank" rel="noopener" class="btn btn-secondary">Tìm hiểu Ví Trả Sau</a>
+      <button type="button" id="ctaPrimaryBtn" class="btn btn-primary" onclick="alert('Mở ví!')">Mở Ví Trả Sau & Trả Góp Ngay ↗</button>
+    </div>
+  </div>
+
+  <!-- Dynamic FAQ Schema in DOM for RAG/SEO bots -->
+  <script type="application/ld+json" id="faqSchema">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": []
+  }
+  </script>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    // Presets Database for Use Cases
+    const USE_CASES = {
+      vits: {
+        url: 'momo.vn/vi-tra-sau/giai-dap/phi-chuyen-doi-tra-gop',
+        title: 'Phí chuyển đổi trả góp Ví Trả Sau MoMo là bao nhiêu?',
+        navBrand: 'Ví Trả Sau',
+        breadcrumb: '<a href="/lab.html">Trang chủ</a> / <a href="javascript:void(0)">Ví Trả Sau</a> / Giải đáp & Phí',
+        coreAnswer: '<strong>Phí chuyển đổi trả góp Ví Trả Sau MoMo là phí cố định 3%/tháng</strong> tính trên số tiền dư nợ gốc đăng ký trả góp ban đầu (tương đương với mức lãi suất phẳng 0%). Bạn <strong>không phải chịu bất kỳ khoản lãi suất hay phí ẩn nào khác</strong> trong suốt kỳ hạn trả góp.',
+        amountLabel: 'Số tiền cần trả góp',
+        amountDefault: '3.000.000',
+        amountChips: [
+          { val: 1000000, label: '1 triệu' },
+          { val: 3000000, label: '3 triệu' },
+          { val: 10000000, label: '10 triệu' },
+          { val: 20000000, label: '20 triệu' }
+        ],
+        termLabel: 'Kỳ hạn trả góp mong muốn',
+        terms: [
+          { months: 3, label: '3 tháng', detail: 'Phí 9%' },
+          { months: 6, label: '6 tháng', detail: 'Phí 18%' },
+          { months: 9, label: '9 tháng', detail: 'Phí 27%' },
+          { months: 12, label: '12 tháng', detail: 'Phí 36%' }
+        ],
+        defaultTerm: 6,
+        kpiLabel: 'Trả mỗi tháng (gốc & phí)',
+        chartLabels: { goc: 'Tiền gốc', fee: 'Phí chuyển đổi' },
+        details: [
+          { name: 'Gốc trả/tháng', id: 'resultGoc' },
+          { name: 'Phí trả/tháng', id: 'resultPhi' },
+          { name: 'Tổng phí chuyển đổi', id: 'resultTotalFee' },
+          { name: 'Tổng tiền phải trả', id: 'resultTotal' }
+        ],
+        tableTitle: '📋 Bảng tra cứu phí chuyển đổi trả góp',
+        tableIntro: 'Mức phí chuyển đổi trả góp được áp dụng cố định tùy theo kỳ hạn được quy định chính thức như sau:',
+        tableCols: ['Kỳ hạn', 'Mức phí chuyển đổi', 'Tỷ suất tương đương', 'Ví dụ (với hóa đơn 3 triệu)'],
+        tableRows: [
+          ['<strong>3 tháng</strong>', '<strong>9.0%</strong> cố định', '3.0% / tháng', 'Trả 1.090.000đ/tháng (Tổng phí: 270.000đ)'],
+          ['<strong>6 tháng</strong>', '<strong>18.0%</strong> cố định', '3.0% / tháng', 'Trả 590.000đ/tháng (Tổng phí: 540.000đ)'],
+          ['<strong>9 tháng</strong>', '<strong>27.0%</strong> cố định', '3.0% / tháng', 'Trả 423.333đ/tháng (Tổng phí: 810.000đ)'],
+          ['<strong>12 tháng</strong>', '<strong>36.0%</strong> cố định', '3.0% / tháng', 'Trả 340.000đ/tháng (Tổng phí: 1.080.000đ)']
+        ],
+        authorityText: '<strong>Dữ liệu xác thực nguồn gốc chính chủ</strong><br>Biểu phí và công thức tính toán trên được cập nhật chính thức và có hiệu lực từ ngày 01/01/2026 bởi Công ty Cổ phần Dịch vụ Di động Trực tuyến (MoMo) và ngân hàng đối tác liên kết cung cấp sản phẩm Ví Trả Sau.',
+        faqs: [
+          { q: 'Hóa đơn bao nhiêu tiền thì được chuyển đổi trả góp?', a: 'Bạn có thể chuyển đổi trả góp cho bất kỳ hóa đơn mua sắm hoặc dư nợ sao kê cuối kỳ nào có giá trị <strong>tối thiểu từ 100.000đ trở lên</strong>. Tổng giá trị hóa đơn đăng ký trả góp cộng với phí phát sinh phải nhỏ hơn hoặc bằng hạn mức Ví Trả Sau khả dụng của bạn.' },
+          { q: 'Ví Trả Sau có áp dụng tất toán trước hạn được không?', a: 'Đối với các giao dịch hoặc hóa đơn đã thực hiện chuyển đổi trả góp, Ví Trả Sau MoMo <strong>không hỗ trợ tất toán trước hạn</strong>. Số tiền gốc và phí chuyển đổi sẽ được chia đều thanh toán theo từng tháng đúng theo kỳ hạn bạn đã lựa chọn ban đầu.' },
+          { q: 'Phí dịch vụ duy trì 33.000đ được tính như thế nào?', a: 'Phí dịch vụ duy trì Ví Trả Sau là 33.000đ/tháng và <strong>chỉ phát sinh trong tháng bạn có sử dụng Ví Trả Sau để thực hiện giao dịch</strong>. Nếu trong tháng bạn không phát sinh bất kỳ chi tiêu nào bằng Ví Trả Sau, bạn sẽ hoàn toàn được miễn phí dịch vụ này.' }
+        ],
+        ctas: {
+          secondaryText: 'Tìm hiểu Ví Trả Sau',
+          secondaryUrl: 'https://www.momo.vn/vi-tra-sau',
+          primaryText: 'Mở Ví Trả Sau & Trả Góp Ngay ↗',
+          primaryAction: "alert('Đang mở màn hình kích hoạt Ví Trả Sau trên ứng dụng MoMo!')"
+        },
+        advice: '💡 <strong>Mẹo tài chính:</strong> Trả góp với phí cố định 3% giúp bạn cân đối dòng tiền mặt cá nhân mà không phải chịu lãi kép thả nổi.',
+        schema: [
+          { q: 'Phí chuyển đổi trả góp Ví Trả Sau MoMo là bao nhiêu?', a: 'Phí chuyển đổi trả góp Ví Trả Sau MoMo là phí cố định 3%/tháng tính trên dư nợ gốc ban đầu.' },
+          { q: 'Có tất toán trước hạn trả góp Ví Trả Sau được không?', a: 'Ví Trả Sau MoMo không hỗ trợ tất toán trước hạn đối với các giao dịch đã thực hiện chuyển đổi trả góp.' }
+        ]
+      },
+      vaynhanh: {
+        url: 'momo.vn/vay-nhanh/giai-dap/tat-toan-truoc-han-co-phat-khong',
+        title: 'Tất toán khoản vay FastMoney trên MoMo trước hạn có bị phạt không?',
+        navBrand: 'Vay Nhanh FastMoney',
+        breadcrumb: '<a href="/lab.html">Trang chủ</a> / <a href="javascript:void(0)">Vay Nhanh</a> / Tất toán trước hạn',
+        coreAnswer: '<strong>Tất toán trước hạn FastMoney trên MoMo có phí phạt là 5%</strong> tính trên số tiền dư nợ gốc còn lại tại thời điểm khách hàng yêu cầu thanh toán trước hạn. Tuy nhiên, bạn <strong>tiết kiệm được 100% tiền lãi của những tháng còn lại</strong>.',
+        amountLabel: 'Số dư nợ gốc còn lại',
+        amountDefault: '5.000.000',
+        amountChips: [
+          { val: 2000000, label: '2 triệu' },
+          { val: 5000000, label: '5 triệu' },
+          { val: 10000000, label: '10 triệu' },
+          { val: 20000000, label: '20 triệu' }
+        ],
+        termLabel: 'Kỳ hạn còn lại của khoản vay',
+        terms: [
+          { months: 2, label: '2 tháng', detail: 'Lãi ~36%/năm' },
+          { months: 4, label: '4 tháng', detail: 'Lãi ~36%/năm' },
+          { months: 6, label: '6 tháng', detail: 'Lãi ~36%/năm' },
+          { months: 12, label: '1 năm', detail: 'Lãi ~36%/năm' }
+        ],
+        defaultTerm: 4,
+        kpiLabel: 'Tổng tiền tất toán sớm (Gốc + Phí 5%)',
+        chartLabels: { goc: 'Nợ gốc còn lại', fee: 'Phí phạt 5%' },
+        details: [
+          { name: 'Dư nợ gốc tất toán', id: 'resultGoc' },
+          { name: 'Phí phạt tất toán (5%)', id: 'resultPhi' },
+          { name: 'Tiền lãi tiết kiệm được', id: 'resultTotalFee' },
+          { name: 'Tổng số tiền cần trả', id: 'resultTotal' }
+        ],
+        tableTitle: '📋 Bảng so sánh Chi phí tất toán sớm vs Đóng đúng hạn',
+        tableIntro: 'Số liệu so sánh ví dụ cụ thể cho khoản vay dư nợ còn lại 10 triệu đồng (lãi suất tham chiếu 3%/tháng):',
+        tableCols: ['Kỳ hạn còn lại', 'Phí phạt tất toán (5%)', 'Tiền lãi nếu đóng đúng hạn', 'Số tiền tiết kiệm thực tế'],
+        tableRows: [
+          ['<strong>2 tháng</strong>', '500.000đ', '600.000đ', '<strong>Tiết kiệm 100.000đ</strong>'],
+          ['<strong>4 tháng</strong>', '500.000đ', '1.200.000đ', '<strong>Tiết kiệm 700.000đ</strong>'],
+          ['<strong>6 tháng</strong>', '500.000đ', '1.800.000đ', '<strong>Tiết kiệm 1.300.000đ</strong>'],
+          ['<strong>12 tháng</strong>', '500.000đ', '3.600.000đ', '<strong>Tiết kiệm 3.100.000đ</strong>']
+        ],
+        authorityText: '<strong>Dữ liệu xác thực từ đối tác FastMoney</strong><br>Quy định phí tất toán trước hạn 5% được quy định chi tiết trong Hợp đồng tín dụng được ký kết chính thức giữa khách hàng và công ty tài chính đối tác cung cấp dịch vụ Vay Nhanh trên ứng dụng MoMo.',
+        faqs: [
+          { q: 'Làm thế nào để thanh toán tất toán trước hạn khoản vay Vay Nhanh?', a: 'Bạn mở MoMo, tìm kiếm dịch vụ "Vay Nhanh", chọn khoản vay hiện hữu của bạn, click nút "Thanh toán/Tất toán sớm" và xác nhận giao dịch. Phí phạt 5% sẽ được tự động cộng dồn vào dư nợ gốc hiển thị trên màn hình thanh toán.' },
+          { q: 'Có hỗ trợ trả nợ trước hạn một phần gốc không?', a: 'Hiện nay, sản phẩm Vay Nhanh trên MoMo chỉ hỗ trợ tất toán toàn bộ dư nợ còn lại của khoản vay, chưa hỗ trợ khách hàng thanh toán trước hạn một phần số tiền gốc.' },
+          { q: 'Tất toán khoản vay sớm có bị tính điểm nợ xấu CIC không?', a: 'Không. Tất toán trước hạn thể hiện bạn có khả năng tài chính tốt và lịch sử thanh toán nợ đầy đủ, giúp cải thiện điểm tín dụng CIC của bạn tốt hơn.' }
+        ],
+        ctas: {
+          secondaryText: 'Tìm hiểu Vay Nhanh',
+          secondaryUrl: 'https://www.momo.vn/vay-nhanh',
+          primaryText: 'Tất Toán Khoản Vay Sớm ↗',
+          primaryAction: "alert('Đang mở màn hình quản lý khoản vay Vay Nhanh trên ứng dụng MoMo!')"
+        },
+        advice: '💡 <strong>Mẹo tài chính:</strong> Nếu kỳ hạn còn lại dài (>3 tháng), tất toán sớm giúp bạn tiết kiệm được lượng tiền lãi cực lớn dù phải chịu phí phạt 5%.',
+        schema: [
+          { q: 'Phí phạt tất toán trước hạn FastMoney là bao nhiêu?', a: 'Phí tất toán trước hạn là 5% tính trên phần dư nợ gốc còn lại tại thời điểm tất toán.' },
+          { q: 'Tất toán trước hạn FastMoney có giúp tiết kiệm lãi không?', a: 'Có. Bạn tiết kiệm được toàn bộ tiền lãi của những tháng còn lại sau khi trừ đi phí phạt 5%.' }
+        ]
+      },
+      tuithantai: {
+        url: 'momo.vn/tiet-kiem-online/giai-dap/suc-manh-lai-kep-tui-than-tai',
+        title: 'Lãi suất Túi Thần Tài MoMo tính thế nào và sức mạnh lãi kép ra sao?',
+        navBrand: 'Túi Thần Tài',
+        breadcrumb: '<a href="/lab.html">Trang chủ</a> / <a href="javascript:void(0)">Túi Thần Tài</a> / Sức mạnh lãi kép',
+        coreAnswer: '<strong>Lợi nhuận Túi Thần Tài MoMo lên đến 5.0%/năm</strong> tính theo ngày, và tiền lời được cộng dồn trực tiếp vào gốc mỗi ngày. Nhờ cơ chế <strong>nhận tiền lời theo ngày và tự động tái đầu tư</strong>, dòng tiền của bạn sẽ sinh lời lũy kế theo cấp số nhân nhờ sức mạnh lãi kép.',
+        amountLabel: 'Số tiền gửi tích lũy ban đầu',
+        amountDefault: '10.000.000',
+        amountChips: [
+          { val: 1000000, label: '1 triệu' },
+          { val: 10000000, label: '10 triệu' },
+          { val: 50000000, label: '50 triệu' },
+          { val: 100000000, label: '100 triệu' }
+        ],
+        termLabel: 'Thời gian tích lũy mong muốn',
+        terms: [
+          { months: 6, label: '6 tháng', detail: 'Tỷ suất 5%/năm' },
+          { months: 12, label: '1 năm', detail: 'Tỷ suất 5%/năm' },
+          { months: 36, label: '3 năm', detail: 'Tỷ suất 5%/năm' },
+          { months: 60, label: '5 năm', detail: 'Tỷ suất 5%/năm' }
+        ],
+        defaultTerm: 12,
+        kpiLabel: 'Tổng số dư sau thời hạn gửi',
+        chartLabels: { goc: 'Gốc gửi ban đầu', fee: 'Tiền lãi kép nhận được' },
+        details: [
+          { name: 'Tiền gốc gửi ban đầu', id: 'resultGoc' },
+          { name: 'Tiền lãi kép tích lũy', id: 'resultPhi' },
+          { name: 'Lợi nhuận thực tế đạt được', id: 'resultTotalFee' },
+          { name: 'Tổng tài sản nhận được', id: 'resultTotal' }
+        ],
+        tableTitle: '📊 Sức mạnh tăng trưởng tích lũy lãi kép Túi Thần Tài',
+        tableIntro: 'Bảng minh họa số tiền tích lũy tăng trưởng theo thời gian với lợi nhuận giả định 5.0%/năm cộng dồn lãi kép mỗi ngày (gửi 10 triệu ban đầu + tích lũy thêm 50.000đ/ngày):',
+        tableCols: ['Thời gian tích lũy', 'Tổng tiền gốc đã nộp', 'Lợi nhuận nhận được', 'Tổng tài sản cuối kỳ'],
+        tableRows: [
+          ['<strong>1 năm</strong>', '28.250.000đ', '712.500đ', '<strong>28.962.500đ</strong>'],
+          ['<strong>3 năm</strong>', '64.750.000đ', '5.120.000đ', '<strong>69.870.000đ</strong>'],
+          ['<strong>5 năm</strong>', '101.250.000đ', '14.850.000đ', '<strong>116.100.000đ</strong>'],
+          ['<strong>10 năm</strong>', '192.500.000đ', '62.450.000đ', '<strong>254.950.000đ</strong>']
+        ],
+        authorityText: '<strong>Dữ liệu tài chính minh bạch an toàn</strong><br>Sản phẩm Túi Thần Tài được quản lý bởi Công ty Cổ phần Finsight (Finsight) và được ngân hàng thương mại cổ phần ngoại thương Việt Nam (Vietcombank) giám sát và lưu ký tài sản an toàn.',
+        faqs: [
+          { q: 'Rút tiền từ Túi Thần Tài MoMo về ví có mất phí và bao lâu nhận được?', a: 'Rút tiền từ Túi Thần Tài về Ví MoMo hoàn toàn <strong>miễn phí 100%</strong>. Hệ thống hỗ trợ xử lý rút tiền **tức thì 24/7** (bao gồm cả ngày nghỉ lễ, Tết).' },
+          { q: 'Lợi nhuận nhận được từ Túi Thần Tài có phải đóng thuế không?', a: 'Có. Theo quy định, tiền lời phát sinh từ Túi Thần Tài là thu nhập chịu thuế. Tuy nhiên, Công ty Finsight đã tự động khấu trừ thuế TNCN tại nguồn trước khi chuyển tiền lời thực tế vào tài khoản của bạn, do đó bạn không cần thực hiện thêm bất cứ thủ tục kê khai thuế nào.' },
+          { q: 'Điểm Tin Cậy MoMo có ảnh hưởng thế nào đến hạn mức Túi Thần Tài?', a: 'Hạn mức gửi tiền tối đa vào Túi Thần Tài được quy định dựa trên Điểm Tin Cậy MoMo của bạn: Điểm càng cao, hạn mức tích lũy tối đa càng lớn, dao động từ 100 triệu lên tới tối đa 500 triệu đồng.' }
+        ],
+        ctas: {
+          secondaryText: 'Tìm hiểu Túi Thần Tài',
+          secondaryUrl: 'https://www.momo.vn/tui-than-tai',
+          primaryText: 'Nạp Tiền Tích Lũy Ngay ↗',
+          primaryAction: "alert('Đang mở màn hình nạp tiền vào Túi Thần Tài trên ứng dụng MoMo!')"
+        },
+        advice: '💡 <strong>Mẹo tài chính:</strong> Nhận lãi theo ngày tạo điều kiện tối ưu để tiền lời liên tục sinh lãi kép, tốt hơn nhiều so với hình thức nhận lãi cuối kỳ.',
+        schema: [
+          { q: 'Lợi nhuận Túi Thần Tài MoMo là bao nhiêu?', a: 'Túi Thần Tài MoMo mang lại lợi nhuận lên đến 5.0%/năm tính theo ngày và cộng dồn lãi kép mỗi ngày.' },
+          { q: 'Rút tiền Túi Thần Tài về ví MoMo có mất phí không?', a: 'Hoàn toàn miễn phí rút tiền và tiền được chuyển về ví ngay tức thì 24/7.' }
+        ]
+      }
+    };
+
+    let activeUc = 'vits';
+    let activeTerm = 6;
+
+    const fmt = n => new Intl.NumberFormat('vi-VN').format(Math.round(n)) + ' đ';
+    const parseMoney = s => +String(s).replace(/[^\d]/g, '') || 0;
+
+    const elAmount = document.getElementById('amount');
+
+    // Load active Use Case
+    function loadUseCase(ucKey) {
+      activeUc = ucKey;
+      const data = USE_CASES[ucKey];
+      
+      // Update simulated browser elements
+      document.getElementById('simulatedUrl').textContent = 'URL: ' + data.url;
+      
+      // Update basic texts
+      document.getElementById('navBrandText').textContent = 'MoMo ' + data.navBrand;
+      document.getElementById('breadcrumbArea').innerHTML = data.breadcrumb;
+      document.getElementById('pageH1').textContent = data.title;
+      document.getElementById('coreAnswerText').innerHTML = data.coreAnswer;
+      document.getElementById('amountLabel').textContent = data.amountLabel;
+      elAmount.value = Number(parseMoney(data.amountDefault)).toLocaleString('vi-VN');
+      document.getElementById('termLabel').textContent = data.termLabel;
+      document.getElementById('kpiTitle').textContent = data.kpiLabel;
+      
+      // Update Chart labels
+      document.getElementById('chartLblGoc').textContent = data.chartLabels.goc;
+      document.getElementById('chartLblFee').textContent = data.chartLabels.fee;
+
+      // Update Advice box
+      const adviceBox = document.getElementById('calcAdviceBox');
+      adviceBox.innerHTML = data.advice;
+      if (ucKey === 'vaynhanh') {
+        adviceBox.classList.add('orange-box');
+      } else {
+        adviceBox.classList.remove('orange-box');
+      }
+
+      // Update Table Texts
+      document.getElementById('tableTitleText').textContent = data.tableTitle;
+      document.getElementById('tableIntroText').textContent = data.tableIntro;
+
+      // Render Money Chips
+      const chipsContainer = document.getElementById('amountChips');
+      chipsContainer.innerHTML = '';
+      data.amountChips.forEach((chip, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chip-btn' + (index === 1 ? ' active' : '');
+        btn.textContent = chip.label;
+        btn.dataset.val = chip.val;
+        btn.addEventListener('click', () => {
+          chipsContainer.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          elAmount.value = Number(chip.val).toLocaleString('vi-VN');
+          calculate();
+        });
+        chipsContainer.appendChild(btn);
+      });
+
+      // Render Term pills
+      activeTerm = data.defaultTerm;
+      const pillsContainer = document.getElementById('termPills');
+      pillsContainer.innerHTML = '';
+      data.terms.forEach(term => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pill-btn' + (term.months === activeTerm ? ' active' : '');
+        btn.dataset.months = term.months;
+        btn.innerHTML = `${term.label} <span>${term.detail}</span>`;
+        btn.addEventListener('click', () => {
+          pillsContainer.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeTerm = term.months;
+          calculate();
+        });
+        pillsContainer.appendChild(btn);
+      });
+
+      // Render Details list labels
+      const detailsList = document.getElementById('detailsList');
+      detailsList.innerHTML = '';
+      data.details.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'detail-row';
+        row.innerHTML = `<span>${item.name}</span><strong id="${item.id}">—</strong>`;
+        detailsList.appendChild(row);
+      });
+
+      // Render Fact Sheet Table
+      const dataTable = document.getElementById('dataTable');
+      dataTable.innerHTML = '';
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      data.tableCols.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      dataTable.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      data.tableRows.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+          const td = document.createElement('td');
+          td.innerHTML = cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      dataTable.appendChild(tbody);
+
+      // Render Authority Badge
+      document.getElementById('authorityText').innerHTML = data.authorityText;
+
+      // Render FAQs
+      const faqsList = document.getElementById('faqsList');
+      faqsList.innerHTML = '';
+      data.faqs.forEach(faq => {
+        const faqItem = document.createElement('div');
+        faqItem.className = 'faq-item';
+        
+        const trigger = document.createElement('button');
+        trigger.className = 'faq-trigger';
+        trigger.textContent = faq.q;
+        
+        const content = document.createElement('div');
+        content.className = 'faq-content';
+        content.innerHTML = faq.a;
+        
+        trigger.addEventListener('click', () => {
+          const isOpen = faqItem.classList.contains('open');
+          faqsList.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+          if (!isOpen) {
+            faqItem.classList.add('open');
+          }
+        });
+        
+        faqItem.appendChild(trigger);
+        faqItem.appendChild(content);
+        faqsList.appendChild(faqItem);
+      });
+
+      // Render CTAs
+      const ctaSec = document.getElementById('ctaSecondaryBtn');
+      ctaSec.textContent = data.ctas.secondaryText;
+      ctaSec.href = data.ctas.secondaryUrl;
+
+      const ctaPri = document.getElementById('ctaPrimaryBtn');
+      ctaPri.textContent = data.ctas.primaryText;
+      ctaPri.setAttribute('onclick', data.ctas.primaryAction);
+
+      // Update FAQ Schema in DOM
+      const schemaScript = document.getElementById('faqSchema');
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": data.schema[0].q,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": data.schema[0].a
+            }
+          },
+          {
+            "@type": "Question",
+            "name": data.schema[1].q,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": data.schema[1].a
+            }
+          }
+        ]
+      };
+      schemaScript.textContent = JSON.stringify(schemaData, null, 2);
+
+      // Trigger recalculation
+      calculate();
+    }
+
+    // Main calculation logic
+    function calculate() {
+      const amount = parseMoney(elAmount.value);
+      
+      if (amount <= 0) {
+        document.querySelectorAll('.details-list strong').forEach(el => el.textContent = '—');
+        document.getElementById('resultMonthly').textContent = '—';
+        return;
+      }
+
+      const term = activeTerm;
+
+      if (activeUc === 'vits') {
+        // Ví Trả Sau: 3% fixed fee / month
+        const gocMonth = amount / term;
+        const phiMonth = amount * 0.03;
+        const monthlyPay = gocMonth + phiMonth;
+        const totalFee = phiMonth * term;
+        const totalPay = amount + totalFee;
+
+        document.getElementById('resultMonthly').textContent = fmt(monthlyPay);
+        document.getElementById('resultGoc').textContent = fmt(gocMonth);
+        document.getElementById('resultPhi').textContent = fmt(phiMonth);
+        document.getElementById('resultTotalFee').textContent = fmt(totalFee);
+        document.getElementById('resultTotal').textContent = fmt(totalPay);
+
+        const gocPct = (amount / totalPay) * 100;
+        const feePct = (totalFee / totalPay) * 100;
+        document.getElementById('barGoc').style.width = gocPct + '%';
+        document.getElementById('barFee').style.width = feePct + '%';
+
+      } else if (activeUc === 'vaynhanh') {
+        // Vay Nhanh FastMoney: 5% early payoff fee, save remaining months' interest
+        // Assume monthly interest rate is 3% flat for simulation purposes
+        const penalty = amount * 0.05;
+        const interestSaved = amount * 0.03 * term;
+        const totalPay = amount + penalty;
+
+        document.getElementById('resultMonthly').textContent = fmt(totalPay);
+        document.getElementById('resultGoc').textContent = fmt(amount);
+        document.getElementById('resultPhi').textContent = fmt(penalty);
+        document.getElementById('resultTotalFee').textContent = fmt(interestSaved);
+        document.getElementById('resultTotal').textContent = fmt(totalPay);
+
+        const gocPct = (amount / totalPay) * 100;
+        const feePct = (penalty / totalPay) * 100;
+        document.getElementById('barGoc').style.width = gocPct + '%';
+        document.getElementById('barFee').style.width = feePct + '%';
+
+      } else if (activeUc === 'tuithantai') {
+        // Túi Thần Tài: 5.0% annual compounding daily
+        // Formula: A = P * (1 + r/n)^(nt)
+        const rate = 0.05;
+        const n = 365; // daily
+        const t = term / 12; // years
+        const totalPay = amount * Math.pow((1 + rate/n), n*t);
+        const profit = totalPay - amount;
+        const yieldPercent = ((profit / amount) * 100).toFixed(2) + ' %';
+
+        document.getElementById('resultMonthly').textContent = fmt(totalPay);
+        document.getElementById('resultGoc').textContent = fmt(amount);
+        document.getElementById('resultPhi').textContent = fmt(profit);
+        document.getElementById('resultTotalFee').textContent = yieldPercent;
+        document.getElementById('resultTotal').textContent = fmt(totalPay);
+
+        const gocPct = (amount / totalPay) * 100;
+        const feePct = (profit / totalPay) * 100;
+        document.getElementById('barGoc').style.width = gocPct + '%';
+        document.getElementById('barFee').style.width = feePct + '%';
+      }
+    }
+
+    // Real-time formatting for money input
+    function formatValue(el) {
+      const num = parseMoney(el.value);
+      el.value = num > 0 ? num.toLocaleString('vi-VN') : '';
+    }
+
+    elAmount.addEventListener('input', () => {
+      let cursor = elAmount.selectionStart;
+      const oldLen = elAmount.value.length;
+      formatValue(elAmount);
+      const newLen = elAmount.value.length;
+      cursor = cursor + (newLen - oldLen);
+      elAmount.setSelectionRange(cursor, cursor);
+      calculate();
+    });
+
+    // Toolbar Switcher Buttons
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.toolbar-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadUseCase(btn.dataset.uc);
+      });
+    });
+
+    // Initial load
+    loadUseCase('vits');
+  </script>
+
+</body>
+</html>

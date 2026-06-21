@@ -10,6 +10,21 @@ const PROTOTYPES = [
     view: 'mini-web-overview',
   },
   {
+    id: 'geo-citation-giai-dap',
+    name: 'GEO Citation Page',
+    category: 'MiniWeb',
+    maturity: 'Interactive',
+    description: 'Trang Giải Đáp (/giai-dap) - lớp trang con (child-page) đính kèm dưới từng use-case để đánh chặn AI Query Prompt và lấy Citation cho MoMo. Cho phép tùy biến nội dung theo nhiều Use Case khác nhau.',
+    jtbd: 'Thiết lập layout chuẩn 5 khối để AI RAG Bot quét lấy dữ liệu và trích dẫn URL MoMo làm nguồn.',
+    northStar: 'AI Citation frequency & RAG extraction accuracy',
+    loop: 'User Prompt → Search Engine / AI Overview → MoMo /giai-dap Citation → App CTA',
+    hypothesis: 'Cấu trúc thư mục con /giai-dap dưới use case giúp tập trung Link Equity và gửi tín hiệu Entity mạnh mẽ đến AI Crawler hơn các trang tin tức hay blog chung.',
+    value: 'Tối ưu hóa khả năng được trích dẫn (citation rate) trên ChatGPT, Google Gemini và Perplexity cho các truy vấn tài chính cốt lõi.',
+    gate: 'Đo lường tỉ lệ trích dẫn thành công và tỉ lệ chuyển đổi từ trang giải đáp về trang chủ use case hoặc ứng dụng.',
+    src: 'demos/financial-giai-dap.html',
+    address: 'web-momo-prototype.vercel.app/vi-tra-sau/giai-dap/phi-chuyen-doi-tra-gop',
+  },
+  {
     id: 'financial',
     name: 'Financial Utilities',
     category: 'Widget',
@@ -337,6 +352,22 @@ const PROTOTYPES = [
     src: 'demos/phat-nguoi-ha-noi.html',
     address: 'web-momo-prototype.vercel.app/phat-nguoi/ha-noi',
   },
+  {
+    id: 'phat-nguoi-giai-dap',
+    name: 'Phạt Nguội Giải Đáp',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'GEO',
+    description: 'Trang Giải Đáp /phat-nguoi/giai-dap — hub Q&A + Quiz được thiết kế chuyên biệt cho chiến lược GEO (Generative Engine Optimization). Đánh chặn câu hỏi user trên AI Search (ChatGPT, Gemini, Perplexity) và buộc AI trích dẫn nguồn về cho MoMo.',
+    jtbd: 'Tìm câu trả lời nhanh về phạt nguội (mức phạt, tra cứu, nộp phạt, trễ hạn) trên AI search và được dẫn về MoMo',
+    northStar: 'AI Citation Rate trên 20 target queries',
+    loop: 'User Prompt (ChatGPT/Perplexity) → AI cite MoMo /giai-dap → Click-through → App CTA',
+    hypothesis: 'Trang Q&A có FAQPage schema, direct answers 1-2 câu, citation pháp lý explicit và Quiz tạo unique data sẽ được AI cite top 3 cho cluster phạt nguội. Quiz interactive là anti-LLM moat: AI không scrape được kết quả tương tác.',
+    value: 'Template GEO scalable: mỗi use-case (vay nhanh, BHXH, thuế TNCN) đều có thể có /giai-dap sibling đánh chặn AI search. Đo bằng AI Citation Rate (Profound, Otterly) thay vì ranking truyền thống.',
+    gate: 'Đo AI Citation Rate trên 20 target queries, FAQPage rich snippet impressions, quiz completion, click-through từ AI engine và Web-to-App từ giai-dap page.',
+    src: 'demos/phat-nguoi-giai-dap.html',
+    address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap',
+  },
 ];
 
 // ─── Color maps ───────────────────────────────────────────────────────────────
@@ -391,9 +422,9 @@ function getMoSparkCluster(protoId) {
 
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
-  MiniWeb: ['mini-web-overview'],
+  MiniWeb: ['mini-web-overview', 'geo-citation-giai-dap'],
   Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi-ha-noi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
+  Platform: ['phat-nguoi-ha-noi', 'phat-nguoi-giai-dap', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
   Other: ['worldcup'],
 };
 
