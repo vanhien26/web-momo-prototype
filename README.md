@@ -46,7 +46,10 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 
 | Prototype | File | Mô tả |
 |---|---|---|
-| Phạt Nguội Hà Nội | `demos/phat-nguoi-ha-noi.html` | Tra cứu phạt nguội pSEO (P0 - CEO mandate) |
+| Phạt Nguội | `demos/phat-nguoi.html` | Hub tra cứu toàn quốc, directory địa phương và định tuyến nội dung |
+| Phạt Nguội Hà Nội | `demos/phat-nguoi-ha-noi.html` | Location Detail child-page của Hub Phạt Nguội |
+| Phạt Nguội Giải Đáp | `demos/phat-nguoi-giai-dap.html` | Content Hub con của Phạt Nguội, tập trung Q&A và Quiz Center |
+| Cách nộp phạt qua MoMo | `demos/phat-nguoi-nop-qua-momo.html` | Q&A Detail con của Phạt Nguội Giải Đáp |
 | Merchant | `demos/merchant.html` | Merchant detail page đa ngành |
 | Merchant Discovery | `demos/merchant-discovery.html` | Card stack swipe để khám phá merchant |
 | Cinema Film Detail | `demos/cinema-film-detail.html` | Film detail tích hợp Summer Campaign 2026 + Game Mở Khoá |

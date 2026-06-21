@@ -1,764 +1,151 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tra cứu phạt nguội Hà Nội – Demo prototype | MoMo</title>
-<meta name="description" content="Demo prototype tra cứu phạt nguội tại Hà Nội: form lookup, kết quả vi phạm, navigate tỉnh thành khác và các dịch vụ liên quan.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --pk:#a50064;--pk2:#c8007a;--pk-bg:#fff0f7;--pk-dark:#6d0040;
-  --ink:#111827;--sub:#6b7280;--muted:#9ca3af;
-  --line:#e5e7eb;--bg:#f5f6f8;--white:#fff;
-  --green:#059669;--green-bg:#ecfdf5;--green-mid:#10b981;
-  --amber:#d97706;--amber-bg:#fffbeb;
-  --red:#dc2626;--red-bg:#fef2f2;--red-mid:#ef4444;
-  --blue:#2563eb;--blue-bg:#eff6ff;
-  --orange:#ea580c;--orange-bg:#fff7ed;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
-button{font-family:inherit;cursor:pointer}
-
-/* ─── TOPBAR ─────────────────────────────── */
-.topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 20px;height:50px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:200}
-.topbar-logo{display:flex;align-items:center;gap:7px;text-decoration:none;flex-shrink:0}
-.topbar-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--pk);display:grid;place-items:center;overflow:hidden}
-.topbar-logo-mark img{width:80%;height:80%;object-fit:contain}
-.topbar-crumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sub);flex:1;min-width:0;overflow:hidden}
-.topbar-crumb a{color:var(--sub);text-decoration:none;white-space:nowrap}
-.topbar-crumb a:hover{color:var(--pk)}
-.topbar-crumb .sep{color:var(--muted);flex-shrink:0}
-.topbar-crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap}
-.topbar-cta{flex-shrink:0;background:var(--pk);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:700}
-
-/* ─── HERO ───────────────────────────────── */
-.hero{background:linear-gradient(155deg,#8a0053 0%,var(--pk2) 100%);padding:28px 20px 0;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.05);top:-80px;right:-60px;pointer-events:none}
-.hero::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04);bottom:60px;left:-60px;pointer-events:none}
-.hero-wrap{max-width:480px;margin:0 auto;position:relative;z-index:1}
-.hero-loc{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:rgba(255,255,255,.92);margin-bottom:14px}
-.hero h1{font-size:28px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.78);line-height:1.55;margin-bottom:22px;max-width:360px}
-
-/* lookup card */
-.lookup-card{background:#fff;border-radius:16px 16px 0 0;padding:20px 20px 0;box-shadow:0 -10px 40px rgba(0,0,0,.14)}
-.lookup-label{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
-.plate-input-wrap{position:relative;margin-bottom:10px}
-.plate-input{width:100%;height:54px;border:2px solid var(--line);border-radius:12px;padding:0 46px 0 14px;font-family:inherit;font-size:18px;font-weight:800;color:var(--ink);letter-spacing:.09em;text-transform:uppercase;transition:border-color .15s;outline:none}
-.plate-input:focus{border-color:var(--pk)}
-.plate-input::placeholder{font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:14px}
-.plate-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:26px;height:26px;background:var(--line);border:none;border-radius:50%;color:var(--sub);font-size:12px;display:none;align-items:center;justify-content:center}
-.plate-input:not(:placeholder-shown) ~ .plate-clear{display:flex}
-.vtype-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
-.vtype-btn{height:44px;border:1.5px solid var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:700;color:var(--sub);transition:all .15s;padding:0 6px;white-space:nowrap}
-.vtype-btn.on{border-color:var(--pk);background:var(--pk-bg);color:var(--pk)}
-.plate-hint{font-size:11px;color:var(--sub);margin:-4px 0 10px;line-height:1.45}
-.plate-hint b{color:var(--ink);font-weight:700}
-.save-plate{display:flex;align-items:center;gap:7px;margin-bottom:12px;cursor:pointer;user-select:none}
-.save-plate input{width:16px;height:16px;accent-color:var(--pk);cursor:pointer}
-.save-plate label{font-size:12px;color:var(--sub);font-weight:600;cursor:pointer}
-.save-plate label b{color:var(--ink);font-weight:700}
-.social-proof{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;padding:10px 0 4px;font-size:11.5px;color:var(--sub);font-weight:600}
-.social-proof b{color:var(--ink);font-weight:800;letter-spacing:-.01em}
-.social-proof .sp-dot{width:3px;height:3px;border-radius:50%;background:var(--muted)}
-.search-btn{width:100%;height:52px;background:var(--pk);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;margin-bottom:14px}
-.search-btn:hover{background:var(--pk2)}
-.search-btn:active{transform:scale(.98)}
-.trust-row{display:flex;align-items:center;justify-content:center;gap:0;padding:12px 0 16px;border-top:1px solid var(--line)}
-.trust-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--sub);font-weight:600;border-right:1px solid var(--line)}
-.trust-item:last-child{border-right:none}
-.trust-ico{font-size:15px}
-
-/* ─── RESULT AREA ──────────────────────────── */
-.result-wrap{background:#fff;padding:0 20px 20px;max-width:480px;margin:0 auto}
-.result-area{display:none}
-.result-area.show{display:block}
-.result-loading{padding:24px;text-align:center}
-.spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--pk);border-radius:50%;animation:_spin .8s linear infinite;margin:0 auto 10px}
-@keyframes _spin{to{transform:rotate(360deg)}}
-.violation-card{border-radius:14px;border:1px solid var(--line);overflow:hidden;margin-top:4px}
-.vc-header{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#fafafa}
-.vc-plate{font-size:17px;font-weight:900;letter-spacing:.1em;color:var(--ink)}
-.vc-type-tag{font-size:10px;font-weight:700;background:var(--bg);color:var(--sub);padding:3px 10px;border-radius:20px;border:1px solid var(--line)}
-.vc-summary{padding:11px 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
-.vc-summary.bad{background:var(--red-bg);color:var(--red)}
-.vc-summary.clean{background:var(--green-bg);color:var(--green)}
-.violation-item{padding:14px 16px;border-bottom:1px solid var(--line)}
-.vi-name{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:8px}
-.vi-row{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--sub);margin-bottom:5px}
-.vi-row svg{flex-shrink:0;margin-top:1px}
-.vi-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
-.vi-fine{font-size:16px;font-weight:900;color:var(--red)}
-.vi-status{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:4px 11px;border-radius:20px}
-.vi-status.unpaid{background:var(--red-bg);color:var(--red)}
-.vi-status.paid{background:var(--green-bg);color:var(--green)}
-.vc-footer{padding:12px 16px;display:flex;gap:8px}
-.vc-btn{flex:1;height:42px;border-radius:10px;font-size:13px;font-weight:700;border:none;display:flex;align-items:center;justify-content:center;gap:5px}
-.vc-btn.primary{background:var(--pk);color:#fff}
-.vc-btn.outline{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
-
-/* ─── SUGGEST ────────────────────────────── */
-.suggest-section{background:#fff;padding:20px;border-top:1px solid var(--line);border-bottom:6px solid var(--bg)}
-.suggest-section + .suggest-section{border-top:none}
-.sec-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.mini-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
-.province-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:16px}
-.province-scroll::-webkit-scrollbar{display:none}
-.province-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap;cursor:pointer;transition:all .15s;text-decoration:none}
-.province-chip:hover,.province-chip.active{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
-.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.related-card{border:1.5px solid var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s,transform .15s;text-decoration:none}
-.related-card:hover{border-color:var(--pk);transform:translateY(-1px)}
-.related-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
-.related-name{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:2px}
-.related-desc{font-size:10.5px;color:var(--sub);line-height:1.4}
-
-/* ─── CONTENT SEO ────────────────────────── */
-.content-seo{max-width:720px;margin:0 auto;padding:28px 20px 40px}
-.cs-header{margin-bottom:20px}
-.cs-eyebrow{font-size:10.5px;font-weight:800;color:var(--pk);text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px}
-.cs-h2{font-size:22px;font-weight:900;color:var(--ink);line-height:1.22;margin-bottom:6px}
-.cs-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:12px}
-.cs-meta span{display:flex;align-items:center;gap:4px}
-
-/* stat strip */
-.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stat-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 12px;text-align:center}
-.stat-val{font-size:24px;font-weight:900;color:var(--pk);line-height:1;margin-bottom:5px}
-.stat-lbl{font-size:10px;color:var(--sub);font-weight:600;line-height:1.4}
-
-/* content cards */
-.cs-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:10px}
-.cs-card-hd{padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
-.cs-card-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
-.cs-card-title{font-size:14px;font-weight:800;color:var(--ink);flex:1}
-.cs-card-badge{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.cs-card-body{padding:14px 16px}
-.cs-card-body-flush{padding:0}
-
-/* ── Shared content body patterns (article-simple) ─── */
-.art-p{font-size:13px;color:var(--sub);line-height:1.72}
-.art-p+.art-p{margin-top:10px}
-.art-p strong{color:var(--ink)}
-.art-note{font-size:11.5px;color:var(--sub);line-height:1.6;padding:10px 16px;background:var(--bg);border-radius:8px;margin-top:12px}
-.art-note strong{color:var(--ink);font-weight:700}
-
-/* art-list: label + value rows — used for fine table AND timeline */
-.art-list{list-style:none}
-.art-list li{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px}
-.art-list li:last-child{border-bottom:none}
-.al-lbl{font-weight:700;color:var(--ink);flex-shrink:0;min-width:0}
-.al-val{color:var(--sub);line-height:1.5;flex:1}
-.fine-r{color:var(--red);font-weight:800}
-.fine-o{color:var(--orange);font-weight:800}
-.fine-a{color:var(--amber);font-weight:800}
-
-/* step-list: counter ol */
-.step-list{list-style:none;counter-reset:stp}
-.step-list li{counter-increment:stp;display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}
-.step-list li:last-child{border-bottom:none}
-.step-list li::before{content:counter(stp);width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--pk);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.step-list li strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
-.step-list li span{font-size:12px;color:var(--sub);line-height:1.5}
-
-/* icon-list: emoji + text rows */
-.icon-list{list-style:none}
-.icon-list li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.icon-list li:last-child{border-bottom:none}
-.il-ico{font-size:17px;flex-shrink:0;line-height:1.2}
-.icon-list strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
-.icon-list span{font-size:12px;color:var(--sub);line-height:1.5}
-
-/* faq */
-.faq-item{border-bottom:1px solid var(--line)}
-.faq-item:last-child{border-bottom:none}
-.faq-q{padding:14px 16px;font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;transition:color .15s;user-select:none}
-.faq-q:hover{color:var(--pk)}
-.faq-q.open{color:var(--pk)}
-.faq-icon{width:22px;height:22px;border-radius:50%;background:var(--bg);display:grid;place-items:center;flex-shrink:0;transition:background .15s,transform .25s}
-.faq-q.open .faq-icon{background:var(--pk-bg);transform:rotate(45deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1)}
-.faq-a.open{max-height:400px}
-.faq-a-inner{padding:0 16px 14px;font-size:12.5px;color:var(--sub);line-height:1.7}
-
-/* info/alert boxes */
-.info-box{background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#1e40af;line-height:1.65;margin-top:12px}
-.info-box strong{font-weight:700;display:block;margin-bottom:4px;font-size:12.5px}
-.success-box{background:var(--green-bg);border-left:3px solid var(--green-mid);border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#065f46;line-height:1.65;margin-top:12px}
-.success-box strong{font-weight:700;display:block;margin-bottom:4px}
-.alert-box{background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#92400e;line-height:1.65;margin-top:10px}
-.alert-box strong{font-weight:700;display:block;margin-bottom:4px}
-
-/* cta section */
-.cta-section{background:linear-gradient(135deg,#8a0053 0%,var(--pk2) 100%);padding:32px 20px;text-align:center;position:relative;overflow:hidden}
-.cta-section::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);top:-60px;right:-40px;pointer-events:none}
-.cta-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;position:relative}
-.cta-sub{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:22px;position:relative}
-.cta-btn-row{display:flex;gap:10px;justify-content:center;position:relative;flex-wrap:wrap}
-.cta-btn{height:46px;border-radius:12px;padding:0 22px;font-size:13px;font-weight:800;border:none;display:flex;align-items:center;gap:8px;cursor:pointer}
-.cta-btn.white{background:#fff;color:var(--pk)}
-.cta-btn.ghost{background:transparent;border:2px solid rgba(255,255,255,.45);color:#fff}
-
-/* fixed cta */
-.fixed-cta{position:fixed;bottom:0;left:0;right:0;background:var(--pk);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:300;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 24px rgba(0,0,0,.2)}
-.fixed-cta.show{transform:translateY(0)}
-.fixed-cta-text{font-size:12px;color:rgba(255,255,255,.85);line-height:1.3}
-.fixed-cta-text strong{color:#fff;display:block;font-size:13px;font-weight:800}
-.fixed-cta-btn{flex-shrink:0;height:40px;background:#fff;color:var(--pk);border:none;border-radius:20px;padding:0 18px;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}
-.fixed-cta-x{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:none;color:#fff;width:20px;height:20px;border-radius:50%;font-size:10px;cursor:pointer;display:grid;place-items:center}
-
-/* ─── LONG FORM ──────────────────────────── */
-.long-form{max-width:720px;margin:0 auto;padding:0 20px 40px}
-.lf-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 24px 20px}
-.lf-top{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.lf-h2{font-size:19px;font-weight:900;color:var(--ink);line-height:1.3;margin-bottom:5px}
-.lf-meta{font-size:11px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
-.lf-meta span{display:flex;align-items:center;gap:4px}
-.lf-h3{font-size:15px;font-weight:800;color:var(--ink);line-height:1.4;padding-left:10px;border-left:3px solid var(--pk);margin:22px 0 9px}
-.lf-h4{font-size:13.5px;font-weight:700;color:var(--ink);margin:14px 0 5px}
-.lf-p{font-size:13px;color:var(--sub);line-height:1.8;margin-bottom:9px}
-.lf-p strong{color:var(--ink)}
-.lf-ul{list-style:disc;padding-left:18px;margin-bottom:9px}
-.lf-ul li{font-size:13px;color:var(--sub);line-height:1.72;margin-bottom:4px}
-.lf-ul li::marker{color:var(--pk)}
-
-@media(max-width:520px){
-  .hero h1{font-size:24px}
-  .stat-strip{grid-template-columns:repeat(3,1fr)}
-  .al-lbl{min-width:72px}
-  .lf-card{padding:18px 16px}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tra cứu phạt nguội Hà Nội | MoMo</title>
+  <meta name="description" content="Tra cứu phạt nguội ô tô, xe máy tại Hà Nội và xem hướng dẫn xử lý vi phạm theo địa phương.">
+  <link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="phat-nguoi.css?v=1">
 </head>
 <body>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="phat-nguoi.html" aria-label="Về Hub Phạt Nguội">
+        <img src="../assets/images/momo-logo.svg" alt="MoMo">
+        <span class="brand-copy"><strong>Phạt Nguội</strong><small>Location Detail · Hà Nội</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng Phạt Nguội">
+        <a href="phat-nguoi.html">Tổng quan</a>
+        <a href="phat-nguoi-giai-dap.html">Giải đáp</a>
+        <a href="phat-nguoi-nop-qua-momo.html">Nộp phạt</a>
+        <a href="../lab.html">← Lab</a>
+        <a class="nav-cta" href="#lookup">Tra cứu Hà Nội</a>
+      </nav>
+    </div>
+  </header>
 
-<!-- ─── TOPBAR ──────────────────────────────── -->
-<nav class="topbar">
-  <a class="topbar-logo" href="../../lab.html">
-    <div class="topbar-logo-mark">
-      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
-    </div>
-  </a>
-  <div class="topbar-crumb">
-    <a href="#">Phạt Nguội</a>
-    <span class="sep">›</span>
-    <span class="cur">Hà Nội</span>
-  </div>
-  <button class="topbar-cta">Mở MoMo</button>
-</nav>
+  <main>
+    <nav class="shell breadcrumb" aria-label="Breadcrumb">
+      <a href="../lab.html">Lab</a><span class="breadcrumb-sep">›</span>
+      <a href="phat-nguoi.html">Phạt Nguội</a><span class="breadcrumb-sep">›</span>
+      <span>Địa phương</span><span class="breadcrumb-sep">›</span><strong>Hà Nội</strong>
+    </nav>
 
-<!-- ─── HERO ────────────────────────────────── -->
-<section class="hero">
-  <div class="hero-wrap">
-    <div class="hero-loc">
-      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5a4.5 4.5 0 0 1 4.5 4.5C12.5 9.25 8 14 8 14S3.5 9.25 3.5 6A4.5 4.5 0 0 1 8 1.5zm0 2.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
-      Hà Nội · Thành phố trực thuộc TW
-    </div>
-    <h1>Tra cứu phạt nguội<br>tại Hà Nội</h1>
-    <p class="hero-sub">Kiểm tra vi phạm giao thông theo biển số ô tô, xe máy — chính xác từ dữ liệu Cục CSGT, miễn phí.</p>
-    <!-- Lookup card -->
-    <div class="lookup-card">
-      <div class="lookup-label">Nhập biển số xe</div>
-      <div class="plate-input-wrap">
-        <input type="text" class="plate-input" id="plateInput" placeholder="VD: 29A12345" maxlength="12" oninput="onPlateInput(this)" onkeydown="if(event.key==='Enter')doSearch()">
-        <button class="plate-clear" onclick="clearPlate()">✕</button>
-      </div>
-      <div class="plate-hint">💡 Ví dụ: <b>29A-123.45</b> nhập là <b>29A12345</b> (bỏ dấu chấm, gạch ngang).</div>
-      <div class="vtype-row">
-        <button class="vtype-btn on" id="vt-oto" onclick="setVType('oto')">🚗 Ô tô</button>
-        <button class="vtype-btn" id="vt-xemay" onclick="setVType('xemay')">🏍️ Xe máy</button>
-        <button class="vtype-btn" id="vt-xedien" onclick="setVType('xedien')">🛵 Xe máy điện</button>
-      </div>
-      <label class="save-plate" for="savePlateChk">
-        <input type="checkbox" id="savePlateChk">
-        <label for="savePlateChk"><b>Lưu biển số</b> để tra nhanh lần sau</label>
-      </label>
-      <button class="search-btn" onclick="doSearch()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Tra cứu miễn phí
-      </button>
-      <div class="trust-row">
-        <div class="trust-item"><div class="trust-ico">✅</div>Cục CSGT &amp; Đăng kiểm</div>
-        <div class="trust-item"><div class="trust-ico">⚡</div>Kết quả 3 giây</div>
-        <div class="trust-item"><div class="trust-ico">🆓</div>Miễn phí 100%</div>
-      </div>
-      <div class="social-proof">
-        <span>📸 <b>1.800+</b> Camera AI</span><span class="sp-dot"></span>
-        <span>👥 <b>1M+</b> người dùng</span><span class="sp-dot"></span>
-        <span>🔄 <b>500K+</b> lượt/tháng</span>
-      </div>
-    </div>
-  </div>
-</section>
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-panel">
+          <div class="hero-copy">
+            <span class="eyebrow"><i class="eyebrow-dot"></i> Location Detail · Hà Nội</span>
+            <h1>Tra cứu phạt nguội tại Hà Nội</h1>
+            <p class="hero-dek">Kiểm tra biển số và xem những thông tin chỉ dành cho người điều khiển phương tiện tại Hà Nội: mã vùng, khu vực cần lưu ý và cách tiếp tục xử lý.</p>
+            <div class="location-meta" aria-label="Thông tin Hà Nội">
+              <span>Biển số 29 đến 33, 40</span><span>Ô tô, xe máy, xe điện</span><span>Cập nhật 06/2026</span>
+            </div>
+          </div>
 
-<!-- ─── RESULT AREA ──────────────────────────── -->
-<div class="result-wrap">
-  <div class="result-area" id="resultArea">
-    <div class="result-loading" id="resultLoading">
-      <div class="spin"></div>
-      <div style="font-size:13px;color:var(--sub);font-weight:600">Đang tra cứu dữ liệu CSGT...</div>
-    </div>
-    <div id="resultCard"></div>
-  </div>
-</div>
-
-<!-- ─── SUGGEST ──────────────────────────────── -->
-<div class="suggest-section">
-  <div class="sec-title">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Đề xuất cho tôi
-  </div>
-  <div class="mini-label">Tra cứu tỉnh / thành khác</div>
-  <div class="province-scroll">
-    <a class="province-chip active" href="#">🏙️ Hà Nội</a>
-    <a class="province-chip" href="#">🌆 TP. Hồ Chí Minh</a>
-    <a class="province-chip" href="#">🏖️ Đà Nẵng</a>
-    <a class="province-chip" href="#">🌊 Hải Phòng</a>
-    <a class="province-chip" href="#">🌳 Bình Dương</a>
-    <a class="province-chip" href="#">🌺 Cần Thơ</a>
-    <a class="province-chip" href="#">🏔️ Đồng Nai</a>
-    <a class="province-chip" href="#">⛵ Khánh Hoà</a>
-    <a class="province-chip" href="#">🌾 Long An</a>
-  </div>
-  <div class="mini-label">Liên quan đến phạt nguội</div>
-  <div class="related-grid">
-    <a class="related-card" href="#">
-      <div class="related-ico" style="background:#fff0f7">💳</div>
-      <div>
-        <div class="related-name">Nộp phạt online</div>
-        <div class="related-desc">Thanh toán không đến CA</div>
-      </div>
-    </a>
-    <a class="related-card" href="#">
-      <div class="related-ico" style="background:#fffbeb">🔔</div>
-      <div>
-        <div class="related-name">Nhận cảnh báo</div>
-        <div class="related-desc">Alert khi có phạt mới</div>
-      </div>
-    </a>
-    <a class="related-card" href="#">
-      <div class="related-ico" style="background:#eff6ff">📍</div>
-      <div>
-        <div class="related-name">Bản đồ camera HN</div>
-        <div class="related-desc">600+ vị trí AI giám sát</div>
-      </div>
-    </a>
-    <a class="related-card" href="phat-nguoi-giai-dap.html">
-      <div class="related-ico" style="background:#fef2f2">⚠️</div>
-      <div>
-        <div class="related-name">Phạt chậm nộp</div>
-        <div class="related-desc">Tính tiền phạt trễ hạn</div>
-      </div>
-    </a>
-  </div>
-</div>
-
-<!-- ─── CONTENT SEO ───────────────────────────── -->
-<div class="content-seo">
-  <div class="cs-header">
-    <div class="cs-eyebrow">Thông tin · Hà Nội 2026</div>
-    <h2 class="cs-h2">Phạt nguội tại Hà Nội:<br>Những điều cần biết</h2>
-    <div class="cs-meta">
-      <span>
-        <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.5 4v3.5l2.5 1.5-.5.87L8 9.28V5H8.5z"/></svg>
-        Cập nhật 06/2026
-      </span>
-      <span>
-        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13z"/><circle cx="8" cy="8" r="1" fill="currentColor"/></svg>
-        Nguồn: Cục CSGT · NĐ 168/2024
-      </span>
-    </div>
-  </div>
-
-  <!-- stat strip -->
-  <div class="stat-strip">
-    <div class="stat-card">
-      <div class="stat-val">3.2M</div>
-      <div class="stat-lbl">Vi phạm ghi nhận tại HN / năm</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">15–30</div>
-      <div class="stat-lbl">Ngày phạt nguội xuất hiện</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">#1</div>
-      <div class="stat-lbl">Quá tốc độ - vi phạm phổ biến nhất</div>
-    </div>
-  </div>
-
-  <!-- Card 1: Phạt nguội là gì -->
-  <div class="cs-card">
-    <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#fff0f7">📷</div>
-      <div class="cs-card-title">Phạt nguội là gì?</div>
-    </div>
-    <div class="cs-card-body">
-      <p class="art-p">Phạt nguội là hình thức xử phạt vi phạm giao thông ghi nhận <strong>tự động qua camera</strong> tại các nút giao thông. Chủ phương tiện <strong>không bị dừng xe ngay lúc vi phạm</strong> — thông báo được gửi sau 15–30 ngày qua bưu điện hoặc hệ thống điện tử.</p>
-      <p class="art-p" style="margin-top:10px">Hà Nội là địa phương triển khai camera phạt nguội dày đặc nhất cả nước, tập trung tại Võ Chí Công, Trần Duy Hưng, Nguyễn Chí Thanh, Phạm Văn Đồng và Vành đai 3. Năm 2025, Hà Nội bổ sung thêm 680 camera thế hệ mới.</p>
-    </div>
-  </div>
-
-  <!-- Card 2: Mức phạt 2026 -->
-  <div class="cs-card">
-    <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#fff7ed">📊</div>
-      <div class="cs-card-title">Mức phạt vi phạm giao thông 2026</div>
-      <div class="cs-card-badge" style="background:#fff0f7;color:var(--pk)">NĐ 168/2024</div>
-    </div>
-    <div class="cs-card-body">
-      <ul class="art-list">
-        <li>
-          <span class="al-lbl">Vượt tốc độ &gt;20 km/h</span>
-          <span class="al-val">Ô tô <em class="fine-r">6–8 tr</em> · Xe máy <em class="fine-o">2–3 tr</em></span>
-        </li>
-        <li>
-          <span class="al-lbl">Vượt đèn đỏ</span>
-          <span class="al-val">Ô tô <em class="fine-r">4–6 tr</em> · Xe máy <em class="fine-o">1–2 tr</em></span>
-        </li>
-        <li>
-          <span class="al-lbl">Ngược chiều</span>
-          <span class="al-val">Ô tô <em class="fine-o">3–5 tr</em> · Xe máy <em class="fine-a">0,4–0,6 tr</em></span>
-        </li>
-        <li>
-          <span class="al-lbl">Làn đường cấm</span>
-          <span class="al-val">Ô tô <em class="fine-o">1–2 tr</em> · Xe máy <em class="fine-a">0,3–0,4 tr</em></span>
-        </li>
-        <li>
-          <span class="al-lbl">Vượt 10–20 km/h</span>
-          <span class="al-val">Ô tô <em class="fine-o">3–5 tr</em> · Xe máy <em class="fine-a">0,8–1 tr</em></span>
-        </li>
-        <li>
-          <span class="al-lbl">Đỗ xe sai quy định</span>
-          <span class="al-val">Ô tô <em class="fine-a">0,8–1 tr</em> · Xe máy <em class="fine-a">0,2–0,3 tr</em></span>
-        </li>
-      </ul>
-      <p class="art-note">⚠️ Vượt tốc độ &gt;35 km/h và vượt đèn đỏ còn có thể bị <strong>tước GPLX 2–4 tháng</strong>. Vi phạm tái lặp trong 6 tháng tăng mức phạt tối đa 2 lần.</p>
-    </div>
-  </div>
-
-  <!-- Card 3: Quy trình xử lý -->
-  <div class="cs-card">
-    <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#f0fdf4">⚡</div>
-      <div class="cs-card-title">Quy trình xử lý khi bị phạt nguội</div>
-    </div>
-    <div class="cs-card-body">
-      <ol class="step-list">
-        <li><strong>Tra cứu biển số</strong><span>Kiểm tra trên MoMo hoặc csgt.gov.vn — miễn phí, có kết quả trong 3 giây.</span></li>
-        <li><strong>Nhận thông báo vi phạm</strong><span>Giấy báo vi phạm gửi qua bưu điện sau 15–30 ngày, hoặc nhận push notification từ MoMo.</span></li>
-        <li><strong>Chuẩn bị hồ sơ</strong><span>GPLX + Giấy đăng ký xe + CMND/CCCD bản gốc.</span></li>
-        <li><strong>Nộp phạt</strong><span>Đến CA phường/quận nơi ghi nhận vi phạm, hoặc nộp online qua cổng dịch vụ công.</span></li>
-      </ol>
-      <p class="art-note">💡 <strong>Nộp qua MoMo:</strong> Tính năng thanh toán phạt nguội trực tiếp trong app đang được triển khai — không cần đến CA, không xếp hàng.</p>
-    </div>
-  </div>
-
-  <!-- Card 4: Thời gian xuất hiện -->
-  <div class="cs-card">
-    <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#eff6ff">🕐</div>
-      <div class="cs-card-title">Bao lâu vi phạm xuất hiện trong hệ thống?</div>
-    </div>
-    <div class="cs-card-body">
-      <ul class="art-list">
-        <li>
-          <span class="al-lbl" style="color:var(--pk);min-width:90px">Ngày 0</span>
-          <span class="al-val">Camera ghi nhận hình ảnh vi phạm, lưu tự động kèm GPS và timestamp.</span>
-        </li>
-        <li>
-          <span class="al-lbl" style="color:var(--pk);min-width:90px">Ngày 3–7</span>
-          <span class="al-val">Cán bộ CSGT xác minh, đối chiếu hình ảnh với dữ liệu đăng ký xe.</span>
-        </li>
-        <li>
-          <span class="al-lbl" style="color:var(--pk);min-width:90px">Ngày 15–30</span>
-          <span class="al-val">Vi phạm xuất hiện trên hệ thống CSGT.vn và đồng bộ với MoMo.</span>
-        </li>
-        <li>
-          <span class="al-lbl" style="color:var(--red);min-width:90px">Sau 60 ngày</span>
-          <span class="al-val">Hạn nộp phạt bắt buộc — quá hạn bị cưỡng chế, không đăng kiểm và không sang tên được.</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Card 5: Lý do dùng MoMo -->
-  <div class="cs-card">
-    <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#fff0f7">⭐</div>
-      <div class="cs-card-title">Tại sao tra cứu qua MoMo?</div>
-      <div class="cs-card-badge" style="background:#f0fdf4;color:var(--green)">1M+ người dùng</div>
-    </div>
-    <div class="cs-card-body">
-      <ul class="icon-list">
-        <li><span class="il-ico">⚡</span><div><strong>Nhanh &amp; Miễn phí</strong><span>Kết quả trong 3 giây, không mất phí tra cứu.</span></div></li>
-        <li><span class="il-ico">🏛️</span><div><strong>Nguồn chính thống</strong><span>Đồng bộ trực tiếp từ hệ thống Cục CSGT Quốc gia.</span></div></li>
-        <li><span class="il-ico">🔔</span><div><strong>Cảnh báo tức thì</strong><span>Push notification ngay khi biển số có vi phạm mới xuất hiện.</span></div></li>
-        <li><span class="il-ico">💳</span><div><strong>Nộp phạt trong app</strong><span>Thanh toán trực tiếp qua MoMo, không cần đến CA.</span></div></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="cs-card">
-    <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#f5f3ff">💬</div>
-      <div class="cs-card-title">Câu hỏi thường gặp về phạt nguội Hà Nội</div>
-    </div>
-    <div class="cs-card-body-flush">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Không thấy kết quả tra cứu có nghĩa là không có vi phạm không?
-          <div class="faq-icon"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg></div>
+          <form class="lookup-card" id="lookup" data-lookup-form data-location="Hà Nội">
+            <div class="lookup-head">
+              <div><strong>Kiểm tra biển số tại Hà Nội</strong><small>Nhập liền, không cần dấu chấm hoặc gạch ngang</small></div>
+              <span class="lookup-badge">Miễn phí</span>
+            </div>
+            <label class="field-label" for="hanoiPlate">Biển số phương tiện</label>
+            <div class="plate-field"><input id="hanoiPlate" data-plate-input autocomplete="off" placeholder="Ví dụ: 29A12345" maxlength="12"></div>
+            <div class="vehicle-switch" role="group" aria-label="Loại phương tiện">
+              <button type="button" data-vehicle="oto" aria-pressed="true">🚗 Ô tô</button>
+              <button type="button" data-vehicle="xemay" aria-pressed="false">🏍️ Xe máy</button>
+              <button type="button" data-vehicle="xedien" aria-pressed="false">🛵 Xe máy điện</button>
+            </div>
+            <button class="lookup-submit" type="submit">Tra cứu miễn phí</button>
+            <div class="lookup-trust"><span>Dữ liệu mô phỏng</span><span>Không lưu biển số</span></div>
+            <div class="lookup-result" data-lookup-result role="status" aria-live="polite"></div>
+          </form>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Không hoàn toàn. Vi phạm có thể chưa được xử lý xong hoặc dữ liệu chưa đồng bộ (thường 15-30 ngày). Nếu nghi ngờ có vi phạm, bạn nên tra cứu lại sau vài ngày hoặc liên hệ trực tiếp Đội CSGT địa phương.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Người khác lái xe mình thì mình có bị phạt không?
-          <div class="faq-icon"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg></div>
+    </section>
+
+    <section class="section section-white">
+      <div class="shell">
+        <nav class="local-nav" aria-label="Mục lục Hà Nội">
+          <a href="#lookup">Tra cứu biển số</a><a href="#local-context">Thông tin Hà Nội</a><a href="#process">Cách xử lý</a><a href="#faq">Câu hỏi thường gặp</a>
+        </nav>
+        <div class="section-head">
+          <div><span class="section-kicker">Thông tin địa phương</span><h2>Điểm khác biệt của trang Hà Nội</h2></div>
+          <p>Trang này không lặp lại hướng dẫn chung của Hub. Nội dung tập trung vào bối cảnh giao thông, nhận diện biển số và cách xử lý vi phạm được ghi nhận tại Hà Nội.</p>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Phạt nguội xử phạt theo biển số xe (phương tiện), không theo người lái. Chủ xe đứng tên đăng ký nhận giấy thông báo vi phạm. Chủ xe có thể cung cấp thông tin người lái cho CSGT để điều chỉnh trách nhiệm pháp lý.</div></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Có thể nộp phạt nguội trực tuyến tại Hà Nội không?
-          <div class="faq-icon"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg></div>
+        <div class="info-grid" id="local-context">
+          <article class="info-card"><span class="info-card-icon">🔢</span><h3>Nhận diện biển số Hà Nội</h3><p>Các dải biển số thường gặp gồm 29, 30, 31, 32, 33 và 40. Hệ thống tra cứu vẫn nhận biển số phương tiện từ tỉnh khác nếu vi phạm được ghi nhận tại Hà Nội.</p></article>
+          <article class="info-card"><span class="info-card-icon">📍</span><h3>Tra cứu theo nơi vi phạm</h3><p>Thông tin kết quả cần thể hiện thời gian, vị trí, hành vi và đơn vị phát hiện. Đây là dữ liệu quan trọng để xác định đầu mối xử lý tiếp theo.</p></article>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Hà Nội đang triển khai thí điểm nộp phạt trực tuyến qua Cổng dịch vụ công và một số ứng dụng như MoMo. Tính năng thanh toán trong app MoMo sẽ sớm ra mắt chính thức — không cần đến CA, không xếp hàng chờ.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Cần mang giấy tờ gì khi đến nộp phạt tại CA Hà Nội?
-          <div class="faq-icon"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg></div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="section-head">
+          <div><span class="section-kicker">Khu vực cần lưu ý</span><h2>Các hành lang giao thông lớn</h2></div>
+          <p>Danh sách giúp user nhận diện bối cảnh di chuyển, không phải danh mục camera đầy đủ hoặc công cụ né tránh kiểm soát.</p>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Cần mang: (1) CMND/CCCD/Hộ chiếu bản gốc, (2) Giấy đăng ký xe bản gốc, (3) Giấy phép lái xe bản gốc, (4) Giấy thông báo vi phạm nếu đã nhận được. Đến CA phường/quận nơi phương tiện bị ghi nhận vi phạm.</div></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          Phạt nguội có hết hiệu lực không nếu không xử lý?
-          <div class="faq-icon"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg></div>
+        <div class="route-list">
+          <article class="route-card"><strong>Vành đai 3 và Phạm Văn Đồng</strong><span>Lưu lượng lớn, nhiều nút giao và đoạn chuyển làn cần quan sát biển báo.</span></article>
+          <article class="route-card"><strong>Võ Chí Công và cầu Nhật Tân</strong><span>Tuyến kết nối sân bay, cần chú ý tốc độ cho phép thay đổi theo từng đoạn.</span></article>
+          <article class="route-card"><strong>Giải Phóng và Nguyễn Trãi</strong><span>Mật độ giao thông cao, thường xuyên có phân luồng tại nút giao.</span></article>
+          <article class="route-card"><strong>Khu vực trung tâm</strong><span>Nhiều đường một chiều, khu vực hạn chế dừng đỗ và khung giờ tổ chức giao thông riêng.</span></article>
         </div>
-        <div class="faq-a"><div class="faq-a-inner">Quyết định xử phạt có hiệu lực 1 năm kể từ ngày ra quyết định. Nếu quá hạn không nộp phạt, CSGT sẽ áp dụng biện pháp cưỡng chế: tạm hoãn đăng kiểm, không được sang tên xe và bị tăng thêm tiền phạt chậm nộp 0,05% mỗi ngày. Bạn có thể <a href="phat-nguoi-giai-dap.html" style="color:var(--pk);font-weight:700">sử dụng Máy tính trễ hạn phạt nguội tại đây ↗</a> để tính toán chi tiết.</div></div>
+        <p class="source-note">Hãy tuân thủ biển báo và hướng dẫn của lực lượng chức năng tại thời điểm di chuyển. Trang không công bố danh sách camera để phục vụ hành vi né tránh kiểm soát.</p>
       </div>
-    </div>
-  </div>
+    </section>
 
-</div><!-- /content-seo -->
-
-<!-- ─── LONG FORM ─────────────────────────────── -->
-<div class="long-form">
-  <div class="lf-card">
-
-    <div class="lf-top">
-      <h2 class="lf-h2">Phạt nguội tại Hà Nội: Hướng dẫn toàn diện 2026</h2>
-      <div class="lf-meta">
-        <span>📅 Cập nhật: 06/2026</span>
-        <span>📋 Nghị định 168/2024/NĐ-CP</span>
-        <span>⏱ Đọc 5 phút</span>
+    <section class="section section-white" id="process">
+      <div class="shell">
+        <div class="section-head">
+          <div><span class="section-kicker">Sau khi có kết quả</span><h2>Xử lý vi phạm ghi nhận tại Hà Nội</h2></div>
+          <p>Luồng chỉ dẫn bắt đầu từ thông tin trên quyết định hoặc kết quả chính thức, không suy đoán đầu mối dựa trên biển số.</p>
+        </div>
+        <div class="steps">
+          <article class="step"><div><strong>Đối chiếu chi tiết vi phạm</strong><span>Kiểm tra biển số, thời gian, địa điểm, hành vi và đơn vị phát hiện được ghi trong kết quả.</span></div></article>
+          <article class="step"><div><strong>Xác nhận đơn vị xử lý</strong><span>Dùng thông tin liên hệ trên quyết định hoặc kênh chính thức của Cục CSGT. Không chuyển tiền theo hướng dẫn từ cuộc gọi lạ.</span></div></article>
+          <article class="step"><div><strong>Chuẩn bị giấy tờ</strong><span>Chuẩn bị giấy tờ theo yêu cầu trong thông báo và xác định hình thức xử lý trực tiếp hoặc trực tuyến.</span></div></article>
+          <article class="step"><div><strong>Lưu biên lai và kiểm tra trạng thái</strong><span>Sau khi hoàn tất, lưu chứng từ và kiểm tra lại trạng thái trên hệ thống chính thức.</span></div></article>
+        </div>
+        <p class="source-note">Cần hướng dẫn chung về thời hạn, hồ sơ và các tình huống đặc biệt? <a href="phat-nguoi-giai-dap.html">Mở Trung tâm Giải đáp Phạt Nguội</a>.</p>
       </div>
-    </div>
+    </section>
 
-    <p class="lf-p">Phạt nguội là hình thức xử phạt vi phạm giao thông thông qua hệ thống camera giám sát, không cần lực lượng CSGT có mặt trực tiếp. Tại Hà Nội, hệ thống này được mở rộng mạnh từ năm 2023 và bứt phá về quy mô triển khai sau khi Nghị định 168/2024/NĐ-CP có hiệu lực từ ngày 1/1/2025, đưa mức phạt vi phạm giao thông lên cao nhất từ trước đến nay. Nếu xe của bạn đang lưu thông tại Hà Nội, hiểu đúng cơ chế phạt nguội sẽ giúp bạn chủ động xử lý và tránh để quyết định xử phạt hết hiệu lực.</p>
-
-    <h3 class="lf-h3">Hệ thống phạt nguội tại Hà Nội vận hành như thế nào</h3>
-    <p class="lf-p">Hà Nội hiện có hơn <strong>800 camera giám sát giao thông</strong> trải khắp các tuyến đường huyết mạch, nút giao trọng điểm và các khu vực thường xuyên ùn tắc. Camera ghi lại hành vi vi phạm theo thời gian thực - từ vượt tốc độ, vượt đèn đỏ, đi sai làn, đến đỗ xe không đúng nơi quy định - rồi truyền về Trung tâm Chỉ huy Cảnh sát Giao thông Công an TP Hà Nội để xử lý.</p>
-    <p class="lf-p">Dữ liệu hình ảnh được đối chiếu với cơ sở dữ liệu đăng ký phương tiện quốc gia. Sau khi xác minh, CSGT Hà Nội ra quyết định xử phạt gửi về địa chỉ của chủ sở hữu xe theo hồ sơ đăng ký. Toàn bộ thông tin vi phạm được cập nhật lên Cổng Dịch vụ Công quốc gia và hệ thống tra cứu của Cục CSGT (csgt.vn) trong vòng 72 giờ làm việc.</p>
-
-    <h4 class="lf-h4">Quy trình xác minh vi phạm</h4>
-    <ul class="lf-ul">
-      <li>Camera ghi nhận và lưu hình ảnh/video thời điểm vi phạm kèm tọa độ GPS, thời gian chính xác</li>
-      <li>Tổ xử lý trích xuất dữ liệu, đối chiếu biển số với Cơ sở dữ liệu đăng ký phương tiện quốc gia</li>
-      <li>Lãnh đạo CSGT ký quyết định xử phạt, ghi rõ mức phạt và hình thức bổ sung (nếu có)</li>
-      <li>Quyết định gửi đến địa chỉ chủ xe qua bưu điện và cập nhật lên hệ thống tra cứu trực tuyến</li>
-      <li>Chủ phương tiện có <strong>10 ngày</strong> kể từ ngày nhận thông báo để đến nộp phạt; nếu không đến thì thực hiện cưỡng chế</li>
-    </ul>
-
-    <h3 class="lf-h3">Các điểm phạt nguội phổ biến tại Hà Nội</h3>
-    <p class="lf-p">Theo số liệu thống kê từ Công an TP Hà Nội, phần lớn vi phạm được ghi nhận tập trung tại những khu vực có mật độ camera cao và lưu lượng giao thông lớn. Người điều khiển phương tiện cần đặc biệt chú ý tại:</p>
-    <ul class="lf-ul">
-      <li><strong>Vành đai 3 và Đại lộ Thăng Long:</strong> tuyến cao tốc đô thị, camera đo tốc độ trung bình mỗi 2 km, mức phạt tốc độ cao nhất tới 18 triệu đồng</li>
-      <li><strong>Đường Võ Chí Công - Xuân La - Nhật Tân:</strong> điểm nóng vượt tốc độ và vượt đèn đỏ, camera hoạt động 24/7</li>
-      <li><strong>Ngã tư Kim Đồng - Giải Phóng:</strong> vi phạm đèn đỏ và vượt vạch dừng chiếm tỷ lệ cao</li>
-      <li><strong>Phố Huế - Bà Triệu - Hàng Bài:</strong> khu vực đông đúc, vi phạm làn đường và đỗ xe sai quy định</li>
-      <li><strong>Cầu Vĩnh Tuy, cầu Thanh Trì:</strong> đầu cầu và cuối cầu lắp đặt camera kiểm soát tốc độ cố định</li>
-      <li><strong>Khu vực nội đô (Ba Đình, Hoàn Kiếm):</strong> nhiều camera phạt đi vào đường cấm, đường một chiều</li>
-    </ul>
-    <p class="lf-p">Ngoài camera cố định, Công an Hà Nội còn triển khai xe ô tô chuyên dụng gắn thiết bị camera di động tuần tra các tuyến đường chưa lắp đặt camera thường trực - đây là nguồn gốc của nhiều trường hợp "không nhớ vi phạm ở đâu" mà chủ xe phản ánh.</p>
-
-    <h3 class="lf-h3">Nghị định 168/2024 - Mức phạt hiện hành</h3>
-    <p class="lf-p">Nghị định 168/2024/NĐ-CP có hiệu lực từ 1/1/2025 thay thế hoàn toàn Nghị định 100/2019 và Nghị định 123/2021. Đây là lần điều chỉnh mức phạt giao thông lớn nhất trong lịch sử, với mức tăng trung bình <strong>3-5 lần</strong> so với quy định cũ. Mục tiêu là tạo tính răn đe mạnh hơn, đặc biệt với các hành vi gây nguy hiểm cao như vượt tốc độ và lái xe sau khi uống rượu bia.</p>
-
-    <h4 class="lf-h4">Mức phạt tăng đáng kể với vi phạm phổ biến</h4>
-    <ul class="lf-ul">
-      <li><strong>Vượt tốc độ 20-35 km/h:</strong> 6.000.000 - 8.000.000 đ (ô tô) / 3.000.000 - 4.000.000 đ (xe máy)</li>
-      <li><strong>Vượt tốc độ trên 35 km/h:</strong> 10.000.000 - 18.000.000 đ (ô tô) / 6.000.000 - 8.000.000 đ (xe máy)</li>
-      <li><strong>Vượt đèn đỏ:</strong> 4.000.000 - 6.000.000 đ (ô tô) / 2.000.000 - 3.000.000 đ (xe máy)</li>
-      <li><strong>Đi vào đường ngược chiều:</strong> 4.000.000 - 6.000.000 đ (ô tô) / 1.500.000 - 2.500.000 đ (xe máy)</li>
-      <li><strong>Không thắt dây an toàn (ô tô):</strong> 800.000 - 1.000.000 đ (tăng gấp 4 so với cũ)</li>
-    </ul>
-
-    <h4 class="lf-h4">Hình thức xử phạt bổ sung</h4>
-    <p class="lf-p">Ngoài phạt tiền, Nghị định 168 mở rộng đáng kể các hình thức xử phạt bổ sung và biện pháp khắc phục hậu quả. Tùy mức độ vi phạm, chủ xe có thể bị:</p>
-    <ul class="lf-ul">
-      <li>Tước giấy phép lái xe từ 1 đến 24 tháng (tăng đáng kể so với 3-6 tháng trước đây)</li>
-      <li>Tạm giữ phương tiện 7-60 ngày (có thể kết hợp với phạt tiền)</li>
-      <li>Ghi điểm trừ vào Giấy phép lái xe (cơ chế mới, áp dụng từ 2025)</li>
-      <li>Không được đăng kiểm cho đến khi hoàn thành nghĩa vụ nộp phạt</li>
-    </ul>
-
-    <h3 class="lf-h3">Hướng dẫn nộp phạt nguội Hà Nội 2026</h3>
-    <p class="lf-p">Quyết định xử phạt có thời hạn <strong>1 năm</strong> kể từ ngày ký. Nếu để quá hạn, ngoài việc bị cưỡng chế, chủ xe còn có thể bị tính thêm tiền phạt chậm nộp 0,05%/ngày trên tổng số tiền phạt. <a href="phat-nguoi-giai-dap.html" style="color:var(--pk);font-weight:700">Xem chi tiết công thức và Máy tính phạt chậm nộp 0.05% ngày ↗</a>. Do đó, sau khi phát hiện vi phạm qua tra cứu, nên xử lý sớm nhất có thể.</p>
-
-    <h4 class="lf-h4">Nộp phạt trực tiếp tại kho bạc hoặc CSGT</h4>
-    <ul class="lf-ul">
-      <li>Đến Phòng CSGT - PC08 Công an TP Hà Nội: số 75 Hàng Chuối, quận Hai Bà Trưng, Hà Nội</li>
-      <li>Hoặc Kho bạc Nhà nước quận/huyện nơi ra quyết định xử phạt (ghi trên quyết định)</li>
-      <li>Mang theo quyết định xử phạt (bản gốc hoặc bản tra cứu) và CMND/CCCD</li>
-      <li>Giờ làm việc: Thứ 2 đến Thứ 6, 7h30 - 11h30 và 13h30 - 17h00</li>
-    </ul>
-
-    <h4 class="lf-h4">Nộp phạt trực tuyến qua ứng dụng và cổng dịch vụ công</h4>
-    <p class="lf-p">Từ năm 2024, Hà Nội triển khai thanh toán phạt nguội trực tuyến qua nhiều kênh, giúp người dân không phải đến trực tiếp cơ quan:</p>
-    <ul class="lf-ul">
-      <li><strong>Cổng Dịch vụ Công quốc gia</strong> (dichvucong.gov.vn): đăng nhập tài khoản định danh, tìm quyết định xử phạt, thanh toán qua VNPay/ngân hàng</li>
-      <li><strong>Ứng dụng MoMo:</strong> tính năng "Phạt nguội" trong danh mục Phương tiện - tra cứu biển số, xem quyết định và nộp phạt trong cùng một luồng</li>
-      <li><strong>VNeID:</strong> nộp phạt trực tiếp trong app định danh điện tử sau khi tra cứu vi phạm</li>
-      <li><strong>Internet Banking:</strong> chuyển khoản theo mã quyết định xử phạt được in trên thông báo</li>
-    </ul>
-    <p class="lf-p">Sau khi thanh toán trực tuyến thành công, biên lai điện tử được gửi về email/số điện thoại đăng ký. Trạng thái "Đã nộp phạt" thường được cập nhật trên hệ thống tra cứu sau <strong>1-3 ngày làm việc</strong>.</p>
-
-    <h3 class="lf-h3">Những lưu ý quan trọng khi xử lý phạt nguội</h3>
-    <p class="lf-p">Nhiều chủ xe lần đầu nhận thông báo phạt nguội thường gặp phải một số hiểu lầm phổ biến. Dưới đây là những điểm cần nắm rõ:</p>
-    <ul class="lf-ul">
-      <li><strong>Không nhận được thông báo bưu điện không đồng nghĩa với không vi phạm:</strong> Thông báo có thể gửi nhầm địa chỉ hoặc thất lạc. Nên chủ động tra cứu định kỳ, đặc biệt nếu thường xuyên di chuyển tại Hà Nội.</li>
-      <li><strong>Vi phạm gắn với phương tiện, không gắn với người lái:</strong> Nếu bạn cho mượn xe và người mượn bị phạt nguội, chủ xe chịu trách nhiệm nộp phạt. Sau đó có thể khởi kiện dân sự để đòi lại - nhưng đây là quy trình riêng biệt.</li>
-      <li><strong>Đổi biển số không xóa được vi phạm cũ:</strong> CSGT tra cứu theo số khung (VIN) và số máy, không chỉ theo biển số. Khi sang tên hoặc đăng kiểm, vi phạm chưa nộp phạt sẽ bị phát hiện.</li>
-      <li><strong>Xe bán rồi vẫn có thể bị phát hiện vi phạm nếu chưa sang tên:</strong> Hồ sơ đăng ký vẫn mang tên người bán đến khi hoàn thành thủ tục sang tên. Nên yêu cầu sang tên ngay khi giao dịch.</li>
-      <li><strong>Kiểm tra trước khi đăng kiểm:</strong> Từ 2025, xe có quyết định xử phạt chưa hoàn thành sẽ bị từ chối đăng kiểm tự động. Tra cứu trước 1-2 tuần để tránh bị hoãn.</li>
-    </ul>
-    <p class="lf-p">Nếu cho rằng quyết định xử phạt có sai sót (sai biển số, sai loại vi phạm), chủ xe có quyền <strong>khiếu nại trong vòng 90 ngày</strong> kể từ ngày nhận quyết định, theo quy định tại Luật Xử lý vi phạm hành chính. Nộp đơn khiếu nại trực tiếp tại cơ quan CSGT đã ra quyết định hoặc qua cổng dịch vụ công trực tuyến.</p>
-
-  </div>
-</div><!-- /long-form -->
-
-<!-- ─── CTA ──────────────────────────────────── -->
-<section class="cta-section">
-  <h2 class="cta-title">Nhận cảnh báo phạt nguội<br>Hà Nội tức thì</h2>
-  <p class="cta-sub">Đăng ký theo dõi biển số - MoMo thông báo ngay khi có vi phạm mới tại Hà Nội.</p>
-  <div class="cta-btn-row">
-    <button class="cta-btn white">📱 Tải MoMo miễn phí</button>
-    <button class="cta-btn ghost">🔔 Bật thông báo</button>
-  </div>
-</section>
-
-<!-- ─── FIXED CTA ─────────────────────────────── -->
-<div class="fixed-cta" id="fixedCta">
-  <div class="fixed-cta-text">
-    <strong>Tra cứu phạt nguội Hà Nội</strong>
-    Miễn phí · Dữ liệu CSGT · Nhận cảnh báo ngay
-  </div>
-  <button class="fixed-cta-btn" onclick="scrollTo({top:0,behavior:'smooth'})">Tra cứu</button>
-  <button class="fixed-cta-x" onclick="this.closest('.fixed-cta').classList.remove('show')">✕</button>
-</div>
-
-<script>
-let _vtype = 'oto';
-function setVType(t) {
-  _vtype = t;
-  document.getElementById('vt-oto').className = 'vtype-btn' + (t==='oto'?' on':'');
-  document.getElementById('vt-xemay').className = 'vtype-btn' + (t==='xemay'?' on':'');
-}
-function onPlateInput(el) {
-  el.value = el.value.toUpperCase().replace(/[^A-Z0-9\-\.]/g,'');
-}
-function clearPlate() {
-  document.getElementById('plateInput').value = '';
-  document.getElementById('resultArea').classList.remove('show');
-}
-
-const RESULTS = {
-  '29A12345': { plate:'29A-12345', violations:[{ name:'Vượt tốc độ 28 km/h so với quy định cho phép', dt:'25/03/2026 · 08:23', loc:'Đường Võ Chí Công, Q. Tây Hồ, Hà Nội', auth:'Đội CSGT số 6 - CATP Hà Nội', fine:'6.000.000 đ', status:'unpaid', sev:'h' }] },
-  '30F98765': { plate:'30F-98765', violations:[{ name:'Đi vào đường ngược chiều tại nút giao thông', dt:'12/04/2026 · 17:45', loc:'Đường Trần Duy Hưng, Q. Cầu Giấy, Hà Nội', auth:'Đội CSGT số 7 - CATP Hà Nội', fine:'4.000.000 đ', status:'paid', sev:'m' }] },
-};
-
-function doSearch() {
-  const raw = document.getElementById('plateInput').value.replace(/[\s\-\.]/g,'').toUpperCase();
-  if (!raw || raw.length < 5) { document.getElementById('plateInput').focus(); return; }
-  const area = document.getElementById('resultArea');
-  area.classList.add('show');
-  document.getElementById('resultLoading').style.display = 'block';
-  document.getElementById('resultCard').innerHTML = '';
-  area.scrollIntoView({ behavior:'smooth', block:'nearest' });
-  setTimeout(() => {
-    document.getElementById('resultLoading').style.display = 'none';
-    renderResult(raw, RESULTS[raw] || null);
-  }, 1600);
-}
-
-function renderResult(rawPlate, data) {
-  const div = document.getElementById('resultCard');
-  const plate = rawPlate.replace(/^(\w{2,3})(\w+)$/, '$1-$2');
-  const typeLbl = _vtype === 'oto' ? 'Ô tô' : 'Xe máy';
-  if (!data) {
-    div.innerHTML = `<div class="violation-card">
-      <div class="vc-header"><span class="vc-plate">${plate}</span><span class="vc-type-tag">${typeLbl}</span></div>
-      <div class="vc-summary clean">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        Không tìm thấy vi phạm tại Hà Nội
+    <section class="section">
+      <div class="shell">
+        <div class="section-head">
+          <div><span class="section-kicker">Internal linking</span><h2>Tiếp tục theo đúng nhu cầu</h2></div>
+          <p>Location page chuyển user về Hub cho nội dung chung, hoặc sang child content chuyên sâu khi user đã biết vấn đề cần xử lý.</p>
+        </div>
+        <div class="journey-grid">
+          <article class="journey-card"><span class="journey-step">HUB</span><h3>Phạt Nguội toàn quốc</h3><p>Tra cứu chung, chọn địa phương khác và hiểu toàn bộ hành trình.</p><a class="text-link" href="phat-nguoi.html">Về Hub Phạt Nguội →</a></article>
+          <article class="journey-card"><span class="journey-step">Q&A</span><h3>Giải đáp Phạt Nguội</h3><p>Câu trả lời trực tiếp về mức phạt, trễ hạn, hồ sơ và khiếu nại.</p><a class="text-link" href="phat-nguoi-giai-dap.html">Mở Trung tâm Giải đáp →</a></article>
+          <article class="journey-card"><span class="journey-step">PAY</span><h3>Nộp phạt qua MoMo</h3><p>Xem flow hướng dẫn thanh toán và các kênh xử lý liên quan.</p><a class="text-link" href="phat-nguoi-nop-qua-momo.html">Xem hướng dẫn →</a></article>
+        </div>
       </div>
-      <div style="padding:14px 16px;font-size:12px;color:var(--sub);line-height:1.65">Biển số <strong style="color:var(--ink)">${plate}</strong> hiện không có vi phạm chưa xử lý tại Hà Nội. Cập nhật ngày ${new Date().toLocaleDateString('vi-VN')}.<br><span style="font-size:11px">Lưu ý: Camera có thể ghi nhận vi phạm mới 15-30 ngày sau khi xảy ra.</span></div>
-      <div class="vc-footer">
-        <button class="vc-btn outline" onclick="clearPlate()">Tra cứu lại</button>
-        <button class="vc-btn primary">🔔 Theo dõi biển số</button>
-      </div>
-    </div>`;
-    return;
-  }
-  const v = data.violations[0];
-  const fineColor = v.sev==='h' ? 'var(--red)' : v.sev==='m' ? 'var(--orange)' : 'var(--amber)';
-  div.innerHTML = `<div class="violation-card">
-    <div class="vc-header"><span class="vc-plate">${data.plate}</span><span class="vc-type-tag">${typeLbl}</span></div>
-    <div class="vc-summary bad">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Tìm thấy ${data.violations.length} vi phạm chưa xử lý
-    </div>
-    <div class="violation-item">
-      <div class="vi-name">${v.name}</div>
-      <div class="vi-row"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="2"/><line x1="5" y1="1" x2="5" y2="4"/><line x1="11" y1="1" x2="11" y2="4"/><line x1="1" y1="7" x2="15" y2="7"/></svg>${v.dt}</div>
-      <div class="vi-row"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5a4.5 4.5 0 0 1 4.5 4.5C12.5 9.25 8 14 8 14S3.5 9.25 3.5 6A4.5 4.5 0 0 1 8 1.5zm0 2.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>${v.loc}</div>
-      <div class="vi-row"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v3l2 2"/></svg>${v.auth}</div>
-      <div class="vi-footer">
-        <span style="font-size:17px;font-weight:900;color:${fineColor}">${v.fine}</span>
-        <span class="vi-status ${v.status}">${v.status==='unpaid'?'⏳ Chưa nộp phạt':'✅ Đã nộp phạt'}</span>
-      </div>
-    </div>
-    <div class="vc-footer">
-      <button class="vc-btn outline">Xem chi tiết</button>
-      <button class="vc-btn primary">💳 Nộp phạt ngay</button>
-    </div>
-  </div>`;
-}
+    </section>
 
-function toggleFaq(btn) {
-  const item = btn.closest('.faq-item');
-  const ans = item.querySelector('.faq-a');
-  const isOpen = btn.classList.contains('open');
-  document.querySelectorAll('.faq-q').forEach(b=>b.classList.remove('open'));
-  document.querySelectorAll('.faq-a').forEach(a=>a.classList.remove('open'));
-  if (!isOpen) { btn.classList.add('open'); ans.classList.add('open'); }
-}
+    <section class="section section-white" id="faq">
+      <div class="shell">
+        <div class="section-head"><div><span class="section-kicker">FAQ Hà Nội</span><h2>Câu hỏi theo địa phương</h2></div></div>
+        <div class="faq-list">
+          <details><summary>Xe biển tỉnh khác vi phạm tại Hà Nội có tra cứu được không?</summary><p>Có. Tra cứu dựa trên biển số và loại phương tiện. Khi có kết quả, hãy căn cứ đơn vị phát hiện và thông tin trong quyết định để xác định nơi xử lý.</p></details>
+          <details><summary>Không thấy kết quả ngay sau khi di chuyển tại Hà Nội có nghĩa là không vi phạm?</summary><p>Không nhất thiết. Dữ liệu cần được xác minh trước khi đồng bộ. Nếu còn nghi ngờ, hãy kiểm tra lại và ưu tiên nguồn chính thức.</p></details>
+          <details><summary>Tôi nên đến đâu để xử lý?</summary><p>Đầu mối phụ thuộc đơn vị phát hiện và nội dung quyết định. Không mặc định mọi trường hợp đều xử lý tại cùng một địa chỉ.</p></details>
+        </div>
+      </div>
+    </section>
 
-let _fixedShown = false;
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 500 && !_fixedShown) {
-    document.getElementById('fixedCta').classList.add('show');
-    _fixedShown = true;
-  }
-});
-</script>
+    <section class="section">
+      <div class="shell cta-band">
+        <div><h2>Theo dõi biển số sau khi tra cứu</h2><p>Mở MoMo để nhận thông báo khi hệ thống ghi nhận thay đổi mới.</p></div>
+        <div class="cta-actions"><button class="cta-button is-primary" type="button">Mở MoMo</button><a class="cta-button" href="phat-nguoi.html">Về Hub Phạt Nguội</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer-inner"><span>Template: Phạt Nguội Location Detail · Hà Nội</span><nav class="footer-links"><a href="phat-nguoi.html">Hub</a><a href="phat-nguoi-giai-dap.html">Giải đáp</a><a href="../lab.html">Lab</a></nav></div></footer>
+  <script src="phat-nguoi.js?v=1"></script>
 </body>
 </html>

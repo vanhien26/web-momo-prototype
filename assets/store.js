@@ -342,45 +342,55 @@ const PROTOTYPES = [
     ],
   },
   {
-    id: 'phat-nguoi-ha-noi',
-    name: 'Phạt Nguội Hà Nội',
+    id: 'phat-nguoi',
+    name: 'Phạt Nguội',
     category: 'Platform',
     ownerGroup: 'Cell Team',
-    maturity: 'pSEO',
-    description: 'Trang pSEO Tra cứu Phạt Nguội theo Tỉnh/Thành — demo Hà Nội: Hero H1 + Lookup biển số, kết quả CSGT có/không vi phạm, Đề xuất tỉnh/thành + dịch vụ liên quan, Content SEO dạng card (mức phạt, quy trình, timeline, FAQ).',
-    jtbd: 'Tra cứu vi phạm giao thông theo biển số xe tại Hà Nội, biết mức phạt và quy trình xử lý',
+    maturity: 'Hub',
+    description: 'Hub Phạt Nguội toàn quốc: lookup biển số, định tuyến theo nhu cầu, directory tỉnh/thành và internal link tới Giải đáp, Nộp phạt cùng các Location Detail.',
+    jtbd: 'Tra cứu vi phạm theo biển số và đi tiếp đến đúng hướng dẫn hoặc địa phương cần xử lý',
     northStar: 'Lookup completion rate',
-    loop: 'Search → Lookup → Result → Related CTA',
-    hypothesis: 'Trang pSEO theo tỉnh/thành tạo organic entry point riêng cho từng địa phương — mỗi trang là một keyword cluster với lookup tool + content SEO địa phương hóa.',
-    value: 'Template nhân rộng cho 63 tỉnh/thành: mỗi URL /phat-nguoi/{tinh} là một pSEO page độc lập, tăng SoV phạt nguội và cross-sell dịch vụ liên quan.',
-    gate: 'Đo lookup completion, result engagement (found/not-found rate), related service CTR, CTA conversion và Web-to-App từ pSEO page.',
-    src: 'demos/phat-nguoi-ha-noi.html',
-    address: 'web-momo-prototype.vercel.app/phat-nguoi/ha-noi',
-  },
-  {
-    id: 'phat-nguoi-giai-dap',
-    name: 'Phạt Nguội Giải Đáp',
-    category: 'Platform',
-    ownerGroup: 'Cell Team',
-    maturity: 'GEO',
-    description: 'Hub Q&A Directory + Quiz Center centralize cho cluster Phạt Nguội. Hub là điểm vào: TL;DR + thư viện câu hỏi (cards link sang child page) + 4 bộ quiz theo chủ đề. Mỗi câu hỏi user prompt trên AI = 1 child page chuyên sâu. Khác biệt với /blog (long-form articles) - đây là Q&A direct-answer phục vụ AI Citation.',
-    jtbd: 'Khi tôi muốn (A) khám phá thư viện câu hỏi user đã hỏi về phạt nguội để tìm câu liên quan tôi, hoặc (B) kiểm tra hiểu biết của mình với quiz có giải thích trích điều luật, tôi đến trang này như directory + quiz center duy nhất - không phải đọc từng blog rời rạc.',
-    northStar: 'AI Citation Rate (Profound/Otterly) trên top 20 target user prompts cho cluster Phạt Nguội',
-    loop: 'User Prompt (ChatGPT/Perplexity/Gemini) → AI cite child Q&A page → Read → Mini Quiz / CTA app',
-    hypothesis: 'Hub-and-Spoke architecture (1 Hub + N child pages mỗi user prompt) sẽ được AI cite tốt hơn 1 mega-page FAQ. Quiz Center centralize chiếm trust signal "Quiz Phạt Nguội" 1 chỗ thay vì scattered ở blog posts. Mini quiz inline trên child + link về Hub Quiz = cross-pollination engagement.',
-    value: 'Template GEO scalable: thêm Q mới chỉ là thêm 1 child page + 1 card ở Hub. 6 child page hot (mức phạt, tra cứu, nộp qua MoMo...) + Quiz Center 4 sets centralized. Distinction rõ với /blog (long-form) và /ha-noi (utility lookup) - 3 content type complement nhau trong cluster.',
-    gate: 'Đo AI Citation Rate cho 20 target prompts, child page CTR từ Hub directory, Quiz completion per set, Mini quiz answer rate trên child pages, Web-to-App từ CTA.',
-    src: 'demos/phat-nguoi-giai-dap.html',
-    address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap',
+    loop: 'Search → Hub lookup → Location/Guide → Result → App',
+    hypothesis: 'Một Hub chung giữ utility và nội dung toàn quốc, còn Location Detail chỉ giữ context địa phương sẽ tạo kiến trúc dễ mở rộng và tránh trùng nội dung giữa các tỉnh thành.',
+    value: 'Content model Hub + Location Detail có thể nhân rộng theo địa phương, đồng thời giữ Giải đáp và Nộp phạt như các content hub chuyên biệt.',
+    gate: 'Đo lookup completion, location selection, child-page CTR, result engagement và Web-to-App conversion.',
+    src: 'demos/phat-nguoi.html',
+    address: 'web-momo-prototype.vercel.app/phat-nguoi',
     tools: [
       {
-        id: 'phat-nguoi-nop-qua-momo',
-        name: 'Cách nộp phạt qua MoMo',
-        category: 'Child Page',
-        description: 'Pilot child Q&A page (1 user prompt = 1 page). HowTo 5 bước nộp phạt qua MoMo + bảng so sánh 4 kênh + Reviewed by Luật sư + Mini Quiz 3 câu liên quan + Related Q + CTA. Template chuẩn để replicate cho 5 child còn lại.',
-        jtbd: 'Khi tôi vừa biết mình có vi phạm cần nộp và đang thắc mắc nộp qua MoMo cụ thể có làm được không + làm thế nào, tôi muốn câu trả lời thẳng kèm hướng dẫn từng bước thực thi ngay (không phải đọc 1500 chữ blog), để tôi quyết định xong và act trong cùng phiên.',
-        src: 'demos/phat-nguoi-nop-qua-momo.html',
-        address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap/nop-qua-momo',
+        id: 'phat-nguoi-ha-noi',
+        name: 'Phạt Nguội Hà Nội',
+        category: 'Location Detail',
+        description: 'Child-page đầu tiên của template Location: lookup dùng chung và content riêng về biển số, khu vực, quy trình xử lý tại Hà Nội.',
+        jtbd: 'Tra cứu và hiểu cách xử lý vi phạm được ghi nhận tại Hà Nội',
+        src: 'demos/phat-nguoi-ha-noi.html',
+        address: 'web-momo-prototype.vercel.app/phat-nguoi/ha-noi',
+      },
+      {
+        id: 'phat-nguoi-giai-dap',
+        name: 'Phạt Nguội Giải Đáp',
+        category: 'Content Hub',
+        maturity: 'GEO',
+        description: 'Hub Q&A Directory và Quiz Center cho cluster Phạt Nguội. Mỗi câu hỏi người dùng là một child page trả lời trực tiếp, hỗ trợ internal link và AI Citation.',
+        jtbd: 'Khám phá câu trả lời theo tình huống hoặc kiểm tra hiểu biết về phạt nguội tại một thư viện tập trung',
+        northStar: 'AI Citation Rate trên nhóm câu hỏi mục tiêu',
+        loop: 'User Prompt → Q&A Hub → Child Answer → Quiz / App',
+        hypothesis: 'Kiến trúc Hub và child Q&A giúp câu trả lời dễ tìm, dễ mở rộng và có ngữ cảnh rõ hơn một trang FAQ tổng hợp.',
+        value: 'Content Hub chuyên biệt nằm trong dự án Phạt Nguội, bổ sung lớp giải đáp cho utility lookup và Location Detail.',
+        gate: 'Đo child-page CTR, quiz completion, AI Citation Rate và Web-to-App conversion.',
+        src: 'demos/phat-nguoi-giai-dap.html',
+        address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap',
+        tools: [
+          {
+            id: 'phat-nguoi-nop-qua-momo',
+            name: 'Cách nộp phạt qua MoMo',
+            category: 'Q&A Detail',
+            description: 'Child Q&A đầu tiên: trả lời trực tiếp khả năng nộp phạt qua MoMo, hướng dẫn từng bước, so sánh kênh và CTA thực thi.',
+            jtbd: 'Hiểu rõ cách nộp phạt qua MoMo và thực hiện ngay trong cùng một phiên',
+            src: 'demos/phat-nguoi-nop-qua-momo.html',
+            address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap/nop-qua-momo',
+          },
+        ],
       },
     ],
   },
@@ -407,6 +417,9 @@ const CAT_COLOR = {
   'Discovery':  { bg: '#fffbeb', text: '#b45309' },
   'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
   'Transit':    { bg: '#eef2ff', text: '#4338ca' },
+  'Location Detail': { bg: '#eff6ff', text: '#1d4ed8' },
+  'Content Hub': { bg: '#faf5ff', text: '#7c3aed' },
+  'Q&A Detail': { bg: '#fff0f7', text: '#a50064' },
   'Other':      { bg: '#f1f5f9', text: '#475569' },
   'Destination':{ bg: '#fff0f7', text: '#a50064' },
   'Child Page':  { bg: '#fff0f7', text: '#a50064' },
@@ -440,7 +453,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'chatbot', 'ads-manager', 'blog-category'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi-ha-noi', 'phat-nguoi-giai-dap', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
+  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
   Other: ['worldcup'],
 };
 
@@ -630,6 +643,16 @@ let activeProtoId = null;
 let activeToolId  = null;
 const expanded    = new Set();
 
+function findToolPath(proto, toolId, tools = proto?.tools || [], ancestors = []) {
+  for (const tool of tools) {
+    const path = [...ancestors, tool];
+    if (tool.id === toolId) return path;
+    const nestedPath = findToolPath(proto, toolId, tool.tools || [], path);
+    if (nestedPath) return nestedPath;
+  }
+  return null;
+}
+
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 function renderNav() {
@@ -654,17 +677,24 @@ function renderNav() {
     const renderNavItem = (p, i) => {
       const isActive   = activeProtoId === p.id && !activeToolId;
       const isExpanded = expanded.has(p.id);
+      const activePath = activeProtoId === p.id && activeToolId ? findToolPath(p, activeToolId) : null;
+
+      const renderToolNavItems = (tools, depth = 0) => tools.map(t => {
+        const tc = CAT_COLOR[t.category] || CAT_COLOR['Planning'];
+        const isTA = activeProtoId === p.id && activeToolId === t.id;
+        const isAncestor = activePath?.some(item => item.id === t.id) && !isTA;
+        return `<div class="tool-nav-node" style="--tool-depth:${depth}">
+          <button class="tool-nav-btn${isTA ? ' active' : ''}${isAncestor ? ' ancestor' : ''}" data-proto="${p.id}" data-tool="${t.id}">
+            <span class="tool-nav-cat" style="color:${tc.text}">${t.category}</span>
+            <span class="tool-nav-lbl">${t.name}</span>
+          </button>
+          ${t.tools?.length ? `<div class="tool-nav-children">${renderToolNavItems(t.tools, depth + 1)}</div>` : ''}
+        </div>`;
+      }).join('');
 
       const toolsHtml = p.tools ? `
         <div class="tool-nav-list${isExpanded ? '' : ' hidden'}" id="tnl-${p.id}">
-          ${p.tools.map(t => {
-            const tc = CAT_COLOR[t.category] || CAT_COLOR['Planning'];
-            const isTA = activeProtoId === p.id && activeToolId === t.id;
-            return `<button class="tool-nav-btn${isTA ? ' active' : ''}" data-proto="${p.id}" data-tool="${t.id}">
-              <span class="tool-nav-cat" style="color:${tc.text}">${t.category}</span>
-              <span class="tool-nav-lbl">${t.name}</span>
-            </button>`;
-          }).join('')}
+          ${renderToolNavItems(p.tools)}
         </div>` : '';
 
       return `<div class="proto-nav-group">
@@ -1186,8 +1216,9 @@ function renderWorkspace() {
   }
 
   if (activeToolId && proto.tools) {
-    const tool = proto.tools.find(t => t.id === activeToolId);
-    if (tool) { ws.innerHTML = buildToolView(proto, tool); wireWs(ws, proto, tool); return; }
+    const toolPath = findToolPath(proto, activeToolId);
+    const tool = toolPath?.at(-1);
+    if (tool) { ws.innerHTML = buildToolView(proto, tool, toolPath); wireWs(ws, proto, tool); return; }
   }
 
   ws.innerHTML = buildProtoView(proto);
@@ -1231,17 +1262,18 @@ function buildProtoView(proto) {
   </div>`;
 }
 
-function buildToolView(proto, tool) {
-  const tc  = CAT_COLOR[tool.category]  || {};
+function buildToolView(proto, tool, toolPath = [tool]) {
+  const tc  = CAT_COLOR[tool.category] || CAT_COLOR['Planning'];
   const src = tool.src || `demos/financial.html#${tool.id}`;
   const preview = previewSrc(src);
   const address = tool.address || `${proto.address}#${tool.id}`;
+  const parentTool = toolPath.length > 1 ? toolPath.at(-2) : null;
 
   return `
   <div class="ws-topbar">
     <div class="ws-breadcrumb">
       <button class="menu-toggle" id="menuToggle">☰</button>
-      <button class="ws-back-btn" data-proto="${proto.id}">← ${proto.name}</button>
+      <button class="ws-back-btn" data-proto="${proto.id}"${parentTool ? ` data-parent-tool="${parentTool.id}"` : ''}>← ${parentTool?.name || proto.name}</button>
       <span class="ws-bc-sep">/</span>
       <span class="ws-cat-tag" style="background:${tc.bg};color:${tc.text}">${tool.category}</span>
       <span class="ws-bc-sep">/</span>
@@ -1295,7 +1327,10 @@ function wireWs(ws, proto, tool) {
 
   // Back button
   const back = ws.querySelector('.ws-back-btn');
-  if (back) back.addEventListener('click', () => selectProto(back.dataset.proto));
+  if (back) back.addEventListener('click', () => {
+    if (back.dataset.parentTool) selectTool(back.dataset.proto, back.dataset.parentTool);
+    else selectProto(back.dataset.proto);
+  });
 
   // Mobile menu toggle
   const mt = ws.querySelector('#menuToggle');
