@@ -2809,6 +2809,41 @@ function renderTravelBudget() {
   }).join('');
   document.getElementById('tbBreakdown').innerHTML = breakdownHtml;
 
+  // Per-day cost + tier comparison (fills the left column, aids the spend-tier decision)
+  const dailyCard = document.getElementById('tbDailyCard');
+  if (dailyCard) {
+    const tiers = [
+      { id:'budget', label:'Tiết kiệm', icon:'💸' },
+      { id:'mid',    label:'Cân bằng',  icon:'⚖️' },
+      { id:'luxury', label:'Cao cấp',   icon:'✨' },
+    ];
+    const maxDaily = Math.max(...tiers.map(t => dest.dailyVND[t.id]));
+    dailyCard.innerHTML = `
+      <div class="tb-daily-head">
+        <span class="tb-daily-k">Chi phí trung bình / ngày</span>
+        <strong class="tb-daily-v">${fmtM(dailyVnd)}</strong>
+      </div>
+      <div class="tb-tier-compare">
+        ${tiers.map(t => {
+          const d = dest.dailyVND[t.id];
+          const on = t.id === TB_STATE.tier;
+          return `<button type="button" class="tb-tier-row${on?' on':''}" data-tier="${t.id}">
+            <span class="tb-tier-label">${t.icon} ${t.label}</span>
+            <span class="tb-tier-bar"><span class="tb-tier-fill" style="width:${Math.round(d/maxDaily*100)}%"></span></span>
+            <span class="tb-tier-amt">${fmtM(d)}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <p class="tb-daily-note">Chênh lệch chủ yếu ở lưu trú và ăn uống. Chạm một mức để đổi chuẩn chi tiêu.</p>`;
+    dailyCard.querySelectorAll('.tb-tier-row').forEach(btn => {
+      btn.onclick = () => {
+        TB_STATE.tier = btn.dataset.tier;
+        document.querySelectorAll('#tbTierControl button').forEach(b => b.classList.toggle('active', b.dataset.tier === TB_STATE.tier));
+        renderTravelBudget();
+      };
+    });
+  }
+
   // Payment hierarchy — MoMo as primary source of fund
   renderTbPayment(dest, total);
 }
