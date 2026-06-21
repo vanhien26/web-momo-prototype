@@ -9,7 +9,12 @@ const fmtM = n => {
 
 function val(id) {
   const el = document.getElementById(id);
-  return el ? +el.value : 0;
+  if (!el) return 0;
+  const valStr = String(el.value);
+  if (valStr.includes('.') || valStr.includes(',')) {
+    return +valStr.replace(/[^\d]/g, '') || 0;
+  }
+  return +valStr || 0;
 }
 
 function setResult({ main, mainLabel, second, secondLabel, progress = 50 }) {
@@ -39,15 +44,29 @@ const CALCS = {
   },
 
   installment() {
-    const price = val('price'), down = val('down'), n = val('months'), r = val('fee') / 100 / 12;
-    const principal = price - down;
-    if (!principal || !n) { setResult({ main:'—', mainLabel:'TRẢ MỖI THÁNG', second:'—', secondLabel:'TỔNG PHẢI TRẢ', progress:0 }); return; }
-    const mo = r === 0 ? principal / n : principal * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
-    const total = down + mo * n;
+    const amount = val('amount') || val('price');
+    const n = val('months');
+    if (!amount || !n) {
+      setResult({ main: '—', mainLabel: 'TRẢ MỖI THÁNG', second: '—', secondLabel: 'TỔNG PHẢI TRẢ', progress: 0 });
+      return;
+    }
+    if (amount < 100000) {
+      setResult({
+        main: '—', mainLabel: 'SỐ TIỀN TỐI THIỂU 100K',
+        second: '—', secondLabel: 'YÊU CẦU HÓA ĐƠN',
+        progress: 0
+      });
+      return;
+    }
+    const gocMonth = amount / n;
+    const phiMonth = amount * 0.03;
+    const mo = gocMonth + phiMonth;
+    const totalFee = phiMonth * n;
+    const total = amount + totalFee;
     setResult({
-      main: fmt(mo), mainLabel: 'TRẢ MỖI THÁNG',
-      second: fmt(total), secondLabel: 'TỔNG PHẢI TRẢ',
-      progress: price > 0 ? (down / price) * 100 : 0,
+      main: fmt(mo), mainLabel: 'TRẢ MỖI THÁNG (gồm gốc & phí)',
+      second: fmt(total), secondLabel: 'TỔNG PHẢI TRẢ (gốc & phí)',
+      progress: total > 0 ? (totalFee / total) * 100 : 0,
     });
   },
 
@@ -120,13 +139,51 @@ const CALCS = {
   retirement() {
     const expense = val('expense'), years = val('years'), inflation = val('inflation') / 100;
     const retireYears = val('retireYears') || 20;
+    const returnRate = (val('returnRate') || 0) / 100;
+    
+    // Tỷ suất sinh lời thực tế (Real rate of return) sau lạm phát
+    const r = (1 + returnRate) / (1 + inflation) - 1;
     const futureCost = expense * Math.pow(1 + inflation, years);
-    const totalNeeded = futureCost * 12 * retireYears;
+    
+    // Công thức tính Giá trị hiện tại của dòng tiền đều (Annuity Present Value) trong thời kỳ hưu trí
+    let totalNeeded = 0;
+    const n_months = retireYears * 12;
+    if (Math.abs(r) < 1e-6) {
+      totalNeeded = futureCost * n_months;
+    } else {
+      const r_month = Math.pow(1 + r, 1/12) - 1;
+      totalNeeded = futureCost * (1 - Math.pow(1 + r_month, -n_months)) / r_month;
+    }
+
+    // Tính số tiền cần tiết kiệm mỗi tháng trước khi nghỉ hưu (Future Value of Annuity)
+    let monthlySave = 0;
+    if (years > 0) {
+      const r_save_month = returnRate / 12;
+      const n_save_months = years * 12;
+      if (r_save_month === 0) {
+        monthlySave = totalNeeded / n_save_months;
+      } else {
+        monthlySave = totalNeeded * r_save_month / (Math.pow(1 + r_save_month, n_save_months) - 1);
+      }
+    }
+
+    // Cập nhật kết quả chính và phụ
     setResult({
-      main: fmt(futureCost), mainLabel: 'CHI PHÍ SỐNG KHI HƯU/THÁNG',
-      second: fmtM(totalNeeded), secondLabel: 'TỔNG VỐN CẦN TÍCH LŨY',
+      main: fmtM(totalNeeded), mainLabel: 'TỔNG VỐN CẦN TÍCH LŨY',
+      second: fmt(futureCost), secondLabel: 'CHI PHÍ KHI HƯU/THÁNG',
       progress: Math.min(100, (years / 40) * 100),
     });
+
+    // Hiển thị phần tiết kiệm bổ sung
+    const insightEl = document.getElementById('savingInsight');
+    if (insightEl) {
+      if (years > 0) {
+        insightEl.innerHTML = `🎯 Để đạt mục tiêu này, bạn cần tiết kiệm khoảng <strong>${fmt(monthlySave)}</strong>/tháng từ nay đến khi nghỉ hưu (giả định lợi suất đầu tư đạt ${val('returnRate')}%/năm).`;
+        insightEl.style.display = 'block';
+      } else {
+        insightEl.style.display = 'none';
+      }
+    }
   },
 
   emergency() {
@@ -178,6 +235,71 @@ const CALCS = {
       progress: Math.min(100, (years / 18) * 100),
     });
   },
+
+  childPlanner() {
+    const locEl = document.getElementById('location');
+    const eduEl = document.getElementById('education');
+    const age = val('age');
+    if (!locEl || !eduEl || age > 18) return;
+    
+    const location = locEl.value;
+    const education = eduEl.value;
+    
+    let baseCost = val('customBase');
+    let eduCost = val('customEdu');
+    
+    if (baseCost <= 0) {
+      baseCost = (location === 'city') ? 4000000 : 2500000;
+    }
+    
+    if (eduCost <= 0) {
+      if (location === 'city') {
+        if (education === 'public') eduCost = 1500000;
+        else if (education === 'private') eduCost = 6000000;
+        else eduCost = 20000000;
+      } else {
+        if (education === 'public') eduCost = 800000;
+        else if (education === 'private') eduCost = 3000000;
+        else eduCost = 10000000;
+      }
+    }
+    
+    const returnRate = (val('customReturn') || 6) / 100;
+    const monthlyCost = baseCost + eduCost;
+    const yearsLeft = Math.max(0, 18 - age);
+    
+    let totalCost = 0;
+    const inflation = 0.05;
+    for (let t = 0; t < yearsLeft; t++) {
+      totalCost += (monthlyCost * 12) * Math.pow(1 + inflation, t);
+    }
+    
+    const uniCostToday = eduCost * 12 * 4;
+    const uniCostFuture = uniCostToday * Math.pow(1 + inflation, yearsLeft);
+    
+    let monthlySave = 0;
+    if (yearsLeft > 0) {
+      const r = returnRate / 12;
+      const N = yearsLeft * 12;
+      monthlySave = r === 0 ? uniCostFuture / N : uniCostFuture * r / (Math.pow(1 + r, N) - 1);
+    }
+    
+    setResult({
+      main: fmtM(totalCost), mainLabel: 'TỔNG CHI PHÍ ĐẾN 18 TUỔI',
+      second: fmt(monthlySave), secondLabel: 'CẦN TÍCH LŨY / THÁNG (Cho ĐH)',
+      progress: Math.min(100, (age / 18) * 100)
+    });
+    
+    const insightEl = document.getElementById('savingInsight');
+    if (insightEl) {
+      if (yearsLeft > 0) {
+        insightEl.innerHTML = `🎯 Quỹ Đại học dự kiến khi con 18 tuổi là <strong>${fmtM(uniCostFuture)}</strong>. Tiết kiệm ngay từ bây giờ giúp bạn tối ưu chi phí tích lũy nhờ lãi kép (giả định tỷ suất sinh lời ${returnRate * 100}%/năm).`;
+        insightEl.style.display = 'block';
+      } else {
+        insightEl.style.display = 'none';
+      }
+    }
+  },
 };
 
 function runCalc() {
@@ -187,6 +309,34 @@ function runCalc() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Auto-format money inputs
+  document.querySelectorAll('[data-input]').forEach(el => {
+    const parent = el.closest('.input-wrap');
+    const noteEl = parent ? parent.querySelector('.note') : null;
+    const isMoney = noteEl && (noteEl.textContent.includes('đ') || noteEl.textContent.includes('Đơn vị: đ'));
+    
+    if (isMoney && el.tagName === 'INPUT') {
+      el.type = 'text';
+      el.inputMode = 'numeric';
+      
+      const formatValue = () => {
+        const num = +String(el.value).replace(/[^\d]/g, '') || 0;
+        el.value = num > 0 ? num.toLocaleString('vi-VN') : '';
+      };
+      
+      formatValue();
+      
+      el.addEventListener('input', () => {
+        let cursor = el.selectionStart;
+        const oldLen = el.value.length;
+        formatValue();
+        const newLen = el.value.length;
+        cursor = cursor + (newLen - oldLen);
+        el.setSelectionRange(cursor, cursor);
+      });
+    }
+  });
+
   // Run on load with default values
   runCalc();
   // Live update on any input change

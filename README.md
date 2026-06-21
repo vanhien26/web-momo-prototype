@@ -25,7 +25,8 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 |---|---|---|
 | Ads & Widget Manager | `demos/ads.html` | Setup campaign, chọn placement, preview real-time Desktop/Mobile |
 | MoMo Project Assistant | `demos/chatbot.html` | Chatbot nhúng 6 template UX (Bubble/Popup/Standard/Proactive) + RAG |
-| SEO/GEO Project Hub | `demos/seo-geo-score.html` | Topic-Cluster-Keyword 3 tầng, Keyword Registry, Business Context |
+| SEO/GEO Project Hub | `demos/seo-geo-project.html` | Topic-Cluster-Keyword 3 tầng, Keyword Registry, Business Context |
+| SEO/GEO Content Score | `demos/seo-geo-score.html` | Governance Gate chấm Technical SEO, Content, GEO và Trust trước Publish |
 | SEO/GEO Dashboard | `demos/seo-geo-dashboard.html` | Dashboard theo dõi performance SEO/GEO theo Use Case |
 | GenAI Orchestrator | `demos/orchestrator.html` | Multi-agent pipeline visualization (9 nodes) |
 | Agentic Hub | `demos/agentic-hub.html` | Per-agent model selection (Haiku/Sonnet/Opus), RAG simulation, cost tracking |
@@ -36,7 +37,7 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 
 | Prototype | File | Mô tả |
 |---|---|---|
-| Financial Utilities | `demos/financial.html` | 18 công cụ tài chính: Credit, Insurance, Savings, Investment, Tax, Planning |
+| Financial Utilities | `demos/financial.html` | 27 công cụ tài chính: Credit, Financial Health, Insurance, Savings, Investment, Tax, Planning |
 | Bill Lookup | `demos/bill-lookup.html` | Tra cứu hóa đơn điện/nước/internet |
 | Scam Check | `demos/scam-check.html` | Kiểm tra số tài khoản/SĐT lừa đảo |
 | World Cup 2026 Predictor | `demos/world-cup.html` | Dự đoán kết quả World Cup 2026 |
@@ -46,7 +47,11 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 
 | Prototype | File | Mô tả |
 |---|---|---|
-| Phạt Nguội Hà Nội | `demos/phat-nguoi-ha-noi.html` | Tra cứu phạt nguội pSEO (P0 - CEO mandate) |
+| Dịch Vụ Công | `demos/dich-vu-cong.html` | Knowledge và Governance Hub: tìm thủ tục, tạo checklist và chuyển sang cổng chính thức |
+| Phạt Nguội | `demos/phat-nguoi.html` | Hub tra cứu toàn quốc, directory địa phương và định tuyến nội dung |
+| Phạt Nguội Hà Nội | `demos/phat-nguoi-ha-noi.html` | Location Detail child-page của Hub Phạt Nguội |
+| Phạt Nguội Giải Đáp | `demos/phat-nguoi-giai-dap.html` | Content Hub con của Phạt Nguội, tập trung Q&A và Quiz Center |
+| Cách nộp phạt qua MoMo | `demos/phat-nguoi-nop-qua-momo.html` | Q&A Detail con của Phạt Nguội Giải Đáp |
 | Merchant | `demos/merchant.html` | Merchant detail page đa ngành |
 | Merchant Discovery | `demos/merchant-discovery.html` | Card stack swipe để khám phá merchant |
 | Cinema Film Detail | `demos/cinema-film-detail.html` | Film detail tích hợp Summer Campaign 2026 + Game Mở Khoá |

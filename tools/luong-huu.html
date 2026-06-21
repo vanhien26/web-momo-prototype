@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="vi"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Công cụ ước tính lương hưu | MoMo Utilities Lab</title>
-<meta name="description" content="Ước tính dòng tiền hưu trí cần chuẩn bị theo chi phí sống và lạm phát.">
+<title>Kế hoạch Hưu trí Tự lập | MoMo Utilities Lab</title>
+<meta name="description" content="Tính toán quỹ tài chính cần chuẩn bị để nghỉ hưu tự do, an nhàn.">
+<link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
 <link rel="stylesheet" href="../assets/tools.css">
 </head><body>
 <div class="nav"><div class="nav-inner"><a class="brand" href="/lab.html"><span class="logo">M</span><span>MoMo Utilities Lab</span></a><div class="nav-links"><a href="/lab.html">← Lab</a></div></div></div>
@@ -10,8 +11,8 @@
   <aside class="panel">
     <div class="breadcrumb"><a href="/lab.html">Trang chủ</a> / Hưu trí</div>
     <div class="icon">👵</div>
-    <h1 class="tool-title">Công cụ ước tính lương hưu</h1>
-    <p class="note">Ước tính dòng tiền hưu trí cần chuẩn bị theo chi phí sống và lạm phát.</p>
+    <h1 class="tool-title">Kế hoạch Hưu trí Tự lập</h1>
+    <p class="note">Ước tính số tiền cần tích lũy và số tiền tiết kiệm mỗi tháng để tự do tài chính tuổi già.</p>
     <div class="form">
     <div class="input-wrap">
       <label for="expense">Chi phí sống hiện tại/tháng</label>
@@ -26,16 +27,23 @@
     </div>
 
     <div class="input-wrap">
-      <label for="inflation">Lạm phát năm</label>
+      <label for="inflation">Lạm phát bình quân/năm</label>
       <input data-input id="inflation" type="number" value="4">
       <small class="note">Đơn vị: %</small>
     </div>
 
     <div class="input-wrap">
-      <label for="retireYears">Số năm sống sau nghỉ hưu</label>
+      <label for="retireYears">Số năm hưởng hưu dự kiến</label>
       <input data-input id="retireYears" type="number" value="25">
       <small class="note">Đơn vị: năm</small>
-    </div><button class="primary" data-run data-logic="retirement">Tính ngay</button></div>
+    </div>
+
+    <div class="input-wrap">
+      <label for="returnRate">Lợi suất đầu tư/tiết kiệm kỳ vọng</label>
+      <input data-input id="returnRate" type="number" value="7">
+      <small class="note">Đơn vị: %/năm (lãi suất tiền gửi hoặc quỹ đầu tư)</small>
+    </div>
+    <button class="primary" data-run data-logic="retirement">Tính ngay</button></div>
   </aside>
   <section>
     <div class="result">
@@ -45,24 +53,24 @@
         <div class="kpi"><small id="mainLabel">Kết quả chính</small><strong id="mainResult">0đ</strong><div class="bar"><span id="progressBar"></span></div></div>
         <div class="kpi"><small id="secondLabel">Kết quả phụ</small><strong id="secondResult">0đ</strong><div class="bar"><span style="width:42%"></span></div></div>
       </div>
+      <div id="savingInsight" style="margin-top:16px; margin-bottom: 8px; padding: 12px 16px; border-radius: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 14px; font-weight: 600; display: none;"></div>
       <p class="note">Kết quả chỉ dùng để tham khảo theo dữ liệu bạn nhập. Khi triển khai thật cần kết nối dữ liệu sản phẩm, rule pháp lý, disclaimer và tracking event.</p>
     </div>
     <div class="explain" style="margin-top:18px">
       <h2>Logic tính toán</h2>
-      <p class="note">Chi phí tương lai = chi phí hiện tại * (1 + lạm phát)^năm</p>
+      <p class="note">Mô hình tính toán dòng tiền đều (Annuity) có điều chỉnh theo lạm phát & tỷ suất sinh lời thực tế của dòng vốn gửi tiết kiệm/đầu tư.</p>
       <table class="table">
-        <tr><th>Thành phần</th><th>Vai trò UX</th></tr>
-        <tr><td>Input</td><td>Thu thập nhu cầu, có thể dùng cho personalization hoặc pre-fill app.</td></tr>
-        <tr><td>Kết quả chính</td><td>Trả lời intent ngay lập tức.</td></tr>
-        <tr><td>Giải thích</td><td>Tăng trust, hỗ trợ SEO/GEO và giảm hiểu sai.</td></tr>
-        <tr><td>CTA</td><td>Dẫn người dùng sang sản phẩm hoặc flow tương ứng trên app.</td></tr>
+        <tr><th>Thành phần</th><th>Công thức / Vai trò</th></tr>
+        <tr><td>Chi phí hưu/tháng</td><td>= Chi phí hiện tại × (1 + lạm phát)^năm</td></tr>
+        <tr><td>Quỹ hưu trí cần có</td><td>Tính theo dòng tiền đều Present Value của Annuity với lãi suất thực dương = (Lãi suất - Lạm phát)</td></tr>
+        <tr><td>Tiết kiệm hàng tháng</td><td>Số tiền cần góp mỗi tháng từ nay đến khi nghỉ hưu để đạt mục tiêu (Future Value of Annuity)</td></tr>
       </table>
     </div>
     <div class="explain" style="margin-top:18px">
       <h2>Công cụ liên quan</h2>
       <div class="related"><a href="vay-nhanh.html"><b>💳 Công cụ ước tính khoản vay</b><br><small class="note">Vay</small></a>
 <a href="tiet-kiem.html"><b>🏦 Công cụ tính tiền tiết kiệm</b><br><small class="note">Tiết kiệm</small></a>
-<a href="tra-gop.html"><b>🛒 Công cụ tính trả góp</b><br><small class="note">Trả góp</small></a></div>
+<a href="nuoi-con.html"><b>👶 Kế hoạch nuôi con</b><br><small class="note">Gia đình</small></a></div>
     </div>
   </section>
 </main>

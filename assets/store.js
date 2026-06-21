@@ -26,14 +26,18 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/financial-utilities',
     tools: [
       { id: 'vay-nhanh',       name: 'Vay Nhanh',          category: 'Credit',     description: 'Ước tính số tiền trả hằng tháng theo số tiền vay, lãi suất và kỳ hạn.',               jtbd: 'Biết trước gánh nặng tài chính trước khi vay' },
-      { id: 'tra-gop',         name: 'Trả Góp',            category: 'Credit',     description: 'Ước tính số tiền cần trả mỗi tháng khi mua hàng trả góp với các kỳ hạn khác nhau.', jtbd: 'So sánh gói trả góp để chọn phương án tối ưu' },
+      { id: 'tra-gop',         name: 'Trả Góp Ví Trả Sau', category: 'Credit',     description: 'Ước tính số tiền thanh toán hằng kỳ khi chuyển đổi trả góp dư nợ hoặc giao dịch qua Ví Trả Sau MoMo.', jtbd: 'Biết số tiền gốc và phí trả mỗi tháng qua Ví Trả Sau để cân đối chi tiêu.' },
       { id: 'cic-score',       name: 'CIC Score',          category: 'Credit',     description: 'Mô phỏng điểm tín dụng CIC theo các yếu tố thanh toán, sử dụng hạn mức và lịch sử.', jtbd: 'Biết điểm CIC hiện tại và cách cải thiện' },
       { id: 'cic-stimulator',  name: 'CIC Stimulator',     category: 'Credit',     description: 'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.',        jtbd: 'Lên kế hoạch cải thiện điểm CIC trước khi vay' },
+      { id: 'net-worth',       name: 'Giá Trị Tài Sản Ròng', category: 'Financial Health', description: 'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng tại một thời điểm.', jtbd: 'Biết vị thế tài chính ròng để ưu tiên tăng tài sản hoặc giảm nợ' },
+      { id: 'dti',             name: 'Tỷ Lệ Nợ Trên Thu Nhập', category: 'Financial Health', description: 'Tính tỷ lệ thu nhập gộp hàng tháng đang dùng để thanh toán các nghĩa vụ nợ.', jtbd: 'Đánh giá áp lực nợ trước khi cân nhắc vay thêm' },
+      { id: 'debt-payoff',     name: 'Kế Hoạch Trả Nợ', category: 'Financial Health', description: 'So sánh chiến lược Avalanche và Snowball khi trả nhiều khoản nợ.', jtbd: 'Chọn thứ tự trả nợ và biết thời gian hoàn tất kế hoạch' },
       { id: 'bao-hiem-o-to',   name: 'Bảo Hiểm Ô Tô',     category: 'Insurance',  description: 'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí.',                          jtbd: 'Ước tính phí bảo hiểm trước khi quyết định mua' },
       { id: 'bhxh',            name: 'BHXH',               category: 'Insurance',  description: 'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.',                  jtbd: 'Hiểu quyền lợi BHXH để quyết định đóng tự nguyện' },
       { id: 'luong-huu',       name: 'Lương Hưu',          category: 'Insurance',  description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.', jtbd: 'Biết trước lương hưu để lập kế hoạch nghỉ hưu' },
       { id: 'bhxh-1-lan',      name: 'BHXH 1 Lần',         category: 'Insurance',  description: 'Ước tính số tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024: 1,5 tháng MBQTL/năm trước 2014, 2 tháng/năm từ 2014, auto trượt giá CPI.', jtbd: 'Cân nhắc rút BHXH một lần hay giữ tiếp để lương hưu' },
       { id: 'tiet-kiem',       name: 'Tiết Kiệm',          category: 'Savings',    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',                 jtbd: 'Biết trước lợi tức để chọn kỳ hạn tiết kiệm phù hợp' },
+      { id: 'nuoi-con',        name: 'Kế Hoạch Nuôi Con',  category: 'Savings',    description: 'Ước tính chi phí nuôi dạy con đến 18 tuổi và số tiền cần tích lũy hằng tháng cho quỹ đại học.', jtbd: 'Biết trước chi phí nuôi con để lập kế hoạch tài chính gia đình vững vàng.' },
       { id: 'lai-suat',        name: 'Lãi Suất Ngân Hàng', category: 'Savings',    description: 'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận theo số tiền và kỳ hạn.', jtbd: 'Chọn ngân hàng và kỳ hạn cho lãi suất tốt nhất' },
       { id: 'thue-tncn',       name: 'Thuế TNCN',          category: 'Tax',        description: 'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến 5 bậc và giảm trừ gia cảnh 15,5tr (Luật 2025).', jtbd: 'Tính nhanh thuế TNCN để lập kế hoạch tài chính' },
       { id: 'quyet-toan-tncn', name: 'Quyết Toán TNCN',    category: 'Tax',        description: 'Quyết toán thuế TNCN cuối năm: chênh lệch giữa thuế cả năm và thuế đã tạm đóng, biết phải nộp thêm hay được hoàn trước 30/04.', jtbd: 'Biết phải nộp thêm hay được hoàn cuối kỳ' },
@@ -44,7 +48,7 @@ const PROTOTYPES = [
       { id: 'ty-gia',          name: 'Tỷ Giá',             category: 'FX',         description: 'Converter A/B: chọn cặp tiền, đảo chiều, xem chart, chênh lệch bank-mid, tỷ giá hiệu dụng và số nhận ròng.', jtbd: 'Biết đổi từ tiền nào sang tiền nào, rate đang biến động ra sao và nhận ròng bao nhiêu' },
       { id: 'fx-compare',      name: 'So Sánh Tỷ Giá NH',  category: 'FX',         description: 'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ, highlight rate tốt nhất / kém nhất, sort theo best rate.', jtbd: 'Chọn ngân hàng đổi tiền có rate tốt nhất' },
       { id: 'travel-budget',   name: 'Budget Du Lịch',     category: 'FX',         description: 'Lập ngân sách chuyến đi cho 10 điểm đến × 3 tier (budget/mid/luxury) × N ngày, breakdown theo lưu trú / ăn / di chuyển / hoạt động / dự phòng.', jtbd: 'Biết cần mang bao nhiêu tiền cho chuyến đi' },
-      { id: 'quy-du-phong',    name: 'Quỹ Dự Phòng',      category: 'Planning',   description: 'Tính quy mô quỹ khẩn cấp cần có theo chi tiêu và số tháng an toàn mục tiêu.',       jtbd: 'Xác định đúng mức quỹ dự phòng cần tích lũy' },
+      { id: 'quy-du-phong',    name: 'Quỹ Dự Phòng',      category: 'Financial Health', description: 'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian hoàn thành và lạm phát dự kiến.', jtbd: 'Xác định đúng mức quỹ dự phòng cần tích lũy' },
       { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính',   category: 'Planning',   description: 'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư, tỷ lệ rút vốn an toàn và dòng tiền góp hàng tháng.', jtbd: 'Biết mình cần bao nhiêu, tốc độ góp có đủ không và thiếu ở đâu' },
       { id: 'dam-cuoi',        name: 'Kế Hoạch Đám Cưới', category: 'Planning',   description: 'Lập ngân sách cưới theo số khách, bàn tiệc, chi phí cố định, tiền mừng dự kiến, dự phòng và quỹ sau cưới.', jtbd: 'Biết cần chuẩn bị bao nhiêu tiền mặt để cưới xong không hụt dòng tiền' },
       { id: 'hoc-phi',         name: 'Học Phí Tương Lai',  category: 'Planning',   description: 'Ước tính học phí thực tế theo lạm phát và tính số tiền cần chuẩn bị từ hôm nay.',      jtbd: 'Tính trước chi phí học phí để chuẩn bị đủ vốn' },
@@ -152,7 +156,7 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/project-assistant',
   },
   {
-    id: 'seo-geo-score',
+    id: 'seo-geo-project',
     name: 'SEO/GEO Project Hub',
     category: 'MoSpark',
     maturity: 'Interactive',
@@ -163,8 +167,23 @@ const PROTOTYPES = [
     hypothesis: 'Tập trung quản lý keyword trong một registry duy nhất với quy tắc 1 keyword = 1 URL sẽ loại bỏ cannibalization và tạo nền tảng vững cho content production quy mô lớn.',
     value: 'Single source of truth cho toàn bộ SEO/GEO portfolio: SoV per use case, funnel TOFU/MOFU/BOFU, Business Context đủ 12 trường là gate bắt buộc trước khi GenAI sản xuất.',
     gate: 'Đo use case coverage (% có keyword đầy đủ), Business Context completeness rate, keyword uniqueness index và GenAI kickoff rate per cluster.',
+    src: 'demos/seo-geo-project.html',
+    address: 'web-momo-prototype.vercel.app/seo-geo-project',
+  },
+  {
+    id: 'seo-geo-score',
+    name: 'SEO/GEO Content Score',
+    category: 'MoSpark',
+    maturity: 'Governance Gate',
+    description: 'Pre-publish scoring system kiểm tra Technical SEO, Content, GEO và Trust. Mỗi rule có evidence, mức độ ưu tiên và hành động sửa; backend Hard Gate bảo vệ domain trước nội dung chưa đạt chuẩn.',
+    jtbd: 'Biết chính xác bài viết đã đủ điều kiện Publish chưa, lỗi nằm ở đâu và cần sửa gì trước',
+    northStar: 'First-pass publish readiness rate',
+    loop: 'Draft → Auto-score → Fix evidence → Governance Gate → Publish',
+    hypothesis: 'Một score có evidence và rule theo JTBD giúp Editor sửa đúng lỗi nhanh hơn checklist nhị phân hoặc review thủ công.',
+    value: 'Chuẩn hóa quality gate cho mọi page type mà không khuyến khích keyword stuffing, wordcount máy móc hoặc số liệu không nguồn.',
+    gate: 'Đo pass rate lần đầu, hard-gate failure, time-to-fix, rule failure distribution và publish override attempt.',
     src: 'demos/seo-geo-score.html',
-    address: 'web-momo-prototype.vercel.app/seo-geo-hub',
+    address: 'web-momo-prototype.vercel.app/seo-geo-score',
   },
   {
     id: 'universal-search',
@@ -229,33 +248,29 @@ const PROTOTYPES = [
   },
   {
     id: 'blog-category',
-    name: 'MoSpark Blog Category',
+    name: 'MoSpark Blog',
     category: 'MoSpark',
     maturity: 'Listing',
-    description: 'Blog category listing với 8 danh mục Use Case MoMo, featured article, article grid 2-col, category filter tabs với live count và inline contextual ad.',
-    jtbd: 'Khám phá nội dung theo chủ đề, tìm bài phù hợp nhanh',
-    northStar: 'Article click-through rate',
-    loop: 'Browse → Filter → Read → Convert',
-    hypothesis: 'Category listing có filter theo use case giúp user tìm đúng nội dung nhanh hơn và tăng engagement depth trong content hub MoSpark.',
-    value: 'Tạo bề mặt điều hướng nội dung theo 8 danh mục MoMo, tăng internal linking và time-on-site.',
-    gate: 'Đo category filter usage, article CTR, scroll depth và CTA conversion từ listing sang bài viết.',
+    description: 'Blog Hub-and-Spoke: Category là cha (listing 8 danh mục Use Case + featured article + filter tabs), Article là child page chuyên sâu (full-width + quiz tương tác + floating TOC + inline ads). Pattern Cate → Article giống Investopedia/Cloudflare Learning.',
+    jtbd: 'Khám phá nội dung blog theo danh mục Use Case rồi đi sâu vào bài cụ thể, kiểm tra hiểu biết qua quiz và chuyển đổi sang dịch vụ MoMo.',
+    northStar: 'Category → Article CTR + Article completion + CTA conversion',
+    loop: 'Browse Category → Filter → Click Article → Read → Quiz → Convert',
+    hypothesis: 'Cấu trúc Category (cha) → Article (con) tập trung internal link equity về Hub Category cho từng Use Case, tăng entity authority. Article có quiz + contextual ad theo chủ đề tăng engagement và conversion so với blog phẳng.',
+    value: 'Tạo bề mặt điều hướng nội dung 2 tầng (8 category × N article) cho SEO/GEO, mỗi Category là entity hub củng cố Link Equity, mỗi Article là content depth target từng query.',
+    gate: 'Đo category filter usage, article CTR từ listing, scroll depth article, quiz completion, CTA conversion cả category lẫn article.',
     src: 'demos/blog-category.html',
     address: 'web-momo-prototype.vercel.app/mospark-blog',
-  },
-  {
-    id: 'blog',
-    name: 'MoSpark Blog Article',
-    category: 'MoSpark',
-    maturity: 'Article',
-    description: 'Full-width blog article với quiz tương tác, floating TOC, inline ads (Universal + Contextual), static aggregate rating và progressive reading experience.',
-    jtbd: 'Đọc bài chuyên sâu, kiểm tra kiến thức và chuyển đổi sang dịch vụ MoMo',
-    northStar: 'Article completion + CTA conversion',
-    loop: 'Read → Quiz → Convert',
-    hypothesis: 'Blog article tích hợp quiz và contextual ads theo đúng chủ đề tăng engagement và conversion so với bài viết thuần.',
-    value: 'Tạo bề mặt nội dung chiều sâu cho SEO/GEO, quiz tăng time-on-page, contextual ad phục vụ monetization.',
-    gate: 'Đo scroll depth, quiz completion, CTA CTR từ inline ad và fixed bar, Web-to-App conversion.',
-    src: 'demos/blog.html',
-    address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
+    tools: [
+      {
+        id: 'blog',
+        name: 'Blog Article',
+        category: 'Child Page',
+        description: 'Article child page chuyên sâu: full-width + quiz tương tác + floating TOC + inline ads (Universal + Contextual) + static aggregate rating + progressive reading. Mỗi Article thuộc về 1 Category cha.',
+        jtbd: 'Đọc bài chuyên sâu về chủ đề cụ thể, test hiểu biết qua quiz inline rồi chuyển sang app MoMo nếu phù hợp.',
+        src: 'demos/blog.html',
+        address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
+      },
+    ],
   },
   {
     id: 'orchestrator',
@@ -318,20 +333,80 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/agentic-hub',
   },
   {
-    id: 'phat-nguoi-ha-noi',
-    name: 'Phạt Nguội Hà Nội',
+    id: 'dich-vu-cong',
+    name: 'Dịch Vụ Công',
     category: 'Platform',
     ownerGroup: 'Cell Team',
-    maturity: 'pSEO',
-    description: 'Trang pSEO Tra cứu Phạt Nguội theo Tỉnh/Thành — demo Hà Nội: Hero H1 + Lookup biển số, kết quả CSGT có/không vi phạm, Đề xuất tỉnh/thành + dịch vụ liên quan, Content SEO dạng card (mức phạt, quy trình, timeline, FAQ).',
-    jtbd: 'Tra cứu vi phạm giao thông theo biển số xe tại Hà Nội, biết mức phạt và quy trình xử lý',
+    maturity: 'Governance Hub',
+    description: 'Knowledge và Governance Hub giúp người dùng tìm đúng thủ tục, kiểm tra điều kiện, tạo checklist hồ sơ và chuyển sang cổng chính thức để nộp hoặc theo dõi hồ sơ.',
+    jtbd: 'Hiểu mình cần làm thủ tục nào, chuẩn bị gì và tiếp tục ở đâu mà không phải tự ghép thông tin từ nhiều nguồn',
+    northStar: 'Qualified handoff rate đến đúng hướng dẫn hoặc cổng dịch vụ công chính thức',
+    loop: 'Nhu cầu → Hướng dẫn → Checklist → Cổng chính thức → Theo dõi hồ sơ',
+    hypothesis: 'Giải thích theo tình huống và chỉ rõ điểm chuyển giao giúp người dùng hoàn thành tác vụ tốt hơn một danh mục thủ tục hoặc bài viết thuần thông tin.',
+    value: 'Tạo lớp điều hướng đáng tin cậy giữa nhu cầu tìm kiếm trên Web và hệ thống thực thi của cơ quan nhà nước.',
+    gate: 'Đo search success, checklist completion, guide engagement, qualified handoff và return rate để tra cứu hồ sơ.',
+    src: 'demos/dich-vu-cong.html',
+    address: 'web-momo-prototype.vercel.app/dich-vu-cong',
+    tools: [
+      {id:'dvc-doi-gplx',name:'Đổi Bằng Lái Xe',category:'Service Guide',description:'Hướng dẫn theo trường hợp hết hạn, mất, hỏng hoặc đổi thông tin GPLX.',jtbd:'Biết mình thuộc trường hợp nào và chuẩn bị đúng hồ sơ trước khi nộp',src:'demos/doi-bang-lai-xe.html',address:'web-momo-prototype.vercel.app/dich-vu-cong/doi-bang-lai-xe'},
+      {id:'dvc-cccd',name:'Cấp Đổi Căn Cước',category:'Service Guide',description:'Hướng dẫn theo tình huống hết hạn, mất thẻ hoặc thay đổi thông tin.',jtbd:'Làm đúng thủ tục căn cước theo tình trạng thực tế',src:'demos/gia-han-cccd.html',address:'web-momo-prototype.vercel.app/dich-vu-cong/cap-doi-can-cuoc'},
+      {id:'dvc-ho-chieu',name:'Cấp Hộ Chiếu',category:'Service Guide',description:'Hướng dẫn cấp mới hoặc cấp lại hộ chiếu, từ điều kiện đến kênh thực hiện.',jtbd:'Chuẩn bị đủ thông tin và chọn đúng cách nộp hồ sơ hộ chiếu',src:'demos/lam-ho-chieu.html',address:'web-momo-prototype.vercel.app/dich-vu-cong/cap-ho-chieu'},
+      {id:'dvc-khai-sinh',name:'Đăng Ký Khai Sinh',category:'Service Guide',description:'Hướng dẫn theo thời hạn, người thực hiện và tình trạng giấy tờ.',jtbd:'Đăng ký khai sinh đúng thời hạn và không thiếu giấy tờ',src:'demos/dang-ky-khai-sinh.html',address:'web-momo-prototype.vercel.app/dich-vu-cong/dang-ky-khai-sinh'},
+      {id:'dvc-ket-hon',name:'Đăng Ký Kết Hôn',category:'Service Guide',description:'Phân biệt thủ tục trong nước và trường hợp có yếu tố nước ngoài.',jtbd:'Kiểm tra điều kiện và chuẩn bị đúng bộ hồ sơ kết hôn',src:'demos/dang-ky-ket-hon.html',address:'web-momo-prototype.vercel.app/dich-vu-cong/dang-ky-ket-hon'},
+    ],
+  },
+  {
+    id: 'phat-nguoi',
+    name: 'Phạt Nguội',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'Hub',
+    description: 'Hub Phạt Nguội toàn quốc: lookup biển số, định tuyến theo nhu cầu, directory tỉnh/thành và internal link tới Giải đáp, Nộp phạt cùng các Location Detail.',
+    jtbd: 'Tra cứu vi phạm theo biển số và đi tiếp đến đúng hướng dẫn hoặc địa phương cần xử lý',
     northStar: 'Lookup completion rate',
-    loop: 'Search → Lookup → Result → Related CTA',
-    hypothesis: 'Trang pSEO theo tỉnh/thành tạo organic entry point riêng cho từng địa phương — mỗi trang là một keyword cluster với lookup tool + content SEO địa phương hóa.',
-    value: 'Template nhân rộng cho 63 tỉnh/thành: mỗi URL /phat-nguoi/{tinh} là một pSEO page độc lập, tăng SoV phạt nguội và cross-sell dịch vụ liên quan.',
-    gate: 'Đo lookup completion, result engagement (found/not-found rate), related service CTR, CTA conversion và Web-to-App từ pSEO page.',
-    src: 'demos/phat-nguoi-ha-noi.html',
-    address: 'web-momo-prototype.vercel.app/phat-nguoi/ha-noi',
+    loop: 'Search → Hub lookup → Location/Guide → Result → App',
+    hypothesis: 'Một Hub chung giữ utility và nội dung toàn quốc, còn Location Detail chỉ giữ context địa phương sẽ tạo kiến trúc dễ mở rộng và tránh trùng nội dung giữa các tỉnh thành.',
+    value: 'Content model Hub + Location Detail có thể nhân rộng theo địa phương, đồng thời giữ Giải đáp và Nộp phạt như các content hub chuyên biệt.',
+    gate: 'Đo lookup completion, location selection, child-page CTR, result engagement và Web-to-App conversion.',
+    src: 'demos/phat-nguoi.html',
+    address: 'web-momo-prototype.vercel.app/phat-nguoi',
+    tools: [
+      {
+        id: 'phat-nguoi-ha-noi',
+        name: 'Phạt Nguội Hà Nội',
+        category: 'Location Detail',
+        description: 'Child-page đầu tiên của template Location: lookup dùng chung và content riêng về biển số, khu vực, quy trình xử lý tại Hà Nội.',
+        jtbd: 'Tra cứu và hiểu cách xử lý vi phạm được ghi nhận tại Hà Nội',
+        src: 'demos/phat-nguoi-ha-noi.html',
+        address: 'web-momo-prototype.vercel.app/phat-nguoi/ha-noi',
+      },
+      {
+        id: 'phat-nguoi-giai-dap',
+        name: 'Phạt Nguội Giải Đáp',
+        category: 'Content Hub',
+        maturity: 'GEO',
+        description: 'Hub Q&A Directory và Quiz Center cho cluster Phạt Nguội. Mỗi câu hỏi người dùng là một child page trả lời trực tiếp, hỗ trợ internal link và AI Citation.',
+        jtbd: 'Khám phá câu trả lời theo tình huống hoặc kiểm tra hiểu biết về phạt nguội tại một thư viện tập trung',
+        northStar: 'AI Citation Rate trên nhóm câu hỏi mục tiêu',
+        loop: 'User Prompt → Q&A Hub → Child Answer → Quiz / App',
+        hypothesis: 'Kiến trúc Hub và child Q&A giúp câu trả lời dễ tìm, dễ mở rộng và có ngữ cảnh rõ hơn một trang FAQ tổng hợp.',
+        value: 'Content Hub chuyên biệt nằm trong dự án Phạt Nguội, bổ sung lớp giải đáp cho utility lookup và Location Detail.',
+        gate: 'Đo child-page CTR, quiz completion, AI Citation Rate và Web-to-App conversion.',
+        src: 'demos/phat-nguoi-giai-dap.html',
+        address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap',
+        tools: [
+          {
+            id: 'phat-nguoi-nop-qua-momo',
+            name: 'Cách nộp phạt qua MoMo',
+            category: 'Q&A Detail',
+            description: 'Child Q&A đầu tiên: trả lời trực tiếp khả năng nộp phạt qua MoMo, hướng dẫn từng bước, so sánh kênh và CTA thực thi.',
+            jtbd: 'Hiểu rõ cách nộp phạt qua MoMo và thực hiện ngay trong cùng một phiên',
+            src: 'demos/phat-nguoi-nop-qua-momo.html',
+            address: 'web-momo-prototype.vercel.app/phat-nguoi/giai-dap/nop-qua-momo',
+          },
+        ],
+      },
+    ],
   },
 ];
 
@@ -356,6 +431,10 @@ const CAT_COLOR = {
   'Discovery':  { bg: '#fffbeb', text: '#b45309' },
   'Engagement': { bg: '#f5f3ff', text: '#6d28d9' },
   'Transit':    { bg: '#eef2ff', text: '#4338ca' },
+  'Location Detail': { bg: '#eff6ff', text: '#1d4ed8' },
+  'Service Guide': { bg: '#ecfdf3', text: '#067647' },
+  'Content Hub': { bg: '#faf5ff', text: '#7c3aed' },
+  'Q&A Detail': { bg: '#fff0f7', text: '#a50064' },
   'Other':      { bg: '#f1f5f9', text: '#475569' },
   'Destination':{ bg: '#fff0f7', text: '#a50064' },
   'Child Page':  { bg: '#fff0f7', text: '#a50064' },
@@ -378,7 +457,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -386,10 +465,10 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi-ha-noi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
+  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
   Other: ['worldcup'],
 };
 
@@ -579,6 +658,16 @@ let activeProtoId = null;
 let activeToolId  = null;
 const expanded    = new Set();
 
+function findToolPath(proto, toolId, tools = proto?.tools || [], ancestors = []) {
+  for (const tool of tools) {
+    const path = [...ancestors, tool];
+    if (tool.id === toolId) return path;
+    const nestedPath = findToolPath(proto, toolId, tool.tools || [], path);
+    if (nestedPath) return nestedPath;
+  }
+  return null;
+}
+
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 function renderNav() {
@@ -603,17 +692,24 @@ function renderNav() {
     const renderNavItem = (p, i) => {
       const isActive   = activeProtoId === p.id && !activeToolId;
       const isExpanded = expanded.has(p.id);
+      const activePath = activeProtoId === p.id && activeToolId ? findToolPath(p, activeToolId) : null;
+
+      const renderToolNavItems = (tools, depth = 0) => tools.map(t => {
+        const tc = CAT_COLOR[t.category] || CAT_COLOR['Planning'];
+        const isTA = activeProtoId === p.id && activeToolId === t.id;
+        const isAncestor = activePath?.some(item => item.id === t.id) && !isTA;
+        return `<div class="tool-nav-node" style="--tool-depth:${depth}">
+          <button class="tool-nav-btn${isTA ? ' active' : ''}${isAncestor ? ' ancestor' : ''}" data-proto="${p.id}" data-tool="${t.id}">
+            <span class="tool-nav-cat" style="color:${tc.text}">${t.category}</span>
+            <span class="tool-nav-lbl">${t.name}</span>
+          </button>
+          ${t.tools?.length ? `<div class="tool-nav-children">${renderToolNavItems(t.tools, depth + 1)}</div>` : ''}
+        </div>`;
+      }).join('');
 
       const toolsHtml = p.tools ? `
         <div class="tool-nav-list${isExpanded ? '' : ' hidden'}" id="tnl-${p.id}">
-          ${p.tools.map(t => {
-            const tc = CAT_COLOR[t.category] || CAT_COLOR['Planning'];
-            const isTA = activeProtoId === p.id && activeToolId === t.id;
-            return `<button class="tool-nav-btn${isTA ? ' active' : ''}" data-proto="${p.id}" data-tool="${t.id}">
-              <span class="tool-nav-cat" style="color:${tc.text}">${t.category}</span>
-              <span class="tool-nav-lbl">${t.name}</span>
-            </button>`;
-          }).join('')}
+          ${renderToolNavItems(p.tools)}
         </div>` : '';
 
       return `<div class="proto-nav-group">
@@ -701,7 +797,7 @@ const MOSPARK_HOME_CAPABILITIES = [
   {
     title: 'GenAI Content',
     text: 'Sản xuất outline, article, FAQ và product embed từ Content Plan đã duyệt, có Business Context và quality gate.',
-    proto: 'blog',
+    proto: 'blog-category',
   },
   {
     title: 'Ads & Widget',
@@ -716,7 +812,7 @@ const MOSPARK_HOME_CAPABILITIES = [
   {
     title: 'SEO/GEO Project',
     text: 'Quản lý Use Case, Cluster, Keyword Registry, Business Context và performance trên Google Search lẫn AI Search.',
-    proto: 'seo-geo-score',
+    proto: 'seo-geo-project',
   },
   {
     title: 'Chatbot',
@@ -746,7 +842,7 @@ function buildMoSparkHomeIntro() {
         <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
         <div class="mh-actions">
           <button type="button" class="mh-primary" data-open-proto="blog">Mở demo Phạt Nguội</button>
-          <button type="button" class="mh-secondary" data-open-proto="seo-geo-score">Xem SEO/GEO Project</button>
+          <button type="button" class="mh-secondary" data-open-proto="seo-geo-project">Xem SEO/GEO Project</button>
         </div>
       </div>
       <div class="mh-stack">
@@ -851,7 +947,7 @@ function buildHomeHero() {
         <div class="hl-page-header-left">
           <div class="hl-brand-line">
             <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="hl-mospark-logo" decoding="async">
-            <span class="hl-page-kicker">Internal · Prototype Directory</span>
+            <span class="hl-page-kicker">Internal · Web Platform</span>
           </div>
           <h1 class="hl-page-title">Prototype Lab</h1>
           <p class="hl-page-sub">${getTotalSurfaceCount()} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
@@ -1135,8 +1231,9 @@ function renderWorkspace() {
   }
 
   if (activeToolId && proto.tools) {
-    const tool = proto.tools.find(t => t.id === activeToolId);
-    if (tool) { ws.innerHTML = buildToolView(proto, tool); wireWs(ws, proto, tool); return; }
+    const toolPath = findToolPath(proto, activeToolId);
+    const tool = toolPath?.at(-1);
+    if (tool) { ws.innerHTML = buildToolView(proto, tool, toolPath); wireWs(ws, proto, tool); return; }
   }
 
   ws.innerHTML = buildProtoView(proto);
@@ -1180,17 +1277,18 @@ function buildProtoView(proto) {
   </div>`;
 }
 
-function buildToolView(proto, tool) {
-  const tc  = CAT_COLOR[tool.category]  || {};
+function buildToolView(proto, tool, toolPath = [tool]) {
+  const tc  = CAT_COLOR[tool.category] || CAT_COLOR['Planning'];
   const src = tool.src || `demos/financial.html#${tool.id}`;
   const preview = previewSrc(src);
   const address = tool.address || `${proto.address}#${tool.id}`;
+  const parentTool = toolPath.length > 1 ? toolPath.at(-2) : null;
 
   return `
   <div class="ws-topbar">
     <div class="ws-breadcrumb">
       <button class="menu-toggle" id="menuToggle">☰</button>
-      <button class="ws-back-btn" data-proto="${proto.id}">← ${proto.name}</button>
+      <button class="ws-back-btn" data-proto="${proto.id}"${parentTool ? ` data-parent-tool="${parentTool.id}"` : ''}>← ${parentTool?.name || proto.name}</button>
       <span class="ws-bc-sep">/</span>
       <span class="ws-cat-tag" style="background:${tc.bg};color:${tc.text}">${tool.category}</span>
       <span class="ws-bc-sep">/</span>
@@ -1244,7 +1342,10 @@ function wireWs(ws, proto, tool) {
 
   // Back button
   const back = ws.querySelector('.ws-back-btn');
-  if (back) back.addEventListener('click', () => selectProto(back.dataset.proto));
+  if (back) back.addEventListener('click', () => {
+    if (back.dataset.parentTool) selectTool(back.dataset.proto, back.dataset.parentTool);
+    else selectProto(back.dataset.proto);
+  });
 
   // Mobile menu toggle
   const mt = ws.querySelector('#menuToggle');
