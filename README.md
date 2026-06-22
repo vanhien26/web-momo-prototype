@@ -62,14 +62,14 @@ Research-spec prototype lab cho MoMo Web Platform. Mọi tính toán, dữ liệ
 ## Run locally
 
 ```bash
-# Python (no deps)
-python3 -m http.server 3000
+# Python, hỗ trợ clean URL giống Vercel
+python3 scripts/serve-local.py --port 4321
 
 # Hoặc bất kỳ static server nào
 npx serve -p 3000 .
 ```
 
-Mở `http://localhost:3000`.
+Mở `http://localhost:4321/lab`.
 
 ---
 

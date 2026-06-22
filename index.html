@@ -218,38 +218,250 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
 @keyframes sg-fade{0%,5%{opacity:0}18%,72%{opacity:1}84%,100%{opacity:0}}
 
 /* Hero OS Panel */
-.os-panel{background:#0f1117;border-radius:16px;border:1px solid rgba(255,255,255,.07);overflow:hidden;font-family:ui-monospace,monospace}
-.os-topbar{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);gap:10px;background:rgba(255,255,255,.02)}
-.os-dots{display:flex;gap:5px}
-.os-dots span{width:10px;height:10px;border-radius:50%}
-.os-d1{background:#ff5f57}.os-d2{background:#febc2e}.os-d3{background:#28c840}
-.os-name{flex:1;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.05em;text-transform:uppercase}
-.os-live-badge{display:flex;align-items:center;gap:5px;font-size:8px;font-weight:800;letter-spacing:.1em;color:#a50064;text-transform:uppercase}
-.os-body{display:grid;grid-template-columns:1fr 1.3fr;min-height:158px}
-.os-mods-col{padding:12px 14px;border-right:1px solid rgba(255,255,255,.05)}
-.os-feed-col{padding:12px 14px}
-.os-col-label{font-size:7px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:9px}
-.os-mod-row{display:flex;align-items:center;gap:7px;padding:3.5px 0;font-size:10px;color:rgba(255,255,255,.48)}
-.os-mod-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;animation:mod-pulse 2s ease-in-out infinite}
-.mi1{background:#34d399;animation-delay:0s}
-.mi2{background:#60a5fa;animation-delay:.5s}
-.mi3{background:#a78bfa;animation-delay:1s}
-.mi4{background:#f472b6;animation-delay:1.5s}
-.mi5{background:#34d399;animation-delay:.3s}
-.mi6{background:#fbbf24;animation-delay:.8s}
-@keyframes mod-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
-.os-feed-viewport{height:118px;overflow:hidden;position:relative}
-.os-feed-viewport::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent,#0f1117);z-index:1;pointer-events:none}
-.os-feed-scroller{animation:os-scroll 22s linear infinite}
+/* ─── MoSpark Growth OS panel (hero) ─────────────────────────────────────── */
+.os-panel-wrap{position:relative}
+.os-panel-wrap::before{
+  content:'';position:absolute;inset:-30px -20px;z-index:-1;
+  background:radial-gradient(60% 50% at 50% 50%,rgba(165,0,100,.18),transparent 70%);
+  filter:blur(20px);
+}
+.os-panel{
+  background:linear-gradient(165deg,#13151c 0%,#0f1117 60%,#0d0f17 100%);
+  border-radius:16px;border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 0 1px rgba(165,0,100,.06) inset;
+  overflow:hidden;font-family:ui-monospace,'JetBrains Mono','SF Mono',monospace;
+}
+.os-topbar{
+  display:flex;align-items:center;padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);gap:12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.025) 0%,rgba(255,255,255,0) 100%);
+}
+.os-dots{display:flex;gap:6px}
+.os-dots span{width:11px;height:11px;border-radius:50%}
+.os-d1{background:#ff5f57;box-shadow:0 0 6px rgba(255,95,87,.35)}
+.os-d2{background:#febc2e;box-shadow:0 0 6px rgba(254,188,46,.3)}
+.os-d3{background:#28c840;box-shadow:0 0 6px rgba(40,200,64,.3)}
+.os-name{
+  flex:1;font-size:11.5px;font-weight:700;color:rgba(255,255,255,.7);
+  letter-spacing:.16em;text-transform:uppercase;
+}
+.os-live-badge{
+  display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;
+  letter-spacing:.14em;color:#ff3d8c;text-transform:uppercase;
+}
+.os-live-badge .live-dot{
+  width:6px;height:6px;border-radius:50%;background:#ff3d8c;flex-shrink:0;
+  box-shadow:0 0 8px rgba(255,61,140,.7);animation:live-pulse 1.4s ease-in-out infinite;
+}
+@keyframes live-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+.os-body{display:grid;grid-template-columns:1fr 1.25fr;min-height:200px}
+.os-mods-col{padding:14px 16px;border-right:1px solid rgba(255,255,255,.06);position:relative}
+.os-feed-col{padding:14px 16px}
+.os-col-label{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:12px;
+}
+.os-col-count{font-size:8.5px;color:rgba(255,255,255,.25);letter-spacing:.12em;font-weight:700}
+
+/* Module list */
+.os-mod-row{
+  display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:9px;
+  padding:6px 8px;margin:0 -8px;border-radius:6px;
+  font-size:11.5px;color:rgba(255,255,255,.7);font-weight:500;
+  letter-spacing:.01em;transition:background .3s ease,color .3s ease;
+  animation:mod-active 9s ease-in-out infinite;position:relative;
+}
+.os-mod-row:nth-child(1){animation-delay:0s}
+.os-mod-row:nth-child(2){animation-delay:1.5s}
+.os-mod-row:nth-child(3){animation-delay:3s}
+.os-mod-row:nth-child(4){animation-delay:4.5s}
+.os-mod-row:nth-child(5){animation-delay:6s}
+.os-mod-row:nth-child(6){animation-delay:7.5s}
+@keyframes mod-active{
+  0%,82%,100%{background:transparent;color:rgba(255,255,255,.7)}
+  3%,15%{background:rgba(165,0,100,.13);color:#fff}
+}
+.os-mod-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 0 0 currentColor;
+}
+.mi1{background:#34d399;color:#34d399}
+.mi2{background:#60a5fa;color:#60a5fa}
+.mi3{background:#a78bfa;color:#a78bfa}
+.mi4{background:#f472b6;color:#f472b6}
+.mi5{background:#fb7185;color:#fb7185}
+.mi6{background:#fbbf24;color:#fbbf24}
+.os-mod-row:nth-child(1) .os-mod-dot{animation:dot-pulse-color 9s ease-in-out infinite;animation-delay:0s}
+.os-mod-row:nth-child(2) .os-mod-dot{animation:dot-pulse-color 9s ease-in-out infinite;animation-delay:1.5s}
+.os-mod-row:nth-child(3) .os-mod-dot{animation:dot-pulse-color 9s ease-in-out infinite;animation-delay:3s}
+.os-mod-row:nth-child(4) .os-mod-dot{animation:dot-pulse-color 9s ease-in-out infinite;animation-delay:4.5s}
+.os-mod-row:nth-child(5) .os-mod-dot{animation:dot-pulse-color 9s ease-in-out infinite;animation-delay:6s}
+.os-mod-row:nth-child(6) .os-mod-dot{animation:dot-pulse-color 9s ease-in-out infinite;animation-delay:7.5s}
+@keyframes dot-pulse-color{
+  0%,82%,100%{box-shadow:0 0 0 0 currentColor;transform:scale(1)}
+  3%,15%{box-shadow:0 0 8px 1px currentColor;transform:scale(1.15)}
+}
+.os-mod-meta{
+  font-size:9.5px;color:rgba(255,255,255,.4);font-weight:700;
+  font-variant-numeric:tabular-nums;letter-spacing:.04em;
+}
+
+/* Activity feed */
+.os-feed-viewport{
+  height:150px;overflow:hidden;position:relative;mask-image:linear-gradient(180deg,transparent 0,#000 12%,#000 82%,transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 12%,#000 82%,transparent 100%);
+}
+.os-feed-scroller{animation:os-scroll 24s linear infinite}
 @keyframes os-scroll{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
-.os-act-entry{font-size:9px;color:rgba(255,255,255,.32);padding:5.5px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ae-hi{color:rgba(180,0,100,.95)}
-.ae-ok{color:rgba(52,211,153,.7)}
-.os-footer{padding:9px 14px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:10px}
-.os-track{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
-.os-fill{height:100%;background:linear-gradient(90deg,#7a004b,#a50064,#d4006e);border-radius:2px;animation:fill-breathe 3.5s ease-in-out infinite}
-@keyframes fill-breathe{0%,100%{width:58%}40%{width:76%}70%{width:67%}}
-.os-metric{font-size:9px;font-weight:800;color:rgba(200,0,122,.75);white-space:nowrap;letter-spacing:.03em}
+.os-act-entry{
+  display:grid;grid-template-columns:14px 1fr auto;gap:8px;align-items:center;
+  font-size:10.5px;color:rgba(255,255,255,.6);padding:6.5px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);line-height:1.4;
+}
+.os-act-entry .ae-ico{
+  width:13px;text-align:center;font-size:11px;font-weight:800;line-height:1;flex-shrink:0;
+}
+.ae-hi{color:#ff3d8c}
+.ae-ok{color:#34d399}
+.ae-up{color:#60a5fa}
+.os-act-entry .ae-text{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;color:rgba(255,255,255,.72);
+}
+.os-act-entry .ae-time{
+  font-size:8.5px;color:rgba(255,255,255,.28);font-weight:700;
+  letter-spacing:.04em;flex-shrink:0;font-variant-numeric:tabular-nums;
+}
+
+/* Footer with sparkline + counter */
+.os-footer{
+  padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.015) 100%);
+}
+.os-spark{display:flex;align-items:center;gap:9px}
+.os-spark-svg{height:22px;width:90px;flex-shrink:0}
+.os-spark-svg .spark-path{
+  fill:none;stroke:#ff3d8c;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 4px rgba(255,61,140,.5));
+  stroke-dasharray:280;stroke-dashoffset:280;
+  animation:spark-draw 4s ease-in-out infinite;
+}
+@keyframes spark-draw{
+  0%{stroke-dashoffset:280}
+  40%,55%{stroke-dashoffset:0}
+  95%,100%{stroke-dashoffset:-280}
+}
+.os-spark-svg .spark-area{
+  fill:url(#sparkGrad);opacity:.18;
+}
+.os-track{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;display:none}
+.os-fill{height:100%;background:linear-gradient(90deg,#7a004b,#a50064,#d4006e);border-radius:2px}
+.os-metric{
+  font-size:13px;font-weight:800;color:#ff3d8c;
+  white-space:nowrap;letter-spacing:.01em;
+  display:inline-flex;align-items:baseline;gap:5px;font-variant-numeric:tabular-nums;
+}
+.os-metric small{font-size:9.5px;color:rgba(255,61,140,.65);font-weight:700;letter-spacing:.04em;text-transform:lowercase}
+
+/* ─── Platform story (Cũ vs MoSpark) ────────────────────────────────────── */
+.platform-intro{margin-bottom:36px}
+.platform-story{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;
+  margin-bottom:40px;border-radius:24px;
+  background:linear-gradient(180deg,#fff 0%,#fdf6fb 100%);
+  border:1px solid #f5e0ed;overflow:hidden;
+  box-shadow:0 4px 16px rgba(165,0,100,.04);
+}
+.ps-scene{padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+.ps-scene.ps-old{background:linear-gradient(180deg,#fdf6fb 0%,#fbecf4 100%)}
+.ps-scene.ps-new{background:#fff}
+
+.ps-scene-head{display:flex;align-items:center;gap:9px}
+.ps-stage-label{
+  font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  padding:4px 9px;border-radius:4px;
+  background:rgba(165,0,100,.08);color:#a50064;border:1px solid rgba(165,0,100,.18);
+}
+.ps-stage-label.new{background:#a50064;color:#fff;border-color:#a50064}
+.ps-scene-head strong{font-size:13px;font-weight:800;color:#1f1f29;letter-spacing:-.005em}
+
+.ps-canvas{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid #f5e0ed;border-radius:14px;
+  padding:14px;min-height:200px;
+}
+.ps-scene.ps-old .ps-canvas{background:rgba(255,255,255,.65);border-color:#f5d2e5}
+.ps-illustration{width:100%;height:auto;max-height:210px;display:block}
+
+.ps-meta{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  font-size:10.5px;color:#6b6b7b;line-height:1.45;
+}
+.ps-meta strong{font-size:11px;font-weight:800;color:#1f1f29;flex-shrink:0;white-space:nowrap}
+.ps-meta span{font-family:ui-monospace,'JetBrains Mono','SF Mono',monospace;font-size:9.5px;letter-spacing:.01em}
+
+/* Center flow arrow */
+.ps-flow{
+  display:flex;align-items:center;justify-content:center;
+  padding:0 14px;background:linear-gradient(90deg,#fbecf4 0%,#fff 50%,#fff 100%);
+  position:relative;
+}
+.ps-arrow-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:8px 0;
+}
+.ps-arrow{width:120px;height:36px}
+.ps-arrow-line{stroke-dasharray:96 96;stroke-dashoffset:96;animation:ps-arrow-draw 3s ease-in-out infinite}
+.ps-arrow-dot{transform-origin:60px 18px;animation:ps-dot-travel 3s ease-in-out infinite}
+@keyframes ps-arrow-draw{
+  0%{stroke-dashoffset:96}
+  45%,60%{stroke-dashoffset:0}
+  95%,100%{stroke-dashoffset:-96}
+}
+@keyframes ps-dot-travel{
+  0%,5%{transform:translateX(-56px);opacity:0}
+  10%{opacity:1}
+  50%,55%{transform:translateX(40px);opacity:1}
+  60%,100%{transform:translateX(40px);opacity:0}
+}
+.ps-flow-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 11px;border-radius:20px;
+  background:#1f1f29;color:#fff;font-size:9.5px;font-weight:800;
+  letter-spacing:.05em;box-shadow:0 6px 18px rgba(31,31,41,.25);
+}
+
+/* Sparkle twinkle */
+.ps-sparkle{animation:ps-twinkle 2s ease-in-out infinite}
+@keyframes ps-twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.ps-sparkle-badge rect{animation:ps-badge-glow 3s ease-in-out infinite}
+@keyframes ps-badge-glow{0%,100%{filter:drop-shadow(0 0 0 rgba(236,72,153,0))}50%{filter:drop-shadow(0 0 8px rgba(236,72,153,.4))}}
+
+/* Steam wiggle */
+.ps-steam{animation:ps-steam-rise 2.6s ease-in-out infinite;transform-origin:center bottom}
+@keyframes ps-steam-rise{0%,100%{opacity:.6;transform:translateY(2px)}50%{opacity:1;transform:translateY(-2px)}}
+
+/* Old scene subtle wobble (busy team feel) */
+.ps-people-old{animation:ps-busy 4s ease-in-out infinite}
+@keyframes ps-busy{0%,100%{transform:translateX(0)}25%{transform:translateX(-1px)}75%{transform:translateX(1px)}}
+
+@media (max-width:880px){
+  .platform-story{grid-template-columns:1fr;border-radius:18px}
+  .ps-flow{padding:14px}
+  .ps-arrow{transform:rotate(90deg);width:80px}
+  .ps-arrow-wrap{flex-direction:row;gap:14px}
+  .ps-scene{padding:18px}
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  .ps-arrow-line,.ps-arrow-dot,.ps-sparkle,.ps-sparkle-badge rect,.ps-steam,.ps-people-old{
+    animation:none;
+  }
+  .ps-arrow-line{stroke-dashoffset:0}
+}
 
 @media(max-width:900px){
   .workflow-section{padding:62px 0 70px}
@@ -280,7 +492,7 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
   .ai-doc-hd,.ai-doc-l1,.ai-doc-l2,.ai-doc-l3,
   .ads-card-anim,.chat-u-msg,.chat-dots-anim,.chat-ai-msg,.chat-dots-anim span,
   .seo-bl,.sg-arc,.sg-num-anim,
-  .os-mod-dot,.os-feed-scroller,.os-fill{animation:none;opacity:1;transform:none;transition:none;width:100%;stroke-dashoffset:38}
+  .os-mod-dot,.os-mod-row,.os-feed-scroller,.os-fill,.live-dot,.spark-path{animation:none;opacity:1;transform:none;transition:none;width:100%;stroke-dashoffset:0}
   .bef-step,.aft-step,.ba-flow-progress,.ba-flow-head{animation:none;opacity:1;transition:none}
   .ba-flow-progress{transform:scaleX(1)}
   .ba-flow-head{display:none}
@@ -341,54 +553,68 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
     </div>
 
     <!-- Hero OS Panel -->
-    <div class="rv os-panel">
+    <div class="rv os-panel-wrap">
+    <div class="os-panel">
       <div class="os-topbar">
         <div class="os-dots"><span class="os-d1"></span><span class="os-d2"></span><span class="os-d3"></span></div>
         <span class="os-name">MoSpark Platform</span>
-        <span class="os-live-badge"><span class="dot-pulse" style="width:5px;height:5px;border-radius:50%;background:#a50064;display:inline-block;flex-shrink:0"></span>Live</span>
+        <span class="os-live-badge"><span class="live-dot"></span>Live</span>
       </div>
       <div class="os-body">
         <div class="os-mods-col">
-          <div class="os-col-label">Modules</div>
-          <div class="os-mod-row"><span class="os-mod-dot mi1"></span>LP Builder</div>
-          <div class="os-mod-row"><span class="os-mod-dot mi2"></span>GenAI Content</div>
-          <div class="os-mod-row"><span class="os-mod-dot mi3"></span>Ads &amp; Widget</div>
-          <div class="os-mod-row"><span class="os-mod-dot mi4"></span>Chatbot</div>
-          <div class="os-mod-row"><span class="os-mod-dot mi5"></span>SEO/GEO</div>
-          <div class="os-mod-row"><span class="os-mod-dot mi6"></span>Score Gate</div>
+          <div class="os-col-label">Modules <span class="os-col-count">6 / 6 OK</span></div>
+          <div class="os-mod-row"><span class="os-mod-dot mi1"></span><span class="os-mod-name">LP Builder</span><span class="os-mod-meta">12</span></div>
+          <div class="os-mod-row"><span class="os-mod-dot mi2"></span><span class="os-mod-name">GenAI Content</span><span class="os-mod-meta">247K</span></div>
+          <div class="os-mod-row"><span class="os-mod-dot mi3"></span><span class="os-mod-name">Ads &amp; Widget</span><span class="os-mod-meta">8</span></div>
+          <div class="os-mod-row"><span class="os-mod-dot mi4"></span><span class="os-mod-name">Chatbot</span><span class="os-mod-meta">1.2K</span></div>
+          <div class="os-mod-row"><span class="os-mod-dot mi5"></span><span class="os-mod-name">SEO/GEO</span><span class="os-mod-meta">38</span></div>
+          <div class="os-mod-row"><span class="os-mod-dot mi6"></span><span class="os-mod-name">Score Gate</span><span class="os-mod-meta">91</span></div>
         </div>
         <div class="os-feed-col">
-          <div class="os-col-label">Activity</div>
+          <div class="os-col-label">Activity <span class="os-col-count" id="osActivityRate">+47/min</span></div>
           <div class="os-feed-viewport">
             <div class="os-feed-scroller">
-              <div class="os-act-entry"><span class="ae-hi">↑</span> LP Vay Nhanh · published</div>
-              <div class="os-act-entry"><span class="ae-ok">✓</span> Score 84 · BH xe máy · pass</div>
-              <div class="os-act-entry"><span class="ae-hi">→</span> Chatbot · 14 sessions</div>
-              <div class="os-act-entry"><span class="ae-ok">↑</span> SEO rank +3 · phạt nguội</div>
-              <div class="os-act-entry"><span class="ae-hi">⚡</span> GenAI draft · 1,247 từ</div>
-              <div class="os-act-entry"><span class="ae-ok">✓</span> Widget · blog.momo.vn · live</div>
-              <div class="os-act-entry"><span class="ae-hi">↑</span> LP BH ô tô · published</div>
-              <div class="os-act-entry"><span class="ae-ok">✓</span> Score 91 · VTS · pass</div>
-              <div class="os-act-entry"><span class="ae-hi">→</span> Chatbot · Credit · active</div>
-              <div class="os-act-entry"><span class="ae-ok">↑</span> SEO cite · AI Overview</div>
-              <div class="os-act-entry"><span class="ae-hi">↑</span> LP Vay Nhanh · published</div>
-              <div class="os-act-entry"><span class="ae-ok">✓</span> Score 84 · BH xe máy · pass</div>
-              <div class="os-act-entry"><span class="ae-hi">→</span> Chatbot · 14 sessions</div>
-              <div class="os-act-entry"><span class="ae-ok">↑</span> SEO rank +3 · phạt nguội</div>
-              <div class="os-act-entry"><span class="ae-hi">⚡</span> GenAI draft · 1,247 từ</div>
-              <div class="os-act-entry"><span class="ae-ok">✓</span> Widget · blog.momo.vn · live</div>
-              <div class="os-act-entry"><span class="ae-hi">↑</span> LP BH ô tô · published</div>
-              <div class="os-act-entry"><span class="ae-ok">✓</span> Score 91 · VTS · pass</div>
-              <div class="os-act-entry"><span class="ae-hi">→</span> Chatbot · Credit · active</div>
-              <div class="os-act-entry"><span class="ae-ok">↑</span> SEO cite · AI Overview</div>
+              <div class="os-act-entry"><span class="ae-ico ae-hi">↑</span><span class="ae-text">LP Vay Nhanh · published</span><span class="ae-time">now</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">✓</span><span class="ae-text">Score 84 · BH xe máy · pass</span><span class="ae-time">2s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-up">→</span><span class="ae-text">Chatbot · 14 sessions</span><span class="ae-time">5s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">↑</span><span class="ae-text">SEO rank +3 · phạt nguội</span><span class="ae-time">9s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-hi">⚡</span><span class="ae-text">GenAI draft · 1,247 từ</span><span class="ae-time">14s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">✓</span><span class="ae-text">Widget · blog.momo.vn · live</span><span class="ae-time">20s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-hi">↑</span><span class="ae-text">LP BH ô tô · published</span><span class="ae-time">28s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">✓</span><span class="ae-text">Score 91 · VTS · pass</span><span class="ae-time">37s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-up">→</span><span class="ae-text">Chatbot · Credit · active</span><span class="ae-time">48s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">↑</span><span class="ae-text">SEO cite · AI Overview</span><span class="ae-time">1m</span></div>
+              <!-- duplicate for seamless scroll loop -->
+              <div class="os-act-entry"><span class="ae-ico ae-hi">↑</span><span class="ae-text">LP Vay Nhanh · published</span><span class="ae-time">now</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">✓</span><span class="ae-text">Score 84 · BH xe máy · pass</span><span class="ae-time">2s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-up">→</span><span class="ae-text">Chatbot · 14 sessions</span><span class="ae-time">5s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">↑</span><span class="ae-text">SEO rank +3 · phạt nguội</span><span class="ae-time">9s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-hi">⚡</span><span class="ae-text">GenAI draft · 1,247 từ</span><span class="ae-time">14s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">✓</span><span class="ae-text">Widget · blog.momo.vn · live</span><span class="ae-time">20s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-hi">↑</span><span class="ae-text">LP BH ô tô · published</span><span class="ae-time">28s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">✓</span><span class="ae-text">Score 91 · VTS · pass</span><span class="ae-time">37s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-up">→</span><span class="ae-text">Chatbot · Credit · active</span><span class="ae-time">48s</span></div>
+              <div class="os-act-entry"><span class="ae-ico ae-ok">↑</span><span class="ae-text">SEO cite · AI Overview</span><span class="ae-time">1m</span></div>
             </div>
           </div>
         </div>
       </div>
       <div class="os-footer">
-        <div class="os-track"><div class="os-fill"></div></div>
-        <span class="os-metric">+47 sessions/min</span>
+        <div class="os-spark">
+          <svg class="os-spark-svg" viewBox="0 0 90 22" aria-hidden="true">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ff3d8c"/>
+                <stop offset="100%" stop-color="#ff3d8c" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path class="spark-area" d="M0 18 L0 14 L8 12 L16 15 L24 8 L32 11 L40 5 L48 9 L56 4 L64 7 L72 3 L80 6 L90 2 L90 22 L0 22 Z"/>
+            <path class="spark-path" d="M0 14 L8 12 L16 15 L24 8 L32 11 L40 5 L48 9 L56 4 L64 7 L72 3 L80 6 L90 2"/>
+          </svg>
+        </div>
+        <span class="os-metric"><span id="osMetricNum">47</span><small>sessions/min</small></span>
       </div>
+    </div>
     </div>
   </div>
 </section>
@@ -502,25 +728,188 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif}
 </section>
 
 <!-- ═══ PLATFORM ═══ -->
-<section class="mx-auto grid max-w-[1160px] gap-4 px-5 py-20 md:grid-cols-[.92fr_1.08fr] md:px-10">
-  <article class="rv rounded-2xl border border-line bg-white p-6">
-    <h2 class="momo-display mt-0 text-[clamp(22px,2.8vw,36px)] font-black leading-[1.05] tracking-[-0.02em]">Một platform, trọn vòng tăng trưởng Web</h2>
-    <p class="mt-4 text-[13px] leading-[1.8] text-muted">MoSpark giúp đội tăng trưởng không phải chờ Dev cho mọi thử nghiệm Web. BU/PM có thể khởi tạo landing, sản xuất content, nhúng widget, setup ads, bật chatbot và đo kết quả đến tận hành động mở app hoặc giao dịch.</p>
-    <p class="mt-3 text-[13px] leading-[1.8] text-muted">Tinh thần chính là Product Led Growth: sản phẩm gặp user ngay tại nơi họ đang tìm kiếm, trước khi user tải app.</p>
-  </article>
+<section class="mx-auto max-w-[1160px] px-5 py-20 md:px-10">
+  <!-- Title + intro -->
+  <div class="rv platform-intro">
+    <h2 class="momo-display text-[clamp(28px,3.4vw,46px)] font-black leading-[1.05] tracking-[-0.025em]">Một platform, trọn vòng tăng trưởng Web</h2>
+    <p class="mt-5 max-w-[640px] text-[14.5px] leading-[1.8] text-muted">MoSpark giúp đội tăng trưởng không phải chờ Dev cho mọi thử nghiệm Web. BU/PM có thể khởi tạo landing, sản xuất content, nhúng widget, setup ads, bật chatbot và đo kết quả đến tận hành động mở app hoặc giao dịch.</p>
+    <p class="mt-3 max-w-[640px] text-[14.5px] leading-[1.8] text-muted">Tinh thần chính là Product Led Growth: sản phẩm gặp user ngay tại nơi họ đang tìm kiếm, trước khi user tải app.</p>
+  </div>
 
-  <div class="rv grid gap-2.5 md:[transition-delay:.08s]">
-    <article class="rounded-2xl border border-line bg-white p-4">
-      <h3 class="text-base font-extrabold">Không còn phụ thuộc Dev cho mọi thay đổi</h3>
-      <p class="mt-1.5 text-xs leading-6 text-muted">Landing, content block, widget và campaign placement được cấu hình như component thay vì hardcode từng sprint.</p>
+  <!-- Story illustration: Cũ vs MoSpark -->
+  <div class="rv platform-story" style="--story-delay:.08s">
+    <div class="ps-scene ps-old">
+      <div class="ps-scene-head">
+        <span class="ps-stage-label">CŨ</span>
+        <strong>Đội đông, chờ Dev</strong>
+      </div>
+      <div class="ps-canvas">
+        <svg viewBox="0 0 220 180" class="ps-illustration" aria-hidden="true">
+          <!-- Browser windows (background tools) -->
+          <g class="ps-tool-icons" stroke="#fbcfe8" stroke-width="1.5" fill="#fdf2f8">
+            <rect x="32" y="18" width="56" height="38" rx="3"/>
+            <line x1="32" y1="26" x2="88" y2="26"/>
+            <circle cx="37" cy="22" r="1" fill="#fbcfe8" stroke="none"/>
+            <circle cx="41" cy="22" r="1" fill="#fbcfe8" stroke="none"/>
+            <line x1="38" y1="32" x2="62" y2="32" stroke-width="1.2"/>
+            <line x1="38" y1="38" x2="80" y2="38" stroke-width="1.2"/>
+            <line x1="38" y1="44" x2="68" y2="44" stroke-width="1.2"/>
+            <!-- Pie chart -->
+            <circle cx="106" cy="32" r="9" fill="#fdf2f8"/>
+            <path d="M106 23 A 9 9 0 0 1 115 32 L 106 32 Z" fill="#fbcfe8"/>
+            <!-- Clock -->
+            <circle cx="18" cy="32" r="8" fill="#fdf2f8"/>
+            <line x1="18" y1="32" x2="18" y2="26" stroke-width="1.2"/>
+            <line x1="18" y1="32" x2="22" y2="32" stroke-width="1.2"/>
+            <!-- doc stack -->
+            <rect x="118" y="48" width="20" height="14" rx="1.5"/>
+            <rect x="115" y="44" width="20" height="14" rx="1.5"/>
+          </g>
+          <!-- 3 people sitting at table -->
+          <g class="ps-people-old" stroke="#f472b6" stroke-width="2" fill="#fce7f3" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Person 1 (left) -->
+            <circle cx="40" cy="90" r="10"/>
+            <path d="M28 130 L 28 105 Q 40 96 52 105 L 52 130 Z"/>
+            <!-- Arm typing -->
+            <path d="M50 112 L 60 122" fill="none"/>
+            <!-- Person 2 (middle, slightly higher) -->
+            <circle cx="85" cy="82" r="11"/>
+            <path d="M72 130 L 72 100 Q 85 90 98 100 L 98 130 Z"/>
+            <!-- Holding phone (right hand up) -->
+            <rect x="98" y="98" width="8" height="12" rx="1.5"/>
+            <path d="M97 108 L 100 102" fill="none"/>
+            <!-- Person 3 (right) -->
+            <circle cx="135" cy="90" r="10"/>
+            <path d="M123 130 L 123 105 Q 135 96 147 105 L 147 130 Z"/>
+            <!-- Holding pen -->
+            <line x1="147" y1="110" x2="155" y2="103" stroke-width="1.8"/>
+          </g>
+          <!-- Laptops in front -->
+          <g class="ps-laptops" stroke="#ec4899" stroke-width="1.8" fill="#fce7f3" stroke-linejoin="round">
+            <path d="M16 135 L 64 135 L 60 122 L 20 122 Z"/>
+            <line x1="16" y1="135" x2="64" y2="135" stroke-width="2.2"/>
+            <path d="M70 135 L 120 135 L 115 120 L 75 120 Z"/>
+            <line x1="70" y1="135" x2="120" y2="135" stroke-width="2.2"/>
+          </g>
+          <!-- Table line -->
+          <line x1="8" y1="148" x2="170" y2="148" stroke="#f9a8d4" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="170" x2="170" y2="170" stroke="#fbcfe8" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 4"/>
+        </svg>
+      </div>
+      <div class="ps-meta">
+        <span>Brief → Spec → Ticket → Sprint Dev → QA → Live</span>
+        <strong>4-8 tuần / lần thử</strong>
+      </div>
+    </div>
+
+    <!-- Center arrow with MoSpark badge -->
+    <div class="ps-flow">
+      <div class="ps-arrow-wrap">
+        <svg viewBox="0 0 120 36" class="ps-arrow" aria-hidden="true">
+          <path d="M4 18 L 100 18" stroke="#ec4899" stroke-width="2.5" stroke-linecap="round" fill="none" class="ps-arrow-line"/>
+          <path d="M100 18 L 88 10 M 100 18 L 88 26" stroke="#ec4899" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="60" cy="18" r="3.5" fill="#ec4899" class="ps-arrow-dot"/>
+        </svg>
+        <span class="ps-flow-badge">
+          <img class="block h-3 w-auto object-contain" src="https://static.momocdn.net/app/img/web-platform/logo-mospark-dark.svg" alt="MoSpark" decoding="async">
+        </span>
+      </div>
+    </div>
+
+    <div class="ps-scene ps-new">
+      <div class="ps-scene-head">
+        <span class="ps-stage-label new">MOSPARK</span>
+        <strong>PM tự build, có AI</strong>
+      </div>
+      <div class="ps-canvas">
+        <svg viewBox="0 0 220 180" class="ps-illustration" aria-hidden="true">
+          <!-- AI sparkle badge top-right -->
+          <g class="ps-sparkle-badge">
+            <rect x="160" y="14" width="44" height="44" rx="9" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+            <g class="ps-sparkle" fill="#ec4899">
+              <path d="M178 36 L 181 30 L 184 36 L 190 39 L 184 42 L 181 48 L 178 42 L 172 39 Z"/>
+              <path d="M192 26 L 194 22 L 196 26 L 200 28 L 196 30 L 194 34 L 192 30 L 188 28 Z" opacity=".85"/>
+            </g>
+          </g>
+          <!-- Solo person with bun -->
+          <g stroke="#1f1f29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <!-- Hair bun (filled black) -->
+            <ellipse cx="98" cy="68" rx="11" ry="7" fill="#1f1f29"/>
+            <!-- Head + hair top -->
+            <path d="M82 88 Q 80 74 92 70 Q 88 64 98 60 Q 110 60 114 72 Q 116 90 110 100" fill="#fff"/>
+            <!-- Face fill -->
+            <path d="M86 86 Q 86 76 96 74 Q 110 74 112 86 Q 112 100 100 104 Q 88 102 86 86" fill="#fff"/>
+            <!-- Earring -->
+            <circle cx="84" cy="92" r="1.8" fill="#1f1f29"/>
+          </g>
+          <!-- Cardigan + shirt -->
+          <g stroke="#1f1f29" stroke-width="2" stroke-linejoin="round">
+            <!-- White inner shirt -->
+            <path d="M88 110 L 86 142 L 116 142 L 114 110 Z" fill="#fff"/>
+            <!-- Pink cardigan left -->
+            <path d="M76 122 L 88 110 L 88 142 L 76 148 Z" fill="#f9a8d4"/>
+            <!-- Pink cardigan right -->
+            <path d="M114 110 L 130 122 L 130 148 L 114 142 Z" fill="#f9a8d4"/>
+            <!-- Right arm holding cup -->
+            <path d="M130 122 Q 144 118 152 100" fill="#f9a8d4" stroke-linecap="round"/>
+          </g>
+          <!-- Tablet stand -->
+          <g>
+            <rect x="32" y="108" width="60" height="44" rx="3" fill="#ec4899" stroke="#1f1f29" stroke-width="2"/>
+            <rect x="36" y="112" width="52" height="36" rx="1.5" fill="#fce7f3"/>
+            <!-- Tablet kickstand -->
+            <path d="M52 152 L 60 162 L 76 162 L 84 152" stroke="#1f1f29" stroke-width="2" fill="#f9a8d4" stroke-linejoin="round"/>
+          </g>
+          <!-- Coffee cup -->
+          <g>
+            <path d="M138 78 L 138 102 Q 138 108 144 108 L 152 108 Q 158 108 158 102 L 158 78 Z" fill="#ec4899" stroke="#1f1f29" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="138" y="74" width="20" height="6" rx="1.5" fill="#fff" stroke="#1f1f29" stroke-width="2"/>
+            <!-- Steam -->
+            <path class="ps-steam" d="M144 64 Q 142 60 146 56 Q 150 52 148 48" stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path class="ps-steam" d="M152 66 Q 154 62 150 58 Q 146 54 150 50" stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-linecap="round" style="animation-delay:.5s"/>
+          </g>
+          <!-- Small joy lines beside coffee -->
+          <g stroke="#f472b6" stroke-width="1.8" stroke-linecap="round" fill="none">
+            <line x1="166" y1="78" x2="172" y2="76"/>
+            <line x1="166" y1="84" x2="172" y2="84"/>
+            <line x1="168" y1="92" x2="174" y2="92"/>
+          </g>
+          <!-- Plant pot -->
+          <g stroke="#1f1f29" stroke-width="2" stroke-linejoin="round">
+            <path d="M174 138 L 178 162 L 200 162 L 204 138 Z" fill="#f9a8d4"/>
+            <path d="M178 138 L 200 138" stroke-width="2.2" fill="none"/>
+            <!-- Leaves -->
+            <path d="M185 138 Q 188 118 196 116" fill="#fff" stroke-width="2"/>
+            <path d="M196 116 Q 200 112 204 116 Q 200 126 196 116" fill="#fff"/>
+            <path d="M192 138 Q 185 122 178 124" fill="#fff" stroke-width="2"/>
+          </g>
+          <!-- Table line -->
+          <line x1="8" y1="162" x2="212" y2="162" stroke="#1f1f29" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ps-meta">
+        <span>Brief → AI draft → Score gate → Publish</span>
+        <strong>1-2 ngày / lần thử</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 bullet cards -->
+  <div class="rv grid gap-3 sm:grid-cols-2 lg:grid-cols-3" style="--story-delay:.16s">
+    <article class="rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-px hover:border-momo-600/30 hover:shadow-[0_8px_24px_rgba(165,0,100,.08)]">
+      <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-momo-50 text-[12px] font-extrabold text-momo-600">✦</span>
+      <h3 class="mt-3 text-[15px] font-extrabold text-ink">Không còn phụ thuộc Dev cho mọi thay đổi</h3>
+      <p class="mt-2 text-[12.5px] leading-[1.7] text-muted">Landing, content block, widget và campaign placement được cấu hình như component thay vì hardcode từng sprint.</p>
     </article>
-    <article class="rounded-2xl border border-line bg-white p-4">
-      <h3 class="text-base font-extrabold">GenAI có quality gate</h3>
-      <p class="mt-1.5 text-xs leading-6 text-muted">AI chỉ là production engine. Business context, outline approval, SEO/GEO score và review gate mới là phần bảo vệ chất lượng.</p>
+    <article class="rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-px hover:border-momo-600/30 hover:shadow-[0_8px_24px_rgba(165,0,100,.08)]">
+      <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-momo-50 text-[12px] font-extrabold text-momo-600">◎</span>
+      <h3 class="mt-3 text-[15px] font-extrabold text-ink">GenAI có quality gate</h3>
+      <p class="mt-2 text-[12.5px] leading-[1.7] text-muted">AI chỉ là production engine. Business context, outline approval, SEO/GEO score và review gate mới là phần bảo vệ chất lượng.</p>
     </article>
-    <article class="rounded-2xl border border-line bg-white p-4">
-      <h3 class="text-base font-extrabold">Đo được business outcome</h3>
-      <p class="mt-1.5 text-xs leading-6 text-muted">Không dừng ở pageview. Mỗi use case cần đo được Open App, Download App, MAU, MEU và transaction.</p>
+    <article class="rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-px hover:border-momo-600/30 hover:shadow-[0_8px_24px_rgba(165,0,100,.08)]">
+      <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-momo-50 text-[12px] font-extrabold text-momo-600">▲</span>
+      <h3 class="mt-3 text-[15px] font-extrabold text-ink">Đo được business outcome</h3>
+      <p class="mt-2 text-[12.5px] leading-[1.7] text-muted">Không dừng ở pageview. Mỗi use case cần đo được Open App, Download App, MAU, MEU và transaction.</p>
     </article>
   </div>
 </section>
@@ -1172,6 +1561,23 @@ document.querySelectorAll('[data-workflow-step]').forEach(button=>{
   });
 });
 renderWorkflowStep(0);
+
+/* ─── Hero OS panel: live counter ticker ─────────────────────────────────── */
+(() => {
+  const numEl = document.getElementById('osMetricNum');
+  const rateEl = document.getElementById('osActivityRate');
+  if (!numEl) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let cur = 47;
+  const tick = () => {
+    /* drift between 42 and 58, occasional spike */
+    const drift = Math.round((Math.random() - 0.45) * 4);
+    cur = Math.max(42, Math.min(58, cur + drift));
+    numEl.textContent = '+' + cur;
+    if (rateEl) rateEl.textContent = '+' + cur + '/min';
+  };
+  setInterval(tick, 1800);
+})();
 </script>
 
 </body>
