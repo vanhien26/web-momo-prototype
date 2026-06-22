@@ -56,8 +56,32 @@ header{
   width:280px;flex-shrink:0;background:var(--panel-l);
   border-right:1px solid var(--line);
   display:flex;flex-direction:column;overflow:hidden;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
+  position:relative;
 }
-.pl-head{padding:12px 12px 10px;border-bottom:1px solid var(--line)}
+/* Collapsed state - chỉ show 1 cột icon mỏng bên trái */
+.layout.sidebar-collapsed .panel-left{width:44px}
+.layout.sidebar-collapsed .pl-head .pl-title,
+.layout.sidebar-collapsed .pl-head .pl-search,
+.layout.sidebar-collapsed .project-list,
+.layout.sidebar-collapsed .pl-foot{display:none}
+.layout.sidebar-collapsed .pl-head{padding:8px 6px;border-bottom:none}
+
+/* Collapse toggle button - góc trên phải sidebar khi expand, ở giữa khi collapsed */
+.pl-collapse-btn{
+  position:absolute;top:14px;right:8px;z-index:5;
+  width:24px;height:24px;border-radius:6px;
+  border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;cursor:pointer;
+  font-size:12px;color:var(--t2);
+  transition:all .15s;
+}
+.pl-collapse-btn:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+.layout.sidebar-collapsed .pl-collapse-btn{right:auto;left:50%;transform:translateX(-50%)}
+.pl-collapse-icon{display:inline-block;transition:transform .22s}
+.layout.sidebar-collapsed .pl-collapse-icon{transform:rotate(180deg)}
+
+.pl-head{padding:12px 12px 10px;border-bottom:1px solid var(--line);position:relative}
 .pl-title{
   font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
   color:var(--t2);margin-bottom:9px;
@@ -1412,9 +1436,12 @@ header{
   </div>
 </header>
 
-<div class="layout">
+<div class="layout" id="layoutRoot">
 
 <aside class="panel-left">
+  <button class="pl-collapse-btn" id="plCollapseBtn" onclick="toggleSidebar()" title="Thu gọn sidebar" aria-label="Thu gọn sidebar">
+    <span class="pl-collapse-icon">‹</span>
+  </button>
   <div class="pl-head">
     <div class="pl-title">
       Dự án SEO/GEO
@@ -1424,7 +1451,6 @@ header{
       <span class="pl-search-icon">⌕</span>
       <input type="text" id="searchInput" placeholder="Tìm dự án..." oninput="filterProjects()">
     </div>
-
   </div>
   <div class="project-list" id="projectList"></div>
   <div class="pl-foot">
@@ -2281,6 +2307,9 @@ function parseCSV(text) {
 }
 
 function hydrateKeywordResearch(project, rows) {
+  // Gom keyword theo cluster, sau đó chọn highest-volume làm Primary,
+  // các keyword còn lại trở thành Secondaries của Primary đó.
+  // Pattern: 1 cluster = 1 bài viết AI = 1 Primary + N Secondaries.
   const clusters = new Map();
   rows.forEach(row => {
     const theme = row.Theme;
@@ -2295,19 +2324,31 @@ function hydrateKeywordResearch(project, rows) {
         theme,
         name:clusterName,
         vol:0,
-        keywords:[],
+        _pool:[], // tạm chứa tất cả keywords trước khi chia primary/secondary
       });
     }
     const cluster = clusters.get(key);
     cluster.vol += volume;
-    cluster.keywords.push({
-      kw:keyword, vol:volume, status:'none', rank:null, intent:'info', isPrimary:true, secondaries:[],
-    });
+    cluster._pool.push({ kw:keyword, vol:volume });
   });
+
+  // Convert pool → primary + secondaries (1 primary highest vol)
+  clusters.forEach(cluster => {
+    const sorted = cluster._pool.sort((a, b) => b.vol - a.vol);
+    const primary = sorted[0] || { kw:cluster.name, vol:0 };
+    const secondaries = sorted.slice(1);
+    cluster.keywords = [{
+      kw: primary.kw, vol: primary.vol,
+      status: 'none', rank: null, intent: 'info', isPrimary: true,
+      secondaries,
+    }];
+    delete cluster._pool;
+  });
+
   project.clusters = [...clusters.values()];
   prepareProjectForCrud(project);
   project.vol = project.clusters.reduce((sum, cluster) => sum + cluster.vol, 0);
-  project.keywordSource = 'CSV chuẩn hóa: Theme, Cluster, Keyword, Volume';
+  project.keywordSource = 'CSV chuẩn hóa: Theme, Cluster, Keyword, Volume (Primary = highest vol, rest = Secondaries)';
 }
 
 async function loadPhatNguoiKeywordResearch() {
@@ -2387,6 +2428,32 @@ function renderProjectList() {
 }
 
 function filterProjects() { renderProjectList() }
+
+function toggleSidebar() {
+  const root = document.getElementById('layoutRoot');
+  if (!root) return;
+  const collapsed = root.classList.toggle('sidebar-collapsed');
+  const btn = document.getElementById('plCollapseBtn');
+  if (btn) {
+    btn.title = collapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar';
+    btn.setAttribute('aria-label', btn.title);
+  }
+  try { localStorage.setItem('seoGeoSidebarCollapsed', collapsed ? '1' : '0'); } catch (e) {}
+}
+
+// Restore sidebar state on load
+(function restoreSidebar(){
+  try {
+    if (localStorage.getItem('seoGeoSidebarCollapsed') === '1') {
+      document.addEventListener('DOMContentLoaded', () => {
+        const root = document.getElementById('layoutRoot');
+        if (root) root.classList.add('sidebar-collapsed');
+        const btn = document.getElementById('plCollapseBtn');
+        if (btn) { btn.title = 'Mở rộng sidebar'; btn.setAttribute('aria-label', btn.title); }
+      });
+    }
+  } catch (e) {}
+})();
 
 /* ─── SELECT PROJECT ─────────────────────────────────────────────────────── */
 function selectProject(id) {
