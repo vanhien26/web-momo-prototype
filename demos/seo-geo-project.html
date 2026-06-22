@@ -248,8 +248,9 @@ header{
 
 /* ─── HIERARCHICAL CONTENT PLAN ─────────────────────────────────────────── */
 .theme-inventory{
-  --ti-grid:minmax(0,1.8fr) minmax(90px,.65fr) 90px 136px;
-  background:transparent;
+  /* Hierarchical: 6 cols Theme/Cluster | Primary Keyword | Month Volume | Ranking | Status/Progress | Actions */
+  --ti-grid:minmax(240px,1.3fr) minmax(220px,1.5fr) 110px 84px 150px 200px;
+  background:#fff;border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;
 }
 
 .ti-head,.ti-theme-row,.ti-cluster-row{
@@ -257,43 +258,52 @@ header{
   grid-template-columns:var(--ti-grid);
   align-items:center;column-gap:14px;
 }
-.ti-head{display:none}
+.ti-head{
+  display:grid;padding:10px 16px;background:var(--sf-2);border-bottom:1px solid var(--sf-line);
+}
 .ti-head span{font-size:8.5px;font-weight:800;letter-spacing:.55px;text-transform:uppercase;color:var(--t3)}
 .ti-head span:nth-child(3){text-align:right}
-.ti-head span:nth-child(4){text-align:right}
-.ti-head span:nth-child(5){text-align:right}
+.ti-head span:nth-child(4){text-align:center}
+.ti-head span:nth-child(5){text-align:left}
+.ti-head span:nth-child(6){text-align:left}
 
-.ti-theme{margin-bottom:8px;border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(20,20,30,.025)}
-.ti-theme:last-child{margin-bottom:0}
+/* Theme container - each theme is a self-contained card */
+.ti-theme{border-bottom:1px solid var(--sf-line);background:#fff}
+.ti-theme:last-child{border-bottom:none}
 
-/* Theme row - section header band */
+/* Theme row - section header */
 .ti-theme-row{
-  padding:13px 14px;background:#fff;
-  cursor:pointer;transition:background .12s;
+  padding:13px 16px;cursor:pointer;transition:background .12s;
+  background:#fff;border-left:3px solid transparent;
 }
 .ti-theme-row:hover{background:var(--sf-1)}
-.ti-theme.open>.ti-theme-row{background:#fff}
-.ti-theme.open>.ti-theme-row:hover{background:var(--sf-1)}
-
-.ti-theme-main{display:flex;align-items:center;gap:8px;min-width:0;position:relative}
-.ti-item-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
-.ti-item-meta{font-size:8.5px;color:var(--t3);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ti-arrow{width:18px;height:18px;display:grid;place-items:center;flex-shrink:0;font-size:9px;color:var(--t3);transition:transform .18s}
-.ti-theme.open>.ti-theme-row .ti-arrow,.ti-cluster.open>.ti-cluster-row .ti-arrow{transform:rotate(90deg);color:var(--pk)}
-.ti-theme-name{font-size:12.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
-.ai-mark{font-size:10px;line-height:1;color:var(--pk);font-weight:900}
-.ti-theme-funnel{
-  font-size:7.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
-  padding:2px 6px;border-radius:3px;background:var(--pk-bg);color:var(--pk);flex-shrink:0;
+.ti-theme.open>.ti-theme-row{
+  background:linear-gradient(180deg,#fdf6fb 0%,#fdf0f8 100%);border-left-color:var(--pk);
 }
+.ti-theme.open>.ti-theme-row:hover{background:#fdf0f8}
+
+.ti-theme-main{display:flex;align-items:center;gap:9px;min-width:0;position:relative}
+.ti-arrow{
+  width:16px;height:16px;display:grid;place-items:center;flex-shrink:0;
+  font-size:8.5px;color:var(--t3);transition:transform .18s;
+}
+.ti-theme.open>.ti-theme-row .ti-arrow,
+.ti-cluster.open>.ti-cluster-row .ti-arrow{transform:rotate(90deg);color:var(--pk)}
+.ti-theme-name{
+  font-size:13px;font-weight:800;color:var(--ink);letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ai-mark{font-size:10px;line-height:1;color:var(--pk);font-weight:900}
 
 .ti-theme-tools{
-  position:absolute;right:0;top:50%;transform:translateY(-50%);
-  display:flex;gap:3px;padding-left:14px;
-  background:linear-gradient(90deg,transparent,#fff 14px);
-  opacity:0;transition:opacity .12s;
+  margin-left:auto;display:flex;gap:3px;opacity:0;transition:opacity .12s;flex-shrink:0;padding-left:8px;
 }
 .ti-theme-row:hover .ti-theme-tools{opacity:1}
+
+/* Generic meta cell: stack value + label */
+.ti-cell-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ti-cell-meta strong{font-size:11.5px;font-weight:800;color:var(--ink);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti-cell-meta span{font-size:9px;color:var(--t3);font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* Generic meta cell: stack value + label */
 .ti-cell-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -349,69 +359,127 @@ header{
 }
 .ti-theme-add:hover{background:var(--pk-bg);border-style:solid;border-color:var(--pk)}
 
+/* Volume cell (right-aligned, tabular) */
+.ti-volume-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ti-volume-cell strong{display:block;font-size:13px;font-weight:800;color:var(--ink);line-height:1.1}
+.ti-volume-cell small{display:block;font-size:8.5px;color:var(--t3);font-weight:600;margin-top:2px;text-transform:lowercase}
+.ti-cluster-row .ti-volume-cell strong{font-size:11.5px;font-weight:700}
+
+/* Ranking cell - center-aligned pill */
+.ti-rank-cell{display:flex;justify-content:center;align-items:center}
+.ti-rank-pill{
+  display:inline-flex;align-items:baseline;gap:2px;
+  font-variant-numeric:tabular-nums;
+  font-size:11px;font-weight:800;line-height:1;
+  padding:5px 10px;border-radius:20px;letter-spacing:-.01em;
+}
+.ti-rank-pill small{font-size:8.5px;font-weight:700;opacity:.7;text-transform:uppercase}
+.ti-rank-pill.top3   {background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.ti-rank-pill.top10  {background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}
+.ti-rank-pill.top30  {background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.ti-rank-pill.top100 {background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+.ti-rank-pill.out    {background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.ti-keyword-row .ti-rank-pill{font-size:10px;padding:3px 8px}
+.ti-keyword-row .ti-rank-pill small{font-size:7.5px}
+
+/* Published progress cell (theme row) */
+.ti-published{}
+.ti-published-num{font-size:10.5px;color:var(--t2);line-height:1.2;font-variant-numeric:tabular-nums}
+.ti-published-num strong{font-size:11.5px;font-weight:800;color:var(--ink)}
+.ti-published-bar{margin-top:5px;height:3px;background:var(--sf-3);border-radius:2px;overflow:hidden;width:100%;max-width:140px}
+.ti-published-fill{height:100%;background:linear-gradient(90deg,var(--green),#10b981);border-radius:2px;transition:width .35s ease}
+.ti-published-fill.zero{background:var(--sf-3)}
+
+/* Status pill (cluster row col 4) */
+.ti-status-cell{display:flex;align-items:center}
+.ti-status-pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;
+  padding:4px 9px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase;
+}
+.ti-status-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.ti-status-pill.none{background:var(--sf-2);color:var(--t3);border:1px solid var(--sf-line)}
+.ti-status-pill.outline{background:#fff3e0;color:#a04a00;border:1px solid #fde0b3}
+.ti-status-pill.draft{background:var(--amber-bg);color:var(--amber-dk);border:1px solid #fde68a}
+.ti-status-pill.published{background:var(--green-bg);color:var(--green-dk);border:1px solid #bbf7d0}
+
+/* Actions cell */
+.ti-row-actions{display:flex;align-items:center;justify-content:flex-start;gap:5px;min-width:0}
+.ti-action{
+  border:1px solid rgba(165,0,100,.28);background:var(--pk-bg);color:var(--pk);
+  border-radius:6px;padding:6px 12px;font-size:10px;font-weight:800;cursor:pointer;
+  white-space:nowrap;flex:1;min-width:90px;text-align:center;transition:all .12s;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.ti-action:hover{background:var(--pk);color:#fff;border-color:var(--pk)}
+.ti-action.published{background:var(--green-bg);border-color:transparent;color:var(--green-dk)}
+.ti-action.published:hover{background:var(--green);color:#fff}
+.ti-icon-btn{
+  width:26px;height:26px;border:1px solid var(--sf-line);border-radius:6px;background:#fff;
+  color:var(--t3);font-size:11px;font-weight:700;display:grid;place-items:center;cursor:pointer;
+  flex-shrink:0;transition:all .12s;
+}
+.ti-icon-btn:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+.ti-icon-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.ti-theme-add{
+  border:1px dashed rgba(165,0,100,.32);background:#fff;color:var(--pk);
+  border-radius:6px;padding:6px 12px;font-size:10px;font-weight:800;cursor:pointer;
+  white-space:nowrap;width:100%;text-align:center;transition:all .15s;
+}
+.ti-theme-add:hover{background:var(--pk-bg);border-style:solid;border-color:var(--pk)}
+
 /* Theme body (contains cluster rows) */
-.ti-theme-body{display:none;padding:0 10px 10px 24px;background:#fff;position:relative}
+.ti-theme-body{display:none;background:#fff;padding:0 0 10px}
 .ti-theme.open>.ti-theme-body{display:block}
-.ti-theme-body::before{content:'';position:absolute;left:18px;top:0;bottom:16px;width:1px;background:var(--sf-line)}
 
-/* Cluster row - data row inside theme body */
-.ti-cluster{margin-top:6px;position:relative}
-.ti-cluster:first-child{margin-top:0}
+/* Cluster row - indented data row inside theme body */
+.ti-cluster{position:relative}
+.ti-cluster:not(:first-child){margin-top:1px}
 .ti-cluster-row{
-  padding:10px 11px;cursor:pointer;transition:background .12s;background:var(--sf-1);
-  position:relative;border:1px solid var(--sf-line);border-radius:8px;
+  padding:10px 16px;cursor:pointer;transition:background .12s;background:#fff;
 }
-.ti-cluster-row:hover{background:#fff}
+.ti-cluster-row:hover{background:var(--sf-1)}
 .ti-cluster.open>.ti-cluster-row{background:var(--sf-1)}
-.ti-cluster.open>.ti-cluster-row:hover{background:#fff}
-.ti-cluster-body{display:none;padding:4px 0 0 22px;background:#fff}
-.ti-cluster.open>.ti-cluster-body{display:block}
 
-.ti-cluster-main{display:flex;align-items:center;gap:7px;min-width:0;position:relative}
+.ti-cluster-main{display:flex;align-items:center;gap:7px;min-width:0;padding-left:28px;position:relative}
 .ti-cluster-main::before{
-  content:'';position:absolute;left:-18px;top:50%;
-  width:10px;height:1px;background:var(--sf-3);
+  content:'';position:absolute;left:18px;top:50%;transform:translateY(-50%);
+  width:8px;height:1px;background:var(--sf-3);
 }
-.ti-cluster-name{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti-cluster-name{font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ti-cluster-funnel{
-  font-size:7px;font-weight:800;letter-spacing:.35px;text-transform:uppercase;
-  padding:1px 5px;border-radius:3px;background:var(--sf-2);color:var(--t3);flex-shrink:0;
+  font-size:7.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;background:var(--pk-bg);color:var(--pk);flex-shrink:0;
 }
 
-/* Primary keyword cell (cluster row, col 2) */
-.ti-primary-cell{display:flex;flex-direction:column;gap:2px;min-width:0}
-.ti-primary-line{display:flex;align-items:center;gap:5px;min-width:0}
+/* Cluster row - Primary KW cell (col 2) */
+.ti-primary-cell{display:flex;flex-direction:column;gap:4px;min-width:0;padding:2px 0}
 .ti-primary-label{
-  font-size:7px;font-weight:800;letter-spacing:.45px;text-transform:uppercase;
+  font-size:8px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
   color:var(--pk);line-height:1;
+  display:inline-flex;align-items:center;gap:5px;
 }
+.ti-primary-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--pk);box-shadow:0 0 0 2px var(--pk-bg)}
 .ti-primary-kw{
-  font-size:10.5px;font-weight:700;color:var(--ink);line-height:1.3;
+  font-size:12px;font-weight:800;color:var(--ink);line-height:1.3;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  letter-spacing:-.005em;
 }
 .ti-secondary-pill{
-  display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:800;
-  color:var(--t2);background:var(--sf-2);border:1px solid var(--sf-line);
-  border-radius:10px;padding:1px 6px;margin-top:1px;width:max-content;
+  display:inline-flex;align-items:center;gap:4px;font-size:8.5px;font-weight:800;
+  color:var(--pk);background:#fff;border:1px solid rgba(165,0,100,.28);
+  border-radius:10px;padding:2.5px 8px;width:max-content;
+  letter-spacing:.2px;
 }
+.ti-secondary-pill::before{content:'+';color:var(--pk);font-weight:900}
 
-/* Primary article rows inside a Cluster */
-.ti-primary-group{margin-top:4px}
-.ti-primary-group:first-child{margin-top:0}
-.ti-primary-row{
-  display:grid;grid-template-columns:var(--ti-grid);align-items:center;column-gap:14px;
-  padding:8px 10px;background:#fff;cursor:pointer;transition:background .12s;border-radius:7px;
+/* Expanded secondaries inline under cluster row */
+.ti-keywords{display:none;background:var(--sf-1);border-top:1px solid var(--sf-line)}
+.ti-cluster.open>.ti-keywords{display:block}
+.ti-secondary-toolbar{
+  display:flex;align-items:center;justify-content:space-between;padding:7px 16px 7px 46px;
+  background:var(--sf-2);font-size:9px;color:var(--t3);font-weight:600;
+  border-bottom:1px solid var(--sf-line);
 }
-.ti-primary-row:hover{background:var(--sf-1)}
-.ti-primary-group.open>.ti-primary-row{background:#fff}
-.ti-primary-group.open>.ti-primary-row:hover{background:var(--sf-1)}
-.ti-primary-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
-.ti-primary-branch{font-size:7.5px;font-weight:800;color:var(--pk);text-transform:uppercase;letter-spacing:.35px}
-.ti-primary-branch::before{content:'›';margin-right:5px;color:var(--t3)}
-.ti-primary-secondaries{display:none;margin-left:18px;background:var(--sf-1);border-radius:7px;overflow:hidden}
-.ti-primary-group.open>.ti-primary-secondaries{display:block}
-.ti-primary-row .ti-volume-cell strong{font-size:10.5px}
-.ti-primary-row .ti-status-pill{font-size:8px;padding:3px 7px}
 
 /* Secondary keywords expanded panel */
 .ti-keywords{display:none;background:#fff}
@@ -427,22 +495,21 @@ header{
 .ti-add-secondary:hover{background:var(--pk-bg)}
 
 .ti-keyword-row{
-  display:grid;grid-template-columns:minmax(0,1fr) 100px 136px;
+  display:grid;grid-template-columns:minmax(240px,1.3fr) minmax(220px,1.5fr) 110px 84px 150px 200px;
   align-items:center;column-gap:14px;
-  padding:7px 10px;border-top:1px solid var(--sf-line);
+  padding:7px 16px;border-top:1px solid var(--sf-line);
 }
 .ti-keyword-row:hover{background:var(--sf-2)}
-.ti-secondary-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
-.ti-keyword-name{font-size:9.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ti-keyword-row .ti-volume-cell strong{font-size:10px;font-weight:700}
-.ti-secondary-role{font-size:7.5px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.35px}
+.ti-keyword-row .ti-keyword-name{font-size:10px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:46px}
+.ti-keyword-row .ti-volume-cell strong{font-size:10.5px;font-weight:700}
+.ti-secondary-role{font-size:8px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.35px;font-style:italic}
 
-/* Keep CRUD available without filling every row with controls. */
-.ti-row-actions .ti-icon-btn{opacity:0;transition:opacity .12s,border-color .12s,color .12s,background .12s}
+/* Subtle edit/delete on rows */
+.ti-row-actions .ti-icon-btn{opacity:.55;transition:opacity .12s,border-color .12s,color .12s,background .12s}
 .ti-theme-row:hover .ti-row-actions .ti-icon-btn,
 .ti-cluster-row:hover .ti-row-actions .ti-icon-btn,
-.ti-primary-row:hover .ti-row-actions .ti-icon-btn,
 .ti-keyword-row:hover .ti-row-actions .ti-icon-btn{opacity:1}
+.ti-row-actions .ti-icon-btn:hover{opacity:1}
 
 /* Merchant variant: one row per content, expand only for Secondary Keywords */
 .merchant-inventory>.ti-head span:nth-child(3){text-align:left}
@@ -2454,9 +2521,44 @@ function advanceMerchantContentInline(merchantId) {
 
 /* ─── BUILD DETAIL ───────────────────────────────────────────────────────── */
 function getArticleAction(keyword) {
-  if (keyword.status === 'published') return {label:'Xem Bài', className:' published'};
-  if (keyword.status && keyword.status !== 'none') return {label:'Tiếp Tục', className:''};
+  if (keyword.status === 'published') return {label:'View', className:' published'};
+  if (keyword.status && keyword.status !== 'none') return {label:'Continue', className:''};
   return {label:'Write', className:''};
+}
+
+/* Mock SERP ranking per keyword (deterministic seed based on string hash).
+   Prototype only - production sẽ fetch từ GSC/Profound. */
+function getMockRanking(keyword) {
+  if (!keyword) return null;
+  const str = String(keyword).toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  const seed = Math.abs(hash) % 100;
+  if (seed < 12) return null; // out of top 100
+  if (seed < 22) return Math.floor(seed / 4) + 1; // 1-5 (Top 3-ish)
+  if (seed < 42) return Math.floor((seed - 22) / 2) + 6; // 6-15
+  if (seed < 70) return Math.floor((seed - 42) / 1.5) + 16; // 16-34
+  return Math.floor(seed) + 5; // 75-100ish
+}
+function rankPillHTML(rank) {
+  if (rank === null || rank === undefined) {
+    return `<span class="ti-rank-pill out" title="Ngoài Top 100">Out</span>`;
+  }
+  const cls = rank <= 3 ? 'top3' : rank <= 10 ? 'top10' : rank <= 30 ? 'top30' : 'top100';
+  return `<span class="ti-rank-pill ${cls}" title="Vị trí trung bình Google SERP"><small>#</small>${rank}</span>`;
+}
+/* Aggregate ranking cho cluster: dùng ranking của primary keyword */
+function clusterRanking(cluster) {
+  const primary = (cluster.keywords && cluster.keywords[0]) || null;
+  return getMockRanking(primary && primary.kw);
+}
+/* Aggregate cho theme: best ranking trong tất cả primary keywords */
+function themeRanking(theme) {
+  const ranks = theme.clusters
+    .map(c => getMockRanking(((c.keywords||[])[0]||{}).kw))
+    .filter(r => r !== null);
+  if (!ranks.length) return null;
+  return Math.min(...ranks);
 }
 
 function buildDetail(p) {
@@ -2490,14 +2592,16 @@ function buildDetail(p) {
   const totalKeywords = getProjectKeywordCount(p);
   const totalVolume = p.clusters.reduce((sum, cluster) => sum + cluster.vol, 0);
 
-  renderPrimaryRow = (p, cluster, primary, primaryIndex) => {
+  /* Hierarchical render: Theme row → expand to Cluster rows → expand to Secondary KWs.
+     Each Cluster row carries its Primary Keyword inline (1 primary per cluster). */
+  const renderCluster = (cluster) => {
+    const primary = cluster.keywords[0] || { kw:'(chưa có)', vol:0, status:'none', secondaries:[] };
     const secondaries = primary.secondaries || [];
-    const keywordKey = `${cluster.id}-${primaryIndex}`;
-    const isOpen = !!openKeywords[keywordKey];
+    const isOpen = !!openClusters[cluster.id];
     const action = getArticleAction(primary);
     const actionHandler = primary.status === 'published'
-      ? `viewArticle('${p.id}','${cluster.id}',${primaryIndex})`
-      : `openAIPanel('${p.id}','${cluster.id}',${primaryIndex})`;
+      ? `viewArticle('${p.id}','${cluster.id}',0)`
+      : `openAIPanel('${p.id}','${cluster.id}',0)`;
     const statusLabel = {
       'published':'Đã xuất bản', 'draft':'Bản nháp', 'outline':'Outline review',
       'outline-review':'Outline review', 'draft-review':'Review bản nháp', 'none':'Chưa tạo'
@@ -2507,46 +2611,18 @@ function buildDetail(p) {
                  : primary.status === 'draft' || primary.status === 'draft-review' ? 'draft'
                  : (primary.status && primary.status !== 'none') ? 'outline'
                  : 'none';
+
     const secondaryRows = secondaries.map((secondary, secondaryIndex) => `<div class="ti-keyword-row">
-      <span></span>
       <span class="ti-keyword-name" title="${escapeHTML(secondary.kw)}">${escapeHTML(secondary.kw)}</span>
-      <div class="ti-volume-cell"><strong>${Number(secondary.vol).toLocaleString('en-US')}</strong></div>
       <span class="ti-secondary-role">Secondary</span>
+      <div class="ti-volume-cell"><strong>${Number(secondary.vol).toLocaleString('en-US')}</strong></div>
+      <div class="ti-rank-cell">${rankPillHTML(getMockRanking(secondary.kw))}</div>
+      <span></span>
       <div class="ti-row-actions">
-        <button class="ti-icon-btn" onclick="event.stopPropagation();openEditSecondaryKeyword('${p.id}','${cluster.id}',${primaryIndex},${secondaryIndex})" title="Sửa Secondary Keyword">✎</button>
-        <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteSecondaryKeyword('${p.id}','${cluster.id}',${primaryIndex},${secondaryIndex})" title="Xóa Secondary Keyword">×</button>
+        <button class="ti-icon-btn" onclick="event.stopPropagation();openEditSecondaryKeyword('${p.id}','${cluster.id}',0,${secondaryIndex})" title="Sửa Secondary Keyword">✎</button>
+        <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteSecondaryKeyword('${p.id}','${cluster.id}',0,${secondaryIndex})" title="Xóa Secondary Keyword">×</button>
       </div>
     </div>`).join('');
-
-    return `<div class="ti-primary-group${isOpen ? ' open' : ''}" id="kwg-${keywordKey}">
-      <div class="ti-primary-row" onclick="toggleKeyword('${keywordKey}',event)">
-        <span class="ti-primary-branch">Primary</span>
-        <div class="ti-primary-cell">
-          <span class="ti-primary-kw" title="${escapeHTML(primary.kw)}">${escapeHTML(primary.kw)}</span>
-          <span class="ti-secondary-pill">${secondaries.length} Secondary</span>
-        </div>
-        <div class="ti-volume-cell"><strong>${Number(primary.vol).toLocaleString('en-US')}</strong></div>
-        <div class="ti-status-cell"><span class="ti-status-pill ${sClass}">${sLbl}</span></div>
-        <div class="ti-row-actions">
-          <button class="ti-action${action.className}" id="st-${cluster.id}-${primaryIndex}" onclick="event.stopPropagation();${actionHandler}"><span class="ai-mark">✦</span> ${action.label}</button>
-          <button class="ti-icon-btn" onclick="event.stopPropagation();openEditPrimaryKeyword('${p.id}','${cluster.id}',${primaryIndex})" title="Sửa Primary Keyword">✎</button>
-          <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeletePrimaryKeyword('${p.id}','${cluster.id}',${primaryIndex})" title="Xóa Primary Keyword">×</button>
-        </div>
-      </div>
-      <div class="ti-primary-secondaries">
-        <div class="ti-secondary-toolbar">
-          <span>${secondaries.length} Secondary Keywords</span>
-          <button class="ti-add-secondary" onclick="event.stopPropagation();openCreateSecondaryKeyword('${p.id}','${cluster.id}',${primaryIndex})">+ Secondary Keyword</button>
-        </div>
-        ${secondaryRows}
-      </div>
-    </div>`;
-  };
-
-  const renderCluster = cluster => {
-    const isOpen = !!openClusters[cluster.id];
-    const primaryCount = cluster.keywords.length;
-    const publishedCount = cluster.keywords.filter(primary => primary.status === 'published').length;
 
     return `<div class="ti-cluster${isOpen ? ' open' : ''}" id="cc-${cluster.id}">
       <div class="ti-cluster-row" onclick="toggleCluster('${cluster.id}')">
@@ -2555,48 +2631,63 @@ function buildDetail(p) {
           ${cluster.funnel ? `<span class="ti-cluster-funnel">${cluster.funnel.toUpperCase()}</span>` : ''}
           <span class="ti-cluster-name" title="${escapeHTML(cluster.name)}">${escapeHTML(cluster.name)}</span>
         </div>
-        <div class="ti-cell-meta">
-          <strong>${primaryCount.toLocaleString('en-US')} Primary Keywords</strong>
+        <div class="ti-primary-cell">
+          <span class="ti-primary-label">Primary KW</span>
+          <span class="ti-primary-kw" title="${escapeHTML(primary.kw)}">${escapeHTML(primary.kw)}</span>
+          ${secondaries.length ? `<span class="ti-secondary-pill">${secondaries.length} Secondary</span>` : ''}
         </div>
-        <div class="ti-volume-cell"><strong>${Number(cluster.vol).toLocaleString('en-US')}</strong></div>
-        <div class="ti-published"><div class="ti-published-num"><strong>${publishedCount}/${primaryCount}</strong> xuất bản</div></div>
+        <div class="ti-volume-cell">
+          <strong>${Number(cluster.vol).toLocaleString('en-US')}</strong>
+        </div>
+        <div class="ti-rank-cell">${rankPillHTML(clusterRanking(cluster))}</div>
+        <div class="ti-status-cell">
+          <span class="ti-status-pill ${sClass}">${sLbl}</span>
+        </div>
         <div class="ti-row-actions">
-          <button class="ti-theme-add" onclick="event.stopPropagation();openCreatePrimaryKeyword('${p.id}','${cluster.id}')">+ Primary</button>
+          <button class="ti-action${action.className}" id="st-${cluster.id}-0" onclick="event.stopPropagation();${actionHandler}"><span class="ai-mark">✦</span> ${action.label}</button>
           <button class="ti-icon-btn" onclick="event.stopPropagation();openEditCluster('${p.id}','${cluster.id}')" title="Sửa Cluster">✎</button>
           <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteCluster('${p.id}','${cluster.id}')" title="Xóa Cluster">×</button>
         </div>
       </div>
-      <div class="ti-cluster-body">${isOpen ? cluster.keywords.map((primary, primaryIndex) => renderPrimaryRow(p, cluster, primary, primaryIndex)).join('') : ''}</div>
+      <div class="ti-keywords">
+        <div class="ti-secondary-toolbar">
+          <span>${secondaries.length} Secondary Keywords cùng bài viết</span>
+          <button class="ti-add-secondary" onclick="event.stopPropagation();openCreateSecondaryKeyword('${p.id}','${cluster.id}',0)">+ Secondary Keyword</button>
+        </div>
+        ${secondaryRows}
+      </div>
     </div>`;
   };
 
   const themeRows = themes.map((theme, index) => {
     const isOpen = openThemes[theme.id] ?? index === 0;
     const pubPct = theme.articles > 0 ? Math.round((theme.published / theme.articles) * 100) : 0;
+    const clusterWord = theme.clusters.length === 1 ? 'cluster' : 'clusters';
+    const articleWord = theme.articles === 1 ? 'bài viết AI' : 'bài viết AI';
     return `<div class="ti-theme${isOpen ? ' open' : ''}" id="${theme.id}">
       <div class="ti-theme-row" onclick="toggleTheme('${theme.id}')">
         <div class="ti-theme-main">
           <span class="ti-arrow">▶</span>
           <span class="ti-theme-name" title="${escapeHTML(theme.name)}">${escapeHTML(theme.name)}</span>
           <span class="ti-theme-tools">
-            <button class="ti-icon-btn" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')" title="Thêm Cluster">+</button>
             <button class="ti-icon-btn" onclick="event.stopPropagation();openRenameTheme('${p.id}','${encodeURIComponent(theme.name)}')" title="Đổi tên Theme">✎</button>
             <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteTheme('${p.id}','${encodeURIComponent(theme.name)}')" title="Xóa Theme">×</button>
           </span>
         </div>
         <div class="ti-cell-meta">
-          <strong>${theme.clusters.length.toLocaleString('en-US')} Clusters</strong>
-          <span>${theme.articles.toLocaleString('en-US')} Primary Keywords</span>
+          <strong>${theme.clusters.length.toLocaleString('en-US')} ${clusterWord}</strong>
+          <span>${theme.articles.toLocaleString('en-US')} ${articleWord} · ${theme.keywords.toLocaleString('en-US')} keywords</span>
         </div>
         <div class="ti-volume-cell">
           <strong>${theme.volume.toLocaleString('en-US')}</strong>
         </div>
+        <div class="ti-rank-cell">${rankPillHTML(themeRanking(theme))}</div>
         <div class="ti-published">
           <div class="ti-published-num"><strong>${theme.published}/${theme.articles}</strong> xuất bản</div>
           <div class="ti-published-bar"><div class="ti-published-fill${pubPct === 0 ? ' zero' : ''}" style="width:${pubPct}%"></div></div>
         </div>
         <div class="ti-row-actions">
-          <button class="ti-theme-add" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')">+ Cluster</button>
+          <button class="ti-theme-add" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')">+ Cluster mới</button>
         </div>
       </div>
       <div class="ti-theme-body">${theme.clusters.sort((a, b) => b.vol - a.vol).map(renderCluster).join('')}</div>
@@ -2657,19 +2748,22 @@ function buildDetail(p) {
         <div class="topic-head">
           <div>
             <span class="topic-title">Content Plan</span>
-            <div class="topic-source">Theme &gt; Cluster &gt; Primary Keyword &gt; Secondary Keyword</div>
+            <div class="topic-source">1 Primary Keyword = 1 bài viết AI · Secondary Keywords được triển khai trong cùng bài</div>
           </div>
           <div class="topic-actions">
             <div class="topic-summary">
               <span>Themes <strong>${themes.length}</strong></span>
-              <span><span class="ai-mark">✦</span> Content <strong>${publishedArticles}/${totalArticles}</strong></span>
+              <span><span class="ai-mark">✦</span> AI Articles <strong>${publishedArticles}/${totalArticles}</strong></span>
               <span>Keywords <strong>${totalKeywords.toLocaleString('en-US')}</strong></span>
-              <span>Monthly Volume <strong>${totalVolume.toLocaleString('en-US')}</strong></span>
+              <span>Total Volume <strong>${totalVolume.toLocaleString('en-US')}</strong></span>
             </div>
             <button class="topic-create" onclick="openCreateCluster('${p.id}')">+ Thêm Cluster</button>
           </div>
         </div>
-        ${themeRows ? `<div class="theme-inventory" aria-label="Theme and keyword content hierarchy">
+        ${themeRows ? `<div class="theme-inventory" aria-label="Content plan hierarchy">
+          <div class="ti-head">
+            <span>Theme / Cluster</span><span>Primary Keyword</span><span>Month Volume</span><span>Ranking</span><span>Status / Progress</span><span>Actions</span>
+          </div>
           ${themeRows}
         </div>` : '<div class="cp-empty">Dự án chưa có dữ liệu Theme/Cluster/Keyword.</div>'}
       </section>
