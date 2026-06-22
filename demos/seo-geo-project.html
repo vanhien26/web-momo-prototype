@@ -528,18 +528,6 @@ header{
 .topic-summary strong{font-size:10.5px;color:var(--ink);margin-left:3px}
 .topic-source{font-size:8px;color:var(--t3);margin-top:3px}
 
-@media (max-width:980px){
-  .theme-inventory{--ti-grid:minmax(0,1.5fr) minmax(86px,.65fr) 84px 140px}
-  .ti-head,.ti-theme-row,.ti-cluster-row,.ti-keyword-row{
-    grid-template-columns:var(--ti-grid);column-gap:10px;
-  }
-  .ti-theme-row{padding:11px 12px}
-  .ti-cluster-row{padding-left:34px}
-  .ti-primary-row{padding-left:44px;column-gap:10px}
-  .ti-keyword-row{padding-left:58px}
-}
-@media (hover:none){.ti-row-actions .ti-icon-btn{opacity:1}}
-
 /* ─── CLUSTER CARD ────────────────────────────────────────────────────────── */
 .cluster-card{border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;background:#fff;margin-bottom:6px}
 .cluster-head{display:flex;align-items:center;gap:9px;padding:11px 14px;cursor:pointer;transition:background .12s;user-select:none}
@@ -1386,12 +1374,150 @@ header{
   background:var(--amber);color:#fff;font-size:8px;font-weight:900;display:grid;place-items:center;
 }
 
+/* ─── HAMBURGER TOGGLE ──────────────────────────────────────────────────── */
+.sidebar-toggle{
+  display:none;width:32px;height:32px;border:1px solid var(--line);border-radius:var(--r6);
+  background:#fff;color:var(--t2);font-size:16px;cursor:pointer;place-items:center;flex-shrink:0;
+}
+.sidebar-toggle:hover{background:var(--sf-2);color:var(--ink)}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(20,20,30,.35);z-index:29}
+
+/* ─── RESPONSIVE: TABLET ≤ 1080px ──────────────────────────────────────── */
+@media (max-width:1080px){
+  .theme-inventory{
+    --ti-grid:minmax(0,1.2fr) minmax(0,1.3fr) 90px 72px 120px 140px;
+  }
+  .ti-head,.ti-theme-row,.ti-cluster-row,.ti-keyword-row{column-gap:10px}
+  .ti-action{min-width:70px;padding:5px 8px;font-size:9px}
+}
+
+/* ─── RESPONSIVE: SIDEBAR COLLAPSE ≤ 980px ─────────────────────────────── */
+@media (max-width:980px){
+  .sidebar-toggle{display:grid}
+  .panel-left{
+    position:fixed;left:0;top:50px;bottom:0;z-index:30;
+    transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);
+    box-shadow:none;width:280px;
+  }
+  .panel-left.open{transform:translateX(0);box-shadow:8px 0 24px rgba(0,0,0,.12)}
+  .sidebar-backdrop.show{display:block}
+
+  .theme-inventory{
+    --ti-grid:minmax(0,1.3fr) minmax(0,1.4fr) 88px 70px 120px 140px;
+  }
+  .ti-head,.ti-theme-row,.ti-cluster-row,.ti-keyword-row{column-gap:8px}
+  .ti-theme-row{padding:11px 12px}
+  .ti-cluster-row{padding:9px 12px}
+  .ti-keyword-row{padding:7px 12px}
+  .ti-primary-kw{font-size:11px}
+  .ti-action{min-width:64px;padding:5px 7px;font-size:9px}
+  .ti-icon-btn{width:24px;height:24px;font-size:10px}
+  .topic-head{flex-wrap:wrap;gap:8px}
+  .topic-actions{flex-wrap:wrap;gap:6px}
+  .topic-summary{flex-wrap:wrap;gap:8px 12px}
+  .po-grid{flex-wrap:wrap;gap:14px 24px}
+  .dh-market{flex-wrap:wrap;gap:12px}
+}
+
+/* ─── RESPONSIVE: NARROW ≤ 768px ───────────────────────────────────────── */
+@media (max-width:768px){
+  .theme-inventory{
+    --ti-grid:minmax(0,1fr) minmax(0,1fr) 78px auto;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+  }
+  .ti-head span:nth-child(4),
+  .ti-theme-row>*:nth-child(4),
+  .ti-cluster-row>*:nth-child(4),
+  .ti-keyword-row>*:nth-child(4){display:none}
+  .ti-head span:nth-child(5),
+  .ti-theme-row>*:nth-child(5){display:none}
+  .ti-head span:nth-child(6),
+  .ti-theme-row>*:nth-child(6){min-width:100px}
+
+  .ti-keyword-row{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 78px auto;
+    column-gap:8px;
+  }
+  .ti-keyword-row>*:nth-child(5),
+  .ti-keyword-row>*:nth-child(4){display:none}
+
+  .mp-directory{padding:10px 12px 24px}
+  .mp-kpis{grid-template-columns:repeat(2,1fr)}
+  .dh{padding:12px 14px 10px}
+  .dh-title{font-size:18px}
+  .cp-body{padding:12px 14px 24px}
+  .info-sections{padding:8px 14px 4px}
+  .biz-grid{grid-template-columns:1fr;gap:8px}
+  .project-overview{margin:10px 14px 4px}
+  .po-grid{gap:10px 18px}
+
+  .h-badge{display:none}
+  .h-brand-sub{display:none}
+  .h-user-name{display:none}
+  header{padding:0 10px}
+}
+
+/* ─── RESPONSIVE: MOBILE ≤ 540px ───────────────────────────────────────── */
+@media (max-width:540px){
+  .theme-inventory{
+    --ti-grid:1fr;
+    border-radius:var(--r8);
+  }
+  .ti-head{display:none}
+  .ti-theme-row,.ti-cluster-row,.ti-keyword-row{
+    display:flex;flex-wrap:wrap;gap:6px 10px;padding:10px 12px;
+  }
+  .ti-theme-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .ti-theme-main{width:100%}
+  .ti-theme-row .ti-cell-meta{flex-direction:row;gap:8px;align-items:center}
+  .ti-theme-row .ti-volume-cell{display:inline-flex;gap:4px;align-items:baseline}
+  .ti-theme-row .ti-volume-cell strong{font-size:11px}
+  .ti-theme-row .ti-volume-cell::before{content:'Vol:';font-size:9px;color:var(--t3);font-weight:600}
+  .ti-theme-row .ti-published{display:flex;align-items:center;gap:6px}
+  .ti-theme-row .ti-published-bar{margin-left:0}
+  .ti-theme-row>*:nth-child(4){display:none}
+  .ti-theme-row>*:nth-child(5){display:flex}
+  .ti-theme-row .ti-row-actions{width:100%}
+  .ti-theme-add{padding:5px 8px;font-size:9px}
+
+  .ti-cluster-row{flex-direction:column;align-items:flex-start;gap:6px;padding-left:12px}
+  .ti-cluster-main{width:100%;padding-left:18px}
+  .ti-cluster-main::before{left:8px}
+  .ti-cluster-row .ti-primary-cell{width:100%;padding-left:18px}
+  .ti-cluster-row .ti-volume-cell{display:inline-flex;gap:4px;align-items:baseline}
+  .ti-cluster-row .ti-volume-cell strong{font-size:10.5px}
+  .ti-cluster-row .ti-volume-cell::before{content:'Vol:';font-size:8.5px;color:var(--t3);font-weight:600}
+  .ti-cluster-row .ti-status-cell{display:flex}
+  .ti-cluster-row .ti-row-actions{width:100%;justify-content:flex-start}
+  .ti-cluster-row>*:nth-child(4){display:none}
+
+  .ti-keyword-row{display:flex;flex-wrap:wrap;gap:4px 8px;padding:8px 12px 8px 30px}
+  .ti-keyword-row .ti-keyword-name{width:100%;padding-left:0}
+  .ti-keyword-row .ti-volume-cell strong{font-size:10px}
+  .ti-keyword-row .ti-row-actions{margin-left:auto}
+
+  .mp-kpis{grid-template-columns:1fr 1fr}
+  .mp-toolbar{flex-wrap:wrap}
+  .topic-head{flex-direction:column;align-items:flex-start}
+  .topic-actions{flex-direction:column;align-items:flex-start;width:100%}
+  .topic-summary{flex-wrap:wrap;gap:6px 10px}
+  .dh-title{font-size:16px}
+  .dh-meta{flex-direction:column;align-items:flex-start;gap:4px}
+  .dh-mi{border-right:none;margin-right:0;padding-right:0}
+
+  .crud-fields{grid-template-columns:1fr}
+  .crud-field.full{grid-column:auto}
+}
+
+@media (hover:none){.ti-row-actions .ti-icon-btn{opacity:1}}
+
 </style>
 </head>
 <body>
 
 <header>
   <div class="h-left">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Mở menu dự án">☰</button>
     <a href="../lab.html" class="h-back">← Lab</a>
     <div class="h-div"></div>
     <div class="h-logo">
@@ -1413,8 +1539,9 @@ header{
 </header>
 
 <div class="layout">
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
-<aside class="panel-left">
+<aside class="panel-left" id="panelLeft">
   <div class="pl-head">
     <div class="pl-title">
       Dự án SEO/GEO
@@ -1667,6 +1794,14 @@ header{
 <div class="toast" id="toast"></div>
 
 <script>
+/* ─── SIDEBAR TOGGLE ───────────────────────────────────────────────────── */
+function toggleSidebar(){
+  const panel=document.getElementById('panelLeft');
+  const backdrop=document.getElementById('sidebarBackdrop');
+  const open=panel.classList.toggle('open');
+  backdrop.classList.toggle('show',open);
+}
+
 /* ─── DATA ─────────────────────────────────────────────────────────────────── */
 const MERCHANT_ENTITIES = [
   { id:'bun-thit-nuong-chi-tuyen', name:'Bún thịt nướng Chị Tuyền', category:'F&B', location:'Việt Nam',
@@ -2409,6 +2544,10 @@ function selectProject(id) {
   det.innerHTML = selectedProject.isDistributed
     ? buildMerchantDirectory(selectedProject)
     : buildDetail(selectedProject);
+  if (window.innerWidth <= 980) {
+    document.getElementById('panelLeft').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
+  }
 }
 
 function buildMerchantRows(merchants, project) {
