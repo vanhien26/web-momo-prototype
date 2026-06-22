@@ -171,6 +171,21 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/seo-geo-project',
   },
   {
+    id: 'merchant-page-builder',
+    name: 'Merchant Page Manager',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Quản lý Merchant record đã được khởi tạo từ SEO/GEO Content Plan: liên kết Merchant ID, enrich dữ liệu, kiểm tra Overview rồi mở Editor cho Logo, GenAI Content, Banner AI, Internal Links và Information Display.',
+    jtbd: 'Hoàn thiện Merchant record và page content từ một Merchant đã có sẵn trong Content Plan',
+    northStar: 'Verified Merchant Page draft completion',
+    loop: 'Merchant List → Edit → Sync Merchant ID → Overview → Edit Content',
+    hypothesis: 'Giữ SEO context từ Content Plan xuyên suốt Builder sẽ giảm nhập lại keyword, tránh sai mapping và tăng tốc tạo Merchant Page.',
+    value: 'Nối trực tiếp SEO planning với CMS authoring trên cùng data contract của Merchant.',
+    gate: 'Đo tỷ lệ scan Merchant ID thành công, verify completion, editor completion và thời gian từ Create đến draft.',
+    src: 'demos/merchant-page-builder.html',
+    address: 'web-momo-prototype.vercel.app/merchant-page-builder',
+  },
+  {
     id: 'seo-geo-score',
     name: 'SEO/GEO Content Score',
     category: 'MoSpark',
@@ -457,7 +472,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -465,7 +480,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant'],
@@ -806,8 +821,8 @@ const MOSPARK_HOME_CAPABILITIES = [
   },
   {
     title: 'Landing Page Builder',
-    text: 'BU/PM mô tả mục tiêu, chọn template theo use case, preview mobile và publish không phải chờ Dev cho thay đổi thường ngày.',
-    proto: 'blog-category',
+    text: 'BU/PM mở Merchant record từ Content Plan, sync Merchant ID rồi hoàn thiện Logo, GenAI Content, Banner và Internal Links.',
+    proto: 'merchant-page-builder',
   },
   {
     title: 'SEO/GEO Project',
