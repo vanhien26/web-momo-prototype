@@ -273,7 +273,7 @@ header{
 /* ─── HIERARCHICAL CONTENT PLAN ─────────────────────────────────────────── */
 .theme-inventory{
   /* Hierarchical: 6 cols Theme/Cluster | Primary Keyword | Month Volume | Ranking | Status/Progress | Actions */
-  --ti-grid:minmax(240px,1.3fr) minmax(220px,1.5fr) 110px 84px 150px 200px;
+  --ti-grid:minmax(260px,1.4fr) minmax(230px,1.6fr) 120px 150px 220px;
   background:#fff;border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;
 }
 
@@ -536,12 +536,14 @@ header{
 .ti-row-actions .ti-icon-btn:hover{opacity:1}
 
 /* Merchant variant: one row per content, expand only for Secondary Keywords */
-.merchant-inventory>.ti-head span:nth-child(3){text-align:left}
-.merchant-theme-row{padding:9px 14px}
-.merchant-theme-row .ti-theme-name{font-size:11.5px;line-height:1.25}
+.merchant-inventory>.ti-head span:nth-child(3){text-align:right}
+.merchant-theme-row{padding:10px 16px}
+.merchant-theme-row .ti-theme-name{font-size:13px;font-weight:800;line-height:1.3;letter-spacing:-.01em}
 .merchant-secondary-panel{background:#fff}
-.merchant-keyword-row{padding:7px 14px 7px 26px}
-.merchant-keyword-row .ti-keyword-name{font-size:9.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.merchant-keyword-row{padding:9px 16px 9px 46px}
+/* Đồng nhất font với cluster keyword row của project chính */
+.merchant-keyword-row .ti-keyword-name{font-size:11px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:0}
+.merchant-keyword-row .ti-volume-cell strong{font-size:11px;font-weight:700}
 .merchant-keyword-row .ti-row-actions{gap:4px}
 .merchant-project .ti-secondary-toolbar:only-child{border-bottom:0}
 
@@ -2490,10 +2492,11 @@ function buildMerchantRows(merchants, project) {
     const status = merchant.contentStatus || 'none';
     const actionLabel = status === 'published' ? 'Xem Bài' : MERCHANT_ACTION_LABEL[status];
     const secondaryRows = merchant.secondaries.map((keyword, keywordIndex) => `<div class="ti-keyword-row merchant-keyword-row">
-      <span>Secondary</span>
-      <span></span>
-      <span class="ti-keyword-name">${escapeHTML(keyword.kw)}</span>
+      <span class="ti-keyword-name" title="${escapeHTML(keyword.kw)}">${escapeHTML(keyword.kw)}</span>
+      <span class="ti-secondary-role">Secondary</span>
       <div class="ti-volume-cell"><strong>${Number(keyword.vol).toLocaleString('en-US')}</strong></div>
+      <div class="ti-rank-cell">${rankPillHTML(getMockRanking(keyword.kw))}</div>
+      <span></span>
       <div class="ti-row-actions">
         <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchantKeyword('${merchant.id}',${keywordIndex})" title="Sửa Secondary Keyword">✎</button>
         <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchantKeyword('${merchant.id}',${keywordIndex})" title="Xóa Secondary Keyword">×</button>
@@ -2683,7 +2686,6 @@ function buildDetail(p) {
       <span class="ti-keyword-name" title="${escapeHTML(secondary.kw)}">${escapeHTML(secondary.kw)}</span>
       <span class="ti-secondary-role">Secondary</span>
       <div class="ti-volume-cell"><strong>${Number(secondary.vol).toLocaleString('en-US')}</strong></div>
-      <div class="ti-rank-cell">${rankPillHTML(getMockRanking(secondary.kw))}</div>
       <span></span>
       <div class="ti-row-actions">
         <button class="ti-icon-btn" onclick="event.stopPropagation();openEditSecondaryKeyword('${p.id}','${cluster.id}',0,${secondaryIndex})" title="Sửa Secondary Keyword">✎</button>
@@ -2706,7 +2708,6 @@ function buildDetail(p) {
         <div class="ti-volume-cell">
           <strong>${Number(cluster.vol).toLocaleString('en-US')}</strong>
         </div>
-        <div class="ti-rank-cell">${rankPillHTML(clusterRanking(cluster))}</div>
         <div class="ti-status-cell">
           <span class="ti-status-pill ${sClass}">${sLbl}</span>
         </div>
@@ -2748,13 +2749,12 @@ function buildDetail(p) {
         <div class="ti-volume-cell">
           <strong>${theme.volume.toLocaleString('en-US')}</strong>
         </div>
-        <div class="ti-rank-cell">${rankPillHTML(themeRanking(theme))}</div>
         <div class="ti-published">
-          <div class="ti-published-num"><strong>${theme.published}/${theme.articles}</strong> xuất bản</div>
+          <div class="ti-published-num"><strong>${theme.published}/${theme.articles}</strong> published</div>
           <div class="ti-published-bar"><div class="ti-published-fill${pubPct === 0 ? ' zero' : ''}" style="width:${pubPct}%"></div></div>
         </div>
         <div class="ti-row-actions">
-          <button class="ti-theme-add" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')">+ Cluster mới</button>
+          <button class="ti-theme-add" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')">+ Cluster</button>
         </div>
       </div>
       <div class="ti-theme-body">${theme.clusters.sort((a, b) => b.vol - a.vol).map(renderCluster).join('')}</div>
@@ -2822,14 +2822,14 @@ function buildDetail(p) {
               <span>Themes <strong>${themes.length}</strong></span>
               <span><span class="ai-mark">✦</span> AI Articles <strong>${publishedArticles}/${totalArticles}</strong></span>
               <span>Keywords <strong>${totalKeywords.toLocaleString('en-US')}</strong></span>
-              <span>Total Volume <strong>${totalVolume.toLocaleString('en-US')}</strong></span>
+              <span>Monthly Volume <strong>${totalVolume.toLocaleString('en-US')}</strong></span>
             </div>
-            <button class="topic-create" onclick="openCreateCluster('${p.id}')">+ Thêm Cluster</button>
+            <button class="topic-create" onclick="openCreateCluster('${p.id}')">+ Cluster</button>
           </div>
         </div>
         ${themeRows ? `<div class="theme-inventory" aria-label="Content plan hierarchy">
           <div class="ti-head">
-            <span>Theme / Cluster</span><span>Primary Keyword</span><span>Month Volume</span><span>Ranking</span><span>Status / Progress</span><span>Actions</span>
+            <span>Theme / Cluster</span><span>Primary Keyword</span><span>Month Volume</span><span>Status</span><span>Action</span>
           </div>
           ${themeRows}
         </div>` : '<div class="cp-empty">Dự án chưa có dữ liệu Theme/Cluster/Keyword.</div>'}
