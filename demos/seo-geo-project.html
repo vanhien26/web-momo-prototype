@@ -102,9 +102,18 @@ header{
 
 /* project metadata: Division + Inventory */
 .pi-division{font-size:10px;font-weight:700;color:var(--t2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pi-inventory{display:flex;align-items:baseline;margin-top:5px;color:var(--ink)}
+.pi-stats{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:7px}
+.pi-inventory{display:flex;align-items:baseline;color:var(--ink)}
 .pi-inventory strong{font-size:17px;font-weight:800;line-height:1}
 .pi-inventory span{font-size:9px;color:var(--t3)}
+.pi-content-count{
+  display:inline-flex;align-items:baseline;gap:3px;max-width:126px;padding:4px 7px;
+  border:1px solid rgba(165,0,100,.16);border-radius:6px;background:var(--pk-bg);color:var(--pk);
+  white-space:nowrap;
+}
+.pi-content-count strong{font-size:10.5px;font-weight:900;line-height:1}
+.pi-content-count span{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.2px;overflow:hidden;text-overflow:ellipsis}
+.pi-content-count.done{border-color:#bbf7d0;background:var(--green-bg);color:var(--green-dk)}
 
 .sov-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
 .sov-track{flex:1;height:3px;background:var(--sf-3);border-radius:2px;overflow:hidden}
@@ -160,11 +169,11 @@ header{
 .dh-market-item.highlight .dh-market-val{color:var(--pk)}
 
 /* Compact project overview */
-.project-overview{margin:8px 22px 4px;border:1px solid var(--sf-line);border-radius:var(--r10);background:#fff;overflow:hidden;flex-shrink:0}
-.po-title{padding:7px 11px;border-bottom:1px solid var(--sf-line);font-size:8px;font-weight:800;letter-spacing:.65px;text-transform:uppercase;color:var(--t3)}
-.po-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr .65fr}
-.po-item{padding:9px 11px;min-width:0}
-.po-item+.po-item{border-left:1px solid var(--sf-line)}
+.project-overview{margin:10px 22px 4px;padding:12px 16px;border:1px solid var(--sf-line);border-radius:var(--r10);background:#fff;flex-shrink:0}
+.po-title{margin-bottom:10px;font-size:8px;font-weight:800;letter-spacing:.65px;text-transform:uppercase;color:var(--t3)}
+.po-grid{display:flex;align-items:flex-start;gap:34px}
+.po-item{padding:0;min-width:112px}
+.po-item:first-child{flex:1;min-width:220px}
 .po-label{display:block;font-size:7.5px;font-weight:800;letter-spacing:.45px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
 .po-value{display:block;font-size:13px;line-height:1.2;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .po-value.url{font-size:10.5px;color:var(--pk);text-decoration:none}
@@ -237,77 +246,299 @@ header{
 .fn-tag.bofu{background:var(--green-bg);color:var(--green)}
 .fn-meta{font-size:10px;color:var(--t3);margin-left:auto}
 
-/* Theme-first keyword inventory for non-Merchant projects */
-.theme-inventory{border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;background:#fff}
-.ti-head,.ti-theme-row,.ti-cluster-row,.ti-keyword-row{
-  display:grid;grid-template-columns:minmax(170px,.8fr) minmax(145px,.8fr) minmax(215px,1.2fr) 86px 190px;
-  align-items:center;gap:12px
+/* ─── HIERARCHICAL CONTENT PLAN ─────────────────────────────────────────── */
+.theme-inventory{
+  /* Hierarchical: 6 cols Theme/Cluster | Primary Keyword | Month Volume | Ranking | Status/Progress | Actions */
+  --ti-grid:minmax(240px,1.3fr) minmax(220px,1.5fr) 110px 84px 150px 200px;
+  background:#fff;border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;
 }
-.ti-head{padding:8px 14px;background:var(--sf-2);border-bottom:1px solid var(--sf-line)}
-.ti-head span{font-size:8px;font-weight:800;letter-spacing:.55px;text-transform:uppercase;color:var(--t3)}
-.ti-head span:nth-child(4),.ti-head span:nth-child(5){text-align:right}
-.ti-theme{border-bottom:1px solid var(--sf-line)}
+
+.ti-head,.ti-theme-row,.ti-cluster-row{
+  display:grid;
+  grid-template-columns:var(--ti-grid);
+  align-items:center;column-gap:14px;
+}
+.ti-head{
+  display:grid;padding:10px 16px;background:var(--sf-2);border-bottom:1px solid var(--sf-line);
+}
+.ti-head span{font-size:8.5px;font-weight:800;letter-spacing:.55px;text-transform:uppercase;color:var(--t3)}
+.ti-head span:nth-child(3){text-align:right}
+.ti-head span:nth-child(4){text-align:center}
+.ti-head span:nth-child(5){text-align:left}
+.ti-head span:nth-child(6){text-align:left}
+
+/* Theme container - each theme is a self-contained card */
+.ti-theme{border-bottom:1px solid var(--sf-line);background:#fff}
 .ti-theme:last-child{border-bottom:none}
-.ti-theme-row{padding:11px 14px;background:#fff;cursor:pointer;transition:background .12s}
-.ti-theme-row:hover,.ti-theme.open>.ti-theme-row{background:#fffafd}
-.ti-theme-main,.ti-cluster-main{display:flex;align-items:center;gap:8px;min-width:0}.ti-theme-main{position:relative}
-.ti-arrow{width:16px;height:16px;display:grid;place-items:center;flex-shrink:0;font-size:8px;color:var(--t3);transition:transform .18s}
-.ti-theme.open>.ti-theme-row .ti-arrow,.ti-cluster.open>.ti-cluster-row .ti-arrow{transform:rotate(90deg);color:var(--pk)}
-.ti-theme-name{font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ti-theme-tools{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;gap:3px;padding-left:8px;background:linear-gradient(90deg,transparent,#fffafd 12px);opacity:0;transition:opacity .12s}.ti-theme-row:hover .ti-theme-tools{opacity:1}
-.ti-icon-btn{width:22px;height:22px;border:1px solid var(--sf-line);border-radius:5px;background:#fff;color:var(--t2);font-size:10px;font-weight:800;display:grid;place-items:center;cursor:pointer}
+
+/* Theme row - section header */
+.ti-theme-row{
+  padding:13px 16px;cursor:pointer;transition:background .12s;
+  background:#fff;border-left:3px solid transparent;
+}
+.ti-theme-row:hover{background:var(--sf-1)}
+.ti-theme.open>.ti-theme-row{
+  background:linear-gradient(180deg,#fdf6fb 0%,#fdf0f8 100%);border-left-color:var(--pk);
+}
+.ti-theme.open>.ti-theme-row:hover{background:#fdf0f8}
+
+.ti-theme-main{display:flex;align-items:center;gap:9px;min-width:0;position:relative}
+.ti-arrow{
+  width:16px;height:16px;display:grid;place-items:center;flex-shrink:0;
+  font-size:8.5px;color:var(--t3);transition:transform .18s;
+}
+.ti-theme.open>.ti-theme-row .ti-arrow,
+.ti-cluster.open>.ti-cluster-row .ti-arrow{transform:rotate(90deg);color:var(--pk)}
+.ti-theme-name{
+  font-size:13px;font-weight:800;color:var(--ink);letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ai-mark{font-size:10px;line-height:1;color:var(--pk);font-weight:900}
+
+.ti-theme-tools{
+  margin-left:auto;display:flex;gap:3px;opacity:0;transition:opacity .12s;flex-shrink:0;padding-left:8px;
+}
+.ti-theme-row:hover .ti-theme-tools{opacity:1}
+
+/* Generic meta cell: stack value + label */
+.ti-cell-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ti-cell-meta strong{font-size:11.5px;font-weight:800;color:var(--ink);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti-cell-meta span{font-size:9px;color:var(--t3);font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Generic meta cell: stack value + label */
+.ti-cell-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ti-cell-meta strong{font-size:11px;font-weight:800;color:var(--ink);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti-cell-meta span{font-size:9px;color:var(--t3);font-weight:600;line-height:1.3}
+
+/* Volume cell */
+.ti-volume-cell{text-align:right;font-variant-numeric:tabular-nums}
+.ti-volume-cell strong{display:block;font-size:13px;font-weight:800;color:var(--ink);line-height:1.1}
+.ti-cluster-row .ti-volume-cell strong{font-size:11.5px;font-weight:700}
+
+/* Published progress cell (theme row) */
+.ti-published{text-align:right}
+.ti-published-num{font-size:10.5px;color:var(--t2);line-height:1.2;font-variant-numeric:tabular-nums}
+.ti-published-num strong{font-size:12px;font-weight:800;color:var(--ink)}
+.ti-published-bar{margin-top:4px;height:3px;background:var(--sf-3);border-radius:2px;overflow:hidden;width:80px;margin-left:auto}
+.ti-published-fill{height:100%;background:linear-gradient(90deg,var(--green),#10b981);border-radius:2px;transition:width .35s ease}
+.ti-published-fill.zero{background:var(--sf-3)}
+
+/* Status pill (cluster row) */
+.ti-status-cell{display:flex;justify-content:flex-end}
+.ti-status-pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;
+  padding:4px 9px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase;
+}
+.ti-status-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.ti-status-pill.none{background:var(--sf-2);color:var(--t3);border:1px solid var(--sf-line)}
+.ti-status-pill.outline{background:#fff3e0;color:#a04a00;border:1px solid #fde0b3}
+.ti-status-pill.draft{background:var(--amber-bg);color:var(--amber-dk);border:1px solid #fde68a}
+.ti-status-pill.published{background:var(--green-bg);color:var(--green-dk);border:1px solid #bbf7d0}
+
+/* Actions cell */
+.ti-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px}
+.ti-action{
+  border:1px solid rgba(165,0,100,.28);background:#fff;color:var(--pk);
+  border-radius:6px;padding:6px 10px;font-size:9.5px;font-weight:800;cursor:pointer;
+  white-space:nowrap;flex:1;min-width:80px;text-align:center;transition:all .12s;
+}
+.ti-action:hover{background:var(--pk);color:#fff;border-color:var(--pk)}
+.ti-action.published{background:var(--green-bg);border-color:transparent;color:var(--green-dk)}
+.ti-action.published:hover{background:var(--green);color:#fff}
+.ti-icon-btn{
+  width:26px;height:26px;border:1px solid var(--sf-line);border-radius:6px;background:#fff;
+  color:var(--t3);font-size:11px;font-weight:700;display:grid;place-items:center;cursor:pointer;
+  flex-shrink:0;transition:all .12s;
+}
 .ti-icon-btn:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
 .ti-icon-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
-.ti-count,.ti-volume{font-size:10px;font-weight:700;color:var(--t2);text-align:right}
-.ti-volume{color:var(--ink)}
-.ti-theme-body{display:none;background:var(--sf-1);border-top:1px solid var(--sf-line)}
+.ti-theme-add{
+  border:1px dashed rgba(165,0,100,.32);background:#fff;color:var(--pk);
+  border-radius:6px;padding:6px 10px;font-size:9.5px;font-weight:800;cursor:pointer;
+  white-space:nowrap;width:100%;text-align:center;transition:all .15s;
+}
+.ti-theme-add:hover{background:var(--pk-bg);border-style:solid;border-color:var(--pk)}
+
+/* Volume cell (right-aligned, tabular) */
+.ti-volume-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ti-volume-cell strong{display:block;font-size:13px;font-weight:800;color:var(--ink);line-height:1.1}
+.ti-volume-cell small{display:block;font-size:8.5px;color:var(--t3);font-weight:600;margin-top:2px;text-transform:lowercase}
+.ti-cluster-row .ti-volume-cell strong{font-size:11.5px;font-weight:700}
+
+/* Ranking cell - center-aligned pill */
+.ti-rank-cell{display:flex;justify-content:center;align-items:center}
+.ti-rank-pill{
+  display:inline-flex;align-items:baseline;gap:2px;
+  font-variant-numeric:tabular-nums;
+  font-size:11px;font-weight:800;line-height:1;
+  padding:5px 10px;border-radius:20px;letter-spacing:-.01em;
+}
+.ti-rank-pill small{font-size:8.5px;font-weight:700;opacity:.7;text-transform:uppercase}
+.ti-rank-pill.top3   {background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.ti-rank-pill.top10  {background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}
+.ti-rank-pill.top30  {background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.ti-rank-pill.top100 {background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+.ti-rank-pill.out    {background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.ti-keyword-row .ti-rank-pill{font-size:10px;padding:3px 8px}
+.ti-keyword-row .ti-rank-pill small{font-size:7.5px}
+
+/* Published progress cell (theme row) */
+.ti-published{}
+.ti-published-num{font-size:10.5px;color:var(--t2);line-height:1.2;font-variant-numeric:tabular-nums}
+.ti-published-num strong{font-size:11.5px;font-weight:800;color:var(--ink)}
+.ti-published-bar{margin-top:5px;height:3px;background:var(--sf-3);border-radius:2px;overflow:hidden;width:100%;max-width:140px}
+.ti-published-fill{height:100%;background:linear-gradient(90deg,var(--green),#10b981);border-radius:2px;transition:width .35s ease}
+.ti-published-fill.zero{background:var(--sf-3)}
+
+/* Status pill (cluster row col 4) */
+.ti-status-cell{display:flex;align-items:center}
+.ti-status-pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;
+  padding:4px 9px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase;
+}
+.ti-status-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.ti-status-pill.none{background:var(--sf-2);color:var(--t3);border:1px solid var(--sf-line)}
+.ti-status-pill.outline{background:#fff3e0;color:#a04a00;border:1px solid #fde0b3}
+.ti-status-pill.draft{background:var(--amber-bg);color:var(--amber-dk);border:1px solid #fde68a}
+.ti-status-pill.published{background:var(--green-bg);color:var(--green-dk);border:1px solid #bbf7d0}
+
+/* Actions cell */
+.ti-row-actions{display:flex;align-items:center;justify-content:flex-start;gap:5px;min-width:0}
+.ti-action{
+  border:1px solid rgba(165,0,100,.28);background:var(--pk-bg);color:var(--pk);
+  border-radius:6px;padding:6px 12px;font-size:10px;font-weight:800;cursor:pointer;
+  white-space:nowrap;flex:1;min-width:90px;text-align:center;transition:all .12s;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.ti-action:hover{background:var(--pk);color:#fff;border-color:var(--pk)}
+.ti-action.published{background:var(--green-bg);border-color:transparent;color:var(--green-dk)}
+.ti-action.published:hover{background:var(--green);color:#fff}
+.ti-icon-btn{
+  width:26px;height:26px;border:1px solid var(--sf-line);border-radius:6px;background:#fff;
+  color:var(--t3);font-size:11px;font-weight:700;display:grid;place-items:center;cursor:pointer;
+  flex-shrink:0;transition:all .12s;
+}
+.ti-icon-btn:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+.ti-icon-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.ti-theme-add{
+  border:1px dashed rgba(165,0,100,.32);background:#fff;color:var(--pk);
+  border-radius:6px;padding:6px 12px;font-size:10px;font-weight:800;cursor:pointer;
+  white-space:nowrap;width:100%;text-align:center;transition:all .15s;
+}
+.ti-theme-add:hover{background:var(--pk-bg);border-style:solid;border-color:var(--pk)}
+
+/* Theme body (contains cluster rows) */
+.ti-theme-body{display:none;background:#fff;padding:0 0 10px}
 .ti-theme.open>.ti-theme-body{display:block}
-.ti-cluster{border-bottom:1px solid var(--sf-line)}
-.ti-cluster:last-child{border-bottom:none}
-.ti-cluster-row{padding:9px 14px;cursor:pointer;transition:background .12s}
-.ti-cluster-row:hover,.ti-cluster.open>.ti-cluster-row{background:#fff}
-.merchant-article-compact{display:flex;align-items:center;gap:12px;padding:7px 12px 7px 34px;background:#fff;cursor:pointer;transition:background .12s}
-.merchant-article-compact:hover,.ti-cluster.open>.merchant-article-compact{background:#fffafd}
-.ti-cluster.open>.merchant-article-compact .ti-arrow{transform:rotate(90deg);color:var(--pk)}
-.merchant-article-block{min-width:0;display:flex;flex-direction:column;gap:1px}.merchant-article-topic{flex:1.35}.merchant-article-primary{flex:1}
-.merchant-article-label{font-size:7px;font-weight:800;letter-spacing:.35px;text-transform:uppercase;color:var(--t3)}
-.merchant-article-value{font-size:10px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.merchant-article-sub{font-size:8px;color:var(--t3);white-space:nowrap}
-.merchant-secondary-count{font-size:8px;font-weight:800;color:var(--pk);background:var(--pk-bg);border-radius:12px;padding:3px 7px;white-space:nowrap}
-.merchant-article-compact>.ti-row-actions{width:190px;flex-shrink:0}
-.ti-cluster-indent{color:var(--t3);font-size:9px;padding-left:24px}
-.ti-cluster-name{font-size:10.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Cluster row - indented data row inside theme body */
+.ti-cluster{position:relative}
+.ti-cluster:not(:first-child){margin-top:1px}
+.ti-cluster-row{
+  padding:10px 16px;cursor:pointer;transition:background .12s;background:#fff;
+}
+.ti-cluster-row:hover{background:var(--sf-1)}
+.ti-cluster.open>.ti-cluster-row{background:var(--sf-1)}
+
+.ti-cluster-main{display:flex;align-items:center;gap:7px;min-width:0;padding-left:28px;position:relative}
+.ti-cluster-main::before{
+  content:'';position:absolute;left:18px;top:50%;transform:translateY(-50%);
+  width:8px;height:1px;background:var(--sf-3);
+}
+.ti-cluster-name{font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti-cluster-funnel{
+  font-size:7.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;background:var(--pk-bg);color:var(--pk);flex-shrink:0;
+}
+
+/* Cluster row - Primary KW cell (col 2) */
+.ti-primary-cell{display:flex;flex-direction:column;gap:4px;min-width:0;padding:2px 0}
+.ti-primary-label{
+  font-size:8px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--pk);line-height:1;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.ti-primary-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--pk);box-shadow:0 0 0 2px var(--pk-bg)}
+.ti-primary-kw{
+  font-size:12px;font-weight:800;color:var(--ink);line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  letter-spacing:-.005em;
+}
+.ti-secondary-pill{
+  display:inline-flex;align-items:center;gap:4px;font-size:8.5px;font-weight:800;
+  color:var(--pk);background:#fff;border:1px solid rgba(165,0,100,.28);
+  border-radius:10px;padding:2.5px 8px;width:max-content;
+  letter-spacing:.2px;
+}
+.ti-secondary-pill::before{content:'+';color:var(--pk);font-weight:900}
+
+/* Expanded secondaries inline under cluster row */
+.ti-keywords{display:none;background:var(--sf-1);border-top:1px solid var(--sf-line)}
+.ti-cluster.open>.ti-keywords{display:block}
+.ti-secondary-toolbar{
+  display:flex;align-items:center;justify-content:space-between;padding:7px 16px 7px 46px;
+  background:var(--sf-2);font-size:9px;color:var(--t3);font-weight:600;
+  border-bottom:1px solid var(--sf-line);
+}
+
+/* Secondary keywords expanded panel */
 .ti-keywords{display:none;background:#fff}
 .ti-cluster.open>.ti-keywords{display:block}
-.ti-keyword-row{padding:7px 14px;border-top:1px solid var(--sf-line)}
-.ti-keyword-row:hover{background:var(--sf-2)}
-.ti-keyword-name{font-size:10px;color:var(--ink);padding-left:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ti-keyword-volume{font-size:9.5px;font-weight:700;color:var(--t2);text-align:right}
-.ti-primary{min-width:0}
-.ti-primary strong{display:block;font-size:10.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ti-primary small{display:block;font-size:8px;color:var(--t3);margin-top:2px}
-.ti-article-meta{font-size:8.5px;color:var(--t3);text-align:right}
-.ti-article-meta strong{color:var(--ink)}
-.ti-action{width:100%;border:1px solid rgba(165,0,100,.22);background:var(--pk-bg);color:var(--pk);border-radius:6px;padding:5px 7px;font-size:8.5px;font-weight:800;cursor:pointer;white-space:nowrap}
-.ti-action:hover{background:var(--pk);color:#fff}
-.ti-action.published{background:var(--green-bg);border-color:transparent;color:var(--green-dk)}
-.ti-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:4px}
-.ti-row-actions .ti-action{flex:1;min-width:74px}
-.ti-secondary-role{font-size:8px;color:var(--t3);text-align:right}
-.ti-secondary-toolbar{display:flex;align-items:center;justify-content:space-between;padding:6px 14px;border-top:1px solid var(--sf-line);background:var(--sf-2);font-size:8.5px;color:var(--t3)}
-.ti-add-secondary{border:1px solid rgba(165,0,100,.2);background:#fff;color:var(--pk);border-radius:5px;padding:4px 7px;font-size:8px;font-weight:800;cursor:pointer}
+.ti-secondary-toolbar{
+  display:flex;align-items:center;justify-content:space-between;padding:6px 16px 6px 44px;
+  background:var(--sf-1);font-size:9px;color:var(--t3);font-weight:600;
+}
+.ti-add-secondary{
+  border:1px solid rgba(165,0,100,.2);background:#fff;color:var(--pk);
+  border-radius:5px;padding:4px 8px;font-size:8.5px;font-weight:800;cursor:pointer;
+}
 .ti-add-secondary:hover{background:var(--pk-bg)}
+
+.ti-keyword-row{
+  display:grid;grid-template-columns:minmax(240px,1.3fr) minmax(220px,1.5fr) 110px 84px 150px 200px;
+  align-items:center;column-gap:14px;
+  padding:7px 16px;border-top:1px solid var(--sf-line);
+}
+.ti-keyword-row:hover{background:var(--sf-2)}
+.ti-keyword-row .ti-keyword-name{font-size:10px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:46px}
+.ti-keyword-row .ti-volume-cell strong{font-size:10.5px;font-weight:700}
+.ti-secondary-role{font-size:8px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.35px;font-style:italic}
+
+/* Subtle edit/delete on rows */
+.ti-row-actions .ti-icon-btn{opacity:.55;transition:opacity .12s,border-color .12s,color .12s,background .12s}
+.ti-theme-row:hover .ti-row-actions .ti-icon-btn,
+.ti-cluster-row:hover .ti-row-actions .ti-icon-btn,
+.ti-keyword-row:hover .ti-row-actions .ti-icon-btn{opacity:1}
+.ti-row-actions .ti-icon-btn:hover{opacity:1}
+
+/* Merchant variant: one row per content, expand only for Secondary Keywords */
+.merchant-inventory>.ti-head span:nth-child(3){text-align:left}
+.merchant-theme-row{padding:9px 14px}
+.merchant-theme-row .ti-theme-name{font-size:11.5px;line-height:1.25}
+.merchant-secondary-panel{background:#fff}
+.merchant-keyword-row{padding:7px 14px 7px 26px}
+.merchant-keyword-row .ti-keyword-name{font-size:9.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.merchant-keyword-row .ti-row-actions{gap:4px}
+.merchant-project .ti-secondary-toolbar:only-child{border-bottom:0}
+
 .topic-actions{display:flex;align-items:center;gap:8px}
 .topic-create{border:1px solid rgba(165,0,100,.25);background:var(--pk);color:#fff;border-radius:6px;padding:6px 9px;font-size:8.5px;font-weight:800;cursor:pointer;white-space:nowrap}
 .topic-create:hover{background:var(--pk2)}
-.topic-summary{display:flex;align-items:center;gap:16px;font-size:9px;color:var(--t3)}
-.topic-summary strong{font-size:11px;color:var(--ink);margin-left:3px}
-.topic-source{font-size:8.5px;color:var(--t3);margin-top:5px}
+.topic-summary{display:flex;align-items:center;gap:14px;font-size:8.5px;color:var(--t3);white-space:nowrap}
+.topic-summary strong{font-size:10.5px;color:var(--ink);margin-left:3px}
+.topic-source{font-size:8px;color:var(--t3);margin-top:3px}
 
 @media (max-width:980px){
-  .ti-head,.ti-theme-row,.ti-cluster-row,.ti-keyword-row{grid-template-columns:minmax(95px,.6fr) minmax(125px,.85fr) minmax(165px,1.1fr) 70px 160px;gap:7px}
-  .merchant-article-compact{padding-left:20px;gap:8px}.merchant-article-compact>.ti-row-actions{width:160px}
+  .theme-inventory{--ti-grid:minmax(0,1.5fr) minmax(86px,.65fr) 84px 140px}
+  .ti-head,.ti-theme-row,.ti-cluster-row,.ti-keyword-row{
+    grid-template-columns:var(--ti-grid);column-gap:10px;
+  }
+  .ti-theme-row{padding:11px 12px}
+  .ti-cluster-row{padding-left:34px}
+  .ti-primary-row{padding-left:44px;column-gap:10px}
+  .ti-keyword-row{padding-left:58px}
 }
+@media (hover:none){.ti-row-actions .ti-icon-btn{opacity:1}}
 
 /* ─── CLUSTER CARD ────────────────────────────────────────────────────────── */
 .cluster-card{border:1px solid var(--sf-line);border-radius:var(--r10);overflow:hidden;background:#fff;margin-bottom:6px}
@@ -428,10 +659,10 @@ header{
 .biz-val{font-size:11px;color:var(--ink);line-height:1.55}
 
 /* Topic cluster market overview */
-.topic-overview{margin:5px 22px 0;border:1px solid var(--sf-line);border-radius:var(--r8);background:#fff;overflow:hidden;flex-shrink:0}
+.topic-overview{margin:5px 22px 0;background:transparent;flex-shrink:0}
 .cp-body .topic-overview{margin:0}
-.topic-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 13px;border-bottom:1px solid var(--sf-line);background:var(--sf-2)}
-.topic-title{font-size:11px;font-weight:700;color:var(--ink)}
+.topic-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:2px 2px 12px;background:transparent}
+.topic-title{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap}
 .topic-market{display:flex;align-items:baseline;gap:6px}.topic-market span{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--t3)}.topic-market strong{font-size:13px;color:var(--pk)}
 .topic-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:9px 12px}
 .topic-list .cp-empty{grid-column:1/-1;padding:18px}
@@ -593,6 +824,156 @@ header{
 .wiz-pt-card.lp .wiz-pt-action{background:#c2410c;color:#fff}
 .wiz-pt-card.lp:hover .wiz-pt-action{background:#9a3412}
 
+/* ─── STAGE 4: PRE-PUBLISH SCORE PANEL ─────────────────────────────────────── */
+/* Scanning state (during simulated check) */
+.wiz-score-scanning{
+  padding:32px 22px;display:flex;flex-direction:column;align-items:center;gap:14px;
+  background:linear-gradient(180deg,#fafafa 0%,#fff 100%);border:1px solid var(--sf-line);
+  border-radius:12px;
+}
+.wiz-score-scanning .scan-ring{
+  width:64px;height:64px;border-radius:50%;border:3px solid var(--sf-line);
+  border-top-color:var(--pk);animation:scanSpin 1s linear infinite;
+}
+@keyframes scanSpin{to{transform:rotate(360deg)}}
+.wiz-score-scanning .scan-title{font-size:14px;font-weight:800;color:var(--ink)}
+.wiz-score-scanning .scan-sub{font-size:11px;color:var(--t3);text-align:center;max-width:380px;line-height:1.55}
+.wiz-score-scan-list{margin-top:6px;display:flex;flex-direction:column;gap:5px;width:100%;max-width:420px}
+.wiz-score-scan-item{display:flex;align-items:center;gap:9px;padding:7px 11px;background:#fff;border:1px solid var(--sf-line);border-radius:7px;font-size:11px;color:var(--t2)}
+.wiz-score-scan-item .dot{width:8px;height:8px;border-radius:50%;background:var(--sf-line);flex-shrink:0;transition:background .25s}
+.wiz-score-scan-item.checking .dot{background:var(--pk);animation:dotPulse 1s ease infinite}
+.wiz-score-scan-item.done .dot{background:var(--green)}
+.wiz-score-scan-item.done{color:var(--ink)}
+.wiz-score-scan-item .scan-time{margin-left:auto;font-size:9.5px;color:var(--t3);font-variant-numeric:tabular-nums}
+@keyframes dotPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+
+/* Result hero - overall score */
+.wiz-score-result{display:none}
+.wiz-score-result.show{display:block;animation:stageIn .3s ease}
+.wiz-score-hero{
+  display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;
+  padding:18px 20px;margin-bottom:14px;border-radius:12px;
+  background:linear-gradient(135deg,#fafafa 0%,#fff 65%,#fdf5fa 100%);
+  border:1px solid var(--sf-line);position:relative;overflow:hidden;
+}
+.wiz-score-hero::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--green) 0%,var(--green) 100%);
+}
+.wiz-score-hero.tier-good::before{background:linear-gradient(180deg,var(--green) 0%,#10b981 100%)}
+.wiz-score-hero.tier-warn::before{background:linear-gradient(180deg,var(--amber) 0%,#f59e0b 100%)}
+.wiz-score-hero.tier-fail::before{background:linear-gradient(180deg,var(--red) 0%,#ef4444 100%)}
+.wiz-score-hero.tier-warn{background:linear-gradient(135deg,#fffdf7 0%,#fff 65%,#fef7e8 100%)}
+.wiz-score-hero.tier-fail{background:linear-gradient(135deg,#fffafa 0%,#fff 65%,#fef2f2 100%)}
+
+.wiz-score-ring-wrap{position:relative;width:96px;height:96px;flex-shrink:0}
+.wiz-score-ring{width:96px;height:96px;transform:rotate(-90deg)}
+.wiz-score-ring .ring-bg{stroke:var(--sf-line);stroke-width:7;fill:none}
+.wiz-score-ring .ring-fg{
+  stroke-width:7;fill:none;stroke-linecap:round;
+  transition:stroke-dashoffset 1s cubic-bezier(.34,1.56,.64,1),stroke .4s ease;
+}
+.wiz-score-hero.tier-good .ring-fg{stroke:var(--green)}
+.wiz-score-hero.tier-warn .ring-fg{stroke:var(--amber)}
+.wiz-score-hero.tier-fail .ring-fg{stroke:var(--red)}
+.wiz-score-ring-num{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;line-height:1;
+}
+.wiz-score-ring-num strong{font-size:28px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.wiz-score-ring-num span{font-size:8.5px;font-weight:700;color:var(--t3);letter-spacing:.5px;margin-top:3px;text-transform:uppercase}
+
+.wiz-score-verdict{min-width:0}
+.wiz-score-verdict-label{
+  display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:.65px;text-transform:uppercase;
+  color:var(--t3);margin-bottom:4px;
+}
+.wiz-score-verdict-title{font-size:18px;font-weight:800;color:var(--ink);line-height:1.2;margin-bottom:5px}
+.wiz-score-hero.tier-good .wiz-score-verdict-title{color:var(--green-dk)}
+.wiz-score-hero.tier-warn .wiz-score-verdict-title{color:var(--amber-dk)}
+.wiz-score-hero.tier-fail .wiz-score-verdict-title{color:#991b1b}
+.wiz-score-verdict-desc{font-size:11px;color:var(--t2);line-height:1.5;max-width:340px}
+
+.wiz-score-meta{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0}
+.wiz-score-pt-pill{
+  font-size:10px;font-weight:800;padding:5px 10px;border-radius:20px;
+  background:var(--ink);color:#fff;display:flex;align-items:center;gap:5px;
+}
+.wiz-score-pt-pill.lp{background:#c2410c}
+.wiz-score-pt-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.wiz-score-block-pill{
+  font-size:10px;font-weight:800;padding:5px 10px;border-radius:20px;
+  background:var(--red-bg);color:var(--red);border:1px solid #fecaca;
+  display:flex;align-items:center;gap:5px;
+}
+.wiz-score-block-pill.ok{background:var(--green-bg);color:var(--green-dk);border-color:#bbf7d0}
+.wiz-score-block-pill .num{font-size:11px}
+
+/* Group cards grid */
+.wiz-score-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px}
+.wiz-score-group{
+  background:#fff;border:1px solid var(--sf-line);border-radius:10px;
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.wiz-score-group.full{grid-column:1/-1}
+.wiz-score-group.group-fail{border-color:#fecaca;background:linear-gradient(180deg,#fff 0%,#fef9f9 100%)}
+.wiz-score-group.group-warn{border-color:#fde68a;background:linear-gradient(180deg,#fff 0%,#fffcf2 100%)}
+
+.wiz-score-group-head{
+  display:flex;align-items:center;gap:9px;padding:10px 12px;
+  border-bottom:1px solid var(--sf-line);
+}
+.wiz-score-group-icon{
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;
+  font-size:12px;flex-shrink:0;
+}
+.wiz-score-group-icon.cwv{background:#eff6ff;color:var(--blue)}
+.wiz-score-group-icon.onpage{background:#f0fdf4;color:var(--green)}
+.wiz-score-group-icon.geo{background:#f5f3ff;color:var(--purple)}
+.wiz-score-group-icon.eeat{background:#fffbeb;color:var(--amber)}
+.wiz-score-group-icon.track{background:var(--pk-bg);color:var(--pk)}
+
+.wiz-score-group-title{flex:1;min-width:0}
+.wiz-score-group-title strong{display:block;font-size:11.5px;font-weight:800;color:var(--ink);line-height:1.2}
+.wiz-score-group-title span{display:block;font-size:9px;color:var(--t3);margin-top:2px;letter-spacing:.3px;text-transform:uppercase;font-weight:700}
+
+.wiz-score-group-score{font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;flex-shrink:0}
+.wiz-score-group-score small{font-size:9.5px;color:var(--t3);font-weight:700;margin-left:1px}
+
+.wiz-score-group-body{padding:8px 4px 8px 8px;display:flex;flex-direction:column;gap:1px}
+.wiz-score-check{
+  display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;
+  padding:6px 8px;border-radius:6px;transition:background .12s;
+}
+.wiz-score-check:hover{background:var(--sf-2)}
+.wiz-score-check-icon{
+  width:16px;height:16px;border-radius:50%;display:grid;place-items:center;
+  font-size:9px;font-weight:900;color:#fff;flex-shrink:0;
+}
+.wiz-score-check.pass .wiz-score-check-icon{background:var(--green)}
+.wiz-score-check.warn .wiz-score-check-icon{background:var(--amber)}
+.wiz-score-check.fail .wiz-score-check-icon{background:var(--red);animation:failPulse 2s ease infinite}
+@keyframes failPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.45)}50%{box-shadow:0 0 0 4px rgba(220,38,38,0)}}
+.wiz-score-check-label{font-size:10.5px;color:var(--ink);line-height:1.35;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.wiz-score-check-label .blocker{
+  font-size:7.5px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.4px;
+  background:var(--red-bg);color:var(--red);border:1px solid rgba(220,38,38,.2);text-transform:uppercase;
+}
+.wiz-score-check-data{font-size:9.5px;color:var(--t2);font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;flex-shrink:0}
+.wiz-score-check.fail .wiz-score-check-data{color:var(--red)}
+.wiz-score-check.warn .wiz-score-check-data{color:var(--amber-dk)}
+
+/* Action zone under groups */
+.wiz-score-action-note{
+  margin-top:10px;padding:10px 12px;border-radius:8px;
+  font-size:11px;line-height:1.5;display:flex;align-items:flex-start;gap:8px;
+}
+.wiz-score-action-note.fail{background:var(--red-bg);border:1px solid #fecaca;color:#991b1b}
+.wiz-score-action-note.warn{background:var(--amber-bg);border:1px solid #fde68a;color:var(--amber-dk)}
+.wiz-score-action-note.pass{background:var(--green-bg);border:1px solid #bbf7d0;color:var(--green-dk)}
+.wiz-score-action-note strong{font-weight:800}
+.wiz-score-action-note .ico{font-size:13px;line-height:1.35;flex-shrink:0}
+
 /* Wizard footer */
 .wiz-ft{padding:12px 22px;border-top:1px solid var(--sf-line);display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;flex-shrink:0}
 .wiz-ft-info{font-size:11px;color:var(--t3);display:flex;align-items:center;gap:6px}
@@ -645,6 +1026,366 @@ header{
 .crud-foot{display:flex;justify-content:flex-end;gap:8px;padding:11px 16px;border-top:1px solid var(--line);background:var(--sf-2)}
 .crud-btn{border:1px solid var(--line);border-radius:7px;padding:7px 12px;font-size:10px;font-weight:800;cursor:pointer;background:#fff;color:var(--t2)}
 .crud-btn.primary{background:var(--pk);border-color:var(--pk);color:#fff}.crud-btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   EDITOR SCREEN (WordPress-style CMS, opens after Page Type choice)
+   ════════════════════════════════════════════════════════════════════════════ */
+.editor-overlay{position:fixed;inset:0;z-index:250;background:#f5f4f0;display:none}
+.editor-overlay.show{display:flex;flex-direction:column;animation:wizFadeIn .25s ease}
+
+/* Header */
+.editor-head{
+  height:54px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;
+}
+.ed-h-left{display:flex;align-items:center;gap:14px;min-width:0}
+.ed-back-btn{
+  background:none;border:1px solid var(--line);border-radius:7px;padding:6px 11px;
+  font:inherit;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;transition:all .15s;
+}
+.ed-back-btn:hover{border-color:var(--ink);color:var(--ink);background:var(--sf-2)}
+.ed-divider{width:1px;height:22px;background:var(--line)}
+.ed-h-title{min-width:0;display:flex;flex-direction:column;gap:1px}
+.ed-h-title strong{font-size:13px;font-weight:800;color:var(--ink);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+.ed-h-title span{font-size:9.5px;color:var(--t3);font-weight:600}
+
+.ed-h-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ed-status-pill{
+  font-size:9px;font-weight:800;letter-spacing:.5px;padding:4px 8px;border-radius:4px;
+  background:var(--sf-2);color:var(--t2);border:1px solid var(--line);text-transform:uppercase;
+}
+.ed-status-pill.draft{background:var(--amber-bg);color:var(--amber-dk);border-color:#fde68a}
+.ed-status-pill.published{background:var(--green-bg);color:var(--green-dk);border-color:#bbf7d0}
+.ed-pagetype-pill{
+  font-size:9px;font-weight:800;letter-spacing:.4px;padding:4px 8px;border-radius:4px;
+  background:var(--ink);color:#fff;text-transform:uppercase;
+}
+.ed-pagetype-pill.lp{background:#c2410c}
+
+.ed-btn{
+  border:1px solid var(--line);background:#fff;color:var(--t2);padding:7px 13px;border-radius:7px;
+  font:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.ed-btn:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
+.ed-btn:disabled{opacity:.5;cursor:not-allowed}
+.ed-btn.primary{background:var(--pk);border-color:var(--pk);color:#fff}
+.ed-btn.primary:hover:not(:disabled){background:var(--pk2);border-color:var(--pk2)}
+.ed-btn.primary:disabled{background:#d4a5bf;border-color:#d4a5bf;color:#fff;opacity:1}
+
+/* Body */
+.editor-body{flex:1;display:flex;overflow:hidden}
+
+/* Canvas (left) */
+.ed-canvas{
+  flex:1;background:var(--sf-1);overflow-y:auto;display:flex;flex-direction:column;
+}
+.ed-canvas::-webkit-scrollbar{width:6px}.ed-canvas::-webkit-scrollbar-thumb{background:var(--sf-3);border-radius:3px}
+
+.ed-canvas-toolbar{
+  display:flex;align-items:center;gap:2px;padding:8px 14px;background:#fff;
+  border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;
+}
+.ed-tool{
+  border:none;background:none;color:var(--t2);padding:5px 8px;border-radius:5px;
+  font:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .12s;
+  display:inline-flex;align-items:center;gap:4px;line-height:1;
+}
+.ed-tool:hover{background:var(--sf-2);color:var(--ink)}
+.ed-tool.bold{font-weight:900}
+.ed-tool-divider{width:1px;height:18px;background:var(--line);margin:0 4px}
+.ed-tool-spacer{flex:1}
+.ed-word-count{font-size:9.5px;color:var(--t3);font-weight:700;padding:0 8px;font-variant-numeric:tabular-nums}
+
+.ed-canvas-content{
+  max-width:760px;width:100%;margin:24px auto 60px;background:#fff;
+  border:1px solid var(--sf-line);border-radius:10px;padding:40px 56px;
+  min-height:calc(100vh - 200px);
+}
+.ed-canvas-content .ed-h1{
+  font-size:30px;font-weight:800;color:var(--ink);line-height:1.2;margin-bottom:14px;
+  border:none;outline:none;width:100%;background:none;font-family:inherit;padding:0;
+}
+.ed-canvas-content .ed-h1:focus{outline:1px dashed var(--pk);outline-offset:6px}
+.ed-canvas-content .ed-meta-row{
+  display:flex;align-items:center;gap:10px;padding-bottom:14px;margin-bottom:22px;
+  border-bottom:1px solid var(--sf-line);font-size:11px;color:var(--t3);
+}
+.ed-meta-row .ed-author-chip{
+  display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);font-weight:700;
+}
+.ed-meta-row .ed-author-avatar{
+  width:20px;height:20px;border-radius:50%;background:var(--pk-bg);color:var(--pk);
+  display:grid;place-items:center;font-size:9px;font-weight:800;
+}
+.ed-meta-dot{width:3px;height:3px;background:var(--sf-3);border-radius:50%}
+
+.ed-canvas-content h2{font-size:20px;font-weight:800;color:var(--ink);margin:26px 0 10px;line-height:1.3}
+.ed-canvas-content h3{font-size:16px;font-weight:700;color:var(--ink);margin:20px 0 8px;line-height:1.35}
+.ed-canvas-content p{font-size:14px;line-height:1.7;color:var(--ink);margin-bottom:14px}
+.ed-canvas-content ul,.ed-canvas-content ol{margin:0 0 14px 22px;font-size:14px;line-height:1.7;color:var(--ink)}
+.ed-canvas-content li{margin-bottom:5px}
+.ed-canvas-content strong{font-weight:700;color:var(--ink)}
+.ed-canvas-content a{color:var(--pk);text-decoration:underline;text-decoration-color:rgba(165,0,100,.3);text-underline-offset:3px}
+.ed-canvas-content a:hover{text-decoration-color:var(--pk)}
+
+.ed-empty-image{
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
+  background:var(--sf-2);border:1.5px dashed var(--sf-line);border-radius:8px;
+  padding:30px;color:var(--t3);font-size:11px;margin:14px 0;cursor:pointer;
+  transition:all .15s;
+}
+.ed-empty-image:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+
+/* Sidebar (right) */
+.ed-sidebar{
+  width:400px;background:#fff;border-left:1px solid var(--line);
+  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
+}
+.ed-tabs{
+  display:flex;border-bottom:1px solid var(--line);background:var(--sf-2);flex-shrink:0;
+  padding:0 4px;
+}
+.ed-tab{
+  flex:1;background:none;border:none;padding:11px 4px 10px;font:inherit;font-size:10.5px;
+  font-weight:700;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;
+  position:relative;
+}
+.ed-tab:hover{color:var(--ink)}
+.ed-tab.active{color:var(--pk);border-bottom-color:var(--pk);background:#fff}
+.ed-tab .ed-tab-icon{font-size:13px;line-height:1}
+.ed-tab .ed-tab-badge{
+  position:absolute;top:6px;right:50%;transform:translateX(20px);
+  font-size:7.5px;font-weight:900;color:#fff;background:var(--red);
+  border-radius:8px;padding:1px 5px;line-height:1.2;min-width:14px;text-align:center;
+}
+.ed-tab .ed-tab-badge.ok{background:var(--green)}
+.ed-tab.active .ed-tab-badge{box-shadow:0 0 0 2px #fff}
+
+.ed-tab-body{flex:1;overflow-y:auto;padding:14px}
+.ed-tab-body::-webkit-scrollbar{width:5px}.ed-tab-body::-webkit-scrollbar-thumb{background:var(--sf-3);border-radius:3px}
+
+/* ─── Tab: SEO Audit (Score Panel - compact single column) ────────────────── */
+.audit-empty{
+  padding:30px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.audit-empty-ico{font-size:32px;opacity:.4}
+.audit-empty h4{font-size:13px;font-weight:800;color:var(--ink)}
+.audit-empty p{font-size:11px;color:var(--t3);line-height:1.55;max-width:280px}
+.audit-empty button{
+  margin-top:8px;background:var(--pk);color:#fff;border:none;padding:9px 14px;
+  border-radius:7px;font:inherit;font-size:11.5px;font-weight:800;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.audit-empty button:hover{background:var(--pk2)}
+
+.audit-scanning{padding:18px 8px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.audit-scanning .scan-ring{
+  width:42px;height:42px;border-radius:50%;border:3px solid var(--sf-line);
+  border-top-color:var(--pk);animation:scanSpin 1s linear infinite;
+}
+.audit-scanning .scan-title{font-size:12px;font-weight:800;color:var(--ink);text-align:center}
+.audit-scan-list{margin-top:4px;display:flex;flex-direction:column;gap:5px;width:100%}
+.audit-scan-item{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--sf-1);
+  border:1px solid var(--sf-line);border-radius:6px;font-size:10.5px;color:var(--t2);
+}
+.audit-scan-item .dot{width:7px;height:7px;border-radius:50%;background:var(--sf-line);flex-shrink:0;transition:background .25s}
+.audit-scan-item.checking .dot{background:var(--pk);animation:dotPulse 1s ease infinite}
+.audit-scan-item.done .dot{background:var(--green)}
+.audit-scan-item.done{color:var(--ink)}
+.audit-scan-item .scan-time{margin-left:auto;font-size:9px;color:var(--t3);font-variant-numeric:tabular-nums}
+
+/* Score hero - compact vertical */
+.audit-hero{
+  display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:12px;
+  border-radius:10px;background:linear-gradient(135deg,#fafafa 0%,#fff 65%,#fdf5fa 100%);
+  border:1px solid var(--sf-line);position:relative;overflow:hidden;
+}
+.audit-hero::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
+.audit-hero.tier-good::before{background:var(--green)}
+.audit-hero.tier-warn::before{background:var(--amber)}
+.audit-hero.tier-fail::before{background:var(--red)}
+.audit-hero.tier-warn{background:linear-gradient(135deg,#fffdf7 0%,#fff 65%,#fef7e8 100%)}
+.audit-hero.tier-fail{background:linear-gradient(135deg,#fffafa 0%,#fff 65%,#fef2f2 100%)}
+
+.audit-ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.audit-ring{width:72px;height:72px;transform:rotate(-90deg)}
+.audit-ring .ring-bg{stroke:var(--sf-line);stroke-width:6;fill:none}
+.audit-ring .ring-fg{stroke-width:6;fill:none;stroke-linecap:round;
+  transition:stroke-dashoffset 1s cubic-bezier(.34,1.56,.64,1),stroke .4s ease}
+.audit-hero.tier-good .ring-fg{stroke:var(--green)}
+.audit-hero.tier-warn .ring-fg{stroke:var(--amber)}
+.audit-hero.tier-fail .ring-fg{stroke:var(--red)}
+.audit-ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.audit-ring-num strong{font-size:21px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.audit-ring-num span{font-size:7.5px;font-weight:800;color:var(--t3);letter-spacing:.4px;margin-top:2px;text-transform:uppercase}
+
+.audit-verdict{flex:1;min-width:0}
+.audit-verdict-lbl{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin-bottom:2px}
+.audit-verdict-title{font-size:13.5px;font-weight:800;color:var(--ink);line-height:1.2;margin-bottom:3px}
+.audit-hero.tier-good .audit-verdict-title{color:var(--green-dk)}
+.audit-hero.tier-warn .audit-verdict-title{color:var(--amber-dk)}
+.audit-hero.tier-fail .audit-verdict-title{color:#991b1b}
+.audit-verdict-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.audit-block-pill{font-size:9px;font-weight:800;padding:3px 7px;border-radius:20px;background:var(--red-bg);color:var(--red);border:1px solid #fecaca}
+.audit-block-pill.ok{background:var(--green-bg);color:var(--green-dk);border-color:#bbf7d0}
+.audit-block-pill .num{font-weight:900}
+
+/* Action note (compact) */
+.audit-action-note{
+  margin:0 0 12px;padding:9px 11px;border-radius:7px;font-size:10.5px;line-height:1.5;
+  display:flex;align-items:flex-start;gap:7px;
+}
+.audit-action-note.fail{background:var(--red-bg);border:1px solid #fecaca;color:#991b1b}
+.audit-action-note.warn{background:var(--amber-bg);border:1px solid #fde68a;color:var(--amber-dk)}
+.audit-action-note.pass{background:var(--green-bg);border:1px solid #bbf7d0;color:var(--green-dk)}
+.audit-action-note strong{font-weight:800}
+.audit-action-note .ico{font-size:12px;line-height:1.3;flex-shrink:0}
+
+/* Re-scan button */
+.audit-rescan-row{display:flex;align-items:center;gap:6px;margin-bottom:12px;justify-content:space-between}
+.audit-last-run{font-size:9.5px;color:var(--t3);font-weight:600}
+.audit-rescan{
+  border:1px solid var(--sf-line);background:#fff;color:var(--t2);padding:5px 9px;border-radius:6px;
+  font:inherit;font-size:10px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px;
+  transition:all .15s;
+}
+.audit-rescan:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+
+/* Group cards (single column, compact) */
+.audit-groups{display:flex;flex-direction:column;gap:8px}
+.audit-group{
+  background:#fff;border:1px solid var(--sf-line);border-radius:8px;overflow:hidden;
+}
+.audit-group.group-fail{border-color:#fecaca;background:linear-gradient(180deg,#fff 0%,#fef9f9 100%)}
+.audit-group.group-warn{border-color:#fde68a;background:linear-gradient(180deg,#fff 0%,#fffcf2 100%)}
+
+.audit-group-head{
+  display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:pointer;
+  user-select:none;transition:background .12s;
+}
+.audit-group-head:hover{background:var(--sf-2)}
+.audit-group-icon{
+  width:22px;height:22px;border-radius:5px;display:grid;place-items:center;font-size:11px;flex-shrink:0;
+}
+.audit-group-icon.cwv{background:#eff6ff;color:var(--blue)}
+.audit-group-icon.onpage{background:#f0fdf4;color:var(--green)}
+.audit-group-icon.geo{background:#f5f3ff;color:var(--purple)}
+.audit-group-icon.eeat{background:#fffbeb;color:var(--amber)}
+.audit-group-icon.track{background:var(--pk-bg);color:var(--pk)}
+
+.audit-group-title{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
+.audit-group-title strong{font-size:11px;font-weight:800;color:var(--ink);line-height:1.2}
+.audit-group-status{display:inline-flex;gap:3px;align-items:center}
+.audit-group-status .mini-dot{width:6px;height:6px;border-radius:50%}
+.audit-group-status .mini-dot.pass{background:var(--green)}
+.audit-group-status .mini-dot.warn{background:var(--amber)}
+.audit-group-status .mini-dot.fail{background:var(--red)}
+
+.audit-group-score{font-size:11px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;flex-shrink:0;margin-right:5px}
+.audit-group-score small{font-size:9px;color:var(--t3);font-weight:700}
+.audit-group-arrow{color:var(--t3);font-size:9px;transition:transform .2s;flex-shrink:0}
+.audit-group.open .audit-group-arrow{transform:rotate(90deg);color:var(--pk)}
+
+.audit-group-body{display:none;border-top:1px solid var(--sf-line);padding:6px 4px 6px 8px;flex-direction:column;gap:1px}
+.audit-group.open .audit-group-body{display:flex}
+
+.audit-check{
+  display:grid;grid-template-columns:16px 1fr auto;gap:7px;align-items:flex-start;
+  padding:6px 7px;border-radius:5px;
+}
+.audit-check:hover{background:var(--sf-2)}
+.audit-check-icon{
+  width:14px;height:14px;border-radius:50%;display:grid;place-items:center;
+  font-size:8px;font-weight:900;color:#fff;flex-shrink:0;margin-top:1px;
+}
+.audit-check.pass .audit-check-icon{background:var(--green)}
+.audit-check.warn .audit-check-icon{background:var(--amber)}
+.audit-check.fail .audit-check-icon{background:var(--red);animation:failPulse 2s ease infinite}
+.audit-check-label{font-size:10px;color:var(--ink);line-height:1.4;min-width:0;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.audit-check-label .blocker{
+  font-size:7px;font-weight:800;padding:1px 4px;border-radius:3px;letter-spacing:.35px;
+  background:var(--red-bg);color:var(--red);border:1px solid rgba(220,38,38,.2);text-transform:uppercase;
+}
+.audit-check-data{font-size:9px;color:var(--t2);font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.audit-check.fail .audit-check-data{color:var(--red)}
+.audit-check.warn .audit-check-data{color:var(--amber-dk)}
+
+/* ─── Tab: Document (settings) ────────────────────────────────────────────── */
+.ed-tab-section{margin-bottom:16px}
+.ed-tab-section-title{
+  font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);
+  margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid var(--sf-line);
+}
+.ed-field{margin-bottom:11px}
+.ed-field label{display:block;font-size:9.5px;font-weight:700;color:var(--t2);margin-bottom:4px}
+.ed-field input,.ed-field textarea,.ed-field select{
+  width:100%;border:1px solid var(--sf-line);border-radius:6px;padding:7px 9px;
+  font:inherit;font-size:11px;color:var(--ink);outline:none;background:#fff;font-family:inherit;
+}
+.ed-field input:focus,.ed-field textarea:focus,.ed-field select:focus{border-color:var(--pk);box-shadow:0 0 0 2px rgba(165,0,100,.07)}
+.ed-field textarea{resize:vertical;min-height:60px;line-height:1.5}
+.ed-field .ed-hint{font-size:9px;color:var(--t3);margin-top:3px;font-weight:600}
+.ed-field-readonly{
+  font-size:11px;color:var(--t2);background:var(--sf-2);padding:7px 9px;border-radius:6px;
+  border:1px solid var(--sf-line);font-family:'Be Vietnam Pro',monospace;
+}
+
+/* ─── Tab: Internal Links ────────────────────────────────────────────────── */
+.il-search{
+  width:100%;border:1px solid var(--sf-line);border-radius:6px;padding:7px 9px;font:inherit;
+  font-size:11px;color:var(--ink);outline:none;margin-bottom:9px;background:#fff;
+}
+.il-search:focus{border-color:var(--pk);box-shadow:0 0 0 2px rgba(165,0,100,.07)}
+.il-section-title{
+  display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:800;
+  letter-spacing:.5px;text-transform:uppercase;color:var(--t3);margin:8px 0 6px;
+}
+.il-suggest-count{font-size:8.5px;color:var(--pk);font-weight:800;background:var(--pk-bg);padding:1px 5px;border-radius:8px}
+.il-list{display:flex;flex-direction:column;gap:5px}
+.il-item{
+  display:flex;align-items:center;gap:8px;padding:8px 9px;background:#fff;border:1px solid var(--sf-line);
+  border-radius:7px;font-size:10.5px;color:var(--ink);transition:all .15s;
+}
+.il-item:hover{border-color:var(--pk);background:var(--pk-bg)}
+.il-item-icon{font-size:14px;flex-shrink:0;line-height:1}
+.il-item-body{flex:1;min-width:0}
+.il-item-body strong{display:block;font-size:10.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.il-item-body span{display:block;font-size:9px;color:var(--t3);margin-top:1px;font-family:'Be Vietnam Pro',monospace}
+.il-item-add{
+  flex-shrink:0;background:#fff;border:1px solid var(--sf-line);color:var(--t2);
+  width:24px;height:24px;border-radius:6px;font-size:13px;cursor:pointer;line-height:1;
+  display:grid;place-items:center;transition:all .15s;
+}
+.il-item-add:hover{border-color:var(--pk);background:var(--pk);color:#fff}
+.il-item.added .il-item-add{background:var(--green);border-color:var(--green);color:#fff;cursor:default}
+.il-item.added .il-item-add::before{content:'✓';font-size:11px}
+.il-item.added .il-item-add{font-size:0}
+
+/* ─── Tab: Media ───────────────────────────────────────────────────────────── */
+.md-upload-zone{
+  border:1.5px dashed var(--sf-line);border-radius:8px;padding:18px;text-align:center;
+  background:var(--sf-1);color:var(--t3);font-size:11px;cursor:pointer;transition:all .15s;
+  margin-bottom:12px;
+}
+.md-upload-zone:hover{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+.md-upload-icon{font-size:22px;display:block;margin-bottom:5px;opacity:.6}
+.md-list{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.md-thumb{
+  aspect-ratio:1;background:var(--sf-2);border:1px solid var(--sf-line);border-radius:6px;
+  display:grid;place-items:center;color:var(--t3);font-size:18px;cursor:pointer;
+  transition:all .15s;position:relative;overflow:hidden;
+}
+.md-thumb:hover{border-color:var(--pk)}
+.md-thumb.has-img{background:linear-gradient(135deg,#d4d4d8 0%,#a1a1aa 100%)}
+.md-thumb-alt-warn{
+  position:absolute;top:3px;right:3px;width:14px;height:14px;border-radius:50%;
+  background:var(--amber);color:#fff;font-size:8px;font-weight:900;display:grid;place-items:center;
+}
+
 </style>
 </head>
 <body>
@@ -655,6 +1396,9 @@ header{
     <div class="h-div"></div>
     <div class="h-logo">
       <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block">
+    </div>
+    <div class="h-logo" style="background:#fff;border:1px solid var(--line)">
+      <img src="../assets/images/logo-web-platform.svg" alt="Web Platform" style="width:80%;height:80%;object-fit:contain;display:block">
     </div>
     <div>
       <div class="h-brand-name">SEO/GEO Project</div>
@@ -843,56 +1587,202 @@ header{
   </div>
 </div>
 
+<!-- ════════════════════════════════════════════════════════════════════════════
+     EDITOR SCREEN (opens after wizard Page Type choice)
+     ════════════════════════════════════════════════════════════════════════════ -->
+<div class="editor-overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="edArticleTitle">
+
+  <div class="editor-head">
+    <div class="ed-h-left">
+      <button class="ed-back-btn" type="button" onclick="closeEditor()">← Quay lại Project</button>
+      <div class="ed-divider"></div>
+      <div class="ed-h-title">
+        <strong id="edArticleTitle">—</strong>
+        <span id="edArticleMeta">—</span>
+      </div>
+    </div>
+    <div class="ed-h-right">
+      <span class="ed-pagetype-pill" id="edPagetypePill">Blog Article</span>
+      <span class="ed-status-pill draft" id="edStatusPill">Draft</span>
+      <button class="ed-btn" type="button" onclick="editorSaveDraft()">Save Draft</button>
+      <button class="ed-btn primary" type="button" id="edPublishBtn" onclick="editorPublish()" disabled>Publish ngay →</button>
+    </div>
+  </div>
+
+  <div class="editor-body">
+
+    <!-- Canvas (WYSIWYG mock) -->
+    <div class="ed-canvas">
+      <div class="ed-canvas-toolbar">
+        <button class="ed-tool" type="button" title="Heading 2">H2</button>
+        <button class="ed-tool" type="button" title="Heading 3">H3</button>
+        <div class="ed-tool-divider"></div>
+        <button class="ed-tool bold" type="button" title="Bold">B</button>
+        <button class="ed-tool" type="button" title="Italic"><em>I</em></button>
+        <button class="ed-tool" type="button" title="Link">🔗 Link</button>
+        <div class="ed-tool-divider"></div>
+        <button class="ed-tool" type="button" title="Image">🖼 Image</button>
+        <button class="ed-tool" type="button" title="Quote">❝</button>
+        <button class="ed-tool" type="button" title="Bullet list">• List</button>
+        <div class="ed-tool-divider"></div>
+        <button class="ed-tool" type="button" title="FAQ block">FAQ</button>
+        <button class="ed-tool" type="button" title="Product embed">MoMo</button>
+        <span class="ed-tool-spacer"></span>
+        <span class="ed-word-count" id="edWordCount">0 words</span>
+      </div>
+      <div class="ed-canvas-content" id="edCanvasContent" contenteditable="false">
+        <!-- injected by openEditor -->
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="ed-sidebar">
+      <div class="ed-tabs" role="tablist">
+        <button class="ed-tab active" data-tab="seo-audit" type="button" onclick="switchEditorTab('seo-audit')">
+          <span class="ed-tab-icon">◎</span>
+          <span>SEO Audit</span>
+          <span class="ed-tab-badge" id="edAuditBadge" style="display:none">!</span>
+        </button>
+        <button class="ed-tab" data-tab="document" type="button" onclick="switchEditorTab('document')">
+          <span class="ed-tab-icon">▤</span>
+          <span>Document</span>
+        </button>
+        <button class="ed-tab" data-tab="links" type="button" onclick="switchEditorTab('links')">
+          <span class="ed-tab-icon">⤳</span>
+          <span>Internal Links</span>
+        </button>
+        <button class="ed-tab" data-tab="media" type="button" onclick="switchEditorTab('media')">
+          <span class="ed-tab-icon">▣</span>
+          <span>Media</span>
+        </button>
+      </div>
+      <div class="ed-tab-body" id="edTabBody">
+        <!-- injected by switchEditorTab -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* ─── DATA ─────────────────────────────────────────────────────────────────── */
 const MERCHANT_ENTITIES = [
-  {
-    id:'tiem-mi-chu-cao', name:'Tiệm Mì Chú Cao', category:'F&B', location:'Quận 5, TP.HCM',
-    primary:{kw:'tiệm mì chú cao',vol:22000}, secondaries:[
-      {kw:'menu mì chú cao',vol:7400}, {kw:'tiệm mì chú cao ở đâu',vol:5300},
-      {kw:'tiệm mì chú cao ví trả sau momo',vol:3100}
-    ],
-    contentStatus:'outline-review',
-    context:'Mì Hoa, hủ tiếu, ăn tại chỗ, giao hàng và thanh toán MoMo.'
-  },
-  {
-    id:'highlands-coffee', name:'Highlands Coffee', category:'Café', location:'Toàn quốc',
-    primary:{kw:'highlands coffee',vol:368000}, secondaries:[
-      {kw:'menu highlands coffee',vol:110000}, {kw:'highlands coffee gần đây',vol:74000},
-      {kw:'highlands coffee thanh toán momo',vol:49000}
-    ],
-    contentStatus:'published',
-    context:'Chuỗi café với menu, chi nhánh, ưu đãi và thanh toán tại quầy.'
-  },
-  {
-    id:'starbucks-reserve', name:'Starbucks Reserve', category:'Café', location:'Quận 1, TP.HCM',
-    primary:{kw:'starbucks reserve',vol:246000}, secondaries:[
-      {kw:'menu starbucks reserve',vol:90000}, {kw:'starbucks reserve saigon',vol:49000},
-      {kw:'starbucks thanh toán momo',vol:27000}
-    ],
-    contentStatus:'draft',
-    context:'Café trải nghiệm cao cấp, menu theo mùa, đặt hàng và thanh toán số.'
-  },
-  {
-    id:'kfc', name:'KFC', category:'F&B', location:'Toàn quốc',
-    primary:{kw:'kfc',vol:201000}, secondaries:[
-      {kw:'menu kfc',vol:74000}, {kw:'kfc gần đây',vol:60000},
-      {kw:'kfc thanh toán momo',vol:36000}
-    ],
-    contentStatus:'none',
-    context:'Chuỗi thức ăn nhanh với menu, cửa hàng gần nhất, ưu đãi và giao hàng.'
-  },
-  {
-    id:'phuc-long', name:'Phúc Long', category:'Café', location:'Toàn quốc',
-    primary:{kw:'phúc long',vol:301000}, secondaries:[
-      {kw:'menu phúc long',vol:110000}, {kw:'phúc long gần đây',vol:67000},
-      {kw:'phúc long thanh toán momo',vol:40000}
-    ],
-    contentStatus:'published',
-    context:'Chuỗi trà và café với menu, chi nhánh, chương trình thành viên và thanh toán số.'
-  }
+  { id:'bun-thit-nuong-chi-tuyen', name:'Bún thịt nướng Chị Tuyền', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bún thịt nướng chị tuyền',vol:8100}, secondaries:[], contentStatus:'none',
+    context:'Quán bún thịt nướng - thanh toán MoMo tại quầy.' },
+  { id:'com-tam-ong-khoi-dieu', name:'Cơm Tấm Ống Khói Điệu', category:'F&B', location:'Việt Nam',
+    primary:{kw:'cơm tấm ống khói điệu',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Quán cơm tấm - thanh toán MoMo tại quầy.' },
+  { id:'hu-tieu-my-tho-thanh-xuan', name:'Hủ tiếu Mỹ Tho Thanh Xuân', category:'F&B', location:'Việt Nam',
+    primary:{kw:'hủ tiếu mỹ tho thanh xuân',vol:1300}, secondaries:[], contentStatus:'none',
+    context:'Hủ tiếu Mỹ Tho đặc trưng - thanh toán MoMo tại quầy.' },
+  { id:'banh-uot-cay-me', name:'Bánh ướt Cây Me', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bánh ướt cây me',vol:480}, secondaries:[], contentStatus:'none',
+    context:'Bánh ướt truyền thống - thanh toán MoMo tại quầy.' },
+  { id:'mi-xao-gion-a-ty', name:'Mì Xào Giòn A Tỷ', category:'F&B', location:'Việt Nam',
+    primary:{kw:'mì xào giòn a tỷ',vol:170}, secondaries:[], contentStatus:'none',
+    context:'Mì xào giòn kiểu Hoa - thanh toán MoMo tại quầy.' },
+  { id:'hu-tieu-nam-vang-ong-hai-bau', name:'Hủ tiếu Nam Vang Ông Hai Bầu', category:'F&B', location:'Việt Nam',
+    primary:{kw:'hủ tiếu nam vang ông hai bầu',vol:390}, secondaries:[], contentStatus:'none',
+    context:'Hủ tiếu Nam Vang - thanh toán MoMo tại quầy.' },
+  { id:'quan-com-chu-lun', name:'Quán Cơm Chú Lùn', category:'F&B', location:'Việt Nam',
+    primary:{kw:'quán cơm chú lùn',vol:320}, secondaries:[], contentStatus:'none',
+    context:'Quán cơm bình dân - thanh toán MoMo tại quầy.' },
+  { id:'huong-giang-bakery', name:'Hương Giang Bakery', category:'Bakery', location:'Việt Nam',
+    primary:{kw:'hương giang bakery',vol:320}, secondaries:[], contentStatus:'none',
+    context:'Tiệm bánh - thanh toán MoMo tại quầy.' },
+  { id:'hu-tieu-nam-vang-69', name:'Hủ tiếu Nam Vang 69', category:'F&B', location:'Việt Nam',
+    primary:{kw:'hủ tiếu nam vang 69',vol:110}, secondaries:[], contentStatus:'none',
+    context:'Hủ tiếu Nam Vang - thanh toán MoMo tại quầy.' },
+  { id:'cha-gio-phuong', name:'Chả giò Phượng', category:'F&B', location:'Việt Nam',
+    primary:{kw:'chả giò phượng',vol:90}, secondaries:[], contentStatus:'none',
+    context:'Chả giò - thanh toán MoMo tại quầy.' },
+  { id:'hai-san-ngo-tho', name:'Hải sản Ngô Thơ', category:'F&B', location:'Việt Nam',
+    primary:{kw:'hải sản ngô thơ',vol:70}, secondaries:[], contentStatus:'none',
+    context:'Quán hải sản - thanh toán MoMo tại quầy.' },
+  { id:'cha-ruoi-hang-beo', name:'Chả rươi Hằng Béo', category:'F&B', location:'Việt Nam',
+    primary:{kw:'chả rươi hằng béo',vol:30}, secondaries:[], contentStatus:'none',
+    context:'Chả rươi miền Bắc - thanh toán MoMo tại quầy.' },
+  { id:'banh-mi-huu-liem', name:'Bánh mì Hữu Liêm', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bánh mì hữu liêm',vol:20}, secondaries:[], contentStatus:'none',
+    context:'Bánh mì truyền thống - thanh toán MoMo tại quầy.' },
+  { id:'tiem-mi-chu-cao', name:'Tiệm Mì Chú Cao', category:'F&B', location:'Việt Nam',
+    primary:{kw:'tiệm mì chú cao',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Mì Hoa kiểu cũ - thanh toán MoMo tại quầy.' },
+  { id:'bun-ca-tu-lun', name:'Bún cá Tư Lùn', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bún cá tư lùn',vol:90}, secondaries:[], contentStatus:'none',
+    context:'Bún cá đặc trưng - thanh toán MoMo tại quầy.' },
+  { id:'tra-da-manh-nhay', name:'Trà đá Mạnh Nháy', category:'Drinks', location:'Việt Nam',
+    primary:{kw:'trà đá mạnh nháy',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Trà đá vỉa hè - thanh toán MoMo tại quầy.' },
+  { id:'xoi-truong', name:'Xôi Trường', category:'F&B', location:'Việt Nam',
+    primary:{kw:'xôi trường',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Quán xôi truyền thống - thanh toán MoMo tại quầy.' },
+  { id:'banh-mi-cay-khanh-nap', name:'Bánh mì cay Khánh Nạp', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bánh mì cay khánh nạp',vol:720}, secondaries:[], contentStatus:'none',
+    context:'Bánh mì cay Hải Phòng - thanh toán MoMo tại quầy.' },
+  { id:'bun-cha-co-huong', name:'Bún Chả Cô Hường', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bún chả cô hường',vol:20}, secondaries:[], contentStatus:'none',
+    context:'Bún chả Hà Nội - thanh toán MoMo tại quầy.' },
+  { id:'bo-nhung-mam-ruoc-8-con', name:'Bò nhúng Mắm ruốc 8 Còn', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bò nhúng mắm ruốc 8 còn',vol:2900}, secondaries:[], contentStatus:'none',
+    context:'Bò nhúng mắm ruốc - thanh toán MoMo tại quầy.' },
+  { id:'bo-la-lot-mo-chai-chi-hang', name:'Bò lá lốt mỡ chài chị Hằng', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bò lá lốt mỡ chài chị hằng',vol:320}, secondaries:[], contentStatus:'none',
+    context:'Bò lá lốt mỡ chài - thanh toán MoMo tại quầy.' },
+  { id:'bun-thit-nuong-co-be', name:'Bún thịt nướng cô Bế', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bún thịt nướng cô bế',vol:170}, secondaries:[], contentStatus:'none',
+    context:'Bún thịt nướng - thanh toán MoMo tại quầy.' },
+  { id:'mien-luon-chan-cam', name:'Miến lươn chân cầm', category:'F&B', location:'Việt Nam',
+    primary:{kw:'miến lươn chân cầm',vol:6600}, secondaries:[], contentStatus:'none',
+    context:'Miến lươn Hà Nội - thanh toán MoMo tại quầy.' },
+  { id:'mi-cuong-thu', name:'Mì Cường Thư', category:'F&B', location:'Việt Nam',
+    primary:{kw:'mì cường thư',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Quán mì truyền thống - thanh toán MoMo tại quầy.' },
+  { id:'tiem-che-huu-hoa', name:'Tiệm Chè Hữu Hòa', category:'Dessert', location:'Việt Nam',
+    primary:{kw:'tiệm chè hữu hòa',vol:390}, secondaries:[], contentStatus:'none',
+    context:'Quán chè cổ truyền - thanh toán MoMo tại quầy.' },
+  { id:'mien-ga-co-nhan', name:'Miến Gà Cô Nhẫn', category:'F&B', location:'Việt Nam',
+    primary:{kw:'miến gà cô nhẫn',vol:30}, secondaries:[], contentStatus:'none',
+    context:'Miến gà Hà Nội - thanh toán MoMo tại quầy.' },
+  { id:'com-tam-di-duc', name:'Cơm Tấm Dì Đức', category:'F&B', location:'Việt Nam',
+    primary:{kw:'cơm tấm dì đức',vol:390}, secondaries:[], contentStatus:'none',
+    context:'Cơm tấm Sài Gòn - thanh toán MoMo tại quầy.' },
+  { id:'banh-beo-banh-bot-loc-co-hai-thuong', name:'Bánh Bèo Bánh Bột Lộc Cô Hai Thương', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bánh bèo bánh bột lộc cô hai thương',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Bánh bèo bánh bột lộc Huế - thanh toán MoMo tại quầy.' },
+  { id:'chao-bo-o-lien', name:'Cháo Bò O Liên', category:'F&B', location:'Việt Nam',
+    primary:{kw:'cháo bò o liên',vol:40}, secondaries:[], contentStatus:'none',
+    context:'Cháo bò - thanh toán MoMo tại quầy.' },
+  { id:'bun-cha-ca-hon', name:'Bún Chả Cá Hờn', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bún chả cá hờn',vol:3600}, secondaries:[], contentStatus:'none',
+    context:'Bún chả cá miền Trung - thanh toán MoMo tại quầy.' },
+  { id:'bun-mam-di-lien', name:'Bún Mắm Dì Liên', category:'F&B', location:'Việt Nam',
+    primary:{kw:'bún mắm dì liên',vol:480}, secondaries:[], contentStatus:'none',
+    context:'Bún mắm miền Tây - thanh toán MoMo tại quầy.' },
+  { id:'chao-suon-co-la', name:'Cháo Sườn Cô Là', category:'F&B', location:'Việt Nam',
+    primary:{kw:'cháo sườn cô là',vol:2900}, secondaries:[], contentStatus:'none',
+    context:'Cháo sườn - thanh toán MoMo tại quầy.' },
+  { id:'gio-cha-ba-binh', name:'Giò Chả Bà Bính', category:'F&B', location:'Việt Nam',
+    primary:{kw:'giò chả bà bính',vol:50}, secondaries:[], contentStatus:'none',
+    context:'Giò chả truyền thống - thanh toán MoMo tại quầy.' },
+  { id:'nom-bo-kho-long-vi-dung', name:'Nộm Bò Khô Long Vi Dung', category:'F&B', location:'Việt Nam',
+    primary:{kw:'nộm bò khô long vi dung',vol:1000}, secondaries:[], contentStatus:'none',
+    context:'Nộm bò khô Hà Nội - thanh toán MoMo tại quầy.' },
+  { id:'hang-che-ba-thom', name:'Hàng Chè Bà Thơm', category:'Dessert', location:'Việt Nam',
+    primary:{kw:'hàng chè bà thơm',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Hàng chè cổ truyền - thanh toán MoMo tại quầy.' },
+  { id:'cafe-bot-long-ly', name:'Cafe Bọt Long Lý', category:'Café', location:'Việt Nam',
+    primary:{kw:'cafe bọt long lý',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Cafe bọt - thanh toán MoMo tại quầy.' },
+  { id:'luon-xuan-leo', name:'Lươn Xuân Leo', category:'F&B', location:'Việt Nam',
+    primary:{kw:'lươn xuân leo',vol:20}, secondaries:[], contentStatus:'none',
+    context:'Quán lươn miền Trung - thanh toán MoMo tại quầy.' },
+  { id:'nem-chua-phuong-chi-le', name:'Nem Chua Phương Chi Lê', category:'F&B', location:'Việt Nam',
+    primary:{kw:'nem chua phương chi lê',vol:10}, secondaries:[], contentStatus:'none',
+    context:'Nem chua - thanh toán MoMo tại quầy.' }
 ];
 
 function merchantInventory(merchant) {
@@ -1189,7 +2079,7 @@ const MERCHANT_STATUS_LABEL = {
   published:        'Published',
 };
 const MERCHANT_ACTION_LABEL = {
-  none:             'Viết Bài',
+  none:             'Write',
   outline:          'Duyệt Outline',
   'outline-review': 'Tạo Draft',
   draft:            'Duyệt Draft',
@@ -1214,6 +2104,7 @@ let openThemes      = {};
 let openClusters    = {};
 let openKeywords    = {};
 let openMerchantTopics = {};
+let renderPrimaryRow = null;
 // wizState replaces old aiContext (declared in wizard section)
 let crudContext     = null;
 const CRUD_STORAGE_KEY = 'mospark-topic-inventory-v1';
@@ -1247,6 +2138,18 @@ function getProjectKeywordCount(p) {
   }
   return projKwTotal(p) + projSecondaryTotal(p);
 }
+function getProjectContentStats(p) {
+  if (p.isDistributed) {
+    const total = p.merchants.length;
+    const pending = p.merchants.filter(merchant => (merchant.contentStatus || 'none') !== 'published').length;
+    return {total, pending};
+  }
+  const articles = p.clusters.flatMap(cluster => cluster.keywords || []);
+  return {
+    total:articles.length,
+    pending:articles.filter(primary => (primary.status || 'none') !== 'published').length,
+  };
+}
 function rankClass(r) {
   if (r === null || r === undefined) return 'r-none';
   if (r <= 3)  return 'r-top3';
@@ -1264,27 +2167,30 @@ function getClusterTheme(cluster) {
 }
 
 function normalizeClusterKeywords(cluster) {
-  const flattened = [];
+  const primaries = [];
   const seen = new Set();
-  cluster.keywords.forEach(keyword => {
-    const candidates = [{...keyword, secondaries:undefined}, ...(keyword.secondaries || []).map(secondary => ({
-      ...secondary, status:'none', rank:null, intent:keyword.intent || 'info', isPrimary:false,
-    }))];
-    candidates.forEach(candidate => {
-      const key = candidate.kw?.trim().toLowerCase();
-      if (!key || seen.has(key)) return;
-      seen.add(key);
-      flattened.push(candidate);
+  (cluster.keywords || []).forEach(keyword => {
+    const key = keyword.kw?.trim().toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    const secondarySeen = new Set();
+    const secondaries = (keyword.secondaries || []).filter(secondary => {
+      const secondaryKey = secondary.kw?.trim().toLowerCase();
+      if (!secondaryKey || secondarySeen.has(secondaryKey) || secondaryKey === key) return false;
+      secondarySeen.add(secondaryKey);
+      return true;
+    }).map(secondary => ({kw:secondary.kw, vol:Number(secondary.vol || 0)}));
+    primaries.push({
+      ...keyword,
+      vol:Number(keyword.vol || 0),
+      status:keyword.status || 'none',
+      rank:keyword.rank ?? null,
+      intent:keyword.intent || 'info',
+      isPrimary:true,
+      secondaries,
     });
   });
-  if (!flattened.length) return;
-  let primaryIndex = flattened.findIndex(keyword => keyword.isPrimary);
-  if (primaryIndex < 0) {
-    primaryIndex = flattened.reduce((bestIndex, keyword, index, keywords) =>
-      Number(keyword.vol) > Number(keywords[bestIndex].vol) ? index : bestIndex, 0);
-  }
-  flattened.forEach((keyword, index) => { keyword.isPrimary = index === primaryIndex; });
-  cluster.keywords = flattened;
+  cluster.keywords = primaries;
 }
 
 function prepareProjectForCrud(project) {
@@ -1303,7 +2209,7 @@ function restoreProjectData(project) {
   if (!Array.isArray(stored)) return false;
   project.clusters = stored;
   prepareProjectForCrud(project);
-  project.vol = project.clusters.reduce((sum, cluster) => sum + Number(cluster.vol || 0), 0);
+  recalculateProject(project);
   return true;
 }
 
@@ -1315,7 +2221,9 @@ function saveProjectData(project) {
 
 function recalculateProject(project) {
   project.clusters.forEach(cluster => {
-    cluster.vol = cluster.keywords.reduce((sum, keyword) => sum + Number(keyword.vol || 0), 0);
+    cluster.vol = cluster.keywords.reduce((sum, primary) =>
+      sum + Number(primary.vol || 0) + (primary.secondaries || []).reduce((secondarySum, secondary) =>
+        secondarySum + Number(secondary.vol || 0), 0), 0);
   });
   project.vol = project.clusters.reduce((sum, cluster) => sum + cluster.vol, 0);
 }
@@ -1392,7 +2300,9 @@ function hydrateKeywordResearch(project, rows) {
     }
     const cluster = clusters.get(key);
     cluster.vol += volume;
-    cluster.keywords.push({kw:keyword, vol:volume, status:'none', rank:null, intent:'info'});
+    cluster.keywords.push({
+      kw:keyword, vol:volume, status:'none', rank:null, intent:'info', isPrimary:true, secondaries:[],
+    });
   });
   project.clusters = [...clusters.values()];
   prepareProjectForCrud(project);
@@ -1460,12 +2370,18 @@ function renderProjectList() {
     const sovPct = p.sov !== null ? Math.min(p.sov / p.targetSov * 100, 100) : 0;
     const wc     = projKwPublished(p), tot = projKwTotal(p);
     const wpct   = tot > 0 ? Math.round(wc / tot * 100) : 0;
+    const content = getProjectContentStats(p);
     return `<div class="pi${selectedProject?.id===p.id?' sel':''}" onclick="selectProject('${p.id}')">
       <div class="pi-top">
         <div class="pi-name">${p.name}</div>
       </div>
       <div class="pi-division">${p.division}</div>
-      <div class="pi-inventory"><strong>${fmtVol(p.vol)}</strong><span>/tháng</span></div>
+      <div class="pi-stats">
+        <div class="pi-inventory"><strong>${fmtVol(p.vol)}</strong><span>/tháng</span></div>
+        <div class="pi-content-count${content.pending === 0 ? ' done' : ''}" title="${content.pending}/${content.total} content chưa xuất bản">
+          <strong>${content.pending}</strong><span>content cần viết</span>
+        </div>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1484,6 +2400,7 @@ function selectProject(id) {
   }
   openThemes = {};
   openClusters = {};
+  openKeywords = {};
   openMerchantTopics = {};
   renderProjectList();
   document.getElementById('emptyState').style.display = 'none';
@@ -1498,65 +2415,49 @@ function buildMerchantRows(merchants, project) {
   if (!merchants.length) return '<div class="cp-empty">Chưa có Merchant nào trong Content Plan.</div>';
   return merchants.map((merchant, index) => {
     const merchantOpen = openMerchantTopics[merchant.id] ?? index === 0;
-    const articleId = `merchant-${merchant.id}`;
-    const articleOpen = !!openClusters[articleId];
     const totalVolume = merchantInventory(merchant);
+    const topicCluster = merchantTopicCluster(merchant);
+    const topicClusterLabel = topicCluster.trim().toLowerCase() === merchant.name.trim().toLowerCase()
+      ? '1 Topic Cluster'
+      : topicCluster;
     const status = merchant.contentStatus || 'none';
     const actionLabel = status === 'published' ? 'Xem Bài' : MERCHANT_ACTION_LABEL[status];
-    const secondaryRows = merchant.secondaries.map((keyword, keywordIndex) => `<div class="ti-keyword-row">
-      <span></span>
+    const secondaryRows = merchant.secondaries.map((keyword, keywordIndex) => `<div class="ti-keyword-row merchant-keyword-row">
+      <span>Secondary</span>
       <span></span>
       <span class="ti-keyword-name">${escapeHTML(keyword.kw)}</span>
-      <span class="ti-keyword-volume">${Number(keyword.vol).toLocaleString('en-US')}</span>
+      <div class="ti-volume-cell"><strong>${Number(keyword.vol).toLocaleString('en-US')}</strong></div>
       <div class="ti-row-actions">
-        <span class="ti-secondary-role">Cùng bài viết</span>
         <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchantKeyword('${merchant.id}',${keywordIndex})" title="Sửa Secondary Keyword">✎</button>
         <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchantKeyword('${merchant.id}',${keywordIndex})" title="Xóa Secondary Keyword">×</button>
       </div>
     </div>`).join('');
 
     return `<div class="ti-theme${merchantOpen ? ' open' : ''}" id="merchant-theme-${merchant.id}">
-      <div class="ti-theme-row" onclick="toggleMerchantKeywords('${merchant.id}')">
+      <div class="ti-theme-row merchant-theme-row" onclick="toggleMerchantKeywords('${merchant.id}')">
         <div class="ti-theme-main">
           <span class="ti-arrow">▶</span>
           <span class="ti-theme-name" title="${escapeHTML(merchant.name)}">${escapeHTML(merchant.name)}</span>
-          <span class="ti-theme-tools">
-            <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchant('${merchant.id}')" title="Sửa Merchant">✎</button>
-            <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchant('${merchant.id}')" title="Xóa Merchant">×</button>
-          </span>
         </div>
-        <span class="ti-count">1 topic cluster</span>
-        <span class="ti-count">1 bài viết AI</span>
-        <span class="ti-volume">${totalVolume.toLocaleString('en-US')}</span>
-        <span class="ti-article-meta"><strong>${status === 'published' ? '1/1' : '0/1'}</strong> đã xuất bản</span>
+        <div class="ti-cell-meta"><strong title="${escapeHTML(topicCluster)}">${escapeHTML(topicClusterLabel)}</strong></div>
+        <div class="ti-primary-cell">
+          <span class="ti-primary-kw" title="${escapeHTML(merchant.primary.kw)}">${escapeHTML(merchant.primary.kw)}</span>
+          <span class="ti-secondary-pill">${merchant.secondaries.length} Secondary</span>
+        </div>
+        <div class="ti-volume-cell"><strong>${totalVolume.toLocaleString('en-US')}</strong></div>
+        <div class="ti-row-actions">
+          <button class="ti-action${status === 'published' ? ' published' : ''}" onclick="event.stopPropagation();advanceMerchantContentInline('${merchant.id}')"><span class="ai-mark">✦</span> ${actionLabel}</button>
+          <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchant('${merchant.id}')" title="Sửa Merchant">✎</button>
+          <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchant('${merchant.id}')" title="Xóa Merchant">×</button>
+        </div>
       </div>
       <div class="ti-theme-body">
-        <div class="ti-cluster${articleOpen ? ' open' : ''}" id="cc-${articleId}">
-          <div class="merchant-article-compact" onclick="toggleCluster('${articleId}')">
-            <span class="ti-arrow">▶</span>
-            <div class="merchant-article-block merchant-article-topic">
-              <span class="merchant-article-label">Topic Cluster</span>
-              <span class="merchant-article-value" title="${escapeHTML(merchantTopicCluster(merchant))}">${escapeHTML(merchantTopicCluster(merchant))}</span>
-            </div>
-            <div class="merchant-article-block merchant-article-primary">
-              <span class="merchant-article-label">Primary Keyword</span>
-              <span class="merchant-article-value">${escapeHTML(merchant.primary.kw)}</span>
-              <span class="merchant-article-sub">${Number(merchant.primary.vol).toLocaleString('en-US')}/tháng</span>
-            </div>
-            <span class="merchant-secondary-count">+${merchant.secondaries.length} Secondary</span>
-            <div class="ti-row-actions">
-              <button class="ti-action${status === 'published' ? ' published' : ''}" onclick="event.stopPropagation();advanceMerchantContentInline('${merchant.id}')">${actionLabel}</button>
-              <button class="ti-icon-btn" onclick="event.stopPropagation();openEditMerchant('${merchant.id}')" title="Sửa Merchant">✎</button>
-              <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteMerchant('${merchant.id}')" title="Xóa Merchant">×</button>
-            </div>
+        <div class="merchant-secondary-panel">
+          <div class="ti-secondary-toolbar">
+            <span>${merchant.secondaries.length} Secondary Keywords</span>
+            <button class="ti-add-secondary" onclick="openCreateMerchantKeyword('${merchant.id}')">+ Secondary Keyword</button>
           </div>
-          <div class="ti-keywords">
-            <div class="ti-secondary-toolbar">
-              <span>${merchant.secondaries.length} Secondary Keywords trong cùng bài</span>
-              <button class="ti-add-secondary" onclick="openCreateMerchantKeyword('${merchant.id}')">+ Secondary Keyword</button>
-            </div>
-            ${secondaryRows || '<div class="cp-empty">Bài viết này chưa có Secondary Keyword.</div>'}
-          </div>
+          ${secondaryRows}
         </div>
       </div>
     </div>`;
@@ -1576,23 +2477,20 @@ function buildMerchantDirectory(project) {
       <section class="topic-overview">
         <div class="topic-head">
           <div>
-            <span class="topic-title">Merchant Content Plan</span>
-            <div class="topic-source">1 Brand = 1 Topic Cluster đặc thù = 1 Primary Keyword = 1 bài viết AI</div>
+            <span class="topic-title">Content Plan</span>
+            <div class="topic-source">Merchant &gt; Topic Cluster &gt; Primary Keyword &gt; Secondary Keyword</div>
           </div>
           <div class="topic-actions">
             <div class="topic-summary">
               <span>Merchants <strong>${merchants.length}</strong></span>
-              <span>AI Articles <strong>${published}/${merchants.length}</strong></span>
+              <span><span class="ai-mark">✦</span> Content <strong>${published}/${merchants.length}</strong></span>
               <span>Keywords <strong>${keywordCount.toLocaleString('en-US')}</strong></span>
-              <span>Total Volume <strong>${Number(project.vol).toLocaleString('en-US')}/tháng</strong></span>
+              <span>Monthly Volume <strong>${Number(project.vol).toLocaleString('en-US')}</strong></span>
             </div>
             <button class="topic-create" onclick="openCreateMerchant()">+ Thêm Merchant</button>
           </div>
         </div>
-        <div class="theme-inventory">
-          <div class="ti-head">
-            <span>Merchant</span><span>Topic Cluster</span><span>Primary Keyword</span><span>Volume</span><span>AI Article</span>
-          </div>
+        <div class="theme-inventory merchant-inventory" aria-label="Merchant content hierarchy">
           ${buildMerchantRows(merchants, project)}
         </div>
       </section>
@@ -1622,32 +2520,45 @@ function advanceMerchantContentInline(merchantId) {
 }
 
 /* ─── BUILD DETAIL ───────────────────────────────────────────────────────── */
-function getClusterArticle(cluster) {
-  if (!cluster.keywords.length) return null;
-  let primaryIndex = cluster.keywords.findIndex(keyword => keyword.isPrimary);
-  if (primaryIndex < 0) {
-    primaryIndex = cluster.keywords.reduce((bestIndex, keyword, index, keywords) =>
-      keyword.vol > keywords[bestIndex].vol ? index : bestIndex, 0);
-  }
-  const primary = cluster.keywords[primaryIndex];
-  const secondaryCandidates = [
-    ...(primary.secondaries || []),
-    ...cluster.keywords.filter((_, index) => index !== primaryIndex),
-  ];
-  const seen = new Set([primary.kw.trim().toLowerCase()]);
-  const secondaries = secondaryCandidates.filter(keyword => {
-    const key = keyword.kw.trim().toLowerCase();
-    if (!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  }).sort((a, b) => b.vol - a.vol);
-  return {primary, primaryIndex, secondaries};
+function getArticleAction(keyword) {
+  if (keyword.status === 'published') return {label:'View', className:' published'};
+  if (keyword.status && keyword.status !== 'none') return {label:'Continue', className:''};
+  return {label:'Write', className:''};
 }
 
-function getArticleAction(keyword) {
-  if (keyword.status === 'published') return {label:'Xem Bài', className:' published'};
-  if (keyword.status && keyword.status !== 'none') return {label:'Tiếp Tục', className:''};
-  return {label:'Viết Bài', className:''};
+/* Mock SERP ranking per keyword (deterministic seed based on string hash).
+   Prototype only - production sẽ fetch từ GSC/Profound. */
+function getMockRanking(keyword) {
+  if (!keyword) return null;
+  const str = String(keyword).toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  const seed = Math.abs(hash) % 100;
+  if (seed < 12) return null; // out of top 100
+  if (seed < 22) return Math.floor(seed / 4) + 1; // 1-5 (Top 3-ish)
+  if (seed < 42) return Math.floor((seed - 22) / 2) + 6; // 6-15
+  if (seed < 70) return Math.floor((seed - 42) / 1.5) + 16; // 16-34
+  return Math.floor(seed) + 5; // 75-100ish
+}
+function rankPillHTML(rank) {
+  if (rank === null || rank === undefined) {
+    return `<span class="ti-rank-pill out" title="Ngoài Top 100">Out</span>`;
+  }
+  const cls = rank <= 3 ? 'top3' : rank <= 10 ? 'top10' : rank <= 30 ? 'top30' : 'top100';
+  return `<span class="ti-rank-pill ${cls}" title="Vị trí trung bình Google SERP"><small>#</small>${rank}</span>`;
+}
+/* Aggregate ranking cho cluster: dùng ranking của primary keyword */
+function clusterRanking(cluster) {
+  const primary = (cluster.keywords && cluster.keywords[0]) || null;
+  return getMockRanking(primary && primary.kw);
+}
+/* Aggregate cho theme: best ranking trong tất cả primary keywords */
+function themeRanking(theme) {
+  const ranks = theme.clusters
+    .map(c => getMockRanking(((c.keywords||[])[0]||{}).kw))
+    .filter(r => r !== null);
+  if (!ranks.length) return null;
+  return Math.min(...ranks);
 }
 
 function buildDetail(p) {
@@ -1662,92 +2573,122 @@ function buildDetail(p) {
   });
 
   const themes = [...themeMap.entries()].map(([name, clusters], index) => {
-    const articles = clusters.map(getClusterArticle).filter(Boolean);
+    const primaries = clusters.flatMap(cluster => cluster.keywords || []);
     return {
       id:`theme-${p.id}-${index}`,
       name,
       clusters,
-      articles:articles.length,
-      published:articles.filter(article => article.primary.status === 'published').length,
+      articles:primaries.length,
+      published:primaries.filter(primary => primary.status === 'published').length,
       volume:clusters.reduce((sum, cluster) => sum + cluster.vol, 0),
-      keywords:clusters.reduce((sum, cluster) => sum + cluster.keywords.length, 0),
+      keywords:clusters.reduce((sum, cluster) => sum + cluster.keywords.reduce((keywordSum, primary) =>
+        keywordSum + 1 + (primary.secondaries?.length || 0), 0), 0),
     };
   }).sort((a, b) => b.volume - a.volume);
 
-  const totalArticles = p.clusters.filter(cluster => getClusterArticle(cluster)).length;
-  const publishedArticles = p.clusters.filter(cluster => getClusterArticle(cluster)?.primary.status === 'published').length;
-  const totalKeywords = p.clusters.reduce((sum, cluster) => sum + cluster.keywords.length, 0);
+  const totalArticles = p.clusters.reduce((sum, cluster) => sum + cluster.keywords.length, 0);
+  const publishedArticles = p.clusters.reduce((sum, cluster) =>
+    sum + cluster.keywords.filter(primary => primary.status === 'published').length, 0);
+  const totalKeywords = getProjectKeywordCount(p);
   const totalVolume = p.clusters.reduce((sum, cluster) => sum + cluster.vol, 0);
 
-  const renderCluster = cluster => {
-    const article = getClusterArticle(cluster);
-    if (!article) return '';
-    const {primary, primaryIndex, secondaries} = article;
+  /* Hierarchical render: Theme row → expand to Cluster rows → expand to Secondary KWs.
+     Each Cluster row carries its Primary Keyword inline (1 primary per cluster). */
+  const renderCluster = (cluster) => {
+    const primary = cluster.keywords[0] || { kw:'(chưa có)', vol:0, status:'none', secondaries:[] };
+    const secondaries = primary.secondaries || [];
     const isOpen = !!openClusters[cluster.id];
     const action = getArticleAction(primary);
     const actionHandler = primary.status === 'published'
-      ? `viewArticle('${p.id}','${cluster.id}',${primaryIndex})`
-      : `openAIPanel('${p.id}','${cluster.id}',${primaryIndex})`;
-    const secondaryRows = secondaries.map(keyword => {
-      const keywordIndex = cluster.keywords.indexOf(keyword);
-      return `<div class="ti-keyword-row">
+      ? `viewArticle('${p.id}','${cluster.id}',0)`
+      : `openAIPanel('${p.id}','${cluster.id}',0)`;
+    const statusLabel = {
+      'published':'Đã xuất bản', 'draft':'Bản nháp', 'outline':'Outline review',
+      'outline-review':'Outline review', 'draft-review':'Review bản nháp', 'none':'Chưa tạo'
+    };
+    const sLbl = statusLabel[primary.status] || 'Chưa tạo';
+    const sClass = primary.status === 'published' ? 'published'
+                 : primary.status === 'draft' || primary.status === 'draft-review' ? 'draft'
+                 : (primary.status && primary.status !== 'none') ? 'outline'
+                 : 'none';
+
+    const secondaryRows = secondaries.map((secondary, secondaryIndex) => `<div class="ti-keyword-row">
+      <span class="ti-keyword-name" title="${escapeHTML(secondary.kw)}">${escapeHTML(secondary.kw)}</span>
+      <span class="ti-secondary-role">Secondary</span>
+      <div class="ti-volume-cell"><strong>${Number(secondary.vol).toLocaleString('en-US')}</strong></div>
+      <div class="ti-rank-cell">${rankPillHTML(getMockRanking(secondary.kw))}</div>
       <span></span>
-      <span></span>
-      <span class="ti-keyword-name">${escapeHTML(keyword.kw)}</span>
-      <span class="ti-keyword-volume">${Number(keyword.vol).toLocaleString('en-US')}</span>
       <div class="ti-row-actions">
-        <span class="ti-secondary-role">Cùng bài viết</span>
-        <button class="ti-icon-btn" onclick="event.stopPropagation();openEditKeyword('${p.id}','${cluster.id}',${keywordIndex})" title="Sửa Secondary Keyword">✎</button>
-        <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteKeyword('${p.id}','${cluster.id}',${keywordIndex})" title="Xóa Secondary Keyword">×</button>
+        <button class="ti-icon-btn" onclick="event.stopPropagation();openEditSecondaryKeyword('${p.id}','${cluster.id}',0,${secondaryIndex})" title="Sửa Secondary Keyword">✎</button>
+        <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteSecondaryKeyword('${p.id}','${cluster.id}',0,${secondaryIndex})" title="Xóa Secondary Keyword">×</button>
       </div>
-    </div>`;
-    }).join('');
+    </div>`).join('');
 
     return `<div class="ti-cluster${isOpen ? ' open' : ''}" id="cc-${cluster.id}">
       <div class="ti-cluster-row" onclick="toggleCluster('${cluster.id}')">
-        <span class="ti-cluster-indent">└</span>
         <div class="ti-cluster-main">
           <span class="ti-arrow">▶</span>
+          ${cluster.funnel ? `<span class="ti-cluster-funnel">${cluster.funnel.toUpperCase()}</span>` : ''}
           <span class="ti-cluster-name" title="${escapeHTML(cluster.name)}">${escapeHTML(cluster.name)}</span>
         </div>
-        <div class="ti-primary">
-          <strong title="${escapeHTML(primary.kw)}">${escapeHTML(primary.kw)}</strong>
-          <small>${secondaries.length.toLocaleString('en-US')} Secondary Keywords</small>
+        <div class="ti-primary-cell">
+          <span class="ti-primary-label">Primary KW</span>
+          <span class="ti-primary-kw" title="${escapeHTML(primary.kw)}">${escapeHTML(primary.kw)}</span>
+          ${secondaries.length ? `<span class="ti-secondary-pill">${secondaries.length} Secondary</span>` : ''}
         </div>
-        <span class="ti-volume">${Number(cluster.vol).toLocaleString('en-US')}</span>
+        <div class="ti-volume-cell">
+          <strong>${Number(cluster.vol).toLocaleString('en-US')}</strong>
+        </div>
+        <div class="ti-rank-cell">${rankPillHTML(clusterRanking(cluster))}</div>
+        <div class="ti-status-cell">
+          <span class="ti-status-pill ${sClass}">${sLbl}</span>
+        </div>
         <div class="ti-row-actions">
-          <button class="ti-action${action.className}" id="st-${cluster.id}-${primaryIndex}" onclick="event.stopPropagation();${actionHandler}">${action.label}</button>
-          <button class="ti-icon-btn" onclick="event.stopPropagation();openEditCluster('${p.id}','${cluster.id}')" title="Sửa bài viết">✎</button>
-          <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteCluster('${p.id}','${cluster.id}')" title="Xóa bài viết">×</button>
+          <button class="ti-action${action.className}" id="st-${cluster.id}-0" onclick="event.stopPropagation();${actionHandler}"><span class="ai-mark">✦</span> ${action.label}</button>
+          <button class="ti-icon-btn" onclick="event.stopPropagation();openEditCluster('${p.id}','${cluster.id}')" title="Sửa Cluster">✎</button>
+          <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteCluster('${p.id}','${cluster.id}')" title="Xóa Cluster">×</button>
         </div>
       </div>
       <div class="ti-keywords">
         <div class="ti-secondary-toolbar">
-          <span>${secondaries.length.toLocaleString('en-US')} Secondary Keywords trong cùng bài</span>
-          <button class="ti-add-secondary" onclick="openCreateKeyword('${p.id}','${cluster.id}')">+ Secondary Keyword</button>
+          <span>${secondaries.length} Secondary Keywords cùng bài viết</span>
+          <button class="ti-add-secondary" onclick="event.stopPropagation();openCreateSecondaryKeyword('${p.id}','${cluster.id}',0)">+ Secondary Keyword</button>
         </div>
-        ${secondaryRows || '<div class="cp-empty">Bài viết này chưa có Secondary Keyword.</div>'}
+        ${secondaryRows}
       </div>
     </div>`;
   };
 
   const themeRows = themes.map((theme, index) => {
     const isOpen = openThemes[theme.id] ?? index === 0;
+    const pubPct = theme.articles > 0 ? Math.round((theme.published / theme.articles) * 100) : 0;
+    const clusterWord = theme.clusters.length === 1 ? 'cluster' : 'clusters';
+    const articleWord = theme.articles === 1 ? 'bài viết AI' : 'bài viết AI';
     return `<div class="ti-theme${isOpen ? ' open' : ''}" id="${theme.id}">
       <div class="ti-theme-row" onclick="toggleTheme('${theme.id}')">
         <div class="ti-theme-main">
           <span class="ti-arrow">▶</span>
           <span class="ti-theme-name" title="${escapeHTML(theme.name)}">${escapeHTML(theme.name)}</span>
           <span class="ti-theme-tools">
-            <button class="ti-icon-btn" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')" title="Thêm Cluster">+</button>
             <button class="ti-icon-btn" onclick="event.stopPropagation();openRenameTheme('${p.id}','${encodeURIComponent(theme.name)}')" title="Đổi tên Theme">✎</button>
             <button class="ti-icon-btn danger" onclick="event.stopPropagation();openDeleteTheme('${p.id}','${encodeURIComponent(theme.name)}')" title="Xóa Theme">×</button>
           </span>
         </div>
-        <span class="ti-count">${theme.clusters.length.toLocaleString('en-US')} clusters</span>
-        <span class="ti-count">${theme.articles.toLocaleString('en-US')} bài viết AI</span>
-        <span class="ti-volume">${theme.volume.toLocaleString('en-US')}</span>
-        <span class="ti-article-meta"><strong>${theme.published}/${theme.articles}</strong> đã xuất bản</span>
+        <div class="ti-cell-meta">
+          <strong>${theme.clusters.length.toLocaleString('en-US')} ${clusterWord}</strong>
+          <span>${theme.articles.toLocaleString('en-US')} ${articleWord} · ${theme.keywords.toLocaleString('en-US')} keywords</span>
+        </div>
+        <div class="ti-volume-cell">
+          <strong>${theme.volume.toLocaleString('en-US')}</strong>
+        </div>
+        <div class="ti-rank-cell">${rankPillHTML(themeRanking(theme))}</div>
+        <div class="ti-published">
+          <div class="ti-published-num"><strong>${theme.published}/${theme.articles}</strong> xuất bản</div>
+          <div class="ti-published-bar"><div class="ti-published-fill${pubPct === 0 ? ' zero' : ''}" style="width:${pubPct}%"></div></div>
+        </div>
+        <div class="ti-row-actions">
+          <button class="ti-theme-add" onclick="event.stopPropagation();openCreateCluster('${p.id}','${encodeURIComponent(theme.name)}')">+ Cluster mới</button>
+        </div>
       </div>
       <div class="ti-theme-body">${theme.clusters.sort((a, b) => b.vol - a.vol).map(renderCluster).join('')}</div>
     </div>`;
@@ -1806,22 +2747,22 @@ function buildDetail(p) {
       <section class="topic-overview">
         <div class="topic-head">
           <div>
-            <span class="topic-title">Topic Cluster</span>
+            <span class="topic-title">Content Plan</span>
             <div class="topic-source">1 Primary Keyword = 1 bài viết AI · Secondary Keywords được triển khai trong cùng bài</div>
           </div>
           <div class="topic-actions">
             <div class="topic-summary">
-            <span>Themes <strong>${themes.length}</strong></span>
-            <span>AI Articles <strong>${publishedArticles}/${totalArticles}</strong></span>
-            <span>Keywords <strong>${totalKeywords.toLocaleString('en-US')}</strong></span>
-            <span>Total Volume <strong>${totalVolume.toLocaleString('en-US')}/tháng</strong></span>
+              <span>Themes <strong>${themes.length}</strong></span>
+              <span><span class="ai-mark">✦</span> AI Articles <strong>${publishedArticles}/${totalArticles}</strong></span>
+              <span>Keywords <strong>${totalKeywords.toLocaleString('en-US')}</strong></span>
+              <span>Total Volume <strong>${totalVolume.toLocaleString('en-US')}</strong></span>
             </div>
             <button class="topic-create" onclick="openCreateCluster('${p.id}')">+ Thêm Cluster</button>
           </div>
         </div>
-        ${themeRows ? `<div class="theme-inventory">
+        ${themeRows ? `<div class="theme-inventory" aria-label="Content plan hierarchy">
           <div class="ti-head">
-            <span>Theme</span><span>Cluster</span><span>Primary Keyword</span><span>Volume</span><span>AI Article</span>
+            <span>Theme / Cluster</span><span>Primary Keyword</span><span>Month Volume</span><span>Ranking</span><span>Status / Progress</span><span>Actions</span>
           </div>
           ${themeRows}
         </div>` : '<div class="cp-empty">Dự án chưa có dữ liệu Theme/Cluster/Keyword.</div>'}
@@ -1846,8 +2787,8 @@ function crudField(name, label, value = '', type = 'text', full = false) {
   </div>`;
 }
 
-function openCrudModal({title, mode, projectId, clusterId = null, merchantId = null, keywordIndex = null, theme = null, fields = '', warning = '', destructive = false}) {
-  crudContext = {mode, projectId, clusterId, merchantId, keywordIndex, theme};
+function openCrudModal({title, mode, projectId, clusterId = null, merchantId = null, keywordIndex = null, primaryIndex = null, secondaryIndex = null, theme = null, fields = '', warning = '', destructive = false}) {
+  crudContext = {mode, projectId, clusterId, merchantId, keywordIndex, primaryIndex, secondaryIndex, theme};
   document.getElementById('crudTitle').textContent = title;
   document.getElementById('crudFields').innerHTML = fields || `<div class="crud-warning">${escapeHTML(warning)}</div>`;
   const submit = document.getElementById('crudSubmit');
@@ -1870,7 +2811,7 @@ function handleCrudOverlayClick(event) {
 function openCreateCluster(projectId, encodedTheme = '') {
   const theme = encodedTheme ? decodeURIComponent(encodedTheme) : '';
   openCrudModal({
-    title:'Thêm Cluster và bài viết AI', mode:'create-cluster', projectId,
+    title:'Thêm Cluster', mode:'create-cluster', projectId,
     fields:[
       crudField('theme','Theme',theme,'text',true),
       crudField('cluster','Cluster',''),
@@ -1883,14 +2824,11 @@ function openCreateCluster(projectId, encodedTheme = '') {
 function openEditCluster(projectId, clusterId) {
   const project = PROJECTS.find(item => item.id === projectId);
   const cluster = project.clusters.find(item => item.id === clusterId);
-  const article = getClusterArticle(cluster);
   openCrudModal({
-    title:'Sửa Cluster và Primary Keyword', mode:'edit-cluster', projectId, clusterId,
+    title:'Sửa Cluster', mode:'edit-cluster', projectId, clusterId,
     fields:[
       crudField('theme','Theme',getClusterTheme(cluster),'text',true),
       crudField('cluster','Cluster',cluster.name),
-      crudField('volume','Primary Volume',article.primary.vol,'number'),
-      crudField('keyword','Primary Keyword',article.primary.kw,'text',true),
     ].join(''),
   });
 }
@@ -1900,32 +2838,57 @@ function openDeleteCluster(projectId, clusterId) {
   const cluster = project.clusters.find(item => item.id === clusterId);
   openCrudModal({
     title:'Xóa Cluster', mode:'delete-cluster', projectId, clusterId, destructive:true,
-    warning:`Cluster “${cluster.name}”, Primary Keyword và toàn bộ Secondary Keywords sẽ bị xóa.`,
+    warning:`Cluster “${cluster.name}” cùng toàn bộ Primary và Secondary Keywords sẽ bị xóa.`,
   });
 }
 
-function openCreateKeyword(projectId, clusterId) {
+function openCreatePrimaryKeyword(projectId, clusterId) {
   openCrudModal({
-    title:'Thêm Secondary Keyword', mode:'create-keyword', projectId, clusterId,
+    title:'Thêm Primary Keyword', mode:'create-primary', projectId, clusterId,
+    fields:[crudField('keyword','Primary Keyword','','text',true),crudField('volume','Volume','0','number')].join(''),
+  });
+}
+
+function openEditPrimaryKeyword(projectId, clusterId, primaryIndex) {
+  const project = PROJECTS.find(item => item.id === projectId);
+  const keyword = project.clusters.find(item => item.id === clusterId).keywords[primaryIndex];
+  openCrudModal({
+    title:'Sửa Primary Keyword', mode:'edit-primary', projectId, clusterId, primaryIndex,
+    fields:[crudField('keyword','Primary Keyword',keyword.kw,'text',true),crudField('volume','Volume',keyword.vol,'number')].join(''),
+  });
+}
+
+function openDeletePrimaryKeyword(projectId, clusterId, primaryIndex) {
+  const project = PROJECTS.find(item => item.id === projectId);
+  const keyword = project.clusters.find(item => item.id === clusterId).keywords[primaryIndex];
+  openCrudModal({
+    title:'Xóa Primary Keyword', mode:'delete-primary', projectId, clusterId, primaryIndex, destructive:true,
+    warning:`Primary Keyword “${keyword.kw}” và toàn bộ Secondary Keywords sẽ bị xóa.`,
+  });
+}
+
+function openCreateSecondaryKeyword(projectId, clusterId, primaryIndex) {
+  openCrudModal({
+    title:'Thêm Secondary Keyword', mode:'create-secondary', projectId, clusterId, primaryIndex,
     fields:[crudField('keyword','Secondary Keyword','','text',true),crudField('volume','Volume','0','number')].join(''),
   });
 }
 
-function openEditKeyword(projectId, clusterId, keywordIndex) {
+function openEditSecondaryKeyword(projectId, clusterId, primaryIndex, secondaryIndex) {
   const project = PROJECTS.find(item => item.id === projectId);
-  const keyword = project.clusters.find(item => item.id === clusterId).keywords[keywordIndex];
+  const keyword = project.clusters.find(item => item.id === clusterId).keywords[primaryIndex].secondaries[secondaryIndex];
   openCrudModal({
-    title:'Sửa Secondary Keyword', mode:'edit-keyword', projectId, clusterId, keywordIndex,
+    title:'Sửa Secondary Keyword', mode:'edit-secondary', projectId, clusterId, primaryIndex, secondaryIndex,
     fields:[crudField('keyword','Secondary Keyword',keyword.kw,'text',true),crudField('volume','Volume',keyword.vol,'number')].join(''),
   });
 }
 
-function openDeleteKeyword(projectId, clusterId, keywordIndex) {
+function openDeleteSecondaryKeyword(projectId, clusterId, primaryIndex, secondaryIndex) {
   const project = PROJECTS.find(item => item.id === projectId);
-  const keyword = project.clusters.find(item => item.id === clusterId).keywords[keywordIndex];
+  const keyword = project.clusters.find(item => item.id === clusterId).keywords[primaryIndex].secondaries[secondaryIndex];
   openCrudModal({
-    title:'Xóa Secondary Keyword', mode:'delete-keyword', projectId, clusterId, keywordIndex, destructive:true,
-    warning:`Secondary Keyword “${keyword.kw}” sẽ bị xóa khỏi bài viết này.`,
+    title:'Xóa Secondary Keyword', mode:'delete-secondary', projectId, clusterId, primaryIndex, secondaryIndex, destructive:true,
+    warning:`Secondary Keyword “${keyword.kw}” sẽ bị xóa khỏi Primary Keyword này.`,
   });
 }
 
@@ -2011,7 +2974,7 @@ function submitCrud(event) {
   event.preventDefault();
   if (!crudContext) return;
   const values = Object.fromEntries(new FormData(event.currentTarget).entries());
-  const {mode, projectId, clusterId, merchantId, keywordIndex, theme} = crudContext;
+  const {mode, projectId, clusterId, merchantId, keywordIndex, primaryIndex, secondaryIndex, theme} = crudContext;
   const project = PROJECTS.find(item => item.id === projectId);
   const cluster = clusterId ? project.clusters.find(item => item.id === clusterId) : null;
   const merchant = merchantId ? project.merchants.find(item => item.id === merchantId) : null;
@@ -2057,34 +3020,49 @@ function submitCrud(event) {
     const id = `custom-${Date.now()}`;
     project.clusters.push({
       id, theme:values.theme.trim(), name:values.cluster.trim(), vol:Number(values.volume),
-      keywords:[{kw:values.keyword.trim(),vol:Number(values.volume),intent:'info',status:'none',rank:null,isPrimary:true}],
+      keywords:[{kw:values.keyword.trim(),vol:Number(values.volume),intent:'info',status:'none',rank:null,isPrimary:true,secondaries:[]}],
     });
     openClusters[id] = true;
     message = 'Đã tạo Cluster và bài viết AI mới';
   } else if (mode === 'edit-cluster') {
-    const article = getClusterArticle(cluster);
     cluster.theme = values.theme.trim();
     cluster.name = values.cluster.trim();
-    article.primary.kw = values.keyword.trim();
-    article.primary.vol = Number(values.volume);
-    article.primary.isPrimary = true;
-    message = 'Đã cập nhật Cluster và Primary Keyword';
+    message = 'Đã cập nhật Cluster';
   } else if (mode === 'delete-cluster') {
     project.clusters = project.clusters.filter(item => item.id !== clusterId);
     delete openClusters[clusterId];
     message = 'Đã xóa Cluster';
-  } else if (mode === 'create-keyword') {
-    cluster.keywords.push({kw:values.keyword.trim(),vol:Number(values.volume),intent:'info',status:'none',rank:null,isPrimary:false});
+  } else if (mode === 'create-primary') {
+    cluster.keywords.push({
+      kw:values.keyword.trim(),vol:Number(values.volume),intent:'info',status:'none',rank:null,isPrimary:true,secondaries:[],
+    });
     openClusters[clusterId] = true;
+    message = 'Đã thêm Primary Keyword';
+  } else if (mode === 'edit-primary') {
+    cluster.keywords[primaryIndex].kw = values.keyword.trim();
+    cluster.keywords[primaryIndex].vol = Number(values.volume);
+    openClusters[clusterId] = true;
+    message = 'Đã cập nhật Primary Keyword';
+  } else if (mode === 'delete-primary') {
+    cluster.keywords.splice(primaryIndex, 1);
+    openClusters[clusterId] = true;
+    message = 'Đã xóa Primary Keyword';
+  } else if (mode === 'create-secondary') {
+    cluster.keywords[primaryIndex].secondaries.push({kw:values.keyword.trim(),vol:Number(values.volume)});
+    openClusters[clusterId] = true;
+    openKeywords[`${clusterId}-${primaryIndex}`] = true;
     message = 'Đã thêm Secondary Keyword';
-  } else if (mode === 'edit-keyword') {
-    cluster.keywords[keywordIndex].kw = values.keyword.trim();
-    cluster.keywords[keywordIndex].vol = Number(values.volume);
+  } else if (mode === 'edit-secondary') {
+    const secondary = cluster.keywords[primaryIndex].secondaries[secondaryIndex];
+    secondary.kw = values.keyword.trim();
+    secondary.vol = Number(values.volume);
     openClusters[clusterId] = true;
+    openKeywords[`${clusterId}-${primaryIndex}`] = true;
     message = 'Đã cập nhật Secondary Keyword';
-  } else if (mode === 'delete-keyword') {
-    cluster.keywords.splice(keywordIndex, 1);
+  } else if (mode === 'delete-secondary') {
+    cluster.keywords[primaryIndex].secondaries.splice(secondaryIndex, 1);
     openClusters[clusterId] = true;
+    openKeywords[`${clusterId}-${primaryIndex}`] = true;
     message = 'Đã xóa Secondary Keyword';
   } else if (mode === 'rename-theme') {
     project.clusters.filter(item => getClusterTheme(item) === theme).forEach(item => { item.theme = values.theme.trim(); });
@@ -2108,9 +3086,21 @@ function toggleTheme(themeId) {
 }
 
 function toggleCluster(cid) {
-  openClusters[cid] = !openClusters[cid];
   const card = document.getElementById('cc-' + cid);
-  if (card) card.classList.toggle('open', !!openClusters[cid]);
+  const isOpen = !card?.classList.contains('open');
+  openClusters[cid] = isOpen;
+  if (!card) return;
+  const body = card.querySelector('.ti-cluster-body');
+  if (body && selectedProject && !selectedProject.isDistributed && renderPrimaryRow) {
+    if (isOpen && !body.childElementCount) {
+      const cluster = selectedProject.clusters.find(item => item.id === cid);
+      body.innerHTML = cluster.keywords.map((primary, primaryIndex) =>
+        renderPrimaryRow(selectedProject, cluster, primary, primaryIndex)).join('');
+    } else if (!isOpen) {
+      body.innerHTML = '';
+    }
+  }
+  card.classList.toggle('open', isOpen);
 }
 
 /* ─── TOGGLE KEYWORD (expand secondaries) ───────────────────────────────── */
@@ -2141,7 +3131,7 @@ function refreshStatusPill(pid, cid, ki) {
   const k = c.keywords[ki];
   const action = getArticleAction(k);
   stBtn.className = `ti-action${action.className}`;
-  stBtn.textContent = action.label;
+  stBtn.innerHTML = `<span class="ai-mark">✦</span> ${action.label}`;
   if (k.status === 'published') {
     stBtn.title = 'Xem bài viết đã xuất bản';
     stBtn.onclick = (e) => { e.stopPropagation(); viewArticle(pid, cid, ki); };
@@ -2331,13 +3321,12 @@ function setWizStage(n) {
   const labels = { 1: 'Outline & Chỉnh sửa', 2: 'Bài nháp chi tiết', 3: 'Chọn Page Type' };
   document.getElementById('wizFtInfo').textContent = `Bước ${n} / 3 - ${labels[n]}`;
   /* back btn */
-  document.getElementById('wizBackBtn').disabled = (n === 1 || n === 3);
+  document.getElementById('wizBackBtn').disabled = (n === 1);
   /* next btn config per stage */
   const nextBtn = document.getElementById('wizNextBtn');
-  if (n === 1) { nextBtn.textContent = 'Approve & Tạo bài nháp →'; nextBtn.disabled = true; }
-  else if (n === 2) { nextBtn.textContent = 'Chọn Page Type →'; nextBtn.disabled = true; }
-  else if (n === 3) { nextBtn.style.display = 'none'; return; }
-  nextBtn.style.display = '';
+  if (n === 1) { nextBtn.textContent = 'Approve & Tạo bài nháp →'; nextBtn.disabled = true; nextBtn.style.display = ''; }
+  else if (n === 2) { nextBtn.textContent = 'Chọn Page Type →'; nextBtn.disabled = true; nextBtn.style.display = ''; }
+  else if (n === 3) { nextBtn.style.display = 'none'; }
 }
 
 function wizNext() {
@@ -2353,7 +3342,8 @@ function wizNext() {
 function wizBack() {
   if (wizState.stage === 2) {
     setWizStage(1);
-    /* editor already populated, stay editable */
+  } else if (wizState.stage === 3) {
+    setWizStage(2);
   }
 }
 
@@ -2490,29 +3480,601 @@ function draftBodyForH2(h2, k, intent) {
   return samples[intent] || samples.info;
 }
 
-/* ─── Stage 4: Page Type choose ───────────────────────────────────────────── */
+/* ─── Stage 3: Page Type choose - đóng wizard, mở Editor ──────────────────── */
 function choosePageType(type) {
-  const { pid, cid, ki } = wizState;
+  wizState.pageType = type;
+  /* Hand off context to Editor before closing wizard */
+  const ctx = { pid: wizState.pid, cid: wizState.cid, ki: wizState.ki,
+                pageType: type, h1: wizState.h1, h2List: wizState.h2List.slice(),
+                draftHtml: wizState.draftHtml };
+  closeWizard();
+  openEditor(ctx);
+}
+
+/* ─── Score logic (shared with Editor SEO Audit tab) ──────────────────────── */
+/* Score schema: 5 groups, each check has state (pass/warn/fail), blocker flag.
+   Total = sum of group weights. Blocker fails block publish regardless of score. */
+function buildScoreScenario() {
+  const author = 'Mai Văn Hùng - SEO/GEO Lead';
+  return [
+    {
+      id:'cwv', name:'Core Web Vitals', sub:'PageSpeed API · CrUX', icon:'⚡', weight:20,
+      checks:[
+        { label:'LCP (Largest Contentful Paint)', data:'1.8s', target:'< 2.5s', state:'pass', blocker:true },
+        { label:'INP (Interaction to Next Paint)', data:'142ms', target:'< 200ms', state:'pass', blocker:true },
+        { label:'CLS (Cumulative Layout Shift)', data:'0.04', target:'< 0.1', state:'pass', blocker:true },
+      ]
+    },
+    {
+      id:'onpage', name:'On-page SEO', sub:'Static crawl staging URL', icon:'⬢', weight:25,
+      checks:[
+        { label:'Title tag (length)', data:'58 chars', target:'50-60', state:'pass', blocker:false },
+        { label:'Meta description (length)', data:'148 chars', target:'140-160', state:'pass', blocker:false },
+        { label:'H1 unique + match Title', data:'OK', target:'Unique', state:'pass', blocker:false },
+        { label:'URL slug', data:'/blog/vay-nhanh-momo', target:'Clean, no params', state:'pass', blocker:false },
+        { label:'Internal links to product page', data:'1 link', target:'≥ 3', state:'fail', blocker:false },
+        { label:'Image alt text coverage', data:'8 / 10', target:'100%', state:'warn', blocker:false },
+      ]
+    },
+    {
+      id:'geo', name:'GEO / AEO Readiness', sub:'LLM citation + entity check', icon:'◈', weight:20,
+      checks:[
+        { label:'JSON-LD Article schema', data:'Valid', target:'Required', state:'pass', blocker:true },
+        { label:'FAQPage schema', data:'4 Q&A', target:'≥ 3 Q&A', state:'pass', blocker:false },
+        { label:'Entity mentions (MoMo, products)', data:'7 mentions', target:'≥ 5', state:'pass', blocker:false },
+        { label:'Semantic chunking (H2 breaks)', data:'4 sections', target:'≥ 3', state:'pass', blocker:false },
+        { label:'Citation-ready pull quote', data:'0 quote', target:'≥ 1 quote block', state:'fail', blocker:false },
+      ]
+    },
+    {
+      id:'eeat', name:'Foundation E-E-A-T', sub:'YMYL · Tài chính', icon:'◐', weight:20,
+      checks:[
+        { label:'Named author (real person)', data:author, target:'Required (YMYL)', state:'pass', blocker:true },
+        { label:'Author bio + credentials', data:'Linked', target:'Bio page exists', state:'pass', blocker:false },
+        { label:'Editorial date', data:'21/06/2026', target:'Required', state:'pass', blocker:false },
+        { label:'YMYL disclaimer + product link', data:'OK', target:'Required', state:'pass', blocker:false },
+      ]
+    },
+    {
+      id:'track', name:'Tracking', sub:'GA4 + GTM + Onelink', icon:'◢', weight:15,
+      checks:[
+        { label:'GA4 page_view fired', data:'G-02G70QKZ26', target:'Required', state:'pass', blocker:true },
+        { label:'GTM OutApp container fire', data:'GTM-P9JDDJZ', target:'Required', state:'pass', blocker:false },
+        { label:'Onelink CTA tracked', data:'momoapp.onelink.vn', target:'Required', state:'pass', blocker:false },
+      ]
+    },
+  ];
+}
+
+function computeGroupScore(group) {
+  const stateValue = { pass:1, warn:0.5, fail:0 };
+  const sum = group.checks.reduce((s,c) => s + stateValue[c.state], 0);
+  const ratio = sum / group.checks.length;
+  return Math.round(ratio * group.weight);
+}
+
+function computeTotals(groups) {
+  let totalEarned = 0, totalWeight = 0, blockerFails = 0, warns = 0, fails = 0;
+  groups.forEach(g => {
+    totalEarned += computeGroupScore(g);
+    totalWeight += g.weight;
+    g.checks.forEach(c => {
+      if (c.state === 'fail') { fails++; if (c.blocker) blockerFails++; }
+      if (c.state === 'warn') warns++;
+    });
+  });
+  const total = Math.round((totalEarned / totalWeight) * 100);
+  return { total, blockerFails, warns, fails };
+}
+
+function getTier(total, blockerFails) {
+  if (blockerFails > 0) return 'fail';
+  if (total >= 85) return 'good';
+  if (total >= 70) return 'warn';
+  return 'fail';
+}
+
+function verdictTextFor(tier, totals) {
+  if (tier === 'fail' && totals.blockerFails > 0) {
+    return {
+      title: 'Chưa đạt - có blocker',
+      desc: `Còn ${totals.blockerFails} blocker fail cần khắc phục trước khi publish. Score ${totals.total}/100 nhưng blocker override.`
+    };
+  }
+  if (tier === 'fail') {
+    return {
+      title: 'Score quá thấp',
+      desc: `Score ${totals.total}/100 dưới ngưỡng 70. Cần fix nhiều check trước khi publish, dù không có blocker.`
+    };
+  }
+  if (tier === 'warn') {
+    return {
+      title: 'Sẵn sàng - có cảnh báo',
+      desc: `Đạt ngưỡng publish (≥ 70). Còn ${totals.fails} fail non-blocker và ${totals.warns} warning - có thể fix sau.`
+    };
+  }
+  return {
+    title: 'Sẵn sàng xuất bản',
+    desc: `Score đạt ${totals.total}/100, không blocker fail. Bài viết qua đầy đủ các gate SEO/GEO/E-E-A-T/Tracking.`
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   EDITOR SCREEN (WordPress-style CMS)
+   Opens after wizard Page Type choice. Score Panel lives in SEO Audit tab.
+   ════════════════════════════════════════════════════════════════════════════ */
+let editorState = {
+  open: false, pid: null, cid: null, ki: null, pageType: 'blog',
+  h1: '', h2List: [], draftHtml: '',
+  activeTab: 'seo-audit',
+  audit: null, /* { groups, totals, tier, ranAt } */
+};
+
+const MOMO_INTERNAL_PAGES = [
+  { slug: '/vay-nhanh', title: 'Vay Nhanh - vay tiền online MoMo', cat: 'Credit' },
+  { slug: '/vi-tra-sau', title: 'Ví Trả Sau (BNPL) - mua trước trả sau', cat: 'Credit' },
+  { slug: '/cic-score', title: 'CIC Score - tra cứu điểm tín dụng miễn phí', cat: 'Credit' },
+  { slug: '/bh-xe-may', title: 'Bảo hiểm xe máy', cat: 'Insurance' },
+  { slug: '/bhyt', title: 'Bảo hiểm y tế tự nguyện', cat: 'Insurance' },
+  { slug: '/phat-nguoi', title: 'Tra cứu phạt nguội', cat: 'Public' },
+  { slug: '/tools/loan-calculator', title: 'Loan Calculator - tính lãi vay', cat: 'Tool' },
+  { slug: '/tools/cic-checker', title: 'CIC Checker tool', cat: 'Tool' },
+];
+
+const MOCK_MEDIA = [
+  { name: 'hero-vay-nhanh.jpg', hasImg: true, altOk: true },
+  { name: 'flow-1.png', hasImg: true, altOk: true },
+  { name: 'flow-2.png', hasImg: true, altOk: false },
+  { name: 'screenshot-app.png', hasImg: true, altOk: true },
+  { name: 'cta-banner.jpg', hasImg: true, altOk: false },
+];
+
+function openEditor(ctx) {
+  editorState = {
+    open: true,
+    pid: ctx.pid, cid: ctx.cid, ki: ctx.ki, pageType: ctx.pageType,
+    h1: ctx.h1, h2List: ctx.h2List, draftHtml: ctx.draftHtml,
+    activeTab: 'seo-audit',
+    audit: null,
+  };
+
+  const p = PROJECTS.find(p => p.id === ctx.pid);
+  const c = p.clusters.find(c => c.id === ctx.cid);
+  const k = c.keywords[ctx.ki];
+
+  /* Header */
+  document.getElementById('edArticleTitle').textContent = ctx.h1 || k.kw;
+  document.getElementById('edArticleMeta').textContent =
+    `${p.name} · "${k.kw}" · ${fmtVol(k.vol)}/tháng · ${k.intent.toUpperCase()}`;
+  const ptPill = document.getElementById('edPagetypePill');
+  if (ctx.pageType === 'landing') { ptPill.textContent = 'Landing Page'; ptPill.classList.add('lp'); }
+  else { ptPill.textContent = 'Blog Article'; ptPill.classList.remove('lp'); }
+
+  /* Canvas content - reformat draft HTML into editor article */
+  const content = document.getElementById('edCanvasContent');
+  const today = new Date().toLocaleDateString('vi-VN');
+  content.innerHTML = `
+    <input class="ed-h1" type="text" value="${(ctx.h1 || k.kw).replace(/"/g,'&quot;')}" placeholder="Nhập H1 (tiêu đề chính)">
+    <div class="ed-meta-row">
+      <span class="ed-author-chip"><span class="ed-author-avatar">MH</span>Mai Văn Hùng - SEO/GEO Lead</span>
+      <span class="ed-meta-dot"></span>
+      <span>${today}</span>
+      <span class="ed-meta-dot"></span>
+      <span>~ ${Math.max(3, Math.ceil((ctx.draftHtml || '').length / 800))} phút đọc</span>
+    </div>
+    ${stripFirstH2(ctx.draftHtml || '<p>Bài nháp chưa có nội dung.</p>')}
+    <div class="ed-empty-image">📷 Kéo thả ảnh vào đây hoặc dùng tab Media bên phải để upload</div>
+  `;
+
+  /* Word count */
+  const wc = (content.textContent || '').trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('edWordCount').textContent = wc.toLocaleString('vi-VN') + ' words';
+
+  /* Reset publish button */
+  const pubBtn = document.getElementById('edPublishBtn');
+  pubBtn.disabled = true;
+  pubBtn.textContent = 'Chạy SEO Audit trước →';
+
+  /* Reset audit badge */
+  document.getElementById('edAuditBadge').style.display = 'none';
+
+  /* Open overlay + render default tab */
+  document.getElementById('editorOverlay').classList.add('show');
+  switchEditorTab('seo-audit');
+}
+
+function stripFirstH2(html) {
+  /* Wizard draftHtml prepends <h2>H1</h2><p>Search Volume...</p> - skip it because Editor renders H1 separately */
+  return (html || '').replace(/^<h2>[^<]*<\/h2>\s*<p><strong>Search Volume:[\s\S]*?<\/p>/i, '');
+}
+
+function closeEditor() {
+  document.getElementById('editorOverlay').classList.remove('show');
+  editorState.open = false;
+}
+
+function editorSaveDraft() {
+  showToast('💾 Bản nháp đã lưu', 't-pk');
+}
+
+/* ─── Tab switching ───────────────────────────────────────────────────────── */
+function switchEditorTab(tab) {
+  editorState.activeTab = tab;
+  document.querySelectorAll('.ed-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  const body = document.getElementById('edTabBody');
+  if (tab === 'seo-audit') body.innerHTML = renderTabSEOAudit();
+  else if (tab === 'document') body.innerHTML = renderTabDocument();
+  else if (tab === 'links') body.innerHTML = renderTabLinks();
+  else if (tab === 'media') body.innerHTML = renderTabMedia();
+}
+
+/* ─── Tab: SEO Audit (Score Panel) ────────────────────────────────────────── */
+function renderTabSEOAudit() {
+  if (!editorState.audit) {
+    return `<div class="audit-empty">
+      <div class="audit-empty-ico">◎</div>
+      <h4>Chạy SEO/GEO Audit</h4>
+      <p>Hệ thống sẽ chấm điểm bài viết theo 5 nhóm: Core Web Vitals, On-page SEO, GEO/AEO Readiness, Foundation E-E-A-T và Tracking. Blocker fail sẽ chặn Publish.</p>
+      <button type="button" onclick="runEditorAudit()">▶ Chạy audit ngay</button>
+    </div>`;
+  }
+  if (editorState.audit.scanning) {
+    return `<div class="audit-scanning">
+      <div class="scan-ring"></div>
+      <div class="scan-title">Đang chạy 5 nhóm kiểm tra...</div>
+      <div class="audit-scan-list" id="auditScanList"></div>
+    </div>`;
+  }
+  const a = editorState.audit;
+  return renderAuditResult(a.groups, a.totals, a.tier, a.ranAt);
+}
+
+function renderAuditResult(groups, totals, tier, ranAt) {
+  const verdict = verdictTextFor(tier, totals);
+  const circumference = 2 * Math.PI * 33;
+  const offset = circumference * (1 - totals.total / 100);
+
+  const blockHtml = totals.blockerFails > 0
+    ? `<span class="audit-block-pill"><span class="num">${totals.blockerFails}</span> blocker fail</span>`
+    : `<span class="audit-block-pill ok"><span class="num">0</span> blocker · ${totals.warns} warn</span>`;
+
+  let actionHtml = '';
+  if (totals.blockerFails > 0) {
+    actionHtml = `<div class="audit-action-note fail"><span class="ico">⛔</span><div><strong>${totals.blockerFails} blocker chặn Publish.</strong> Khắc phục các mục đỏ có tag "Blocker" rồi re-scan trước khi xuất bản.</div></div>`;
+  } else if (tier === 'warn') {
+    actionHtml = `<div class="audit-action-note warn"><span class="ico">⚠</span><div><strong>Đạt ${totals.total}/100. Publish được nhưng nên xử lý ${totals.fails} fail non-blocker và ${totals.warns} warning trước.</strong></div></div>`;
+  } else {
+    actionHtml = `<div class="audit-action-note pass"><span class="ico">✓</span><div><strong>Đạt ${totals.total}/100 - Sẵn sàng Publish.</strong>${totals.warns + totals.fails > 0 ? ` Có ${totals.warns} warn / ${totals.fails} non-blocker fail có thể fix sau.` : ' Tất cả check pass.'}</div></div>`;
+  }
+
+  const groupsHtml = groups.map(g => {
+    const score = computeGroupScore(g);
+    const fails = g.checks.filter(c => c.state === 'fail').length;
+    const warns = g.checks.filter(c => c.state === 'warn').length;
+    let groupClass = 'open';
+    if (g.checks.some(c => c.state === 'fail' && c.blocker)) groupClass += ' group-fail';
+    else if (fails > 0 || warns > 0) groupClass += ' group-warn';
+    /* Dots summary */
+    const passN = g.checks.length - fails - warns;
+    const dots = '<span class="mini-dot pass"></span>'.repeat(passN)
+               + '<span class="mini-dot warn"></span>'.repeat(warns)
+               + '<span class="mini-dot fail"></span>'.repeat(fails);
+
+    return `<div class="audit-group ${groupClass}">
+      <div class="audit-group-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="audit-group-icon ${g.id}">${g.icon}</div>
+        <div class="audit-group-title">
+          <strong>${g.name}</strong>
+          <span class="audit-group-status">${dots}</span>
+        </div>
+        <div class="audit-group-score">${score}<small>/${g.weight}</small></div>
+        <span class="audit-group-arrow">▶</span>
+      </div>
+      <div class="audit-group-body">
+        ${g.checks.map(c => {
+          const icon = c.state === 'pass' ? '✓' : c.state === 'warn' ? '!' : '✕';
+          return `<div class="audit-check ${c.state}">
+            <div class="audit-check-icon">${icon}</div>
+            <div class="audit-check-label">
+              ${c.label}
+              ${c.blocker ? '<span class="blocker">Blocker</span>' : ''}
+            </div>
+            <div class="audit-check-data">${c.data}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="audit-hero tier-${tier}">
+      <div class="audit-ring-wrap">
+        <svg class="audit-ring" viewBox="0 0 72 72" aria-hidden="true">
+          <circle class="ring-bg" cx="36" cy="36" r="33"></circle>
+          <circle class="ring-fg" cx="36" cy="36" r="33"
+            stroke-dasharray="${circumference.toFixed(2)}"
+            stroke-dashoffset="${offset.toFixed(2)}"></circle>
+        </svg>
+        <div class="audit-ring-num">
+          <strong>${totals.total}</strong>
+          <span>/ 100</span>
+        </div>
+      </div>
+      <div class="audit-verdict">
+        <div class="audit-verdict-lbl">Pre-Publish Score</div>
+        <div class="audit-verdict-title">${verdict.title}</div>
+        <div class="audit-verdict-pills">${blockHtml}</div>
+      </div>
+    </div>
+
+    <div class="audit-rescan-row">
+      <span class="audit-last-run">Chạy lúc ${ranAt}</span>
+      <button class="audit-rescan" type="button" onclick="runEditorAudit()">↻ Re-scan</button>
+    </div>
+
+    ${actionHtml}
+
+    <div class="audit-groups">${groupsHtml}</div>
+  `;
+}
+
+function runEditorAudit() {
+  /* Build scenario (deterministic for prototype). To demo blocker scenario,
+     uncomment the override lines inside or call runEditorAuditFail() from console. */
+  const groups = buildScoreScenario();
+  editorState.audit = { scanning: true, groups: null, totals: null, tier: null, ranAt: null };
+  document.getElementById('edTabBody').innerHTML = renderTabSEOAudit();
+
+  /* Populate scan list */
+  const list = document.getElementById('auditScanList');
+  list.innerHTML = groups.map(g =>
+    `<div class="audit-scan-item" data-group="${g.id}">
+       <span class="dot"></span>
+       <span>${g.name}</span>
+       <span class="scan-time">—</span>
+     </div>`
+  ).join('');
+
+  const itemEls = [...list.querySelectorAll('.audit-scan-item')];
+  let i = 0;
+  const tick = () => {
+    if (i >= itemEls.length) {
+      setTimeout(() => finishAudit(groups), 250);
+      return;
+    }
+    const el = itemEls[i];
+    el.classList.add('checking');
+    const ms = 180 + groups[i].checks.length * 70;
+    setTimeout(() => {
+      el.classList.remove('checking');
+      el.classList.add('done');
+      el.querySelector('.scan-time').textContent = (ms/1000).toFixed(2) + 's';
+      i++;
+      tick();
+    }, ms);
+  };
+  setTimeout(tick, 250);
+}
+
+function finishAudit(groups) {
+  const totals = computeTotals(groups);
+  const tier = getTier(totals.total, totals.blockerFails);
+  const ranAt = new Date().toLocaleTimeString('vi-VN', { hour:'2-digit', minute:'2-digit' });
+  editorState.audit = { scanning: false, groups, totals, tier, ranAt };
+  document.getElementById('edTabBody').innerHTML = renderTabSEOAudit();
+  updatePublishButton();
+  updateAuditBadge();
+}
+
+function runEditorAuditFail() {
+  /* Demo helper: inject blocker fail scenario. Call from console. */
+  const groups = buildScoreScenario();
+  groups[0].checks[0] = { label:'LCP (Largest Contentful Paint)', data:'3.4s', target:'< 2.5s', state:'fail', blocker:true };
+  groups[3].checks[0] = { label:'Named author (real person)', data:'Chưa khai báo', target:'Required (YMYL)', state:'fail', blocker:true };
+  editorState.audit = { scanning: false, groups,
+    totals: computeTotals(groups),
+    tier: 'fail',
+    ranAt: new Date().toLocaleTimeString('vi-VN', { hour:'2-digit', minute:'2-digit' })
+  };
+  editorState.audit.tier = getTier(editorState.audit.totals.total, editorState.audit.totals.blockerFails);
+  if (editorState.activeTab === 'seo-audit') {
+    document.getElementById('edTabBody').innerHTML = renderTabSEOAudit();
+  }
+  updatePublishButton();
+  updateAuditBadge();
+}
+
+function updateAuditBadge() {
+  const badge = document.getElementById('edAuditBadge');
+  if (!editorState.audit || editorState.audit.scanning) { badge.style.display = 'none'; return; }
+  const t = editorState.audit.totals;
+  if (t.blockerFails > 0) {
+    badge.style.display = '';
+    badge.textContent = t.blockerFails;
+    badge.classList.remove('ok');
+  } else if (editorState.audit.tier === 'good') {
+    badge.style.display = '';
+    badge.textContent = '✓';
+    badge.classList.add('ok');
+  } else {
+    badge.style.display = '';
+    badge.textContent = '!';
+    badge.classList.remove('ok');
+  }
+}
+
+/* ─── Publish button (synced with audit state) ────────────────────────────── */
+function updatePublishButton() {
+  const btn = document.getElementById('edPublishBtn');
+  const pageLabel = editorState.pageType === 'landing' ? 'Landing Page' : 'Blog Article';
+
+  if (!editorState.audit || editorState.audit.scanning) {
+    btn.disabled = true;
+    btn.textContent = 'Chạy SEO Audit trước →';
+    return;
+  }
+  const t = editorState.audit.totals;
+  if (t.blockerFails > 0) {
+    btn.disabled = true;
+    btn.textContent = `${t.blockerFails} blocker chặn Publish`;
+  } else if (editorState.audit.tier === 'warn') {
+    btn.disabled = false;
+    btn.textContent = `Publish ${pageLabel} (có warn) →`;
+  } else {
+    btn.disabled = false;
+    btn.textContent = `Publish ${pageLabel} →`;
+  }
+}
+
+function editorPublish() {
+  const { pid, cid, ki, pageType } = editorState;
   const p = PROJECTS.find(p => p.id === pid);
   const c = p.clusters.find(c => c.id === cid);
   const k = c.keywords[ki];
 
-  if (type === 'blog') {
+  if (pageType === 'blog') {
     k.status = 'published';
     k.pageType = 'blog';
     refreshStatusPill(pid, cid, ki);
     refreshProjectProgress(p, c);
-    closeWizard();
+    closeEditor();
     document.getElementById('projectDetail').innerHTML = buildDetail(p);
-    showToast(`✓ Blog "${k.kw}" đã sẵn sàng xuất bản`, 't-green');
-  } else if (type === 'landing') {
+    showToast(`✓ Blog "${k.kw}" đã Publish (Score ${editorState.audit.totals.total}/100)`, 't-green');
+  } else {
     k.status = 'draft-review';
     k.pageType = 'landing';
     refreshStatusPill(pid, cid, ki);
-    closeWizard();
+    closeEditor();
     document.getElementById('projectDetail').innerHTML = buildDetail(p);
-    showToast(`→ Đã input "${k.kw}" vào Long Form Content cho Landing Page`, 't-pk');
+    showToast(`→ Landing "${k.kw}" đã input vào Long Form (Score ${editorState.audit.totals.total}/100)`, 't-pk');
   }
+}
+
+/* ─── Tab: Document ───────────────────────────────────────────────────────── */
+function renderTabDocument() {
+  const { pid, cid, ki, pageType } = editorState;
+  const p = PROJECTS.find(p => p.id === pid);
+  const c = p.clusters.find(c => c.id === cid);
+  const k = c.keywords[ki];
+  const slugBase = pageType === 'landing' ? '/lp/' : '/blog/';
+  const slug = (k.kw || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+  return `
+    <div class="ed-tab-section">
+      <div class="ed-tab-section-title">URL & Slug</div>
+      <div class="ed-field">
+        <label>URL slug</label>
+        <input type="text" value="${slug}">
+        <div class="ed-hint">URL preview: momo.vn${slugBase}<strong>${slug}</strong></div>
+      </div>
+    </div>
+
+    <div class="ed-tab-section">
+      <div class="ed-tab-section-title">SEO Meta</div>
+      <div class="ed-field">
+        <label>Meta title (50-60 chars)</label>
+        <input type="text" value="${editorState.h1 || k.kw}">
+      </div>
+      <div class="ed-field">
+        <label>Meta description (140-160 chars)</label>
+        <textarea>Hướng dẫn chi tiết về ${k.kw}. Cập nhật 2026 từ MoMo - app tài chính số 1 Việt Nam. Tra cứu, tính phí và thanh toán ngay trên app.</textarea>
+      </div>
+    </div>
+
+    <div class="ed-tab-section">
+      <div class="ed-tab-section-title">Phân loại</div>
+      <div class="ed-field">
+        <label>Project</label>
+        <div class="ed-field-readonly">${p.name}</div>
+      </div>
+      <div class="ed-field">
+        <label>Topic Cluster</label>
+        <div class="ed-field-readonly">${c.name || c.id}</div>
+      </div>
+      <div class="ed-field">
+        <label>Page Type</label>
+        <div class="ed-field-readonly">${pageType === 'landing' ? 'Landing Page (BOFU)' : 'Blog Article (TOFU/MOFU)'}</div>
+      </div>
+      <div class="ed-field">
+        <label>Search Intent</label>
+        <div class="ed-field-readonly">${(k.intent || 'info').toUpperCase()}</div>
+      </div>
+    </div>
+
+    <div class="ed-tab-section">
+      <div class="ed-tab-section-title">Author & E-E-A-T</div>
+      <div class="ed-field">
+        <label>Author</label>
+        <input type="text" value="Mai Văn Hùng - SEO/GEO Lead">
+        <div class="ed-hint">Bắt buộc với YMYL (Tài chính). Link tới /authors/ page.</div>
+      </div>
+      <div class="ed-field">
+        <label>Editorial date</label>
+        <input type="date" value="2026-06-21">
+      </div>
+    </div>
+  `;
+}
+
+/* ─── Tab: Internal Links ────────────────────────────────────────────────── */
+function renderTabLinks() {
+  const { pid } = editorState;
+  /* AI-suggest priority: same project category */
+  const p = PROJECTS.find(p => p.id === pid);
+  const projectCat = inferProjectCategory(p);
+  const suggested = MOMO_INTERNAL_PAGES.filter(pg => pg.cat === projectCat);
+  const others = MOMO_INTERNAL_PAGES.filter(pg => pg.cat !== projectCat);
+
+  const itemHtml = (pg, suggested) => `<div class="il-item">
+    <span class="il-item-icon">${pg.cat === 'Tool' ? '⚙' : pg.cat === 'Insurance' ? '◐' : pg.cat === 'Credit' ? '⬢' : '◧'}</span>
+    <div class="il-item-body">
+      <strong>${pg.title}</strong>
+      <span>momo.vn${pg.slug}</span>
+    </div>
+    <button class="il-item-add" type="button" title="Insert link">+</button>
+  </div>`;
+
+  return `
+    <input class="il-search" type="text" placeholder="🔍 Tìm trang để link...">
+    <div class="il-section-title">
+      <span>AI-suggested (cùng category)</span>
+      <span class="il-suggest-count">${suggested.length}</span>
+    </div>
+    <div class="il-list">${suggested.map(p => itemHtml(p, true)).join('')}</div>
+    <div class="il-section-title" style="margin-top:16px"><span>Tất cả trang MoMo</span></div>
+    <div class="il-list">${others.map(p => itemHtml(p, false)).join('')}</div>
+  `;
+}
+
+function inferProjectCategory(p) {
+  const map = {
+    'phat-nguoi': 'Public',
+    'vay-nhanh': 'Credit', 'vi-tra-sau': 'Credit', 'cic-score': 'Credit',
+    'bhyt': 'Insurance', 'bh-xe-may': 'Insurance', 'bh-o-to': 'Insurance', 'bhxh': 'Insurance',
+    'merchant': 'Public',
+  };
+  return map[p.id] || 'Credit';
+}
+
+/* ─── Tab: Media ─────────────────────────────────────────────────────────── */
+function renderTabMedia() {
+  return `
+    <div class="md-upload-zone">
+      <span class="md-upload-icon">⬆</span>
+      Kéo thả ảnh hoặc <strong style="color:var(--pk)">browse</strong> để upload
+      <div class="ed-hint" style="margin-top:5px">Webp/JPEG ≤ 200KB · Alt text bắt buộc</div>
+    </div>
+    <div class="ed-tab-section-title">Đã upload (${MOCK_MEDIA.length})</div>
+    <div class="md-list">
+      ${MOCK_MEDIA.map(m => `
+        <div class="md-thumb has-img" title="${m.name}${m.altOk ? '' : ' - thiếu alt text'}">
+          ${m.name.endsWith('.png') ? '🖼' : '📷'}
+          ${m.altOk ? '' : '<span class="md-thumb-alt-warn">!</span>'}
+        </div>
+      `).join('')}
+    </div>
+    <div class="ed-hint" style="margin-top:9px">⚠ 2 ảnh thiếu alt text - ảnh hưởng Onpage Score</div>
+  `;
 }
 
 function refreshProjectProgress(p, c) {
