@@ -1784,16 +1784,35 @@ function computeGeneric(tool) {
 }
 
 // ─── Gold Panel
+// Giá tham chiếu snapshot 20/06/2026 từ bảng giá công bố SJC/PNJ/DOJI/BTMC/BTMH.
+// prevBuy/prevSell = giá đóng cửa hôm qua (19/06/2026) để hiển thị delta.
 const GOLD_PRODUCTS = [
-  { id: 'sjc-luong',  name: 'SJC 1 lượng',      brand: 'SJC', unit: 'lượng', buy: 121500000, sell: 124000000, trend: 'up'   },
-  { id: 'sjc-nhan',   name: 'SJC Nhẫn 1 chỉ',   brand: 'SJC', unit: 'chỉ',   buy: 12100000,  sell: 12300000,  trend: 'up'   },
-  { id: 'pnj-luong',  name: 'PNJ 1 lượng',       brand: 'PNJ', unit: 'lượng', buy: 119000000, sell: 122000000, trend: 'flat' },
-  { id: 'pnj-nhan',   name: 'PNJ Nhẫn 1 chỉ',   brand: 'PNJ', unit: 'chỉ',   buy: 11900000,  sell: 12200000,  trend: 'down' },
-  { id: 'doji-luong', name: 'DOJI 1 lượng',      brand: 'DOJI',unit: 'lượng', buy: 120500000, sell: 123500000, trend: 'up'   },
-  { id: 'btmc-luong', name: 'Bảo Tín Minh Châu', brand: 'BTMC',unit: 'lượng', buy: 120000000, sell: 123000000, trend: 'flat' },
+  { id: 'sjc-luong',     name: 'SJC 1 lượng',          brand: 'SJC',  location: '',     unit: 'lượng', buy: 144200000, sell: 147200000, prevBuy: 147700000, prevSell: 150700000, trend: 'down' },
+  { id: 'sjc-nhan',      name: 'SJC Nhẫn 1 chỉ',       brand: 'SJC',  location: '',     unit: 'chỉ',   buy: 14380000,  sell: 14680000,  prevBuy: 14730000,  prevSell: 15030000,  trend: 'down' },
+  { id: 'pnj-hcm',       name: 'PNJ HCM 1 lượng',      brand: 'PNJ',  location: 'HCM',  unit: 'lượng', buy: 143500000, sell: 146500000, prevBuy: 146800000, prevSell: 149800000, trend: 'down' },
+  { id: 'pnj-hn',        name: 'PNJ Hà Nội 1 lượng',   brand: 'PNJ',  location: 'HN',   unit: 'lượng', buy: 143300000, sell: 146400000, prevBuy: 146600000, prevSell: 149700000, trend: 'down' },
+  { id: 'pnj-nhan',      name: 'PNJ Nhẫn 1 chỉ',       brand: 'PNJ',  location: '',     unit: 'chỉ',   buy: 14250000,  sell: 14550000,  prevBuy: 14500000,  prevSell: 14800000,  trend: 'down' },
+  { id: 'doji-hn',       name: 'DOJI Hà Nội 1 lượng',  brand: 'DOJI', location: 'HN',   unit: 'lượng', buy: 143800000, sell: 146800000, prevBuy: 146900000, prevSell: 149900000, trend: 'down' },
+  { id: 'doji-sg',       name: 'DOJI Sài Gòn 1 lượng', brand: 'DOJI', location: 'SG',   unit: 'lượng', buy: 143700000, sell: 146700000, prevBuy: 146800000, prevSell: 149800000, trend: 'down' },
+  { id: 'btmc-luong',    name: 'BTMC 1 lượng',         brand: 'BTMC', location: '',     unit: 'lượng', buy: 143600000, sell: 146600000, prevBuy: 146700000, prevSell: 149700000, trend: 'down' },
+  { id: 'btmh-luong',    name: 'BTMH 1 lượng',         brand: 'BTMH', location: '',     unit: 'lượng', buy: 143500000, sell: 146500000, prevBuy: 146600000, prevSell: 149600000, trend: 'down' },
 ];
 
-const GOLD_WORLD = { pair: 'XAU/USD', price: 3312.50, change: +18.30, changePct: +0.56, high: 3328.10, low: 3298.40 };
+const GOLD_WORLD = { pair: 'XAU/USD', price: 4194.00, change: -70.00, changePct: -1.64, high: 4268.50, low: 4158.20 };
+
+// Tỷ giá USD/VND tham chiếu để tính premium VN vs thế giới
+const GOLD_USD_VND = 26090;
+// 1 lượng = 37,5g · 1 troy ounce = 31,1035g · 1 lượng = 1,20565 oz
+const LUONG_PER_OUNCE = 37.5 / 31.1035;
+// Premium TB 1 năm tham chiếu (SJC vs giá thế giới quy đổi)
+const PREMIUM_AVG_1Y_PCT = 17.0;
+
+const GOLD_NEWS = [
+  { time: '14:35 · 20/06', tag: 'Thế giới',  title: 'Vàng thế giới rơi sát 4.150 USD/ounce, áp lực bán tăng khi USD mạnh', source: 'Tuổi Trẻ' },
+  { time: '11:20 · 20/06', tag: 'Trong nước', title: 'SJC giảm 3,5 triệu/lượng theo đà giảm của vàng thế giới', source: '24h' },
+  { time: '09:05 · 20/06', tag: 'Phân tích',  title: 'Premium SJC vs thế giới về dưới 15%, thấp nhất 6 tháng', source: 'CafeF' },
+  { time: '19/06',         tag: 'Dự báo',    title: 'Goldman Sachs giữ mục tiêu 5.400 USD/oz cuối 2026', source: 'Lao Động' },
+];
 
 const TREND_ICON = { up: '▲', down: '▼', flat: '—' };
 const TREND_COLOR = { up: '#12b76a', down: '#f04438', flat: '#98a2b3' };
@@ -1881,6 +1900,36 @@ function renderGoldChart() {
 }
 
 function initGoldPanel() {
+  // Quick market snapshot (Vàng + USD + VN-Index)
+  const sjcRef = GOLD_PRODUCTS.find(p => p.id === 'sjc-luong');
+  const sjcDelta = sjcRef.sell - sjcRef.prevSell;
+  // Cùng GOLD_USD_VND để khớp với premium calc trong renderGoldDecision
+  const usdSell = GOLD_USD_VND;
+  const vniValue = 1382.45;
+  const vniDelta = -12.30;
+  document.getElementById('quickMarket').innerHTML = `
+    <div class="quick-market-card">
+      <span>SJC 1 lượng (bán)</span>
+      <strong>${fmtM(sjcRef.sell)}</strong>
+      <em class="${sjcDelta >= 0 ? 'up' : 'down'}">${sjcDelta >= 0 ? '+' : ''}${fmtM(sjcDelta)} vs hôm qua</em>
+    </div>
+    <div class="quick-market-card">
+      <span>USD/VND (bán)</span>
+      <strong>${new Intl.NumberFormat('vi-VN').format(usdSell)} đ</strong>
+      <em>Vietcombank tham chiếu</em>
+    </div>
+    <div class="quick-market-card">
+      <span>VN-Index</span>
+      <strong>${vniValue.toLocaleString('vi-VN', {minimumFractionDigits:2})}</strong>
+      <em class="${vniDelta >= 0 ? 'up' : 'down'}">${vniDelta >= 0 ? '+' : ''}${vniDelta.toFixed(2)} điểm</em>
+    </div>
+    <div class="quick-market-card">
+      <span>XAU/USD</span>
+      <strong>$${GOLD_WORLD.price.toLocaleString('en-US', {minimumFractionDigits:2})}</strong>
+      <em class="${GOLD_WORLD.change >= 0 ? 'up' : 'down'}">${GOLD_WORLD.change >= 0 ? '+' : ''}${GOLD_WORLD.change.toFixed(2)} (${GOLD_WORLD.changePct.toFixed(2)}%)</em>
+    </div>
+  `;
+
   // XAU/USD hero bar
   const w = GOLD_WORLD;
   const sign = w.change >= 0 ? '+' : '';
@@ -1900,20 +1949,34 @@ function initGoldPanel() {
     </div>
   `;
 
-  // Price table
+  // Decision panel: Premium VN vs thế giới + 30D position + spread signal
+  renderGoldDecision();
+
+  // Price table với cột "Hôm qua" + delta
   document.getElementById('goldPriceTable').innerHTML = GOLD_PRODUCTS.map(p => {
-    const spread = p.sell - p.buy;
-    const tColor = TREND_COLOR[p.trend];
-    const tIcon  = TREND_ICON[p.trend];
+    const delta = p.sell - p.prevSell;
+    const deltaClass = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+    const deltaSign = delta > 0 ? '+' : '';
+    const deltaIcon = delta > 0 ? '▲' : delta < 0 ? '▼' : '—';
+    const locTag = p.location ? `<small class="gold-row-loc">${p.location}</small>` : '';
     return `
     <div class="gold-table-row">
-      <span class="gold-row-name"><b>${p.brand}</b>${p.name.replace(p.brand, '').trim()}</span>
+      <span class="gold-row-name"><b>${p.brand}</b>${p.name.replace(p.brand, '').replace(p.location || '~~no-loc~~', '').trim()} ${locTag}</span>
       <span class="gold-row-buy">${fmtM(p.buy)}<small>/${p.unit}</small></span>
       <span class="gold-row-sell">${fmtM(p.sell)}<small>/${p.unit}</small></span>
-      <span class="gold-row-spread">${fmtM(spread)}</span>
-      <span class="gold-row-trend" style="color:${tColor}">${tIcon}</span>
+      <span class="gold-row-prev">${fmtM(p.prevSell)}</span>
+      <span class="gold-row-delta ${deltaClass}">${deltaIcon} ${deltaSign}${fmtM(delta)}</span>
     </div>`;
   }).join('');
+
+  // News feed
+  document.getElementById('goldNewsList').innerHTML = GOLD_NEWS.map(n => `
+    <a class="gold-news-item" href="#" onclick="event.preventDefault();momo_track('news_click',{title:'${n.title.replace(/'/g,"\\'")}',source:'${n.source}'})">
+      <span class="gold-news-tag">${n.tag}</span>
+      <strong class="gold-news-title">${n.title}</strong>
+      <small class="gold-news-meta">${n.time} · ${n.source}</small>
+    </a>
+  `).join('');
 
   // Chart product selector (only lượng-based products to keep prices comparable)
   const chartProducts = GOLD_PRODUCTS.filter(p => p.unit === 'lượng');
@@ -1999,9 +2062,109 @@ function computeGold() {
   profitEl.textContent = (profit >= 0 ? '+' : '') + fmtM(profit);
   profitEl.style.color = profit >= 0 ? '#12b76a' : '#f04438';
 
-  document.getElementById('goldInsight').textContent = pct >= breakEven
-    ? `Kịch bản +${pct}% đủ bù chênh lệch mua-bán. Ước tính lãi ${fmtM(Math.abs(profit))} trên tổng đầu tư.`
-    : `Kịch bản +${pct}% chưa bù được chênh lệch mua-bán (${breakEven.toFixed(1)}%). Cần tăng thêm để hòa vốn.`;
+  const insightEl = document.getElementById('goldInsight');
+  if (qty === 0) {
+    // Fallback khi budget không đủ 1 đơn vị: gợi ý sản phẩm nhỏ hơn
+    const fallback = GOLD_PRODUCTS.filter(x => x.unit === 'chỉ' && budget >= x.sell)
+      .sort((a, b) => a.sell - b.sell)[0];
+    if (fallback) {
+      const fallbackQty = Math.floor(budget / fallback.sell);
+      insightEl.innerHTML = `Ngân sách ${fmtM(budget)} chưa đủ 1 ${p.unit} ${p.brand} (${fmtM(p.sell)}/${p.unit}). Gợi ý: <b>${fallback.name}</b> — đủ mua ${fallbackQty} chỉ. <button type="button" class="gold-insight-cta" onclick="document.getElementById('goldProduct').value='${fallback.id}';computeGold();">Chuyển sang ${fallback.brand} nhẫn</button>`;
+    } else {
+      insightEl.textContent = `Ngân sách ${fmtM(budget)} chưa đủ mua ${p.brand} ${p.name}. Cần tối thiểu ${fmtM(p.sell)} cho 1 ${p.unit}.`;
+    }
+    return;
+  }
+
+  const pctSign = pct >= 0 ? '+' : '';
+  insightEl.textContent = pct >= breakEven
+    ? `Kịch bản ${pctSign}${pct}% đủ bù chênh lệch mua-bán (${breakEven.toFixed(1)}%). Ước tính lãi ${fmtM(Math.abs(profit))} trên tổng đầu tư.`
+    : `Kịch bản ${pctSign}${pct}% chưa bù được chênh lệch mua-bán (${breakEven.toFixed(1)}%). Cần tăng thêm để hòa vốn.`;
+}
+
+// Tính premium VN vs thế giới + vị trí 30D + đánh giá spread
+function renderGoldDecision() {
+  const sjc = GOLD_PRODUCTS.find(p => p.id === 'sjc-luong');
+  // Premium = SJC sell - (XAU/USD × lượng/oz × USD/VND)
+  const worldPerLuong = GOLD_WORLD.price * LUONG_PER_OUNCE * GOLD_USD_VND;
+  const premiumAbs = sjc.sell - worldPerLuong;
+  const premiumPct = premiumAbs / worldPerLuong * 100;
+  const premiumDeltaVsAvg = premiumPct - PREMIUM_AVG_1Y_PCT;
+  const premiumSignal = premiumDeltaVsAvg < -2 ? 'attractive'
+    : premiumDeltaVsAvg > 2 ? 'expensive' : 'neutral';
+  const premiumLabel = { attractive: 'Thấp hơn TB', expensive: 'Cao hơn TB', neutral: 'Quanh TB' }[premiumSignal];
+  const premiumColor = { attractive: '#027a48', expensive: '#b42318', neutral: '#475467' }[premiumSignal];
+
+  // Vị trí 30D từ chart (dùng cùng generator với chart)
+  const { points } = genGoldHistory(sjc, '1M');
+  const prices = points.map(p => p.price);
+  const min30 = Math.min(...prices);
+  const max30 = Math.max(...prices);
+  const pos30 = (sjc.sell - min30) / (max30 - min30) * 100;
+  const pos30Signal = pos30 < 30 ? 'low' : pos30 > 70 ? 'high' : 'mid';
+  const pos30Label = { low: 'Gần đáy 30 ngày', high: 'Gần đỉnh 30 ngày', mid: 'Vùng giữa 30 ngày' }[pos30Signal];
+  const pos30Color = { low: '#027a48', high: '#b42318', mid: '#475467' }[pos30Signal];
+
+  // Spread mua-bán: hôm nay vs TB tham chiếu (giả định TB ~2,5tr/lượng)
+  const spread = sjc.sell - sjc.buy;
+  const SPREAD_AVG = 2500000;
+  const spreadDelta = spread - SPREAD_AVG;
+  const spreadSignal = spreadDelta > 200000 ? 'wide' : spreadDelta < -200000 ? 'narrow' : 'normal';
+  const spreadLabel = { wide: 'Rộng hơn TB', narrow: 'Hẹp hơn TB', normal: 'Quanh TB' }[spreadSignal];
+  const spreadColor = { wide: '#b42318', narrow: '#027a48', normal: '#475467' }[spreadSignal];
+
+  // Tổng hợp signal → recommendation đơn giản
+  const buySignals = (premiumSignal === 'attractive' ? 1 : 0)
+                    + (pos30Signal === 'low' ? 1 : 0)
+                    + (spreadSignal === 'narrow' ? 1 : 0);
+  const waitSignals = (premiumSignal === 'expensive' ? 1 : 0)
+                    + (pos30Signal === 'high' ? 1 : 0)
+                    + (spreadSignal === 'wide' ? 1 : 0);
+  let verdict, verdictDetail, verdictTone;
+  if (buySignals >= 2 && buySignals > waitSignals) {
+    verdict = 'Có thể cân nhắc vào tiền';
+    verdictDetail = `${buySignals}/3 tín hiệu nghiêng về mua. Vẫn nên chia nhỏ, không all-in một lần.`;
+    verdictTone = 'buy';
+  } else if (waitSignals >= 2 && waitSignals > buySignals) {
+    verdict = 'Có thể chờ thêm';
+    verdictDetail = `${waitSignals}/3 tín hiệu cảnh báo. Premium hoặc giá đang cao so với tham chiếu.`;
+    verdictTone = 'wait';
+  } else {
+    verdict = 'Tín hiệu trung tính';
+    verdictDetail = 'Chưa có lợi thế rõ ràng cho cả mua và chờ. Cân theo nhu cầu thực và thời điểm cá nhân.';
+    verdictTone = 'neutral';
+  }
+
+  document.getElementById('goldDecision').innerHTML = `
+    <div class="gold-decision-grid">
+      <div class="gold-decision-card primary">
+        <span class="gold-decision-label">Chênh lệch VN vs thế giới</span>
+        <strong class="gold-decision-value">${premiumAbs >= 0 ? '+' : ''}${fmtM(premiumAbs)}/lượng</strong>
+        <p class="gold-decision-meta">SJC ${fmtM(sjc.sell)} · Thế giới quy đổi ${fmtM(worldPerLuong)} (${GOLD_WORLD.price.toFixed(0)} USD × ${LUONG_PER_OUNCE.toFixed(3)} oz/lượng × ${(GOLD_USD_VND/1000).toFixed(2)}k VND/USD)</p>
+        <p class="gold-decision-signal" style="color:${premiumColor}">
+          <b>${premiumPct.toFixed(1)}%</b> · ${premiumLabel} (TB 1 năm ${PREMIUM_AVG_1Y_PCT}%)
+        </p>
+      </div>
+      <div class="gold-decision-card">
+        <span class="gold-decision-label">Vị trí giá trong 30 ngày</span>
+        <strong class="gold-decision-value">${pos30.toFixed(0)}%</strong>
+        <p class="gold-decision-meta">Đáy ${fmtM(min30)} · Đỉnh ${fmtM(max30)}</p>
+        <p class="gold-decision-signal" style="color:${pos30Color}">${pos30Label}</p>
+      </div>
+      <div class="gold-decision-card">
+        <span class="gold-decision-label">Chênh mua-bán SJC</span>
+        <strong class="gold-decision-value">${fmtM(spread)}/lượng</strong>
+        <p class="gold-decision-meta">Tham chiếu TB ${fmtM(SPREAD_AVG)}/lượng</p>
+        <p class="gold-decision-signal" style="color:${spreadColor}">${spreadLabel}</p>
+      </div>
+    </div>
+    <div class="gold-verdict gold-verdict-${verdictTone}">
+      <span class="gold-verdict-kicker">Tổng hợp tín hiệu</span>
+      <strong class="gold-verdict-title">${verdict}</strong>
+      <p class="gold-verdict-detail">${verdictDetail}</p>
+      <button class="gold-verdict-alert" type="button" onclick="momo_track('cta_click',{cta:'set_gold_alert',location:'gold_decision'});alert('Mockup: gửi cảnh báo khi SJC < '+ ${Math.round(sjc.sell * 0.97 / 1000000)} +' triệu/lượng (tính năng thật sẽ qua app MoMo).')">🔔 Đặt cảnh báo giá</button>
+    </div>
+  `;
 }
 
 // ─── Stock Panel
