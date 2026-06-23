@@ -513,6 +513,113 @@ h1, h2, h3, .h2, .h3, .article-title, .sec-hd, .quiz-intro-title, .quiz-q-text, 
   }
 }
 
+/* ─ Mobile TOC FAB + drawer ─ */
+.toc-fab {
+  display: none;
+  position: fixed;
+  bottom: 84px;
+  right: 16px;
+  background: var(--momo);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px 8px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 18px rgba(175,1,113,.32);
+  z-index: 900;
+  transition: opacity .2s, transform .2s;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+}
+.toc-fab.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.toc-fab .toc-fab-label {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media(max-width:1279px) {
+  .toc-fab { display: flex; }
+}
+.toc-drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.42);
+  z-index: 1000;
+  transition: opacity .25s;
+}
+.toc-drawer-backdrop.open { display: block; }
+.toc-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border-radius: 18px 18px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 1001;
+  transform: translateY(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+}
+.toc-drawer.open { transform: translateY(0); }
+.toc-drawer-handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(0,0,0,.12);
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+.toc-drawer-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.toc-drawer-close {
+  background: var(--bg2);
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 14px;
+  padding: 0;
+}
+.toc-drawer-body {
+  overflow-y: auto;
+  padding: 8px 12px 20px;
+  flex: 1;
+}
+.toc-drawer-body .toc-list { gap: 2px; }
+.toc-drawer-body .toc-item {
+  font-size: 13.5px;
+  padding: 9px 10px;
+  border-radius: 8px;
+}
+
 /* ─ Audio article ─ */
 .listen-card {
   background: linear-gradient(135deg, #fff0f6 0%, #ffffff 56%, #faf9fc 100%);
@@ -2439,6 +2546,32 @@ h1, h2, h3, .h2, .h3, .article-title, .sec-hd, .quiz-intro-title, .quiz-q-text, 
   </div>
 </aside>
 
+<!-- Mobile TOC FAB + drawer -->
+<div class="toc-drawer-backdrop" id="tocDrawerBackdrop"></div>
+<div class="toc-drawer" id="tocDrawer" role="dialog" aria-modal="true" aria-label="Mục lục bài viết">
+  <div class="toc-drawer-handle"></div>
+  <div class="toc-drawer-hd">
+    <span>Mục lục bài viết</span>
+    <button class="toc-drawer-close" id="tocDrawerClose" aria-label="Đóng"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="toc-drawer-body">
+    <ul class="toc-list" id="tocListMobile">
+      <li class="toc-item toc-active" data-target="s1"><span class="toc-dot"></span>Phạt nguội là gì?</li>
+      <li class="toc-item" data-target="s2"><span class="toc-dot"></span>Bảng mức phạt 2025</li>
+      <li class="toc-item" data-target="s3"><span class="toc-dot"></span>3 cách tra cứu</li>
+      <li class="toc-item toc-sub" data-target="s3a"><span class="toc-dot"></span>1. Qua MoMo</li>
+      <li class="toc-item toc-sub" data-target="s3b"><span class="toc-dot"></span>2. csgt.vn</li>
+      <li class="toc-item toc-sub" data-target="s3c"><span class="toc-dot"></span>3. Tổng đài 1088</li>
+      <li class="toc-item" data-target="s4"><span class="toc-dot"></span>Nộp phạt từng bước</li>
+      <li class="toc-item" data-target="s5"><span class="toc-dot"></span>AI nói gì?</li>
+    </ul>
+  </div>
+</div>
+<button class="toc-fab" id="tocFab" aria-label="Mục lục bài viết">
+  <i class="ti ti-list" style="font-size:14px"></i>
+  <span class="toc-fab-label" id="tocFabLabel">Mục lục</span>
+</button>
+
 <!-- Page Content -->
 <div class="page">
 
@@ -2977,6 +3110,36 @@ document.querySelectorAll('.reaction-chip').forEach(chip => {
 const headings = ['s1','s2','s3','s4','s5'].map(id => document.getElementById(id)).filter(Boolean);
 const tocItems = document.querySelectorAll('#tocList .toc-item[data-target]');
 
+const TOC_LABELS = {s1:'Phạt nguội là gì?',s2:'Bảng mức phạt 2025',s3:'3 cách tra cứu',s4:'Nộp phạt từng bước',s5:'AI nói gì?'};
+const tocFab = document.getElementById('tocFab');
+const tocFabLabel = document.getElementById('tocFabLabel');
+const tocDrawer = document.getElementById('tocDrawer');
+const tocDrawerBackdrop = document.getElementById('tocDrawerBackdrop');
+const tocListMobile = document.querySelectorAll('#tocListMobile .toc-item[data-target]');
+const tocInlineEl = document.querySelector('.toc-inline');
+
+function openTocDrawer() {
+  tocDrawer.classList.add('open');
+  tocDrawerBackdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTocDrawer() {
+  tocDrawer.classList.remove('open');
+  tocDrawerBackdrop.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+tocFab.addEventListener('click', openTocDrawer);
+document.getElementById('tocDrawerClose').addEventListener('click', closeTocDrawer);
+tocDrawerBackdrop.addEventListener('click', closeTocDrawer);
+tocListMobile.forEach(item => {
+  item.addEventListener('click', () => {
+    const el = document.getElementById(item.dataset.target);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    closeTocDrawer();
+  });
+});
+
 function updateToc() {
   let active = 's1';
   headings.forEach(h => {
@@ -2985,6 +3148,16 @@ function updateToc() {
   tocItems.forEach(item => {
     item.classList.toggle('toc-active', item.dataset.target === active);
   });
+  // Mobile: sync active state + FAB label
+  tocListMobile.forEach(item => {
+    item.classList.toggle('toc-active', item.dataset.target === active);
+  });
+  const label = TOC_LABELS[active] || 'Mục lục';
+  tocFabLabel.textContent = label;
+  // Show FAB once user scrolls past the inline TOC block
+  const isDesktop = window.innerWidth >= 1280;
+  const inlinePassed = tocInlineEl ? tocInlineEl.getBoundingClientRect().bottom < 0 : window.scrollY > 300;
+  tocFab.classList.toggle('show', !isDesktop && inlinePassed);
 }
 
 tocItems.forEach(item => {
