@@ -1,0 +1,1 @@
+Read CLAUDE.md at project root before doing anything. It contains the complete codebase map, data structures, routing rules, common bugs and their fixes. Do not explore the codebase without reading it first.
