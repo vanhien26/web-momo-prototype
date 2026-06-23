@@ -5,180 +5,185 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tra cứu phạt nguội Hà Nội – Demo prototype | MoMo</title>
 <meta name="description" content="Demo prototype tra cứu phạt nguội tại Hà Nội: form lookup, kết quả vi phạm, navigate tỉnh thành khác và các dịch vụ liên quan.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <style>
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-style:normal;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
 :root{
-  --pk:#a50064;--pk2:#c8007a;--pk-bg:#fff0f7;--pk-dark:#6d0040;
-  --ink:#111827;--sub:#6b7280;--muted:#9ca3af;
+  --momo:#a50064;--momo-mid:#c8007a;--momo-dark:#6d0040;
+  --pk-bg:#fff0f7;
+  --ink:#1a1210;--sub:#6b7280;--muted:#9ca3af;
   --line:#e5e7eb;--bg:#f5f6f8;--white:#fff;
   --green:#059669;--green-bg:#ecfdf5;--green-mid:#10b981;
   --amber:#d97706;--amber-bg:#fffbeb;
   --red:#dc2626;--red-bg:#fef2f2;--red-mid:#ef4444;
   --blue:#2563eb;--blue-bg:#eff6ff;
   --orange:#ea580c;--orange-bg:#fff7ed;
+  --font:'MoMoTrustSans',system-ui,sans-serif;
+  --font-display:'MoMoTrustDisplay','MoMoTrustSans',system-ui,sans-serif;
+  --r:12px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.65}
+a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
 /* ─── TOPBAR ─────────────────────────────── */
 .topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 20px;height:50px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:200}
 .topbar-logo{display:flex;align-items:center;gap:7px;text-decoration:none;flex-shrink:0}
-.topbar-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--pk);display:grid;place-items:center;overflow:hidden}
+.topbar-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--momo);display:grid;place-items:center;overflow:hidden}
 .topbar-logo-mark img{width:80%;height:80%;object-fit:contain}
 .topbar-crumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sub);flex:1;min-width:0;overflow:hidden}
 .topbar-crumb a{color:var(--sub);text-decoration:none;white-space:nowrap}
-.topbar-crumb a:hover{color:var(--pk)}
+.topbar-crumb a:hover{color:var(--momo)}
 .topbar-crumb .sep{color:var(--muted);flex-shrink:0}
 .topbar-crumb .cur{color:var(--ink);font-weight:700;white-space:nowrap}
-.topbar-cta{flex-shrink:0;background:var(--pk);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:700}
+.topbar-cta{flex-shrink:0;background:var(--momo);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:700}
+.topbar-cta:hover{background:var(--momo-mid)}
 
 /* ─── HERO ───────────────────────────────── */
-.hero{background:linear-gradient(155deg,#8a0053 0%,var(--pk2) 100%);padding:28px 20px 0;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.05);top:-80px;right:-60px;pointer-events:none}
-.hero::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04);bottom:60px;left:-60px;pointer-events:none}
+.hero{background:linear-gradient(155deg,#8a0053 0%,var(--momo-mid) 100%);padding:48px 20px 0;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.04);top:-100px;right:-80px;pointer-events:none}
 .hero-wrap{max-width:480px;margin:0 auto;position:relative;z-index:1}
-.hero-loc{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:rgba(255,255,255,.92);margin-bottom:14px}
-.hero h1{font-size:28px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.78);line-height:1.55;margin-bottom:22px;max-width:360px}
+.hero-loc{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:14px}
+.hero h1{font-size:clamp(24px,4vw,34px);font-weight:700;color:#fff;line-height:1.12;margin-bottom:10px;letter-spacing:-.03em;font-family:var(--font-display)}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.78);line-height:1.6;margin-bottom:24px;max-width:360px}
 
 /* lookup card */
 .lookup-card{background:#fff;border-radius:16px 16px 0 0;padding:20px 20px 0;box-shadow:0 -10px 40px rgba(0,0,0,.14)}
-.lookup-label{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
+.lookup-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
 .plate-input-wrap{position:relative;margin-bottom:10px}
-.plate-input{width:100%;height:54px;border:2px solid var(--line);border-radius:12px;padding:0 46px 0 14px;font-family:inherit;font-size:18px;font-weight:800;color:var(--ink);letter-spacing:.09em;text-transform:uppercase;transition:border-color .15s;outline:none}
-.plate-input:focus{border-color:var(--pk)}
-.plate-input::placeholder{font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:14px}
+.plate-input{width:100%;height:54px;border:2px solid var(--line);border-radius:var(--r);padding:0 46px 0 14px;font-family:var(--font);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:.09em;text-transform:uppercase;transition:border-color .15s;outline:none}
+.plate-input:focus{border-color:var(--momo)}
+.plate-input::placeholder{font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);font-size:14px}
 .plate-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:26px;height:26px;background:var(--line);border:none;border-radius:50%;color:var(--sub);font-size:12px;display:none;align-items:center;justify-content:center}
 .plate-input:not(:placeholder-shown) ~ .plate-clear{display:flex}
 .vtype-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
 .vtype-btn{height:44px;border:1.5px solid var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:700;color:var(--sub);transition:all .15s;padding:0 6px;white-space:nowrap}
-.vtype-btn.on{border-color:var(--pk);background:var(--pk-bg);color:var(--pk)}
+.vtype-btn.on{border-color:var(--momo);background:var(--pk-bg);color:var(--momo)}
 .plate-hint{font-size:11px;color:var(--sub);margin:-4px 0 10px;line-height:1.45}
 .plate-hint b{color:var(--ink);font-weight:700}
 .save-plate{display:flex;align-items:center;gap:7px;margin-bottom:12px;cursor:pointer;user-select:none}
-.save-plate input{width:16px;height:16px;accent-color:var(--pk);cursor:pointer}
+.save-plate input{width:16px;height:16px;accent-color:var(--momo);cursor:pointer}
 .save-plate label{font-size:12px;color:var(--sub);font-weight:600;cursor:pointer}
 .save-plate label b{color:var(--ink);font-weight:700}
 .social-proof{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;padding:10px 0 4px;font-size:11.5px;color:var(--sub);font-weight:600}
-.social-proof b{color:var(--ink);font-weight:800;letter-spacing:-.01em}
+.social-proof b{color:var(--ink);font-weight:700}
 .social-proof .sp-dot{width:3px;height:3px;border-radius:50%;background:var(--muted)}
-.search-btn{width:100%;height:52px;background:var(--pk);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;margin-bottom:14px}
-.search-btn:hover{background:var(--pk2)}
+.search-btn{width:100%;height:52px;background:var(--momo);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;margin-bottom:14px}
+.search-btn:hover{background:var(--momo-mid)}
 .search-btn:active{transform:scale(.98)}
 .trust-row{display:flex;align-items:center;justify-content:center;gap:0;padding:12px 0 16px;border-top:1px solid var(--line)}
-.trust-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--sub);font-weight:600;border-right:1px solid var(--line)}
+.trust-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;color:var(--sub);font-weight:600;border-right:1px solid var(--line)}
 .trust-item:last-child{border-right:none}
-.trust-ico{font-size:15px}
+.trust-ico{color:var(--sub)}
 
 /* ─── RESULT AREA ──────────────────────────── */
 .result-wrap{background:#fff;padding:0 20px 20px;max-width:480px;margin:0 auto}
 .result-area{display:none}
 .result-area.show{display:block}
 .result-loading{padding:24px;text-align:center}
-.spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--pk);border-radius:50%;animation:_spin .8s linear infinite;margin:0 auto 10px}
+.spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--momo);border-radius:50%;animation:_spin .8s linear infinite;margin:0 auto 10px}
 @keyframes _spin{to{transform:rotate(360deg)}}
 .violation-card{border-radius:14px;border:1px solid var(--line);overflow:hidden;margin-top:4px}
 .vc-header{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#fafafa}
-.vc-plate{font-size:17px;font-weight:900;letter-spacing:.1em;color:var(--ink)}
+.vc-plate{font-size:17px;font-weight:700;letter-spacing:.1em;color:var(--ink)}
 .vc-type-tag{font-size:10px;font-weight:700;background:var(--bg);color:var(--sub);padding:3px 10px;border-radius:20px;border:1px solid var(--line)}
 .vc-summary{padding:11px 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
 .vc-summary.bad{background:var(--red-bg);color:var(--red)}
 .vc-summary.clean{background:var(--green-bg);color:var(--green)}
 .violation-item{padding:14px 16px;border-bottom:1px solid var(--line)}
-.vi-name{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.vi-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px}
 .vi-row{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--sub);margin-bottom:5px}
 .vi-row svg{flex-shrink:0;margin-top:1px}
 .vi-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
-.vi-fine{font-size:16px;font-weight:900;color:var(--red)}
+.vi-fine{font-size:16px;font-weight:700;color:var(--red)}
 .vi-status{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:4px 11px;border-radius:20px}
 .vi-status.unpaid{background:var(--red-bg);color:var(--red)}
 .vi-status.paid{background:var(--green-bg);color:var(--green)}
 .vc-footer{padding:12px 16px;display:flex;gap:8px}
 .vc-btn{flex:1;height:42px;border-radius:10px;font-size:13px;font-weight:700;border:none;display:flex;align-items:center;justify-content:center;gap:5px}
-.vc-btn.primary{background:var(--pk);color:#fff}
+.vc-btn.primary{background:var(--momo);color:#fff}
 .vc-btn.outline{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
 
 /* ─── SUGGEST ────────────────────────────── */
 .suggest-section{background:#fff;padding:20px;border-top:1px solid var(--line);border-bottom:6px solid var(--bg)}
 .suggest-section + .suggest-section{border-top:none}
-.sec-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.mini-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.sec-title{font-size:clamp(14px,2vw,16px);font-weight:700;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:6px;font-family:var(--font-display)}
+.mini-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
 .province-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:16px}
 .province-scroll::-webkit-scrollbar{display:none}
 .province-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap;cursor:pointer;transition:all .15s;text-decoration:none}
-.province-chip:hover,.province-chip.active{border-color:var(--pk);color:var(--pk);background:var(--pk-bg)}
+.province-chip:hover,.province-chip.active{border-color:var(--momo);color:var(--momo);background:var(--pk-bg)}
 .related-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.related-card{border:1.5px solid var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s,transform .15s;text-decoration:none}
-.related-card:hover{border-color:var(--pk);transform:translateY(-1px)}
-.related-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
-.related-name{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:2px}
+.related-card{border:1.5px solid var(--line);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s,transform .15s;text-decoration:none}
+.related-card:hover{border-color:var(--momo);transform:translateY(-1px)}
+.related-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.related-ico svg{width:18px;height:18px}
+.related-name{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px}
 .related-desc{font-size:10.5px;color:var(--sub);line-height:1.4}
 
 /* ─── CONTENT SEO ────────────────────────── */
 .content-seo{max-width:720px;margin:0 auto;padding:28px 20px 40px}
 .cs-header{margin-bottom:20px}
-.cs-eyebrow{font-size:10.5px;font-weight:800;color:var(--pk);text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px}
-.cs-h2{font-size:22px;font-weight:900;color:var(--ink);line-height:1.22;margin-bottom:6px}
+.cs-h2{font-size:clamp(20px,3vw,26px);font-weight:700;color:var(--ink);line-height:1.18;margin-bottom:6px;font-family:var(--font-display);letter-spacing:-.02em}
 .cs-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:12px}
 .cs-meta span{display:flex;align-items:center;gap:4px}
-
-/* stat strip */
-.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stat-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 12px;text-align:center}
-.stat-val{font-size:24px;font-weight:900;color:var(--pk);line-height:1;margin-bottom:5px}
-.stat-lbl{font-size:10px;color:var(--sub);font-weight:600;line-height:1.4}
 
 /* content cards */
 .cs-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:10px}
 .cs-card-hd{padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
-.cs-card-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
-.cs-card-title{font-size:14px;font-weight:800;color:var(--ink);flex:1}
+.cs-card-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+.cs-card-ico svg{width:16px;height:16px}
+.cs-card-title{font-size:14px;font-weight:700;color:var(--ink);flex:1}
 .cs-card-badge{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
 .cs-card-body{padding:14px 16px}
 .cs-card-body-flush{padding:0}
 
-/* ── Shared content body patterns (article-simple) ─── */
+/* shared content body patterns */
 .art-p{font-size:13px;color:var(--sub);line-height:1.72}
 .art-p+.art-p{margin-top:10px}
 .art-p strong{color:var(--ink)}
 .art-note{font-size:11.5px;color:var(--sub);line-height:1.6;padding:10px 16px;background:var(--bg);border-radius:8px;margin-top:12px}
 .art-note strong{color:var(--ink);font-weight:700}
 
-/* art-list: label + value rows — used for fine table AND timeline */
+/* art-list: label + value rows */
 .art-list{list-style:none}
 .art-list li{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px}
 .art-list li:last-child{border-bottom:none}
 .al-lbl{font-weight:700;color:var(--ink);flex-shrink:0;min-width:0}
 .al-val{color:var(--sub);line-height:1.5;flex:1}
-.fine-r{color:var(--red);font-weight:800}
-.fine-o{color:var(--orange);font-weight:800}
-.fine-a{color:var(--amber);font-weight:800}
+.fine-r{color:var(--red);font-weight:700}
+.fine-o{color:var(--orange);font-weight:700}
+.fine-a{color:var(--amber);font-weight:700}
 
 /* step-list: counter ol */
 .step-list{list-style:none;counter-reset:stp}
 .step-list li{counter-increment:stp;display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}
 .step-list li:last-child{border-bottom:none}
-.step-list li::before{content:counter(stp);width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--pk);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.step-list li::before{content:counter(stp);width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);color:var(--sub);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
 .step-list li strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
 .step-list li span{font-size:12px;color:var(--sub);line-height:1.5}
 
-/* icon-list: emoji + text rows */
-.icon-list{list-style:none}
-.icon-list li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.icon-list li:last-child{border-bottom:none}
-.il-ico{font-size:17px;flex-shrink:0;line-height:1.2}
-.icon-list strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
-.icon-list span{font-size:12px;color:var(--sub);line-height:1.5}
+/* feature list */
+.feat-list{list-style:none}
+.feat-list li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.feat-list li:last-child{border-bottom:none}
+.feat-ico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex-shrink:0}
+.feat-ico svg{width:14px;height:14px}
+.feat-list strong{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.feat-list span{font-size:12px;color:var(--sub);line-height:1.5}
 
 /* faq */
 .faq-item{border-bottom:1px solid var(--line)}
 .faq-item:last-child{border-bottom:none}
 .faq-q{padding:14px 16px;font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;transition:color .15s;user-select:none}
-.faq-q:hover{color:var(--pk)}
-.faq-q.open{color:var(--pk)}
+.faq-q:hover{color:var(--momo)}
+.faq-q.open{color:var(--momo)}
 .faq-icon{width:22px;height:22px;border-radius:50%;background:var(--bg);display:grid;place-items:center;flex-shrink:0;transition:background .15s,transform .25s}
 .faq-q.open .faq-icon{background:var(--pk-bg);transform:rotate(45deg)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1)}
@@ -188,47 +193,42 @@ button{font-family:inherit;cursor:pointer}
 /* info/alert boxes */
 .info-box{background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#1e40af;line-height:1.65;margin-top:12px}
 .info-box strong{font-weight:700;display:block;margin-bottom:4px;font-size:12.5px}
-.success-box{background:var(--green-bg);border-left:3px solid var(--green-mid);border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#065f46;line-height:1.65;margin-top:12px}
-.success-box strong{font-weight:700;display:block;margin-bottom:4px}
-.alert-box{background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#92400e;line-height:1.65;margin-top:10px}
-.alert-box strong{font-weight:700;display:block;margin-bottom:4px}
 
 /* cta section */
-.cta-section{background:linear-gradient(135deg,#8a0053 0%,var(--pk2) 100%);padding:32px 20px;text-align:center;position:relative;overflow:hidden}
-.cta-section::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);top:-60px;right:-40px;pointer-events:none}
-.cta-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;position:relative}
+.cta-section{background:linear-gradient(135deg,#8a0053 0%,var(--momo-mid) 100%);padding:32px 20px;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.04);top:-60px;right:-40px;pointer-events:none}
+.cta-title{font-size:clamp(18px,3vw,22px);font-weight:700;color:#fff;margin-bottom:8px;line-height:1.2;position:relative;font-family:var(--font-display);letter-spacing:-.02em}
 .cta-sub{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:22px;position:relative}
 .cta-btn-row{display:flex;gap:10px;justify-content:center;position:relative;flex-wrap:wrap}
-.cta-btn{height:46px;border-radius:12px;padding:0 22px;font-size:13px;font-weight:800;border:none;display:flex;align-items:center;gap:8px;cursor:pointer}
-.cta-btn.white{background:#fff;color:var(--pk)}
-.cta-btn.ghost{background:transparent;border:2px solid rgba(255,255,255,.45);color:#fff}
+.cta-btn{height:46px;border-radius:var(--r);padding:0 22px;font-size:13px;font-weight:700;border:none;display:flex;align-items:center;gap:8px;cursor:pointer}
+.cta-btn.white{background:#fff;color:var(--momo)}
+.cta-btn.ghost{background:transparent;border:2px solid rgba(255,255,255,.4);color:#fff}
 
 /* fixed cta */
-.fixed-cta{position:fixed;bottom:0;left:0;right:0;background:var(--pk);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:300;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 24px rgba(0,0,0,.2)}
+.fixed-cta{position:fixed;bottom:0;left:0;right:0;background:var(--momo);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:300;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 -4px 24px rgba(0,0,0,.2)}
 .fixed-cta.show{transform:translateY(0)}
 .fixed-cta-text{font-size:12px;color:rgba(255,255,255,.85);line-height:1.3}
-.fixed-cta-text strong{color:#fff;display:block;font-size:13px;font-weight:800}
-.fixed-cta-btn{flex-shrink:0;height:40px;background:#fff;color:var(--pk);border:none;border-radius:20px;padding:0 18px;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}
+.fixed-cta-text strong{color:#fff;display:block;font-size:13px;font-weight:700}
+.fixed-cta-btn{flex-shrink:0;height:40px;background:#fff;color:var(--momo);border:none;border-radius:20px;padding:0 18px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
 .fixed-cta-x{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:none;color:#fff;width:20px;height:20px;border-radius:50%;font-size:10px;cursor:pointer;display:grid;place-items:center}
 
 /* ─── LONG FORM ──────────────────────────── */
 .long-form{max-width:720px;margin:0 auto;padding:0 20px 40px}
 .lf-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 24px 20px}
 .lf-top{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.lf-h2{font-size:19px;font-weight:900;color:var(--ink);line-height:1.3;margin-bottom:5px}
+.lf-h2{font-size:clamp(17px,2.5vw,21px);font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:5px;font-family:var(--font-display);letter-spacing:-.02em}
 .lf-meta{font-size:11px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
 .lf-meta span{display:flex;align-items:center;gap:4px}
-.lf-h3{font-size:15px;font-weight:800;color:var(--ink);line-height:1.4;padding-left:10px;border-left:3px solid var(--pk);margin:22px 0 9px}
+.lf-h3{font-size:15px;font-weight:700;color:var(--ink);line-height:1.4;padding-left:10px;border-left:3px solid var(--momo);margin:22px 0 9px}
 .lf-h4{font-size:13.5px;font-weight:700;color:var(--ink);margin:14px 0 5px}
 .lf-p{font-size:13px;color:var(--sub);line-height:1.8;margin-bottom:9px}
 .lf-p strong{color:var(--ink)}
 .lf-ul{list-style:disc;padding-left:18px;margin-bottom:9px}
 .lf-ul li{font-size:13px;color:var(--sub);line-height:1.72;margin-bottom:4px}
-.lf-ul li::marker{color:var(--pk)}
+.lf-ul li::marker{color:var(--sub)}
 
 @media(max-width:520px){
   .hero h1{font-size:24px}
-  .stat-strip{grid-template-columns:repeat(3,1fr)}
   .al-lbl{min-width:72px}
   .lf-card{padding:18px 16px}
 }
@@ -267,11 +267,11 @@ button{font-family:inherit;cursor:pointer}
         <input type="text" class="plate-input" id="plateInput" placeholder="VD: 29A12345" maxlength="12" oninput="onPlateInput(this)" onkeydown="if(event.key==='Enter')doSearch()">
         <button class="plate-clear" onclick="clearPlate()">✕</button>
       </div>
-      <div class="plate-hint">💡 Ví dụ: <b>29A-123.45</b> nhập là <b>29A12345</b> (bỏ dấu chấm, gạch ngang).</div>
+      <div class="plate-hint">Ví dụ: <b>29A-123.45</b> nhập là <b>29A12345</b> (bỏ dấu chấm, gạch ngang).</div>
       <div class="vtype-row">
-        <button class="vtype-btn on" id="vt-oto" onclick="setVType('oto')">🚗 Ô tô</button>
-        <button class="vtype-btn" id="vt-xemay" onclick="setVType('xemay')">🏍️ Xe máy</button>
-        <button class="vtype-btn" id="vt-xedien" onclick="setVType('xedien')">🛵 Xe máy điện</button>
+        <button class="vtype-btn on" id="vt-oto" onclick="setVType('oto')">Ô tô</button>
+        <button class="vtype-btn" id="vt-xemay" onclick="setVType('xemay')">Xe máy</button>
+        <button class="vtype-btn" id="vt-xedien" onclick="setVType('xedien')">Xe máy điện</button>
       </div>
       <label class="save-plate" for="savePlateChk">
         <input type="checkbox" id="savePlateChk">
@@ -282,14 +282,23 @@ button{font-family:inherit;cursor:pointer}
         Tra cứu miễn phí
       </button>
       <div class="trust-row">
-        <div class="trust-item"><div class="trust-ico">✅</div>Cục CSGT &amp; Đăng kiểm</div>
-        <div class="trust-item"><div class="trust-ico">⚡</div>Kết quả 3 giây</div>
-        <div class="trust-item"><div class="trust-ico">🆓</div>Miễn phí 100%</div>
+        <div class="trust-item">
+          <div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          Cục CSGT &amp; Đăng kiểm
+        </div>
+        <div class="trust-item">
+          <div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg></div>
+          Kết quả 3 giây
+        </div>
+        <div class="trust-item">
+          <div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg></div>
+          Miễn phí 100%
+        </div>
       </div>
       <div class="social-proof">
-        <span>📸 <b>1.800+</b> Camera AI</span><span class="sp-dot"></span>
-        <span>👥 <b>1M+</b> người dùng</span><span class="sp-dot"></span>
-        <span>🔄 <b>500K+</b> lượt/tháng</span>
+        <span><b>1.800+</b> Camera AI</span><span class="sp-dot"></span>
+        <span><b>1M+</b> người dùng</span><span class="sp-dot"></span>
+        <span><b>500K+</b> lượt/tháng</span>
       </div>
     </div>
   </div>
@@ -314,41 +323,49 @@ button{font-family:inherit;cursor:pointer}
   </div>
   <div class="mini-label">Tra cứu tỉnh / thành khác</div>
   <div class="province-scroll">
-    <a class="province-chip active" href="#">🏙️ Hà Nội</a>
-    <a class="province-chip" href="#">🌆 TP. Hồ Chí Minh</a>
-    <a class="province-chip" href="#">🏖️ Đà Nẵng</a>
-    <a class="province-chip" href="#">🌊 Hải Phòng</a>
-    <a class="province-chip" href="#">🌳 Bình Dương</a>
-    <a class="province-chip" href="#">🌺 Cần Thơ</a>
-    <a class="province-chip" href="#">🏔️ Đồng Nai</a>
-    <a class="province-chip" href="#">⛵ Khánh Hoà</a>
-    <a class="province-chip" href="#">🌾 Long An</a>
+    <a class="province-chip active" href="#">Hà Nội</a>
+    <a class="province-chip" href="#">TP. Hồ Chí Minh</a>
+    <a class="province-chip" href="#">Đà Nẵng</a>
+    <a class="province-chip" href="#">Hải Phòng</a>
+    <a class="province-chip" href="#">Bình Dương</a>
+    <a class="province-chip" href="#">Cần Thơ</a>
+    <a class="province-chip" href="#">Đồng Nai</a>
+    <a class="province-chip" href="#">Khánh Hoà</a>
+    <a class="province-chip" href="#">Long An</a>
   </div>
   <div class="mini-label">Liên quan đến phạt nguội</div>
   <div class="related-grid">
     <a class="related-card" href="#">
-      <div class="related-ico" style="background:#fff0f7">💳</div>
+      <div class="related-ico" style="background:var(--pk-bg);color:var(--momo)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
       <div>
         <div class="related-name">Nộp phạt online</div>
         <div class="related-desc">Thanh toán không đến CA</div>
       </div>
     </a>
     <a class="related-card" href="#">
-      <div class="related-ico" style="background:#fffbeb">🔔</div>
+      <div class="related-ico" style="background:var(--amber-bg);color:var(--amber)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
       <div>
         <div class="related-name">Nhận cảnh báo</div>
         <div class="related-desc">Alert khi có phạt mới</div>
       </div>
     </a>
     <a class="related-card" href="#">
-      <div class="related-ico" style="background:#eff6ff">📍</div>
+      <div class="related-ico" style="background:var(--blue-bg);color:var(--blue)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
       <div>
         <div class="related-name">Bản đồ camera HN</div>
         <div class="related-desc">600+ vị trí AI giám sát</div>
       </div>
     </a>
     <a class="related-card" href="#">
-      <div class="related-ico" style="background:#f0fdf4">📋</div>
+      <div class="related-ico" style="background:var(--green-bg);color:var(--green)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
       <div>
         <div class="related-name">Tra cứu mức phạt</div>
         <div class="related-desc">Theo NĐ 168/2024</div>
@@ -360,7 +377,6 @@ button{font-family:inherit;cursor:pointer}
 <!-- ─── CONTENT SEO ───────────────────────────── -->
 <div class="content-seo">
   <div class="cs-header">
-    <div class="cs-eyebrow">Thông tin · Hà Nội 2026</div>
     <h2 class="cs-h2">Phạt nguội tại Hà Nội:<br>Những điều cần biết</h2>
     <div class="cs-meta">
       <span>
@@ -374,26 +390,12 @@ button{font-family:inherit;cursor:pointer}
     </div>
   </div>
 
-  <!-- stat strip -->
-  <div class="stat-strip">
-    <div class="stat-card">
-      <div class="stat-val">3.2M</div>
-      <div class="stat-lbl">Vi phạm ghi nhận tại HN / năm</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">15–30</div>
-      <div class="stat-lbl">Ngày phạt nguội xuất hiện</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">#1</div>
-      <div class="stat-lbl">Quá tốc độ - vi phạm phổ biến nhất</div>
-    </div>
-  </div>
-
   <!-- Card 1: Phạt nguội là gì -->
   <div class="cs-card">
     <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#fff0f7">📷</div>
+      <div class="cs-card-ico" style="background:var(--pk-bg);color:var(--momo)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
       <div class="cs-card-title">Phạt nguội là gì?</div>
     </div>
     <div class="cs-card-body">
@@ -405,9 +407,11 @@ button{font-family:inherit;cursor:pointer}
   <!-- Card 2: Mức phạt 2026 -->
   <div class="cs-card">
     <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#fff7ed">📊</div>
+      <div class="cs-card-ico" style="background:var(--orange-bg);color:var(--orange)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 17v-4m5 4V9m5 8v-6"/></svg>
+      </div>
       <div class="cs-card-title">Mức phạt vi phạm giao thông 2026</div>
-      <div class="cs-card-badge" style="background:#fff0f7;color:var(--pk)">NĐ 168/2024</div>
+      <div class="cs-card-badge" style="background:var(--pk-bg);color:var(--momo)">NĐ 168/2024</div>
     </div>
     <div class="cs-card-body">
       <ul class="art-list">
@@ -436,14 +440,16 @@ button{font-family:inherit;cursor:pointer}
           <span class="al-val">Ô tô <em class="fine-a">0,8–1 tr</em> · Xe máy <em class="fine-a">0,2–0,3 tr</em></span>
         </li>
       </ul>
-      <p class="art-note">⚠️ Vượt tốc độ &gt;35 km/h và vượt đèn đỏ còn có thể bị <strong>tước GPLX 2–4 tháng</strong>. Vi phạm tái lặp trong 6 tháng tăng mức phạt tối đa 2 lần.</p>
+      <p class="art-note">Vượt tốc độ &gt;35 km/h và vượt đèn đỏ còn có thể bị <strong>tước GPLX 2–4 tháng</strong>. Vi phạm tái lặp trong 6 tháng tăng mức phạt tối đa 2 lần.</p>
     </div>
   </div>
 
   <!-- Card 3: Quy trình xử lý -->
   <div class="cs-card">
     <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#f0fdf4">⚡</div>
+      <div class="cs-card-ico" style="background:var(--green-bg);color:var(--green)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
+      </div>
       <div class="cs-card-title">Quy trình xử lý khi bị phạt nguội</div>
     </div>
     <div class="cs-card-body">
@@ -453,28 +459,30 @@ button{font-family:inherit;cursor:pointer}
         <li><strong>Chuẩn bị hồ sơ</strong><span>GPLX + Giấy đăng ký xe + CMND/CCCD bản gốc.</span></li>
         <li><strong>Nộp phạt</strong><span>Đến CA phường/quận nơi ghi nhận vi phạm, hoặc nộp online qua cổng dịch vụ công.</span></li>
       </ol>
-      <p class="art-note">💡 <strong>Nộp qua MoMo:</strong> Tính năng thanh toán phạt nguội trực tiếp trong app đang được triển khai — không cần đến CA, không xếp hàng.</p>
+      <p class="art-note"><strong>Nộp qua MoMo:</strong> Tính năng thanh toán phạt nguội trực tiếp trong app đang được triển khai — không cần đến CA, không xếp hàng.</p>
     </div>
   </div>
 
   <!-- Card 4: Thời gian xuất hiện -->
   <div class="cs-card">
     <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#eff6ff">🕐</div>
+      <div class="cs-card-ico" style="background:var(--blue-bg);color:var(--blue)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
       <div class="cs-card-title">Bao lâu vi phạm xuất hiện trong hệ thống?</div>
     </div>
     <div class="cs-card-body">
       <ul class="art-list">
         <li>
-          <span class="al-lbl" style="color:var(--pk);min-width:90px">Ngày 0</span>
+          <span class="al-lbl" style="min-width:90px">Ngày 0</span>
           <span class="al-val">Camera ghi nhận hình ảnh vi phạm, lưu tự động kèm GPS và timestamp.</span>
         </li>
         <li>
-          <span class="al-lbl" style="color:var(--pk);min-width:90px">Ngày 3–7</span>
+          <span class="al-lbl" style="min-width:90px">Ngày 3–7</span>
           <span class="al-val">Cán bộ CSGT xác minh, đối chiếu hình ảnh với dữ liệu đăng ký xe.</span>
         </li>
         <li>
-          <span class="al-lbl" style="color:var(--pk);min-width:90px">Ngày 15–30</span>
+          <span class="al-lbl" style="min-width:90px">Ngày 15–30</span>
           <span class="al-val">Vi phạm xuất hiện trên hệ thống CSGT.vn và đồng bộ với MoMo.</span>
         </li>
         <li>
@@ -488,16 +496,30 @@ button{font-family:inherit;cursor:pointer}
   <!-- Card 5: Lý do dùng MoMo -->
   <div class="cs-card">
     <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#fff0f7">⭐</div>
+      <div class="cs-card-ico" style="background:var(--pk-bg);color:var(--momo)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
       <div class="cs-card-title">Tại sao tra cứu qua MoMo?</div>
-      <div class="cs-card-badge" style="background:#f0fdf4;color:var(--green)">1M+ người dùng</div>
+      <div class="cs-card-badge" style="background:var(--green-bg);color:var(--green)">1M+ người dùng</div>
     </div>
     <div class="cs-card-body">
-      <ul class="icon-list">
-        <li><span class="il-ico">⚡</span><div><strong>Nhanh &amp; Miễn phí</strong><span>Kết quả trong 3 giây, không mất phí tra cứu.</span></div></li>
-        <li><span class="il-ico">🏛️</span><div><strong>Nguồn chính thống</strong><span>Đồng bộ trực tiếp từ hệ thống Cục CSGT Quốc gia.</span></div></li>
-        <li><span class="il-ico">🔔</span><div><strong>Cảnh báo tức thì</strong><span>Push notification ngay khi biển số có vi phạm mới xuất hiện.</span></div></li>
-        <li><span class="il-ico">💳</span><div><strong>Nộp phạt trong app</strong><span>Thanh toán trực tiếp qua MoMo, không cần đến CA.</span></div></li>
+      <ul class="feat-list">
+        <li>
+          <div class="feat-ico" style="background:var(--amber-bg);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg></div>
+          <div><strong>Nhanh &amp; Miễn phí</strong><span>Kết quả trong 3 giây, không mất phí tra cứu.</span></div>
+        </li>
+        <li>
+          <div class="feat-ico" style="background:var(--blue-bg);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div><strong>Nguồn chính thống</strong><span>Đồng bộ trực tiếp từ hệ thống Cục CSGT Quốc gia.</span></div>
+        </li>
+        <li>
+          <div class="feat-ico" style="background:var(--orange-bg);color:var(--orange)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+          <div><strong>Cảnh báo tức thì</strong><span>Push notification ngay khi biển số có vi phạm mới xuất hiện.</span></div>
+        </li>
+        <li>
+          <div class="feat-ico" style="background:var(--green-bg);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+          <div><strong>Nộp phạt trong app</strong><span>Thanh toán trực tiếp qua MoMo, không cần đến CA.</span></div>
+        </li>
       </ul>
     </div>
   </div>
@@ -505,7 +527,9 @@ button{font-family:inherit;cursor:pointer}
   <!-- FAQ -->
   <div class="cs-card">
     <div class="cs-card-hd">
-      <div class="cs-card-ico" style="background:#f5f3ff">💬</div>
+      <div class="cs-card-ico" style="background:#f5f3ff;color:#7c3aed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
       <div class="cs-card-title">Câu hỏi thường gặp về phạt nguội Hà Nội</div>
     </div>
     <div class="cs-card-body-flush">
@@ -556,9 +580,18 @@ button{font-family:inherit;cursor:pointer}
     <div class="lf-top">
       <h2 class="lf-h2">Phạt nguội tại Hà Nội: Hướng dẫn toàn diện 2026</h2>
       <div class="lf-meta">
-        <span>📅 Cập nhật: 06/2026</span>
-        <span>📋 Nghị định 168/2024/NĐ-CP</span>
-        <span>⏱ Đọc 5 phút</span>
+        <span>
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.5 4v3.5l2.5 1.5-.5.87L8 9.28V5H8.5z"/></svg>
+          Cập nhật: 06/2026
+        </span>
+        <span>
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="9" y2="9"/></svg>
+          Nghị định 168/2024/NĐ-CP
+        </span>
+        <span>
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4l2.5 1.5"/></svg>
+          Đọc 5 phút
+        </span>
       </div>
     </div>
 
@@ -648,10 +681,10 @@ button{font-family:inherit;cursor:pointer}
 <!-- ─── CTA ──────────────────────────────────── -->
 <section class="cta-section">
   <h2 class="cta-title">Nhận cảnh báo phạt nguội<br>Hà Nội tức thì</h2>
-  <p class="cta-sub">Đăng ký theo dõi biển số - MoMo thông báo ngay khi có vi phạm mới tại Hà Nội.</p>
+  <p class="cta-sub">Đăng ký theo dõi biển số — MoMo thông báo ngay khi có vi phạm mới tại Hà Nội.</p>
   <div class="cta-btn-row">
-    <button class="cta-btn white">📱 Tải MoMo miễn phí</button>
-    <button class="cta-btn ghost">🔔 Bật thông báo</button>
+    <button class="cta-btn white">Tải MoMo miễn phí</button>
+    <button class="cta-btn ghost">Bật thông báo</button>
   </div>
 </section>
 
@@ -671,6 +704,7 @@ function setVType(t) {
   _vtype = t;
   document.getElementById('vt-oto').className = 'vtype-btn' + (t==='oto'?' on':'');
   document.getElementById('vt-xemay').className = 'vtype-btn' + (t==='xemay'?' on':'');
+  document.getElementById('vt-xedien').className = 'vtype-btn' + (t==='xedien'?' on':'');
 }
 function onPlateInput(el) {
   el.value = el.value.toUpperCase().replace(/[^A-Z0-9\-\.]/g,'');
@@ -702,7 +736,7 @@ function doSearch() {
 function renderResult(rawPlate, data) {
   const div = document.getElementById('resultCard');
   const plate = rawPlate.replace(/^(\w{2,3})(\w+)$/, '$1-$2');
-  const typeLbl = _vtype === 'oto' ? 'Ô tô' : 'Xe máy';
+  const typeLbl = _vtype === 'oto' ? 'Ô tô' : _vtype === 'xemay' ? 'Xe máy' : 'Xe máy điện';
   if (!data) {
     div.innerHTML = `<div class="violation-card">
       <div class="vc-header"><span class="vc-plate">${plate}</span><span class="vc-type-tag">${typeLbl}</span></div>
@@ -713,7 +747,7 @@ function renderResult(rawPlate, data) {
       <div style="padding:14px 16px;font-size:12px;color:var(--sub);line-height:1.65">Biển số <strong style="color:var(--ink)">${plate}</strong> hiện không có vi phạm chưa xử lý tại Hà Nội. Cập nhật ngày ${new Date().toLocaleDateString('vi-VN')}.<br><span style="font-size:11px">Lưu ý: Camera có thể ghi nhận vi phạm mới 15-30 ngày sau khi xảy ra.</span></div>
       <div class="vc-footer">
         <button class="vc-btn outline" onclick="clearPlate()">Tra cứu lại</button>
-        <button class="vc-btn primary">🔔 Theo dõi biển số</button>
+        <button class="vc-btn primary">Theo dõi biển số</button>
       </div>
     </div>`;
     return;
@@ -732,13 +766,13 @@ function renderResult(rawPlate, data) {
       <div class="vi-row"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5a4.5 4.5 0 0 1 4.5 4.5C12.5 9.25 8 14 8 14S3.5 9.25 3.5 6A4.5 4.5 0 0 1 8 1.5zm0 2.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>${v.loc}</div>
       <div class="vi-row"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v3l2 2"/></svg>${v.auth}</div>
       <div class="vi-footer">
-        <span style="font-size:17px;font-weight:900;color:${fineColor}">${v.fine}</span>
-        <span class="vi-status ${v.status}">${v.status==='unpaid'?'⏳ Chưa nộp phạt':'✅ Đã nộp phạt'}</span>
+        <span style="font-size:17px;font-weight:700;color:${fineColor}">${v.fine}</span>
+        <span class="vi-status ${v.status}">${v.status==='unpaid'?'Chưa nộp phạt':'Đã nộp phạt'}</span>
       </div>
     </div>
     <div class="vc-footer">
       <button class="vc-btn outline">Xem chi tiết</button>
-      <button class="vc-btn primary">💳 Nộp phạt ngay</button>
+      <button class="vc-btn primary">Nộp phạt ngay</button>
     </div>
   </div>`;
 }
