@@ -41,7 +41,7 @@
     .step-bar{display:flex;align-items:center;gap:0;margin:22px 0 6px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fdfcfb}.step{display:flex;align-items:center;gap:8px;flex:1;position:relative}.step:not(:last-child)::after{content:'';flex:none;width:32px;height:1px;background:var(--line);margin:0 10px;transition:background .4s}.step:not(:last-child).done::after{background:var(--green)}.step-num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:800;border:2px solid var(--line);color:var(--t3);background:#fff;transition:all .4s var(--ease);flex:none}.step.active .step-num{border-color:var(--pk);color:var(--pk);background:var(--pk-bg);box-shadow:0 0 0 4px rgba(165,0,100,.08)}.step.done .step-num{border-color:var(--green);color:#fff;background:var(--green)}.step-label{font-size:9px;font-weight:700;color:var(--t3);transition:color .3s;white-space:nowrap}.step.active .step-label{color:var(--ink)}.step.done .step-label{color:var(--green)}
 
     /* ── Identity bar ──────────────────────── */
-    .identity-bar{display:flex;align-items:center;gap:14px;margin:20px 0 14px;padding:14px 16px;border:1px solid #e4d7df;background:#fdfbfc;border-radius:12px;transition:all .3s var(--ease)}.identity-bar.synced{border-color:#c7e3d8;background:#f7fcfa}.identity-copy{min-width:210px}.identity-copy strong{display:block;font-size:11px}.identity-copy span{display:block;color:var(--t3);font-size:9px;margin-top:3px;line-height:1.45}.identity-form{display:flex;gap:8px;flex:1}.identity-form input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 10px;outline:none;font-size:11px;font-weight:700;transition:all var(--dur) var(--ease)}.identity-form input:focus{border-color:var(--pk);box-shadow:0 0 0 3px rgba(165,0,100,.06)}.identity-form input[readonly]{background:var(--soft);cursor:default}
+    .identity-bar{display:flex;align-items:center;gap:14px;margin:20px 0 14px;padding:14px 16px;border:1px solid #e4d7df;background:#fdfbfc;border-radius:12px;transition:all .3s var(--ease)}.identity-bar.synced{border-color:#c7e3d8;background:#f7fcfa}.identity-bar.error{border-color:#f5b8b8;background:#fff8f8}.identity-copy{min-width:210px}.identity-copy strong{display:block;font-size:11px}.identity-copy span{display:block;color:var(--t3);font-size:9px;margin-top:3px;line-height:1.45}.identity-form{display:flex;gap:8px;flex:1;flex-wrap:wrap}.identity-form-row{display:flex;gap:8px;flex:1;min-width:0}.identity-form input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 10px;outline:none;font-size:11px;font-weight:700;transition:all var(--dur) var(--ease)}.identity-form input:focus{border-color:var(--pk);box-shadow:0 0 0 3px rgba(165,0,100,.06)}.identity-form input.input-error{border-color:#e05555;box-shadow:0 0 0 3px rgba(224,85,85,.08)}.identity-form input[readonly]{background:var(--soft);cursor:default}.id-error-msg{width:100%;font-size:9px;color:#c0392b;margin-top:2px;display:flex;align-items:center;gap:4px}
 
     /* ── Overview grid ─────────────────────── */
     .overview-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,.9fr);gap:20px}.browser-card,.info-card,.settings-card,.scraper-card{border:1px solid var(--line);border-radius:13px;background:#fff;overflow:hidden;transition:box-shadow .3s}.browser-card:hover,.info-card:hover{box-shadow:var(--shadow)}
@@ -119,10 +119,11 @@
     const CATEGORIES=['','Nhà hàng','Quán ăn','Siêu thị','Bách hóa','Cafe','Trà sữa','Bar & Pub','Tiệm bánh','Spa & Massage','Gym & Fitness','Phòng khám','Nhà thuốc','Cửa hàng tiện lợi','Thời trang','Điện tử','Khách sạn','Homestay','Rửa xe','Trạm xăng'];
     const AMENITIES_ALL=['Dine-in','Takeaway','Delivery','Wifi','Parking','Air-conditioned','Pet-friendly','Outdoor seating','Private room','Kids zone','Wheelchair accessible','Live music'];
     const SAMPLE_M4B={
-      'M4B-008821':{name:'Tiệm Mì Chú Cao',category:'Quán ăn',address:'56 Nguyễn Trãi, P.3, Q.5, TP.HCM',lng:'106.681803',lat:'10.759624',phone:'0909 123 456',oa:true,oaId:'OA-982104'},
-      'M4B-005512':{name:'Highlands Coffee Bitexco',category:'Cafe',address:'2 Hải Triều, P. Bến Nghé, Q.1, TP.HCM',lng:'106.704618',lat:'10.771600',phone:'028 3914 1514',oa:true,oaId:'OA-771202'},
-      'M4B-003300':{name:'FamilyMart Phan Xích Long',category:'Cửa hàng tiện lợi',address:'181 Phan Xích Long, P.2, Q. Phú Nhuận, TP.HCM',lng:'106.684200',lat:'10.797100',phone:'',oa:false,oaId:''},
+      'M4B008821':{name:'Tiệm Mì Chú Cao',category:'Quán ăn',address:'56 Nguyễn Trãi, P.3, Q.5, TP.HCM',lng:'106.681803',lat:'10.759624',phone:'0909 123 456',oa:true,oaId:'OA-982104'},
+      'M4B005512':{name:'Highlands Coffee Bitexco',category:'Cafe',address:'2 Hải Triều, P. Bến Nghé, Q.1, TP.HCM',lng:'106.704618',lat:'10.771600',phone:'028 3914 1514',oa:true,oaId:'OA-771202'},
+      'M4B003300':{name:'FamilyMart Phan Xích Long',category:'Cửa hàng tiện lợi',address:'181 Phan Xích Long, P.2, Q. Phú Nhuận, TP.HCM',lng:'106.684200',lat:'10.797100',phone:'',oa:false,oaId:''},
     };
+    const M4B_FORMAT=/^M4B\d+$/i;
     const SAMPLE_GMAP={hours:[{day:'T2',time:'07:00 - 22:00'},{day:'T3',time:'07:00 - 22:00'},{day:'T4',time:'07:00 - 22:00'},{day:'T5',time:'07:00 - 22:00'},{day:'T6',time:'07:00 - 23:00'},{day:'T7',time:'08:00 - 23:00'},{day:'CN',time:'08:00 - 21:00'}],amenities:['Dine-in','Takeaway','Wifi','Air-conditioned','Parking'],address:'56 Nguyễn Trãi, P.3, Q.5, TP.HCM',phone:'0909 123 456'};
     const SAMPLE_WEBSEARCH={
       popularItems:['Mì xào hải sản','Mì tôm chua cay','Hủ tiếu Nam Vang','Bánh canh cua'],
@@ -134,7 +135,7 @@
     const source={planId:params.get('planId')||'merchant-record',name:params.get('merchantName')||'Merchant Name',cluster:params.get('cluster')||'Merchant Topic Cluster',primary:params.get('primary')||'primary keyword',secondaries:(secondaryParam===null?'secondary keyword':secondaryParam).split('|').filter(Boolean),volume:Number(params.get('volume')||0)};
 
     const emptyPipeline=()=>({step:0,crawlData:null,confirmedData:null,contentData:null,infoDone:false,contentDone:false});
-    const state={tab:'overview',infoTab:'information',merchantId:'',synced:false,verified:false,draftSaved:false,merchant:{name:source.name,category:'',address:'',lng:'',lat:'',phone:'',oa:false,oaId:''},aiApplied:false,aiContent:null,contentReady:false,editorOpen:false,editorTab:'identity',logo:'',contentGenerated:false,bannerGenerated:false,links:[{label:'Merchant Hub',url:'/merchant'},{label:'Merchant gần đây',url:'/merchant/nearby'}],show:['address','map','payment'],gmapCrawled:false,gmap:{hours:[],amenities:[],address:'',phone:''},pipeline:emptyPipeline()};
+    const state={tab:'overview',infoTab:'information',merchantId:'',synced:false,idError:false,verified:false,draftSaved:false,merchant:{name:source.name,category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''},aiApplied:false,aiContent:null,contentReady:false,editorOpen:false,editorTab:'identity',logo:'',contentGenerated:false,bannerGenerated:false,links:[{label:'Merchant Hub',url:'/merchant'},{label:'Merchant gần đây',url:'/merchant/nearby'}],show:['address','map','payment'],gmapCrawled:false,gmap:{hours:[],amenities:[],address:'',phone:''},pipeline:emptyPipeline()};
 
     function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
     function slug(v){return v.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'merchant'}
@@ -173,17 +174,22 @@
     function scanMerchant(){
       const input=document.getElementById('merchantId'),id=input.value.trim();
       if(!id){toast('Nhập Merchant ID để đồng bộ','warning');return}
-      state.merchantId=id;
+      if(!M4B_FORMAT.test(id)){
+        state.idError=true;state.merchantId=id;
+        render();
+        return;
+      }
+      state.idError=false;state.merchantId=id;
       const button=document.getElementById('syncBtn');
       button.disabled=true;button.innerHTML='<span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .5s linear infinite"></span> Đang đồng bộ...';
       setTimeout(()=>{
-        const data=SAMPLE_M4B[id];
+        const data=SAMPLE_M4B[id.toUpperCase()];
         state.synced=true;state.verified=false;state.draftSaved=false;state.aiApplied=false;state.aiContent=null;state.gmapCrawled=false;state.pipeline=emptyPipeline();
         if(data){
-          state.merchant={...data};
+          state.merchant={...data,addressNew:''};
           state.merchant.name=data.name||source.name;
         }else{
-          state.merchant={name:'',category:'',address:'',lng:'',lat:'',phone:'',oa:false,oaId:''};
+          state.merchant={name:'',category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''};
         }
         render();
         toast(data?'Đã đồng bộ dữ liệu Merchant từ M4B':'M4B không có dữ liệu - vui lòng nhập thủ công',data?'success':'warning');
@@ -453,7 +459,7 @@
     function updateAIContent(key,value){if(state.aiContent)state.aiContent[key]=value}
     function resetMerchant(){
       state.synced=false;state.verified=false;state.draftSaved=false;state.merchantId='';
-      state.merchant={name:source.name,category:'',address:'',lng:'',lat:'',phone:'',oa:false,oaId:''};
+      state.merchant={name:source.name,category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''};
       state.aiApplied=false;state.aiContent=null;state.gmapCrawled=false;state.gmap={hours:[],amenities:[],address:'',phone:''};
       state.pipeline=emptyPipeline();state.editorOpen=false;state.contentReady=false;render();
     }
@@ -468,9 +474,15 @@
     /* ── Identity bar ──────────────────────────── */
     function identityBar(){
       const hasSomeData=state.merchant.name||state.merchant.category||state.merchant.address;
-      return `<div class="identity-bar ${state.synced?'synced':''}">
-        <div class="identity-copy"><strong>${state.synced?'Merchant ID đã liên kết':'Liên kết Merchant ID'}</strong><span>${state.synced?(hasSomeData?'Dữ liệu M4B đã crawl. Chỉnh sửa và Save Draft bên dưới.':'M4B không có dữ liệu. Nhập thủ công và Save Draft.'):'Nhập Merchant ID để crawl dữ liệu từ M4B.'}</span></div>
-        <div class="identity-form"><input id="merchantId" value="${esc(state.merchantId)}" placeholder="Ví dụ: M4B-008821, M4B-005512, M4B-003300" ${state.synced?'readonly':''}><button class="btn primary" id="syncBtn" onclick="scanMerchant()">${state.synced?'✓ Đã đồng bộ':'Crawl M4B'}</button></div>
+      const barClass=state.synced?'synced':state.idError?'error':'';
+      const copyLabel=state.synced?'Merchant ID đã liên kết':state.idError?'Merchant ID không hợp lệ':'Liên kết Merchant ID';
+      const copyDesc=state.synced?(hasSomeData?'Dữ liệu M4B đã crawl. Chỉnh sửa và Save Draft bên dưới.':'M4B không có dữ liệu. Nhập thủ công và Save Draft.'):state.idError?'Định dạng đúng là M4BxxxxX (ví dụ: M4B1234). Không dùng dấu gạch ngang.':'Nhập Merchant ID để crawl dữ liệu từ M4B.';
+      return `<div class="identity-bar ${barClass}">
+        <div class="identity-copy"><strong>${copyLabel}</strong><span>${copyDesc}</span></div>
+        <div class="identity-form">
+          <div class="identity-form-row"><input id="merchantId" value="${esc(state.merchantId)}" placeholder="Ví dụ: M4B1234" class="${state.idError?'input-error':''}" ${state.synced?'readonly':''}><button class="btn primary" id="syncBtn" onclick="scanMerchant()">${state.synced?'✓ Đã đồng bộ':'Crawl M4B'}</button></div>
+          ${state.idError?`<div class="id-error-msg">⚠ ID phải bắt đầu bằng "M4B" và theo sau là số - không dùng ký tự đặc biệt hoặc dấu gạch ngang.</div>`:''}
+        </div>
       </div>`;
     }
 
@@ -509,8 +521,13 @@
               <span class="hint">Nhà hàng, Bách hóa, Quán ăn, Siêu thị...</span>
             </div>
             <div class="field full">
-              <label>Địa chỉ <span class="src-badge ${m.address?'m4b':'manual'}">${m.address?'M4B':'Thủ công'}</span></label>
+              <label>Địa chỉ M4B <span class="src-badge ${m.address?'m4b':'manual'}">${m.address?'M4B':'Thủ công'}</span></label>
               <input value="${esc(m.address)}" placeholder="Nhập địa chỉ" oninput="updateMerchant('address',this.value)">
+            </div>
+            <div class="field full">
+              <label>Địa chỉ mới <span class="src-badge manual">Thủ công</span> <span style="font-size:9px;color:var(--t3);font-weight:400">· sau sát nhập tỉnh thành</span></label>
+              <input value="${esc(m.addressNew||'')}" placeholder="Nhập địa chỉ sau sát nhập (nếu có thay đổi)" oninput="updateMerchant('addressNew',this.value);document.getElementById('addressNewHint').innerHTML=this.value?'<span style=&quot;color:var(--green)&quot;>✓ Địa chỉ này sẽ được dùng thay cho địa chỉ M4B khi publish.</span>':'Để trống nếu địa chỉ M4B vẫn còn đúng.'">
+              <span class="hint" id="addressNewHint">${m.addressNew?`<span style="color:var(--green)">✓ Địa chỉ này sẽ được dùng thay cho địa chỉ M4B khi publish.</span>`:'Để trống nếu địa chỉ M4B vẫn còn đúng.'}</span>
             </div>
             <div class="field">
               <label>Long / Lat <span class="src-badge ${m.lng?'m4b':'manual'}">${m.lng?'M4B':'Thủ công'}</span></label>
