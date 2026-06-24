@@ -245,6 +245,10 @@ const PROTOTYPES = [
     gate: 'Đo category switch rate, lookup success, pay CTA và Metro ticket purchase completion.',
     src: 'demos/payments.html',
     address: 'web-momo-prototype.vercel.app/payments',
+    tools: [
+      { id: 'bill-lookup', name: 'Tra Cứu Hóa Đơn', category: 'Sub-page', description: 'Tra cứu hóa đơn điện, nước, internet theo mã khách hàng hoặc số điện thoại.', jtbd: 'Biết số tiền cần nộp trước khi thanh toán', src: 'demos/bill-lookup.html', address: 'web-momo-prototype.vercel.app/bill-lookup' },
+      { id: 'metro-ticket', name: 'Mua Vé Metro HCM', category: 'Sub-page', description: 'Mua vé Metro TP.HCM: chọn tuyến, ga đi/đến, loại vé, số lượng và nhận QR.', jtbd: 'Mua vé metro nhanh không cần xếp hàng tại ga', src: 'demos/metro-ticket.html', address: 'web-momo-prototype.vercel.app/metro-ticket' },
+    ],
   },
   {
     id: 'scam-check',
@@ -373,7 +377,8 @@ const PROTOTYPES = [
   {
     id: 'onboarding',
     name: 'User Onboarding — Giới thiệu & Đăng ký',
-    category: 'Growth',
+    category: 'Platform',
+    ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Luồng onboarding 6 màn hướng dẫn người dùng mới hiểu MoMo: feature tour, social proof, download CTA và đăng ký số điện thoại với OTP.',
     jtbd: 'Hiểu MoMo làm được gì và bắt đầu ngay không mất công',
@@ -384,11 +389,15 @@ const PROTOTYPES = [
     gate: 'Đo slide completion rate, CTA click rate, register started và OTP verify rate.',
     src: 'demos/onboarding.html',
     address: 'web-momo-prototype.vercel.app/welcome',
+    tools: [
+      { id: 'kyc', name: 'eKYC — Xác Minh Danh Tính', category: 'Sub-flow', description: 'Luồng xác minh danh tính nâng cấp tài khoản MoMo Tier 2: so sánh quyền lợi, chụp CCCD, selfie liveness và kết quả.', jtbd: 'Nâng cấp tài khoản để giao dịch không giới hạn, vay và đầu tư', src: 'demos/kyc.html', address: 'web-momo-prototype.vercel.app/ekyc' },
+    ],
   },
   {
     id: 'dashboard',
     name: 'Dashboard Analytics',
     category: 'Platform',
+    ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Dashboard phân tích vận hành: KPI cards, line chart giao dịch/doanh thu, donut phân loại, bar chart kênh acquisition, heatmap hoạt động, funnel chuyển đổi, top services table.',
     jtbd: 'Nắm tình hình kinh doanh và phát hiện vấn đề từ một màn hình',
@@ -404,6 +413,7 @@ const PROTOTYPES = [
     id: 'search',
     name: 'Search & Discovery',
     category: 'Platform',
+    ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Tìm kiếm dịch vụ với autocomplete, gợi ý, lịch sử, bộ lọc đa chiều (category, ưu đãi, rating), sort, pagination và highlight từ khoá.',
     jtbd: 'Tìm đúng dịch vụ cần ngay, không mất công lướt',
@@ -419,6 +429,7 @@ const PROTOTYPES = [
     id: 'notification-center',
     name: 'Notification Center',
     category: 'Platform',
+    ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Component thông báo đầy đủ: bell icon + badge counter + dropdown + trang danh sách + settings. 5 loại thông báo: giao dịch, ưu đãi, hệ thống, xã hội, tài chính.',
     jtbd: 'Không bỏ sót thông báo quan trọng, kiểm soát được loại nào muốn nhận',
@@ -543,7 +554,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant', 'onboarding', 'dashboard', 'search', 'notification-center'],
+  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant', 'dich-vu-cong', 'onboarding', 'dashboard', 'search', 'notification-center'],
   Other: ['worldcup'],
 };
 

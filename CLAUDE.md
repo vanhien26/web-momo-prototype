@@ -73,12 +73,17 @@ const GROUP_SUMMARY = {           // line 550 — text mô tả cho từng group
 | Category | IDs |
 |----------|-----|
 | MiniWeb | `mini-web-overview` |
-| Widget (Financial) | `financial` (nested tools) |
-| Widget (Other) | `payments`, `scam-check` |
+| Widget (Financial) | `financial` (nested tools: 25+ calculators) |
+| Widget (Other) | `payments` (sub-tools: `bill-lookup`, `metro-ticket`), `scam-check` |
 | MoSpark/GenAI | `orchestrator`, `genai-image`, `agentic-hub` |
 | MoSpark/Modules | `seo-geo-dashboard`, `seo-geo-project`, `merchant-page-builder`, `seo-geo-score`, `chatbot`, `ads-manager`, `blog-category` |
-| Platform | `phat-nguoi`, `esim-du-lich`, `cinema-film-detail`, `universal-search`, `merchant`, `onboarding`, `dashboard`, `search`, `notification-center` |
+| Platform | `phat-nguoi` (sub-tools: ha-noi, giai-dap, nop-qua-momo), `esim-du-lich`, `cinema-film-detail`, `universal-search`, `merchant` (sub-tools: merchant-discovery), `dich-vu-cong` (sub-tools: 5 DVC guides), `onboarding` (sub-tools: `kyc`), `dashboard`, `search`, `notification-center` |
 | Other | `worldcup` |
+
+**QUAN TRỌNG - category phải match GROUP_ORDER:**
+- `GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other']`
+- Prototype có `category` không nằm trong GROUP_ORDER sẽ KHÔNG hiện trong sidebar
+- `onboarding` phải là `category: 'Platform'` (không phải 'Growth')
 
 ### Quy tắc khi thêm prototype mới
 
@@ -155,7 +160,7 @@ Mọi demo HTML đều theo cấu trúc:
 
 - Sidebar: nhóm theo `category` → sort theo `GROUP_ITEM_ORDER`
 - Click item → workspace iframe hoặc embedded content
-- Version query: `store.js?v=30` — bump khi thay đổi store.js để bust cache
+- Version query: `store.js?v=31` — bump khi thay đổi store.js để bust cache
 
 **Nếu prototype không hiện trong sidebar:** Kiểm tra theo thứ tự:
 1. `id` đã có trong `PROTOTYPES` array chưa?
