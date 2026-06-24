@@ -308,6 +308,21 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'blog-editor',
+    name: 'Blog Editor (Tiptap)',
+    category: 'MoSpark',
+    maturity: 'Prototype',
+    description: 'Tiptap-based rich text editor cho MoSpark CMS. Notion-style block editor với slash commands (/), bubble menu khi bôi chọn text, 12 block types (paragraph, heading, callout, list, table, codeblock, image, divider...) và AI assist inline. Pre-loaded bài mẫu Ví Trả Sau MoMo.',
+    jtbd: 'Content editor viết và format bài blog trực quan — không cần biết HTML/Markdown. Slash commands + block types rich giúp tạo nội dung SEO-structured nhanh hơn 3x so với plain textarea.',
+    northStar: 'Time-to-publish (draft → publish) giảm + Content quality score tăng (SEO checklist auto)',
+    loop: 'Open draft → Write với slash commands → Insert blocks → Preview → Publish',
+    hypothesis: 'Editor có block types rõ ràng (callout, table, structured list) giúp content creator tự nhiên tạo ra content structured data-rich, tăng khả năng được AI Overview / GEO citation so với plain text.',
+    value: 'Giảm dependency vào dev cho content formatting. Editor enforce cấu trúc SEO (H1→H2→H3, callout cho FAQ, table cho comparison) ngay từ lúc viết.',
+    gate: 'Đo: time-to-draft, block type diversity per article, slash command usage rate, article publish rate.',
+    src: 'demos/blog-editor.html',
+    address: 'web-momo-prototype.vercel.app/blog-editor',
+  },
+  {
     id: 'orchestrator',
     name: 'GenAI Orchestrator',
     category: 'MoSpark',
@@ -559,7 +574,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -567,7 +582,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'cinema-film-detail', 'merchant', 'dich-vu-cong'],
