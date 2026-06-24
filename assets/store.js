@@ -110,6 +110,22 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'cinema',
+    name: 'Cinema Homepage',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'PLG Page',
+    description: 'Trang chủ Cinema momo.vn/cinema — SEO/organic entry point. Gồm hero campaign, film grid 2-col dạng ticket stub, genre filter, coming soon, rạp gần bạn và PLG block.',
+    jtbd: 'Browse phim đang chiếu, nhận cashback, chọn rạp và mua vé nhanh qua MoMo',
+    northStar: 'Film card click-through → ticket purchase',
+    loop: 'Organic search → Film browse → Pick film → Showtime → Mua vé',
+    hypothesis: 'Ticket stub card design tích hợp cashback benefit ngay trên poster tăng intent mua vé so với card thông thường.',
+    value: 'SEO entry point cho toàn bộ Cinema use case — organic traffic 1M/quý. PLG hook: cashback gắn mỗi film card.',
+    gate: 'Film card CTR, genre filter usage, coming soon notify rate, cinema row click.',
+    src: 'demos/cinema.html',
+    address: 'web-momo-prototype.vercel.app/cinema',
+  },
+  {
     id: 'cinema-film-detail',
     name: 'Cinema Film Detail',
     category: 'Platform',
@@ -203,7 +219,7 @@ const PROTOTYPES = [
   {
     id: 'universal-search',
     name: 'Universal Search',
-    category: 'Platform',
+    category: 'Other',
     ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Google-style federated search cho toàn bộ domain MoMo: dịch vụ, bài viết, merchant và công cụ tài chính trong một trang — với AI Answer box, content-type tabs và related queries.',
@@ -377,7 +393,7 @@ const PROTOTYPES = [
   {
     id: 'onboarding',
     name: 'User Onboarding — Giới thiệu & Đăng ký',
-    category: 'Platform',
+    category: 'Other',
     ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Luồng onboarding 6 màn hướng dẫn người dùng mới hiểu MoMo: feature tour, social proof, download CTA và đăng ký số điện thoại với OTP.',
@@ -396,7 +412,7 @@ const PROTOTYPES = [
   {
     id: 'dashboard',
     name: 'Dashboard Analytics',
-    category: 'Platform',
+    category: 'Other',
     ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Dashboard phân tích vận hành: KPI cards, line chart giao dịch/doanh thu, donut phân loại, bar chart kênh acquisition, heatmap hoạt động, funnel chuyển đổi, top services table.',
@@ -412,7 +428,7 @@ const PROTOTYPES = [
   {
     id: 'search',
     name: 'Search & Discovery',
-    category: 'Platform',
+    category: 'Other',
     ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Tìm kiếm dịch vụ với autocomplete, gợi ý, lịch sử, bộ lọc đa chiều (category, ưu đãi, rating), sort, pagination và highlight từ khoá.',
@@ -428,7 +444,7 @@ const PROTOTYPES = [
   {
     id: 'notification-center',
     name: 'Notification Center',
-    category: 'Platform',
+    category: 'Other',
     ownerGroup: 'Web Platform',
     maturity: 'Interactive',
     description: 'Component thông báo đầy đủ: bell icon + badge counter + dropdown + trang danh sách + settings. 5 loại thông báo: giao dịch, ưu đãi, hệ thống, xã hội, tài chính.',
@@ -554,8 +570,8 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema-film-detail', 'universal-search', 'merchant', 'dich-vu-cong', 'onboarding', 'dashboard', 'search', 'notification-center'],
-  Other: ['worldcup'],
+  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'cinema-film-detail', 'merchant', 'dich-vu-cong'],
+  Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center'],
 };
 
 const GROUP_SUMMARY = {
@@ -1479,4 +1495,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
   renderNav();
   renderWorkspace();
+
+  // ── Sidebar collapse / reveal ────────────────────────────
+  const collapseBtn = document.getElementById('sidebarCollapseBtn');
+  const revealBtn   = document.getElementById('sidebarRevealBtn');
+
+  function collapseSidebar() {
+    document.body.classList.add('sidebar-collapsed');
+    localStorage.setItem('proto-sidebar-collapsed', '1');
+  }
+  function expandSidebar() {
+    document.body.classList.remove('sidebar-collapsed');
+    localStorage.removeItem('proto-sidebar-collapsed');
+  }
+
+  collapseBtn?.addEventListener('click', collapseSidebar);
+  revealBtn?.addEventListener('click', expandSidebar);
+
+  if (localStorage.getItem('proto-sidebar-collapsed')) collapseSidebar();
 });
