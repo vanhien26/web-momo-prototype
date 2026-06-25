@@ -11,7 +11,7 @@ const PROTOTYPES = [
   },
   {
     id: 'financial',
-    name: 'Financial Utilities',
+    name: 'Widget Store',
     category: 'Widget',
     navigationOnly: true,
     maturity: 'Interactive',
@@ -110,8 +110,24 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'vts-merchant-finder',
+    name: 'VTS Merchant Finder',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'Prototype',
+    description: 'Tìm cửa hàng chấp nhận Ví Trả Sau theo địa điểm cụ thể (mall, tòa nhà). Demo với Crescent Mall Q7 — điều hướng theo tầng, lọc theo nhóm danh mục, hiển thị % cashback VTS. Dữ liệu tỉnh/thành từ vietnamese-provinces-database (34 tỉnh sau sát nhập 2025).',
+    jtbd: 'Biết ngay cửa hàng nào trong mall này nhận Ví Trả Sau và được hoàn bao nhiêu',
+    northStar: 'VTS store discovery → checkout intent rate',
+    loop: 'Vào mall → Chọn tầng → Xem cửa hàng VTS → Dùng VTS ngay',
+    hypothesis: 'Điều hướng theo tầng vật lý (B1/1/2/3/4) phù hợp hơn filter danh mục khi user đã đứng trong mall và cần biết quanh họ có gì nhận VTS.',
+    value: 'Tăng VTS transaction rate tại điểm bán offline bằng cách làm nổi bật cửa hàng nhận VTS ngay trong không gian mua sắm.',
+    gate: 'Đo: floor filter usage rate, store card CTR, VTS CTA click rate, province switch rate.',
+    src: 'demos/vts-merchant-finder.html',
+    address: 'web-momo-prototype.vercel.app/vts-merchant-finder',
+  },
+  {
     id: 'cinema',
-    name: 'Cinema Homepage',
+    name: 'Cinema',
     category: 'Platform',
     ownerGroup: 'Cell Team',
     maturity: 'PLG Page',
@@ -124,22 +140,24 @@ const PROTOTYPES = [
     gate: 'Film card CTR, genre filter usage, coming soon notify rate, cinema row click.',
     src: 'demos/cinema.html',
     address: 'web-momo-prototype.vercel.app/cinema',
-  },
-  {
-    id: 'cinema-film-detail',
-    name: 'Cinema Film Detail',
-    category: 'Platform',
-    ownerGroup: 'Cell Team',
-    maturity: 'Campaign Page',
-    description: 'Film Detail page cho Summer Campaign 2026 — tích hợp Hero campaign, Game Mở Khoá (Mua vé → Check-in → Review), Bundle Banner, Thông tin phim, Lịch chiếu và Đánh giá.',
-    jtbd: 'Mua vé và tham gia campaign ngay từ trang phim',
-    northStar: 'Game mission completion + ticket purchase',
-    loop: 'Hero → Game block → Buy ticket → Check-in → Review',
-    hypothesis: 'Tích hợp campaign gamification trực tiếp vào film detail tăng mission completion rate so với popup/banner riêng lẻ.',
-    value: 'Tạo luồng campaign mới cho Cinema: từ organic traffic vào film detail → mua vé → check-in → review → cashback.',
-    gate: 'Đo mission completion rate (1→2→3), ticket CTA CTR, check-in activation và review submission.',
-    src: 'demos/cinema-film-detail.html',
-    address: 'web-momo-prototype.vercel.app/cinema/nghi-he-so-nghi-huu',
+    tools: [
+      {
+        id: 'cinema-film-detail',
+        name: 'Film Detail',
+        category: 'Spoke',
+        ownerGroup: 'Cell Team',
+        maturity: 'Campaign Page',
+        description: 'Film Detail page cho Summer Campaign 2026 — tích hợp Hero campaign, Game Mở Khoá (Mua vé → Check-in → Review), Bundle Banner, Thông tin phim, Lịch chiếu và Đánh giá.',
+        jtbd: 'Mua vé và tham gia campaign ngay từ trang phim',
+        northStar: 'Game mission completion + ticket purchase',
+        loop: 'Hero → Game block → Buy ticket → Check-in → Review',
+        hypothesis: 'Tích hợp campaign gamification trực tiếp vào film detail tăng mission completion rate so với popup/banner riêng lẻ.',
+        value: 'Tạo luồng campaign mới cho Cinema: từ organic traffic vào film detail → mua vé → check-in → review → cashback.',
+        gate: 'Đo mission completion rate (1→2→3), ticket CTA CTR, check-in activation và review submission.',
+        src: 'demos/cinema-film-detail.html',
+        address: 'web-momo-prototype.vercel.app/cinema/nghi-he-so-nghi-huu',
+      },
+    ],
   },
   {
     id: 'ads-manager',
@@ -202,6 +220,36 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/merchant-page-builder',
   },
   {
+    id: 'merchant-list',
+    name: 'Merchant List',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Danh sách toàn bộ merchants kéo trực tiếp từ Supabase — xem giờ mở cửa hôm nay, cashback, status và mở nhanh vào Page Builder.',
+    jtbd: 'Xem toàn cảnh Merchant database và navigate vào từng record để build page',
+    northStar: 'Merchant List → Builder navigation',
+    loop: 'Load from Supabase → Filter/Search → Open in Builder',
+    hypothesis: 'Xem list trước khi vào Builder giúp chọn đúng record và giảm nhập ID thủ công.',
+    value: 'Kết nối trực tiếp Supabase database với prototype workflow.',
+    gate: 'Đo thời gian từ mở list đến bắt đầu edit trong Builder.',
+    src: 'demos/merchant-list.html',
+    address: 'web-momo-prototype.vercel.app/merchant-list',
+  },
+  {
+    id: 'supabase-editor',
+    name: 'Supabase Table Editor',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Clone giao diện Supabase Table Editor — xem và filter toàn bộ data trong 3 tables: merchants, merchant_hours, merchant_promotions. Data load trực tiếp từ Supabase production.',
+    jtbd: 'Inspect và debug data Merchant trực tiếp trong prototype mà không cần mở tab Supabase',
+    northStar: 'Data visibility trong prototype workflow',
+    loop: 'Switch table → Filter → Click FK → Navigate',
+    hypothesis: 'Xem raw data ngay trong prototype giúp verify nhanh hơn mở dashboard riêng.',
+    value: 'Supabase Table Editor experience embedded trong MoSpark prototype.',
+    gate: 'Đo số lần dùng để debug vs mở Supabase dashboard trực tiếp.',
+    src: 'demos/supabase-editor.html',
+    address: 'web-momo-prototype.vercel.app/supabase-editor',
+  },
+  {
     id: 'seo-geo-score',
     name: 'SEO/GEO Content Score',
     category: 'MoSpark',
@@ -246,6 +294,17 @@ const PROTOTYPES = [
     gate: 'Đo team views, comparison depth, returning users và campaign CTA conversion.',
     src: 'demos/world-cup.html',
     address: 'web-momo-prototype.vercel.app/world-cup-2026',
+  },
+  {
+    id: 'widget-store',
+    name: 'Widget Store Manager',
+    category: 'Widget',
+    maturity: 'Interactive',
+    description: 'Trang quản lý toàn bộ Widget Store: 33 công cụ chia 3 category (Financial, Payments, Security) hiển thị với đa dạng UI/UX — domain color taxonomy, featured cards, service tile grid, threat monitor. Có domain filter, list/grid toggle và copy embed code.',
+    jtbd: 'Xem tổng quan và quản lý toàn bộ widget có thể nhúng vào MoMo platform',
+    northStar: 'Widget discovery và embed adoption rate',
+    src: 'demos/widget-store.html',
+    address: 'web-momo-prototype.vercel.app/widget-store',
   },
   {
     id: 'payments',
@@ -574,7 +633,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
+  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'merchant-list', 'supabase-editor', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -582,10 +641,10 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-list', 'supabase-editor', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
   MiniWeb: ['mini-web-overview'],
-  Widget: ['financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'cinema-film-detail', 'merchant', 'dich-vu-cong'],
+  Widget: ['widget-store', 'financial', 'payments', 'scam-check'],
+  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'merchant', 'vts-merchant-finder', 'dich-vu-cong'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center'],
 };
 
@@ -1192,6 +1251,7 @@ function buildMiniWebOverviewView() {
       </div>
       <div class="ws-topbar-right">
         <span class="hl-total-count">${MINI_WEB_ROWS.length} MiniWeb</span>
+        <a href="/mini-web-overview" target="_blank" rel="noopener" class="open-ext-btn">Mở tab ↗</a>
       </div>
     </div>
 

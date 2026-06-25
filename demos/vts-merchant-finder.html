@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cửa hàng Ví Trả Sau · Crescent Mall | MoMo</title>
+  <link rel="shortcut icon" type="image/svg+xml" href="../assets/images/momo-logo.svg">
+  <style>
+    @font-face{font-family:MoMo;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf')}
+    @font-face{font-family:MoMo;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf');font-weight:700}
+    @font-face{font-family:MoMoDisplay;src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf');font-weight:800}
+
+    :root {
+      --navy:#0C1E35; --navy2:#132b46; --navy-rim:rgba(255,255,255,.08);
+      --pink:#EB2F96; --pink-dim:rgba(235,47,150,.1); --pink-rim:rgba(235,47,150,.22);
+      --green:#059669; --green-bg:#ECFDF5;
+      --amber:#D97706; --amber-bg:#FFFBEB;
+      --ink:#111827; --t2:#4B5563; --t3:#9CA3AF;
+      --line:#E5E7EB; --soft:#F7F8FA; --white:#fff;
+      --ease:cubic-bezier(.4,0,.2,1); --dur:.2s;
+      --r:12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin:0; background:var(--soft); color:var(--ink); font-family:MoMo,Arial,sans-serif; font-size:13px; -webkit-font-smoothing:antialiased; }
+    button, input { font:inherit; cursor:pointer; }
+    button { border:none; background:none; padding:0; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height:52px; background:var(--navy);
+      display:flex; align-items:center; gap:12px; padding:0 20px;
+      position:sticky; top:0; z-index:30;
+    }
+    .back-btn {
+      width:32px; height:32px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      background:var(--navy-rim); border-radius:8px;
+      color:#fff; font-size:15px; transition:background var(--dur);
+    }
+    .back-btn:hover { background:rgba(255,255,255,.15); }
+    .topbar-title { flex:1; color:#fff; font:800 13px MoMoDisplay,MoMo; }
+    .vts-pill {
+      display:flex; align-items:center; gap:5px;
+      background:var(--pink); border-radius:99px;
+      padding:4px 11px; color:#fff; font-size:9px; font-weight:800;
+    }
+    .vts-pill-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.7); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ── HERO ── */
+    .hero {
+      background:linear-gradient(150deg, var(--navy) 0%, #1a3d60 100%);
+      padding:24px 20px 28px; position:relative; overflow:hidden;
+    }
+    .hero-glow {
+      position:absolute; top:-80px; right:-80px;
+      width:240px; height:240px; border-radius:50%;
+      background:radial-gradient(circle, rgba(235,47,150,.18) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .hero-crumb {
+      display:flex; align-items:center; gap:5px; flex-wrap:wrap;
+      font-size:9.5px; font-weight:800; letter-spacing:.4px;
+      color:rgba(255,255,255,.5); margin-bottom:12px;
+    }
+    .hero-crumb a { color:rgba(255,255,255,.5); text-decoration:none; }
+    .hero-crumb a:hover { color:rgba(255,255,255,.8); }
+    .hero-crumb .sep { opacity:.35; }
+    .hero-crumb .current { color:rgba(255,255,255,.85); }
+    .hero-h1 { font:800 28px/1.1 MoMoDisplay,MoMo; color:#fff; margin:0 0 8px; }
+    .hero-h1 span { color:var(--pink); }
+    .hero-addr { font-size:11px; color:rgba(255,255,255,.5); margin:0 0 20px; }
+    .hero-kpis { display:flex; gap:8px; flex-wrap:wrap; }
+    .kpi {
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1);
+      border-radius:10px; padding:10px 14px; min-width:80px;
+    }
+    .kpi strong { display:block; font:800 20px MoMoDisplay,MoMo; color:#fff; line-height:1; }
+    .kpi span { display:block; font-size:9px; color:rgba(255,255,255,.45); margin-top:3px; }
+    .kpi.pink strong { color:var(--pink); }
+    .kpi.green strong { color:#34D399; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background:var(--white); border-bottom:1px solid var(--line);
+      padding:10px 16px; display:flex; gap:8px; align-items:center;
+      position:sticky; top:52px; z-index:20;
+    }
+    .search-wrap { flex:1; min-width:0; position:relative; }
+    .search-wrap input {
+      width:100%; border:1px solid var(--line); border-radius:8px;
+      padding:8px 10px 8px 30px; font-size:11px; outline:none;
+      background:var(--soft); transition:border-color var(--dur), background var(--dur);
+    }
+    .search-wrap input:focus { border-color:var(--pink); background:#fff; }
+    .search-ico { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--t3); font-size:13px; pointer-events:none; }
+    .group-chips { display:flex; gap:5px; overflow-x:auto; scrollbar-width:none; }
+    .group-chips::-webkit-scrollbar { display:none; }
+    .g-chip {
+      flex-shrink:0; border:1px solid var(--line); border-radius:99px;
+      padding:6px 11px; font-size:9.5px; font-weight:800; color:var(--t2);
+      background:#fff; transition:all var(--dur); white-space:nowrap;
+    }
+    .g-chip:hover { border-color:var(--pink); color:var(--pink); }
+    .g-chip.on { background:var(--ink); border-color:var(--ink); color:#fff; }
+
+    /* ── FLOOR STRIP (mobile) ── */
+    .floor-strip {
+      display:none; overflow-x:auto; gap:6px; padding:10px 16px;
+      background:#fff; border-bottom:1px solid var(--line); scrollbar-width:none;
+    }
+    .floor-strip::-webkit-scrollbar { display:none; }
+    .f-chip {
+      flex-shrink:0; padding:6px 13px;
+      border:1px solid var(--line); border-radius:99px;
+      font-size:10px; font-weight:800; color:var(--t2);
+      background:#fff; transition:all var(--dur); white-space:nowrap; cursor:pointer;
+    }
+    .f-chip.on { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+    /* ── BODY ── */
+    .body-wrap {
+      display:flex; align-items:flex-start; gap:18px;
+      max-width:1100px; margin:0 auto; padding:20px 16px 48px;
+    }
+
+    /* ── FLOOR NAV (desktop) ── */
+    .floor-nav {
+      width:76px; flex-shrink:0;
+      position:sticky; top:calc(52px + 57px + 20px);
+    }
+    .fn-label { font-size:7.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--t3); text-align:center; margin-bottom:8px; }
+    .fn-item {
+      display:flex; flex-direction:column; align-items:center; gap:2px;
+      padding:9px 5px; border-radius:10px; cursor:pointer;
+      border:1px solid transparent; transition:all var(--dur); margin-bottom:3px;
+    }
+    .fn-item:hover { background:#fff; border-color:var(--line); }
+    .fn-item.on { background:var(--pink-dim); border-color:var(--pink-rim); }
+    .fn-num { font:800 16px MoMoDisplay,MoMo; color:var(--t2); line-height:1; }
+    .fn-item.on .fn-num { color:var(--pink); }
+    .fn-cnt { font-size:7.5px; color:var(--t3); font-weight:700; }
+    .fn-bar { height:3px; width:38px; border-radius:2px; background:var(--line); margin-top:3px; overflow:hidden; }
+    .fn-bar-fill { height:100%; background:var(--pink); border-radius:2px; transition:width .35s var(--ease); }
+    .fn-item.on .fn-bar { background:var(--pink-rim); }
+    .fn-divider { height:1px; background:var(--line); margin:8px 0; }
+    .fn-mall { font-size:7px; text-transform:uppercase; letter-spacing:.5px; color:var(--t3); text-align:center; font-weight:700; line-height:1.4; }
+
+    /* ── STORE CONTENT ── */
+    .store-main { flex:1; min-width:0; }
+    .floor-block { margin-bottom:30px; }
+    .floor-heading {
+      display:flex; align-items:baseline; gap:8px;
+      margin-bottom:13px; padding-bottom:10px;
+      border-bottom:1px solid var(--line);
+    }
+    .fh-num { font:800 20px MoMoDisplay,MoMo; color:var(--ink); }
+    .fh-name { font-size:11px; color:var(--t3); font-weight:700; }
+    .fh-cnt { margin-left:auto; font-size:9px; color:var(--t3); }
+    .store-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:10px; }
+
+    /* ── STORE CARD ── */
+    .s-card {
+      background:var(--white); border:1px solid var(--line); border-radius:var(--r);
+      padding:14px; cursor:pointer; position:relative; overflow:hidden;
+      transition:border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+      animation:fadeUp .25s var(--ease) both;
+    }
+    .s-card:hover {
+      border-color:var(--pink-rim);
+      box-shadow:0 6px 24px rgba(235,47,150,.08);
+      transform:translateY(-2px);
+    }
+    .s-card:hover .s-cta { opacity:1; max-height:28px; margin-top:10px; }
+    .s-floor-pin {
+      position:absolute; top:10px; right:10px;
+      background:var(--soft); border:1px solid var(--line);
+      border-radius:6px; padding:2px 7px;
+      font-size:8px; font-weight:800; color:var(--t3);
+    }
+    .s-top { display:flex; align-items:flex-start; gap:10px; margin-bottom:11px; }
+    .s-icon {
+      width:42px; height:42px; border-radius:10px;
+      background:var(--soft); border:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; flex-shrink:0;
+    }
+    .s-meta { flex:1; min-width:0; }
+    .s-name { font:800 12px/1.25 MoMoDisplay,MoMo; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .s-cat { font-size:9px; color:var(--t3); margin-top:2px; }
+    .vts-badge {
+      display:inline-flex; align-items:center; gap:4px;
+      background:var(--pink-dim); border:1px solid var(--pink-rim);
+      border-radius:6px; padding:3px 8px;
+      font-size:8px; font-weight:800; color:var(--pink);
+    }
+    .vts-badge svg { width:9px; height:9px; fill:var(--pink); flex-shrink:0; }
+    .s-offers { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; align-items:center; }
+    .cashback-tag {
+      background:var(--green-bg); color:var(--green);
+      border-radius:5px; padding:3px 8px;
+      font-size:8px; font-weight:800;
+    }
+    .top-tag {
+      background:var(--amber-bg); color:var(--amber);
+      border-radius:5px; padding:3px 8px;
+      font-size:8px; font-weight:800;
+    }
+    .no-promo { font-size:9px; color:var(--t3); }
+    .s-cta {
+      width:100%; background:var(--pink); color:#fff;
+      border-radius:7px; font-size:9.5px; font-weight:800;
+      padding:5px 0; text-align:center;
+      opacity:0; max-height:0; overflow:hidden;
+      transition:opacity .2s var(--ease), max-height .2s var(--ease), margin-top .2s var(--ease);
+    }
+
+    /* ── EMPTY ── */
+    .empty { text-align:center; padding:48px 20px; color:var(--t3); }
+    .empty .ico { font-size:36px; margin-bottom:10px; }
+    .empty p { font-size:12px; line-height:1.6; }
+
+    /* ── PROVINCE FOOTER ── */
+    .province-footer {
+      border-top:1px solid var(--line); background:var(--white);
+      padding:20px 16px 32px;
+    }
+    .pf-inner { max-width:1100px; margin:0 auto; }
+    .pf-label { font-size:8.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--t3); margin-bottom:10px; }
+    .pf-chips { display:flex; flex-wrap:wrap; gap:5px; }
+    .pf-chip {
+      border:1px solid var(--line); border-radius:8px;
+      padding:5px 10px; font-size:9.5px; font-weight:700; color:var(--t2);
+      background:#fff; cursor:pointer; transition:all var(--dur);
+    }
+    .pf-chip:hover { border-color:var(--pink); color:var(--pink); }
+    .pf-chip.current { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:640px) {
+      .floor-nav { display:none; }
+      .floor-strip { display:flex; }
+      .body-wrap { padding:12px 12px 40px; }
+      .store-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
+      .hero-h1 { font-size:22px; }
+      .hero-kpis { gap:6px; }
+      .kpi { padding:8px 10px; }
+      .kpi strong { font-size:17px; }
+    }
+    @media (max-width:380px) {
+      .store-grid { grid-template-columns:1fr; }
+    }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+    @media (prefers-reduced-motion:reduce) { .s-card { animation:none; } }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <div class="topbar-title">Ví Trả Sau</div>
+  <div class="vts-pill"><div class="vts-pill-dot"></div>MoMo VTS</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <nav class="hero-crumb">
+    <a href="#">Ví Trả Sau</a>
+    <span class="sep">›</span>
+    <a href="#">TP. Hồ Chí Minh</a>
+    <span class="sep">›</span>
+    <span class="current">Crescent Mall</span>
+  </nav>
+  <h1 class="hero-h1">Mua trước, trả sau<br>tại <span>Crescent Mall</span></h1>
+  <p class="hero-addr">101 Tôn Dật Tiên, Phường Tân Phong, Quận 7 · TP. Hồ Chí Minh</p>
+  <div class="hero-kpis">
+    <div class="kpi pink"><strong id="kpiTotal">25</strong><span>cửa hàng VTS</span></div>
+    <div class="kpi green"><strong>12%</strong><span>hoàn tiền tối đa</span></div>
+    <div class="kpi"><strong>5</strong><span>tầng có VTS</span></div>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="search-wrap">
+    <span class="search-ico">⌕</span>
+    <input id="searchInput" type="text" placeholder="Tìm tên cửa hàng..." oninput="applySearch()">
+  </div>
+  <div class="group-chips" id="groupChips"></div>
+</div>
+
+<!-- FLOOR STRIP (mobile only) -->
+<div class="floor-strip" id="floorStrip"></div>
+
+<!-- BODY -->
+<div class="body-wrap">
+  <nav class="floor-nav">
+    <div class="fn-label">Tầng</div>
+    <div id="fnItems"></div>
+    <div class="fn-divider"></div>
+    <div class="fn-mall">Crescent<br>Mall</div>
+  </nav>
+  <main class="store-main" id="storeMain"></main>
+</div>
+
+<!-- PROVINCE FOOTER -->
+<footer class="province-footer">
+  <div class="pf-inner">
+    <div class="pf-label">Tìm Ví Trả Sau ở tỉnh / thành phố khác</div>
+    <div class="pf-chips" id="pfChips"></div>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA: 34 tỉnh/TP sau sát nhập 2025
+// Source: vietnamese-provinces-database
+// ─────────────────────────────────────────────
+const VN_PROVINCES = [
+  {code:"01",name:"Hà Nội"},{code:"04",name:"Cao Bằng"},{code:"08",name:"Tuyên Quang"},
+  {code:"11",name:"Điện Biên"},{code:"12",name:"Lai Châu"},{code:"14",name:"Sơn La"},
+  {code:"15",name:"Lào Cai"},{code:"19",name:"Thái Nguyên"},{code:"20",name:"Lạng Sơn"},
+  {code:"22",name:"Quảng Ninh"},{code:"24",name:"Bắc Ninh"},{code:"25",name:"Phú Thọ"},
+  {code:"31",name:"Hải Phòng"},{code:"33",name:"Hưng Yên"},{code:"37",name:"Ninh Bình"},
+  {code:"38",name:"Thanh Hoá"},{code:"40",name:"Nghệ An"},{code:"42",name:"Hà Tĩnh"},
+  {code:"44",name:"Quảng Trị"},{code:"46",name:"Huế"},{code:"48",name:"Đà Nẵng"},
+  {code:"51",name:"Quảng Ngãi"},{code:"52",name:"Gia Lai"},{code:"56",name:"Khánh Hoà"},
+  {code:"66",name:"Đắk Lắk"},{code:"68",name:"Lâm Đồng"},{code:"75",name:"Đồng Nai"},
+  {code:"79",name:"Hồ Chí Minh"},{code:"80",name:"Tây Ninh"},{code:"82",name:"Đồng Tháp"},
+  {code:"86",name:"Vĩnh Long"},{code:"91",name:"An Giang"},{code:"92",name:"Cần Thơ"},
+  {code:"96",name:"Cà Mau"},
+];
+
+// ─────────────────────────────────────────────
+// DATA: Floor definitions
+// ─────────────────────────────────────────────
+const FLOORS = [
+  { id:'B1', label:'B1', name:'Siêu thị & Tiêu dùng' },
+  { id:'L1', label:'1',  name:'Thời trang & Phụ kiện' },
+  { id:'L2', label:'2',  name:'Ẩm thực & Café' },
+  { id:'L3', label:'3',  name:'Điện tử & Lifestyle' },
+  { id:'L4', label:'4',  name:'Giải trí & Rạp phim' },
+];
+
+// ─────────────────────────────────────────────
+// DATA: Merchants in Crescent Mall
+// ─────────────────────────────────────────────
+const MERCHANTS = [
+  // B1 — Siêu thị & Tiêu dùng
+  { id:1,  name:'Lotte Mart',       cat:'Siêu thị',              group:'Tiêu dùng', floor:'B1', icon:'🛒', cashback:5,  top:false },
+  { id:2,  name:'Guardian',         cat:'Mỹ phẩm & Sức khỏe',   group:'Tiêu dùng', floor:'B1', icon:'💊', cashback:0,  top:false },
+  { id:3,  name:'GS25',             cat:'Cửa hàng tiện lợi',     group:'Tiêu dùng', floor:'B1', icon:'🏪', cashback:0,  top:false },
+  { id:4,  name:'Phúc Long Coffee', cat:'Café & Trà sữa',        group:'Ẩm thực',   floor:'B1', icon:'☕', cashback:8,  top:true  },
+  // L1 — Thời trang & Phụ kiện
+  { id:5,  name:'Zara',             cat:'Thời trang quốc tế',    group:'Thời trang',floor:'L1', icon:'👗', cashback:10, top:true  },
+  { id:6,  name:'Mango',            cat:'Thời trang quốc tế',    group:'Thời trang',floor:'L1', icon:'👔', cashback:8,  top:false },
+  { id:7,  name:'Charles & Keith',  cat:'Giày & Túi xách',       group:'Thời trang',floor:'L1', icon:'👜', cashback:0,  top:false },
+  { id:8,  name:'Pedro',            cat:'Giày & Phụ kiện',       group:'Thời trang',floor:'L1', icon:'👟', cashback:5,  top:false },
+  { id:9,  name:'Pandora',          cat:'Trang sức',             group:'Thời trang',floor:'L1', icon:'💍', cashback:0,  top:false },
+  { id:10, name:'Lacoste',          cat:'Thời trang thể thao',   group:'Thời trang',floor:'L1', icon:'🐊', cashback:6,  top:false },
+  // L2 — Ẩm thực & Café
+  { id:11, name:'Phở 24',           cat:'Nhà hàng Việt',         group:'Ẩm thực',   floor:'L2', icon:'🍜', cashback:10, top:true  },
+  { id:12, name:'Pizza 4Ps',        cat:'Nhà hàng Ý',            group:'Ẩm thực',   floor:'L2', icon:'🍕', cashback:0,  top:true  },
+  { id:13, name:'Coco Garden',      cat:'Buffet hải sản',        group:'Ẩm thực',   floor:'L2', icon:'🌿', cashback:12, top:true  },
+  { id:14, name:'Gong Cha',         cat:'Trà sữa',               group:'Ẩm thực',   floor:'L2', icon:'🧋', cashback:0,  top:false },
+  { id:15, name:'KFC',              cat:'Gà rán & Fast food',    group:'Ẩm thực',   floor:'L2', icon:'🍗', cashback:0,  top:false },
+  { id:16, name:'Popeyes',          cat:'Fast food',             group:'Ẩm thực',   floor:'L2', icon:'🍟', cashback:5,  top:false },
+  { id:17, name:'Cold Stone',       cat:'Kem & Tráng miệng',     group:'Ẩm thực',   floor:'L2', icon:'🍦', cashback:0,  top:false },
+  // L3 — Điện tử & Lifestyle
+  { id:18, name:'FPT Shop',         cat:'Điện thoại & Phụ kiện', group:'Điện tử',   floor:'L3', icon:'📱', cashback:6,  top:false },
+  { id:19, name:'Samsung Store',    cat:'Điện tử',               group:'Điện tử',   floor:'L3', icon:'💻', cashback:5,  top:false },
+  { id:20, name:'Ananas',           cat:'Giày thể thao',         group:'Thời trang',floor:'L3', icon:'👟', cashback:8,  top:false },
+  { id:21, name:'Vascara',          cat:'Giày & Túi',            group:'Thời trang',floor:'L3', icon:'👡', cashback:0,  top:false },
+  { id:22, name:'Juno',             cat:'Giày & Phụ kiện',       group:'Thời trang',floor:'L3', icon:'👠', cashback:5,  top:false },
+  // L4 — Giải trí & Rạp phim
+  { id:23, name:'CGV Cinemas',      cat:'Rạp phim',              group:'Giải trí',  floor:'L4', icon:'🎬', cashback:10, top:true  },
+  { id:24, name:'Anh Star BBQ',     cat:'Nhà hàng nướng',        group:'Ẩm thực',   floor:'L4', icon:'🔥', cashback:7,  top:false },
+  { id:25, name:'Timezone',         cat:'Vui chơi giải trí',     group:'Giải trí',  floor:'L4', icon:'🎮', cashback:0,  top:false },
+];
+
+const GROUPS = ['Tất cả', 'Ẩm thực', 'Thời trang', 'Điện tử', 'Tiêu dùng', 'Giải trí'];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+const S = {
+  floor: 'all',
+  group: 'Tất cả',
+  query: '',
+  province: '79',
+};
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function filtered() {
+  return MERCHANTS.filter(m => {
+    if (S.floor !== 'all' && m.floor !== S.floor) return false;
+    if (S.group !== 'Tất cả' && m.group !== S.group) return false;
+    if (S.query) {
+      const q = S.query.toLowerCase();
+      if (!m.name.toLowerCase().includes(q) && !m.cat.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function floorCount(fid) {
+  return MERCHANTS.filter(m => m.floor === fid).length;
+}
+
+// ─────────────────────────────────────────────
+// RENDER: Floor nav (desktop sidebar)
+// ─────────────────────────────────────────────
+function renderFloorNav() {
+  const maxC = Math.max(...FLOORS.map(f => floorCount(f.id)));
+  const allItem = `
+    <div class="fn-item ${S.floor==='all'?'on':''}" onclick="setFloor('all')">
+      <div class="fn-num" style="font-size:11px;text-align:center">All</div>
+      <div class="fn-cnt">${MERCHANTS.length}</div>
+      <div class="fn-bar"><div class="fn-bar-fill" style="width:100%"></div></div>
+    </div>`;
+  const items = FLOORS.map(f => {
+    const c = floorCount(f.id);
+    const pct = Math.round(c/maxC*100);
+    return `
+      <div class="fn-item ${S.floor===f.id?'on':''}" onclick="setFloor('${f.id}')">
+        <div class="fn-num">${f.label}</div>
+        <div class="fn-cnt">${c}</div>
+        <div class="fn-bar"><div class="fn-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+  document.getElementById('fnItems').innerHTML = allItem + items;
+
+  // Mobile strip
+  const strip = [
+    `<button class="f-chip ${S.floor==='all'?'on':''}" onclick="setFloor('all')">Tất cả · ${MERCHANTS.length}</button>`,
+    ...FLOORS.map(f => `<button class="f-chip ${S.floor===f.id?'on':''}" onclick="setFloor('${f.id}')">Tầng ${f.label} · ${floorCount(f.id)}</button>`)
+  ].join('');
+  document.getElementById('floorStrip').innerHTML = strip;
+}
+
+// ─────────────────────────────────────────────
+// RENDER: Group chips
+// ─────────────────────────────────────────────
+function renderGroups() {
+  document.getElementById('groupChips').innerHTML = GROUPS.map(g =>
+    `<button class="g-chip ${S.group===g?'on':''}" onclick="setGroup('${g}')">${g}</button>`
+  ).join('');
+}
+
+// ─────────────────────────────────────────────
+// RENDER: Store grid
+// ─────────────────────────────────────────────
+function renderStores() {
+  const list = filtered();
+  document.getElementById('kpiTotal').textContent = list.length !== MERCHANTS.length ? list.length : MERCHANTS.length;
+  const main = document.getElementById('storeMain');
+
+  if (!list.length) {
+    main.innerHTML = `<div class="empty"><div class="ico">🔍</div><p>Không tìm thấy cửa hàng.<br>Thử tìm từ khóa khác.</p></div>`;
+    return;
+  }
+
+  const floorsToShow = S.floor === 'all' ? FLOORS : FLOORS.filter(f => f.id === S.floor);
+  let html = '';
+
+  floorsToShow.forEach(fl => {
+    const stores = list.filter(m => m.floor === fl.id);
+    if (!stores.length) return;
+    html += `
+      <div class="floor-block">
+        <div class="floor-heading">
+          <span class="fh-num">Tầng ${fl.label}</span>
+          <span class="fh-name">${fl.name}</span>
+          <span class="fh-cnt">${stores.length} cửa hàng</span>
+        </div>
+        <div class="store-grid">
+          ${stores.map((m, i) => `
+            <div class="s-card" style="animation-delay:${i*0.04}s">
+              <div class="s-floor-pin">${fl.label}</div>
+              <div class="s-top">
+                <div class="s-icon">${m.icon}</div>
+                <div class="s-meta">
+                  <div class="s-name">${m.name}</div>
+                  <div class="s-cat">${m.cat}</div>
+                </div>
+              </div>
+              <div class="vts-badge">
+                <svg viewBox="0 0 12 12"><path d="M10 3L5 9 2 6"/><path d="M10 3L5 9 2 6" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Ví Trả Sau
+              </div>
+              <div class="s-offers">
+                ${m.cashback ? `<span class="cashback-tag">Hoàn ${m.cashback}% VTS</span>` : ''}
+                ${m.top ? `<span class="top-tag">Đang hot</span>` : ''}
+                ${!m.cashback && !m.top ? `<span class="no-promo">Không có ưu đãi thêm</span>` : ''}
+              </div>
+              <div class="s-cta">Dùng Ví Trả Sau ngay →</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  });
+
+  main.innerHTML = html;
+}
+
+// ─────────────────────────────────────────────
+// RENDER: Province footer
+// ─────────────────────────────────────────────
+function renderProvinces() {
+  document.getElementById('pfChips').innerHTML = VN_PROVINCES.map(p =>
+    `<button class="pf-chip ${p.code===S.province?'current':''}" onclick="setProvince('${p.code}')">${p.name}</button>`
+  ).join('');
+}
+
+// ─────────────────────────────────────────────
+// ACTIONS
+// ─────────────────────────────────────────────
+function setFloor(id) { S.floor = id; renderFloorNav(); renderStores(); }
+function setGroup(g) { S.group = g; renderGroups(); renderStores(); }
+function applySearch() { S.query = document.getElementById('searchInput').value; renderStores(); }
+function setProvince(code) {
+  S.province = code;
+  renderProvinces();
+  // production: navigate to /vi-tra-sau/cua-hang/{province-slug}
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderFloorNav();
+renderGroups();
+renderStores();
+renderProvinces();
+</script>
+</body>
+</html>
