@@ -107,7 +107,7 @@
   </style>
 </head>
 <body>
-  <header class="topbar"><a class="back" href="seo-geo-project.html?project=merchant">← Merchant List</a><span class="bar-divider"></span><div class="brand"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:31px;height:31px;object-fit:contain;border-radius:9px"><img src="https://homepage.momocdn.net/img/4f2fa6b0-9f96-4077-b210-6e848b7d7104-1-260622153405.png" alt="Web Platform" style="width:22px;height:22px;object-fit:contain;border-radius:5px;border:1px solid rgba(0,0,0,.08)"><div><strong>Merchant Page Manager</strong><small>MoSpark · Content Builder</small></div></div><span class="source-chip">SEO/GEO Content Plan</span></header>
+  <header class="topbar"><a class="back" href="/merchant-list">← Merchant List</a><span class="bar-divider"></span><div class="brand"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:31px;height:31px;object-fit:contain;border-radius:9px"><img src="https://homepage.momocdn.net/img/4f2fa6b0-9f96-4077-b210-6e848b7d7104-1-260622153405.png" alt="Web Platform" style="width:22px;height:22px;object-fit:contain;border-radius:5px;border:1px solid rgba(0,0,0,.08)"><div><strong>Merchant Page Manager</strong><small>MoSpark · Content Builder</small></div></div><span class="source-chip">SEO/GEO Content Plan</span></header>
   <main class="page">
     <section class="record-head"><div><h1 class="record-title" id="recordTitle"></h1><p class="record-sub">Quản lý thông tin và nội dung Merchant Page</p></div><div class="record-actions"><span class="status staging" id="statusBadge">● Staging</span><button class="btn" id="editContentBtn" onclick="openEditor()" disabled>✎ Chỉnh sửa nội dung</button><button class="btn more">•••</button></div></section>
     <nav class="tabs"><button class="tab active" data-tab="overview" onclick="setTab('overview')">▦ Overview</button><button class="tab" data-tab="settings" onclick="setTab('settings')">☷ Cài đặt Merchant</button><button class="tab" data-tab="scraper" onclick="setTab('scraper')">⌖ Google Map Scraper</button></nav>
@@ -115,15 +115,11 @@
   </main>
   <div class="modal-overlay" id="aiOverlay" onclick="if(event.target===this)closeAIReview()"></div>
   <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/supabase-client.js"></script>
   <script>
     const CATEGORIES=['','Nhà hàng','Quán ăn','Siêu thị','Bách hóa','Cafe','Trà sữa','Bar & Pub','Tiệm bánh','Spa & Massage','Gym & Fitness','Phòng khám','Nhà thuốc','Cửa hàng tiện lợi','Thời trang','Điện tử','Khách sạn','Homestay','Rửa xe','Trạm xăng'];
     const AMENITIES_ALL=['Dine-in','Takeaway','Delivery','Wifi','Parking','Air-conditioned','Pet-friendly','Outdoor seating','Private room','Kids zone','Wheelchair accessible','Live music'];
-    const SAMPLE_M4B={
-      'M4B1234':{name:'Phở Hà Nội 79',category:'Quán ăn',address:'79 Lý Tự Trọng, P. Bến Thành, Q.1, TP.HCM',lng:'106.698700',lat:'10.773200',phone:'028 3822 9933',oa:true,oaId:'OA-112233'},
-      'M4B008821':{name:'Tiệm Mì Chú Cao',category:'Quán ăn',address:'56 Nguyễn Trãi, P.3, Q.5, TP.HCM',lng:'106.681803',lat:'10.759624',phone:'0909 123 456',oa:true,oaId:'OA-982104'},
-      'M4B005512':{name:'Highlands Coffee Bitexco',category:'Cafe',address:'2 Hải Triều, P. Bến Nghé, Q.1, TP.HCM',lng:'106.704618',lat:'10.771600',phone:'028 3914 1514',oa:true,oaId:'OA-771202'},
-      'M4B003300':{name:'FamilyMart Phan Xích Long',category:'Cửa hàng tiện lợi',address:'181 Phan Xích Long, P.2, Q. Phú Nhuận, TP.HCM',lng:'106.684200',lat:'10.797100',phone:'',oa:false,oaId:''},
-    };
     const M4B_FORMAT=/^M4B\d+$/i;
     const SAMPLE_GMAP={hours:[{day:'T2',time:'07:00 - 22:00'},{day:'T3',time:'07:00 - 22:00'},{day:'T4',time:'07:00 - 22:00'},{day:'T5',time:'07:00 - 22:00'},{day:'T6',time:'07:00 - 23:00'},{day:'T7',time:'08:00 - 23:00'},{day:'CN',time:'08:00 - 21:00'}],amenities:['Dine-in','Takeaway','Wifi','Air-conditioned','Parking'],address:'56 Nguyễn Trãi, P.3, Q.5, TP.HCM',phone:'0909 123 456'};
     const SAMPLE_WEBSEARCH={
@@ -136,7 +132,7 @@
     const source={planId:params.get('planId')||'merchant-record',name:params.get('merchantName')||'Merchant Name',cluster:params.get('cluster')||'Merchant Topic Cluster',primary:params.get('primary')||'primary keyword',secondaries:(secondaryParam===null?'secondary keyword':secondaryParam).split('|').filter(Boolean),volume:Number(params.get('volume')||0)};
 
     const emptyPipeline=()=>({step:0,crawlData:null,confirmedData:null,contentData:null,infoDone:false,contentDone:false});
-    const state={tab:'overview',infoTab:'information',merchantId:'',synced:false,idError:false,verified:false,draftSaved:false,merchant:{name:source.name,category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''},aiApplied:false,aiContent:null,contentReady:false,editorOpen:false,editorTab:'identity',logo:'',contentGenerated:false,bannerGenerated:false,links:[{label:'Merchant Hub',url:'/merchant'},{label:'Merchant gần đây',url:'/merchant/nearby'}],show:['address','map','payment'],gmapCrawled:false,gmap:{hours:[],amenities:[],address:'',phone:''},pipeline:emptyPipeline()};
+    const state={tab:'overview',infoTab:'information',merchantId:'',synced:false,idError:false,verified:false,draftSaved:false,merchant:{name:source.name,category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''},aiApplied:false,aiContent:null,contentReady:false,editorOpen:false,editorTab:'identity',logo:'',contentGenerated:false,bannerGenerated:false,links:[{label:'Merchant Hub',url:'/merchant'},{label:'Merchant gần đây',url:'/merchant/nearby'}],show:['address','map','payment'],gmapCrawled:false,gmap:{hours:[],amenities:[],address:'',phone:''},pipeline:emptyPipeline(),promotions:[],dbHours:[]};
 
     function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
     function slug(v){return v.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'merchant'}
@@ -172,41 +168,65 @@
       }).join('')}</div>`;
     }
 
-    function scanMerchant(){
+    async function scanMerchant(){
       const input=document.getElementById('merchantId'),id=input.value.trim();
       if(!id){toast('Nhập Merchant ID để đồng bộ','warning');return}
       if(!M4B_FORMAT.test(id)){
         state.idError=true;state.merchantId=id;
-        render();
-        return;
+        render();return;
       }
       state.idError=false;state.merchantId=id;
       const button=document.getElementById('syncBtn');
       button.disabled=true;button.innerHTML='<span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .5s linear infinite"></span> Đang đồng bộ...';
-      setTimeout(()=>{
-        const data=SAMPLE_M4B[id.toUpperCase()];
-        state.synced=true;state.verified=false;state.draftSaved=false;state.aiApplied=false;state.aiContent=null;state.gmapCrawled=false;state.pipeline=emptyPipeline();
-        if(data){
-          state.merchant={...data,addressNew:''};
-          state.merchant.name=data.name||source.name;
-        }else{
-          state.merchant={name:'',category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''};
-        }
-        render();
-        toast(data?'Đã đồng bộ dữ liệu Merchant từ M4B':'M4B không có dữ liệu - vui lòng nhập thủ công',data?'success':'warning');
-      },700);
+
+      const uid=id.toUpperCase();
+      const [{data:merchant},{data:hours},{data:promos}]=await Promise.all([
+        window.supabase.from('merchants').select().eq('merchant_id',uid).single(),
+        window.supabase.from('merchant_hours').select().eq('merchant_id',uid),
+        window.supabase.from('merchant_promotions').select().eq('merchant_id',uid),
+      ]);
+
+      state.synced=true;state.verified=false;state.draftSaved=false;
+      state.aiApplied=false;state.aiContent=null;state.gmapCrawled=false;state.pipeline=emptyPipeline();
+      state.promotions=(promos||[]).filter(p=>p.is_active);
+      state.dbHours=(hours||[]).map(h=>({day:h.day,time:`${h.open_time} - ${h.close_time}`}));
+
+      if(merchant){
+        state.merchant={
+          name:merchant.name||source.name,
+          category:merchant.category||'',
+          address:merchant.address||'',
+          addressNew:merchant.address_new||'',
+          lng:String(merchant.lng||''),
+          lat:String(merchant.lat||''),
+          phone:merchant.phone||'',
+          oa:merchant.has_oa||false,
+          oaId:merchant.oa_id||'',
+        };
+      }else{
+        state.merchant={name:'',category:'',address:'',addressNew:'',lng:'',lat:'',phone:'',oa:false,oaId:''};
+      }
+      render();
+      toast(merchant?'Đã đồng bộ dữ liệu Merchant từ Supabase':'Không tìm thấy Merchant - vui lòng nhập thủ công',merchant?'success':'warning');
     }
 
     function updateMerchant(key,value){state.merchant[key]=value;state.draftSaved=false;state.verified=false;state.aiApplied=false;state.aiContent=null;state.gmapCrawled=false;state.pipeline=emptyPipeline();document.getElementById('recordTitle').textContent=state.merchant.name;document.getElementById('editContentBtn').disabled=true;renderInfoCard()}
 
-    function saveDraft(button){
+    async function saveDraft(button){
       if(!state.synced)return;
       const btn=button;btn.disabled=true;btn.textContent='Đang lưu...';
-      setTimeout(()=>{
-        state.draftSaved=true;state.verified=true;
-        document.getElementById('editContentBtn').disabled=true;
-        render();toast('Đã lưu Draft thành công');
-      },350);
+      const m=state.merchant;
+      const {data,error}=await window.supabase.from('merchants').upsert({
+        merchant_id:state.merchantId.toUpperCase(),
+        name:m.name,category:m.category,
+        address:m.address,address_new:m.addressNew,
+        lng:parseFloat(m.lng)||null,lat:parseFloat(m.lat)||null,
+        phone:m.phone,has_oa:m.oa,oa_id:m.oaId,status:'staging',
+      });
+      if(error){toast('Lỗi lưu Supabase: '+error.message,'warning');btn.disabled=false;btn.textContent='Save Draft';return;}
+      state.draftSaved=true;state.verified=true;
+      document.getElementById('editContentBtn').disabled=true;
+      render();toast('Đã lưu Draft vào Supabase');
     }
 
     function openEditor(){if(!state.draftSaved)return;if(!state.aiApplied){toast('Hoàn tất Crawl → Confirm → Write trước khi chỉnh sửa nội dung','warning');return}state.editorOpen=true;render()}
@@ -492,7 +512,7 @@
       if(!state.synced)return '';
       const m=state.merchant;const hasSomeData=m.name||m.category||m.address;
       return `<section class="data-editor">
-        <div class="data-editor-head"><h2><span style="font-size:14px">▤</span> Merchant Data</h2>
+        <div class="data-editor-head"><h2><span style="font-size:14px">▤</span> Merchant Data <span style="display:inline-flex;align-items:center;gap:4px;background:#ebfff6;color:#147b57;border:1px solid #c7e3d8;border-radius:99px;padding:3px 8px;font-size:8px;font-weight:800;letter-spacing:.3px;margin-left:6px">● Supabase</span></h2>
           <div class="data-editor-actions">
             ${state.aiApplied?'<span class="ai-applied">✓ AI đã apply</span>':''}
             <button class="btn primary" onclick="startPipeline()" ${!state.draftSaved?'disabled':''}>✦ ${state.aiApplied?'Review AI Output':'Run AI Pipeline'}</button>
@@ -560,12 +580,21 @@
     /* ── Info card ──────────────────────────────── */
     function infoRows(){
       const m=state.merchant;
+      const promo=state.promotions&&state.promotions[0];
+      const openToday=(()=>{
+        if(!state.dbHours.length)return null;
+        const days=['CN','T2','T3','T4','T5','T6','T7'];
+        const d=state.dbHours.find(h=>h.day===days[new Date().getDay()]);
+        return d?d.time:null;
+      })();
       return `<div class="info-row"><span class="info-key">Trạng thái</span><span class="info-value"><span class="status staging">● Staging</span></span></div>
         <div class="info-row"><span class="info-key">Schema Type</span><span class="info-value">${esc(m.category||'LocalBusiness')}</span></div>
         <div class="info-row"><span class="info-key">URL</span><span class="info-value link">${esc(url())}</span></div>
         <div class="info-row"><span class="info-key">Điện thoại</span><span class="info-value ${m.phone?'':'empty-value'}">${esc(m.phone||'—')}</span></div>
         <div class="info-row"><span class="info-key">Danh mục</span><span class="info-value ${m.category?'':'empty-value'}">${esc(m.category||'—')}</span></div>
         ${m.oa?`<div class="info-row"><span class="info-key">OA-ID</span><span class="info-value"><span class="oa-badge yes">${m.oaId}</span></span></div>`:`<div class="info-row"><span class="info-key">OA Detail</span><span class="info-value"><span class="oa-badge no">NO</span></span></div>`}
+        ${openToday?`<div class="info-row"><span class="info-key">Giờ hôm nay</span><span class="info-value" style="color:var(--green)">${esc(openToday)}</span></div>`:''}
+        ${promo?`<div class="info-row"><span class="info-key">Cashback</span><span class="info-value"><span class="oa-badge yes">${esc(promo.value)}</span></span></div><div class="info-row"><span class="info-key">Điều kiện</span><span class="info-value">Min ${(promo.min_order/1000).toFixed(0)}k · Max ${(promo.max_cashback/1000).toFixed(0)}k</span></div>`:`<div class="info-row"><span class="info-key">Cashback</span><span class="info-value"><span class="oa-badge no">Chưa có</span></span></div>`}
         <div class="info-row"><span class="info-key">Draft</span><span class="info-value">${state.draftSaved?'<span style="color:var(--green)">✓ Đã lưu</span>':'<span class="empty-value">Chưa lưu</span>'}</span></div>
         <div class="info-row"><span class="info-key">Cập nhật</span><span class="info-value">${new Date().toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'})}</span></div>`;
     }
@@ -634,6 +663,13 @@
       renderOverview();
     }
     render();
+
+    // Auto-preload nếu merchantId có trong URL (từ Merchant List)
+    const autoId = params.get('merchantId');
+    if (autoId) setTimeout(() => {
+      const input = document.getElementById('merchantId');
+      if (input) { input.value = autoId; scanMerchant(); }
+    }, 80);
   </script>
 </body>
 </html>
