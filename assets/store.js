@@ -623,10 +623,11 @@ function displayGroupName(groupName) {
 
 const GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other'];
 const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
-const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Modules'];
+const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
-  GenAI: ['orchestrator', 'genai-image', 'agentic-hub'],
-  Modules: ['seo-geo-dashboard', 'seo-geo-project', 'merchant-list', 'supabase-editor', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
+  GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
+  Database: ['supabase-editor', 'blog-category', 'blog-editor', 'merchant-page-builder'],
+  Modules:  ['ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -634,7 +635,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'seo-geo-dashboard', 'seo-geo-project', 'merchant-list', 'supabase-editor', 'merchant-page-builder', 'seo-geo-score', 'chatbot', 'ads-manager', 'blog-category', 'blog-editor'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'supabase-editor', 'blog-category', 'blog-editor', 'merchant-page-builder', 'ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['widget-store', 'financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'merchant', 'dich-vu-cong'],
@@ -645,8 +646,8 @@ const GROUP_SUMMARY = {
   MoSpark: {
     eyebrow: 'MoSpark Platform',
     title: 'MoSpark Platform',
-    description: 'Chia thành 2 cụm rõ vai trò: GenAI cung cấp năng lực tạo sinh và orchestration; Modules cung cấp các bề mặt vận hành, tăng trưởng và phân phối trên Web.',
-    examples: 'GenAI: Orchestrator · Image Studio · Agentic Hub | Modules: SEO/GEO · Assistant · Ads · Blog',
+    description: 'Chia thành 3 cụm: GenAI (năng lực tạo sinh & orchestration), Database (data layer & content tools), Modules (bề mặt vận hành & tăng trưởng).',
+    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Supabase · Blog · Merchant Builder | Modules: Ads · SEO/GEO',
   },
   MiniWeb: {
     eyebrow: 'Mini Web Overview',
