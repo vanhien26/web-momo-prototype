@@ -3,720 +3,593 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Widget Store Manager — MoMo</title>
+  <title>Widget Manager — MoMo</title>
   <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --fin:#2563eb;--fin-bg:#eff6ff;
-      --pay:#059669;--pay-bg:#ecfdf5;
-      --sec:#e11d48;--sec-bg:#fff1f2;
-      --com:#7c3aed;--com-bg:#f5f3ff;
-      --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;
-      --g400:#9ca3af;--g600:#4b5563;--g800:#1f2937;--g900:#111827;
+      --momo:#a50064;
+      --g50:#f9fafb;--g100:#f3f4f6;--g150:#eef0f3;--g200:#e5e7eb;
+      --g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;
+      --g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
+      --active-color:#059669;--draft-color:#f59e0b;--paused-color:#9ca3af;
+      --sidebar-w:268px;
     }
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g50);color:var(--g900);min-height:100vh}
+    html,body{height:100%}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g50);color:var(--g900);display:flex;flex-direction:column;min-height:100vh}
 
     /* HEADER */
-    .site-header{background:#fff;border-bottom:1px solid var(--g200);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-    .brand{display:flex;align-items:center;gap:10px}
-    .back-link{color:var(--g600);text-decoration:none;font-size:13px}
+    .hdr{background:#fff;border-bottom:1px solid var(--g200);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:52px}
+    .brand{display:flex;align-items:center;gap:8px}
+    .back-link{color:var(--g500);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:4px}
     .back-link:hover{color:var(--g900)}
-    .bar-sep{width:1px;height:20px;background:var(--g200)}
-    .brand-mark{width:28px;height:28px;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#a50064}
-    .brand-mark.wp{background:#fff;border:1px solid var(--g200)}
-    .brand-mark img{width:80%;height:80%;object-fit:contain}
-    .brand-title{font-size:14px;font-weight:600}
-    .brand-sub{font-size:12px;color:var(--g400)}
-    .header-meta{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--g400)}
-    .live-dot{display:inline-flex;align-items:center;gap:5px}
-    .live-dot i{width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block;animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .sep{width:1px;height:18px;background:var(--g200)}
+    .bmark{width:26px;height:26px;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--momo);flex-shrink:0}
+    .bmark.wp{background:#fff;border:1px solid var(--g200)}
+    .bmark img{width:80%;height:80%;object-fit:contain}
+    .bname{font-size:14px;font-weight:600}
+    .hdr-actions{display:flex;align-items:center;gap:10px}
 
-    /* LAYOUT */
-    .store-main{max-width:1280px;margin:0 auto;padding:24px 24px 80px}
+    /* MAIN LAYOUT */
+    .manager{display:flex;flex:1;overflow:hidden}
 
-    /* TOOLBAR */
-    .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-    .filter-tabs{display:flex;gap:4px;background:var(--g100);padding:4px;border-radius:10px;flex-wrap:wrap}
-    .f-tab{padding:6px 14px;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-weight:500;color:var(--g600);background:transparent;transition:all .15s;white-space:nowrap}
-    .f-tab:hover{color:var(--g900)}
-    .f-tab.active{background:#fff;color:var(--g900);box-shadow:0 1px 3px rgba(0,0,0,.1)}
-    .f-tab .cnt{font-size:11px;opacity:.7;margin-left:2px}
-    .new-tag{font-size:10px;font-weight:700;color:var(--com);background:var(--com-bg);padding:1px 5px;border-radius:4px;margin-left:4px}
-    .view-toggle{display:flex;gap:2px}
-    .v-btn{width:32px;height:32px;border:1px solid var(--g200);background:#fff;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--g400);transition:all .15s}
-    .v-btn.active{background:var(--g800);color:#fff;border-color:var(--g800)}
+    /* SIDEBAR */
+    .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);border-right:1px solid var(--g200);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+    .sidebar-top{padding:12px;border-bottom:1px solid var(--g100);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+    .search-wrap{position:relative}
+    .search-input{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--g200);border-radius:8px;font-size:13px;background:var(--g50);outline:none;transition:border-color .15s}
+    .search-input:focus{border-color:var(--momo);background:#fff}
+    .search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--g400);pointer-events:none}
+    .create-btn{width:100%;padding:8px;background:var(--momo);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+    .create-btn:hover{background:#8b0054}
 
-    /* SECTION HEADING */
-    .sec-head{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:12px}
+    .instance-list{flex:1;overflow-y:auto;padding:8px 0}
+    .group-label{padding:10px 12px 4px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);display:flex;align-items:center;gap:6px}
+    .group-cnt{background:var(--g100);color:var(--g500);font-size:10px;padding:1px 6px;border-radius:10px}
+    .inst-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;transition:background .1s;border-radius:0}
+    .inst-item:hover{background:var(--g50)}
+    .inst-item.active{background:#fdf2f8}
+    .inst-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+    .inst-info{flex:1;min-width:0}
+    .inst-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--g800)}
+    .inst-meta{font-size:11px;color:var(--g400);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .dot-active{background:var(--active-color)}
+    .dot-draft{background:var(--draft-color)}
+    .dot-paused{background:var(--paused-color)}
 
-    /* DOMAIN BADGE */
-    .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
-    .badge-fin{color:var(--fin);background:var(--fin-bg)}
-    .badge-pay{color:var(--pay);background:var(--pay-bg)}
-    .badge-sec{color:var(--sec);background:var(--sec-bg)}
-    .badge-com{color:var(--com);background:var(--com-bg)}
+    /* EDITOR PANEL */
+    .editor{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-    /* FEATURED */
-    .featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
-    .feat-card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:20px;transition:all .2s;position:relative;overflow:hidden}
-    .feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-    .feat-card[data-d="financial"]::before{background:var(--fin)}
-    .feat-card[data-d="payments"]::before{background:var(--pay)}
-    .feat-card[data-d="security"]::before{background:var(--sec)}
-    .feat-card[data-d="comm"]::before{background:var(--com)}
-    .feat-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-2px)}
-    .feat-icon{font-size:28px;margin-bottom:12px;display:block}
-    .feat-name{font-size:16px;font-weight:700;margin:8px 0 2px}
-    .feat-sub{font-size:12px;color:var(--g400);margin-bottom:8px}
-    .feat-desc{font-size:13px;color:var(--g600);line-height:1.5;margin-bottom:16px}
-    .feat-actions{display:flex;gap:8px;flex-wrap:wrap}
+    /* Welcome screen */
+    .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--g400);text-align:center;padding:40px}
+    .welcome-icon{font-size:48px}
+    .welcome h2{font-size:18px;font-weight:600;color:var(--g600)}
+    .welcome p{font-size:14px;line-height:1.6;max-width:320px}
 
-    /* WIDGET GRID */
-    .widget-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .widget-grid.list-view{grid-template-columns:1fr}
-    .w-card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:16px;transition:all .15s}
-    .w-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06);border-color:#d1d5db}
-    .w-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-    .w-icon{font-size:20px;line-height:1}
-    .w-name{font-size:13px;font-weight:600;margin:6px 0 2px}
-    .w-sub{font-size:11px;color:var(--g400);margin-bottom:4px}
-    .w-desc{font-size:12px;color:var(--g600);line-height:1.5}
-    .w-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
-    /* list view */
-    .list-view .w-card{display:flex;align-items:center;gap:16px;padding:12px 16px}
-    .list-view .w-card-top{margin-bottom:0;flex-shrink:0}
-    .list-view .w-card-body{flex:1;min-width:0}
-    .list-view .w-name{margin:0 0 2px}
-    .list-view .w-actions{margin-top:0;flex-shrink:0}
-    .list-view .w-desc{display:none}
+    /* Editor header */
+    .editor-hdr{padding:12px 20px;border-bottom:1px solid var(--g200);background:#fff;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .inst-name-input{flex:1;font-size:15px;font-weight:600;border:none;outline:none;background:transparent;color:var(--g900);padding:2px 0}
+    .inst-name-input:focus{border-bottom:2px solid var(--momo)}
+    .status-select{padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid;cursor:pointer;outline:none}
+    .status-select.active{color:var(--active-color);border-color:#a7f3d0;background:#f0fdf4}
+    .status-select.draft{color:#b45309;border-color:#fde68a;background:#fffbeb}
+    .status-select.paused{color:var(--g500);border-color:var(--g200);background:var(--g50)}
 
-    /* BUTTONS */
-    .btn{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
-    .btn-ghost{background:transparent;border-color:var(--g200);color:var(--g600)}
-    .btn-ghost:hover{background:var(--g50);border-color:#d1d5db;color:var(--g900)}
-    .btn-dark{background:var(--g900);border-color:var(--g900);color:#fff}
-    .btn-dark:hover{background:var(--g800)}
-    .btn-momo{background:#a50064;border-color:#a50064;color:#fff}
-    .btn-momo:hover{background:#8b0054}
-    .btn-sm{padding:4px 10px;font-size:11px}
+    /* Editor body */
+    .editor-body{flex:1;display:grid;grid-template-columns:320px 1fr;overflow:hidden}
+    .config-panel{border-right:1px solid var(--g200);overflow-y:auto;padding:20px;background:#fff;display:flex;flex-direction:column;gap:16px}
+    .preview-panel{overflow-y:auto;padding:20px;background:var(--g50)}
 
-    /* THREAT MONITOR (Security domain) */
-    .threat-monitor{background:var(--sec-bg);border:1px solid #fecdd3;border-radius:14px;padding:20px;margin-bottom:24px;display:none}
-    .threat-monitor.visible{display:block}
-    .threat-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-    .threat-title{font-size:14px;font-weight:700;color:var(--sec);display:flex;align-items:center;gap:8px}
-    .threat-dot{width:8px;height:8px;border-radius:50%;background:var(--sec);animation:pulse 1.5s infinite}
-    .threat-stats{display:flex;gap:24px}
-    .t-stat{text-align:center}
-    .t-val{font-size:24px;font-weight:800;color:var(--g900)}
-    .t-label{font-size:11px;color:var(--g400);margin-top:2px}
-    .threat-feed{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-    .threat-item{background:#fff;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:12px}
-    .threat-badge-type{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:var(--sec);color:#fff;flex-shrink:0}
-    .threat-badge-type.warn{background:#f59e0b}
-    .threat-text{flex:1;color:var(--g600)}
-    .threat-time{color:var(--g400);flex-shrink:0}
+    /* Config sections */
+    .cfg-section{display:flex;flex-direction:column;gap:10px}
+    .cfg-section-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g400);padding-bottom:6px;border-bottom:1px solid var(--g100)}
+    .field-group{display:flex;flex-direction:column;gap:4px}
+    .field-label{font-size:12px;font-weight:500;color:var(--g600)}
+    .field-input{padding:7px 10px;border:1px solid var(--g200);border-radius:7px;font-size:13px;outline:none;width:100%;transition:border-color .15s;font-family:inherit}
+    .field-input:focus{border-color:var(--momo)}
+    textarea.field-input{resize:vertical;min-height:70px}
+    .field-select{padding:7px 10px;border:1px solid var(--g200);border-radius:7px;font-size:13px;background:#fff;outline:none;width:100%;cursor:pointer}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+    .swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s}
+    .swatch.on{border-color:var(--g800);transform:scale(1.15)}
 
-    /* EMBED MODAL */
+    /* Config footer */
+    .config-footer{padding:12px 20px;border-top:1px solid var(--g200);background:#fff;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .del-btn{padding:7px 14px;border:1px solid #fecdd3;background:#fff;color:#e11d48;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+    .del-btn:hover{background:#fff1f2}
+    .save-btn{padding:7px 18px;background:var(--g900);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+    .save-btn:hover{background:var(--g700)}
+
+    /* Preview */
+    .prev-label{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--g400);text-transform:uppercase;margin-bottom:10px}
+    .prev-stage{background:var(--g100);border-radius:12px;padding:20px;min-height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+    .prev-meta{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+    .prev-meta-row{display:flex;justify-content:space-between;font-size:12px}
+    .prev-meta-key{color:var(--g400)}
+    .prev-meta-val{font-weight:500;color:var(--g700)}
+    .badge-status{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+    .bs-active{background:#d1fae5;color:#065f46}
+    .bs-draft{background:#fef3c7;color:#92400e}
+    .bs-paused{background:var(--g100);color:var(--g500)}
+
+    /* Widget previews */
+    .w-cta-bar{border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%}
+    .w-cta-heading{font-size:14px;font-weight:700;color:#fff}
+    .w-cta-sub{font-size:12px;opacity:.8;color:#fff;margin-top:2px}
+    .w-cta-btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:default;background:rgba(255,255,255,.22);color:#fff;flex-shrink:0;white-space:nowrap}
+
+    .w-sp{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:16px;width:100%}
+    .w-sp-stats{display:flex;gap:20px;margin-bottom:12px;justify-content:space-around}
+    .w-sp-stat{text-align:center}
+    .w-sp-val{font-size:20px;font-weight:800}
+    .w-sp-lbl{font-size:11px;color:var(--g400);margin-top:1px}
+    .w-sp-stars{color:#f59e0b;font-size:16px;text-align:center;margin-bottom:8px;letter-spacing:2px}
+    .w-sp-activity{font-size:12px;color:var(--g500);border-top:1px solid var(--g100);padding-top:10px}
+    .w-sp-row{display:flex;gap:6px;margin-bottom:4px;align-items:center}
+    .w-sp-dot{width:5px;height:5px;border-radius:50%;background:#10b981;flex-shrink:0}
+
+    .w-promo{border-radius:12px;overflow:hidden;border:1px solid var(--g200);width:100%;max-width:260px;margin:auto}
+    .w-promo-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
+    .w-promo-badge{position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(255,255,255,.9);color:var(--g800)}
+    .w-promo-body{padding:12px;background:#fff}
+    .w-promo-title{font-size:13px;font-weight:700;margin-bottom:3px}
+    .w-promo-offer{font-size:12px;color:var(--g500);margin-bottom:10px;line-height:1.4}
+    .w-promo-btn{width:100%;padding:8px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:default;color:#fff}
+
+    .w-announce{border-radius:8px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+    .w-announce-text{font-size:13px;color:#fff;flex:1}
+    .w-announce-link{font-size:13px;font-weight:700;color:#fff;text-decoration:underline;white-space:nowrap}
+    .w-announce-x{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;cursor:default;flex-shrink:0}
+
+    .w-newsletter{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:20px;width:100%;text-align:center}
+    .w-newsletter h3{font-size:15px;font-weight:700;margin-bottom:4px}
+    .w-newsletter p{font-size:12px;color:var(--g500);margin-bottom:14px}
+    .w-newsletter-row{display:flex;gap:8px}
+    .w-newsletter-input{flex:1;padding:8px 12px;border:1px solid var(--g200);border-radius:7px;font-size:13px;background:var(--g50)}
+    .w-newsletter-btn{padding:8px 14px;border-radius:7px;font-size:13px;font-weight:700;border:none;cursor:default;color:#fff;white-space:nowrap}
+
+    /* Type picker modal */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center}
     .overlay.open{display:flex}
-    .modal{background:#fff;border-radius:16px;padding:24px;width:540px;max-width:94vw;max-height:90vh;overflow-y:auto}
+    .type-modal{background:#fff;border-radius:16px;padding:24px;width:580px;max-width:95vw;max-height:85vh;overflow-y:auto}
     .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
     .modal-title{font-size:16px;font-weight:700}
-    .modal-close{width:28px;height:28px;border:1px solid var(--g200);background:#fff;border-radius:7px;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;color:var(--g600)}
-    .modal-close:hover{background:var(--g100)}
-    .size-tabs{display:flex;gap:4px;background:var(--g100);padding:4px;border-radius:8px;margin-bottom:16px;width:fit-content}
-    .s-tab{padding:4px 12px;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;color:var(--g600);background:transparent;transition:all .15s}
-    .s-tab.active{background:#fff;color:var(--g900);box-shadow:0 1px 2px rgba(0,0,0,.1)}
-    .code-block{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:14px;font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.6;color:#374151;overflow-x:auto;white-space:pre;margin-bottom:16px}
-    .modal-foot{display:flex;justify-content:space-between;align-items:center}
-    .copy-ok{font-size:12px;color:#10b981;display:none;align-items:center;gap:4px}
-    .copy-ok.show{display:flex}
+    .modal-x{width:28px;height:28px;border:1px solid var(--g200);background:#fff;border-radius:7px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--g500)}
+    .modal-x:hover{background:var(--g100)}
+    .type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .type-card{border:1px solid var(--g200);border-radius:12px;padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+    .type-card:hover{border-color:var(--momo);background:#fdf2f8;box-shadow:0 2px 8px rgba(165,0,100,.1)}
+    .type-card-icon{font-size:28px;margin-bottom:8px}
+    .type-card-name{font-size:13px;font-weight:600;color:var(--g800);margin-bottom:3px}
+    .type-card-cat{font-size:11px;color:var(--g400)}
 
-    /* COMM PANEL */
-    .comm-panel{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:24px;margin-top:24px;display:none}
-    .comm-panel.open{display:block}
-    .cp-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
-    .cp-title{font-size:15px;font-weight:700;margin-top:6px}
-    .cp-layout{display:grid;grid-template-columns:280px 1fr;gap:24px}
-    .cp-controls{display:flex;flex-direction:column;gap:14px}
-    .ctrl-group{}
-    .ctrl-label{font-size:12px;font-weight:600;color:var(--g600);margin-bottom:5px;display:block}
-    .ctrl-input{width:100%;padding:8px 10px;border:1px solid var(--g200);border-radius:8px;font-size:13px;outline:none;transition:border-color .15s}
-    .ctrl-input:focus{border-color:var(--com)}
-    .ctrl-select{width:100%;padding:8px 10px;border:1px solid var(--g200);border-radius:8px;font-size:13px;background:#fff;outline:none;cursor:pointer}
-    .swatches{display:flex;gap:6px;margin-top:2px}
-    .swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s}
-    .swatch.active{border-color:var(--g900);transform:scale(1.15)}
-    .cp-preview{}
-    .prev-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--g400);text-transform:uppercase;margin-bottom:10px}
-    .prev-wrap{background:var(--g100);border-radius:10px;padding:24px;min-height:120px;display:flex;align-items:center;justify-content:center}
-    .cp-code{margin-top:20px;border-top:1px solid var(--g100);padding-top:20px}
-    .cp-code-block{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:14px;font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.6;color:#374151;overflow-x:auto;white-space:pre;margin-bottom:12px;max-height:150px;overflow-y:auto}
+    /* Toast */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--g900);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:300;transform:translateY(80px);opacity:0;transition:all .25s;pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
 
-    /* CTA preview */
-    .cta-bar{border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%}
-    .cta-left .cta-heading{font-size:14px;font-weight:700;color:#fff}
-    .cta-left .cta-sub{font-size:12px;opacity:.8;color:#fff;margin-top:2px}
-    .cta-cta{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:rgba(255,255,255,.25);color:#fff;flex-shrink:0}
-
-    /* Social Proof preview */
-    .sp-card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:16px;width:100%}
-    .sp-stats{display:flex;gap:20px;margin-bottom:12px;justify-content:center}
-    .sp-stat{text-align:center}
-    .sp-val{font-size:22px;font-weight:800;color:var(--g900)}
-    .sp-lbl{font-size:11px;color:var(--g400);margin-top:2px}
-    .sp-stars{color:#f59e0b;font-size:18px;text-align:center;margin-bottom:8px}
-    .sp-activity{font-size:12px;color:var(--g600);border-top:1px solid var(--g100);padding-top:10px}
-    .sp-row{display:flex;gap:8px;margin-bottom:5px;align-items:flex-start}
-    .sp-dot{width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0;margin-top:4px}
-
-    /* Card Promo preview */
-    .promo-card{border-radius:14px;overflow:hidden;border:1px solid var(--g200);width:100%;max-width:280px;margin:auto}
-    .promo-img{height:90px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
-    .promo-badge-pill{position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#fff;color:var(--g900)}
-    .promo-body{padding:14px;background:#fff}
-    .promo-title{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--g900)}
-    .promo-offer{font-size:12px;color:var(--g600);margin-bottom:12px;line-height:1.4}
-    .promo-btn{width:100%;padding:9px;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer;color:#fff}
-
-    /* Empty state */
-    .empty{text-align:center;padding:60px;color:var(--g400)}
-
-    @media(max-width:1100px){.widget-grid{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:900px){.featured-grid{grid-template-columns:1fr 1fr}.cp-layout{grid-template-columns:1fr}}
-    @media(max-width:640px){.featured-grid{grid-template-columns:1fr}.widget-grid{grid-template-columns:repeat(2,1fr)}.toolbar{flex-direction:column;align-items:flex-start}}
-    @media(max-width:400px){.widget-grid{grid-template-columns:1fr}}
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--g200);border-radius:4px}
   </style>
 </head>
 <body>
 
-<header class="site-header">
+<header class="hdr">
   <div class="brand">
     <a href="/lab.html" target="_top" class="back-link">← Lab</a>
-    <span class="bar-sep"></span>
-    <span class="brand-mark"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo"></span>
-    <span class="brand-mark wp"><img src="https://homepage.momocdn.net/img/4f2fa6b0-9f96-4077-b210-6e848b7d7104-1-260622153405.png" alt="WP"></span>
-    <span><span class="brand-title">Widget Store</span><span class="brand-sub"> · Manager</span></span>
+    <span class="sep"></span>
+    <span class="bmark"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo"></span>
+    <span class="bmark wp"><img src="https://homepage.momocdn.net/img/4f2fa6b0-9f96-4077-b210-6e848b7d7104-1-260622153405.png" alt="WP"></span>
+    <span class="bname">Widget Manager</span>
   </div>
-  <div class="header-meta">
-    <span class="live-dot"><i></i> 33 widgets</span>
-    <span>4 domains</span>
-    <span>Embed-ready</span>
+  <div class="hdr-actions">
+    <span id="hdrCount" style="font-size:13px;color:var(--g400)"></span>
   </div>
 </header>
 
-<main class="store-main">
-  <div class="toolbar">
-    <div class="filter-tabs" id="filterTabs">
-      <button class="f-tab active" data-f="all">Tất cả <span class="cnt">33</span></button>
-      <button class="f-tab" data-f="financial">Financial <span class="cnt">27</span></button>
-      <button class="f-tab" data-f="payments">Payments <span class="cnt">2</span></button>
-      <button class="f-tab" data-f="security">Security <span class="cnt">1</span></button>
-      <button class="f-tab" data-f="comm">Comm <span class="cnt">3</span><span class="new-tag">NEW</span></button>
-    </div>
-    <div class="view-toggle">
-      <button class="v-btn active" id="gridBtn" title="Grid view" onclick="setView('grid')">⊞</button>
-      <button class="v-btn" id="listBtn" title="List view" onclick="setView('list')">≡</button>
-    </div>
-  </div>
-
-  <!-- Security threat monitor (visible only in security filter) -->
-  <div class="threat-monitor" id="threatMonitor">
-    <div class="threat-head">
-      <div class="threat-title"><span class="threat-dot"></span> Threat Monitor — Live</div>
-      <div class="threat-stats">
-        <div class="t-stat"><div class="t-val">1.24M</div><div class="t-label">Users protected</div></div>
-        <div class="t-stat"><div class="t-val">320 tỷ</div><div class="t-label">Fraud blocked</div></div>
-        <div class="t-stat"><div class="t-val">4,821</div><div class="t-label">Reports this month</div></div>
+<div class="manager">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="searchInput" placeholder="Tìm widget..." oninput="filterList()">
       </div>
+      <button class="create-btn" onclick="openTypePicker()">+ Tạo widget mới</button>
     </div>
-    <div class="threat-feed">
-      <div class="threat-item"><span class="threat-badge-type">SCAM</span><span class="threat-text">0909 *** 721 — Giả mạo nhân viên ngân hàng, yêu cầu chuyển tiền gấp</span><span class="threat-time">2m ago</span></div>
-      <div class="threat-item"><span class="threat-badge-type warn">WARN</span><span class="threat-text">STK 0361 *** 882 VCB — Giao dịch đáng ngờ, chưa xác nhận lừa đảo</span><span class="threat-time">8m ago</span></div>
-      <div class="threat-item"><span class="threat-badge-type">SCAM</span><span class="threat-text">bit.ly/****** — Link giả mạo trang web MoMo thu thập thông tin đăng nhập</span><span class="threat-time">15m ago</span></div>
-    </div>
-  </div>
+    <div class="instance-list" id="instanceList"></div>
+  </aside>
 
-  <!-- Featured -->
-  <div id="featuredSection">
-    <div class="sec-head">Featured</div>
-    <div class="featured-grid" id="featuredGrid"></div>
-  </div>
-
-  <!-- Catalog -->
-  <div class="sec-head" id="catalogHead">All widgets</div>
-  <div class="widget-grid" id="widgetGrid"></div>
-
-  <!-- Comm interactive panel -->
-  <div class="comm-panel" id="commPanel">
-    <div class="cp-hdr">
-      <div>
-        <span class="badge badge-com">Comm · New</span>
-        <div class="cp-title" id="cpTitle">Widget Builder</div>
-      </div>
-      <button class="modal-close" onclick="closeCommPanel()">×</button>
-    </div>
-    <div id="cpContent"></div>
-  </div>
-</main>
-
-<!-- Embed modal -->
-<div class="overlay" id="embedOverlay">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title" id="embedTitle">Embed Widget</div>
-      <button class="modal-close" onclick="closeEmbed()">×</button>
-    </div>
-    <div class="size-tabs" id="sizeTabs">
-      <button class="s-tab active" onclick="setSize('compact',this)">Compact</button>
-      <button class="s-tab" onclick="setSize('standard',this)">Standard</button>
-      <button class="s-tab" onclick="setSize('full',this)">Full</button>
-    </div>
-    <div class="code-block" id="embedCode"></div>
-    <div class="modal-foot">
-      <span class="copy-ok" id="copyOk">✓ Đã copy!</span>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost" onclick="closeEmbed()">Đóng</button>
-        <button class="btn btn-dark" onclick="copyEmbed()">&lt;/&gt; Copy embed</button>
-      </div>
+  <!-- EDITOR -->
+  <div class="editor" id="editor">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🧩</div>
+      <h2>Widget Manager</h2>
+      <p>Chọn một widget từ danh sách bên trái để chỉnh sửa cấu hình và xem preview, hoặc tạo widget mới.</p>
     </div>
   </div>
 </div>
 
-<script>
-const DOMAIN = {
-  financial:{ label:'Financial', color:'#2563eb', bg:'#eff6ff' },
-  payments: { label:'Payments',  color:'#059669', bg:'#ecfdf5' },
-  security: { label:'Security',  color:'#e11d48', bg:'#fff1f2' },
-  comm:     { label:'Comm',      color:'#7c3aed', bg:'#f5f3ff' },
-}
+<!-- TYPE PICKER MODAL -->
+<div class="overlay" id="typeOverlay">
+  <div class="type-modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Chọn loại widget</div>
+      <button class="modal-x" onclick="closeTypePicker()">×</button>
+    </div>
+    <div class="type-grid" id="typeGrid"></div>
+  </div>
+</div>
 
-const WIDGETS = [
-  // ── Financial (27) ──────────────────────────────────────────────
-  {id:'vay-nhanh',       d:'financial',sub:'Credit',          icon:'💳',name:'Vay Nhanh',             desc:'Ước tính số tiền trả hằng tháng theo khoản vay, lãi suất và kỳ hạn.',src:'/financial-utilities#vay-nhanh',featured:true},
-  {id:'tra-gop',         d:'financial',sub:'Credit',          icon:'💳',name:'Trả Góp Ví Trả Sau',    desc:'Ước tính thanh toán hằng kỳ khi chuyển đổi trả góp qua Ví Trả Sau MoMo.',src:'/financial-utilities#tra-gop'},
-  {id:'cic-score',       d:'financial',sub:'Credit',          icon:'🎯',name:'CIC Score',              desc:'Mô phỏng điểm tín dụng CIC theo thanh toán, hạn mức và lịch sử.',src:'/financial-utilities#cic-score'},
-  {id:'cic-stimulator',  d:'financial',sub:'Credit',          icon:'⚡',name:'CIC Stimulator',         desc:'Mô phỏng tác động của hành động tài chính đến điểm CIC theo thời gian.',src:'/financial-utilities#cic-stimulator'},
-  {id:'net-worth',       d:'financial',sub:'Financial Health',icon:'📊',name:'Tài Sản Ròng',           desc:'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng.',src:'/financial-utilities#net-worth'},
-  {id:'dti',             d:'financial',sub:'Financial Health',icon:'📊',name:'Tỷ Lệ Nợ / Thu Nhập',  desc:'Tính tỷ lệ thu nhập đang dùng để thanh toán nghĩa vụ nợ hằng tháng.',src:'/financial-utilities#dti'},
-  {id:'debt-payoff',     d:'financial',sub:'Financial Health',icon:'📊',name:'Kế Hoạch Trả Nợ',       desc:'So sánh chiến lược Avalanche và Snowball khi trả nhiều khoản nợ.',src:'/financial-utilities#debt-payoff'},
-  {id:'quy-du-phong',    d:'financial',sub:'Financial Health',icon:'🛟',name:'Quỹ Dự Phòng',          desc:'Lập mục tiêu quỹ khẩn cấp theo chi tiêu hằng tháng và thời gian hoàn thành.',src:'/financial-utilities#quy-du-phong'},
-  {id:'bao-hiem-o-to',   d:'financial',sub:'Insurance',       icon:'🚗',name:'Bảo Hiểm Ô Tô',         desc:'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí thị trường.',src:'/financial-utilities#bao-hiem-o-to'},
-  {id:'bhxh',            d:'financial',sub:'Insurance',       icon:'🛡️',name:'BHXH',                  desc:'Mô phỏng tổng đóng BHXH theo mức lương và số tháng tham gia.',src:'/financial-utilities#bhxh'},
-  {id:'luong-huu',       d:'financial',sub:'Insurance',       icon:'👴',name:'Lương Hưu',              desc:'Ước tính lương hưu hằng tháng theo số năm đóng BHXH và mức lương bình quân.',src:'/financial-utilities#luong-huu'},
-  {id:'bhxh-1-lan',      d:'financial',sub:'Insurance',       icon:'💰',name:'BHXH 1 Lần',            desc:'Ước tính số tiền BHXH một lần theo Điều 70 Luật BHXH 2024 có điều chỉnh CPI.',src:'/financial-utilities#bhxh-1-lan'},
-  {id:'tiet-kiem',       d:'financial',sub:'Savings',         icon:'🏦',name:'Tiết Kiệm',              desc:'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',src:'/financial-utilities#tiet-kiem',featured:true},
-  {id:'nuoi-con',        d:'financial',sub:'Savings',         icon:'👶',name:'Kế Hoạch Nuôi Con',      desc:'Ước tính chi phí nuôi dạy con đến 18 tuổi và quỹ đại học cần tích lũy.',src:'/financial-utilities#nuoi-con'},
-  {id:'lai-suat',        d:'financial',sub:'Savings',         icon:'📈',name:'Lãi Suất Ngân Hàng',     desc:'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận.',src:'/financial-utilities#lai-suat'},
-  {id:'thue-tncn',       d:'financial',sub:'Tax',             icon:'📝',name:'Thuế TNCN',              desc:'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến 5 bậc (Luật 2025).',src:'/financial-utilities#thue-tncn'},
-  {id:'quyet-toan-tncn', d:'financial',sub:'Tax',             icon:'🗓️',name:'Quyết Toán TNCN',       desc:'Quyết toán thuế TNCN cuối năm — biết phải nộp thêm hay được hoàn.',src:'/financial-utilities#quyet-toan-tncn'},
-  {id:'thue-tndn-sme',   d:'financial',sub:'Tax',             icon:'🏢',name:'Thuế TNDN SME',          desc:'Tính thuế TNDN cho SME theo Luật 67/2025/QH15 với miễn 3 năm cho DN mới.',src:'/financial-utilities#thue-tndn-sme'},
-  {id:'chung-chi-quy',   d:'financial',sub:'Investment',      icon:'📉',name:'Chứng Chỉ Quỹ',         desc:'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.',src:'/financial-utilities#chung-chi-quy'},
-  {id:'gold',            d:'financial',sub:'Investment',      icon:'🪙',name:'Giá Vàng',               desc:'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và điểm hòa vốn.',src:'/financial-utilities#gold'},
-  {id:'stock',           d:'financial',sub:'Investment',      icon:'📊',name:'Chứng Khoán',            desc:'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.',src:'/financial-utilities#stock'},
-  {id:'ty-gia',          d:'financial',sub:'FX',              icon:'💱',name:'Tỷ Giá',                 desc:'Converter A/B: cặp tiền, đảo chiều, chart, chênh lệch bank-mid và số nhận ròng.',src:'/financial-utilities#ty-gia'},
-  {id:'fx-compare',      d:'financial',sub:'FX',              icon:'🏧',name:'So Sánh Tỷ Giá NH',      desc:'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ.',src:'/financial-utilities#fx-compare'},
-  {id:'travel-budget',   d:'financial',sub:'FX',              icon:'✈️',name:'Budget Du Lịch',         desc:'Ngân sách chuyến đi cho 10 điểm đến × 3 tier × N ngày với breakdown đầy đủ.',src:'/financial-utilities#travel-budget'},
-  {id:'tu-do-tai-chinh', d:'financial',sub:'Planning',        icon:'🎯',name:'Tự Do Tài Chính',        desc:'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư và tỷ lệ rút vốn an toàn.',src:'/financial-utilities#tu-do-tai-chinh'},
-  {id:'dam-cuoi',        d:'financial',sub:'Planning',        icon:'💍',name:'Kế Hoạch Đám Cưới',      desc:'Ngân sách cưới theo số khách, bàn tiệc, tiền mừng dự kiến và quỹ sau cưới.',src:'/financial-utilities#dam-cuoi'},
-  {id:'hoc-phi',         d:'financial',sub:'Planning',        icon:'🎓',name:'Học Phí Tương Lai',       desc:'Ước tính học phí thực theo lạm phát và chi phí cần chuẩn bị từ hôm nay.',src:'/financial-utilities#hoc-phi'},
-  // ── Payments (2) ────────────────────────────────────────────────
-  {id:'bill-lookup',  d:'payments',sub:'Utility Bill',icon:'🧾',name:'Tra Cứu Hóa Đơn',   desc:'Tra cứu hóa đơn điện, nước, internet theo mã khách hàng hoặc số điện thoại.',src:'/bill-lookup',featured:true},
-  {id:'metro-ticket', d:'payments',sub:'Transit',    icon:'🚇',name:'Mua Vé Metro HCM',    desc:'Mua vé Metro TP.HCM: chọn tuyến, ga đi/đến, loại vé, số lượng và nhận QR.',src:'/metro-ticket'},
-  // ── Security (1) ────────────────────────────────────────────────
-  {id:'scam-check',   d:'security',sub:'Safety Hub', icon:'🔒',name:'Scam Check',           desc:'An Toàn MoMo — tra cứu rủi ro SĐT/STK/link + báo cáo lừa đảo ẩn danh.',src:'/scam-check',featured:true},
-  // ── Comm (3 – New) ──────────────────────────────────────────────
-  {id:'cta-widget',   d:'comm',sub:'Call-to-Action',icon:'📣',name:'CTA Widget',            desc:'Banner kêu gọi hành động nhúng được vào landing page với heading, sub và button tùy chỉnh.',src:null,interactive:true,featured:true},
-  {id:'social-proof', d:'comm',sub:'Trust',         icon:'⭐',name:'Social Proof',          desc:'Widget bằng chứng xã hội: hiển thị số người dùng, đánh giá sao và hoạt động gần đây.',src:null,interactive:true},
-  {id:'card-promo',   d:'comm',sub:'Campaign',      icon:'🃏',name:'Card Promotion',         desc:'Card khuyến mãi cho chiến dịch: tiêu đề, ưu đãi, badge mùa vụ và nút CTA màu tùy chỉnh.',src:null,interactive:true},
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Widget Types ──────────────────────────────────────────────────────────────
+const TYPES = [
+  {
+    id: 'cta-banner',
+    name: 'CTA Banner',
+    icon: '📣',
+    category: 'Comm',
+    fields: [
+      {id:'heading', label:'Tiêu đề', type:'text', ph:'Bảo vệ tài chính với MoMo'},
+      {id:'sub',     label:'Sub-text', type:'text', ph:'31 triệu người dùng tin tưởng'},
+      {id:'cta',     label:'Nút CTA',  type:'text', ph:'Tải App Ngay'},
+      {id:'url',     label:'URL đích', type:'text', ph:'https://momo.vn/download'},
+      {id:'color',   label:'Màu nền',  type:'swatches', opts:['#a50064','#2563eb','#059669','#f59e0b','#7c3aed','#0f172a']},
+    ],
+  },
+  {
+    id: 'social-proof',
+    name: 'Social Proof',
+    icon: '⭐',
+    category: 'Comm',
+    fields: [
+      {id:'users',      label:'Số người dùng', type:'text',   ph:'31.000.000'},
+      {id:'rating',     label:'Điểm đánh giá', type:'number', ph:'4.8', min:1, max:5, step:0.1},
+      {id:'ratingCnt',  label:'Lượt đánh giá', type:'text',   ph:'142.500'},
+      {id:'activity',   label:'Tin hoạt động', type:'text',   ph:'Vừa có người hoàn tiền thành công'},
+    ],
+  },
+  {
+    id: 'card-promo',
+    name: 'Card Promotion',
+    icon: '🃏',
+    category: 'Comm',
+    fields: [
+      {id:'title', label:'Tiêu đề',   type:'text', ph:'Hoàn tiền 50%'},
+      {id:'offer', label:'Ưu đãi',    type:'textarea', ph:'Mô tả ưu đãi...'},
+      {id:'cta',   label:'Nút CTA',   type:'text', ph:'Dùng ngay'},
+      {id:'badge', label:'Badge',     type:'text', ph:'Hot'},
+      {id:'emoji', label:'Icon/Emoji',type:'text', ph:'⚡'},
+      {id:'color', label:'Màu',       type:'swatches', opts:['#a50064','#2563eb','#f59e0b','#059669','#7c3aed']},
+    ],
+  },
+  {
+    id: 'announcement',
+    name: 'Announcement Bar',
+    icon: '📢',
+    category: 'Comm',
+    fields: [
+      {id:'message',  label:'Nội dung',    type:'text', ph:'Tính năng mới đã ra mắt!'},
+      {id:'linkText', label:'Link label',  type:'text', ph:'Xem ngay'},
+      {id:'url',      label:'URL',         type:'text', ph:'https://momo.vn'},
+      {id:'color',    label:'Màu',         type:'swatches', opts:['#a50064','#0f172a','#059669','#d97706','#7c3aed']},
+    ],
+  },
+  {
+    id: 'newsletter',
+    name: 'Newsletter Signup',
+    icon: '📧',
+    category: 'Comm',
+    fields: [
+      {id:'headline', label:'Tiêu đề',     type:'text', ph:'Nhận tips tài chính mỗi tuần'},
+      {id:'sub',      label:'Sub-text',    type:'text', ph:'Miễn phí, không spam'},
+      {id:'btnText',  label:'Nút đăng ký', type:'text', ph:'Đăng ký ngay'},
+      {id:'ph',       label:'Placeholder', type:'text', ph:'email@example.com'},
+      {id:'color',    label:'Màu nút',     type:'swatches', opts:['#a50064','#2563eb','#059669','#f59e0b']},
+    ],
+  },
 ]
 
-// ─── State ─────────────────────────────────────────────────────────
-let filter = 'all'
-let view = 'grid'
-let embedId = null
-let embedSize = 'standard'
-let commId = null
+const PAGES = ['Trang Chủ','Blog','Payments','Dashboard','Onboarding','Scam Check','Financial Lab','Unassigned']
+const POSITIONS = ['Top Bar','After Hero','In Content','Sidebar','Footer','Floating','Unassigned']
 
-// ─── Filter tabs ────────────────────────────────────────────────────
-document.getElementById('filterTabs').addEventListener('click', e => {
-  const tab = e.target.closest('[data-f]')
-  if (!tab) return
-  filter = tab.dataset.f
-  document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'))
-  tab.classList.add('active')
-  closeCommPanel()
-  render()
-})
+// ── Widget Instances (demo data) ──────────────────────────────────────────────
+let instances = [
+  {id:'w001',typeId:'cta-banner',   name:'CTA Banner — Trang Chủ',         status:'active', page:'Trang Chủ',   pos:'After Hero', config:{heading:'Bảo vệ tài chính của bạn với MoMo',sub:'Ví điện tử uy tín — 31 triệu người dùng',cta:'Tải App Ngay',url:'https://momo.vn/download',color:'#a50064'}},
+  {id:'w002',typeId:'social-proof', name:'Social Proof — Blog Header',      status:'active', page:'Blog',        pos:'After Hero', config:{users:'31.000.000',rating:'4.8',ratingCnt:'142.500',activity:'Vừa có người hoàn tiền hóa đơn thành công'}},
+  {id:'w003',typeId:'card-promo',   name:'Hoàn Tiền Điện Nước — Payments',  status:'active', page:'Payments',    pos:'In Content', config:{title:'Hoàn tiền 50%',offer:'Thanh toán hóa đơn điện nước qua MoMo. Hoàn tối đa 50.000đ/tháng.',cta:'Thanh toán ngay',badge:'Hot',emoji:'⚡',color:'#a50064'}},
+  {id:'w004',typeId:'announcement', name:'eKYC Drive Q3 — Dashboard',       status:'active', page:'Dashboard',   pos:'Top Bar',    config:{message:'Nâng cấp tài khoản MoMo để giao dịch không giới hạn',linkText:'Xác minh ngay',url:'/ekyc',color:'#0f172a'}},
+  {id:'w005',typeId:'cta-banner',   name:'Vay Tiêu Dùng — Financial Lab',   status:'active', page:'Financial Lab',pos:'Sidebar',   config:{heading:'Cần vay tiêu dùng?',sub:'Lãi suất từ 0.9%/tháng, giải ngân trong 15 phút',cta:'Xem ngay',url:'/financial-utilities#vay-nhanh',color:'#2563eb'}},
+  {id:'w006',typeId:'cta-banner',   name:'Tết 2026 — Trang Chủ',            status:'draft',  page:'Trang Chủ',   pos:'Hero',       config:{heading:'Chúc Mừng Năm Mới 2026!',sub:'Chuyển tiền miễn phí — hoàn tiền 100% phí giao dịch',cta:'Gửi quà Tết',url:'https://momo.vn/tet',color:'#f59e0b'}},
+  {id:'w007',typeId:'card-promo',   name:'Back to School — Onboarding',      status:'draft',  page:'Onboarding',  pos:'In Content', config:{title:'Học phí không lo',offer:'Thanh toán học phí qua MoMo — tích điểm đổi quà cho năm học mới.',cta:'Tìm hiểu thêm',badge:'New',emoji:'📚',color:'#2563eb'}},
+  {id:'w008',typeId:'newsletter',   name:'MoMo Weekly — Blog',               status:'paused', page:'Blog',        pos:'Footer',     config:{headline:'Nhận tips tài chính mỗi tuần',sub:'Nội dung độc quyền từ chuyên gia MoMo, hoàn toàn miễn phí.',btnText:'Đăng ký',ph:'email@example.com',color:'#a50064'}},
+]
 
-// ─── View toggle ────────────────────────────────────────────────────
-function setView(v) {
-  view = v
-  document.getElementById('gridBtn').classList.toggle('active', v === 'grid')
-  document.getElementById('listBtn').classList.toggle('active', v === 'list')
-  document.getElementById('widgetGrid').classList.toggle('list-view', v === 'list')
-}
+let selected = null
+let searchQ = ''
 
-// ─── Render ─────────────────────────────────────────────────────────
-function render() {
-  const all = filter === 'all' ? WIDGETS : WIDGETS.filter(w => w.d === filter)
-  const featured = all.filter(w => w.featured)
-  const rest = all.filter(w => !w.featured)
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const q = searchQ.toLowerCase()
+  const filtered = instances.filter(i => i.name.toLowerCase().includes(q))
 
-  // Threat monitor
-  document.getElementById('threatMonitor').classList.toggle('visible', filter === 'security')
+  const groups = [
+    {key:'active',  label:'Đang hoạt động'},
+    {key:'draft',   label:'Nháp'},
+    {key:'paused',  label:'Đã tắt'},
+  ]
 
-  // Featured section
-  const fs = document.getElementById('featuredSection')
-  if (featured.length) {
-    fs.style.display = ''
-    document.getElementById('featuredGrid').innerHTML = featured.map(featCard).join('')
-  } else {
-    fs.style.display = 'none'
+  let html = ''
+  for (const g of groups) {
+    const items = filtered.filter(i => i.status === g.key)
+    if (!items.length) continue
+    html += `<div class="group-label">${g.label}<span class="group-cnt">${items.length}</span></div>`
+    for (const it of items) {
+      const t = TYPES.find(x => x.id === it.typeId)
+      html += `<div class="inst-item${selected===it.id?' active':''}" onclick="selectWidget('${it.id}')">
+        <span class="inst-icon">${t?.icon||'🧩'}</span>
+        <div class="inst-info">
+          <div class="inst-name">${it.name}</div>
+          <div class="inst-meta">${t?.name||''} · ${it.page}</div>
+        </div>
+        <span class="status-dot dot-${it.status}"></span>
+      </div>`
+    }
   }
+  document.getElementById('instanceList').innerHTML = html || '<div style="padding:20px;text-align:center;font-size:13px;color:var(--g400)">Không tìm thấy</div>'
 
-  // Catalog
-  const dLabel = filter === 'all' ? 'All widgets' : `${DOMAIN[filter].label} widgets`
-  document.getElementById('catalogHead').textContent = `${dLabel} — ${rest.length} items`
-  const grid = document.getElementById('widgetGrid')
-  grid.className = 'widget-grid' + (view === 'list' ? ' list-view' : '')
-  grid.innerHTML = rest.length ? rest.map(wCard).join('') : '<div class="empty">Không có widget nào</div>'
+  const total = instances.length
+  const active = instances.filter(i => i.status === 'active').length
+  document.getElementById('hdrCount').textContent = `${active} active · ${total} total`
 }
 
-function domainBadge(d) {
-  return `<span class="badge badge-${d}">${DOMAIN[d].label}</span>`
+function filterList() {
+  searchQ = document.getElementById('searchInput').value
+  renderSidebar()
 }
 
-function featCard(w) {
-  const action = w.src
-    ? `<a href="${w.src}" target="_top" class="btn btn-ghost btn-sm">↗ Demo</a>`
-    : `<button class="btn btn-ghost btn-sm" onclick="openCommBuilder('${w.id}')">↗ Builder</button>`
-  return `
-    <div class="feat-card" data-d="${w.d}">
-      <span class="feat-icon">${w.icon}</span>
-      ${domainBadge(w.d)}
-      <div class="feat-name">${w.name}</div>
-      <div class="feat-sub">${w.sub}</div>
-      <div class="feat-desc">${w.desc}</div>
-      <div class="feat-actions">
-        ${action}
-        <button class="btn btn-dark btn-sm" onclick="openEmbed('${w.id}')">&lt;/&gt; Embed</button>
+// ── Select widget ────────────────────────────────────────────────────────────
+function selectWidget(id) {
+  selected = id
+  renderSidebar()
+  const inst = instances.find(i => i.id === id)
+  renderEditor(inst)
+}
+
+// ── Editor ───────────────────────────────────────────────────────────────────
+function renderEditor(inst) {
+  const t = TYPES.find(x => x.id === inst.typeId)
+  const ed = document.getElementById('editor')
+
+  const statusOpts = ['active','draft','paused'].map(s =>
+    `<option value="${s}"${inst.status===s?' selected':''}>${{active:'● Đang hoạt động',draft:'○ Nháp',paused:'◌ Đã tắt'}[s]}</option>`
+  ).join('')
+
+  const configFields = t.fields.map(f => {
+    const val = inst.config[f.id] ?? ''
+    if (f.type === 'swatches') {
+      const swatches = f.opts.map(c =>
+        `<span class="swatch${c===val?' on':''}" style="background:${c}" data-fid="${f.id}" data-val="${c}" onclick="swatchPick(this,'${inst.id}','${f.id}','${c}')"></span>`
+      ).join('')
+      return `<div class="field-group"><label class="field-label">${f.label}</label><div class="swatches">${swatches}</div></div>`
+    }
+    if (f.type === 'textarea') {
+      return `<div class="field-group"><label class="field-label">${f.label}</label><textarea class="field-input" data-fid="${f.id}" oninput="fieldUpdate('${inst.id}','${f.id}',this.value)" placeholder="${f.ph||''}">${esc(val)}</textarea></div>`
+    }
+    return `<div class="field-group"><label class="field-label">${f.label}</label><input class="field-input" type="${f.type||'text'}" data-fid="${f.id}" value="${esc(val)}" oninput="fieldUpdate('${inst.id}','${f.id}',this.value)" placeholder="${f.ph||''}"${f.min!==undefined?` min="${f.min}"`:''}${f.max!==undefined?` max="${f.max}"`:''}${f.step!==undefined?` step="${f.step}"`:''}></div>`
+  }).join('')
+
+  ed.innerHTML = `
+    <div class="editor-hdr">
+      <input class="inst-name-input" value="${esc(inst.name)}" oninput="nameUpdate('${inst.id}',this.value)" placeholder="Tên widget...">
+      <select class="status-select ${inst.status}" onchange="statusUpdate('${inst.id}',this.value,this)">${statusOpts}</select>
+      <button class="save-btn" onclick="saveWidget('${inst.id}')">Lưu</button>
+    </div>
+    <div class="editor-body">
+      <div class="config-panel">
+        <div class="cfg-section">
+          <div class="cfg-section-title">Nội dung</div>
+          ${configFields}
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-section-title">Vị trí hiển thị</div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Trang</label>
+              <select class="field-select" onchange="placementUpdate('${inst.id}','page',this.value)">
+                ${PAGES.map(p=>`<option${p===inst.page?' selected':''}>${p}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Vị trí</label>
+              <select class="field-select" onchange="placementUpdate('${inst.id}','pos',this.value)">
+                ${POSITIONS.map(p=>`<option${p===inst.pos?' selected':''}>${p}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="preview-panel">
+        <div class="prev-label">Preview</div>
+        <div class="prev-stage" id="prevStage">${renderPreview(inst)}</div>
+        <div class="prev-meta">
+          <div class="prev-meta-row"><span class="prev-meta-key">Loại</span><span class="prev-meta-val">${t?.name}</span></div>
+          <div class="prev-meta-row"><span class="prev-meta-key">Trang</span><span class="prev-meta-val">${inst.page}</span></div>
+          <div class="prev-meta-row"><span class="prev-meta-key">Vị trí</span><span class="prev-meta-val">${inst.pos}</span></div>
+          <div class="prev-meta-row"><span class="prev-meta-key">Trạng thái</span><span class="badge-status bs-${inst.status}">${{active:'Đang hoạt động',draft:'Nháp',paused:'Đã tắt'}[inst.status]}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="config-footer">
+      <button class="del-btn" onclick="deleteWidget('${inst.id}')">Xoá widget</button>
+      <button class="save-btn" onclick="saveWidget('${inst.id}')">Lưu thay đổi</button>
     </div>`
 }
 
-function wCard(w) {
-  const action = w.src
-    ? `<a href="${w.src}" target="_top" class="btn btn-ghost btn-sm">↗ Demo</a>`
-    : `<button class="btn btn-ghost btn-sm" onclick="openCommBuilder('${w.id}')">↗ Builder</button>`
-  return `
-    <div class="w-card">
-      <div class="w-card-top">
-        <span class="w-icon">${w.icon}</span>
-        ${domainBadge(w.d)}
-      </div>
-      <div class="w-card-body">
-        <div class="w-name">${w.name}</div>
-        <div class="w-sub">${w.sub}</div>
-        <div class="w-desc">${w.desc}</div>
-      </div>
-      <div class="w-actions">
-        ${action}
-        <button class="btn btn-dark btn-sm" onclick="openEmbed('${w.id}')">&lt;/&gt; Embed</button>
-      </div>
-    </div>`
-}
-
-// ─── Embed modal ────────────────────────────────────────────────────
-const SIZES = {
-  compact:  { w:'100%', h:'280' },
-  standard: { w:'100%', h:'480' },
-  full:     { w:'100%', h:'720' },
-}
-const BASE = 'https://web-momo-prototype.vercel.app'
-const PATHS = {
-  'vay-nhanh':'/financial-utilities#vay-nhanh','tra-gop':'/financial-utilities#tra-gop',
-  'cic-score':'/financial-utilities#cic-score','cic-stimulator':'/financial-utilities#cic-stimulator',
-  'net-worth':'/financial-utilities#net-worth','dti':'/financial-utilities#dti',
-  'debt-payoff':'/financial-utilities#debt-payoff','quy-du-phong':'/financial-utilities#quy-du-phong',
-  'bao-hiem-o-to':'/financial-utilities#bao-hiem-o-to','bhxh':'/financial-utilities#bhxh',
-  'luong-huu':'/financial-utilities#luong-huu','bhxh-1-lan':'/financial-utilities#bhxh-1-lan',
-  'tiet-kiem':'/financial-utilities#tiet-kiem','nuoi-con':'/financial-utilities#nuoi-con',
-  'lai-suat':'/financial-utilities#lai-suat','thue-tncn':'/financial-utilities#thue-tncn',
-  'quyet-toan-tncn':'/financial-utilities#quyet-toan-tncn','thue-tndn-sme':'/financial-utilities#thue-tndn-sme',
-  'chung-chi-quy':'/financial-utilities#chung-chi-quy','gold':'/financial-utilities#gold',
-  'stock':'/financial-utilities#stock','ty-gia':'/financial-utilities#ty-gia',
-  'fx-compare':'/financial-utilities#fx-compare','travel-budget':'/financial-utilities#travel-budget',
-  'tu-do-tai-chinh':'/financial-utilities#tu-do-tai-chinh','dam-cuoi':'/financial-utilities#dam-cuoi',
-  'hoc-phi':'/financial-utilities#hoc-phi',
-  'bill-lookup':'/bill-lookup','metro-ticket':'/metro-ticket','scam-check':'/scam-check',
-}
-
-function openEmbed(id) {
-  embedId = id
-  const w = WIDGETS.find(x => x.id === id)
-  document.getElementById('embedTitle').textContent = `Embed: ${w.name}`
-  embedSize = 'standard'
-  document.querySelectorAll('.s-tab').forEach((t,i) => t.classList.toggle('active', i === 1))
-  updateEmbedCode()
-  document.getElementById('embedOverlay').classList.add('open')
-  document.getElementById('copyOk').classList.remove('show')
-}
-
-function setSize(s, el) {
-  embedSize = s
-  document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'))
-  el.classList.add('active')
-  updateEmbedCode()
-}
-
-function updateEmbedCode() {
-  const w = WIDGETS.find(x => x.id === embedId)
-  const sz = SIZES[embedSize]
-  let code
-  if (w.interactive) {
-    code = `<!-- MoMo ${w.name} Widget -->\n<div\n  class="momo-widget"\n  data-type="${w.id}"\n  data-theme="pink"\n></div>\n<script src="${BASE}/widgets/v1.js" async><\/script>`
-  } else {
-    const path = PATHS[w.id] || '/' + w.id
-    code = `<iframe\n  src="${BASE}${path}"\n  width="${sz.w}"\n  height="${sz.h}"\n  frameborder="0"\n  loading="lazy"\n  title="${w.name} — MoMo Widget"\n></iframe>`
+// ── Preview renderers ────────────────────────────────────────────────────────
+function renderPreview(inst) {
+  const c = inst.config
+  switch (inst.typeId) {
+    case 'cta-banner':
+      return `<div class="w-cta-bar" style="background:${c.color||'#a50064'}">
+        <div><div class="w-cta-heading">${esc(c.heading||'CTA Heading')}</div><div class="w-cta-sub">${esc(c.sub||'Sub-text')}</div></div>
+        <button class="w-cta-btn">${esc(c.cta||'CTA')}</button>
+      </div>`
+    case 'social-proof':
+      return `<div class="w-sp">
+        <div class="w-sp-stats">
+          <div class="w-sp-stat"><div class="w-sp-val">${esc(c.users||'0')}</div><div class="w-sp-lbl">Người dùng</div></div>
+          <div class="w-sp-stat"><div class="w-sp-val">${parseFloat(c.rating||5).toFixed(1)}</div><div class="w-sp-lbl">Đánh giá</div></div>
+          <div class="w-sp-stat"><div class="w-sp-val">${esc(c.ratingCnt||'0')}</div><div class="w-sp-lbl">Lượt review</div></div>
+        </div>
+        <div class="w-sp-stars">${stars(c.rating||5)}</div>
+        <div class="w-sp-activity">
+          <div class="w-sp-row"><span class="w-sp-dot"></span><span>${esc(c.activity||'Hoạt động gần đây')} · vừa xong</span></div>
+          <div class="w-sp-row"><span class="w-sp-dot"></span><span>Nguyễn Văn A đã thanh toán hóa đơn thành công</span></div>
+        </div>
+      </div>`
+    case 'card-promo':
+      return `<div class="w-promo">
+        <div class="w-promo-img" style="background:${c.color||'#a50064'}">${c.emoji||'🎁'}<span class="w-promo-badge">${esc(c.badge||'')}</span></div>
+        <div class="w-promo-body">
+          <div class="w-promo-title">${esc(c.title||'Tiêu đề')}</div>
+          <div class="w-promo-offer">${esc(c.offer||'Mô tả ưu đãi').replace(/\n/g,'<br>')}</div>
+          <button class="w-promo-btn" style="background:${c.color||'#a50064'}">${esc(c.cta||'Dùng ngay')}</button>
+        </div>
+      </div>`
+    case 'announcement':
+      return `<div class="w-announce" style="background:${c.color||'#0f172a'}">
+        <div class="w-announce-text">${esc(c.message||'Thông báo...')}</div>
+        <span class="w-announce-link">${esc(c.linkText||'Xem ngay')}</span>
+        <div class="w-announce-x">×</div>
+      </div>`
+    case 'newsletter':
+      return `<div class="w-newsletter">
+        <h3>${esc(c.headline||'Newsletter')}</h3>
+        <p>${esc(c.sub||'Sub-text')}</p>
+        <div class="w-newsletter-row">
+          <div class="w-newsletter-input" style="color:var(--g400)">${esc(c.ph||'email@example.com')}</div>
+          <button class="w-newsletter-btn" style="background:${c.color||'#a50064'}">${esc(c.btnText||'Đăng ký')}</button>
+        </div>
+      </div>`
+    default: return '<div style="color:var(--g400);font-size:13px">No preview</div>'
   }
-  document.getElementById('embedCode').textContent = code
 }
 
-function copyEmbed() {
-  navigator.clipboard.writeText(document.getElementById('embedCode').textContent).then(() => {
-    const ok = document.getElementById('copyOk')
-    ok.classList.add('show')
-    setTimeout(() => ok.classList.remove('show'), 2500)
+function stars(r) {
+  const n = Math.min(5, Math.max(0, parseFloat(r)||5))
+  return '★'.repeat(Math.round(n)) + '☆'.repeat(5-Math.round(n))
+}
+
+// ── Field updates (live preview) ─────────────────────────────────────────────
+function fieldUpdate(id, fid, val) {
+  const inst = instances.find(i => i.id === id)
+  if (!inst) return
+  inst.config[fid] = val
+  const ps = document.getElementById('prevStage')
+  if (ps) ps.innerHTML = renderPreview(inst)
+}
+
+function swatchPick(el, id, fid, val) {
+  const inst = instances.find(i => i.id === id)
+  if (!inst) return
+  inst.config[fid] = val
+  document.querySelectorAll(`.swatch[data-fid="${fid}"]`).forEach(s => s.classList.toggle('on', s.dataset.val === val))
+  const ps = document.getElementById('prevStage')
+  if (ps) ps.innerHTML = renderPreview(inst)
+}
+
+function nameUpdate(id, val) {
+  const inst = instances.find(i => i.id === id)
+  if (inst) { inst.name = val; renderSidebar() }
+}
+
+function statusUpdate(id, val, sel) {
+  const inst = instances.find(i => i.id === id)
+  if (!inst) return
+  inst.status = val
+  sel.className = `status-select ${val}`
+  renderSidebar()
+}
+
+function placementUpdate(id, key, val) {
+  const inst = instances.find(i => i.id === id)
+  if (inst) inst[key] = val
+}
+
+function saveWidget(id) {
+  showToast('Đã lưu thay đổi ✓')
+  renderSidebar()
+}
+
+function deleteWidget(id) {
+  if (!confirm('Xoá widget này?')) return
+  instances = instances.filter(i => i.id !== id)
+  selected = null
+  document.getElementById('editor').innerHTML = `<div class="welcome" id="welcome"><div class="welcome-icon">🧩</div><h2>Widget Manager</h2><p>Chọn một widget hoặc tạo mới.</p></div>`
+  renderSidebar()
+  showToast('Đã xoá widget')
+}
+
+// ── Type picker ───────────────────────────────────────────────────────────────
+function openTypePicker() {
+  document.getElementById('typeGrid').innerHTML = TYPES.map(t =>
+    `<div class="type-card" onclick="createWidget('${t.id}')">
+      <div class="type-card-icon">${t.icon}</div>
+      <div class="type-card-name">${t.name}</div>
+      <div class="type-card-cat">${t.category}</div>
+    </div>`
+  ).join('')
+  document.getElementById('typeOverlay').classList.add('open')
+}
+
+function closeTypePicker() {
+  document.getElementById('typeOverlay').classList.remove('open')
+}
+
+function createWidget(typeId) {
+  closeTypePicker()
+  const t = TYPES.find(x => x.id === typeId)
+  const id = 'w' + Date.now()
+  const defaultConfig = {}
+  t.fields.forEach(f => {
+    if (f.type === 'swatches') defaultConfig[f.id] = f.opts[0]
+    else defaultConfig[f.id] = ''
   })
+  const inst = { id, typeId, name: `${t.name} mới`, status:'draft', page:'Unassigned', pos:'Unassigned', config:defaultConfig }
+  instances.unshift(inst)
+  selected = id
+  renderSidebar()
+  renderEditor(inst)
+  showToast(`Đã tạo ${t.name} mới`)
 }
 
-function closeEmbed() {
-  document.getElementById('embedOverlay').classList.remove('open')
-}
-
-document.getElementById('embedOverlay').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeEmbed()
+document.getElementById('typeOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeTypePicker()
 })
 
-// ─── Comm builder ───────────────────────────────────────────────────
-const COMM_THEMES = {
-  'cta-widget':   ['#a50064','#2563eb','#059669','#f59e0b'],
-  'social-proof': ['#a50064','#2563eb','#059669','#7c3aed'],
-  'card-promo':   ['#a50064','#2563eb','#f59e0b','#059669'],
-}
-
-let ctaState    = { heading:'Bảo vệ tài chính của bạn với MoMo', sub:'Ví điện tử uy tín — 31 triệu người dùng', cta:'Tải App Ngay', color:'#a50064' }
-let spState     = { users:'31.000.000', rating:'4.8', ratingCnt:'142.500', msg:'Người dùng mới nhất vừa tải app' }
-let promoState  = { title:'Hoàn tiền 50%', offer:'Thanh toán hóa đơn điện nước qua MoMo\nHoàn tối đa 50.000đ mỗi tháng', cta:'Dùng ngay', badge:'Hot', color:'#a50064', emoji:'⚡' }
-
-function openCommBuilder(id) {
-  commId = id
-  const w = WIDGETS.find(x => x.id === id)
-  document.getElementById('cpTitle').textContent = w.name + ' Builder'
-  document.getElementById('cpContent').innerHTML = renderCommContent(id)
-  document.getElementById('commPanel').classList.add('open')
-  document.getElementById('commPanel').scrollIntoView({ behavior:'smooth', block:'start' })
-  bindCommEvents(id)
-}
-
-function closeCommPanel() {
-  document.getElementById('commPanel').classList.remove('open')
-  commId = null
-}
-
-function renderCommContent(id) {
-  if (id === 'cta-widget') return renderCta()
-  if (id === 'social-proof') return renderSocialProof()
-  if (id === 'card-promo') return renderCardPromo()
-  return ''
-}
-
-// CTA Widget
-function renderCta() {
-  const s = ctaState
-  const swatches = COMM_THEMES['cta-widget'].map(c =>
-    `<span class="swatch${c===s.color?' active':''}" data-c="${c}" style="background:${c}" onclick="setCtaColor('${c}',this)"></span>`).join('')
-  return `
-  <div class="cp-layout">
-    <div class="cp-controls">
-      <div class="ctrl-group"><label class="ctrl-label">Heading</label><input class="ctrl-input" id="ctaH" value="${esc(s.heading)}" oninput="ctaUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Sub-text</label><input class="ctrl-input" id="ctaS" value="${esc(s.sub)}" oninput="ctaUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Button text</label><input class="ctrl-input" id="ctaB" value="${esc(s.cta)}" oninput="ctaUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Màu nền</label><div class="swatches">${swatches}</div></div>
-    </div>
-    <div class="cp-preview">
-      <div class="prev-label">Preview</div>
-      <div class="prev-wrap" id="ctaPreviewWrap">${ctaPreviewHTML(s)}</div>
-      <div class="cp-code">
-        <div class="sec-head">Embed Code</div>
-        <div class="cp-code-block" id="ctaCode">${ctaCodeStr(s)}</div>
-        <button class="btn btn-dark" onclick="cpCopy('ctaCode')">Copy embed</button>
-      </div>
-    </div>
-  </div>`
-}
-
-function ctaPreviewHTML(s) {
-  return `<div class="cta-bar" style="background:${s.color}"><div class="cta-left"><div class="cta-heading">${esc(s.heading)}</div><div class="cta-sub">${esc(s.sub)}</div></div><button class="cta-cta">${esc(s.cta)}</button></div>`
-}
-function ctaCodeStr(s) {
-  return `<div class="momo-widget" data-type="cta"\n  data-heading="${esc(s.heading)}"\n  data-sub="${esc(s.sub)}"\n  data-cta="${esc(s.cta)}"\n  data-color="${s.color}"\n></div>\n<script src="https://web-momo-prototype.vercel.app/widgets/v1.js" async><\/script>`
-}
-function ctaUpdate() {
-  ctaState.heading = document.getElementById('ctaH').value
-  ctaState.sub = document.getElementById('ctaS').value
-  ctaState.cta = document.getElementById('ctaB').value
-  document.getElementById('ctaPreviewWrap').innerHTML = ctaPreviewHTML(ctaState)
-  document.getElementById('ctaCode').textContent = ctaCodeStr(ctaState)
-}
-function setCtaColor(c, el) {
-  ctaState.color = c
-  document.querySelectorAll('#cpContent .swatch').forEach(s => s.classList.remove('active'))
-  el.classList.add('active')
-  document.getElementById('ctaPreviewWrap').innerHTML = ctaPreviewHTML(ctaState)
-  document.getElementById('ctaCode').textContent = ctaCodeStr(ctaState)
-}
-
-// Social Proof
-function renderSocialProof() {
-  const s = spState
-  const swatches = COMM_THEMES['social-proof'].map(c =>
-    `<span class="swatch" data-c="${c}" style="background:${c}" onclick="spColorPick('${c}',this)"></span>`).join('')
-  return `
-  <div class="cp-layout">
-    <div class="cp-controls">
-      <div class="ctrl-group"><label class="ctrl-label">Số người dùng</label><input class="ctrl-input" id="spU" value="${s.users}" oninput="spUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Đánh giá (1–5)</label><input class="ctrl-input" id="spR" type="number" min="1" max="5" step="0.1" value="${s.rating}" oninput="spUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Số lượt đánh giá</label><input class="ctrl-input" id="spRC" value="${s.ratingCnt}" oninput="spUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Tin nhắn hoạt động</label><input class="ctrl-input" id="spMsg" value="${esc(s.msg)}" oninput="spUpdate()"></div>
-    </div>
-    <div class="cp-preview">
-      <div class="prev-label">Preview</div>
-      <div class="prev-wrap" id="spPreviewWrap">${spPreviewHTML(s)}</div>
-      <div class="cp-code">
-        <div class="sec-head">Embed Code</div>
-        <div class="cp-code-block" id="spCode">${spCodeStr(s)}</div>
-        <button class="btn btn-dark" onclick="cpCopy('spCode')">Copy embed</button>
-      </div>
-    </div>
-  </div>`
-}
-
-function spStars(r) {
-  const n = parseFloat(r) || 5
-  const full = Math.floor(n), half = n % 1 >= 0.5
-  return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(5 - full - (half?1:0))
-}
-
-function spPreviewHTML(s) {
-  return `<div class="sp-card" style="width:100%">
-    <div class="sp-stats">
-      <div class="sp-stat"><div class="sp-val">${esc(s.users)}</div><div class="sp-lbl">Người dùng</div></div>
-      <div class="sp-stat"><div class="sp-val">${esc(s.rating)}</div><div class="sp-lbl">Điểm đánh giá</div></div>
-      <div class="sp-stat"><div class="sp-val">${esc(s.ratingCnt)}</div><div class="sp-lbl">Lượt đánh giá</div></div>
-    </div>
-    <div class="sp-stars">${spStars(s.rating)}</div>
-    <div class="sp-activity">
-      <div class="sp-row"><span class="sp-dot"></span><span>${esc(s.msg)} · vừa xong</span></div>
-      <div class="sp-row"><span class="sp-dot"></span><span>Nguyễn Văn A vừa hoàn tiền thành công</span></div>
-    </div>
-  </div>`
-}
-
-function spCodeStr(s) {
-  return `<div class="momo-widget" data-type="social-proof"\n  data-users="${esc(s.users)}"\n  data-rating="${esc(s.rating)}"\n  data-rating-count="${esc(s.ratingCnt)}"\n></div>\n<script src="https://web-momo-prototype.vercel.app/widgets/v1.js" async><\/script>`
-}
-
-function spUpdate() {
-  spState.users = document.getElementById('spU').value
-  spState.rating = document.getElementById('spR').value
-  spState.ratingCnt = document.getElementById('spRC').value
-  spState.msg = document.getElementById('spMsg').value
-  document.getElementById('spPreviewWrap').innerHTML = spPreviewHTML(spState)
-  document.getElementById('spCode').textContent = spCodeStr(spState)
-}
-
-// Card Promo
-function renderCardPromo() {
-  const s = promoState
-  const swatches = COMM_THEMES['card-promo'].map(c =>
-    `<span class="swatch${c===s.color?' active':''}" style="background:${c}" onclick="promoColor('${c}',this)"></span>`).join('')
-  return `
-  <div class="cp-layout">
-    <div class="cp-controls">
-      <div class="ctrl-group"><label class="ctrl-label">Tiêu đề</label><input class="ctrl-input" id="proT" value="${esc(s.title)}" oninput="promoUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Nội dung ưu đãi</label><input class="ctrl-input" id="proO" value="${esc(s.offer)}" oninput="promoUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Nút CTA</label><input class="ctrl-input" id="proC" value="${esc(s.cta)}" oninput="promoUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Badge label</label><input class="ctrl-input" id="proB" value="${esc(s.badge)}" oninput="promoUpdate()"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Emoji / icon</label><input class="ctrl-input" id="proE" value="${s.emoji}" oninput="promoUpdate()" style="font-size:20px;max-width:60px"></div>
-      <div class="ctrl-group"><label class="ctrl-label">Màu</label><div class="swatches">${swatches}</div></div>
-    </div>
-    <div class="cp-preview">
-      <div class="prev-label">Preview</div>
-      <div class="prev-wrap" id="proPreviewWrap">${promoPreviewHTML(s)}</div>
-      <div class="cp-code">
-        <div class="sec-head">Embed Code</div>
-        <div class="cp-code-block" id="proCode">${promoCodeStr(s)}</div>
-        <button class="btn btn-dark" onclick="cpCopy('proCode')">Copy embed</button>
-      </div>
-    </div>
-  </div>`
-}
-
-function promoPreviewHTML(s) {
-  return `<div class="promo-card">
-    <div class="promo-img" style="background:${s.color}">
-      <span style="font-size:40px">${s.emoji}</span>
-      <span class="promo-badge-pill">${esc(s.badge)}</span>
-    </div>
-    <div class="promo-body">
-      <div class="promo-title">${esc(s.title)}</div>
-      <div class="promo-offer">${esc(s.offer).replace(/\n/g,'<br>')}</div>
-      <button class="promo-btn" style="background:${s.color}">${esc(s.cta)}</button>
-    </div>
-  </div>`
-}
-
-function promoCodeStr(s) {
-  return `<div class="momo-widget" data-type="card-promo"\n  data-title="${esc(s.title)}"\n  data-offer="${esc(s.offer)}"\n  data-cta="${esc(s.cta)}"\n  data-badge="${esc(s.badge)}"\n  data-color="${s.color}"\n></div>\n<script src="https://web-momo-prototype.vercel.app/widgets/v1.js" async><\/script>`
-}
-
-function promoUpdate() {
-  promoState.title = document.getElementById('proT').value
-  promoState.offer = document.getElementById('proO').value
-  promoState.cta   = document.getElementById('proC').value
-  promoState.badge = document.getElementById('proB').value
-  promoState.emoji = document.getElementById('proE').value
-  document.getElementById('proPreviewWrap').innerHTML = promoPreviewHTML(promoState)
-  document.getElementById('proCode').textContent = promoCodeStr(promoState)
-}
-
-function promoColor(c, el) {
-  promoState.color = c
-  document.querySelectorAll('#cpContent .swatch').forEach(s => s.classList.remove('active'))
-  el.classList.add('active')
-  document.getElementById('proPreviewWrap').innerHTML = promoPreviewHTML(promoState)
-  document.getElementById('proCode').textContent = promoCodeStr(promoState)
-}
-
-function bindCommEvents() { /* events bound inline */ }
-
-function cpCopy(elId) {
-  navigator.clipboard.writeText(document.getElementById(elId).textContent)
-    .then(() => { alert('Đã copy embed code!') })
-    .catch(() => {})
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500)
 }
 
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 }
 
-// ─── Init ────────────────────────────────────────────────────────────
-render()
+// ── Init ─────────────────────────────────────────────────────────────────────
+renderSidebar()
 </script>
 </body>
 </html>
