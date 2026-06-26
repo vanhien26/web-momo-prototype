@@ -577,17 +577,17 @@ function renderList() {
   document.getElementById('mapCount').textContent = list.length;
 
   document.getElementById('merchantList').innerHTML = list.map(m => `
-    <div class="m-card ${S.selected===m.id?'active':''}" onclick="selectMerchant(${m.id})">
+    <div class="m-card ${S.selected===m.id?'active':''}"
+         onclick="selectMerchant(${m.id})"
+         onmouseenter="hoverMerchant(${m.id})"
+         onmouseleave="hoverMerchant(null)">
       <div class="m-logo">
         <div class="m-logo-fallback" style="--bc:${m.color};--bc2:${m.color2}">${m.icon}</div>
       </div>
       <div class="m-body">
         <div class="m-name">${m.name}</div>
-        <div class="m-addr">${m.floorLabel}, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí...</div>
-        <div class="m-badges">
-          <span class="badge-vts">✓ Ví Trả Sau</span>
-          ${m.cashback ? `<span class="badge-cashback">Hoàn ${m.cashback}%</span>` : ''}
-        </div>
+        <div class="m-addr">${m.floorLabel}, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7</div>
+        ${m.cashback ? `<div class="m-badges"><span class="badge-cashback">Hoàn ${m.cashback}%</span></div>` : ''}
       </div>
       ${m.rating ? `<div class="m-rating"><span class="star">★</span>${m.rating}</div>` : ''}
     </div>`).join('');
@@ -631,11 +631,14 @@ function selectMerchant(id) {
 
   document.body.classList.add('has-detail');
 
+  // Re-render all markers so active pin is highlighted
+  updateMapMarkers(filtered());
+
   if (map) {
     setTimeout(() => {
       map.invalidateSize();
       map.setView([m.lat, m.lng], 17);
-    }, 50);
+    }, 60);
   }
 }
 
@@ -676,19 +679,63 @@ function initMap() {
   updateMapMarkers(MERCHANTS);
 }
 
-function makeIcon(m, active=false) {
-  return L.divIcon({
-    html:`<div style="background:${active?'#d82d8b':'#fff'};border:2px solid ${active?'#a50064':'#d0d5dd'};border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.18)">${m.icon}</div>`,
-    className:'',iconSize:[36,36],iconAnchor:[18,18]
-  });
+// markerMap: id → Leaflet marker ref (for hover sync)
+const markerMap = {};
+
+function makeIcon(m, state='default') {
+  // state: 'default' | 'hover' | 'active'
+  const isActive = state === 'active';
+  const isHover  = state === 'hover';
+
+  if (m.cashback > 0) {
+    // Groupon-style: pill showing cashback %
+    const bg     = isActive ? '#d82d8b' : '#fff';
+    const border = isActive ? '#a50064' : '#d82d8b';
+    const color  = isActive ? '#fff'    : '#d82d8b';
+    const scale  = isActive ? 'scale(1.15)' : isHover ? 'scale(1.08)' : 'scale(1)';
+    const shadow = isActive
+      ? '0 4px 16px rgba(216,45,139,.45),0 0 0 2px #fff'
+      : isHover
+        ? '0 4px 12px rgba(216,45,139,.25),0 0 0 1.5px #fff'
+        : '0 2px 8px rgba(0,0,0,.14),0 0 0 1.5px #fff';
+    return L.divIcon({
+      html:`<div style="transform:${scale};background:${bg};border:1.5px solid ${border};border-radius:999px;padding:4px 9px;color:${color};font-size:11px;font-weight:800;white-space:nowrap;box-shadow:${shadow};font-family:-apple-system,sans-serif;transition:all .15s">Hoàn ${m.cashback}%</div>`,
+      className:'',iconSize:[76,26],iconAnchor:[38,13]
+    });
+  } else {
+    // Plain dot for merchants with no cashback
+    const size   = isActive ? 14 : 10;
+    const shadow = isActive
+      ? '0 0 0 4px rgba(216,45,139,.2),0 2px 6px rgba(0,0,0,.18)'
+      : isHover
+        ? '0 0 0 3px rgba(216,45,139,.15),0 2px 6px rgba(0,0,0,.14)'
+        : '0 2px 6px rgba(0,0,0,.18)';
+    return L.divIcon({
+      html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:#d82d8b;border:2px solid #fff;box-shadow:${shadow}"></div>`,
+      className:'',iconSize:[size,size],iconAnchor:[size/2,size/2]
+    });
+  }
 }
 
 function updateMapMarkers(list) {
   markers.clearLayers();
+  Object.keys(markerMap).forEach(k => delete markerMap[k]);
   list.forEach(m => {
-    const marker = L.marker([m.lat, m.lng], {icon: makeIcon(m, S.selected===m.id)});
+    const state = S.selected === m.id ? 'active' : 'default';
+    const marker = L.marker([m.lat, m.lng], {icon: makeIcon(m, state)});
     marker.on('click', () => selectMerchant(m.id));
     markers.addLayer(marker);
+    markerMap[m.id] = marker;
+  });
+}
+
+// Hover card → highlight pin bidirectionally (Groupon pattern)
+function hoverMerchant(id) {
+  filtered().forEach(m => {
+    const mk = markerMap[m.id];
+    if (!mk) return;
+    const state = S.selected === m.id ? 'active' : m.id === id ? 'hover' : 'default';
+    mk.setIcon(makeIcon(m, state));
   });
 }
 
