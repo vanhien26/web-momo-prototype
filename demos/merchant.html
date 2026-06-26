@@ -1180,7 +1180,7 @@
           <div class="related">
             <div class="related-item"><div class="related-icon">🍜</div><div><strong>Quán mì người Hoa</strong><span>Bộ sưu tập món Hoa tại TP.HCM</span></div></div>
             <div class="related-item"><div class="related-icon">📍</div><div><strong>Ăn ngon khu Chợ Quán</strong><span>Merchant MoMo quanh khu vực</span></div></div>
-            <div class="related-item"><div class="related-icon">◷</div><div><strong>Nơi dùng Ví Trả Sau</strong><span>Tìm merchant có hỗ trợ</span></div></div>
+            <div class="related-item" onclick="openVTSListing()" style="cursor:pointer"><div class="related-icon">◷</div><div><strong>Nơi dùng Ví Trả Sau</strong><span>Tìm merchant có hỗ trợ</span></div><svg style="margin-left:auto;flex:none;opacity:.4" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </section>
 
@@ -1795,5 +1795,55 @@
   </div>
 
   <button id="tour-replay" onclick="startTour()">Tour quán</button>
+
+  <!-- VTS Listing Overlay -->
+  <div id="vtsListingOverlay" style="
+    display:none;
+    position:fixed;inset:0;z-index:9000;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(2px);
+    align-items:flex-end;
+  ">
+    <div id="vtsListingSheet" style="
+      width:100%;height:96vh;max-height:96vh;
+      background:#fff;border-radius:20px 20px 0 0;
+      display:flex;flex-direction:column;
+      transform:translateY(100%);
+      transition:transform .32s cubic-bezier(.32,1,.22,1);
+      overflow:hidden;
+    ">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid #f0f0f0;flex:none">
+        <div style="width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto;position:absolute;left:50%;transform:translateX(-50%);top:10px"></div>
+        <span style="font-size:15px;font-weight:600;color:#1c1c1e">Cửa hàng chấp nhận Ví Trả Sau</span>
+        <button onclick="closeVTSListing()" style="width:30px;height:30px;border:none;background:#f2f2f7;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666">✕</button>
+      </div>
+      <iframe id="vtsListingFrame" src="" style="flex:1;width:100%;border:none;display:block"></iframe>
+    </div>
+  </div>
+
+  <script>
+  function openVTSListing() {
+    const overlay = document.getElementById('vtsListingOverlay');
+    const sheet = document.getElementById('vtsListingSheet');
+    const frame = document.getElementById('vtsListingFrame');
+    if (!frame.src || frame.src === window.location.href) {
+      frame.src = '/merchant/listing';
+    }
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { sheet.style.transform = 'translateY(0)'; });
+    });
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVTSListing() {
+    const overlay = document.getElementById('vtsListingOverlay');
+    const sheet = document.getElementById('vtsListingSheet');
+    sheet.style.transform = 'translateY(100%)';
+    setTimeout(() => { overlay.style.display = 'none'; document.body.style.overflow = ''; }, 320);
+  }
+  document.getElementById('vtsListingOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeVTSListing();
+  });
+  </script>
 </body>
 </html>

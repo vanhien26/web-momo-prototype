@@ -114,7 +114,7 @@ const PROTOTYPES = [
         description: 'Listing page pSEO — tìm cửa hàng VTS theo địa điểm (mall, chợ, khu vực). Template data-driven: zone filter tự ẩn/hiện theo location_type. Demo: Crescent Mall với 5 tầng, 25 merchants, 34 tỉnh/TP từ vietnamese-provinces-database.',
         jtbd: 'Biết ngay cửa hàng nào tại địa điểm này nhận Ví Trả Sau và hoàn tiền bao nhiêu',
         src: 'demos/vts-merchant-finder.html',
-        address: 'web-momo-prototype.vercel.app/vts-merchant-finder',
+        address: 'web-momo-prototype.vercel.app/merchant/listing',
       },
     ],
   },
