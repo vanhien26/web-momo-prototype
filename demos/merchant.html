@@ -144,12 +144,8 @@
       border:1px solid rgba(120,65,20,.13);
     }
     .topbar{
-      min-height:60px;
-      display:grid;
-      grid-template-columns:auto auto minmax(0,1fr);
-      align-items:center;
-      gap:12px;
-      padding:10px var(--page-gutter);
+      display:flex;
+      flex-direction:column;
       border-radius:18px 18px 0 0;
       background:rgba(255,255,255,.96);
       border-bottom:1px solid var(--line);
@@ -159,6 +155,31 @@
       z-index:30;
     }
     .storefront-signboard + .topbar{border-radius:0}
+    .topbar-main{
+      display:grid;
+      grid-template-columns:auto auto minmax(0,1fr);
+      align-items:center;
+      gap:12px;
+      padding:9px var(--page-gutter);
+      min-height:52px;
+    }
+    .topbar-cobranded{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .topbar-divider{
+      width:1px;height:26px;background:var(--line);flex:none;
+    }
+    .topbar-nav{
+      display:flex;
+      gap:16px;
+      padding:0 calc(var(--page-gutter) - 4px);
+      border-top:1px solid var(--line);
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+    .topbar-nav::-webkit-scrollbar{display:none}
     .logo{display:inline-flex;align-items:center;height:32px;text-decoration:none}
     .logo img{display:block;height:100%;width:auto}
     .merchant-header-logo{
@@ -217,11 +238,17 @@
       max-width:940px;
       padding:40px var(--page-gutter);
     }
+    .merchant-mark-wrap{
+      flex:none;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+    }
     .merchant-mark{
       width:178px;
       aspect-ratio:1;
       border-radius:22px;
-      flex:none;
       border:1px solid rgba(255,255,255,.32);
       box-shadow:0 16px 38px rgba(0,0,0,.28);
       background:
@@ -414,7 +441,7 @@
       cursor:pointer;
     }
     .tab.active{color:var(--momo-dark);border-color:var(--momo)}
-    .section{margin-bottom:14px;padding:18px;scroll-margin-top:126px}
+    .section{margin-bottom:14px;padding:18px;scroll-margin-top:112px}
     .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
     .section-title h2{font-family:"MoMo Trust Sans",sans-serif;font-size:16px;font-weight:800;letter-spacing:-.01em;margin:0}
     .section-title a{color:var(--momo-dark);font-size:11px;font-weight:800;text-decoration:none}
@@ -648,6 +675,29 @@
     /* ===== VERIFIED BADGE ===== */
     .verified-merchant-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:rgba(22,128,61,.18);color:#d1fadf;font-size:10px;font-weight:700;border:1px solid rgba(96,211,148,.25)}
     .verified-merchant-badge:before{content:"✓";width:14px;height:14px;background:#16803d;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:8px;font-weight:900;flex:none}
+    /* ===== ĐỐI TÁC MOMO BADGE ===== */
+    .momo-partner-badge{
+      display:inline-flex;align-items:center;gap:5px;
+      padding:4px 10px;border-radius:999px;
+      background:rgba(255,255,255,.9);color:var(--momo-dark);
+      font-size:10px;font-weight:800;
+      border:1.5px solid rgba(216,45,139,.45);
+      letter-spacing:.02em;white-space:nowrap;
+    }
+    .momo-partner-badge:before{
+      content:"✓";width:14px;height:14px;
+      background:var(--momo);border-radius:50%;
+      display:grid;place-items:center;
+      color:#fff;font-size:7px;font-weight:900;flex:none;
+    }
+    /* ===== PHONE MASKING ===== */
+    .phone-wrap{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .phone-reveal-btn{
+      border:1px solid rgba(165,0,100,.3);border-radius:6px;
+      background:var(--pink-soft);color:var(--momo-dark);
+      font-size:9px;font-weight:800;padding:3px 8px;cursor:pointer;
+    }
+    .phone-reveal-btn:hover{background:#ffe0f2}
     /* ===== SOCIAL LINKS GRID ===== */
     .social-links{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
     .social-link{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;font-size:10px;font-weight:700;text-decoration:none;transition:transform .15s,filter .15s;}
@@ -662,7 +712,7 @@
     .mobile-bar{display:none}
     @media(max-width:1050px){
       .signboard-name{font-size:20px}
-      .topbar{grid-template-columns:auto auto minmax(0,1fr)}.location{display:none}
+      .topbar-main{grid-template-columns:auto auto minmax(0,1fr)}.location{display:none}
       .benefits{grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr)}
       .page-grid{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,1fr)}.source-note{grid-column:1/-1}
     }
@@ -672,7 +722,7 @@
       .storefront-signboard{min-height:60px}
       .signboard-face{width:min(720px,calc(100% - 24px));padding:9px 12px 12px}
       .signboard-name{font-size:18px}
-      .topbar{grid-template-columns:auto auto minmax(0,1fr);padding-inline:18px}
+      .topbar-main{padding-inline:18px}
       .hero-content{gap:22px;padding:34px var(--page-gutter)}
       .merchant-mark{width:150px;padding:14px}
       .merchant-mark strong{font-size:25px}
@@ -692,17 +742,21 @@
       .signboard-name{font-size:16px;line-height:1.1}
       .signboard-meta{gap:5px;font-size:9px}
       .signboard-meta span{padding:3px 7px}
-      .topbar{grid-template-columns:auto auto minmax(0,1fr);gap:8px;padding:9px 12px;border-radius:0}
+      .topbar{border-radius:0}
+      .topbar-main{gap:8px;padding:8px 12px}
       .logo{height:26px}
       .merchant-header-logo{padding:4px 9px;gap:6px}
       .merchant-header-logo span{font-size:8px}
       .merchant-header-logo strong{font-size:11px}
       .search{padding:6px 12px;max-width:none}
+      .topbar-nav{gap:12px}
       .search span{font-size:13px}.search input{font-size:11px;min-width:0}
       .hero{border-radius:0;min-height:326px}.hero-media:after{background:linear-gradient(0deg,rgba(15,11,8,.96) 0%,rgba(15,11,8,.62) 38%,rgba(15,11,8,.03) 78%)}
       .hero-media img{object-position:84% center;transform:scale(1.62)}
       .hero-content{min-height:326px;display:grid;grid-template-columns:78px minmax(0,1fr);align-items:end;gap:12px;padding:66px 14px 22px}
       .merchant-mark{width:78px;padding:8px;border-radius:14px}
+      .merchant-mark-wrap .momo-partner-badge{font-size:7px;padding:2px 5px;gap:3px;letter-spacing:0}
+      .merchant-mark-wrap .momo-partner-badge:before{width:10px;height:10px;font-size:6px}
       .merchant-mark span{font-size:8px}.merchant-mark strong{font-size:18px}.merchant-mark small{font-size:7px}
       .hero h1{font-size:30px;margin-bottom:12px}.hero-meta{gap:6px;font-size:10px}.hero-meta span:last-child{width:100%}.open-status{margin-top:10px;font-size:9px}
       .hero-badges{gap:6px;margin-bottom:10px}.merchant-badge,.activity-pulse{padding:6px 8px;font-size:9px}
@@ -761,7 +815,7 @@
     }
     @media(max-width:360px){
       .signboard-face{padding-inline:8px}.signboard-name{font-size:14px}
-      .topbar{grid-template-columns:auto auto minmax(0,1fr);padding-inline:10px;gap:6px}.logo{height:22px}
+      .topbar-main{padding-inline:10px;gap:6px}.logo{height:22px}
       .merchant-header-logo span{display:none}
       .social-links{grid-template-columns:repeat(3,1fr)}
       .search{padding:5px 10px}.search input{font-size:10px}
@@ -879,17 +933,29 @@
       </div>
     </section>
     <header class="topbar">
-      <a class="logo" href="/lab.html" target="_top" aria-label="Về Prototype Store">
-        <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
-      </a>
-      <div class="merchant-header-logo" aria-label="Logo Tiệm Mì Chú Cao">
-        <span>Tiệm mì</span>
-        <strong>Chú Cao</strong>
+      <div class="topbar-main">
+        <a class="logo" href="/lab.html" target="_top" aria-label="Về Prototype Store">
+          <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+        </a>
+        <div class="topbar-cobranded">
+          <div class="topbar-divider"></div>
+          <div class="merchant-header-logo" aria-label="Logo Tiệm Mì Chú Cao">
+            <span>Tiệm mì</span>
+            <strong>Chú Cao</strong>
+          </div>
+        </div>
+        <label class="search">
+          <span>⌕</span>
+          <input aria-label="Tìm kiếm" placeholder="Tìm món ăn, thương hiệu...">
+        </label>
       </div>
-      <label class="search">
-        <span>⌕</span>
-        <input aria-label="Tìm kiếm" placeholder="Tìm món ăn, thương hiệu...">
-      </label>
+      <nav class="topbar-nav" aria-label="Điều hướng nội dung">
+        <button class="tab active" data-target="intro">Giới thiệu</button>
+        <button class="tab" data-target="menu">Menu</button>
+        <button class="tab" data-target="reviews">Đánh giá</button>
+        <button class="tab" data-target="offer">Ưu đãi</button>
+        <button class="tab" data-target="faq">FAQ</button>
+      </nav>
     </header>
 
     <section class="hero">
@@ -897,8 +963,11 @@
         <img src="https://homepage.momocdn.net/img/tiemmichucao-260602094543.jpg" alt="Tiệm Mì Chú Cao trên MoMo">
       </div>
       <div class="hero-content">
-        <div class="merchant-mark" aria-label="Tiệm Mì Chú Cao">
-          <div><span>TIỆM MÌ</span><strong>CHÚ CAO</strong><small>QUẬN 5</small></div>
+        <div class="merchant-mark-wrap">
+          <div class="merchant-mark" aria-label="Tiệm Mì Chú Cao">
+            <div><span>TIỆM MÌ</span><strong>CHÚ CAO</strong><small>QUẬN 5</small></div>
+          </div>
+          <span id="momoPartnerBadge" class="momo-partner-badge" hidden>Đối tác MoMo</span>
         </div>
         <div>
           <div class="hero-badges">
@@ -948,7 +1017,7 @@
           <div class="quick-item"><i>📍</i><div><strong>Địa chỉ</strong><span>59 Trần Bình Trọng, Phường Chợ Quán, TP.HCM</span><span class="text-link" data-action="directions">Xem bản đồ</span></div></div>
           <div class="quick-item"><i>◷</i><div><strong>Giờ mở cửa</strong><span>06:00 - 20:00<br>Hằng ngày</span></div></div>
           <div class="quick-item"><i>◉</i><div><strong>Khoảng giá</strong><span>30.000đ - 50.000đ</span></div></div>
-          <div class="quick-item"><i>📞</i><div><strong>Điện thoại</strong><span><a href="tel:+84901234567" style="color:var(--momo-dark);font-weight:700">0901 234 567</a></span></div></div>
+          <div class="quick-item"><i>📞</i><div><strong>Điện thoại</strong><div class="phone-wrap"><span id="phoneDisplay" style="color:#344054;font-weight:700">0901 2** ****</span><button class="phone-reveal-btn" id="phoneRevealBtn">Xem</button></div></div></div>
         </section>
 
         <section class="amenities card" aria-labelledby="amenities-title">
@@ -968,13 +1037,6 @@
           <div class="amenity-footnote" id="amenityFootnote">Mock payload theo contract Google Business Profile. Khi có crawl thật, thay payload và giữ nguyên UI.</div>
         </section>
 
-        <nav class="tabs" aria-label="Điều hướng nội dung">
-          <button class="tab active" data-target="intro">Giới thiệu</button>
-          <button class="tab" data-target="menu">Menu</button>
-          <button class="tab" data-target="reviews">Đánh giá</button>
-          <button class="tab" data-target="offer">Ưu đãi</button>
-          <button class="tab" data-target="faq">FAQ</button>
-        </nav>
 
         <section class="section card" id="intro">
           <div class="about-menu">
@@ -1177,7 +1239,9 @@
       tiktok:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.77a4.85 4.85 0 01-1.02-.08z"/></svg>',
       youtube:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>'
     };
+    const MERCHANT_PHONE={full:'0901 234 567',masked:'0901 2** ****',tel:'tel:+84901234567'};
     const MERCHANT_SIGNALS={
+      momoPartnerId:'M4B1234',
       badge:{type:'district_top',label:'Top 10 Quận 5 tháng này',refreshHours:24},
       socialProof:{label:'Được 1.200+ khách MoMo tin dùng',roundedPayments:1200},
       activity:{isHot:true,label:'Quán đang hot',recentLabel:'12 lượt thanh toán gần đây'},
@@ -1327,7 +1391,22 @@
       document.getElementById('activityPulse').hidden=!MERCHANT_SIGNALS.activity.isHot;
       document.getElementById('activityPulse').textContent=MERCHANT_SIGNALS.activity.label;
       document.getElementById('liveCounter').textContent=MERCHANT_SIGNALS.activity.recentLabel;
+      const partnerBadge=document.getElementById('momoPartnerBadge');
+      if(partnerBadge) partnerBadge.hidden=!MERCHANT_SIGNALS.momoPartnerId;
     }
+
+    function revealPhone(){
+      const display=document.getElementById('phoneDisplay');
+      const btn=document.getElementById('phoneRevealBtn');
+      if(!display||!btn)return;
+      display.innerHTML=`<a href="${MERCHANT_PHONE.tel}" style="color:var(--momo-dark);font-weight:700">${MERCHANT_PHONE.full}</a>`;
+      btn.remove();
+      track('view_phone',{merchant_id:'tiem-my-chu-cao-46',decree:'nd13'});
+    }
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn=document.getElementById('phoneRevealBtn');
+      if(btn) btn.addEventListener('click',revealPhone);
+    });
 
     // Render social profile links (pill grid with brand colors)
     function renderSocialProfiles(){
