@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Widget Store — Editor</title>
+  <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#F0F2F5;
+      --surface:#fff;
+      --border:#E4E7EE;
+      --border2:#D1D5DB;
+      --text:#111827;
+      --sub:#6B7280;
+      --muted:#9CA3AF;
+      --momo:#A50064;
+      --momo-light:#FFF0F7;
+      --momo-border:rgba(165,0,100,.15);
+      --green:#15803D; --green-bg:#F0FDF4; --green-b:#BBF7D0;
+      --amber:#B45309; --amber-bg:#FFFBEB; --amber-b:#FDE68A;
+      --red:#B91C1C;   --red-bg:#FEF2F2;   --red-b:#FECACA;
+      --blue:#1E40AF;  --blue-bg:#EFF6FF;  --blue-b:#BFDBFE;
+      --purple:#6D28D9; --purple-bg:#F5F3FF;
+      --teal:#0F766E;  --teal-bg:#F0FDFA;
+      --mono:'JetBrains Mono',monospace;
+    }
+    body{font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+    button,input,select,textarea{font-family:inherit}
+    button{cursor:pointer}
+
+    /* TOPBAR */
+    .topbar{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;z-index:50}
+    .tb-back{font-size:12px;color:var(--sub);text-decoration:none}.tb-back:hover{color:var(--momo)}
+    .tb-div{color:var(--border2)}
+    .tb-logo{width:26px;height:26px;background:var(--momo);border-radius:6px;display:grid;place-items:center;flex-shrink:0}
+    .tb-logo img{width:78%;height:78%;object-fit:contain}
+    .tb-title{font-size:13px;font-weight:700}
+    .tb-badge{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:99px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+    .tb-space{flex:1}
+    .tb-stat{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--muted)}
+    .tb-stat .dot{width:6px;height:6px;border-radius:50%}
+    .tb-btn{height:30px;padding:0 12px;border-radius:7px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-weight:600;color:var(--sub)}.tb-btn:hover{border-color:var(--border2);color:var(--text)}
+    .tb-btn-primary{background:var(--momo);border-color:var(--momo);color:#fff;font-weight:700}.tb-btn-primary:hover{background:#8B0055}
+    .tb-gap{width:6px}
+
+    /* LAYOUT */
+    .shell{display:flex;flex:1;min-height:0}
+
+    /* LEFT LIST */
+    .list-pane{width:248px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+    .lp-search{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .lp-search input{width:100%;height:30px;border:1.5px solid var(--border);border-radius:7px;padding:0 10px;font-size:12px;color:var(--text);outline:none;background:var(--bg)}
+    .lp-search input:focus{border-color:var(--momo);background:#fff}
+    .lp-filters{display:flex;gap:4px;padding:8px 10px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+    .lf{font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;border:1.5px solid var(--border);color:var(--sub);background:none}.lf:hover{color:var(--text);border-color:var(--border2)}.lf.on{color:#fff;border-color:transparent}
+    .lp-scroll{flex:1;overflow-y:auto}
+    .lp-group{border-bottom:1px solid var(--border)}
+    .lp-group-hd{display:flex;align-items:center;justify-content:space-between;padding:6px 12px 5px;background:var(--bg)}
+    .lp-group-label{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .lp-group-cnt{font-size:9px;font-weight:700;color:var(--muted)}
+    .lp-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-left:2.5px solid transparent;cursor:pointer;transition:.1s}.lp-item:hover{background:#F7F8FA}.lp-item.active{background:var(--momo-light);border-left-color:var(--momo)}
+    .lp-av{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0}
+    .lp-meta{flex:1;min-width:0}
+    .lp-name{font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}.lp-item.active .lp-name{color:var(--momo)}
+    .lp-sub{font-size:9px;color:var(--muted);margin-top:1px}
+    .lp-status{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+    /* EDITOR */
+    .editor-pane{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+    .ed-top{padding:14px 22px 0;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border)}
+    .ed-breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+    .ed-bc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.04em}
+    .ed-bc-id{font-size:10px;font-family:var(--mono);color:var(--muted)}
+    .ed-name-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .ed-name{font-size:18px;font-weight:800;line-height:1.1;flex:1}
+    .status-btn{font-size:10px;font-weight:700;padding:4px 10px;border-radius:99px;border:1.5px solid;cursor:pointer;letter-spacing:.04em}
+    .status-btn.active{background:var(--green-bg);border-color:var(--green-b);color:var(--green)}
+    .status-btn.draft{background:var(--amber-bg);border-color:var(--amber-b);color:var(--amber)}
+    .status-btn.review{background:var(--red-bg);border-color:var(--red-b);color:var(--red)}
+    .ed-tabs{display:flex;gap:0}
+    .ed-tab{padding:8px 16px;font-size:12px;font-weight:600;color:var(--sub);background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap}.ed-tab:hover{color:var(--text)}.ed-tab.active{color:var(--momo);border-bottom-color:var(--momo)}
+    .ed-body{flex:1;overflow-y:auto;padding:22px}
+    .ed-cols{display:grid;grid-template-columns:1fr 300px;gap:18px}
+
+    /* SECTIONS */
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
+    .section-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .section-title{font-size:12px;font-weight:800;letter-spacing:.03em}
+    .section-sub{font-size:10px;color:var(--muted)}
+    .section-body{padding:14px 16px}
+
+    /* FORM */
+    .field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+    .field-label{font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+    .field-label .req{color:var(--momo)}
+    .field-hint{font-size:10px;color:var(--muted);margin-top:3px}
+    .finput{width:100%;height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 10px;font-size:12px;color:var(--text);outline:none;background:#fff;transition:.1s}.finput:focus{border-color:var(--momo);box-shadow:0 0 0 2.5px var(--momo-border)}.finput.mono{font-family:var(--mono);font-size:11px;color:var(--blue)}
+    .ftextarea{width:100%;border:1.5px solid var(--border);border-radius:7px;padding:9px 10px;font-size:12px;color:var(--text);outline:none;resize:vertical;line-height:1.5;min-height:70px;background:#fff}.ftextarea:focus{border-color:var(--momo);box-shadow:0 0 0 2.5px var(--momo-border)}.ftextarea.formula{font-family:var(--mono);font-size:12px;color:var(--blue);background:var(--blue-bg);border-color:var(--blue-b);min-height:90px}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .fselect{width:100%;height:34px;border:1.5px solid var(--border);border-radius:7px;padding:0 10px;font-size:12px;color:var(--text);outline:none;background:#fff}
+
+    /* FORMULA */
+    .formula-display{background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--blue);line-height:1.8;margin-bottom:12px;word-break:break-all;white-space:pre-wrap}
+    .var-table{width:100%;border-collapse:collapse;font-size:11px}
+    .var-table th{text-align:left;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 6px 6px;border-bottom:1.5px solid var(--border)}
+    .var-table td{padding:7px 6px;border-bottom:1px solid var(--border);vertical-align:middle}.var-table tr:last-child td{border-bottom:none}.var-table tr:hover td{background:#FAFAFA}
+    .vt-sym{font-family:var(--mono);font-weight:700;color:var(--blue);font-size:12px}
+    .vt-input{width:100%;border:1px solid var(--border);border-radius:5px;padding:3px 7px;font-size:11px;font-family:inherit;color:var(--text);background:#fff;outline:none}.vt-input:focus{border-color:var(--momo)}
+    .vt-range{font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+    /* CONFIG TABLE */
+    .param-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}.param-row:last-child{border-bottom:none}
+    .param-key{font-size:11px;font-weight:600;color:var(--sub);flex:0 0 160px}
+    .param-val{flex:1}.param-val input{width:100%;border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:11px;font-family:var(--mono);background:#fff;outline:none;color:var(--blue)}.param-val input:focus{border-color:var(--momo)}
+    .add-btn{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--momo);padding:6px 0;background:none;border:none;margin-top:4px}.add-btn:hover{opacity:.7}
+
+    /* SIGNALS */
+    .signal-editor{display:flex;flex-direction:column;gap:6px}
+    .sig-ed-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+    .sig-lv-btn{width:28px;height:22px;border-radius:5px;border:none;font-size:9px;font-weight:800;cursor:pointer;flex-shrink:0}
+    .sig-lv-btn.hi{background:#FEE2E2;color:var(--red)}.sig-lv-btn.md{background:#FEF3C7;color:var(--amber)}.sig-lv-btn.lo{background:#D1FAE5;color:var(--green)}
+    .sig-ed-engine{font-size:10px;font-family:var(--mono);color:var(--muted);white-space:nowrap}
+
+    /* LOOKUP */
+    .source-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--teal-bg);color:var(--teal);border:1px solid rgba(15,118,110,.2);letter-spacing:.04em}
+
+    /* THUMBNAIL */
+    .thumb-upload{border:1.5px dashed var(--border2);border-radius:10px;background:var(--bg);min-height:110px;display:flex;align-items:center;justify-content:center;cursor:pointer}.thumb-upload:hover{border-color:var(--momo);background:var(--momo-light)}
+    .thumb-placeholder{text-align:center;padding:20px;color:var(--muted);font-size:12px}
+
+    /* EMBED */
+    .embed-preview{border:1px solid var(--border);border-radius:8px;min-height:100px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+    .bg-picker{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .bg-swatch{width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer}.bg-swatch.selected{border-color:var(--momo)}.bg-swatch.custom{border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted)}
+    .params-table{width:100%;border-collapse:collapse;font-size:11px}
+    .params-table th{text-align:left;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 6px 6px;border-bottom:1.5px solid var(--border)}
+    .params-table td{padding:6px;border-bottom:1px solid var(--border)}.params-table tr:last-child td{border-bottom:none}
+    .params-table input,.params-table select{width:100%;border:1px solid var(--border);border-radius:5px;padding:3px 7px;font-size:11px;font-family:var(--mono);background:#fff;outline:none;color:var(--text)}.params-table input:focus,.params-table select:focus{border-color:var(--momo)}
+
+    /* RULE */
+    .rule-item{display:flex;gap:8px;font-size:11px;color:var(--sub);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.55}.rule-item:last-child{border-bottom:none}
+    .rule-num{font-size:9px;font-weight:800;color:var(--muted);flex-shrink:0;width:16px;padding-top:2px}
+    .rule-edit{width:100%;border:none;background:transparent;font-size:11px;color:var(--sub);outline:none;resize:none;font-family:inherit;line-height:1.55}.rule-edit:focus{color:var(--text)}
+
+    /* SAVE BAR */
+    .save-bar{flex-shrink:0;border-top:1px solid var(--border);background:var(--surface);padding:10px 22px;display:flex;align-items:center;gap:10px}
+    .save-hint{font-size:11px;color:var(--muted);flex:1}
+    .save-hint .changed{color:var(--amber);font-weight:700}
+
+    /* EMPTY */
+    .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);text-align:center;padding:40px}
+    .empty-title{font-size:14px;font-weight:700;color:var(--sub)}
+    .empty-sub{font-size:12px}
+
+    /* TOAST */
+    @keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+    ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="/lab.html" target="_top" class="tb-back">← Lab</a>
+  <span class="tb-div">/</span>
+  <div class="tb-logo"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo"></div>
+  <span class="tb-title">Widget Store</span>
+  <span class="tb-badge">Editor</span>
+  <div class="tb-space"></div>
+  <span class="tb-stat"><span class="dot" style="background:var(--green)"></span>28 Active</span>
+  <div class="tb-gap"></div>
+  <span class="tb-stat"><span class="dot" style="background:var(--amber)"></span>3 Draft</span>
+  <div class="tb-gap"></div>
+  <span class="tb-stat"><span class="dot" style="background:var(--red)"></span>2 Review</span>
+  <div class="tb-gap" style="width:12px"></div>
+  <button class="tb-btn" onclick="showNewModal()">+ Widget mới</button>
+</header>
+
+<div class="shell">
+
+  <aside class="list-pane">
+    <div class="lp-search">
+      <input type="text" id="searchInput" placeholder="Tìm widget..." oninput="filterList()">
+    </div>
+    <div class="lp-filters" id="lfRow">
+      <button class="lf on" data-lf="All" onclick="setListFilter('All',this)">Tất cả</button>
+      <button class="lf" data-lf="Calculator" onclick="setListFilter('Calculator',this)">Calc</button>
+      <button class="lf" data-lf="Simulator" onclick="setListFilter('Simulator',this)">Sim</button>
+      <button class="lf" data-lf="Lookup" onclick="setListFilter('Lookup',this)">Lookup</button>
+      <button class="lf" data-lf="Security" onclick="setListFilter('Security',this)">Sec</button>
+    </div>
+    <div class="lp-scroll" id="listScroll"></div>
+  </aside>
+
+  <div class="editor-pane" id="editorPane">
+    <div class="empty-state" id="emptyState">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h4"/></svg>
+      <div class="empty-title">Chọn widget để chỉnh sửa</div>
+      <div class="empty-sub">33 widgets · 4 types · Click vào danh sách bên trái</div>
+    </div>
+    <div id="editorContent" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+      <div class="ed-top" id="edTop"></div>
+      <div class="ed-body" id="edBody"></div>
+      <div class="save-bar">
+        <span class="save-hint" id="saveHint">Chưa có thay đổi</span>
+        <button class="tb-btn" onclick="discardChanges()">Discard</button>
+        <button class="tb-btn tb-btn-primary" onclick="saveChanges()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TYPE_COLOR={Calculator:{c:'#1E40AF',bg:'#EFF6FF'},Simulator:{c:'#6D28D9',bg:'#F5F3FF'},Lookup:{c:'#0F766E',bg:'#F0FDFA'},Security:{c:'#B91C1C',bg:'#FEF2F2'}};
+const DOMAIN_COLOR={'Credit':'#1E40AF','Financial Health':'#6D28D9','Insurance':'#0891B2','Savings':'#16A34A','Tax':'#CA8A04','Investment':'#EA580C','FX':'#0F766E','Planning':'#6D28D9','Payments':'#047857','Security':'#B91C1C'};
+
+const WIDGETS=[
+  {id:'vay-nhanh',name:'Vay Nhanh',initials:'VN',domain:'Credit',type:'Calculator',status:'active',updated:'20/06/2026',description:'Tính khoản vay tín chấp nhanh: số tiền trả hàng tháng, lãi suất và kỳ hạn.',formula:'M = P × r × (1+r)^n\n    ──────────────────\n       (1+r)^n − 1',vars:[{s:'M',d:'Số tiền trả mỗi tháng',r:'output'},{s:'P',d:'Số tiền vay gốc',r:'1,000,000 – 100,000,000 VND'},{s:'r',d:'Lãi suất tháng = lãi năm / 12',r:'0.18% – 0.34%'},{s:'n',d:'Kỳ hạn vay',r:'6 – 48 tháng'}],config:[{k:'Lãi suất min',v:'2.20%/năm'},{k:'Lãi suất max',v:'4.08%/năm'},{k:'Kỳ hạn min',v:'6 tháng'},{k:'Kỳ hạn max',v:'48 tháng'},{k:'Khoản vay min',v:'1,000,000 VND'},{k:'Khoản vay max',v:'100,000,000 VND'}],rules:['Tính theo dư nợ giảm dần (reducing balance)','Phí thu hộ 20,000 đ/tháng không tính trong M','Lãi suất tự động điều chỉnh theo gói vay'],ui:{iframeUrl:'https://momo.vn/vay-nhanh/tool?iframe=true',height:'480',width:'',bg:'#FFFFFF'},params:[{key:'loan_min',type:'number',val:'1000000'},{key:'loan_max',type:'number',val:'100000000'},{key:'default_rate',type:'number',val:'2.88'}]},
+
+  {id:'tra-gop-vts',name:'Trả Góp Ví Trả Sau',initials:'TG',domain:'Credit',type:'Calculator',status:'active',updated:'18/06/2026',description:'Tính số tiền trả góp hàng tháng khi chuyển đổi dư nợ Ví Trả Sau.',formula:'Monthly = P × rate × (1+rate)^n / ((1+rate)^n − 1)',vars:[{s:'n',d:'Số kỳ trả góp',r:'3 – 24 kỳ'},{s:'rate',d:'Lãi suất tháng VTS',r:'0% – 1.5%'},{s:'P',d:'Số dư hoặc giá trị GD',r:'100,000 – 50,000,000 VND'}],config:[{k:'Kỳ hạn min',v:'3 tháng'},{k:'Kỳ hạn max',v:'24 tháng'},{k:'Rate 0% điều kiện',v:'GD ≥ 3,000,000 VND'},{k:'Hạn mức VTS max',v:'20,000,000 VND'}],rules:['Trả góp 0% cho GD đủ điều kiện','Phí chuyển đổi dư nợ: 1%/tháng còn lại'],ui:{iframeUrl:'https://momo.vn/vi-tra-sau/tra-gop?iframe=true',height:'420',width:'',bg:'#FFFFFF'},params:[{key:'min_eligible',type:'number',val:'3000000'}]},
+
+  {id:'cic-score',name:'CIC Score',initials:'CIC',domain:'Credit',type:'Simulator',status:'active',updated:'15/06/2026',description:'Ước lượng điểm tín dụng CIC dựa trên 5 yếu tố hành vi tài chính.',model:'Weighted Scoring (5 Factors)',modelType:'Tham chiếu FICO 5-factor — không kết nối CIC thật',vars:[{s:'P',d:'Payment history',r:'35% weight'},{s:'U',d:'Utilization ratio',r:'30% weight'},{s:'H',d:'History length',r:'15% weight'},{s:'M',d:'Credit mix',r:'10% weight'},{s:'N',d:'New credit',r:'10% weight'}],config:[{k:'Score range',v:'300 – 900'},{k:'Pass threshold',v:'600'},{k:'Model version',v:'v2.3 (2024)'}],rules:['Không kết nối API CIC thật','Kết quả chỉ tham chiếu','Update weights mỗi quý'],ui:{iframeUrl:'',height:'500',width:'',bg:'#F5F3FF'},params:[]},
+
+  {id:'cic-stimulator',name:'CIC Stimulator',initials:'SIM',domain:'Credit',type:'Simulator',status:'active',updated:'15/06/2026',description:'Mô phỏng lộ trình cải thiện điểm CIC trong 12 tháng.',model:'Time-series Monthly Delta Model',modelType:'Projection 12 tháng theo scenario hành động',vars:[{s:'S0',d:'Điểm CIC khởi đầu',r:'300 – 900'},{s:'Δt',d:'Action array hàng tháng',r:'array'},{s:'w',d:'Weight per factor',r:'fixed'}],config:[{k:'Projection horizon',v:'12 tháng'},{k:'Max scenarios',v:'3'}],rules:['Projection là ước tính','Điểm thực phụ thuộc ngân hàng cập nhật'],ui:{iframeUrl:'',height:'520',width:'',bg:'#F5F3FF'},params:[]},
+
+  {id:'net-worth',name:'Giá Trị Tài Sản Ròng',initials:'NW',domain:'Financial Health',type:'Calculator',status:'active',updated:'10/06/2026',description:'Tính tổng tài sản ròng.',formula:'Net Worth = Σ Assets − Σ Liabilities',vars:[{s:'A',d:'Tổng tài sản (tiền mặt, nhà, xe, đầu tư)',r:'6 danh mục'},{s:'L',d:'Tổng nợ',r:'4 danh mục'}],config:[{k:'Asset categories',v:'6 loại'},{k:'Liability categories',v:'4 loại'}],rules:['Không tính khấu hao','BĐS theo giá người dùng tự nhập'],ui:{iframeUrl:'',height:'560',width:'',bg:'#FFFFFF'},params:[]},
+
+  {id:'dti',name:'Tỷ Lệ Nợ / Thu Nhập',initials:'DTI',domain:'Financial Health',type:'Calculator',status:'active',updated:'10/06/2026',description:'Tính DTI ratio để đánh giá mức độ an toàn tài chính.',formula:'DTI = (Σ Monthly Debt / Gross Monthly Income) × 100',vars:[{s:'D',d:'Tổng thanh toán nợ/tháng',r:'Tổng các khoản'},{s:'I',d:'Thu nhập gộp/tháng',r:'Trước thuế'}],config:[{k:'Safe',v:'< 36%'},{k:'Warning',v:'36% – 43%'},{k:'Danger',v:'> 43%'}],rules:['Hiển thị màu theo ngưỡng','So sánh chuẩn ngân hàng VN'],ui:{iframeUrl:'',height:'380',width:'',bg:'#FFFFFF'},params:[]},
+
+  {id:'bao-hiem-o-to',name:'Bảo Hiểm Ô Tô',initials:'BH',domain:'Insurance',type:'Calculator',status:'active',updated:'20/06/2026',description:'Tính phí bảo hiểm ô tô vật chất và TNDS.',formula:'Premium = V × Rate%\n         + N_seats × TNDS_per_seat\n         + Optional addons',vars:[{s:'V',d:'Giá trị xe',r:'100M – 5,000M VND'},{s:'Rate',d:'Tỷ lệ phí vật chất cơ bản',r:'1.5% – 2.2%'},{s:'N',d:'Số chỗ ngồi',r:'4 – 16 chỗ'},{s:'P_tnds',d:'Phí TNDS/chỗ/năm',r:'80,000 VND'}],config:[{k:'Rate min',v:'1.5%'},{k:'Rate max',v:'2.2%'},{k:'TNDS/chỗ/năm',v:'80,000 VND'},{k:'Hệ số xe nhập',v:'1.1x'}],rules:['TNDS bắt buộc tính riêng','Hệ số thương hiệu xe nhập','Không tính khấu trừ đại lý'],ui:{iframeUrl:'https://momo.vn/bao-hiem-o-to/tinh-phi?iframe=true',height:'560',width:'',bg:'#ECFEFF'},params:[{key:'default_coverage',type:'string',val:'comprehensive'}]},
+
+  {id:'bhxh',name:'BHXH',initials:'XH',domain:'Insurance',type:'Simulator',status:'active',updated:'01/06/2026',description:'Tính tổng tiền đóng BHXH và projection.',model:'Contribution Accumulation Model',modelType:'Tính tổng đóng và estimate lợi ích',vars:[{s:'S',d:'Lương đóng BHXH BQ',r:'Tự nhập'},{s:'T',d:'Số tháng đã đóng',r:'0 – 300'},{s:'r_nld',d:'Tỷ lệ NLĐ',r:'8%'},{s:'r_dn',d:'Tỷ lệ DN',r:'17.5%'}],config:[{k:'Rate NLĐ',v:'8%'},{k:'Rate DN',v:'17.5%'},{k:'Tổng',v:'25.5%'}],rules:['Cần đủ 20 năm để hưởng lương hưu'],ui:{iframeUrl:'',height:'460',width:'',bg:'#ECFEFF'},params:[]},
+
+  {id:'bhxh-1-lan',name:'BHXH Một Lần',initials:'B1',domain:'Insurance',type:'Simulator',status:'review',updated:'CẦN CẬP NHẬT',description:'Tính mức hưởng BHXH một lần theo Điều 70 Luật 2024.',model:'Lump-sum Payout — Điều 70 Luật 2024',modelType:'Tiered payout theo năm đóng',vars:[{s:'Y1',d:'Năm đóng trước 2014',r:'1.5 tháng/năm'},{s:'Y2',d:'Năm đóng từ 2014',r:'2.0 tháng/năm'},{s:'W',d:'BQ lương đóng BHXH',r:'Tự nhập'}],config:[{k:'Hệ số Y1',v:'1.5 tháng/năm'},{k:'Hệ số Y2',v:'2.0 tháng/năm'},{k:'CPI adjust',v:'Auto'},{k:'Luật',v:'⚠ Điều 70/2024 — CẦN VERIFY'}],rules:['⚠ Cần verify theo Nghị định hướng dẫn 2024','CPI tích hợp tự động','Phải có disclaimer tham khảo'],ui:{iframeUrl:'',height:'460',width:'',bg:'#ECFEFF'},params:[]},
+
+  {id:'luong-huu',name:'Lương Hưu',initials:'LH',domain:'Insurance',type:'Simulator',status:'active',updated:'01/06/2026',description:'Dự đoán mức lương hưu hàng tháng.',model:'Rate-based Pension Projection',modelType:'Lũy tiến theo năm đóng, max 75%',vars:[{s:'M',d:'BQ lương đóng BHXH',r:'Tự nhập'},{s:'T',d:'Số năm đóng',r:'20 – 35+'},{s:'g',d:'Giới tính',r:'Nam / Nữ'}],config:[{k:'Rate 20 năm',v:'45%'},{k:'Nam +1 năm',v:'+2%'},{k:'Nữ +1 năm',v:'+3%'},{k:'Max rate',v:'75%'}],rules:['Nam 55–60, Nữ 50–55 (lộ trình)','Tối đa 75% lương BQ'],ui:{iframeUrl:'',height:'480',width:'',bg:'#ECFEFF'},params:[]},
+
+  {id:'tiet-kiem',name:'Tiết Kiệm',initials:'TK',domain:'Savings',type:'Calculator',status:'active',updated:'12/06/2026',description:'Tính lãi kép tiết kiệm ngân hàng.',formula:'A = P × (1 + r/n)^(n × t)',vars:[{s:'P',d:'Tiền gốc',r:'100K – 1B VND'},{s:'r',d:'Lãi suất năm',r:'2% – 9%'},{s:'n',d:'Kỳ ghép lãi/năm',r:'1, 4, 12'},{s:'t',d:'Kỳ hạn (năm)',r:'0.25 – 5'}],config:[{k:'Kỳ hạn options',v:'1W·1M·3M·6M·9M·12M·18M·24M'},{k:'Ghép lãi default',v:'Cuối kỳ'},{k:'Thuế lãi',v:'5% (toggle)'}],rules:['Không tính rút trước hạn','Lãi không tái đầu tư tự động'],ui:{iframeUrl:'https://momo.vn/tiet-kiem/tinh-lai?iframe=true',height:'420',width:'',bg:'#F0FDF4'},params:[{key:'default_term',type:'string',val:'12M'}]},
+
+  {id:'thue-tncn',name:'Thuế TNCN',initials:'TC',domain:'Tax',type:'Calculator',status:'active',updated:'01/06/2026',description:'Tính thuế TNCN theo biểu lũy tiến 7 bậc.',formula:'Tax = Σ (Income_in_bracket × rate)\nTaxable = Income − Deductions − SI',vars:[{s:'I',d:'Thu nhập gộp/tháng',r:'Tự nhập'},{s:'D',d:'Giảm trừ bản thân',r:'11,000,000 VND'},{s:'D_dep',d:'Giảm trừ người phụ thuộc',r:'4,400,000/người'},{s:'SI',d:'Bảo hiểm XH+YT+TN',r:'10.5% lương'}],config:[{k:'Bậc 1 ≤5M',v:'5%'},{k:'Bậc 2 5–10M',v:'10%'},{k:'Bậc 3 10–18M',v:'15%'},{k:'Bậc 4 18–32M',v:'20%'},{k:'Bậc 5 32–52M',v:'25%'},{k:'Bậc 6 52–80M',v:'30%'},{k:'Bậc 7 >80M',v:'35%'}],rules:['Biểu lũy tiến 7 bậc','Giảm trừ 11M từ 01/07/2025','SI trừ trước khi áp biểu'],ui:{iframeUrl:'',height:'500',width:'',bg:'#FEFCE8'},params:[]},
+
+  {id:'thue-tndn',name:'Thuế TNDN SME',initials:'TD',domain:'Tax',type:'Calculator',status:'review',updated:'CẦN CẬP NHẬT — Luật 67/2025',description:'Tính thuế TNDN cho SME theo 3 tier doanh thu.',formula:'Tax = Taxable Profit × Rate%\nRate: 15% | 17% | 20% (theo DT)',vars:[{s:'Rev',d:'Doanh thu năm',r:'≤3B / 3–50B / >50B VND'},{s:'Cost',d:'Chi phí hợp lệ',r:'Tự nhập'},{s:'Exempt',d:'Miễn năm đầu',r:'Toggle'}],config:[{k:'Rate ≤3B',v:'15%'},{k:'Rate 3–50B',v:'17%'},{k:'Rate >50B',v:'20%'},{k:'Luật',v:'⚠ 67/2025/QH15'}],rules:['⚠ Verify điều khoản chuyển tiếp Luật 67/2025','DN mới miễn tối đa 3 năm','Chi phí không HĐ không được khấu trừ'],ui:{iframeUrl:'',height:'440',width:'',bg:'#FEFCE8'},params:[]},
+
+  {id:'lai-suat',name:'Lãi Suất Ngân Hàng',initials:'LS',domain:'Savings',type:'Lookup',status:'active',updated:'25/06/2026',description:'Tra cứu lãi suất tiết kiệm 6 ngân hàng lớn.',source:'Static dataset (manual weekly)',refreshInterval:'Thứ 2 hàng tuần',dataPoints:'6 ngân hàng × 8 kỳ hạn = 48 rates',config:[{k:'Ngân hàng',v:'VCB, VietinBank, Agribank, BIDV, TPBank, MB'},{k:'Kỳ hạn',v:'1W·1M·3M·6M·9M·12M·18M·24M'},{k:'Schedule',v:'Thứ 2 hàng tuần'}],rules:['Static snapshot — không realtime','Highlight rate tốt nhất mỗi kỳ hạn','Alert khi rate thay đổi >0.5%'],ui:{iframeUrl:'',height:'480',width:'',bg:'#F0FDF4'},params:[]},
+
+  {id:'ty-gia',name:'Tỷ Giá',initials:'FX',domain:'FX',type:'Lookup',status:'active',updated:'25/06/2026',description:'Tra cứu tỷ giá ngoại tệ và tính quy đổi.',source:'Static snapshot (VCB reference)',refreshInterval:'Hàng ngày (manual)',dataPoints:'6 cặp tiền × mua/bán = 12 rates',config:[{k:'Currency pairs',v:'USD EUR GBP JPY SGD THB / VND'},{k:'Reference',v:'Vietcombank niêm yết'},{k:'Mid-market',v:'Wise.com (so sánh)'}],rules:['Rate tham chiếu — không phải giao dịch','Hiển thị spread bank vs. mid-market','Effective rate sau phí'],ui:{iframeUrl:'https://momo.vn/chuyen-tien/tinh-ty-gia?iframe=true',height:'420',width:'',bg:'#F0FDFA'},params:[{key:'default_pair',type:'string',val:'USD/VND'}]},
+
+  {id:'fx-compare',name:'So Sánh Tỷ Giá NH',initials:'CMP',domain:'FX',type:'Lookup',status:'active',updated:'22/06/2026',description:'So sánh tỷ giá của 7 ngân hàng.',source:'Static dataset (7 banks)',refreshInterval:'Hàng tuần (manual)',dataPoints:'7 ngân hàng × 6 ngoại tệ',config:[{k:'Banks',v:'VCB·VietinBank·Techcombank·BIDV·MB·Agribank·ACB'},{k:'Currencies',v:'USD EUR GBP JPY AUD SGD'},{k:'Highlight',v:'Auto-flag best/worst'}],rules:['Sort mặc định rate tốt nhất','Highlight xanh cho tốt nhất','Mid-market cuối bảng'],ui:{iframeUrl:'',height:'500',width:'',bg:'#F0FDFA'},params:[]},
+
+  {id:'gold',name:'Giá Vàng',initials:'AU',domain:'Investment',type:'Lookup',status:'active',updated:'25/06/2026',description:'Giá vàng SJC, PNJ và XAU/USD.',source:'Static snapshot (SJC+PNJ+XAU/USD)',refreshInterval:'Hàng ngày (manual)',dataPoints:'3 nguồn × mua/bán + XAU/USD spot',config:[{k:'Sources',v:'SJC · PNJ · XAU/USD (Kitco)'},{k:'Chart range',v:'1D·1W·1M·3M (mocked)'},{k:'Calculator unit',v:'Chỉ vàng (3.75g)'}],rules:['Snapshot tham chiếu không realtime','Spread rõ ràng','Không phục vụ trading'],ui:{iframeUrl:'',height:'500',width:'',bg:'#FFF7ED'},params:[]},
+
+  {id:'bill-lookup',name:'Tra Cứu Hóa Đơn',initials:'BL',domain:'Payments',type:'Lookup',status:'active',updated:'25/06/2026',description:'Tra cứu hóa đơn điện, nước, internet.',source:'MoMo Billing API (EVN, Sawaco, VNPT, FPT)',refreshInterval:'Realtime khi query',dataPoints:'4 providers × multi-region',config:[{k:'Providers',v:'EVN · Sawaco · VNPT · FPT'},{k:'Lookup by',v:'Mã KH hoặc SĐT'},{k:'Timeout',v:'5 giây'}],rules:['Realtime từ API provider','Cache 5 phút tránh spam','Hiển thị hạn nộp và số tiền rõ'],ui:{iframeUrl:'https://momo.vn/dich-vu/hoa-don?iframe=true',height:'440',width:'',bg:'#ECFDF5'},params:[{key:'default_provider',type:'string',val:'EVN'}]},
+
+  {id:'metro',name:'Vé Metro HCM',initials:'MT',domain:'Payments',type:'Lookup',status:'active',updated:'20/06/2026',description:'Tính giá vé Metro HCM theo tuyến và loại vé.',source:'MAUR static fare table',refreshInterval:'Manual khi MAUR thay đổi',dataPoints:'10 ga × zone fares',config:[{k:'Tuyến',v:'Line 1 (Bến Thành–Suối Tiên)'},{k:'Fare type',v:'Zone-based'},{k:'Ticket types',v:'Single · Day pass · Multi-trip'}],rules:['Static theo biểu giá MAUR','QR là demo — không phải vé thật','Cập nhật khi MAUR điều chỉnh giá'],ui:{iframeUrl:'',height:'480',width:'',bg:'#ECFDF5'},params:[]},
+
+  {id:'scam-check',name:'Scam Check',initials:'SC',domain:'Security',type:'Security',status:'active',updated:'25/06/2026',description:'Kiểm tra số điện thoại, URL, tài khoản nghi ngờ lừa đảo.',signals:[{name:'Số điện thoại lạ',level:'hi',engine:'MoMo Anti-Fraud DB',rule:'Check against fraud report database'},{name:'URL giả mạo / phishing',level:'hi',engine:'Domain Blacklist',rule:'Pattern match + phishing blacklist'},{name:'Tài khoản ngân hàng',level:'md',engine:'Bank Verify API',rule:'Account status lookup'},{name:'CCCD / giấy tờ giả',level:'md',engine:'Pattern Validator',rule:'Format checksum validation'},{name:'Mã QR thanh toán',level:'lo',engine:'QR Parser',rule:'Decode + merchant verify'},{name:'Link rút tiền lạ',level:'lo',engine:'URL Classifier',rule:'Keyword + domain pattern'},],config:[{k:'Data retention',v:'Zero — không lưu query'},{k:'Response time',v:'< 200ms'},{k:'Accuracy',v:'97%'},{k:'Fallback',v:'Manual review flag'}],rules:['Không lưu thông tin người dùng nhập','Kết quả là cảnh báo — không phải phán quyết','Cập nhật DB theo báo cáo cộng đồng hàng ngày'],ui:{iframeUrl:'https://momo.vn/bao-mat/kiem-tra-lua-dao?iframe=true',height:'520',width:'',bg:'#FEF2F2'},params:[{key:'check_types',type:'string',val:'phone,url,bank,qr'}]},
+];
+
+let current=null,currentTab='general',listFilter='All',searchQ='',hasChanges=false;
+
+function statusLabel(s){return{active:'Active',draft:'Draft',review:'Needs Review'}[s]||s}
+
+function buildList(){
+  const groups={Calculator:[],Simulator:[],Lookup:[],Security:[]};
+  WIDGETS.filter(w=>{
+    if(listFilter!=='All'&&w.type!==listFilter)return false;
+    if(searchQ&&!w.name.toLowerCase().includes(searchQ.toLowerCase()))return false;
+    return true;
+  }).forEach(w=>(groups[w.type]||[]).push(w));
+  const scroll=document.getElementById('listScroll');
+  scroll.innerHTML='';
+  for(const[type,items]of Object.entries(groups)){
+    if(!items.length)continue;
+    const tc=TYPE_COLOR[type];
+    const grp=document.createElement('div');
+    grp.className='lp-group';
+    grp.innerHTML=`<div class="lp-group-hd"><span class="lp-group-label" style="color:${tc.c}">${type}</span><span class="lp-group-cnt">${items.length}</span></div>`;
+    items.forEach(w=>{
+      const row=document.createElement('div');
+      row.className='lp-item'+(current&&current.id===w.id?' active':'');
+      row.dataset.id=w.id;
+      const dotColor={active:'var(--green)',draft:'var(--amber)',review:'var(--red)'}[w.status];
+      row.innerHTML=`<div class="lp-av" style="background:${DOMAIN_COLOR[w.domain]||'#9CA3AF'}">${w.initials}</div><div class="lp-meta"><div class="lp-name">${w.name}</div><div class="lp-sub">${w.domain}</div></div><span class="lp-status" style="background:${dotColor}"></span>`;
+      row.onclick=()=>selectWidget(w.id);
+      grp.appendChild(row);
+    });
+    scroll.appendChild(grp);
+  }
+}
+
+function setListFilter(f,el){
+  listFilter=f;
+  document.querySelectorAll('.lf').forEach(b=>{b.classList.remove('on');b.style.cssText='';});
+  if(el){el.classList.add('on');const c=TYPE_COLOR[f];if(c){el.style.background=c.c;el.style.borderColor=c.c;el.style.color='#fff';}else{el.style.background='#111827';el.style.borderColor='#111827';el.style.color='#fff';}}
+  buildList();
+}
+function filterList(){searchQ=document.getElementById('searchInput').value;buildList();}
+
+function selectWidget(id){
+  current=WIDGETS.find(w=>w.id===id);
+  if(!current)return;
+  hasChanges=false;currentTab='general';
+  buildList();
+  document.getElementById('emptyState').style.display='none';
+  const ec=document.getElementById('editorContent');
+  ec.style.display='flex';ec.style.flexDirection='column';ec.style.overflow='hidden';ec.style.flex='1';
+  renderEditor();
+}
+
+function renderEditor(){renderEdTop();renderEdBody(currentTab);updateSaveBar();}
+
+function renderEdTop(){
+  const w=current;
+  const tc=TYPE_COLOR[w.type]||{c:'#9CA3AF',bg:'#F9FAFB'};
+  const dc=DOMAIN_COLOR[w.domain]||'#9CA3AF';
+  const tabs=getTabs(w);
+  document.getElementById('edTop').innerHTML=`
+<div class="ed-breadcrumb">
+  <span class="ed-bc-badge" style="background:${tc.bg};color:${tc.c}">${w.type}</span>
+  <span style="font-size:10px;color:var(--border2)">·</span>
+  <span class="ed-bc-badge" style="background:${dc}18;color:${dc}">${w.domain}</span>
+  <div style="flex:1"></div>
+  <span class="ed-bc-id">${w.id}</span>
+</div>
+<div class="ed-name-row">
+  <div class="ed-name">${w.name}</div>
+  <button class="status-btn ${w.status}" onclick="cycleStatus()">${statusLabel(w.status)}</button>
+</div>
+<div class="ed-tabs">${tabs.map(t=>`<button class="ed-tab${currentTab===t.key?' active':''}" onclick="switchEdTab('${t.key}')">${t.label}</button>`).join('')}</div>`;
+}
+
+function getTabs(w){
+  const t=[{key:'general',label:'General'}];
+  if(w.type==='Calculator')t.push({key:'formula',label:'Formula'});
+  if(w.type==='Simulator')t.push({key:'formula',label:'Model'});
+  if(w.type==='Lookup')t.push({key:'source',label:'Data Source'});
+  if(w.type==='Security')t.push({key:'signals',label:'Signals'});
+  t.push({key:'config',label:'Config & Rules'});
+  t.push({key:'embed',label:'Embed'});
+  return t;
+}
+
+function switchEdTab(key){
+  currentTab=key;
+  document.querySelectorAll('.ed-tab').forEach(t=>t.classList.toggle('active',t.onclick&&t.onclick.toString().includes("'"+key+"'")));
+  renderEdTop();renderEdBody(key);
+}
+
+function renderEdBody(tab){
+  const body=document.getElementById('edBody');
+  const w=current;
+  if(tab==='general')body.innerHTML=renderGeneral(w);
+  else if(tab==='formula')body.innerHTML=renderFormula(w);
+  else if(tab==='source')body.innerHTML=renderSource(w);
+  else if(tab==='signals')body.innerHTML=renderSignals(w);
+  else if(tab==='config')body.innerHTML=renderConfig(w);
+  else if(tab==='embed')body.innerHTML=renderEmbed(w);
+}
+
+function renderGeneral(w){return`<div class="ed-cols">
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Thông tin cơ bản</span></div><div class="section-body">
+    <div class="field"><div class="field-label">Widget ID</div><input class="finput mono" value="${w.id}" readonly style="color:var(--muted);background:var(--bg)"><div class="field-hint">Không thể thay đổi sau khi tạo</div></div>
+    <div class="field"><div class="field-label">Widget name <span class="req">*</span></div><input class="finput" value="${w.name}" oninput="markChanged()"></div>
+    <div class="field"><div class="field-label">Description</div><textarea class="ftextarea" rows="3" oninput="markChanged()">${w.description||''}</textarea></div>
+    <div class="frow">
+      <div class="field"><div class="field-label">Domain</div><input class="finput" value="${w.domain}" oninput="markChanged()"></div>
+      <div class="field"><div class="field-label">Widget type</div><input class="finput" value="${w.type}" readonly style="color:var(--muted);background:var(--bg)"><div class="field-hint">Cannot be changed</div></div>
+    </div>
+  </div></div>
+</div>
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Thumbnail</span><span class="section-sub">Optional</span></div><div class="section-body">
+    <div class="thumb-upload" onclick="alert('Upload thumbnail...')"><div class="thumb-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>Chọn ảnh thumbnail<br><span style="font-size:10px">JPG, PNG — Max 2MB</span></div></div>
+  </div></div>
+  <div class="section" style="margin-top:14px"><div class="section-hd"><span class="section-title">Metadata</span></div><div class="section-body">
+    <div class="param-row"><span class="param-key">Last updated</span><span style="font-size:11px;color:var(--sub)">${w.updated}</span></div>
+    <div class="param-row"><span class="param-key">Status</span><span class="status-btn ${w.status}" style="font-size:10px">${statusLabel(w.status)}</span></div>
+  </div></div>
+</div>
+</div>`;}
+
+function renderFormula(w){
+  const isC=w.type==='Calculator';
+  const vars=w.vars||[];
+  return`<div class="ed-cols">
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">${isC?'Formula':'Model definition'}</span></div><div class="section-body">
+    ${isC?`<div class="field"><div class="field-label">Expression</div><textarea class="ftextarea formula" rows="4" oninput="markChanged()">${w.formula||''}</textarea><div class="field-hint">ASCII/Unicode math. Mỗi dòng là một phần của công thức.</div></div>`:`<div class="field"><div class="field-label">Model name</div><input class="finput" value="${w.model||''}" oninput="markChanged()"></div><div class="field"><div class="field-label">Methodology</div><input class="finput" value="${w.modelType||''}" oninput="markChanged()"></div>`}
+    <div class="field"><div class="field-label">Preview</div><div class="formula-display">${(w.formula||w.model||'Chưa định nghĩa')}</div></div>
+  </div></div>
+  <div class="section"><div class="section-hd"><span class="section-title">Variables / Inputs</span><span class="section-sub">${vars.length} biến</span></div>
+    <div style="overflow-x:auto"><table class="var-table"><thead><tr><th style="padding-left:14px">Symbol</th><th>Mô tả</th><th>Range</th></tr></thead><tbody>
+    ${vars.map(v=>`<tr><td style="padding-left:14px"><span class="vt-sym">${v.s}</span></td><td><input class="vt-input" value="${v.d}" oninput="markChanged()"></td><td><span class="vt-range">${v.r}</span></td></tr>`).join('')}
+    </tbody></table></div>
+    <div style="padding:8px 14px"><button class="add-btn">+ Thêm variable</button></div>
+  </div>
+</div>
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Ký hiệu chuẩn</span></div><div class="section-body" style="font-size:11px;color:var(--sub);line-height:2">
+    ${[['×','nhân'],['÷','chia'],['Σ','tổng'],['^','lũy thừa'],['√','căn'],['→','output']].map(([k,v])=>`<code style="font-family:var(--mono);font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--blue);margin-right:4px">${k}</code>${v}<br>`).join('')}
+  </div></div>
+</div>
+</div>`;}
+
+function renderSource(w){return`<div class="ed-cols">
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Data Source</span></div><div class="section-body">
+    <div class="field"><div class="source-badge">● ${w.source||'Unknown'}</div></div>
+    <div class="field"><div class="field-label">Mô tả nguồn</div><input class="finput" value="${w.source||''}" oninput="markChanged()"></div>
+    <div class="frow">
+      <div class="field"><div class="field-label">Refresh interval</div><input class="finput" value="${w.refreshInterval||''}" oninput="markChanged()"></div>
+      <div class="field"><div class="field-label">Data points</div><input class="finput" value="${w.dataPoints||''}" oninput="markChanged()"></div>
+    </div>
+  </div></div>
+  <div class="section"><div class="section-hd"><span class="section-title">Source config</span></div><div class="section-body">
+    ${(w.config||[]).map(c=>`<div class="param-row"><span class="param-key">${c.k}</span><div class="param-val"><input value="${c.v}" oninput="markChanged()"></div></div>`).join('')}
+    <button class="add-btn">+ Thêm config</button>
+  </div></div>
+</div>
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Update rules</span></div><div class="section-body">
+    ${(w.rules||[]).map((r,i)=>`<div class="rule-item"><span class="rule-num">${i+1}</span><textarea class="rule-edit" rows="2" oninput="markChanged()">${r}</textarea></div>`).join('')}
+    <button class="add-btn">+ Thêm rule</button>
+  </div></div>
+</div>
+</div>`;}
+
+function renderSignals(w){
+  const sigs=w.signals||[];
+  return`<div class="ed-cols">
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Signal Rules</span><span class="section-sub">${sigs.length} signals</span></div><div class="section-body">
+    <div class="signal-editor">
+      ${sigs.map((s,i)=>`<div class="sig-ed-row">
+        <button class="sig-lv-btn ${s.level}" onclick="toggleSigLevel(${i})">${s.level.toUpperCase()}</button>
+        <input style="flex:1;border:none;background:transparent;font-size:12px;font-weight:600;outline:none;color:var(--text)" value="${s.name}" oninput="markChanged()">
+        <span class="sig-ed-engine">${s.engine}</span>
+      </div>`).join('')}
+    </div>
+    <button class="add-btn" style="margin-top:6px">+ Thêm signal</button>
+  </div></div>
+</div>
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Severity</span></div><div class="section-body" style="display:flex;flex-direction:column;gap:8px">
+    ${[['hi','#FEE2E2','var(--red)','Nguy hiểm — cảnh báo đỏ'],['md','#FEF3C7','var(--amber)','Nghi ngờ — cảnh báo vàng'],['lo','#D1FAE5','var(--green)','Thông tin — xem xét thêm']].map(([l,bg,c,desc])=>`<div style="display:flex;gap:8px;align-items:center;font-size:11px"><span style="width:32px;height:20px;border-radius:5px;background:${bg};color:${c};font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center">${l.toUpperCase()}</span><span style="color:var(--sub)">${desc}</span></div>`).join('')}
+  </div></div>
+  <div class="section" style="margin-top:14px"><div class="section-hd"><span class="section-title">Engine mapping</span></div><div class="section-body">
+    ${sigs.map(s=>`<div class="param-row"><span class="param-key" style="font-size:10px">${s.name}</span><div class="param-val"><input value="${s.engine}" oninput="markChanged()"></div></div>`).join('')}
+  </div></div>
+</div>
+</div>`;}
+
+function renderConfig(w){return`<div class="ed-cols">
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Parameters</span></div><div class="section-body">
+    ${(w.config||[]).map(c=>`<div class="param-row"><span class="param-key">${c.k}</span><div class="param-val"><input value="${c.v}" oninput="markChanged()"></div></div>`).join('')}
+    <button class="add-btn">+ Thêm parameter</button>
+  </div></div>
+</div>
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Business rules</span><span class="section-sub">${(w.rules||[]).length}</span></div><div class="section-body">
+    ${(w.rules||[]).map((r,i)=>`<div class="rule-item"><span class="rule-num">${i+1}</span><textarea class="rule-edit" rows="2" oninput="markChanged()">${r}</textarea></div>`).join('')}
+    <button class="add-btn">+ Thêm rule</button>
+  </div></div>
+  ${w.status==='review'?`<div class="section" style="margin-top:14px;border-color:var(--red-b)"><div class="section-hd" style="background:var(--red-bg)"><span class="section-title" style="color:var(--red)">⚠ Needs Review</span></div><div class="section-body" style="font-size:11px;color:var(--sub);line-height:1.6">Widget này cần verify trước khi publish. Xem config bên trên.</div></div>`:''}
+</div>
+</div>`;}
+
+function renderEmbed(w){
+  const ui=w.ui||{};
+  const params=w.params||[];
+  const bgs=['#FFFFFF','#F2F4F7','#EFF6FF','#F5F3FF','#F0FDF4','#FEFCE8','#FEF2F2'];
+  return`<div class="ed-cols">
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Embed config</span></div><div class="section-body">
+    <div class="field"><div class="field-label">iframe URL</div><input class="finput mono" placeholder="https://momo.vn/service?iframe=true" value="${ui.iframeUrl||''}" oninput="markChanged()"><div class="field-hint">Để trống nếu widget chưa deploy.</div></div>
+    <div class="frow">
+      <div class="field"><div class="field-label">Height (px)</div><input class="finput" placeholder="480" value="${ui.height||''}" oninput="markChanged()"><div class="field-hint">Min 100px — Max 1200px</div></div>
+      <div class="field"><div class="field-label">Width (px)</div><input class="finput" placeholder="Leave empty = 100% width" value="${ui.width||''}" oninput="markChanged()"><div class="field-hint">Trống = full width</div></div>
+    </div>
+    <div class="field"><div class="field-label">Background</div>
+      <div class="bg-picker">${bgs.map(c=>`<div class="bg-swatch${ui.bg===c?' selected':''}" style="background:${c};border:1.5px solid ${c==='#FFFFFF'?'var(--border2)':'transparent'}" title="${c}" onclick="setBg('${c}',this)"></div>`).join('')}<div class="bg-swatch custom" onclick="pickCustomBg()">+</div></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:5px">Selected: <code style="font-family:var(--mono)">${ui.bg||'#FFFFFF'}</code></div>
+    </div>
+  </div></div>
+  <div class="section"><div class="section-hd"><span class="section-title">Widget Params</span><span class="section-sub">Passed to widget at render time</span></div>
+    <table class="params-table"><thead><tr><th style="padding-left:12px;width:35%">Key</th><th style="width:22%">Type</th><th>Default value</th></tr></thead>
+    <tbody>${params.length?params.map((p,i)=>`<tr><td style="padding-left:12px"><input value="${p.key}" oninput="markChanged()"></td><td><select oninput="markChanged()"><option${p.type==='string'?' selected':''}>string</option><option${p.type==='number'?' selected':''}>number</option><option${p.type==='boolean'?' selected':''}>boolean</option></select></td><td><input value="${p.val}" oninput="markChanged()"></td></tr>`).join(''):`<tr><td colspan="3" style="text-align:center;padding:14px 12px;color:var(--muted);font-size:11px">Chưa có params</td></tr>`}</tbody></table>
+    <div style="padding:8px 12px"><button class="add-btn" onclick="addParam()">+ Thêm param</button></div>
+  </div>
+</div>
+<div>
+  <div class="section"><div class="section-hd"><span class="section-title">Preview</span></div><div class="section-body">
+    <div class="embed-preview" style="background:${ui.bg||'#fff'};min-height:120px">${ui.iframeUrl?`<div style="font-size:11px;color:var(--muted);text-align:center">Widget<br><span style="font-size:10px">${ui.height||'auto'}px</span></div>`:`<div style="font-size:11px;color:var(--muted);text-align:center">Chưa có iframe URL</div>`}</div>
+    ${ui.iframeUrl?`<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:10px;font-family:var(--mono);color:var(--blue);word-break:break-all;line-height:1.7">&lt;iframe src="${ui.iframeUrl}"<br>&nbsp;width="${ui.width||'100%'}" height="${ui.height||'480'}"<br>&nbsp;frameborder="0"&gt;&lt;/iframe&gt;</div>`:''}
+  </div></div>
+</div>
+</div>`;}
+
+function markChanged(){if(!hasChanges){hasChanges=true;updateSaveBar();}}
+function updateSaveBar(){const h=document.getElementById('saveHint');if(hasChanges)h.innerHTML='<span class="changed">Có thay đổi chưa lưu</span>';else h.textContent='Chưa có thay đổi';}
+function saveChanges(){
+  hasChanges=false;updateSaveBar();
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:20px;right:20px;background:#111;color:#fff;font-size:12px;font-weight:600;padding:10px 16px;border-radius:9px;z-index:999;animation:toastIn .18s';
+  t.textContent='✓ Đã lưu thay đổi';document.body.appendChild(t);setTimeout(()=>t.remove(),2200);
+}
+function discardChanges(){hasChanges=false;renderEditor();}
+function cycleStatus(){if(!current)return;const c={active:'draft',draft:'review',review:'active'};current.status=c[current.status]||'active';markChanged();renderEditor();buildList();}
+function setBg(color,el){if(!current)return;current.ui=current.ui||{};current.ui.bg=color;document.querySelectorAll('.bg-swatch').forEach(s=>s.classList.remove('selected'));if(el)el.classList.add('selected');markChanged();}
+function pickCustomBg(){const c=prompt('Mã màu hex:');if(c)setBg(c);}
+function addParam(){if(!current)return;current.params=current.params||[];current.params.push({key:'param_name',type:'string',val:''});markChanged();renderEdBody('embed');}
+function toggleSigLevel(i){if(!current||!current.signals)return;const c={hi:'md',md:'lo',lo:'hi'};current.signals[i].level=c[current.signals[i].level]||'hi';markChanged();renderEdBody('signals');}
+function showNewModal(){alert('Form tạo widget mới sẽ hiện ở đây');}
+
+buildList();
+selectWidget(WIDGETS[0].id);
+</script>
+</body>
+</html>

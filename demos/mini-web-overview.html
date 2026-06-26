@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Web Overview - momo.vn</title>
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-style:normal;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+
+    :root {
+      --grey-50:  #f9fafb;
+      --grey-100: #f2f4f7;
+      --grey-200: #e4e7ec;
+      --grey-300: #d0d5dd;
+      --grey-400: #98a2b3;
+      --grey-500: #667085;
+      --grey-600: #475569;
+      --grey-700: #344054;
+      --grey-800: #1d2939;
+      --elevation-small: rgba(0,0,0,.02) 0px 0px 5px, rgba(0,0,0,.06) 0px 2px 10px, rgba(0,0,0,.3) 0px 0px 1px;
+      --ink:    #1d2939;
+      --muted:  #667085;
+      --line:   #e4e7ec;
+      --canvas: #f2f4f7;
+      --white:  #fff;
+      --momo:   #a50064;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    h1, h2, h3 { font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif; }
+    a { font: inherit; }
+    button { cursor: pointer; font: inherit; }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      height: 52px;
+      padding: 0 20px;
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--canvas);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: border-color .12s, color .12s;
+    }
+    .back-btn:hover { border-color: var(--grey-400); color: var(--ink); }
+    .topbar-cat {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .topbar-count {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--grey-100);
+      color: var(--grey-600);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Page layout */
+    .mw-page {
+      padding: 22px 28px 36px;
+    }
+    .mw-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 18px;
+    }
+    .mw-kicker {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mw-header h1 {
+      margin: 9px 0 5px;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -.035em;
+    }
+    .mw-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .mw-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(78px, 1fr));
+      gap: 8px;
+      margin: 0;
+      flex: none;
+    }
+    .mw-stats div {
+      min-width: 82px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: var(--elevation-small);
+    }
+    .mw-stats dt {
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .mw-stats dd {
+      margin: 3px 0 0;
+      color: #4338ca;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .mw-stats .mw-total-volume dd {
+      font-size: 15px;
+      letter-spacing: -.04em;
+    }
+    .mw-panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: var(--elevation-small);
+    }
+    .mw-filter-bar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(150px, 1fr)) auto;
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--grey-50);
+    }
+    .mw-filter-bar label {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+    .mw-filter-bar label > span {
+      color: var(--grey-600);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .mw-filter-bar input,
+    .mw-filter-bar select {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--grey-300);
+      border-radius: 9px;
+      outline: none;
+      background: var(--white);
+      color: var(--ink);
+      font: 500 12px/1 'MoMoTrustSans', sans-serif;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .mw-filter-bar input { padding: 0 12px; }
+    .mw-filter-bar select { padding: 0 30px 0 10px; }
+    .mw-filter-bar input:focus,
+    .mw-filter-bar select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .12);
+    }
+    .mw-clear {
+      height: 38px;
+      padding: 0 13px;
+      border: 1px solid var(--grey-300);
+      border-radius: 9px;
+      background: var(--white);
+      color: var(--grey-600);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .mw-clear:hover { border-color: #6366f1; color: #4338ca; }
+    .mw-result-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .mw-result-bar h2 {
+      margin: 0;
+      font-family: 'MoMoTrustSans', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .mw-result-bar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .mw-table-wrap {
+      max-height: calc(100vh - 280px);
+      overflow: auto;
+    }
+    .mw-table {
+      width: 100%;
+      min-width: 1060px;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .mw-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--grey-50);
+      color: var(--grey-600);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-align: left;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .mw-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--grey-100);
+      color: var(--grey-700);
+      line-height: 1.4;
+      vertical-align: middle;
+    }
+    .mw-table tbody tr:hover { background: #fafaff; }
+    .mw-table tbody tr:last-child td { border-bottom: 0; }
+    .mw-table td:nth-child(3) { min-width: 150px; }
+    .mw-table td:nth-child(4) { min-width: 170px; color: var(--ink); }
+    .mw-table td:nth-child(5) { width: 260px; max-width: 260px; }
+    .mw-table td:nth-child(7) { min-width: 138px; }
+    .mw-division {
+      display: inline-grid;
+      min-width: 38px;
+      place-items: center;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .mw-chip {
+      display: inline-flex;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .mw-url {
+      display: block;
+      overflow: hidden;
+      color: #4338ca;
+      font-size: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .mw-url:hover { text-decoration: underline; }
+    .mw-volume { display: grid; gap: 2px; }
+    .mw-volume strong {
+      color: #4338ca;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .mw-volume small {
+      overflow: hidden;
+      max-width: 132px;
+      color: var(--muted);
+      font-size: 9px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .mw-volume-pending {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--grey-100);
+      color: var(--grey-500);
+      font-size: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .mw-empty { color: var(--grey-400); }
+    .mw-no-results {
+      padding: 48px 16px !important;
+      color: var(--muted) !important;
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .mw-header { flex-direction: column; align-items: flex-start; }
+      .mw-filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mw-search { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .mw-page { padding: 16px 16px 28px; }
+      .mw-stats { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mw-stats div { min-width: 0; }
+      .mw-filter-bar { grid-template-columns: 1fr; }
+      .mw-search { grid-column: auto; }
+      .mw-clear { width: 100%; }
+      .mw-table-wrap { max-height: none; }
+      .topbar-count { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="back-btn" href="/lab.html">← Lab</a>
+      <span class="topbar-cat">Mini Web Overview</span>
+    </div>
+    <span class="topbar-count" id="topbarCount"></span>
+  </header>
+
+  <main class="mw-page">
+    <header class="mw-header">
+      <div>
+        <span class="mw-kicker">Web inventory 2026</span>
+        <h1>Mini Web Overview</h1>
+        <p>Danh mục MiniWeb trên momo.vn được nhập đầy đủ từ file CSV nguồn.</p>
+      </div>
+      <dl class="mw-stats" id="mwStats" aria-label="Thống kê Mini Web"></dl>
+    </header>
+
+    <section class="mw-panel" aria-labelledby="miniWebTableTitle">
+      <div class="mw-filter-bar">
+        <label class="mw-search">
+          <span>Tìm MiniWeb</span>
+          <input id="miniWebSearch" type="search" placeholder="Tên dịch vụ, product hoặc URL" autocomplete="off">
+        </label>
+        <label>
+          <span>Division</span>
+          <select id="miniWebDivision"><option value="">Tất cả Division</option></select>
+        </label>
+        <label>
+          <span>Use Case</span>
+          <select id="miniWebUseCase"><option value="">Tất cả Use Case</option></select>
+        </label>
+        <label>
+          <span>Page Type</span>
+          <select id="miniWebPageType"><option value="">Tất cả Page Type</option></select>
+        </label>
+        <button class="mw-clear" id="miniWebClear" type="button">Xóa filter</button>
+      </div>
+
+      <div class="mw-result-bar">
+        <h2 id="miniWebTableTitle">Danh sách MiniWeb</h2>
+        <p id="miniWebResultCount" aria-live="polite"></p>
+      </div>
+
+      <div class="mw-table-wrap">
+        <table class="mw-table">
+          <thead>
+            <tr>
+              <th scope="col">Division</th>
+              <th scope="col">Use Case</th>
+              <th scope="col">Product</th>
+              <th scope="col">Service Name</th>
+              <th scope="col">URL</th>
+              <th scope="col">Page Type</th>
+              <th scope="col">Volume/tháng</th>
+            </tr>
+          </thead>
+          <tbody id="miniWebRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/mini-web-data.js?v=1"></script>
+  <script src="../assets/mini-web-volume.js?v=1"></script>
+  <script>
+    const ROWS = Array.isArray(window.MINI_WEB_DATA) ? window.MINI_WEB_DATA : [];
+    const MARKETS = Array.isArray(window.MINI_WEB_SEARCH_MARKETS) ? window.MINI_WEB_SEARCH_MARKETS : [];
+    const VOLUME_BY_URL = new Map();
+    MARKETS.forEach(item => item.urls.forEach(url => VOLUME_BY_URL.set(url, { market: item.market, volume: item.volume })));
+    const FMT = new Intl.NumberFormat('en-US');
+
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+    function norm(v) {
+      return String(v ?? '').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLocaleLowerCase('vi');
+    }
+    function buildOptions(field) {
+      return [...new Set(ROWS.map(r => r[field]).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, 'vi'))
+        .map(v => `<option value="${esc(v)}">${esc(v)}</option>`)
+        .join('');
+    }
+
+    // Populate stats
+    const totalVolume = MARKETS.reduce((s, m) => s + m.volume, 0);
+    const divisions = new Set(ROWS.map(r => r.Division).filter(Boolean)).size;
+    const useCases = new Set(ROWS.map(r => r['Use Case']).filter(Boolean)).size;
+    document.getElementById('mwStats').innerHTML = `
+      <div><dt>MiniWeb</dt><dd>${ROWS.length}</dd></div>
+      <div><dt>Division</dt><dd>${divisions}</dd></div>
+      <div><dt>Use Case</dt><dd>${useCases}</dd></div>
+      <div class="mw-total-volume"><dt>Total Volume</dt><dd title="${FMT.format(totalVolume)} lượt tìm kiếm mỗi tháng">${FMT.format(totalVolume)}</dd></div>
+    `;
+    document.getElementById('topbarCount').textContent = `${ROWS.length} MiniWeb`;
+
+    // Populate select options
+    document.getElementById('miniWebDivision').innerHTML += buildOptions('Division');
+    document.getElementById('miniWebUseCase').innerHTML += buildOptions('Use Case');
+    document.getElementById('miniWebPageType').innerHTML += buildOptions('Page Type');
+
+    // Filter + render
+    const search    = document.getElementById('miniWebSearch');
+    const division  = document.getElementById('miniWebDivision');
+    const useCase   = document.getElementById('miniWebUseCase');
+    const pageType  = document.getElementById('miniWebPageType');
+    const rowsEl    = document.getElementById('miniWebRows');
+    const countEl   = document.getElementById('miniWebResultCount');
+    let raf = null;
+
+    function renderRows() {
+      const query = norm(search.value.trim());
+      const filtered = ROWS.filter(row => {
+        const vol = VOLUME_BY_URL.get(row.URL);
+        const matchQuery = !query || norm(`${Object.values(row).join(' ')} ${vol?.market || ''}`).includes(query);
+        return matchQuery
+          && (!division.value || row.Division === division.value)
+          && (!useCase.value  || row['Use Case'] === useCase.value)
+          && (!pageType.value || row['Page Type'] === pageType.value);
+      });
+
+      countEl.textContent = `Hiển thị ${filtered.length} / ${ROWS.length}`;
+      rowsEl.innerHTML = filtered.length ? filtered.map(row => {
+        const url = String(row.URL || '');
+        const safeHref = /^https?:\/\//i.test(url) ? esc(url) : '#';
+        const displayUrl = esc(url.replace(/^https?:\/\//i, ''));
+        const vol = VOLUME_BY_URL.get(url);
+        const volumeCell = vol
+          ? `<span class="mw-volume"><strong>${FMT.format(vol.volume)}</strong><small>${esc(vol.market)}</small></span>`
+          : '<span class="mw-volume-pending">Đang cập nhật</span>';
+        return `<tr>
+          <td><span class="mw-division">${esc(row.Division)}</span></td>
+          <td>${esc(row['Use Case'])}</td>
+          <td>${esc(row.Product)}</td>
+          <td><strong>${esc(row['Service Name'])}</strong></td>
+          <td><a class="mw-url" href="${safeHref}" target="_blank" rel="noopener" title="${esc(url)}">${displayUrl}<span aria-hidden="true"> ↗</span></a></td>
+          <td><span class="mw-chip">${esc(row['Page Type'])}</span></td>
+          <td>${volumeCell}</td>
+        </tr>`;
+      }).join('') : '<tr><td class="mw-no-results" colspan="7">Không có MiniWeb phù hợp với bộ lọc hiện tại.</td></tr>';
+    }
+
+    search.addEventListener('input', () => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(renderRows); });
+    [division, useCase, pageType].forEach(el => el.addEventListener('change', renderRows));
+    document.getElementById('miniWebClear').addEventListener('click', () => {
+      search.value = division.value = useCase.value = pageType.value = '';
+      renderRows();
+      search.focus();
+    });
+
+    renderRows();
+  </script>
+</body>
+</html>
