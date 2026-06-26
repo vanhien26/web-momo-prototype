@@ -53,26 +53,6 @@
     }
     .close-btn:hover{color:var(--ink);border-color:var(--grey-200)}
 
-    /* Province dropdown row */
-    .province-bar{
-      display:flex;align-items:center;gap:10px;
-      padding:10px 20px 12px;max-width:1440px;margin:0 auto;
-    }
-    .province-select{
-      display:flex;align-items:center;gap:6px;
-      border:1.5px solid var(--momo);border-radius:8px;
-      padding:8px 12px;background:#fff;color:var(--ink);
-      font-size:13px;font-weight:700;min-width:200px;
-      transition:box-shadow .15s;
-    }
-    .province-select:focus-within{box-shadow:0 0 0 3px rgba(216,45,139,.12)}
-    .province-select svg{color:var(--momo);flex:none}
-    .province-select select{
-      flex:1;outline:none;font-size:13px;font-weight:700;color:var(--ink);
-      appearance:none;-webkit-appearance:none;cursor:pointer;
-    }
-    .province-select .chevron{color:var(--muted);flex:none}
-
     /* ── FILTER ROW */
     .filter-row{
       display:flex;align-items:center;gap:8px;
@@ -317,17 +297,6 @@
     <a class="close-btn" href="/lab.html">× Đóng</a>
   </div>
 
-  <!-- Province dropdown -->
-  <div class="province-bar">
-    <label class="province-select">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      <select id="provinceSelect" onchange="onProvinceChange(this.value)">
-        <!-- populated by JS -->
-      </select>
-      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </label>
-  </div>
-
   <!-- Category filter -->
   <div class="filter-row" id="filterRow"></div>
 </header>
@@ -546,7 +515,7 @@ const MERCHANTS = [
 ];
 
 const CATEGORIES = [
-  {id:'all',          label:'Hoàn Tiền', icon:'💰'},
+  {id:'all',          label:'Tất cả',    icon:''},
   {id:'food',         label:'Ẩm thực',   icon:'🍜'},
   {id:'fashion',      label:'Thời trang',icon:'👗'},
   {id:'tech',         label:'Điện tử',   icon:'📱'},
@@ -584,7 +553,7 @@ function renderFilters() {
   document.getElementById('filterRow').innerHTML =
     CATEGORIES.map(c => `
       <button class="filter-chip ${S.cat===c.id?'active':''}" onclick="setCat('${c.id}')">
-        <span class="icon">${c.icon}</span>${c.label}
+        ${c.icon ? `<span class="icon">${c.icon}</span>` : ''}${c.label}
       </button>`).join('') +
     `<button class="filter-more">›</button>`;
 }
@@ -726,13 +695,12 @@ function updateMapMarkers(list) {
 // ─────────────────────────────────────────────
 // ACTIONS
 // ─────────────────────────────────────────────
-function setCat(id) { S.cat = id; S.selected = null; document.getElementById('detailModal').setAttribute('aria-hidden','true'); renderFilters(); renderList(); }
+function setCat(id) { S.cat = id; S.selected = null; document.body.classList.remove('has-detail'); renderFilters(); renderList(); }
 function render() { renderList(); }
 
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
-initProvinceSelect();
 renderFilters();
 initMap();
 renderList();
