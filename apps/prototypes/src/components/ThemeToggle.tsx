@@ -57,18 +57,20 @@ export default function ThemeToggle() {
       </button>
 
       {/* High Contrast Toggle — transparent icon button */}
+      {/* High Contrast Toggle — transparent pill button with text */}
       <button
         type="button"
-        className={`w-9 h-9 p-0 rounded-full flex items-center justify-center border transition-all cursor-pointer ${
+        className={`h-9 px-3 rounded-full flex items-center justify-center gap-1.5 border transition-all cursor-pointer text-xs font-bold ${
           isContrast
-            ? "border-pink-500 bg-pink-50 dark:bg-pink-950/30"
-            : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+            ? "border-pink-500 bg-pink-50 dark:bg-pink-950/30 text-pink-500"
+            : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
         }`}
         onClick={toggleContrast}
         aria-label="Toggle high contrast accessibility theme"
         title="Độ tương phản cao"
       >
-        <Contrast className={`h-4 w-4 ${isContrast ? "text-pink-500" : "text-slate-600 dark:text-slate-400"}`} />
+        <Contrast className="h-4 w-4 shrink-0" />
+        <span>Tương phản cao</span>
       </button>
     </div>
   );
