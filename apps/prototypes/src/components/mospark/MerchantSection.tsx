@@ -34,9 +34,11 @@ export default function MerchantSection() {
       <div className="mx-auto px-5 md:px-10" style={{ maxWidth: "1160px" }}>
 
         <div className="rv mb-14 flex flex-col items-center text-center">
-          <div className="mb-4 flex items-center gap-2">
-            <Badge variant="default">SME Merchant Page</Badge>
-            <Badge variant="secondary">O2O Solution</Badge>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "18px", padding: "7px 14px", borderRadius: "999px", border: "1px solid rgba(165,0,100,.22)", background: "rgba(165,0,100,.07)" }}>
+            <span className="dot-pulse" style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#a50064", display: "inline-block", flexShrink: 0 }}></span>
+            <span style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#a50064", fontFamily: "ui-monospace,monospace" }}>SME Merchant Page</span>
+            <span style={{ width: "1px", height: "10px", background: "rgba(165,0,100,.25)", display: "inline-block" }}></span>
+            <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: "rgba(255,255,255,.35)", fontFamily: "ui-monospace,monospace" }}>O2O Solution</span>
           </div>
           <HeadingBlock
             title="Merchant Page dành cho SME trên MoMo"
@@ -50,12 +52,12 @@ export default function MerchantSection() {
         <div className="rv grid grid-cols-1 gap-5 sm:grid-cols-2" style={{ maxWidth: "900px", margin: "0 auto" }}>
 
           {/* BASIC CARD */}
-          <Card className="flex flex-col" style={{ borderRadius: "22px", padding: "28px 26px 32px", boxShadow: "0 0 0 1px rgba(255,255,255,.06),0 20px 48px rgba(0,0,0,.22)" }}>
+          <Card className="flex flex-col bg-white" style={{ background: "#fff", borderRadius: "22px", padding: "28px 26px 32px", boxShadow: "0 0 0 1px rgba(255,255,255,.06),0 20px 48px rgba(0,0,0,.22)" }}>
             <div style={{ fontFamily: "ui-monospace,monospace", fontSize: "8.5px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "10px" }}>5 tính năng</div>
             <div className="momo-display" style={{ fontSize: "52px", fontWeight: 900, color: "#101828", lineHeight: .92, letterSpacing: "-.04em", marginBottom: "8px" }}>Basic</div>
             <div style={{ fontSize: "12.5px", lineHeight: 1.6, color: "#667085", marginBottom: "22px", maxWidth: "320px" }}>Trang SME định danh rõ ràng, chuẩn SEO/GEO và tích hợp Google Maps - đủ để được tìm thấy và tạo tin tưởng trước khi ghé.</div>
             <a href="/merchant" target="_blank" className="mb-6 block w-full no-underline">
-              <Button variant="outline" className="w-full">Xem Demo Basic →</Button>
+              <Button variant="outline" className="w-full bg-[#f3f4f6] text-[#374151] border-[#e5e7eb] hover:bg-[#e5e7eb]" style={{ width: "100%", background: "#f3f4f6", borderColor: "#e5e7eb", color: "#374151", fontWeight: 800 }}>Xem Demo Basic →</Button>
             </a>
             <div style={{ fontSize: "8px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#d1d5db", fontFamily: "ui-monospace,monospace", marginBottom: "14px" }}>Bao gồm</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
@@ -78,12 +80,12 @@ export default function MerchantSection() {
             <div style={{ position: "relative", display: "flex", flexDirection: "column", height: "100%" }}>
               <div className="mb-2.5 flex items-center gap-2">
                 <span style={{ fontFamily: "ui-monospace,monospace", fontSize: "8.5px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(255,255,255,.6)" }}>9 tính năng</span>
-                <Badge variant="secondary">FEATURED</Badge>
+                <Badge className="text-white border border-white/25 bg-white/15" style={{ fontSize: "8px", fontWeight: 900, padding: "2px 8px", borderRadius: "4px", background: "rgba(255,255,255,.15)", borderColor: "rgba(255,255,255,.25)", color: "#fff", letterSpacing: ".07em" }}>FEATURED</Badge>
               </div>
               <div className="momo-display" style={{ fontSize: "52px", fontWeight: 900, color: "#fff", lineHeight: .92, letterSpacing: "-.04em", marginBottom: "8px" }}>Premium</div>
               <div style={{ fontSize: "12.5px", lineHeight: 1.6, color: "rgba(255,255,255,.7)", marginBottom: "22px", maxWidth: "320px" }}>Trải nghiệm thương nhân đầy đủ nhất - từ định danh, bản đồ, review đến AI Overview và Video giới thiệu.</div>
               <a href="/merchant-page-builder" target="_blank" className="mb-6 block w-full no-underline">
-                <Button variant="secondary" className="w-full">Xem Demo Premium →</Button>
+                <Button variant="secondary" className="w-full bg-white text-[#a50064] border-none hover:bg-[#ffd6ec]" style={{ width: "100%", background: "#fff", color: "#a50064", fontWeight: 800, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,.15)" }}>Xem Demo Premium →</Button>
               </a>
               <div style={{ fontSize: "8px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,255,255,.35)", fontFamily: "ui-monospace,monospace", marginBottom: "14px" }}>Tất cả tính năng</div>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
