@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@momo-webplatform/mobase-next";
+import { Button, buttonVariants } from "@momo-webplatform/mobase-next";
 
 export default function HeroSection() {
   useEffect(() => {
@@ -38,10 +38,8 @@ export default function HeroSection() {
             <span className="dot-pulse h-1.5 w-1.5 rounded-full" style={{ background: "#a50064" }}></span>
             Internal Only
           </span>
-          <Link href="/lab">
-            <Button variant="default" size="sm">
-              Enter Lab
-            </Button>
+          <Link href="/lab" className={buttonVariants({ variant: "default", size: "sm" })}>
+            Enter Lab
           </Link>
         </div>
       </nav>
@@ -67,10 +65,8 @@ export default function HeroSection() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/lab">
-                <Button variant="default" size="lg">
-                  Mở Prototype Lab
-                </Button>
+              <Link href="/lab" className={buttonVariants({ variant: "default", size: "lg" })}>
+                Mở Prototype Lab
               </Link>
             </div>
           </div>
