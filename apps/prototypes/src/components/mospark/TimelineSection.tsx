@@ -5,7 +5,7 @@ import HeadingBlock from "@/components/HeadingBlock";
 
 export default function TimelineSection() {
   return (
-    <section id="content-production" style={{ background: "#f0f2f5", padding: "80px 0" }}>
+    <section id="content-production" style={{ background: "var(--modules-bg)", padding: "80px 0" }}>
       <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 20px" }}>
 
         <div className="rv" style={{ marginBottom: "36px" }}>

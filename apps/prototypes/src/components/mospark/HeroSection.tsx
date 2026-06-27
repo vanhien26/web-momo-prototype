@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { Button, buttonVariants } from "@momo-webplatform/mobase-next";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function HeroSection() {
   useEffect(() => {
@@ -24,12 +25,12 @@ export default function HeroSection() {
   return (
     <>
       <nav className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between border-b px-5 backdrop-blur-xl md:px-10"
-        style={{ borderColor: "#e4e7ec", background: "rgba(255,255,255,0.95)" }}>
-        <a className="flex items-center gap-3 no-underline" href="/" aria-label="MoSpark Prototype Store" style={{ color: "#101828" }}>
+        style={{ borderColor: "var(--border-color)", background: "var(--nav-bg)" }}>
+        <a className="flex items-center gap-3 no-underline" href="/" aria-label="MoSpark Prototype Store" style={{ color: "var(--text-main)" }}>
           <span className="inline-flex items-center rounded-xl bg-black px-3 py-2" style={{ boxShadow: "0 8px 24px rgba(16,24,40,.16)" }}>
             <img className="block h-5 w-auto object-contain" src="https://static.momocdn.net/app/img/web-platform/logo-mospark-dark.svg" alt="MoSpark" decoding="async" />
           </span>
-          <span className="hidden rounded-full border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[.06em] sm:inline-flex" style={{ borderColor: "#e4e7ec", color: "#667085" }}>
+          <span className="hidden rounded-full border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[.06em] sm:inline-flex" style={{ borderColor: "var(--border-color)", color: "var(--text-sub)" }}>
             Prototype Lab
           </span>
         </a>
@@ -38,6 +39,7 @@ export default function HeroSection() {
             <span className="dot-pulse h-1.5 w-1.5 rounded-full" style={{ background: "#a50064" }}></span>
             Internal Only
           </span>
+          <ThemeToggle />
           <Link href="/lab" className={buttonVariants({ variant: "default", size: "sm" })}>
             Enter Lab
           </Link>
@@ -56,11 +58,11 @@ export default function HeroSection() {
             </div>
 
             <h1 className="momo-display font-black leading-[.94] tracking-[-0.025em]"
-              style={{ fontSize: "clamp(44px,6.5vw,84px)", maxWidth: "580px", textWrap: "balance", color: "#101828" }}>
+              style={{ fontSize: "clamp(44px,6.5vw,84px)", maxWidth: "580px", textWrap: "balance", color: "var(--text-main)" }}>
               <span style={{ color: "#a50064" }}>MoSpark</span> - Product Led Growth cùng MoMo.vn
             </h1>
 
-            <p className="mt-6 leading-[1.8]" style={{ fontSize: "14.5px", maxWidth: "500px", color: "#667085" }}>
+            <p className="mt-6 leading-[1.8]" style={{ fontSize: "14.5px", maxWidth: "500px", color: "var(--text-sub)" }}>
               Nền tảng AI-powered Web App/Content của MoMo giúp vận hành và tăng trưởng mọi sản phẩm trên nền tảng Web - từ Landing Page, Mini Web, Web Application.
             </p>
 

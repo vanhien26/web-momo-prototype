@@ -52,21 +52,21 @@ export default function MerchantSection() {
         <div className="rv grid grid-cols-1 gap-5 sm:grid-cols-2" style={{ maxWidth: "900px", margin: "0 auto" }}>
 
           {/* BASIC CARD */}
-          <Card className="flex flex-col bg-white" style={{ background: "#fff", borderRadius: "22px", padding: "28px 26px 32px", boxShadow: "0 0 0 1px rgba(255,255,255,.06),0 20px 48px rgba(0,0,0,.22)" }}>
-            <div style={{ fontFamily: "ui-monospace,monospace", fontSize: "8.5px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "10px" }}>5 tính năng</div>
-            <div className="momo-display" style={{ fontSize: "52px", fontWeight: 900, color: "#101828", lineHeight: .92, letterSpacing: "-.04em", marginBottom: "8px" }}>Basic</div>
-            <div style={{ fontSize: "12.5px", lineHeight: 1.6, color: "#667085", marginBottom: "22px", maxWidth: "320px" }}>Trang SME định danh rõ ràng, chuẩn SEO/GEO và tích hợp Google Maps - đủ để được tìm thấy và tạo tin tưởng trước khi ghé.</div>
+          <Card className="flex flex-col bg-white dark:bg-[#131522]" style={{ background: "var(--card-bg)", borderRadius: "22px", padding: "28px 26px 32px", boxShadow: "0 0 0 1px rgba(255,255,255,.06),0 20px 48px rgba(0,0,0,.22)" }}>
+            <div style={{ fontFamily: "ui-monospace,monospace", fontSize: "8.5px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--text-sub)", marginBottom: "10px" }}>5 tính năng</div>
+            <div className="momo-display" style={{ fontSize: "52px", fontWeight: 900, color: "var(--text-main)", lineHeight: .92, letterSpacing: "-.04em", marginBottom: "8px" }}>Basic</div>
+            <div style={{ fontSize: "12.5px", lineHeight: 1.6, color: "var(--text-sub)", marginBottom: "22px", maxWidth: "320px" }}>Trang SME định danh rõ ràng, chuẩn SEO/GEO và tích hợp Google Maps - đủ để được tìm thấy và tạo tin tưởng trước khi ghé.</div>
             <a href="/merchant" target="_blank" className="mb-6 block w-full no-underline">
-              <Button variant="outline" className="w-full bg-[#f3f4f6] text-[#374151] border-[#e5e7eb] hover:bg-[#e5e7eb]" style={{ width: "100%", background: "#f3f4f6", borderColor: "#e5e7eb", color: "#374151", fontWeight: 800 }}>Xem Demo Basic →</Button>
+              <Button variant="outline" className="w-full bg-[#f3f4f6] dark:bg-[#1f2937] text-[#374151] dark:text-[#f3f4f6] border-[#e5e7eb] dark:border-[#374151] hover:bg-[#e5e7eb]" style={{ width: "100%", background: "var(--secondary)", borderColor: "var(--border-color)", color: "var(--text-sub)", fontWeight: 800 }}>Xem Demo Basic →</Button>
             </a>
-            <div style={{ fontSize: "8px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#d1d5db", fontFamily: "ui-monospace,monospace", marginBottom: "14px" }}>Bao gồm</div>
+            <div style={{ fontSize: "8px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--text-sub)", fontFamily: "ui-monospace,monospace", marginBottom: "14px" }}>Bao gồm</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
               {BASIC_FEATURES.map((f) => (
                 <div key={f.title} style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
-                  <CheckIcon/>
-                  <div style={{ fontSize: "12.5px", color: "#374151", lineHeight: 1.5 }}>
-                    <strong style={{ color: "#101828", fontWeight: 700 }}>{f.title}</strong><br/>
-                    <span style={{ fontSize: "11px", color: "#9ca3af" }}>{f.desc}</span>
+                   <CheckIcon/>
+                  <div style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.5 }}>
+                    <strong style={{ color: "var(--text-main)", fontWeight: 700 }}>{f.title}</strong><br/>
+                    <span style={{ fontSize: "11px", color: "var(--text-sub)" }}>{f.desc}</span>
                   </div>
                 </div>
               ))}

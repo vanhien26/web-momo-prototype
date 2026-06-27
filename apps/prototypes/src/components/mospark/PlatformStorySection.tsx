@@ -15,7 +15,7 @@ export default function PlatformStorySection() {
           colorScheme="black"
           align="left"
         />
-        <p className="mt-3 leading-[1.8]" style={{ maxWidth: "640px", fontSize: "14.5px", color: "#667085" }}>
+        <p className="mt-3 leading-[1.8]" style={{ maxWidth: "640px", fontSize: "14.5px", color: "var(--text-sub)" }}>
           Tinh thần chính là Product Led Growth: sản phẩm gặp user ngay tại nơi họ đang tìm kiếm, trước khi user tải app.
         </p>
       </div>

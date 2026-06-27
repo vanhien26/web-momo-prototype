@@ -20,8 +20,11 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <main
-      className="overflow-x-hidden bg-white"
-      style={{ fontFamily: "var(--font-momo-trust-sans), -apple-system, BlinkMacSystemFont, sans-serif" }}
+      className="overflow-x-hidden bg-white dark:bg-[#0d0f16]"
+      style={{
+        fontFamily: "var(--font-momo-trust-sans), -apple-system, BlinkMacSystemFont, sans-serif",
+        background: "var(--section-bg)",
+      }}
     >
       <HeroSection />
       <TickerBar />

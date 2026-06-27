@@ -5,7 +5,7 @@ import HeadingBlock from "@/components/HeadingBlock";
 
 export default function ModulesSection() {
   return (
-    <section className="py-20" style={{ background: "#f8f9fc" }}>
+    <section className="py-20" style={{ background: "var(--modules-bg)" }}>
       <div className="mx-auto px-5 md:px-10" style={{ maxWidth: "1160px" }}>
         <div className="rv mb-10">
           <HeadingBlock
