@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MoSpark GenAI Image Studio</title>
+  <meta name="description" content="Prototype luồng tạo ảnh GenAI theo Page Type và template có ràng buộc brand.">
+  <style>
+    @font-face{font-family:MoMoTrustSans;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:MoMoTrustSans;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:600 800;font-display:swap}
+    @font-face{font-family:MoMoTrustDisplay;src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:700 900;font-display:swap}
+    :root{
+      --pink:#a50064;--pink-2:#d82d8b;--pink-3:#f7a9d2;--pink-soft:#fff0f7;
+      --ink:#17141c;--ink-2:#3f3945;--muted:#706a75;--line:#e8e3e9;--soft:#f7f6f8;
+      --white:#fff;--green:#087f5b;--green-soft:#e9fbf4;--amber:#b25b00;--amber-soft:#fff4e5;
+      --blue:#175cd3;--blue-soft:#eff6ff;--shadow:0 16px 40px rgba(42,25,39,.1);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#f4f3f5;color:var(--ink);font-family:MoMoTrustSans,Arial,sans-serif}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .app{min-height:100vh;display:flex;flex-direction:column}
+    .topbar{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:18px;position:sticky;top:0;z-index:20}
+    .topbar-left{display:flex;align-items:center;gap:12px;min-width:0}.lab-back{display:inline-flex;align-items:center;height:30px;padding:0 9px;border:1px solid var(--line);border-radius:7px;color:var(--muted);font-size:10px;font-weight:800;text-decoration:none;white-space:nowrap;background:#fff}.lab-back:hover{border-color:#d7a2c3;color:var(--pink);background:var(--pink-soft)}
+    .brand{display:flex;align-items:center;gap:11px;min-width:0}
+    .brand-mark{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;box-shadow:0 7px 18px rgba(165,0,100,.24);overflow:hidden;flex:none}.brand-mark img{width:100%;height:100%;display:block;object-fit:contain}
+    .brand-copy strong{display:block;font-size:14px;letter-spacing:-.2px}.brand-copy span{font-size:10px;color:var(--muted)}
+    .top-context{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .context-chip{font-size:10px;font-weight:700;padding:6px 9px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--ink-2)}
+    .context-chip.live{background:var(--green-soft);border-color:#b9ecd8;color:var(--green)}
+    .save-btn{border:0;border-radius:8px;background:var(--pink);color:#fff;font-size:11px;font-weight:800;padding:9px 13px;box-shadow:0 7px 16px rgba(165,0,100,.2)}
+
+    .flowbar{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:4px;padding:0 22px;overflow-x:auto}
+    .flow-step{border:0;background:transparent;color:var(--muted);display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:8px;font-size:10px;font-weight:750;white-space:nowrap}
+    .flow-step .num{width:20px;height:20px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;background:#fff;font-size:9px}
+    .flow-step.active{background:var(--pink-soft);color:var(--pink)}
+    .flow-step.active .num{background:var(--pink);border-color:var(--pink);color:#fff}
+    .flow-step.done .num{background:var(--green-soft);border-color:#b9ecd8;color:var(--green)}
+    .flow-arrow{color:#c5bec8;font-size:12px}
+
+    .workspace{flex:1;display:grid;grid-template-columns:minmax(310px,360px) minmax(0,1fr);gap:14px;padding:14px;min-height:0}
+    .control,.stage{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 18px rgba(27,20,28,.04);min-height:0}
+    .control{display:flex;flex-direction:column;overflow:hidden}
+    .control-head{padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+    .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;color:var(--pink)}
+    .control-head h1{font-family:MoMoTrustDisplay;margin:5px 0 4px;font-size:20px;letter-spacing:-.5px}.control-head p{margin:0;color:var(--muted);font-size:10.5px;line-height:1.5}
+    .panel-scroll{padding:14px;overflow:auto;flex:1}
+    .step-panel{display:none}.step-panel.active{display:block}
+    .section-title{font-size:11px;font-weight:800;margin:0 0 9px;display:flex;justify-content:space-between;align-items:center;gap:8px}.section-title small{font-size:9px;color:var(--muted);font-weight:500}
+    .card-grid{display:grid;gap:8px}
+    .choice-card{border:1.5px solid var(--line);border-radius:10px;padding:11px;background:#fff;text-align:left;display:flex;gap:10px;align-items:flex-start;transition:.15s}
+    .choice-card:hover{border-color:#d7a2c3}.choice-card.selected{border-color:var(--pink);background:var(--pink-soft);box-shadow:0 0 0 3px rgba(165,0,100,.07)}
+    .choice-icon{width:30px;height:30px;border-radius:8px;background:var(--soft);display:grid;place-items:center;font-size:15px;flex:none}.selected .choice-icon{background:#fff;color:var(--pink)}
+    .choice-copy strong{display:block;font-size:11px}.choice-copy span{display:block;font-size:9.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+    .choice-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.mini-tag{font-size:8px;font-weight:750;padding:2px 5px;border-radius:4px;background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+    .selected .mini-tag{background:#fff;color:var(--pink);border-color:#efc6df}
+    .divider{height:1px;background:var(--line);margin:14px 0}
+    .note{border-radius:9px;padding:10px 11px;background:var(--blue-soft);color:#284f8d;font-size:9.5px;line-height:1.5;border:1px solid #d6e7ff}
+    .template-hero{border:1.5px solid var(--pink);background:linear-gradient(145deg,#fff5fa,#fff);border-radius:11px;padding:11px}
+    .template-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.template-head strong{font-size:11px}.lock-badge{font-size:8px;font-weight:800;color:var(--pink);background:#fff;border:1px solid #efc6df;border-radius:999px;padding:3px 6px}
+    .template-thumb{aspect-ratio:3.2/1;border-radius:7px;background:linear-gradient(120deg,#6b003f,#d82d8b);margin:9px 0;position:relative;overflow:hidden}
+    .template-thumb:before{content:'';position:absolute;inset:14% 54% 14% 5%;border:1px dashed rgba(255,255,255,.65);border-radius:4px}.template-thumb:after{content:'';position:absolute;right:8%;top:14%;width:31%;height:72%;background:linear-gradient(145deg,#f4badb,#fff);border-radius:50% 35% 46% 45%;transform:rotate(-8deg);box-shadow:-18px 14px 0 rgba(255,255,255,.18)}
+    .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.spec{border-radius:7px;background:var(--soft);padding:7px}.spec span{display:block;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px}.spec strong{font-size:10px;display:block;margin-top:2px}
+    .layer-list{display:grid;gap:6px}.layer{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff}.layer-icon{width:25px;height:25px;border-radius:6px;background:var(--soft);display:grid;place-items:center;font-size:11px}.layer-copy{flex:1}.layer-copy strong{font-size:10px;display:block}.layer-copy span{font-size:8.5px;color:var(--muted)}.layer-state{font-size:8px;font-weight:800;color:var(--muted)}.layer-state.ai{color:var(--pink);background:var(--pink-soft);padding:3px 5px;border-radius:4px}
+    .field{display:grid;gap:5px;margin-bottom:10px}.field label{font-size:9px;font-weight:800;color:var(--ink-2)}.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:9px 10px;font-size:10.5px;outline:0}.field textarea{min-height:84px;resize:vertical;line-height:1.5}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(165,0,100,.07)}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.prompt-tokens{display:flex;flex-wrap:wrap;gap:5px}.prompt-token{border:1px solid var(--line);background:#fff;color:var(--ink-2);font-size:8.5px;font-weight:700;padding:5px 7px;border-radius:999px}.prompt-token.on{background:var(--pink-soft);color:var(--pink);border-color:#efc6df}
+    .negative{background:var(--amber-soft);border:1px solid #ffdda9;color:#8d4a00;border-radius:8px;padding:9px;font-size:9px;line-height:1.45}
+    .philosophy-note{margin:9px 0 10px;background:linear-gradient(145deg,#fff0f7,#fff);border-color:#efc6df;color:#6f174d}.philosophy-note a{color:var(--pink);font-weight:800;text-decoration:none}.philosophy-note a:hover{text-decoration:underline}
+    .primary-action,.secondary-action{width:100%;border-radius:9px;padding:10px 12px;font-size:10.5px;font-weight:800}.primary-action{border:0;background:var(--pink);color:#fff;box-shadow:0 8px 18px rgba(165,0,100,.18)}.primary-action:disabled{opacity:.55;cursor:not-allowed}.secondary-action{border:1px solid var(--line);background:#fff;color:var(--ink-2)}
+    .control-actions{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:8px}.control-actions button{flex:1}
+    .progress-card{border:1px solid var(--line);border-radius:10px;padding:11px;background:var(--soft)}
+    .progress-head{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800}.progress-head span:last-child{color:var(--pink)}
+    .progress-track{height:6px;background:#e8e3e9;border-radius:999px;overflow:hidden;margin:8px 0}.progress-fill{width:0;height:100%;background:linear-gradient(90deg,var(--pink),#f264b5);transition:width .45s;border-radius:inherit}
+    .progress-status{font-size:8.5px;color:var(--muted)}
+    .variant-list{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.variant{border:1.5px solid var(--line);border-radius:9px;padding:5px;background:#fff}.variant.selected{border-color:var(--pink);box-shadow:0 0 0 2px rgba(165,0,100,.08)}.variant-art{aspect-ratio:1.55;border-radius:6px;position:relative;overflow:hidden;background-color:#a50064;background-image:url('../assets/genai/kinetic-assurance-key-visual.png');background-size:auto 100%;background-position:right center;background-repeat:no-repeat}.variant-art.v2{filter:hue-rotate(26deg) saturate(.82) brightness(.94);background-color:#70105b}.variant-art.v3{filter:hue-rotate(68deg) saturate(.9) brightness(1.02);background-color:#4300a3}.variant-name{font-size:8.5px;font-weight:800;margin-top:5px}.variant-score{font-size:8px;color:var(--green);margin-top:2px}
+    .gate-summary{display:flex;align-items:center;gap:11px;padding:10px;border-radius:10px;background:var(--green-soft);border:1px solid #b9ecd8}.score-ring{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) 0 96%,#cce9df 96%);position:relative;font-weight:900;font-size:11px;color:var(--green)}.score-ring:before{content:'';position:absolute;inset:5px;background:var(--green-soft);border-radius:50%}.score-ring span{position:relative}.gate-summary strong{font-size:11px;display:block}.gate-summary p{font-size:8.5px;color:#356e5b;margin:3px 0 0;line-height:1.4}
+    .check-list{display:grid;gap:6px;margin-top:10px}.check{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px}.check-dot{width:20px;height:20px;border-radius:6px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-size:10px;font-weight:900}.check-copy{flex:1}.check-copy strong{font-size:9.5px;display:block}.check-copy span{font-size:8px;color:var(--muted)}.check-result{font-size:8px;color:var(--green);font-weight:800}
+    .audit{border-left:2px solid var(--line);margin:12px 0 0 7px;padding-left:12px;display:grid;gap:10px}.audit-item{position:relative}.audit-item:before{content:'';position:absolute;width:7px;height:7px;border-radius:50%;background:var(--green);left:-16.5px;top:3px}.audit-item strong{font-size:9px;display:block}.audit-item span{font-size:8px;color:var(--muted)}
+
+    .stage{display:flex;flex-direction:column;overflow:hidden}
+    .stage-head{height:54px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 15px;gap:12px}.stage-title strong{font-size:11px;display:block}.stage-title span{font-size:8.5px;color:var(--muted)}
+    .stage-tools{display:flex;align-items:center;gap:6px}.tool-btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 8px;font-size:8.5px;font-weight:750;color:var(--ink-2)}.tool-btn.active{background:var(--pink-soft);color:var(--pink);border-color:#efc6df}
+    .canvas-wrap{flex:1;min-height:340px;background-color:#f6f4f7;background-image:radial-gradient(#d8d1da 1px,transparent 1px);background-size:16px 16px;padding:24px;display:flex;align-items:center;justify-content:center;position:relative;overflow:auto}
+    .canvas-scale{width:min(100%,1040px);position:relative}
+    .artboard{aspect-ratio:3.2/1;border-radius:8px;overflow:hidden;position:relative;background:linear-gradient(118deg,#4d0030 0%,#a50064 47%,#e12d92 100%);box-shadow:var(--shadow);isolation:isolate}
+    .artboard:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 76% 44%,rgba(255,255,255,.18),transparent 31%),linear-gradient(105deg,transparent 45%,rgba(255,255,255,.08));z-index:-1}
+    .canvas-art-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:3;pointer-events:none;transition:filter .25s,opacity .25s}.variant-2 .canvas-art-layer{filter:hue-rotate(26deg) saturate(.82) brightness(.94)}.variant-3 .canvas-art-layer{filter:hue-rotate(68deg) saturate(.9) brightness(1.02)}
+    .brand-pattern{position:absolute;right:-3%;top:-28%;width:47%;height:166%;opacity:.34;background:repeating-linear-gradient(132deg,transparent 0 22px,rgba(255,255,255,.22) 23px 25px);transform:skewX(-8deg);pointer-events:none}
+    .hero-copy{position:absolute;left:5.3%;top:13%;width:42%;height:74%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;color:#fff;z-index:5}
+    .campaign-kicker{font-size:clamp(7px,1vw,13px);font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85;margin-bottom:1.6%}.hero-copy h2{font-family:MoMoTrustDisplay;margin:0;width:90%;font-size:clamp(19px,3.1vw,48px);line-height:.95;letter-spacing:-.04em}.hero-copy p{font-size:clamp(7px,1.1vw,15px);line-height:1.3;margin:2.5% 0 3.5%;width:78%;opacity:.9}.hero-cta{border:0;border-radius:999px;background:#fff;color:var(--pink);font-size:clamp(7px,.9vw,12px);font-weight:900;padding:2.2% 5%}.momo-lock{position:absolute;left:5.3%;bottom:8%;z-index:6;display:flex;align-items:center}.momo-lock img{width:clamp(18px,2.4vw,34px);height:clamp(18px,2.4vw,34px);display:block;border-radius:22%;box-shadow:0 6px 14px rgba(49,0,31,.28)}
+    .artboard.variant-2{background:linear-gradient(118deg,#241027 0%,#70105b 48%,#a85bdb 100%)}
+    .artboard.variant-3{background:linear-gradient(118deg,#32007b 0%,#8d1f9f 48%,#e12d92 100%)}
+    .artboard.image-only .hero-copy,.artboard.image-only .momo-lock,.artboard.image-only .brand-pattern{opacity:.13}
+    .safe-layer{position:absolute;inset:4%;z-index:12;pointer-events:none;opacity:0;transition:.2s}.show-guides .safe-layer{opacity:1}.safe-border{position:absolute;inset:0;border:1px dashed rgba(255,255,255,.78);border-radius:4px}.text-zone{position:absolute;left:0;top:0;width:46%;height:100%;background:rgba(0,111,238,.08);border:1px solid rgba(147,207,255,.85)}.image-zone{position:absolute;right:0;top:0;width:53%;height:100%;background:rgba(255,193,7,.08);border:1px solid rgba(255,226,137,.85)}.zone-label{position:absolute;top:5px;left:6px;background:#fff;color:#2563a6;border-radius:3px;padding:2px 4px;font-size:clamp(5px,.6vw,8px);font-weight:800}.image-zone .zone-label{color:#8a5500}
+    .canvas-badge{position:absolute;left:0;top:-19px;font-size:8px;color:var(--muted);background:rgba(255,255,255,.82);padding:3px 6px;border-radius:4px}.canvas-legend{position:absolute;right:0;bottom:-25px;display:flex;gap:5px}.legend{font-size:7.5px;font-weight:750;background:#fff;border:1px solid var(--line);padding:3px 6px;border-radius:4px}.legend.ai{color:var(--pink);border-color:#efc6df}.legend.locked{color:var(--blue);border-color:#cfe2ff}
+    .stage-foot{min-height:84px;border-top:1px solid var(--line);padding:11px 14px;display:grid;grid-template-columns:1.1fr .9fr;gap:12px;background:#fff}.composition{display:flex;align-items:center;gap:8px}.comp-item{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px}.comp-item span{display:block;font-size:7.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}.comp-item strong{font-size:9.5px;display:block;margin-top:3px}.comp-plus{font-size:15px;color:var(--muted)}.gate-mini{display:flex;align-items:center;gap:9px;border-left:1px solid var(--line);padding-left:12px}.gate-mini .score-ring{width:40px;height:40px}.gate-mini strong{font-size:10px}.gate-mini span{font-size:8px;color:var(--muted);display:block;margin-top:2px}
+    .toast{position:fixed;right:18px;bottom:18px;background:#17141c;color:#fff;border-radius:10px;padding:11px 13px;font-size:10px;font-weight:700;box-shadow:0 12px 35px rgba(0,0,0,.24);transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;z-index:50}.toast.show{transform:translateY(0);opacity:1}.toast b{color:#8af0c8}
+    @media(max-width:900px){.workspace{grid-template-columns:1fr}.control{min-height:480px}.stage{min-height:560px}.top-context .context-chip{display:none}.flowbar{padding:0 12px}.flow-step{padding:7px}.flow-step .label{display:none}.flow-arrow{display:none}}
+    @media(max-width:560px){.workspace{padding:8px}.canvas-wrap{padding:24px 10px}.stage-foot{grid-template-columns:1fr}.gate-mini{border-left:0;padding-left:0}.field-row{grid-template-columns:1fr}.topbar{padding:0 12px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <a class="lab-back" href="../lab.html" target="_top">← Lab</a>
+        <div class="brand">
+          <div class="brand-mark"><img src="../assets/images/momo-logo.svg" alt="MoMo"></div>
+          <div class="brand-copy"><strong>MoSpark GenAI Image</strong><span>Template constrained image studio</span></div>
+        </div>
+      </div>
+      <div class="top-context">
+        <span class="context-chip">Landing Page</span>
+        <span class="context-chip">Hero Banner 1920 x 600</span>
+        <span class="context-chip">Canvas Design · Kinetic Assurance</span>
+        <span class="context-chip live">Brand Guard active</span>
+        <button class="save-btn" id="saveDraft" type="button">Lưu bản nháp</button>
+      </div>
+    </header>
+
+    <nav class="flowbar" aria-label="Quy trình tạo ảnh">
+      <button class="flow-step active" data-step="1" type="button"><span class="num">1</span><span class="label">Page Type</span></button><span class="flow-arrow">›</span>
+      <button class="flow-step" data-step="2" type="button"><span class="num">2</span><span class="label">Template Rules</span></button><span class="flow-arrow">›</span>
+      <button class="flow-step" data-step="3" type="button"><span class="num">3</span><span class="label">Creative Brief</span></button><span class="flow-arrow">›</span>
+      <button class="flow-step" data-step="4" type="button"><span class="num">4</span><span class="label">Generate</span></button><span class="flow-arrow">›</span>
+      <button class="flow-step" data-step="5" type="button"><span class="num">5</span><span class="label">Quality Gate</span></button>
+    </nav>
+
+    <main class="workspace">
+      <section class="control">
+        <div class="control-head">
+          <span class="eyebrow" id="stepEyebrow">Bước 1 / 5</span>
+          <h1 id="stepTitle">Chọn đúng Page Type</h1>
+          <p id="stepDesc">Page Type quyết định tỷ lệ khung, template được phép dùng và quy tắc responsive.</p>
+        </div>
+        <div class="panel-scroll">
+          <div class="step-panel active" data-panel="1">
+            <h2 class="section-title">Page Type <small>1 được chọn</small></h2>
+            <div class="card-grid">
+              <button class="choice-card selected" type="button">
+                <span class="choice-icon">▱</span><span class="choice-copy"><strong>Landing Page</strong><span>Hero ưu đãi cho acquisition và campaign.</span><span class="choice-meta"><i class="mini-tag">Desktop first</i><i class="mini-tag">Web to App</i></span></span>
+              </button>
+              <button class="choice-card" type="button" data-alternative="Blog Article"><span class="choice-icon">▤</span><span class="choice-copy"><strong>Blog Article</strong><span>Cover ảnh nội dung, ưu tiên subject và SEO.</span></span></button>
+              <button class="choice-card" type="button" data-alternative="Merchant Detail"><span class="choice-icon">⌂</span><span class="choice-copy"><strong>Merchant Detail</strong><span>Ảnh storefront, món nổi bật và trust signal.</span></span></button>
+            </div>
+            <div class="divider"></div>
+            <h2 class="section-title">Output slot</h2>
+            <div class="template-hero">
+              <div class="template-head"><strong>Hero Banner</strong><span class="lock-badge">Khuyến nghị</span></div>
+              <div class="template-thumb"></div>
+              <div class="spec-grid"><div class="spec"><span>Canvas</span><strong>1920 x 600</strong></div><div class="spec"><span>Ratio</span><strong>16 : 5</strong></div><div class="spec"><span>Responsive</span><strong>Desktop + Tablet</strong></div><div class="spec"><span>Asset slot</span><strong>Right 53%</strong></div></div>
+            </div>
+            <div class="divider"></div>
+            <div class="note"><strong>Tại sao chọn Hero Banner?</strong><br>Template có vùng copy và logo cố định, còn AI chỉ sinh key visual. Đây là case rõ nhất để kiểm soát brand và giảm lỗi text trong ảnh.</div>
+          </div>
+
+          <div class="step-panel" data-panel="2">
+            <h2 class="section-title">Template được duyệt <small>Promo Split Hero 01</small></h2>
+            <div class="template-hero">
+              <div class="template-head"><strong>Promo Split Hero 01</strong><span class="lock-badge">Version 2.4</span></div>
+              <div class="template-thumb"></div>
+              <div class="spec-grid"><div class="spec"><span>Canvas</span><strong>1920 x 600</strong></div><div class="spec"><span>Safe margin</span><strong>96 px</strong></div><div class="spec"><span>Copy zone</span><strong>Left 42%</strong></div><div class="spec"><span>Visual zone</span><strong>Right 53%</strong></div></div>
+            </div>
+            <div class="divider"></div>
+            <h2 class="section-title">Layer contract <small>4 khóa, 1 tạo bởi AI</small></h2>
+            <div class="layer-list">
+              <div class="layer"><span class="layer-icon">T</span><span class="layer-copy"><strong>Headline + CTA</strong><span>Content từ CMS, không rasterize</span></span><span class="layer-state">LOCKED</span></div>
+              <div class="layer"><span class="layer-icon">M</span><span class="layer-copy"><strong>MoMo logo</strong><span>Bottom left, clear space 24 px</span></span><span class="layer-state">LOCKED</span></div>
+              <div class="layer"><span class="layer-icon">◫</span><span class="layer-copy"><strong>Brand pattern</strong><span>Opacity 34%, blend overlay</span></span><span class="layer-state">LOCKED</span></div>
+              <div class="layer"><span class="layer-icon">◐</span><span class="layer-copy"><strong>Color tokens</strong><span>Pink 600, 700 và semantic accent</span></span><span class="layer-state">LOCKED</span></div>
+              <div class="layer"><span class="layer-icon">✦</span><span class="layer-copy"><strong>AI key visual</strong><span>Không text, nền trong hoặc matching tone</span></span><span class="layer-state ai">GENERATIVE</span></div>
+            </div>
+            <div class="divider"></div>
+            <div class="note">MoSpark gửi riêng vùng image slot cùng mask và art direction tới model. Sau khi sinh, hệ thống compositing mới ghép headline, CTA, logo và pattern.</div>
+          </div>
+
+          <div class="step-panel" data-panel="3">
+            <h2 class="section-title">Creative brief <small>Chỉ mô tả key visual</small></h2>
+            <div class="field"><label for="campaign">Campaign / use case</label><input id="campaign" value="Hoàn tiền 500K khi thanh toán hóa đơn"></div>
+            <div class="field-row"><div class="field"><label for="audience">Đối tượng</label><select id="audience"><option>Người dùng mới 22 - 35</option><option>Người dùng hiện hữu</option><option>Merchant SME</option></select></div><div class="field"><label for="objective">Mục tiêu</label><select id="objective"><option>Web to App conversion</option><option>Awareness</option><option>Engagement</option></select></div></div>
+            <div class="field"><label for="subject">Chủ thể cần sinh</label><textarea id="subject">Smartphone hiển thị ứng dụng MoMo, hai thẻ voucher và đồng xu cashback đang bay, góc nhìn 3/4, có chiều sâu, tập trung ở nửa phải.</textarea></div>
+            <div class="field"><label>Art direction</label><div class="prompt-tokens"><button class="prompt-token on" type="button">Editorial systems</button><button class="prompt-token on" type="button">Premium lighting</button><button class="prompt-token on" type="button">MoMo pink</button><button class="prompt-token" type="button">Photorealistic</button><button class="prompt-token" type="button">Flat illustration</button></div></div>
+            <div class="note philosophy-note"><strong>Kinetic Assurance</strong><br>Visual philosophy từ canvas-design: khối chủ thể lớn, quỹ đạo lặp, màu magenta có kiểm soát và khoảng thở dành cho copy zone. <a href="../assets/genai/kinetic-assurance.md" target="_blank" rel="noopener">Xem philosophy</a></div>
+            <div class="negative"><strong>Negative constraints</strong><br>Không chữ, không logo tự sinh, không bàn tay lỗi, không crop chủ thể, không chi tiết tài chính nhạy cảm.</div>
+            <div class="divider"></div>
+            <button class="primary-action" id="generateFromBrief" type="button">✦ Sinh 3 phương án</button>
+          </div>
+
+          <div class="step-panel" data-panel="4">
+            <h2 class="section-title">Generation run <small>IMG-0626-184</small></h2>
+            <div class="progress-card">
+              <div class="progress-head"><span id="progressLabel">Sẵn sàng tạo ảnh</span><span id="progressPct">0%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+              <div class="progress-status" id="progressStatus">Brief và template contract đã sẵn sàng.</div>
+            </div>
+            <div class="variant-list" id="variantList">
+              <button class="variant selected" type="button" data-variant="1"><div class="variant-art v1"></div><div class="variant-name">V1 · Premium Pink</div><div class="variant-score">Brand fit 96</div></button>
+              <button class="variant" type="button" data-variant="2"><div class="variant-art v2"></div><div class="variant-name">V2 · Violet Gold</div><div class="variant-score">Brand fit 92</div></button>
+              <button class="variant" type="button" data-variant="3"><div class="variant-art v3"></div><div class="variant-name">V3 · Tech Blue</div><div class="variant-score">Brand fit 89</div></button>
+            </div>
+            <div class="divider"></div>
+            <h2 class="section-title">Prompt package <small>Model facing</small></h2>
+            <div class="layer-list">
+              <div class="layer"><span class="layer-icon">1</span><span class="layer-copy"><strong>Creative intent</strong><span>Campaign subject + audience + objective</span></span><span class="layer-state">JSON</span></div>
+              <div class="layer"><span class="layer-icon">2</span><span class="layer-copy"><strong>Visual philosophy</strong><span>Kinetic Assurance from canvas-design</span></span><span class="layer-state">MD</span></div>
+              <div class="layer"><span class="layer-icon">3</span><span class="layer-copy"><strong>Template mask</strong><span>Transparent image slot, right 53%</span></span><span class="layer-state">PNG</span></div>
+              <div class="layer"><span class="layer-icon">4</span><span class="layer-copy"><strong>Brand reference</strong><span>Palette, lighting, pattern sample</span></span><span class="layer-state">REF</span></div>
+            </div>
+            <div class="divider"></div>
+            <button class="primary-action" id="goGate" type="button">Kiểm tra Quality Gate</button>
+          </div>
+
+          <div class="step-panel" data-panel="5">
+            <div class="gate-summary"><div class="score-ring"><span id="gateScore">96</span></div><div><strong>Sẵn sàng đưa vào Page Builder</strong><p id="gateCopy">Variant 1 vượt 6/6 rule bắt buộc của template.</p></div></div>
+            <div class="check-list">
+              <div class="check"><span class="check-dot">✓</span><span class="check-copy"><strong>Canvas + aspect ratio</strong><span>1920 x 600, đúng 16:5</span></span><span class="check-result">PASS</span></div>
+              <div class="check"><span class="check-dot">✓</span><span class="check-copy"><strong>Text safe zone</strong><span>0 object overlap vùng copy 42%</span></span><span class="check-result">PASS</span></div>
+              <div class="check"><span class="check-dot">✓</span><span class="check-copy"><strong>Logo integrity</strong><span>Logo ghép từ source, không do AI sinh</span></span><span class="check-result">PASS</span></div>
+              <div class="check"><span class="check-dot">✓</span><span class="check-copy"><strong>Brand color distance</strong><span>Delta E trung bình 4.2</span></span><span class="check-result">PASS</span></div>
+              <div class="check"><span class="check-dot">✓</span><span class="check-copy"><strong>Content safety</strong><span>Không text giả, PII hoặc claim nhạy cảm</span></span><span class="check-result">PASS</span></div>
+              <div class="check"><span class="check-dot">✓</span><span class="check-copy"><strong>Responsive crop</strong><span>Subject giữ đủ ở tablet 1280 x 480</span></span><span class="check-result">PASS</span></div>
+            </div>
+            <div class="audit"><div class="audit-item"><strong>18:42 · Generation completed</strong><span>3 variants, 14.8s, quality high</span></div><div class="audit-item"><strong>18:43 · Auto gate completed</strong><span>Variant 1 được đề xuất theo Brand Fit</span></div><div class="audit-item"><strong>Chờ PM / Content approve</strong><span>Asset chưa publish ra production</span></div></div>
+            <div class="divider"></div>
+            <button class="primary-action" id="approveAsset" type="button">Duyệt và lưu vào Asset Library</button>
+          </div>
+        </div>
+        <div class="control-actions"><button class="secondary-action" id="backStep" type="button">Quay lại</button><button class="primary-action" id="nextStep" type="button">Tiếp tục</button></div>
+      </section>
+
+      <section class="stage">
+        <div class="stage-head">
+          <div class="stage-title"><strong>Promo Split Hero 01</strong><span>Landing Page · Hero Banner · 1920 x 600</span></div>
+          <div class="stage-tools"><button class="tool-btn" id="imageOnly" type="button">AI layer</button><button class="tool-btn" id="toggleGuides" type="button">Safe zones</button><button class="tool-btn active" type="button">40%</button></div>
+        </div>
+        <div class="canvas-wrap">
+          <div class="canvas-scale">
+            <span class="canvas-badge">1920 x 600 px · desktop preview</span>
+            <div class="artboard" id="artboard">
+              <div class="brand-pattern"></div>
+              <div class="hero-copy"><span class="campaign-kicker">Ưu đãi tháng 6</span><h2>Thanh toán hóa đơn, hoàn đến 500K</h2><p>Mở MoMo, thanh toán tiện lợi và nhận hoàn tiền ngay hôm nay.</p><button class="hero-cta" type="button">Nhận ưu đãi</button></div>
+              <div class="momo-lock"><img src="../assets/images/momo-logo.svg" alt="MoMo"></div>
+              <img class="canvas-art-layer" src="../assets/genai/kinetic-assurance-key-visual.png" alt="Key visual Kinetic Assurance do canvas-design tạo, không chứa chữ hoặc logo">
+              <div class="safe-layer"><div class="safe-border"></div><div class="text-zone"><span class="zone-label">LOCKED COPY ZONE · 42%</span></div><div class="image-zone"><span class="zone-label">AI IMAGE SLOT · 53%</span></div></div>
+            </div>
+            <div class="canvas-legend"><span class="legend locked">Locked brand layer</span><span class="legend ai">AI generated layer</span></div>
+          </div>
+        </div>
+        <div class="stage-foot">
+          <div class="composition"><div class="comp-item"><span>Canvas design</span><strong>Kinetic Assurance · no text</strong></div><span class="comp-plus">+</span><div class="comp-item"><span>Template</span><strong>Copy + logo + pattern</strong></div><span class="comp-plus">=</span><div class="comp-item"><span>Final asset</span><strong>Web ready WebP</strong></div></div>
+          <div class="gate-mini"><div class="score-ring"><span id="miniGateScore">96</span></div><div><strong>Brand Quality Gate</strong><span id="miniGateLabel">6/6 rules passed · Variant 1</span></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast"><b>Đã lưu</b> Bản nháp GenAI Image được cập nhật.</div>
+  <script>
+    const stepCopy={
+      1:['Bước 1 / 5','Chọn đúng Page Type','Page Type quyết định tỷ lệ khung, template được phép dùng và quy tắc responsive.'],
+      2:['Bước 2 / 5','Khóa Template Rules','AI chỉ được sinh trong vùng image slot. Copy, logo, pattern và color token do template kiểm soát.'],
+      3:['Bước 3 / 5','Viết Creative Brief','Mô tả chủ thể và art direction. Không đưa headline hoặc logo vào prompt tạo ảnh.'],
+      4:['Bước 4 / 5','Sinh và chọn phương án','Mỗi variant dùng cùng template mask để có thể thay trực tiếp mà không phá layout.'],
+      5:['Bước 5 / 5','Duyệt Quality Gate','Chỉ asset đạt đủ rule bắt buộc mới được lưu vào Asset Library và gửi sang Page Builder.']
+    };
+    let currentStep=1;
+    let selectedVariant=1;
+    const variantScores={1:96,2:92,3:89};
+    const artboard=document.getElementById('artboard');
+    const toast=document.getElementById('toast');
+    function showToast(message){toast.innerHTML=message;toast.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
+    function setStep(step){
+      currentStep=Math.max(1,Math.min(5,Number(step)));
+      document.querySelectorAll('.step-panel').forEach(p=>p.classList.toggle('active',Number(p.dataset.panel)===currentStep));
+      document.querySelectorAll('.flow-step').forEach(btn=>{const n=Number(btn.dataset.step);btn.classList.toggle('active',n===currentStep);btn.classList.toggle('done',n<currentStep)});
+      document.getElementById('stepEyebrow').textContent=stepCopy[currentStep][0];
+      document.getElementById('stepTitle').textContent=stepCopy[currentStep][1];
+      document.getElementById('stepDesc').textContent=stepCopy[currentStep][2];
+      document.getElementById('backStep').disabled=currentStep===1;
+      document.getElementById('nextStep').textContent=currentStep===5?'Hoàn tất':'Tiếp tục';
+      artboard.classList.toggle('show-guides',currentStep===2);
+    }
+    document.querySelectorAll('.flow-step').forEach(btn=>btn.addEventListener('click',()=>setStep(btn.dataset.step)));
+    document.getElementById('backStep').addEventListener('click',()=>setStep(currentStep-1));
+    document.getElementById('nextStep').addEventListener('click',()=>currentStep===5?showToast('<b>Hoàn tất</b> Asset sẵn sàng cho Page Builder.'):setStep(currentStep+1));
+    document.querySelectorAll('[data-alternative]').forEach(btn=>btn.addEventListener('click',()=>showToast('<b>Demo scope</b> Luồng chi tiết đang cố định cho Landing Page Hero Banner.')));
+    document.querySelectorAll('.prompt-token').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('on')));
+    document.getElementById('toggleGuides').addEventListener('click',e=>{e.currentTarget.classList.toggle('active');artboard.classList.toggle('show-guides')});
+    document.getElementById('imageOnly').addEventListener('click',e=>{e.currentTarget.classList.toggle('active');artboard.classList.toggle('image-only')});
+    document.getElementById('saveDraft').addEventListener('click',()=>showToast('<b>Đã lưu</b> Bản nháp GenAI Image được cập nhật.'));
+    function runGeneration(){
+      setStep(4);
+      const fill=document.getElementById('progressFill'),pct=document.getElementById('progressPct'),status=document.getElementById('progressStatus'),label=document.getElementById('progressLabel');
+      const stages=[[18,'Đóng gói brief và brand reference'],[42,'Áp template mask 1920 x 600'],[73,'Sinh 3 key visual không chứa text'],[100,'Compositing và chấm Brand Fit']];
+      let i=0;label.textContent='Đang tạo 3 phương án';
+      const tick=()=>{const [value,text]=stages[i];fill.style.width=value+'%';pct.textContent=value+'%';status.textContent=text;i++;if(i<stages.length)setTimeout(tick,420);else setTimeout(()=>{label.textContent='Đã tạo xong';status.textContent='Variant 1 được đề xuất với Brand Fit 96.';showToast('<b>Generation complete</b> Đã tạo 3 phương án trong 14.8 giây.')},420)};tick();
+    }
+    document.getElementById('generateFromBrief').addEventListener('click',runGeneration);
+    document.querySelectorAll('.variant').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.variant').forEach(v=>v.classList.remove('selected'));btn.classList.add('selected');selectedVariant=Number(btn.dataset.variant);artboard.classList.remove('variant-2','variant-3');if(selectedVariant===2)artboard.classList.add('variant-2');if(selectedVariant===3)artboard.classList.add('variant-3');document.getElementById('miniGateScore').textContent=variantScores[selectedVariant];document.getElementById('miniGateLabel').textContent='6/6 rules passed · Variant '+selectedVariant}));
+    document.getElementById('goGate').addEventListener('click',()=>{document.getElementById('gateScore').textContent=variantScores[selectedVariant];document.getElementById('gateCopy').textContent='Variant '+selectedVariant+' vượt 6/6 rule bắt buộc của template.';setStep(5)});
+    document.getElementById('approveAsset').addEventListener('click',()=>showToast('<b>Đã duyệt</b> IMG-0626-184-V'+selectedVariant+' đã vào Asset Library.'));
+    setStep(1);
+  </script>
+</body>
+</html>

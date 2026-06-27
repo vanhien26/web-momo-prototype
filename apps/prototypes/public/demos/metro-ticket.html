@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mua vé Metro HCM</title>
+  <meta name="description" content="Prototype luồng mua vé Metro Hồ Chí Minh: chọn tuyến, chọn vé, thanh toán và nhận QR lên tàu.">
+  <link rel="stylesheet" href="metro-ticket.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/lab.html" target="_top" aria-label="Về Prototype Store">
+      <span class="brand-mark"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block"></span>
+      <span><strong>Metro Ticket</strong><small>Prototype for Dev</small></span>
+    </a>
+    <nav aria-label="Điều hướng trang">
+      <a href="/lab.html" target="_top">← Lab</a>
+      <a href="../viewer.html?demo=metro" target="_top">Open viewer</a>
+      <a href="#flow">Luồng mua vé</a>
+      <a href="#handoff">Dev notes</a>
+      <span class="status"><i></i>Flow sandbox</span>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Transit payment flow</span>
+        <h1>Mua vé Metro HCM trong 1 luồng ngắn, rõ, và đủ cho Dev implement.</h1>
+        <p>
+          Prototype này tập trung vào core flow: chọn ga đi và ga đến, chọn loại vé, thanh toán,
+          rồi nhận QR để vào cổng. Nội dung là mô phỏng thiết kế sản phẩm, không phải dữ liệu live.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div><strong>4</strong><span>bước chính</span></div>
+        <div><strong>5</strong><span>loại vé</span></div>
+        <div><strong>2</strong><span>phương thức pay</span></div>
+      </div>
+    </section>
+
+    <section class="flow-strip" id="flow">
+      <article class="flow-card active">
+        <span>01</span>
+        <strong>Chọn hành trình</strong>
+        <p>Đi từ ga nào, đến ga nào, đi ngày giờ nào.</p>
+      </article>
+      <article class="flow-card">
+        <span>02</span>
+        <strong>Chọn loại vé</strong>
+        <p>1 lượt, khứ hồi, 1 ngày, 3 ngày hoặc tháng.</p>
+      </article>
+      <article class="flow-card">
+        <span>03</span>
+        <strong>Thanh toán</strong>
+        <p>MoMo balance hoặc thẻ ngân hàng liên kết.</p>
+      </article>
+      <article class="flow-card">
+        <span>04</span>
+        <strong>Nhận QR</strong>
+        <p>Xuất vé điện tử để dùng tại cổng metro.</p>
+      </article>
+    </section>
+
+    <section class="workspace">
+      <div class="left-col">
+        <article class="panel" id="journeyPanel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">Route setup</span>
+              <h2>Thiết lập chuyến đi</h2>
+            </div>
+            <span class="soft-pill">Line 1: Bến Thành - Suối Tiên</span>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Ga đi</span>
+              <select id="originStation"></select>
+            </label>
+            <label>
+              <span>Ga đến</span>
+              <select id="destinationStation"></select>
+            </label>
+            <label>
+              <span>Ngày đi</span>
+              <input id="rideDate" type="date">
+            </label>
+            <label>
+              <span>Giờ đi</span>
+              <input id="rideTime" type="time" value="08:15">
+            </label>
+          </div>
+
+          <div class="travel-summary">
+            <div>
+              <small>Khoảng cách mô phỏng</small>
+              <strong id="segmentCount">0 trạm</strong>
+            </div>
+            <div>
+              <small>Thời gian ước tính</small>
+              <strong id="travelTime">0 phút</strong>
+            </div>
+            <div>
+              <small>Ghi chú</small>
+              <strong>Không nối dữ liệu live</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel" id="ticketPanel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">Ticket choice</span>
+              <h2>Chọn loại vé</h2>
+            </div>
+            <span class="soft-pill">Prototype price ladder</span>
+          </div>
+
+          <div class="ticket-grid" id="ticketOptions"></div>
+        </article>
+
+        <article class="panel" id="paymentPanel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">Payment</span>
+              <h2>Phương thức thanh toán</h2>
+            </div>
+            <span class="soft-pill">Secure handoff</span>
+          </div>
+
+          <div class="payment-tabs" id="paymentTabs"></div>
+          <div class="payment-copy" id="paymentCopy"></div>
+        </article>
+
+        <article class="panel" id="handoff">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">Dev handoff</span>
+              <h2>Prototype notes cho đội Dev</h2>
+            </div>
+          </div>
+          <ul class="handoff-list">
+            <li>Core flow: route select -> ticket select -> payment -> QR ticket.</li>
+            <li>State cần có: empty, invalid route, fare update, success, expired QR.</li>
+            <li>Component cần tách: station picker, ticket card, payment sheet, ticket wallet.</li>
+            <li>Acceptance: đổi ga phải làm giá và thời lượng cập nhật ngay, không reload page.</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="right-col">
+        <article class="summary-card">
+          <div class="summary-top">
+            <div>
+              <span class="panel-kicker">Fare preview</span>
+              <h2 id="fareTitle">Vé 1 lượt</h2>
+              <p id="fareSubtitle">Dành cho 1 hành trình từ trung tâm tới ga cuối.</p>
+            </div>
+            <div class="fare-badge">
+              <small>Tạm tính</small>
+              <strong id="fareValue">12.000 đ</strong>
+            </div>
+          </div>
+
+          <div class="qr-ticket">
+            <div class="qr-visual">
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+              <div class="qr-block"></div>
+            </div>
+            <div class="qr-meta">
+              <span>Mobile ticket</span>
+              <strong id="qrLabel">MOO-METRO-001</strong>
+              <p id="qrHint">QR sẽ được kích hoạt sau khi thanh toán thành công.</p>
+            </div>
+          </div>
+
+          <div class="summary-grid">
+            <div>
+              <small>Loại vé</small>
+              <strong id="ticketLabel">1 lượt</strong>
+            </div>
+            <div>
+              <small>Hạn dùng</small>
+              <strong id="validityLabel">Trong ngày</strong>
+            </div>
+            <div>
+              <small>Cổng vào</small>
+              <strong id="gateLabel">Metro Line 1</strong>
+            </div>
+            <div>
+              <small>Trạng thái</small>
+              <strong id="statusLabel">Chờ thanh toán</strong>
+            </div>
+          </div>
+
+          <button class="primary-action" id="buyButton" type="button">Thanh toán vé metro</button>
+        </article>
+
+        <article class="line-card">
+          <div class="panel-head compact">
+            <div>
+              <span class="panel-kicker">Station map</span>
+              <h2>Trục tuyến minh hoạ</h2>
+            </div>
+          </div>
+          <div class="station-rail" id="stationRail"></div>
+          <p class="source-note">Danh sách trạm chỉ để mô phỏng luồng sản phẩm. Không dùng làm nguồn dữ liệu vận hành.</p>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <script src="metro-ticket.js"></script>
+</body>
+</html>

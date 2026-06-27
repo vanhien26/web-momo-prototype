@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MoMo Prototype Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;0,900;1,900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;
+  --bg2:#f5f5f9;
+  --ink:#0d0d18;
+  --t2:#60607a;
+  --t3:#a0a0b8;
+  --line:#e4e4ee;
+  --pk:#a50064;
+  --pk2:#c8007a;
+  --pk-bg:#fff0f7;
+  --pk-b:rgba(165,0,100,.14);
+  --mono:'Roboto Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Roboto',sans-serif;overflow-x:hidden}
+
+/* NAV */
+.nav{
+  position:fixed;inset:0 0 auto;height:56px;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.mark{
+  width:32px;height:32px;border-radius:8px;background:var(--pk);color:#fff;
+  display:grid;place-items:center;
+  font-size:9px;font-weight:900;line-height:.72;text-align:center;flex:none
+}
+.brand-name{font-size:13px;font-weight:700}
+.brand-name small{display:block;font-size:10px;color:var(--t2);font-weight:400;margin-top:1px}
+.nav-r{display:flex;align-items:center;gap:9px}
+.pill{
+  font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.05em;
+  padding:4px 10px;border-radius:99px;
+  background:var(--pk-bg);color:var(--pk);border:1px solid var(--pk-b);
+  display:flex;align-items:center;gap:6px
+}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--pk);animation:blink 2s infinite;flex:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.btn-pk{
+  padding:7px 18px;border-radius:99px;
+  background:var(--pk);color:#fff;font-size:12px;font-weight:700;
+  border:0;cursor:pointer;text-decoration:none;transition:background .15s
+}
+.btn-pk:hover{background:var(--pk2)}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:80px 40px;position:relative;overflow:hidden
+}
+.hero-blob{
+  position:absolute;top:-120px;right:-80px;
+  width:640px;height:640px;border-radius:50%;
+  background:radial-gradient(circle,rgba(165,0,100,.07) 0%,transparent 70%);
+  pointer-events:none
+}
+.hero-blob2{
+  position:absolute;bottom:-160px;left:-80px;
+  width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,0,122,.05) 0%,transparent 70%);
+  pointer-events:none
+}
+.hero-grid{
+  max-width:1160px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+  position:relative;z-index:1
+}
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--pk);background:var(--pk-bg);border:1px solid var(--pk-b);
+  border-radius:99px;padding:5px 12px;margin-bottom:24px
+}
+.hero-h1{
+  font-size:clamp(52px,7vw,96px);font-weight:900;font-style:italic;
+  line-height:.9;letter-spacing:-.04em;color:var(--ink);margin-bottom:20px
+}
+.hero-h1 b{color:var(--pk);font-style:italic;font-weight:900}
+.hero-p{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:32px;max-width:360px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.cta-solid{
+  padding:11px 22px;border-radius:99px;
+  background:var(--pk);color:#fff;font-size:13px;font-weight:700;
+  border:0;cursor:pointer;text-decoration:none;transition:all .15s;
+  box-shadow:0 2px 14px rgba(165,0,100,.22)
+}
+.cta-solid:hover{background:var(--pk2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(165,0,100,.35)}
+.cta-ghost{
+  padding:10px 22px;border-radius:99px;
+  background:transparent;color:var(--ink);font-size:13px;font-weight:700;
+  border:1.5px solid var(--line);cursor:pointer;text-decoration:none;transition:all .15s
+}
+.cta-ghost:hover{border-color:var(--pk);color:var(--pk)}
+
+/* STAT CARDS — right column */
+.stats-col{display:flex;flex-direction:column;gap:10px}
+.sc{
+  background:var(--bg2);border:1px solid var(--line);border-radius:14px;
+  padding:18px 22px;display:flex;align-items:center;justify-content:space-between;
+  transition:all .2s;cursor:default
+}
+.sc:hover{border-color:var(--pk-b);background:var(--pk-bg)}
+.sc-n{font-size:34px;font-weight:900;line-height:1;letter-spacing:-.03em;color:var(--ink)}
+.sc-n em{color:var(--pk);font-style:normal}
+.sc-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin-top:4px}
+.sc-tag{
+  font-family:var(--mono);font-size:8px;font-weight:500;
+  padding:3px 8px;border-radius:6px;
+  background:var(--bg);border:1px solid var(--line);color:var(--t3);
+  white-space:nowrap
+}
+
+/* TICKER */
+.ticker{overflow:hidden;padding:9px 0;background:var(--pk)}
+.ticker-track{display:inline-flex;animation:tick 28s linear infinite}
+.ti{
+  display:inline-flex;align-items:center;gap:14px;
+  padding:0 22px;
+  font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.04em;
+  color:rgba(255,255,255,.8)
+}
+.ts{color:rgba(255,255,255,.3)}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTION WRAP */
+.wrap{max-width:1160px;margin:0 auto;padding:80px 40px}
+.wrap.gray{background:var(--bg2);max-width:none;padding:80px 0}
+.wrap.gray>.inner{max-width:1160px;margin:0 auto;padding:0 40px}
+
+.eye{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--pk);
+  display:block;margin-bottom:10px
+}
+.sh{
+  font-size:clamp(26px,3vw,40px);font-weight:900;font-style:italic;
+  line-height:1;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px
+}
+.sd{font-size:13px;color:var(--t2);margin-bottom:36px}
+
+/* CATEGORY CARDS */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cat{
+  background:var(--bg);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column
+}
+.cat:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08)}
+.cat-stripe{height:3px;width:100%}
+.cat-body{padding:20px 20px 16px;flex:1;display:flex;flex-direction:column}
+.cat-badge{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  padding:3px 7px;border-radius:4px;
+  display:inline-block;margin-bottom:12px;width:fit-content
+}
+.cat-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.3}
+.cat-desc{font-size:11px;color:var(--t2);line-height:1.65;flex:1}
+.cat-list{
+  font-family:var(--mono);font-size:9px;color:var(--t3);
+  margin-top:12px;padding-top:12px;border-top:1px solid var(--line);line-height:2
+}
+.cat-foot{margin-top:14px;display:flex;align-items:center;justify-content:space-between}
+.cat-count{font-size:10px;color:var(--t2);font-weight:700}
+.cat-btn{
+  font-size:10px;font-weight:700;padding:6px 13px;
+  border-radius:99px;border:0;cursor:pointer;transition:all .14s
+}
+.cat-btn:hover{opacity:.8;transform:scale(1.04)}
+
+/* MoSpark: pink */
+.pk .cat-stripe{background:var(--pk)}
+.pk .cat-badge{background:var(--pk-bg);color:var(--pk)}
+.pk .cat-btn{background:var(--pk-bg);color:var(--pk)}
+
+/* Widget: purple */
+.pp .cat-stripe{background:#7c3aed}
+.pp .cat-badge{background:#f5f3ff;color:#6d28d9}
+.pp .cat-btn{background:#f5f3ff;color:#6d28d9}
+
+/* Platform: blue */
+.bl .cat-stripe{background:#0369a1}
+.bl .cat-badge{background:#e0f2fe;color:#0369a1}
+.bl .cat-btn{background:#e0f2fe;color:#0369a1}
+
+/* PROTO GRID */
+.ftabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.ftab{
+  font-size:11px;font-weight:700;
+  padding:7px 16px;border-radius:99px;
+  border:1.5px solid var(--line);background:transparent;color:var(--t2);
+  cursor:pointer;transition:all .14s;font-family:inherit
+}
+.ftab.on{background:var(--pk);color:#fff;border-color:var(--pk)}
+.ftab:not(.on):hover{border-color:var(--pk);color:var(--pk)}
+
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pc{
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;
+  padding:16px;cursor:pointer;transition:all .18s;
+  display:flex;flex-direction:column;gap:8px
+}
+.pc:hover{border-color:var(--pk-b);box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-2px)}
+.pc-top{display:flex;align-items:center;justify-content:space-between}
+.pc-cat{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;
+  padding:2px 6px;border-radius:4px
+}
+.pc-mat{font-size:8px;color:var(--t3);font-weight:500}
+.pc-name{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3}
+.pc-desc{font-size:11px;color:var(--t2);line-height:1.6;flex:1}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
+.pc-loop{font-family:var(--mono);font-size:8px;color:var(--pk);opacity:.65}
+.pc-open{font-size:10px;font-weight:700;color:var(--pk);background:none;border:0;cursor:pointer;padding:0}
+.pc-open:hover{color:var(--pk2)}
+.pc[data-h="1"]{display:none}
+
+/* FOOTER */
+.foot{
+  border-top:1px solid var(--line);
+  max-width:1160px;margin:0 auto;padding:22px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11px;color:var(--t3)
+}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s}
+.rv.vis{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .stats-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .cat-grid{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .nav,.wrap{padding-left:20px;padding-right:20px}
+  .wrap.gray>.inner{padding:0 20px}
+}
+@media(max-width:520px){
+  .pgrid{grid-template-columns:1fr}
+  .stats-col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="brand" href="/lab.html">
+    <div class="mark"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block"></div>
+    <div class="brand-name">Web Platform <small>Prototype Store</small></div>
+  </a>
+  <div class="nav-r">
+    <span class="pill"><span class="dot"></span>Internal Only</span>
+    <a class="btn-pk" href="/lab.html">Enter Lab →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-grid">
+
+    <div>
+      <div class="hero-kicker"><span class="dot"></span>MoMo Web Platform</div>
+      <h1 class="hero-h1">Prototype<br><b>Lab.</b></h1>
+      <p class="hero-p">Bảng điều hướng nội bộ cho Dev và PM review demo trước production.</p>
+      <div class="ctas">
+        <a class="cta-solid" href="/lab.html">Xem Demo →</a>
+        <a class="cta-ghost" href="orchestrator.html" target="_blank">MoSpark ↗</a>
+      </div>
+    </div>
+
+    <div class="stats-col">
+      <div class="sc">
+        <div><div class="sc-n">13</div><div class="sc-l">Prototype Surfaces</div></div>
+        <span class="sc-tag">live preview</span>
+      </div>
+      <div class="sc">
+        <div><div class="sc-n">3</div><div class="sc-l">Project Groups</div></div>
+        <span class="sc-tag">MoSpark · Widget · Platform</span>
+      </div>
+      <div class="sc">
+        <div><div class="sc-n">15<em>+</em></div><div class="sc-l">Financial Tools</div></div>
+        <span class="sc-tag">interactive</span>
+      </div>
+      <div class="sc">
+        <div><div class="sc-n">Q2<em>/26</em></div><div class="sc-l">Research Spec</div></div>
+        <span class="sc-tag">research-spec</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ti">13 Demos <span class="ts">·</span> MoSpark <span class="ts">·</span> Widget <span class="ts">·</span> Platform <span class="ts">·</span> Financial Utilities <span class="ts">·</span> SEO/GEO Hub <span class="ts">·</span> Merchant Discovery <span class="ts">·</span> Merchant <span class="ts">·</span> GenAI Orchestrator <span class="ts">·</span> World Cup 2026 <span class="ts">·</span> Scam Check <span class="ts">·</span> Metro HCM <span class="ts">·</span></span>
+    <span class="ti">13 Demos <span class="ts">·</span> MoSpark <span class="ts">·</span> Widget <span class="ts">·</span> Platform <span class="ts">·</span> Financial Utilities <span class="ts">·</span> SEO/GEO Hub <span class="ts">·</span> Merchant Discovery <span class="ts">·</span> Merchant <span class="ts">·</span> GenAI Orchestrator <span class="ts">·</span> World Cup 2026 <span class="ts">·</span> Scam Check <span class="ts">·</span> Metro HCM <span class="ts">·</span></span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="wrap gray">
+  <div class="inner">
+    <div class="rv">
+      <span class="eye">Project Groups</span>
+      <div class="sh">3 nhóm. 13 bề mặt.</div>
+      <div class="sd">Mỗi nhóm là một mảnh ghép trong chiến lược Out-App Traffic.</div>
+    </div>
+    <div class="cat-grid">
+
+      <div class="cat pk rv" onclick="location.href='../index.html'">
+        <div class="cat-stripe"></div>
+        <div class="cat-body">
+          <span class="cat-badge">MoSpark</span>
+          <div class="cat-title">GenAI · Content<br>Chatbot · Ads</div>
+          <div class="cat-desc">Hệ sinh thái tạo nội dung, quality gate, chatbot AI và ads placement.</div>
+          <div class="cat-list">GenAI Orchestrator<br>SEO/GEO Project Hub<br>Project Assistant · Ads Manager</div>
+          <div class="cat-foot">
+            <span class="cat-count">4 demos</span>
+            <button class="cat-btn">Open →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat pp rv" onclick="location.href='../index.html'" style="transition-delay:.07s">
+        <div class="cat-stripe"></div>
+        <div class="cat-body">
+          <span class="cat-badge">Widget</span>
+          <div class="cat-title">Financial · Planning<br>Transit · Lookup</div>
+          <div class="cat-desc">Tool tính toán và lookup ngắn, rõ input/output và trạng thái an toàn.</div>
+          <div class="cat-list">Financial Lab (15 tools)<br>Bill Lookup · Scam Check<br>Life Planning · Metro · World Cup</div>
+          <div class="cat-foot">
+            <span class="cat-count">6 demos</span>
+            <button class="cat-btn">Open →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat bl rv" onclick="location.href='../index.html'" style="transition-delay:.14s">
+        <div class="cat-stripe"></div>
+        <div class="cat-body">
+          <span class="cat-badge">Platform</span>
+          <div class="cat-title">MoMo Services<br>Discovery</div>
+          <div class="cat-desc">Surface dịch vụ và discovery cho người dùng chưa cài app.</div>
+          <div class="cat-list">Merchant Discovery<br>Merchant Detail · Search</div>
+          <div class="cat-foot">
+            <span class="cat-count">3 demos</span>
+            <button class="cat-btn">Open →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PROTO GRID -->
+<div class="wrap">
+  <div class="rv">
+    <span class="eye">All Prototypes</span>
+    <div class="sh">13 demo surfaces.</div>
+  </div>
+  <div class="ftabs rv">
+    <button class="ftab on" data-f="all">Tất cả</button>
+    <button class="ftab" data-f="MoSpark">MoSpark</button>
+    <button class="ftab" data-f="Widget">Widget</button>
+    <button class="ftab" data-f="Platform">Platform</button>
+  </div>
+  <div class="pgrid" id="pg"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="foot">
+  <span>MoMo Web Platform · Prototype Store</span>
+  <span>Research-Spec · Web Platform · <span id="fd"></span></span>
+</div>
+
+<script>
+const P=[
+  {id:'orchestrator',name:'GenAI Orchestrator',cat:'MoSpark',mat:'Concept',desc:'Canvas workflow: AI agents nhận prompt, dispatch, query RAG và stream output.',loop:'Prompt → Dispatch → RAG → Output',src:'orchestrator.html'},
+  {id:'seo-geo-project',name:'SEO/GEO Project Hub',cat:'MoSpark',mat:'Interactive',desc:'Quản lý Use Case → Cluster → Keyword, content plan và status tracking.',loop:'Use Case → Cluster → Keyword → Content',src:'seo-geo-project.html'},
+  {id:'chatbot',name:'Project Assistant',cat:'MoSpark',mat:'Interactive',desc:'6 template chatbot theo JTBD, hỗ trợ Bubble, Popup, Standard, Proactive, project RAG và Typebot.',loop:'Template → Ask / Guide → RAG / Typebot → CTA',src:'chatbot.html'},
+  {id:'ads-manager',name:'Ads Placement Manager',cat:'MoSpark',mat:'Interactive',desc:'Tạo chiến dịch, chọn vị trí và preview real-time Desktop / Mobile.',loop:'Setup → Place → Preview → Publish',src:'ads.html'},
+  {id:'financial',name:'Financial Utilities Lab',cat:'Widget',mat:'Interactive',desc:'15 công cụ tài chính tương tác: vay, CIC, bảo hiểm, tiết kiệm, thuế, đầu tư.',loop:'Search → Utility → App',src:'financial.html'},
+  {id:'bill-lookup',name:'Bill Lookup',cat:'Widget',mat:'Lookup',desc:'Tra hóa đơn điện, nước, internet, di động rồi đi thẳng tới thanh toán.',loop:'Lookup → Verify → Pay',src:'bill-lookup.html'},
+  {id:'scam-check',name:'Scam Check',cat:'Widget',mat:'Lookup',desc:'Tra số điện thoại, tài khoản, link, QR để phát hiện lừa đảo trước khi chuyển.',loop:'Paste → Score → Warn',src:'scam-check.html'},
+  {id:'planning-tools',name:'Life Planning Tools',cat:'Widget',mat:'Interactive',desc:'Lập kế hoạch tài chính dài hạn: FIRE, Đám cưới, Học phí.',loop:'Search → Plan → Save',src:'../tools/tu-do-tai-chinh.html'},
+  {id:'worldcup',name:'World Cup 2026',cat:'Widget',mat:'Data',desc:'Data thể thao mùa vụ: so sánh đội, dự đoán, tạo repeat visit.',loop:'Event → Explore → Return',src:'world-cup.html'},
+  {id:'merchant',name:'Merchant',cat:'Platform',mat:'Interaction',desc:'Merchant discovery: tìm nơi hỗ trợ MoMo, Ví Trả Sau, ưu đãi và thông tin chi tiết để ra quyết định.',loop:'Discover → Evaluate → Visit → Pay',src:'merchant.html'},
+  {id:'merchant-discovery',name:'Merchant Discovery',cat:'Platform',mat:'Interactive',desc:'Card stack mobile-first để swipe Merchant, lưu lựa chọn và nhận Sponsored Card từ Ads Placement.',loop:'Category → Swipe → Save / Ad → Detail',src:'merchant-discovery.html'},
+  {id:'momo-services',name:'MoMo Services',cat:'Platform',mat:'Reference',desc:'Landing cho người chưa cài app: dịch vụ, use case, download.',loop:'Read → Explore → Download',src:'search.html'},
+];
+
+const CC={
+  MoSpark:{bg:'rgba(165,0,100,.1)',color:'#a50064'},
+  Widget:{bg:'rgba(109,40,217,.1)',color:'#6d28d9'},
+  Platform:{bg:'rgba(3,105,161,.1)',color:'#0369a1'},
+};
+
+function render(f){
+  document.getElementById('pg').innerHTML=P.map((p,i)=>{
+    const c=CC[p.cat];
+    const h=f!=='all'&&p.cat!==f?'1':'0';
+    return `<div class="pc" data-h="${h}" onclick="window.open('${p.src}','_blank')">
+      <div class="pc-top">
+        <span class="pc-cat" style="background:${c.bg};color:${c.color}">${p.cat}</span>
+        <span class="pc-mat">${p.mat}</span>
+      </div>
+      <div class="pc-name">${p.name}</div>
+      <div class="pc-desc">${p.desc}</div>
+      <div class="pc-foot">
+        <span class="pc-loop">${p.loop}</span>
+        <button class="pc-open" onclick="event.stopPropagation();window.open('${p.src}','_blank')">Open ↗</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.querySelectorAll('.ftab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.ftab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    render(t.dataset.f);
+  });
+});
+
+render('all');
+document.getElementById('fd').textContent=new Date().toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('vis');obs.unobserve(x.target)}})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

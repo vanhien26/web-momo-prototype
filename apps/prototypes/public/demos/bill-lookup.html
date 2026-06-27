@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tra cứu hóa đơn — MoMo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pk:#a50064; --pk2:#c8007a; --pk-bg:#fff0f7;
+      --ink:#111827; --sub:#6b7280; --muted:#9ca3af;
+      --line:#e5e7eb; --bg:#f3f4f6; --white:#fff;
+      --green:#059669; --green-bg:#ecfdf5;
+      --amber:#d97706; --amber-bg:#fffbeb;
+      --red:#dc2626;   --red-bg:#fef2f2;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Be Vietnam Pro',system-ui,sans-serif;
+      background:var(--bg);color:var(--ink);
+      min-height:100vh;-webkit-font-smoothing:antialiased;
+    }
+    button{font-family:inherit;cursor:pointer}
+
+    /* ─── TOPBAR ──────────────────────────────────── */
+    .topbar{
+      background:var(--pk);
+      padding:0 20px;height:52px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .tb-left{display:flex;align-items:center;gap:10px}
+    .tb-logo{width:30px;height:30px;overflow:hidden;border-radius:8px;background:rgba(255,255,255,.15);display:grid;place-items:center}
+    .tb-logo img{width:80%;height:80%;object-fit:contain;display:block}
+    .tb-title{color:#fff;font-size:15px;font-weight:800}
+    .tb-back{color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none}
+    .tb-back:hover{color:#fff}
+
+    /* ─── PAGE ────────────────────────────────────── */
+    .page{max-width:440px;margin:0 auto;padding:20px 16px 48px}
+
+    /* ─── SERVICE GRID ────────────────────────────── */
+    .sec-label{
+      font-size:10.5px;font-weight:800;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;
+    }
+    .svc-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;
+    }
+    .svc-btn{
+      background:var(--white);border:1.5px solid var(--line);border-radius:14px;
+      padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;
+      transition:.15s;
+    }
+    .svc-btn:hover{border-color:var(--pk)}
+    .svc-btn.active{border-color:var(--pk);background:var(--pk-bg)}
+    .svc-ico{font-size:26px;line-height:1}
+    .svc-lbl{font-size:10px;font-weight:700;color:var(--sub)}
+    .svc-btn.active .svc-lbl{color:var(--pk)}
+
+    /* ─── FORM CARD ───────────────────────────────── */
+    .form-card{
+      background:var(--white);border-radius:16px;
+      box-shadow:0 1px 8px rgba(0,0,0,.07);
+      margin-bottom:12px;overflow:hidden;
+    }
+    .form-row{
+      padding:14px 16px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;gap:12px;
+    }
+    .form-row:last-child{border-bottom:none}
+    .form-lbl{
+      font-size:11px;font-weight:700;color:var(--muted);
+      width:88px;flex-shrink:0;
+    }
+    .form-row select,.form-row input{
+      flex:1;border:none;outline:none;
+      font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);background:transparent;
+    }
+    .form-row input::placeholder{color:var(--muted);font-weight:500}
+
+    /* ─── FETCH BUTTON ────────────────────────────── */
+    .btn-fetch{
+      width:100%;height:50px;border:none;border-radius:14px;
+      background:var(--pk);color:#fff;
+      font-size:15px;font-weight:800;letter-spacing:.02em;
+      transition:.15s;margin-bottom:20px;
+    }
+    .btn-fetch:hover{background:var(--pk2)}
+    .btn-fetch:active{transform:scale(.98)}
+
+    /* ─── RESULT CARD ─────────────────────────────── */
+    .result-card{
+      background:var(--white);border-radius:16px;
+      box-shadow:0 1px 8px rgba(0,0,0,.07);
+      overflow:hidden;display:none;
+      animation:slideUp .25s ease;
+    }
+    .result-card.show{display:block}
+    @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    .rc-header{
+      background:var(--pk);padding:14px 16px;
+      display:flex;align-items:center;gap:11px;
+    }
+    .rc-h-icon{
+      width:38px;height:38px;border-radius:10px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;font-size:20px;flex-shrink:0;
+    }
+    .rc-h-name{color:#fff;font-size:14px;font-weight:800}
+    .rc-h-code{color:rgba(255,255,255,.65);font-size:11px;margin-top:1px}
+
+    .rc-customer{
+      padding:13px 16px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .rc-cust-name{font-size:14px;font-weight:700}
+    .rc-cust-sub{font-size:11px;color:var(--sub);margin-top:2px}
+    .rc-pill{
+      font-size:10.5px;font-weight:800;padding:3px 10px;
+      border-radius:20px;white-space:nowrap;flex-shrink:0;
+    }
+    .rc-pill.due{background:var(--amber-bg);color:var(--amber)}
+    .rc-pill.late{background:var(--red-bg);color:var(--red)}
+    .rc-pill.ok{background:var(--green-bg);color:var(--green)}
+
+    .rc-amount-block{
+      padding:22px 16px 18px;text-align:center;border-bottom:1px solid var(--line);
+    }
+    .rc-amt-label{
+      font-size:10.5px;font-weight:800;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;
+    }
+    .rc-amt{font-size:38px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+    .rc-due{margin-top:8px;font-size:12px;color:var(--sub)}
+    .rc-due b{color:var(--ink);font-weight:700}
+
+    .rc-meta{
+      display:grid;grid-template-columns:1fr 1fr;
+      border-bottom:1px solid var(--line);
+    }
+    .rc-meta-item{padding:12px 16px}
+    .rc-meta-item:first-child{border-right:1px solid var(--line)}
+    .rc-meta-lbl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+    .rc-meta-val{font-size:13px;font-weight:700;color:var(--ink)}
+
+    .rc-actions{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+    .btn-pay{
+      width:100%;height:50px;border:none;border-radius:14px;
+      background:var(--pk);color:#fff;
+      font-size:15px;font-weight:800;transition:.15s;
+    }
+    .btn-pay:hover{background:var(--pk2)}
+    .btn-remind{
+      width:100%;height:44px;border:1.5px solid var(--line);border-radius:14px;
+      background:transparent;color:var(--sub);font-size:13px;font-weight:700;transition:.15s;
+    }
+    .btn-remind:hover{border-color:var(--pk);color:var(--pk)}
+
+    /* ─── DISCLAIMER ──────────────────────────────── */
+    .disclaimer{
+      margin-top:20px;font-size:11px;color:var(--muted);
+      text-align:center;line-height:1.6;
+    }
+
+    /* ─── TOAST ───────────────────────────────────── */
+    @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-logo">
+        <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+      </div>
+      <span class="tb-title">Tra cứu hóa đơn</span>
+    </div>
+    <a href="/lab.html" target="_top" class="tb-back">← Lab</a>
+  </div>
+
+  <div class="page">
+
+    <!-- Service type -->
+    <div class="sec-label">Loại dịch vụ</div>
+    <div class="svc-grid">
+      <button class="svc-btn active" data-key="evn" onclick="selectSvc(this)">
+        <span class="svc-ico">⚡</span>
+        <span class="svc-lbl">Điện lực</span>
+      </button>
+      <button class="svc-btn" data-key="sawaco" onclick="selectSvc(this)">
+        <span class="svc-ico">💧</span>
+        <span class="svc-lbl">Nước</span>
+      </button>
+      <button class="svc-btn" data-key="vnpt" onclick="selectSvc(this)">
+        <span class="svc-ico">🌐</span>
+        <span class="svc-lbl">Internet</span>
+      </button>
+      <button class="svc-btn" data-key="mobifone" onclick="selectSvc(this)">
+        <span class="svc-ico">📱</span>
+        <span class="svc-lbl">Di động</span>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <div class="form-card">
+      <div class="form-row">
+        <span class="form-lbl">Nhà cung cấp</span>
+        <select id="providerSel" onchange="onProviderChange()">
+          <option value="evn">EVN HCM</option>
+          <option value="sawaco">SAWACO</option>
+          <option value="vnpt">VNPT</option>
+          <option value="mobifone">MobiFone</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <span class="form-lbl">Mã khách hàng</span>
+        <input id="codeInput" type="text" placeholder="Nhập mã hoặc số điện thoại">
+      </div>
+    </div>
+    <button class="btn-fetch" onclick="doLookup()">Tra cứu hóa đơn →</button>
+
+    <!-- Result -->
+    <div class="result-card" id="resultCard">
+      <div class="rc-header">
+        <div class="rc-h-icon" id="rcIcon">⚡</div>
+        <div>
+          <div class="rc-h-name" id="rcProviderName">EVN HCM</div>
+          <div class="rc-h-code" id="rcCode">EVN-2406-0182</div>
+        </div>
+      </div>
+      <div class="rc-customer">
+        <div>
+          <div class="rc-cust-name" id="rcCustName">Nguyễn Văn A</div>
+          <div class="rc-cust-sub" id="rcCustSub">Quận 7, TP.HCM · Tháng 6/2026</div>
+        </div>
+        <span class="rc-pill due" id="rcPill">Sắp đến hạn</span>
+      </div>
+      <div class="rc-amount-block">
+        <div class="rc-amt-label">Số tiền cần trả</div>
+        <div class="rc-amt" id="rcAmt">1.284.000 đ</div>
+        <div class="rc-due">Hạn thanh toán: <b id="rcDue">18/06/2026</b></div>
+      </div>
+      <div class="rc-meta">
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Loại dịch vụ</div>
+          <div class="rc-meta-val" id="rcType">Điện sinh hoạt</div>
+        </div>
+        <div class="rc-meta-item">
+          <div class="rc-meta-lbl">Còn lại</div>
+          <div class="rc-meta-val" id="rcDays">4 ngày</div>
+        </div>
+      </div>
+      <div class="rc-actions">
+        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
+        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+      </div>
+    </div>
+
+    <p class="disclaimer">Prototype mô phỏng — dữ liệu không kết nối API thực.</p>
+  </div>
+
+  <script>
+    const DATA = {
+      evn:      { icon:'⚡', provider:'EVN HCM',   code:'EVN-2406-0182',    amount:'1.284.000 đ', due:'18/06/2026', days:4, pill:'due',  pillLabel:'Sắp đến hạn',   cust:'Nguyễn Văn A', sub:'Quận 7, TP.HCM · Tháng 6/2026',     type:'Điện sinh hoạt' },
+      sawaco:   { icon:'💧', provider:'SAWACO',     code:'SAWACO-2206-8831', amount:'224.000 đ',   due:'22/06/2026', days:8, pill:'ok',   pillLabel:'Chưa đến hạn',  cust:'Trần Thị B',   sub:'Quận 1, TP.HCM · Tháng 6/2026',      type:'Nước sinh hoạt' },
+      vnpt:     { icon:'🌐', provider:'VNPT',       code:'VNPT-2026-06',     amount:'265.000 đ',   due:'20/06/2026', days:6, pill:'due',  pillLabel:'Cần thanh toán', cust:'Lê Văn C',     sub:'Bình Thạnh, TP.HCM · Tháng 6/2026',  type:'Internet Home Fiber' },
+      mobifone: { icon:'📱', provider:'MobiFone',   code:'MBF-0903-5512',    amount:'179.000 đ',   due:'16/06/2026', days:0, pill:'late', pillLabel:'Đến hạn hôm nay',cust:'Phạm Thị D',   sub:'0903 551 2xx · Tháng 6/2026',        type:'Trả sau' },
+    };
+
+    let activeKey = 'evn';
+
+    function selectSvc(btn) {
+      document.querySelectorAll('.svc-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeKey = btn.dataset.key;
+      document.getElementById('providerSel').value = activeKey;
+      document.getElementById('codeInput').value = DATA[activeKey].code;
+    }
+
+    function onProviderChange() {
+      activeKey = document.getElementById('providerSel').value;
+      document.getElementById('codeInput').value = DATA[activeKey].code;
+      document.querySelectorAll('.svc-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.key === activeKey);
+      });
+    }
+
+    function doLookup() {
+      const d = DATA[activeKey];
+      document.getElementById('rcIcon').textContent = d.icon;
+      document.getElementById('rcProviderName').textContent = d.provider;
+      document.getElementById('rcCode').textContent = d.code;
+      document.getElementById('rcCustName').textContent = d.cust;
+      document.getElementById('rcCustSub').textContent = d.sub;
+      document.getElementById('rcPill').textContent = d.pillLabel;
+      document.getElementById('rcPill').className = 'rc-pill ' + d.pill;
+      document.getElementById('rcAmt').textContent = d.amount;
+      document.getElementById('rcDue').textContent = d.due;
+      document.getElementById('rcType').textContent = d.type;
+      document.getElementById('rcDays').textContent = d.days === 0 ? 'Hôm nay!' : d.days + ' ngày';
+
+      const card = document.getElementById('resultCard');
+      card.classList.remove('show');
+      void card.offsetWidth;
+      card.classList.add('show');
+      setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+    }
+
+    function toast(msg) {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      Object.assign(t.style, {
+        position:'fixed', bottom:'24px', left:'50%',
+        transform:'translateX(-50%)',
+        background:'#111827', color:'#fff',
+        padding:'11px 20px', borderRadius:'12px',
+        fontSize:'13px', fontWeight:'700',
+        fontFamily:'inherit',
+        boxShadow:'0 4px 20px rgba(0,0,0,.18)',
+        zIndex:'999', whiteSpace:'nowrap',
+        animation:'fadeUp .2s ease',
+      });
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2200);
+    }
+
+    // init
+    document.getElementById('codeInput').value = DATA['evn'].code;
+  </script>
+</body>
+</html>

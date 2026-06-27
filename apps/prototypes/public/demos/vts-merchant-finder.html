@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Cửa hàng ở Crescent Mall, TP. Hồ Chí Minh | Ví Trả Sau MoMo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <style>
+    @font-face{font-family:"MoMo Trust Sans";src:url("../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf") format("opentype");font-weight:400;font-display:swap}
+    @font-face{font-family:"MoMo Trust Sans";src:url("../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf") format("opentype");font-weight:500 900;font-display:swap}
+
+    :root{
+      --momo:#d82d8b; --momo-dark:#a50064;
+      --pink-soft:#fff0f7; --pink-rim:#ffd6ec;
+      --ink:#171b24; --muted:#667085;
+      --grey-200:#e4e7ec; --line:#e8e9ed;
+      --surface:#fff; --page:#f6f7f9;
+      --green:#16803d; --green-bg:#ecfdf3;
+      --shadow-sm:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+      --shadow:0 12px 40px rgba(16,24,40,.07);
+      --shadow-lg:0 20px 50px rgba(16,24,40,.12);
+      --ease:cubic-bezier(.4,0,.2,1);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;overflow:hidden}
+    body{color:var(--ink);background:var(--page);font-family:"MoMo Trust Sans",-apple-system,sans-serif;font-synthesis:none;display:flex;flex-direction:column}
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit;cursor:pointer;border:none;background:none;padding:0}
+
+    /* ── PAGE HEAD */
+    .page-head{
+      background:rgba(255,255,255,.97);
+      backdrop-filter:saturate(180%) blur(16px);
+      -webkit-backdrop-filter:saturate(180%) blur(16px);
+      border-bottom:1px solid var(--line);
+      flex:none;z-index:30;
+    }
+    .page-head-inner{
+      display:flex;align-items:center;
+      gap:12px;padding:12px 20px 10px;max-width:1440px;margin:0 auto;
+    }
+
+    /* Brand mark */
+    .ph-brand{
+      width:36px;height:36px;border-radius:10px;flex:none;overflow:hidden;
+      background:var(--momo);display:grid;place-items:center;
+      box-shadow:0 2px 8px rgba(216,45,139,.25);
+    }
+    .ph-brand img{width:22px;height:22px;object-fit:contain;display:block}
+
+    /* Title block */
+    .ph-text{flex:1;min-width:0}
+    .ph-breadcrumb{
+      display:inline-flex;align-items:center;gap:4px;
+      font-size:10px;font-weight:700;color:var(--momo);
+      text-transform:uppercase;letter-spacing:.06em;
+      margin-bottom:2px;
+    }
+    .ph-breadcrumb svg{flex:none;opacity:.7}
+    .ph-title{
+      font-size:15px;font-weight:900;line-height:1.2;
+      color:var(--ink);margin:0;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .ph-sub{
+      display:flex;align-items:center;gap:4px;
+      font-size:10.5px;color:var(--muted);margin-top:1px;
+    }
+    .ph-sub svg{flex:none;color:var(--momo)}
+
+    /* Close button */
+    .close-btn{
+      display:grid;place-items:center;
+      width:32px;height:32px;border-radius:999px;
+      font-size:16px;color:var(--muted);
+      border:1px solid var(--line);background:#fff;
+      flex:none;transition:all .15s;
+    }
+    .close-btn:hover{color:var(--ink);border-color:var(--grey-200);background:var(--page)}
+
+    /* ── FILTER ROW */
+    .filter-row{
+      display:flex;align-items:center;gap:6px;
+      padding:0 20px 10px;max-width:1440px;margin:0 auto;
+      overflow-x:auto;scrollbar-width:none;
+    }
+    .filter-row::-webkit-scrollbar{display:none}
+    .filter-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      padding:7px 13px;border-radius:999px;
+      background:#fff;border:1px solid var(--line);
+      font-size:11.5px;font-weight:600;color:var(--ink);
+      white-space:nowrap;flex:none;
+      transition:border-color .15s,background .15s,color .15s,box-shadow .15s;
+    }
+    .filter-chip:hover{border-color:var(--momo);color:var(--momo)}
+    .filter-chip.active{
+      background:var(--momo);border-color:var(--momo);color:#fff;
+      box-shadow:0 2px 10px rgba(216,45,139,.25);
+    }
+    .filter-chip .icon{font-size:13px}
+    .filter-more{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:32px;height:32px;border-radius:999px;
+      background:#fff;border:1px solid var(--line);
+      font-size:13px;color:var(--muted);flex:none;
+      transition:all .15s;
+    }
+    .filter-more:hover{border-color:var(--grey-200);color:var(--ink)}
+
+    /* ── LAYOUT */
+    .split{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden}
+
+    /* ── LIST PANE */
+    .list-pane{height:100%;overflow:hidden;position:relative;border-right:1px solid var(--line)}
+    .list-scroll{height:100%;overflow-y:auto;overflow-x:hidden;padding:14px 20px 60px}
+    .list-meta{
+      display:flex;align-items:baseline;justify-content:space-between;
+      margin-bottom:12px;flex-wrap:wrap;gap:8px;
+    }
+    .list-title{font-size:16px;font-weight:800;margin:0;color:var(--ink)}
+    .list-sub{font-size:11px;color:var(--muted);margin:3px 0 0}
+    .sort-wrap{
+      display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600;
+      padding:6px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);flex:none;
+    }
+    .sort-wrap select{border:0;outline:0;background:transparent;font-size:11px;font-weight:700;color:var(--ink)}
+
+    /* ── MERCHANT CARDS */
+    .merchant-list{display:flex;flex-direction:column;gap:8px}
+    .m-card{
+      display:flex;align-items:flex-start;gap:12px;
+      padding:12px;border-radius:12px;
+      background:#fff;border:1px solid var(--line);
+      cursor:pointer;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .m-card:hover{border-color:var(--grey-200);box-shadow:var(--shadow-sm)}
+    .m-card.active{border-color:var(--momo);box-shadow:0 0 0 1.5px var(--momo)}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .m-logo{
+      width:52px;height:52px;border-radius:10px;flex:none;overflow:hidden;
+      background:linear-gradient(90deg,#f0f2f5 0%,#e6e9ee 50%,#f0f2f5 100%);
+      background-size:200%;animation:shimmer 1.6s ease-in-out infinite;
+      position:relative;
+    }
+    .m-logo-fallback{
+      position:absolute;inset:0;display:grid;place-items:center;font-size:24px;
+      background:linear-gradient(135deg,var(--bc,var(--momo)) 0%,var(--bc2,var(--momo-dark)) 100%);
+    }
+    .m-body{flex:1;min-width:0}
+    .m-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+    .m-name{
+      font-size:12.5px;font-weight:800;line-height:1.3;
+      color:var(--ink);text-transform:uppercase;letter-spacing:.02em;
+      flex:1;min-width:0;
+    }
+    .m-rating{
+      display:flex;align-items:center;gap:2px;
+      font-size:10px;font-weight:700;color:var(--ink);flex:none;
+    }
+    .m-rating .star{color:#f5a400}
+    .m-meta{display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap}
+    .badge-floor{
+      font-size:9px;font-weight:800;color:#fff;
+      background:var(--ink);
+      padding:2px 7px;border-radius:4px;letter-spacing:.03em;
+    }
+    .badge-cat{font-size:9px;font-weight:600;color:var(--muted);background:var(--page);border:1px solid var(--line);padding:2px 7px;border-radius:4px}
+    .m-addr{
+      font-size:10.5px;color:var(--muted);line-height:1.5;
+      margin-bottom:6px;
+    }
+    .m-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+    .badge-cashback{
+      font-size:9px;font-weight:800;color:var(--green);
+      background:var(--green-bg);padding:2px 7px;border-radius:4px;
+    }
+
+    /* ── MAP PANE */
+    .map-pane{position:relative;height:100%;overflow:hidden}
+    .map-pane #map{height:100%;width:100%;background:#e9eef3}
+
+    /* ── DETAIL MODAL — slides over list pane */
+    .detail-modal{
+      position:absolute;inset:0;z-index:10;
+      background:#fff;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+      transform:translateX(100%);
+      transition:transform .28s cubic-bezier(.32,1,.22,1);
+      pointer-events:none;
+    }
+    body.has-detail .detail-modal{transform:translateX(0);pointer-events:auto}
+    /* Detail topbar */
+    .detail-topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 12px;border-bottom:1px solid var(--line);flex:none;
+      background:#fff;
+    }
+    .detail-back{
+      display:inline-flex;align-items:center;gap:5px;
+      height:30px;padding:0 12px 0 8px;border-radius:999px;
+      background:#fff;border:1px solid var(--line);
+      font-size:11px;font-weight:700;color:var(--ink);
+      transition:all .15s;
+    }
+    .detail-back:hover{border-color:var(--momo);color:var(--momo)}
+    .detail-back svg{flex:none}
+    .detail-close{
+      width:30px;height:30px;border-radius:999px;
+      background:#fff;border:1px solid var(--line);
+      display:grid;place-items:center;
+      transition:all .15s;
+    }
+    .detail-close:hover{border-color:var(--ink)}
+
+    /* Detail info header */
+    .detail-info-block{
+      padding:14px 14px 12px;border-bottom:1px solid var(--line);flex:none;background:#fff;
+    }
+    .detail-info-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+    .detail-icon{
+      width:56px;height:56px;border-radius:12px;flex:none;
+      display:grid;place-items:center;font-size:26px;
+      border:1px solid var(--line);overflow:hidden;
+    }
+    .detail-info-main{flex:1;min-width:0}
+    .detail-name{font-size:14px;font-weight:900;color:var(--ink);margin:0 0 4px;text-transform:uppercase;letter-spacing:.02em;line-height:1.2}
+    .detail-rating-inline{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .detail-rating-inline .stars{color:#f5a400;font-size:12px;letter-spacing:.5px}
+    .detail-rating-inline .count{color:var(--muted);font-weight:500;font-size:11px}
+    .detail-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:6px;font-size:11.5px;color:var(--muted)}
+    .detail-row:last-child{margin-bottom:0}
+    .detail-row svg{flex:none;margin-top:1px;color:var(--momo)}
+    .detail-row a{color:var(--muted)}
+    .detail-row a:hover{color:var(--momo)}
+    .detail-hours-link{color:var(--green)!important;font-weight:600}
+
+    /* Hero image */
+    .detail-hero-logo{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;
+    }
+    .detail-hero-logo img{width:72px;height:72px;object-fit:contain;filter:brightness(0) invert(1);opacity:.25}
+    .detail-hero-logo span{font-size:40px;opacity:.3}
+    .detail-hero{
+      height:160px;position:relative;overflow:hidden;flex:none;
+      background:linear-gradient(90deg,#f0f2f5 0%,#e6e9ee 50%,#f0f2f5 100%);
+      background-size:200%;animation:shimmer 1.6s ease-in-out infinite;
+    }
+    .detail-hero img{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      transition:opacity .3s;
+    }
+    .detail-hero img:not(.loaded){opacity:0}
+    .vts-overlay{
+      position:absolute;bottom:0;left:0;right:0;
+      background:linear-gradient(0deg,rgba(0,0,0,.65) 0%,transparent 100%);
+      padding:12px 12px 10px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .vts-overlay-badge{
+      display:inline-flex;align-items:center;gap:5px;
+      background:var(--momo);color:#fff;
+      border-radius:6px;padding:4px 9px;
+      font-size:10px;font-weight:800;white-space:nowrap;flex:none;
+    }
+    .vts-overlay-badge img{width:13px;height:13px;border-radius:3px;object-fit:contain;background:#fff}
+    .vts-overlay-text{font-size:10px;color:rgba(255,255,255,.88);line-height:1.35}
+    .vts-overlay-text strong{color:#fff;display:block;font-size:10.5px}
+
+    .detail-scroll{flex:1;overflow-y:auto;padding:14px}
+    .detail-desc{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 14px}
+    .detail-actions{display:flex;flex-direction:column;gap:8px;padding-top:4px}
+    .btn-primary{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      background:var(--momo);color:#fff;border-radius:10px;
+      padding:13px;font-size:14px;font-weight:800;
+      transition:background .15s,transform .15s;
+    }
+    .btn-primary:hover{background:var(--momo-dark);transform:translateY(-1px)}
+    .btn-secondary{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;
+      padding:11px;font-size:13px;font-weight:700;
+      transition:border-color .15s;
+    }
+    .btn-secondary svg{color:var(--momo)}
+    .btn-secondary:hover{border-color:var(--momo)}
+
+    /* ── REVIEWS SECTION */
+    .reviews-section{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+    .reviews-header{margin-bottom:12px}
+    .reviews-score{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .reviews-score-num{font-size:36px;font-weight:900;color:var(--ink);line-height:1}
+    .reviews-score-right{display:flex;flex-direction:column;gap:3px}
+    .reviews-score-stars{color:#f5a400;font-size:16px;letter-spacing:2px}
+    .reviews-score-sub{font-size:11px;color:var(--muted)}
+    .reviews-verified{
+      display:flex;align-items:flex-start;gap:8px;
+      background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;
+      padding:10px 12px;margin-bottom:14px;
+    }
+    .reviews-verified-icon{flex:none;color:#16a34a;font-size:16px;margin-top:1px}
+    .reviews-verified-text strong{display:block;font-size:12px;font-weight:800;color:#15803d}
+    .reviews-verified-text span{font-size:11px;color:#166534;line-height:1.45;display:block;margin-top:2px}
+    .reviews-label{font-size:12px;font-weight:800;color:var(--ink);margin-bottom:10px}
+    .reviews-label span{color:var(--momo)}
+    .review-item{padding:12px 0;border-bottom:1px solid var(--line)}
+    .review-item:last-child{border-bottom:0}
+    .review-user{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+    .review-avatar{
+      width:34px;height:34px;border-radius:50%;flex:none;overflow:hidden;
+      background:linear-gradient(135deg,#e8e9ed,#d0d3db);
+      display:grid;place-items:center;font-size:14px;font-weight:800;color:var(--muted);
+    }
+    .review-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .review-user-info strong{display:block;font-size:12px;font-weight:800;color:var(--ink)}
+    .review-user-info span{font-size:11px;color:var(--muted)}
+    .review-stars{color:#f5a400;font-size:13px;letter-spacing:1px;margin-bottom:5px}
+    .review-text{font-size:12px;color:var(--ink);line-height:1.55}
+    .review-helpful{
+      display:inline-flex;align-items:center;gap:5px;
+      margin-top:8px;font-size:11px;color:var(--muted);font-weight:600;
+      border:1px solid var(--line);border-radius:999px;
+      padding:4px 10px;background:#fff;transition:all .15s;
+    }
+    .review-helpful:hover{border-color:var(--grey-200);color:var(--ink)}
+
+    .leaflet-container{background:#f5f4f1;font-family:inherit}
+    .leaflet-control-zoom{display:none!important}
+    .leaflet-control-attribution{font-size:9px!important;background:rgba(255,255,255,.85)!important;padding:2px 7px!important;border-radius:6px 0 0 0!important}
+    .map-overlay{
+      position:absolute;top:14px;left:14px;z-index:400;
+      background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+      border-radius:999px;padding:8px 14px;
+      font-size:11px;font-weight:700;color:var(--ink);
+      box-shadow:0 2px 10px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04);
+      display:flex;align-items:center;gap:7px;
+    }
+    .map-overlay i{width:7px;height:7px;border-radius:50%;background:var(--momo);display:inline-block;animation:pulse 1.6s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}}
+    .map-ctrl-stack{position:absolute;bottom:14px;right:14px;z-index:400;display:flex;flex-direction:column;gap:6px}
+    .map-ctrl-group{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.10),0 0 0 1px rgba(0,0,0,.04);display:flex;flex-direction:column;overflow:hidden}
+    .map-ctrl-btn{width:38px;height:38px;border-radius:0;background:transparent;display:grid;place-items:center;color:var(--ink);font-size:18px;font-weight:700;box-shadow:none;transition:background .12s}
+    .map-ctrl-btn:hover{background:rgba(0,0,0,.04)}
+    .map-ctrl-divider{height:1px;background:rgba(0,0,0,.06);margin:0 4px}
+
+    /* Marker cluster */
+    .marker-cluster-small,.marker-cluster-medium,.marker-cluster-large{background:rgba(216,45,139,.15)!important}
+    .marker-cluster-small div,.marker-cluster-medium div,.marker-cluster-large div{background:linear-gradient(135deg,var(--momo) 0%,#a50064 100%)!important;color:#fff!important;font-weight:800!important;box-shadow:0 4px 14px rgba(216,45,139,.4)!important;border:2px solid #fff!important}
+
+    /* ── RESPONSIVE */
+    @media(max-width:700px){
+      .page-head-inner{padding:10px 14px 8px}
+      .filter-row{padding-left:14px;padding-right:14px}
+      .split{grid-template-columns:1fr}
+      .map-pane{display:none}
+      .list-scroll{padding:12px 14px 60px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- PAGE HEAD -->
+<header class="page-head">
+  <div class="page-head-inner">
+    <div class="ph-brand">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" referrerpolicy="no-referrer">
+    </div>
+    <div class="ph-text">
+      <div class="ph-breadcrumb">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Ví Trả Sau · Cửa hàng
+      </div>
+      <h1 class="ph-title" id="pageTitle">Cửa hàng ở Crescent Mall, TP. Hồ Chí Minh</h1>
+      <div class="ph-sub">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Hồ Chí Minh
+      </div>
+    </div>
+    <a class="close-btn" href="/lab.html">×</a>
+  </div>
+
+  <!-- Category filter -->
+  <div class="filter-row" id="filterRow"></div>
+</header>
+
+<!-- SPLIT LAYOUT -->
+<div class="split">
+
+  <!-- LIST PANE -->
+  <section class="list-pane">
+
+    <!-- Scrollable list -->
+    <div class="list-scroll">
+      <div class="list-meta">
+        <div>
+          <h2 class="list-title" id="listTitle">25 cửa hàng</h2>
+          <p class="list-sub" id="listSub">Crescent Mall · Tất cả</p>
+        </div>
+        <label class="sort-wrap">
+          <select id="sortSelect" onchange="render()">
+            <option value="floor">Theo tầng</option>
+            <option value="cashback">Hoàn tiền cao nhất</option>
+            <option value="az">A → Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="merchant-list" id="merchantList"></div>
+    </div>
+
+    <!-- DETAIL panel (slides over list) -->
+    <aside class="detail-modal" id="detailModal">
+    <!-- Topbar: Back + Close -->
+    <div class="detail-topbar">
+      <button class="detail-back" id="detailBack">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Danh sách
+      </button>
+      <button class="detail-close" id="detailClose">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Info header: icon + name + addr + hours + rating -->
+    <div class="detail-info-block">
+      <div class="detail-info-top">
+        <div class="detail-icon" id="detailIcon"></div>
+        <div class="detail-info-main">
+          <h2 class="detail-name" id="detailName"></h2>
+          <div class="detail-rating-inline" id="detailRatingInline"></div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span id="detailAddr"></span>
+      </div>
+      <div class="detail-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <a class="detail-hours-link" href="#">Xem giờ mở cửa</a>
+      </div>
+    </div>
+
+    <!-- Hero photo -->
+    <div class="detail-hero">
+      <div class="detail-hero-logo" id="detailHeroLogo"></div>
+      <img id="detailHeroImg" src="" alt="" referrerpolicy="no-referrer">
+      <div class="vts-overlay" id="vtsOverlay">
+        <div class="vts-overlay-badge">
+          <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+          Ví Trả Sau
+        </div>
+        <div class="vts-overlay-text" id="vtsOverlayText">
+          <strong>Nay đã có Ví Trả Sau</strong>
+          Mua trước, trả sau 30 ngày
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-scroll">
+      <p class="detail-desc" id="detailDesc"></p>
+      <div class="detail-actions">
+        <button class="btn-primary" id="detailCTA">Xem chi tiết ↗</button>
+        <button class="btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          Chỉ đường
+        </button>
+      </div>
+      <div class="reviews-section" id="detailReviews"></div>
+    </div>
+    </aside>
+
+  </section><!-- /list-pane -->
+
+  <!-- MAP PANE -->
+  <div class="map-pane">
+    <div class="map-overlay"><i></i><span id="mapCount">25 cửa hàng</span> tại Crescent Mall</div>
+    <div class="map-ctrl-stack">
+      <div class="map-ctrl-group">
+        <button class="map-ctrl-btn" id="ctrlZoomIn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="map-ctrl-divider"></div>
+        <button class="map-ctrl-btn" id="ctrlZoomOut">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+</div><!-- /split -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+// ─────────────────────────────────────────────
+// DATA: 34 tỉnh/TP (vietnamese-provinces-database, post-2025)
+// ─────────────────────────────────────────────
+const VN_PROVINCES = [
+  {code:"79",name:"Hồ Chí Minh"},{code:"01",name:"Hà Nội"},{code:"48",name:"Đà Nẵng"},
+  {code:"31",name:"Hải Phòng"},{code:"46",name:"Huế"},{code:"75",name:"Đồng Nai"},
+  {code:"92",name:"Cần Thơ"},{code:"56",name:"Khánh Hoà"},{code:"22",name:"Quảng Ninh"},
+  {code:"68",name:"Lâm Đồng"},{code:"66",name:"Đắk Lắk"},{code:"38",name:"Thanh Hoá"},
+  {code:"40",name:"Nghệ An"},{code:"52",name:"Gia Lai"},{code:"04",name:"Cao Bằng"},
+  {code:"08",name:"Tuyên Quang"},{code:"11",name:"Điện Biên"},{code:"12",name:"Lai Châu"},
+  {code:"14",name:"Sơn La"},{code:"15",name:"Lào Cai"},{code:"19",name:"Thái Nguyên"},
+  {code:"20",name:"Lạng Sơn"},{code:"24",name:"Bắc Ninh"},{code:"25",name:"Phú Thọ"},
+  {code:"33",name:"Hưng Yên"},{code:"37",name:"Ninh Bình"},{code:"42",name:"Hà Tĩnh"},
+  {code:"44",name:"Quảng Trị"},{code:"51",name:"Quảng Ngãi"},{code:"80",name:"Tây Ninh"},
+  {code:"82",name:"Đồng Tháp"},{code:"86",name:"Vĩnh Long"},{code:"91",name:"An Giang"},
+  {code:"96",name:"Cà Mau"},
+];
+
+// ─────────────────────────────────────────────
+// DATA: Merchants — Crescent Mall, Q7, HCM
+// Coordinates clustered around 10.7297, 106.7128
+// ─────────────────────────────────────────────
+const MERCHANTS = [
+  // B1
+  {id:1,  name:'LOTTE MART',        cat:'Siêu thị',              group:'market',       floor:'B1', floorLabel:'Tầng B1', icon:'🛒', color:'#d82d8b',color2:'#a50064', cashback:5,  rating:4.3, lat:10.7297,lng:106.7128,
+   addr:'Tầng B1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80',
+   desc:'Siêu thị Lotte Mart tại Crescent Mall với đầy đủ thực phẩm, đồ gia dụng và hàng tiêu dùng. Thanh toán Ví Trả Sau, hoàn 5% ngay trong tháng.',
+   reviews:[
+     {name:'Trần Minh Khoa',avatar:null,rating:5,text:'Siêu thị rộng, hàng hóa đa dạng. Thanh toán Ví Trả Sau nhanh lắm, không cần tiền mặt luôn.',helpful:12},
+     {name:'Nguyễn Thị Lan',avatar:'https://i.pravatar.cc/60?img=5',rating:4,text:'Giá cả hợp lý, nhân viên nhiệt tình. Hoàn 5% qua MoMo là điểm cộng lớn.',helpful:8},
+     {name:'Lê Văn Hùng',avatar:'https://i.pravatar.cc/60?img=11',rating:4,text:'Khu hải sản tươi ngon. Hơi đông vào cuối tuần nhưng chấp nhận được.',helpful:5},
+   ]},
+  {id:2,  name:'GUARDIAN',          cat:'Mỹ phẩm & Sức khỏe',   group:'market',       floor:'B1', floorLabel:'Tầng B1', icon:'💊', color:'#059669',color2:'#047857', cashback:0,  rating:4.2, lat:10.7295,lng:106.7131,
+   addr:'Tầng B1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600&q=80',
+   desc:'Chuỗi bán lẻ mỹ phẩm, chăm sóc sức khỏe hàng đầu. Hơn 10.000 sản phẩm từ các thương hiệu quốc tế.',
+   reviews:[
+     {name:'Phạm Thu Hà',avatar:'https://i.pravatar.cc/60?img=9',rating:5,text:'Sản phẩm chính hãng, giá tốt hơn ngoài tiệm. Nhân viên tư vấn nhiệt tình.',helpful:15},
+     {name:'Đỗ Quang Minh',avatar:null,rating:4,text:'Đủ thương hiệu quốc tế. Thanh toán MoMo nhanh, không cần xếp hàng lâu.',helpful:6},
+   ]},
+  {id:3,  name:'GS25',              cat:'Cửa hàng tiện lợi',     group:'market',       floor:'B1', floorLabel:'Tầng B1', icon:'🏪', color:'#2563eb',color2:'#1d4ed8', cashback:0,  rating:4.1, lat:10.7299,lng:106.7125,
+   addr:'Tầng B1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80',
+   desc:'Chuỗi cửa hàng tiện lợi Hàn Quốc với đồ ăn nhanh, đồ uống và tiện ích 24/7.',
+   reviews:[
+     {name:'Võ Thị Bích',avatar:'https://i.pravatar.cc/60?img=16',rating:4,text:'Đồ ăn Hàn tiện lợi, giá ổn. Cà phê hộp ngon hơn tưởng.',helpful:9},
+     {name:'Bùi Thanh Tùng',avatar:null,rating:4,text:'Mở cửa muộn tiện lắm. Hay ghé sau khi xem phim CGV.',helpful:4},
+   ]},
+  {id:4,  name:'PHÚC LONG COFFEE',  cat:'Café & Trà sữa',        group:'food',         floor:'B1', floorLabel:'Tầng B1', icon:'☕', color:'#92400e',color2:'#78350f', cashback:8,  rating:4.5, lat:10.7293,lng:106.7133,
+   addr:'Tầng B1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1558857563-b371033873b8?w=600&q=80',
+   desc:'Trà và cà phê Phúc Long nổi tiếng với hương vị đặc trưng. Dùng Ví Trả Sau hoàn ngay 8%.',
+   reviews:[
+     {name:'Nguyễn Phan Tấn Hòa',avatar:'https://i.pravatar.cc/60?img=33',rating:5,text:'Trà sữa ngon nhất trong mall này. Hoàn 8% qua VTS là quá hời!',helpful:21},
+     {name:'Trần Thị Kiều Trinh',avatar:'https://i.pravatar.cc/60?img=47',rating:5,text:'Không gian thoáng, phục vụ nhanh. Chè khúc bạch ở đây đỉnh lắm.',helpful:17},
+     {name:'Lý Minh Châu',avatar:null,rating:4,text:'Đồ uống ổn định chất lượng, không lo hôm nay ngon hôm sau dở.',helpful:8},
+   ]},
+  // L1
+  {id:5,  name:'ZARA',              cat:'Thời trang quốc tế',    group:'fashion',      floor:'L1', floorLabel:'Tầng 1',  icon:'👗', color:'#1c1917',color2:'#292524', cashback:10, rating:4.4, lat:10.7301,lng:106.7126,
+   addr:'Tầng 1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=600&q=80',
+   desc:'Thời trang nhanh Zara với bộ sưu tập mới nhất. Hoàn 10% khi thanh toán Ví Trả Sau.',
+   reviews:[
+     {name:'Mai Anh Thư',avatar:'https://i.pravatar.cc/60?img=23',rating:5,text:'Hoàn 10% là rate tốt nhất mall này. Quần áo mới về liên tục.',helpful:19},
+     {name:'Phan Đức Long',avatar:null,rating:4,text:'Sale lớn cuối tuần kết hợp VTS thì lời lắm. Nên theo dõi app MoMo.',helpful:11},
+   ]},
+  {id:6,  name:'MANGO',             cat:'Thời trang quốc tế',    group:'fashion',      floor:'L1', floorLabel:'Tầng 1',  icon:'👔', color:'#b45309',color2:'#92400e', cashback:8,  rating:4.2, lat:10.7303,lng:106.7130,
+   addr:'Tầng 1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+   desc:'Mango – thời trang phong cách Địa Trung Hải. Hoàn 8% qua Ví Trả Sau.',
+   reviews:[
+     {name:'Trương Thị Hoa',avatar:'https://i.pravatar.cc/60?img=41',rating:4,text:'Chất lượng ổn với giá tầm trung. Hoàn VTS 8% giúp tiết kiệm đáng kể.',helpful:7},
+   ]},
+  {id:7,  name:'CHARLES & KEITH',   cat:'Giày & Túi xách',       group:'fashion',      floor:'L1', floorLabel:'Tầng 1',  icon:'👜', color:'#7c3aed',color2:'#6d28d9', cashback:0,  rating:4.3, lat:10.7298,lng:106.7122,
+   addr:'Tầng 1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1584735175315-9d5df23be620?w=600&q=80',
+   desc:'Thương hiệu giày & túi xách Singapore. Thanh toán Ví Trả Sau linh hoạt.',
+   reviews:[
+     {name:'Ngô Thị Diễm',avatar:'https://i.pravatar.cc/60?img=49',rating:5,text:'Túi đẹp, bền. Thanh toán VTS không cần đủ tiền mặt, tiện quá.',helpful:13},
+     {name:'Huỳnh Văn Phúc',avatar:null,rating:4,text:'Design đẹp theo mùa. Nhân viên không push quá nhiều như một số nơi khác.',helpful:6},
+   ]},
+  {id:8,  name:'PEDRO',             cat:'Giày & Phụ kiện',       group:'fashion',      floor:'L1', floorLabel:'Tầng 1',  icon:'👟', color:'#0e7490',color2:'#0c4a6e', cashback:5,  rating:4.1, lat:10.7296,lng:106.7135,
+   addr:'Tầng 1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
+   desc:'Pedro – giày và phụ kiện thời trang từ Singapore. VTS hoàn 5%.',
+   reviews:[
+     {name:'Lâm Thị Ngọc',avatar:'https://i.pravatar.cc/60?img=32',rating:4,text:'Giày công sở đẹp, đi bền. VTS hoàn 5% cũng được.',helpful:5},
+   ]},
+  {id:9,  name:'PANDORA',           cat:'Trang sức',             group:'fashion',      floor:'L1', floorLabel:'Tầng 1',  icon:'💍', color:'#be185d',color2:'#9d174d', cashback:0,  rating:4.5, lat:10.7302,lng:106.7120,
+   addr:'Tầng 1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80',
+   desc:'Trang sức Pandora với các mẫu charm và vòng tay nổi tiếng thế giới.',
+   reviews:[
+     {name:'Vũ Thị Thanh',avatar:'https://i.pravatar.cc/60?img=20',rating:5,text:'Mua gift cho bạn gái ở đây, staff tư vấn nhiệt tình. Thanh toán MoMo nhanh.',helpful:22},
+     {name:'Đinh Quốc Bảo',avatar:null,rating:4,text:'Chính hãng, có giấy bảo hành đầy đủ. Giá OK hơn mua online.',helpful:9},
+   ]},
+  {id:10, name:'LACOSTE',           cat:'Thời trang thể thao',   group:'fashion',      floor:'L1', floorLabel:'Tầng 1',  icon:'🐊', color:'#15803d',color2:'#166534', cashback:6,  rating:4.3, lat:10.7304,lng:106.7117,
+   addr:'Tầng 1, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80',
+   desc:'Lacoste – phong cách thể thao Pháp. Hoàn 6% khi thanh toán Ví Trả Sau.',
+   reviews:[
+     {name:'Trần Công Danh',avatar:'https://i.pravatar.cc/60?img=15',rating:4,text:'Polo Lacoste bền, form đẹp. Kết hợp VTS hoàn 6% thì mua được nhiều hơn.',helpful:10},
+   ]},
+  // L2
+  {id:11, name:'PHỞ 24',            cat:'Nhà hàng Việt',         group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🍜', color:'#b45309',color2:'#78350f', cashback:10, rating:4.3, lat:10.7291,lng:106.7126,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1503764654157-72d979d9af2f?w=600&q=80',
+   desc:'Phở 24 – thương hiệu phở Việt nổi tiếng. Hoàn 10% VTS cho mỗi bữa ăn.',
+   reviews:[
+     {name:'Nguyễn Văn Tài',avatar:null,rating:5,text:'Phở nước trong, không bị ngọt hóa học. Hoàn 10% qua VTS ăn mà còn lời.',helpful:16},
+     {name:'Phan Thị Mỹ Duyên',avatar:'https://i.pravatar.cc/60?img=38',rating:4,text:'Sạch sẽ, phục vụ nhanh. Phù hợp ăn trưa văn phòng.',helpful:8},
+   ]},
+  {id:12, name:'PIZZA 4PS',         cat:"Nhà hàng Ý",            group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🍕', color:'#dc2626',color2:'#b91c1c', cashback:0,  rating:4.8, lat:10.7294,lng:106.7132,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80',
+   desc:'Pizza 4Ps với công thức từ Nhật Bản, topping tươi ngon. Đặt bàn trước qua MoMo.',
+   reviews:[
+     {name:'Lê Hoàng Anh',avatar:'https://i.pravatar.cc/60?img=12',rating:5,text:'Pizza ngon nhất HCM không lời nào hoa mỹ hơn. Phô mai chảy đỉnh.',helpful:34},
+     {name:'Bùi Thị Cẩm',avatar:'https://i.pravatar.cc/60?img=45',rating:5,text:'Đặt bàn qua MoMo rất tiện. Không gian đẹp, phù hợp hẹn hò.',helpful:27},
+     {name:'Tô Quang Vinh',avatar:null,rating:4,text:'Ngon nhưng hơi đắt. Nên đặt bàn trước, vào thẳng chờ lâu.',helpful:14},
+   ]},
+  {id:13, name:'COCO GARDEN',       cat:'Buffet hải sản',        group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🌿', color:'#047857',color2:'#065f46', cashback:12, rating:4.4, lat:10.7290,lng:106.7129,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80',
+   desc:'Buffet hải sản cao cấp – Coco Garden. Dùng Ví Trả Sau hoàn ngay 12%.',
+   reviews:[
+     {name:'Hồ Sĩ Tuấn',avatar:'https://i.pravatar.cc/60?img=17',rating:5,text:'Buffet hải sản đỉnh. Hoàn 12% VTS là rate khủng nhất khu này.',helpful:25},
+     {name:'Đặng Thị Hương',avatar:null,rating:4,text:'Tôm hùm tươi ngon, hàu rất sạch. Nên đặt bàn tránh xếp hàng.',helpful:12},
+   ]},
+  {id:14, name:'GONG CHA',          cat:'Trà sữa',               group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🧋', color:'#92400e',color2:'#78350f', cashback:0,  rating:4.2, lat:10.7296,lng:106.7136,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1558857563-b371033873b8?w=600&q=80',
+   desc:'Gong Cha – trà sữa Đài Loan chuẩn vị. Thanh toán MoMo không tiền mặt.',
+   reviews:[
+     {name:'Cao Thị Tuyết',avatar:'https://i.pravatar.cc/60?img=26',rating:4,text:'Trà oolong cheese foam ngon. Ít ngọt hơn mấy chỗ khác, thích.',helpful:9},
+   ]},
+  {id:15, name:'KFC',               cat:'Gà rán & Fast food',    group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🍗', color:'#dc2626',color2:'#b91c1c', cashback:0,  rating:4.2, lat:10.7288,lng:106.7124,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&q=80',
+   desc:'KFC – gà rán giòn ngon chuẩn vị Mỹ. Combo đa dạng cho cả gia đình.',
+   reviews:[
+     {name:'Phạm Anh Dũng',avatar:null,rating:4,text:'Gà tươi, giòn. Combo family tiết kiệm hơn order lẻ nhiều.',helpful:7},
+   ]},
+  {id:16, name:'POPEYES',           cat:'Fast food',             group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🍟', color:'#d97706',color2:'#b45309', cashback:5,  rating:4.1, lat:10.7292,lng:106.7120,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80',
+   desc:'Popeyes Louisiana Kitchen – gà rán phong cách Louisiana. VTS hoàn 5%.',
+   reviews:[
+     {name:'Lý Thanh Sơn',avatar:'https://i.pravatar.cc/60?img=53',rating:4,text:'Gà Cajun ngon hơn KFC theo ý kiến cá nhân. VTS hoàn 5% cũng ổn.',helpful:11},
+   ]},
+  {id:17, name:'COLD STONE',        cat:'Kem & Tráng miệng',     group:'food',         floor:'L2', floorLabel:'Tầng 2',  icon:'🍦', color:'#0e7490',color2:'#0c4a6e', cashback:0,  rating:4.3, lat:10.7287,lng:106.7131,
+   addr:'Tầng 2, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80',
+   desc:'Cold Stone Creamery – kem tươi Mỹ được trộn trực tiếp trên đá lạnh.',
+   reviews:[
+     {name:'Nguyễn Minh Trí',avatar:'https://i.pravatar.cc/60?img=60',rating:5,text:'Xem nhân viên trộn kem trên đá lạnh rất hay. Vị sweet cream là best.',helpful:18},
+   ]},
+  // L3
+  {id:18, name:'FPT SHOP',          cat:'Điện thoại & Phụ kiện', group:'tech',         floor:'L3', floorLabel:'Tầng 3',  icon:'📱', color:'#d82d8b',color2:'#a50064', cashback:6,  rating:4.3, lat:10.7305,lng:106.7128,
+   addr:'Tầng 3, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=600&q=80',
+   desc:'FPT Shop – điện thoại, laptop, phụ kiện chính hãng. Trả góp 0% qua Ví Trả Sau.',
+   reviews:[
+     {name:'Trần Quốc Việt',avatar:null,rating:5,text:'Trả góp 0% qua VTS mua iPhone dễ hơn nhiều. Staff kiến thức tốt.',helpful:29},
+     {name:'Đào Thị Linh',avatar:'https://i.pravatar.cc/60?img=36',rating:4,text:'Giá niêm yết chuẩn, không bị ép mua phụ kiện. Bảo hành nhanh.',helpful:15},
+   ]},
+  {id:19, name:'SAMSUNG STORE',     cat:'Điện tử',               group:'tech',         floor:'L3', floorLabel:'Tầng 3',  icon:'💻', color:'#1d4ed8',color2:'#1e40af', cashback:5,  rating:4.4, lat:10.7307,lng:106.7124,
+   addr:'Tầng 3, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&q=80',
+   desc:'Samsung Experience Store – trải nghiệm toàn bộ hệ sinh thái Galaxy. VTS hoàn 5%.',
+   reviews:[
+     {name:'Vũ Đình Khải',avatar:'https://i.pravatar.cc/60?img=57',rating:5,text:'Trải nghiệm thử S25 Ultra trước khi mua. Staff không rush, rất thích.',helpful:20},
+   ]},
+  {id:20, name:'ANANAS',            cat:'Giày thể thao',         group:'fashion',      floor:'L3', floorLabel:'Tầng 3',  icon:'👟', color:'#7c3aed',color2:'#6d28d9', cashback:8,  rating:4.4, lat:10.7303,lng:106.7132,
+   addr:'Tầng 3, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
+   desc:'Ananas – giày thể thao Việt phong cách. Hoàn 8% khi thanh toán Ví Trả Sau.',
+   reviews:[
+     {name:'Lê Nhật Minh',avatar:'https://i.pravatar.cc/60?img=8',rating:5,text:'Tự hào thương hiệu Việt. Chất lượng không thua Nike tầm giá này.',helpful:31},
+     {name:'Nguyễn Thị Phương',avatar:null,rating:4,text:'Hoàn 8% VTS mua giày Việt, cảm giác support local mà còn lợi.',helpful:14},
+   ]},
+  {id:21, name:'VASCARA',           cat:'Giày & Túi',            group:'fashion',      floor:'L3', floorLabel:'Tầng 3',  icon:'👡', color:'#be185d',color2:'#9d174d', cashback:0,  rating:4.2, lat:10.7309,lng:106.7120,
+   addr:'Tầng 3, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80',
+   desc:'Vascara – giày và túi xách thời trang Việt. Thanh toán Ví Trả Sau linh hoạt.',
+   reviews:[
+     {name:'Hoàng Thị Thu',avatar:'https://i.pravatar.cc/60?img=44',rating:4,text:'Giày công sở đẹp, giá hợp lý. Hay sale cuối tháng.',helpful:8},
+   ]},
+  {id:22, name:'JUNO',              cat:'Giày & Phụ kiện',       group:'fashion',      floor:'L3', floorLabel:'Tầng 3',  icon:'👠', color:'#9d174d',color2:'#831843', cashback:5,  rating:4.1, lat:10.7306,lng:106.7135,
+   addr:'Tầng 3, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&q=80',
+   desc:'Juno – giày và phụ kiện thời trang nữ. VTS hoàn 5% mỗi đơn hàng.',
+   reviews:[
+     {name:'Trịnh Thị Mai',avatar:null,rating:4,text:'Design cập nhật trend nhanh. VTS hoàn 5% mỗi đơn là thêm động lực mua.',helpful:6},
+   ]},
+  // L4
+  {id:23, name:'CGV CINEMAS',       cat:'Rạp phim',              group:'entertainment',floor:'L4', floorLabel:'Tầng 4',  icon:'🎬', color:'#1c1917',color2:'#292524', cashback:10, rating:4.6, lat:10.7285,lng:106.7128,
+   addr:'Tầng 4, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&q=80',
+   desc:'CGV Cinemas – hệ thống rạp phim hiện đại với màn hình lớn và âm thanh 4DX. Hoàn 10% vé qua Ví Trả Sau.',
+   reviews:[
+     {name:'Bùi Đăng Khoa',avatar:'https://i.pravatar.cc/60?img=65',rating:5,text:'4DX xem phim action đỉnh lắm. Mua vé qua MoMo lại hoàn 10%, quá oke.',helpful:38},
+     {name:'Ngô Thị Bích Ngân',avatar:'https://i.pravatar.cc/60?img=27',rating:5,text:'Ghế rộng, màn hình sắc nét. Nên đặt trước qua app MoMo để chọn ghế đẹp.',helpful:22},
+   ]},
+  {id:24, name:'ANH STAR BBQ',      cat:'Nhà hàng nướng',        group:'food',         floor:'L4', floorLabel:'Tầng 4',  icon:'🔥', color:'#b45309',color2:'#92400e', cashback:7,  rating:4.3, lat:10.7283,lng:106.7132,
+   addr:'Tầng 4, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&q=80',
+   desc:'Anh Star BBQ – nướng Hàn Quốc và Nhật Bản đỉnh cao. VTS hoàn 7%.',
+   reviews:[
+     {name:'Phùng Thế Anh',avatar:null,rating:5,text:'Thịt bò wagyu nướng ngon tuyệt. Hoàn 7% VTS cho bill cao là đáng lắm.',helpful:17},
+     {name:'Lương Thị Nga',avatar:'https://i.pravatar.cc/60?img=30',rating:4,text:'Không gian đẹp, staff nhiệt tình. Hơi ồn vào cuối tuần.',helpful:9},
+   ]},
+  {id:25, name:'TIMEZONE',          cat:'Vui chơi giải trí',     group:'entertainment',floor:'L4', floorLabel:'Tầng 4',  icon:'🎮', color:'#1d4ed8',color2:'#1e40af', cashback:0,  rating:4.2, lat:10.7281,lng:106.7126,
+   addr:'Tầng 4, TTTM Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, Hồ Chí Minh',
+   photo:'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&q=80',
+   desc:'Timezone – khu vui chơi giải trí với hàng trăm máy game hiện đại cho cả gia đình.',
+   reviews:[
+     {name:'Dương Minh Tuấn',avatar:'https://i.pravatar.cc/60?img=4',rating:4,text:'Máy game nhiều, hiện đại. Nạp thẻ qua MoMo tiện, không cần đổi tiền lẻ.',helpful:13},
+   ]},
+];
+
+const CATEGORIES = [
+  {id:'all',          label:'Tất cả',    icon:''},
+  {id:'food',         label:'Ẩm thực',   icon:'🍜'},
+  {id:'fashion',      label:'Thời trang',icon:'👗'},
+  {id:'tech',         label:'Điện tử',   icon:'📱'},
+  {id:'market',       label:'Tiêu dùng', icon:'🛒'},
+  {id:'entertainment',label:'Giải trí',  icon:'🎬'},
+];
+
+const FLOORS = [
+  {id:'B1',label:'B1',name:'Tầng B1',cat:'Siêu thị & Tiêu dùng'},
+  {id:'L1',label:'1', name:'Tầng 1', cat:'Thời trang & Phụ kiện'},
+  {id:'L2',label:'2', name:'Tầng 2', cat:'Ẩm thực & Café'},
+  {id:'L3',label:'3', name:'Tầng 3', cat:'Điện tử & Lifestyle'},
+  {id:'L4',label:'4', name:'Tầng 4', cat:'Giải trí & Rạp phim'},
+];
+
+// ─────────────────────────────────────────────
+// BRAND LOGOS — Google favicon service (sz=128 works in preview)
+const _g = d => `https://www.google.com/s2/favicons?domain=${d}&sz=128`;
+const LOGOS = {
+  1:  _g('lottemart.com.vn'),
+  2:  _g('guardian.com.vn'),
+  3:  _g('gs25.com.vn'),
+  4:  _g('phuclong.com.vn'),
+  5:  _g('zara.com'),
+  6:  _g('mango.com'),
+  7:  _g('charleskeith.com'),
+  8:  _g('pedro.com.sg'),
+  9:  _g('pandora.net'),
+  10: _g('lacoste.com'),
+  11: _g('pho24.com.vn'),
+  12: _g('pizza4ps.com'),
+  13: _g('cocogarden.vn'),
+  14: _g('gong-cha.com'),
+  15: _g('kfc.com'),
+  16: _g('popeyes.com'),
+  17: _g('coldstonecreamery.com'),
+  18: _g('fptshop.com.vn'),
+  19: _g('samsung.com'),
+  20: _g('ananas.vn'),
+  21: _g('vascara.com'),
+  22: _g('juno.vn'),
+  23: _g('cgv.vn'),
+  24: _g('anhstar.com.vn'),
+  25: _g('timezone.com'),
+};
+
+// STATE
+// ─────────────────────────────────────────────
+const S = {cat:'all', province:'79', selected:null};
+
+// ─────────────────────────────────────────────
+// PROVINCE SELECT
+// ─────────────────────────────────────────────
+function initProvinceSelect() {
+  document.getElementById('provinceSelect').innerHTML = VN_PROVINCES.map(p =>
+    `<option value="${p.code}" ${p.code===S.province?'selected':''}>${p.name}</option>`
+  ).join('');
+}
+function onProvinceChange(code) { S.province = code; }
+
+// ─────────────────────────────────────────────
+// FILTER CHIPS
+// ─────────────────────────────────────────────
+function renderFilters() {
+  document.getElementById('filterRow').innerHTML =
+    CATEGORIES.map(c => `
+      <button class="filter-chip ${S.cat===c.id?'active':''}" onclick="setCat('${c.id}')">
+        ${c.icon ? `<span class="icon">${c.icon}</span>` : ''}${c.label}
+      </button>`).join('') +
+    `<button class="filter-more">›</button>`;
+}
+
+// ─────────────────────────────────────────────
+// MERCHANT LIST
+// ─────────────────────────────────────────────
+function filtered() {
+  let list = MERCHANTS.filter(m => S.cat === 'all' || m.group === S.cat);
+  const sort = document.getElementById('sortSelect')?.value || 'floor';
+  if (sort === 'cashback') list = [...list].sort((a,b) => b.cashback - a.cashback);
+  else if (sort === 'az') list = [...list].sort((a,b) => a.name.localeCompare(b.name,'vi'));
+  else list = [...list].sort((a,b) => FLOORS.findIndex(f=>f.id===a.floor) - FLOORS.findIndex(f=>f.id===b.floor));
+  return list;
+}
+
+function renderList() {
+  const list = filtered();
+  document.getElementById('listTitle').textContent = `${list.length} cửa hàng`;
+  document.getElementById('listSub').textContent = 'Crescent Mall · ' + (S.cat === 'all' ? 'Tất cả' : CATEGORIES.find(c=>c.id===S.cat)?.label);
+  document.getElementById('mapCount').textContent = list.length;
+
+  document.getElementById('merchantList').innerHTML = list.map(m => `
+    <div class="m-card ${S.selected===m.id?'active':''}"
+         onclick="selectMerchant(${m.id})"
+         onmouseenter="hoverMerchant(${m.id})"
+         onmouseleave="hoverMerchant(null)">
+      <div class="m-logo" style="${LOGOS[m.id]?'background:#fff':''}">
+        ${LOGOS[m.id]
+          ? `<img src="${LOGOS[m.id]}" alt="${m.name}" style="width:100%;height:100%;object-fit:contain;padding:6px;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">`
+          : ''}
+        <div class="m-logo-fallback" style="--bc:${m.color};--bc2:${m.color2};${LOGOS[m.id]?'display:none':''}">${m.icon}</div>
+      </div>
+      <div class="m-body">
+        <div class="m-header">
+          <div class="m-name">${m.name}</div>
+          ${m.rating ? `<div class="m-rating"><span class="star">★</span>${m.rating}</div>` : ''}
+        </div>
+        <div class="m-meta">
+          <span class="badge-floor">${m.floorLabel}</span>
+          <span class="badge-cat">${m.cat}</span>
+        </div>
+        <div class="m-addr">${m.addr}</div>
+        ${m.cashback ? `<div class="m-badges"><span class="badge-cashback">Hoàn ${m.cashback}% với Ví Trả Sau</span></div>` : ''}
+      </div>
+    </div>`).join('');
+
+  updateMapMarkers(list);
+}
+
+// ─────────────────────────────────────────────
+// DETAIL MODAL
+// ─────────────────────────────────────────────
+function selectMerchant(id) {
+  S.selected = id;
+  renderList();
+  if (!S.selected) {
+    document.body.classList.remove('has-detail');
+    return;
+  }
+  const m = MERCHANTS.find(x => x.id === id);
+  if (!m) return;
+
+  // Icon
+  const detailIconEl = document.getElementById('detailIcon');
+  detailIconEl.style.background = LOGOS[m.id] ? '#fff' : '';
+  detailIconEl.innerHTML = LOGOS[m.id]
+    ? `<img src="${LOGOS[m.id]}" alt="${m.name}" style="width:100%;height:100%;object-fit:contain;padding:8px;border-radius:10px" onerror="this.parentElement.style.background='';this.outerHTML='<div style=\\"width:100%;height:100%;border-radius:10px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,${m.color},${m.color2})\\">${m.icon}</div>'">`
+    : `<div style="width:100%;height:100%;border-radius:10px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,${m.color},${m.color2})">${m.icon}</div>`;
+
+  document.getElementById('detailName').textContent = m.name;
+  document.getElementById('detailAddr').textContent = m.addr;
+  document.getElementById('detailDesc').textContent = m.desc;
+
+  // Rating inline
+  const stars = '★'.repeat(Math.round(m.rating)) + '☆'.repeat(5 - Math.round(m.rating));
+  const rc = (m.reviews || []).length;
+  document.getElementById('detailRatingInline').innerHTML = m.rating
+    ? `<span class="stars">${stars}</span><span>${m.rating}</span><span class="count">(${rc} đánh giá)</span>`
+    : '';
+
+  // Hero: try Unsplash (works on Vercel), fallback to brand gradient
+  const img = document.getElementById('detailHeroImg');
+  const heroEl = img.parentElement;
+  img.classList.remove('loaded');
+  img.style.display = '';
+  heroEl.style.background = `linear-gradient(135deg, ${m.color} 0%, ${m.color2} 100%)`;
+  // Hero logo (visible on gradient bg when photo fails)
+  const heroLogo = document.getElementById('detailHeroLogo');
+  heroLogo.innerHTML = LOGOS[m.id]
+    ? `<img src="${LOGOS[m.id]}" alt="">`
+    : `<span>${m.icon}</span>`;
+
+  img.src = m.photo;
+  img.onload = () => { img.classList.add('loaded'); heroEl.style.background = ''; heroLogo.style.display = 'none'; };
+  img.onerror = () => { img.style.display = 'none'; };
+
+  document.getElementById('vtsOverlayText').innerHTML =
+    `<strong>Nay đã có Ví Trả Sau</strong>${m.cashback ? `Hoàn ngay <b>${m.cashback}%</b> cho đơn này` : 'Mua trước, trả sau 30 ngày'}`;
+
+  document.getElementById('detailCTA').textContent = `Xem ưu đãi tại ${m.name} ↗`;
+
+  // Reviews
+  renderDetailReviews(m);
+
+  document.body.classList.add('has-detail');
+
+  // Re-render all markers so active pin is highlighted
+  updateMapMarkers(filtered());
+
+  updateMapMarkers(filtered());
+  if (map) map.setView([m.lat, m.lng], 17);
+}
+
+function renderDetailReviews(m) {
+  const reviews = m.reviews || [];
+  if (!reviews.length) { document.getElementById('detailReviews').innerHTML = ''; return; }
+
+  const avgRating = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+  const fullStars = '★'.repeat(Math.round(avgRating));
+  const emptyStars = '☆'.repeat(5 - Math.round(avgRating));
+
+  const reviewItems = reviews.map(r => {
+    const avatar = r.avatar
+      ? `<img src="${r.avatar}" alt="${r.name}" referrerpolicy="no-referrer">`
+      : `<span>${r.name.charAt(0)}</span>`;
+    const rStars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+    return `
+      <div class="review-item">
+        <div class="review-user">
+          <div class="review-avatar">${avatar}</div>
+          <div class="review-user-info">
+            <strong>${r.name}</strong>
+            <span>${reviews.length === 1 ? '1 đánh giá' : `${reviews.length} đánh giá`}</span>
+          </div>
+        </div>
+        <div class="review-stars">${rStars}</div>
+        ${r.text ? `<div class="review-text">${r.text}</div>` : ''}
+        <button class="review-helpful">👍 Hữu ích ${r.helpful ? `(${r.helpful})` : ''}</button>
+      </div>`;
+  }).join('');
+
+  document.getElementById('detailReviews').innerHTML = `
+    <div class="reviews-header">
+      <div class="reviews-score">
+        <div class="reviews-score-num">${avgRating}</div>
+        <div class="reviews-score-right">
+          <div class="reviews-score-stars">${fullStars}${emptyStars}</div>
+          <div class="reviews-score-sub">based on MoMo ${reviews.length} review${reviews.length > 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      <div class="reviews-verified">
+        <div class="reviews-verified-icon">✓</div>
+        <div class="reviews-verified-text">
+          <strong>100% Đánh giá đã xác thực</strong>
+          <span>Toàn bộ review đến từ khách hàng đã thật sự thanh toán qua MoMo tại cửa hàng này.</span>
+        </div>
+      </div>
+    </div>
+    <div class="reviews-label">Đánh giá từ <span>MoMo</span></div>
+    ${reviewItems}`;
+}
+
+function closeDetail() {
+  S.selected = null;
+  document.body.classList.remove('has-detail');
+  renderList();
+  if (map && markers.getLayers().length) map.fitBounds(markers.getBounds(), {padding:[40,40]});
+}
+document.getElementById('detailClose').onclick = closeDetail;
+document.getElementById('detailBack').onclick = closeDetail;
+
+// ─────────────────────────────────────────────
+// MAP (Leaflet, centered on Crescent Mall)
+// ─────────────────────────────────────────────
+let map, markers;
+
+function initMap() {
+  map = L.map('map', {zoomControl:false, attributionControl:true}).setView([10.7295, 106.7128], 16);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    subdomains:'abcd', maxZoom:20
+  }).addTo(map);
+
+  markers = L.markerClusterGroup({
+    showCoverageOnHover:false,
+    maxClusterRadius:40,
+    iconCreateFunction(cluster){
+      return L.divIcon({
+        html:`<div style="background:linear-gradient(135deg,#d82d8b,#a50064);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid #fff;box-shadow:0 4px 14px rgba(216,45,139,.4)">${cluster.getChildCount()}</div>`,
+        className:'',iconSize:[32,32]
+      });
+    }
+  });
+  map.addLayer(markers);
+
+
+  updateMapMarkers(MERCHANTS);
+}
+
+// markerMap: id → Leaflet marker ref (for hover sync)
+const markerMap = {};
+
+function makeIcon(m, state='default') {
+  // state: 'default' | 'hover' | 'active'
+  const isActive = state === 'active';
+  const isHover  = state === 'hover';
+
+  if (m.cashback > 0) {
+    // Groupon-style: pill showing cashback %
+    const bg     = isActive ? '#d82d8b' : '#fff';
+    const border = isActive ? '#a50064' : '#d82d8b';
+    const color  = isActive ? '#fff'    : '#d82d8b';
+    const scale  = isActive ? 'scale(1.15)' : isHover ? 'scale(1.08)' : 'scale(1)';
+    const shadow = isActive
+      ? '0 4px 16px rgba(216,45,139,.45),0 0 0 2px #fff'
+      : isHover
+        ? '0 4px 12px rgba(216,45,139,.25),0 0 0 1.5px #fff'
+        : '0 2px 8px rgba(0,0,0,.14),0 0 0 1.5px #fff';
+    return L.divIcon({
+      html:`<div style="transform:${scale};background:${bg};border:1.5px solid ${border};border-radius:999px;padding:4px 9px;color:${color};font-size:11px;font-weight:800;white-space:nowrap;box-shadow:${shadow};font-family:-apple-system,sans-serif;transition:all .15s">Hoàn ${m.cashback}%</div>`,
+      className:'',iconSize:[76,26],iconAnchor:[38,13]
+    });
+  } else {
+    // Plain dot for merchants with no cashback
+    const size   = isActive ? 14 : 10;
+    const shadow = isActive
+      ? '0 0 0 4px rgba(216,45,139,.2),0 2px 6px rgba(0,0,0,.18)'
+      : isHover
+        ? '0 0 0 3px rgba(216,45,139,.15),0 2px 6px rgba(0,0,0,.14)'
+        : '0 2px 6px rgba(0,0,0,.18)';
+    return L.divIcon({
+      html:`<div style="width:${size}px;height:${size}px;border-radius:50%;background:#d82d8b;border:2px solid #fff;box-shadow:${shadow}"></div>`,
+      className:'',iconSize:[size,size],iconAnchor:[size/2,size/2]
+    });
+  }
+}
+
+function updateMapMarkers(list) {
+  markers.clearLayers();
+  Object.keys(markerMap).forEach(k => delete markerMap[k]);
+  list.forEach(m => {
+    const state = S.selected === m.id ? 'active' : 'default';
+    const marker = L.marker([m.lat, m.lng], {icon: makeIcon(m, state)});
+    marker.on('click', () => selectMerchant(m.id));
+    markers.addLayer(marker);
+    markerMap[m.id] = marker;
+  });
+}
+
+// Hover card → highlight pin bidirectionally (Groupon pattern)
+function hoverMerchant(id) {
+  filtered().forEach(m => {
+    const mk = markerMap[m.id];
+    if (!mk) return;
+    const state = S.selected === m.id ? 'active' : m.id === id ? 'hover' : 'default';
+    mk.setIcon(makeIcon(m, state));
+  });
+}
+
+// ─────────────────────────────────────────────
+// ACTIONS
+// ─────────────────────────────────────────────
+function setCat(id) { S.cat = id; S.selected = null; document.body.classList.remove('has-detail'); renderFilters(); renderList(); }
+function render() { renderList(); }
+
+document.getElementById('ctrlZoomIn').addEventListener('click', () => map?.zoomIn());
+document.getElementById('ctrlZoomOut').addEventListener('click', () => map?.zoomOut());
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderFilters();
+initMap();
+renderList();
+</script>
+</body>
+</html>

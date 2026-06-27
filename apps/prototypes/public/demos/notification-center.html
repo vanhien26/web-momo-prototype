@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Notification Center — MoMo Prototype</title>
+  <style>
+    :root{
+      --momo:#a50064;--momo2:#d82d8b;--momo-light:#fff0f7;--momo-ring:#a5006420;
+      --ink:#1d2939;--sub:#475467;--muted:#98a2b3;--line:#e4e7ec;--bg:#f2f4f7;--white:#fff;
+      --green:#027a48;--green-bg:#d1fadf;
+      --blue:#1d4ed8;--blue-bg:#eff6ff;
+      --amber:#b45309;--amber-bg:#fef3c7;
+      --red:#b42318;--red-bg:#fee4e2;
+      --purple:#6d28d9;--purple-bg:#f5f3ff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;min-height:100vh}
+
+    /* ── Nav ── */
+    .topbar{height:56px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px #0000000a}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+    .brand-mark{width:32px;height:32px;background:var(--momo);border-radius:8px;display:grid;place-items:center;font-size:9px;font-weight:900;color:#fff;line-height:1.1;text-align:center}
+    .brand strong{font-size:13px}.brand small{font-size:10px;color:var(--muted);display:block}
+    .topbar-right{display:flex;align-items:center;gap:16px}
+    .topbar-back{font-size:12px;color:var(--muted);text-decoration:none}.topbar-back:hover{color:var(--momo)}
+    .nav-icons{display:flex;align-items:center;gap:8px}
+
+    /* ── Bell button ── */
+    .bell-wrap{position:relative;cursor:pointer}
+    .bell-btn{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);display:grid;place-items:center;font-size:18px;cursor:pointer;transition:.15s;position:relative}
+    .bell-btn:hover{border-color:var(--momo);background:var(--momo-light)}
+    .bell-btn.active{border-color:var(--momo);background:var(--momo-light)}
+    .bell-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;background:var(--red);color:#fff;font-size:10px;font-weight:800;border-radius:99px;display:grid;place-items:center;padding:0 4px;border:2px solid #fff;animation:badge-pop .3s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes badge-pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+    /* ── Dropdown panel ── */
+    .notif-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:400px;background:var(--white);border-radius:16px;box-shadow:0 4px 6px -1px #0000001a,0 10px 40px -4px #00000020,0 0 0 1px var(--line);z-index:200;overflow:hidden;transform-origin:top right;transform:scale(.96) translateY(-6px);opacity:0;transition:transform .2s cubic-bezier(.34,1.2,.64,1),opacity .15s;pointer-events:none}
+    .notif-dropdown.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+
+    .nd-header{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+    .nd-title{font-size:14px;font-weight:800}
+    .nd-actions{display:flex;align-items:center;gap:8px}
+    .nd-action-btn{font-size:11px;font-weight:700;color:var(--momo);cursor:pointer;border:none;background:none;font-family:inherit;padding:3px 6px;border-radius:6px;transition:.1s}
+    .nd-action-btn:hover{background:var(--momo-light)}
+
+    /* ── Tabs ── */
+    .nd-tabs{display:flex;border-bottom:1px solid var(--line);padding:0 10px;gap:0}
+    .nd-tab{padding:9px 10px;border:none;background:none;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;transition:.1s}
+    .nd-tab.active{color:var(--momo);border-bottom-color:var(--momo)}
+    .nd-tab .cnt{font-size:10px;font-weight:800;background:var(--red);color:#fff;border-radius:99px;padding:1px 5px;line-height:1.4}
+    .nd-tab.active .cnt{background:var(--momo)}
+
+    /* ── Notification list ── */
+    .nd-list{max-height:420px;overflow-y:auto;overscroll-behavior:contain}
+    .nd-list::-webkit-scrollbar{width:4px}.nd-list::-webkit-scrollbar-track{background:transparent}.nd-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+
+    .nd-group-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 16px 4px;background:var(--bg)}
+
+    .nd-item{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;cursor:pointer;border-bottom:1px solid #f1f3f5;transition:.12s;position:relative}
+    .nd-item:last-child{border-bottom:none}
+    .nd-item:hover{background:#fafafa}
+    .nd-item.unread{background:#fffbff}
+    .nd-item.unread::before{content:'';position:absolute;left:6px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--momo)}
+
+    .nd-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+    .nd-body{flex:1;min-width:0}
+    .nd-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+    .nd-name{font-size:12px;font-weight:700;line-height:1.3}
+    .nd-time{font-size:10px;color:var(--muted);white-space:nowrap;flex-shrink:0;margin-top:1px}
+    .nd-msg{font-size:12px;color:var(--sub);margin-top:2px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .nd-amount{font-size:13px;font-weight:800;margin-top:4px}
+    .nd-amount.green{color:var(--green)}.nd-amount.red{color:var(--red)}.nd-amount.momo{color:var(--momo)}
+    .nd-cta{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--momo);margin-top:5px;padding:3px 8px;background:var(--momo-light);border-radius:6px}
+
+    /* ── Empty state ── */
+    .nd-empty{padding:40px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .nd-empty-icon{font-size:40px}
+    .nd-empty-title{font-size:13px;font-weight:700}
+    .nd-empty-sub{font-size:12px;color:var(--muted)}
+
+    /* ── Footer ── */
+    .nd-footer{padding:10px 16px;border-top:1px solid var(--line);text-align:center}
+    .nd-footer a{font-size:12px;font-weight:700;color:var(--momo);text-decoration:none}
+    .nd-footer a:hover{text-decoration:underline}
+
+    /* ── Main demo area ── */
+    .demo-shell{max-width:900px;margin:0 auto;padding:32px 24px}
+    .demo-title{font-size:22px;font-weight:900}
+    .demo-sub{font-size:13px;color:var(--sub);margin-top:4px}
+    .demo-row{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap}
+    .demo-label{font-size:12px;font-weight:700;color:var(--muted)}
+
+    /* ── Preview panel ── */
+    .preview-area{position:relative;margin-top:32px}
+    .preview-topbar{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+    .preview-left{display:flex;align-items:center;gap:10px}
+    .preview-logo{width:28px;height:28px;background:var(--momo);border-radius:7px;display:grid;place-items:center;font-size:8px;font-weight:900;color:#fff}
+    .preview-app{font-size:13px;font-weight:700}
+    .preview-right{display:flex;align-items:center;gap:10px;position:relative}
+
+    /* ── Notification items (standalone page) ── */
+    .notif-page{background:var(--white);border:1px solid var(--line);border-radius:14px;margin-top:16px;overflow:hidden}
+    .np-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+    .np-title{font-size:16px;font-weight:800}
+    .np-tabs{display:flex;border-bottom:1px solid var(--line);padding:0 12px}
+    .np-tab{padding:10px 12px;border:none;background:none;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:5px;font-family:inherit;transition:.1s}
+    .np-tab.active{color:var(--momo);border-bottom-color:var(--momo)}
+
+    /* ── Settings panel ── */
+    .settings-panel{background:var(--white);border:1px solid var(--line);border-radius:14px;margin-top:16px;overflow:hidden}
+    .sp-header{padding:14px 20px;border-bottom:1px solid var(--line);font-size:14px;font-weight:800}
+    .sp-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line)}
+    .sp-row:last-child{border-bottom:none}
+    .sp-info{display:flex;align-items:center;gap:10px}
+    .sp-icon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+    .sp-name{font-size:13px;font-weight:700}.sp-desc{font-size:11px;color:var(--muted);margin-top:2px}
+    .toggle{width:38px;height:22px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:.25s;flex-shrink:0;border:none}
+    .toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 1px 3px #0000001a}
+    .toggle.on{background:var(--green)}
+    .toggle.on::after{left:18px}
+
+    /* ── Annotation chips ── */
+    .anno{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--momo-light);color:var(--momo);position:absolute;pointer-events:none;white-space:nowrap}
+    .anno-line{position:absolute;pointer-events:none}
+
+    .section-sep{height:24px}
+    .section-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+
+    .explain-box{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
+    .explain-box h3{font-size:14px;font-weight:800;margin-bottom:12px}
+    table.etable{width:100%;border-collapse:collapse;font-size:12px}
+    table.etable th{text-align:left;font-weight:700;color:var(--muted);padding:6px 10px;background:#f9fafb;border-bottom:1px solid var(--line)}
+    table.etable td{padding:8px 10px;border-bottom:1px solid #f1f3f5;color:var(--sub);vertical-align:top}
+    table.etable tr:last-child td{border-bottom:none}
+    table.etable td:first-child{font-weight:700;color:var(--ink);white-space:nowrap}
+  </style>
+</head>
+<body>
+
+<!-- ── Top navigation bar ── -->
+<div class="topbar">
+  <a class="brand" href="../index.html">
+    <div class="brand-mark">M<br>o</div>
+    <div><strong>MoMo Utilities Lab</strong><small>Notification Center</small></div>
+  </a>
+  <div class="topbar-right">
+    <a class="topbar-back" href="../index.html">← Prototype Store</a>
+    <div class="nav-icons">
+      <!-- Simulated icons -->
+      <div style="width:36px;height:36px;border-radius:9px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;font-size:16px">🔍</div>
+      <!-- Bell with dropdown -->
+      <div class="bell-wrap" id="bellWrap">
+        <button class="bell-btn" id="bellBtn" onclick="toggleDropdown()">
+          🔔
+          <div class="bell-badge" id="bellBadge">5</div>
+        </button>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="nd-header">
+            <div class="nd-title">Thông báo</div>
+            <div class="nd-actions">
+              <button class="nd-action-btn" onclick="markAllRead()">Đọc tất cả</button>
+              <button class="nd-action-btn" onclick="showNotifPage()">Xem tất cả</button>
+            </div>
+          </div>
+          <div class="nd-tabs" id="ndTabs">
+            <button class="nd-tab active" data-tab="all" onclick="switchTab('all',this)">Tất cả <span class="cnt" id="cnt-all">5</span></button>
+            <button class="nd-tab" data-tab="transaction" onclick="switchTab('transaction',this)">Giao dịch <span class="cnt" id="cnt-transaction">2</span></button>
+            <button class="nd-tab" data-tab="promo" onclick="switchTab('promo',this)">Ưu đãi <span class="cnt" id="cnt-promo">2</span></button>
+            <button class="nd-tab" data-tab="system" onclick="switchTab('system',this)">Hệ thống <span class="cnt" id="cnt-system">1</span></button>
+          </div>
+          <div class="nd-list" id="ndList"></div>
+          <div class="nd-footer"><a href="#" onclick="showNotifPage();return false">Xem tất cả thông báo →</a></div>
+        </div>
+      </div>
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--momo),var(--momo2));display:grid;place-items:center;font-size:14px;color:#fff;font-weight:700;cursor:pointer">L</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main demo content ── -->
+<div class="demo-shell">
+  <div class="demo-title">Notification Center</div>
+  <div class="demo-sub">Component thông báo cho web app — bell icon + dropdown + trang đầy đủ + settings.</div>
+
+  <div class="demo-row">
+    <span class="demo-label">Thao tác thử:</span>
+    <button onclick="toggleDropdown()" style="border:1.5px solid var(--momo);background:var(--momo-light);color:var(--momo);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🔔 Mở Dropdown</button>
+    <button onclick="addNotif()" style="border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Thêm thông báo mới</button>
+    <button onclick="markAllRead()" style="border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✓ Đọc tất cả</button>
+  </div>
+
+  <div class="section-sep"></div>
+  <div class="section-label">Trang thông báo đầy đủ</div>
+
+  <!-- Standalone notification page -->
+  <div class="notif-page" id="notifPage">
+    <div class="np-header">
+      <div class="np-title">Thông báo</div>
+      <button onclick="markAllRead()" style="border:none;background:none;font-size:12px;font-weight:700;color:var(--momo);cursor:pointer;font-family:inherit;padding:5px 8px;border-radius:6px" onmouseover="this.style.background='var(--momo-light)'" onmouseout="this.style.background='none'">Đọc tất cả</button>
+    </div>
+    <div class="np-tabs" id="npTabs">
+      <button class="np-tab active" data-tab="all" onclick="switchPageTab('all',this)">Tất cả</button>
+      <button class="np-tab" data-tab="transaction" onclick="switchPageTab('transaction',this)">Giao dịch</button>
+      <button class="np-tab" data-tab="promo" onclick="switchPageTab('promo',this)">Ưu đãi</button>
+      <button class="np-tab" data-tab="system" onclick="switchPageTab('system',this)">Hệ thống</button>
+    </div>
+    <div id="npList"></div>
+  </div>
+
+  <div class="section-sep"></div>
+  <div class="section-label">Cài đặt thông báo</div>
+
+  <!-- Settings panel -->
+  <div class="settings-panel">
+    <div class="sp-header">Tuỳ chỉnh thông báo</div>
+    <div id="settingsList"></div>
+  </div>
+
+  <!-- Explain table -->
+  <div class="explain-box">
+    <h3>Loại thông báo & Use case</h3>
+    <table class="etable">
+      <tr><th>Loại</th><th>Icon</th><th>Ví dụ</th><th>Hành động</th></tr>
+      <tr><td>Giao dịch</td><td>💸 / 💰</td><td>Nhận tiền, thanh toán, nạp thẻ thành công</td><td>Xem chi tiết giao dịch</td></tr>
+      <tr><td>Ưu đãi</td><td>🎁 / 🏷️</td><td>Voucher mới, deal hết hạn, cashback được duyệt</td><td>Xem deal / Dùng ngay</td></tr>
+      <tr><td>Hệ thống</td><td>🔒 / ⚠️</td><td>Đăng nhập thiết bị mới, cập nhật chính sách</td><td>Xem lại / Bảo mật</td></tr>
+      <tr><td>Xã hội</td><td>👥</td><td>Bạn bè tham gia MoMo, yêu cầu chuyển tiền</td><td>Phản hồi / Từ chối</td></tr>
+      <tr><td>Tài chính</td><td>📈</td><td>Tiết kiệm đáo hạn, lãi suất thay đổi</td><td>Gia hạn / Rút tiền</td></tr>
+    </table>
+  </div>
+  <div style="padding:12px 0;text-align:center;font-size:11px;color:var(--muted)">Demo nội bộ · Không lưu dữ liệu thật · <a href="../index.html" style="color:var(--momo)">← Prototype Store</a></div>
+</div>
+
+<script>
+  // ── Data
+  const TYPE_META = {
+    transaction: { bg: '#d1fadf', icon: '💸', label: 'Giao dịch' },
+    promo:       { bg: '#fef3c7', icon: '🎁', label: 'Ưu đãi' },
+    system:      { bg: '#fee4e2', icon: '🔒', label: 'Hệ thống' },
+    social:      { bg: '#eff6ff', icon: '👥', label: 'Xã hội' },
+    finance:     { bg: '#f5f3ff', icon: '📈', label: 'Tài chính' },
+  };
+
+  let notifications = [
+    { id:1, type:'transaction', unread:true,  time:'2 phút',   title:'Nhận tiền thành công', msg:'Trần Minh Tuấn đã chuyển cho bạn 500.000 đ', amount:'+500.000 đ', amountColor:'green', cta:'Xem chi tiết' },
+    { id:2, type:'promo',       unread:true,  time:'15 phút',  title:'Voucher giảm 30% mới', msg:'Grab Food tặng bạn voucher giảm 30% đơn từ 100K. Hết hạn hôm nay lúc 23:59.', cta:'Dùng ngay' },
+    { id:3, type:'system',      unread:true,  time:'1 giờ',    title:'Đăng nhập thiết bị mới', msg:'Tài khoản của bạn vừa được đăng nhập từ iPhone 15 tại Hà Nội. Không phải bạn?', cta:'Kiểm tra ngay' },
+    { id:4, type:'transaction', unread:true,  time:'2 giờ',    title:'Thanh toán điện thành công', msg:'Hoá đơn điện tháng 6 (EVN) 850.000 đ đã được thanh toán', amount:'-850.000 đ', amountColor:'red', cta:'Xem hoá đơn' },
+    { id:5, type:'promo',       unread:true,  time:'3 giờ',    title:'Hoàn tiền 15.000 đ', msg:'Bạn nhận được 15.000 đ MoMo Xu từ giao dịch thanh toán tại Circle K hôm qua.', amount:'+15.000 Xu', amountColor:'momo', cta:'Xem ví Xu' },
+    { id:6, type:'finance',     unread:false, time:'Hôm qua',  title:'Tiết kiệm sắp đáo hạn', msg:'Sổ tiết kiệm 20.000.000 đ của bạn sẽ đáo hạn vào 15/06. Chọn gia hạn hoặc rút tiền.', cta:'Gia hạn ngay' },
+    { id:7, type:'social',      unread:false, time:'Hôm qua',  title:'Bạn bè vừa tham gia', msg:'Nguyễn Thảo Linh vừa đăng ký MoMo qua link giới thiệu của bạn. Bạn nhận 50.000 đ.', amount:'+50.000 đ', amountColor:'green', cta:'Xem thưởng' },
+    { id:8, type:'promo',       unread:false, time:'2 ngày',   title:'Deal hôm nay: Pizza 50%', msg:'Domino\'s Pizza giảm 50% cho đơn từ 200K khi thanh toán MoMo. Chỉ còn 3 giờ.', cta:'Xem deal' },
+    { id:9, type:'system',      unread:false, time:'3 ngày',   title:'Cập nhật chính sách', msg:'MoMo đã cập nhật Điều khoản sử dụng và Chính sách bảo mật. Vui lòng đọc kỹ.', cta:'Xem chi tiết' },
+    { id:10, type:'transaction',unread:false, time:'3 ngày',   title:'Nạp điện thoại thành công', msg:'Nạp 50.000 đ cho số 0901 234 567 (Viettel) thành công.', amount:'-50.000 đ', amountColor:'red', cta:'Xem giao dịch' },
+  ];
+
+  const SETTINGS = [
+    { id:'s_transaction', icon:'💸', bg:'#d1fadf', name:'Giao dịch', desc:'Nhận tiền, thanh toán, nạp thẻ', on:true },
+    { id:'s_promo',       icon:'🎁', bg:'#fef3c7', name:'Ưu đãi & Hoàn tiền', desc:'Voucher mới, deal, cashback', on:true },
+    { id:'s_security',    icon:'🔒', bg:'#fee4e2', name:'Bảo mật', desc:'Đăng nhập lạ, thay đổi mật khẩu', on:true },
+    { id:'s_finance',     icon:'📈', bg:'#f5f3ff', name:'Tài chính', desc:'Tiết kiệm đáo hạn, lãi suất', on:true },
+    { id:'s_social',      icon:'👥', bg:'#eff6ff', name:'Xã hội', desc:'Bạn bè tham gia, yêu cầu chuyển tiền', on:false },
+    { id:'s_system',      icon:'⚙️', bg:'#f3f4f6', name:'Hệ thống', desc:'Cập nhật ứng dụng, bảo trì', on:false },
+  ];
+
+  let currentTab = 'all';
+  let currentPageTab = 'all';
+  let dropdownOpen = false;
+  let newIdCounter = 100;
+
+  // ── Counts
+  function getUnread(type) {
+    return notifications.filter(n => n.unread && (type === 'all' || n.type === type)).length;
+  }
+
+  function updateBadge() {
+    const total = getUnread('all');
+    const badge = document.getElementById('bellBadge');
+    if (total > 0) { badge.style.display = ''; badge.textContent = total > 9 ? '9+' : total; }
+    else badge.style.display = 'none';
+    // update tab counts
+    ['all','transaction','promo','system'].forEach(t => {
+      const el = document.getElementById('cnt-' + t);
+      if (el) { const c = getUnread(t); el.textContent = c; el.style.display = c > 0 ? '' : 'none'; }
+    });
+  }
+
+  // ── Toggle dropdown
+  function toggleDropdown() {
+    dropdownOpen = !dropdownOpen;
+    document.getElementById('notifDropdown').classList.toggle('open', dropdownOpen);
+    document.getElementById('bellBtn').classList.toggle('active', dropdownOpen);
+    if (dropdownOpen) renderList();
+  }
+
+  document.addEventListener('click', e => {
+    if (!document.getElementById('bellWrap').contains(e.target)) {
+      dropdownOpen = false;
+      document.getElementById('notifDropdown').classList.remove('open');
+      document.getElementById('bellBtn').classList.remove('active');
+    }
+  });
+
+  // ── Render list (dropdown)
+  function renderList() {
+    const el = document.getElementById('ndList');
+    const filtered = notifications.filter(n => currentTab === 'all' || n.type === currentTab);
+
+    if (filtered.length === 0) {
+      el.innerHTML = `<div class="nd-empty"><div class="nd-empty-icon">🔔</div><div class="nd-empty-title">Không có thông báo</div><div class="nd-empty-sub">Bạn đã đọc hết rồi</div></div>`;
+      return;
+    }
+
+    // Group by time category
+    const today = filtered.filter(n => ['2 phút','15 phút','1 giờ','2 giờ','3 giờ'].includes(n.time));
+    const yesterday = filtered.filter(n => n.time === 'Hôm qua');
+    const older = filtered.filter(n => !today.includes(n) && !yesterday.includes(n));
+
+    let html = '';
+    if (today.length)     html += `<div class="nd-group-label">Hôm nay</div>` + today.map(renderItem).join('');
+    if (yesterday.length) html += `<div class="nd-group-label">Hôm qua</div>` + yesterday.map(renderItem).join('');
+    if (older.length)     html += `<div class="nd-group-label">Trước đó</div>` + older.map(renderItem).join('');
+    el.innerHTML = html;
+  }
+
+  function renderItem(n) {
+    const m = TYPE_META[n.type] || TYPE_META.system;
+    return `<div class="nd-item${n.unread?' unread':''}" onclick="readItem(${n.id})">
+      <div class="nd-icon" style="background:${m.bg}">${m.icon}</div>
+      <div class="nd-body">
+        <div class="nd-title-row">
+          <div class="nd-name">${n.title}</div>
+          <div class="nd-time">${n.time}</div>
+        </div>
+        <div class="nd-msg">${n.msg}</div>
+        ${n.amount ? `<div class="nd-amount ${n.amountColor}">${n.amount}</div>` : ''}
+        ${n.cta ? `<div class="nd-cta">→ ${n.cta}</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  function readItem(id) {
+    const n = notifications.find(x => x.id === id);
+    if (n) n.unread = false;
+    updateBadge();
+    renderList();
+    renderPageList();
+  }
+
+  function markAllRead() {
+    notifications.forEach(n => n.unread = false);
+    updateBadge();
+    renderList();
+    renderPageList();
+  }
+
+  function switchTab(tab, el) {
+    currentTab = tab;
+    document.querySelectorAll('#ndTabs .nd-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderList();
+  }
+
+  // ── Render page list
+  function renderPageList() {
+    const el = document.getElementById('npList');
+    const filtered = notifications.filter(n => currentPageTab === 'all' || n.type === currentPageTab);
+    if (filtered.length === 0) {
+      el.innerHTML = `<div class="nd-empty"><div class="nd-empty-icon">🔔</div><div class="nd-empty-title">Không có thông báo</div></div>`;
+      return;
+    }
+    const today = filtered.filter(n => ['2 phút','15 phút','1 giờ','2 giờ','3 giờ'].includes(n.time));
+    const yesterday = filtered.filter(n => n.time === 'Hôm qua');
+    const older = filtered.filter(n => !today.includes(n) && !yesterday.includes(n));
+
+    let html = '';
+    if (today.length)     html += `<div class="nd-group-label">Hôm nay</div>` + today.map(renderItem).join('');
+    if (yesterday.length) html += `<div class="nd-group-label">Hôm qua</div>` + yesterday.map(renderItem).join('');
+    if (older.length)     html += `<div class="nd-group-label">Trước đó</div>` + older.map(renderItem).join('');
+    el.innerHTML = html;
+  }
+
+  function switchPageTab(tab, el) {
+    currentPageTab = tab;
+    document.querySelectorAll('#npTabs .np-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderPageList();
+  }
+
+  function showNotifPage() {
+    toggleDropdown();
+    document.getElementById('notifPage').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Add new notification (demo)
+  const NEW_NOTIFS = [
+    { type:'transaction', title:'Nhận tiền 200.000 đ', msg:'Lê Văn Hùng vừa chuyển cho bạn 200.000 đ', amount:'+200.000 đ', amountColor:'green', cta:'Xem giao dịch' },
+    { type:'promo',       title:'Voucher Shopee giảm 20%', msg:'Shopee tặng voucher giảm 20% cho đơn từ 150K. Hạn dùng 24h.', cta:'Lấy ngay' },
+    { type:'system',      title:'Phiên đăng nhập mới', msg:'Tài khoản đăng nhập từ trình duyệt Chrome / Windows lúc 10:35.', cta:'Xem chi tiết' },
+    { type:'finance',     title:'Lãi tiết kiệm +82.500 đ', msg:'Kỳ trả lãi hàng tháng của sổ tiết kiệm 20 triệu vừa được cộng.', amount:'+82.500 đ', amountColor:'green', cta:'Xem ví' },
+  ];
+  let newIdx = 0;
+
+  function addNotif() {
+    const tpl = NEW_NOTIFS[newIdx % NEW_NOTIFS.length];
+    newIdx++;
+    notifications.unshift({ ...tpl, id: ++newIdCounter, unread: true, time: 'Vừa xong' });
+    updateBadge();
+    renderList();
+    renderPageList();
+    // Pulse bell
+    const btn = document.getElementById('bellBtn');
+    btn.style.transform = 'scale(1.15)';
+    setTimeout(() => btn.style.transform = '', 200);
+  }
+
+  // ── Settings
+  function renderSettings() {
+    const el = document.getElementById('settingsList');
+    el.innerHTML = SETTINGS.map(s => `
+      <div class="sp-row">
+        <div class="sp-info">
+          <div class="sp-icon" style="background:${s.bg}">${s.icon}</div>
+          <div><div class="sp-name">${s.name}</div><div class="sp-desc">${s.desc}</div></div>
+        </div>
+        <button class="toggle${s.on?' on':''}" id="${s.id}" onclick="toggleSetting('${s.id}')"></button>
+      </div>`).join('');
+  }
+
+  function toggleSetting(id) {
+    const s = SETTINGS.find(x => x.id === id);
+    if (s) { s.on = !s.on; renderSettings(); }
+  }
+
+  // ── Init
+  updateBadge();
+  renderPageList();
+  renderSettings();
+</script>
+</body>
+</html>

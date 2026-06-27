@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEO/GEO Content Score | MoSpark</title>
+<meta name="description" content="Governance gate chấm điểm nội dung SEO, GEO và Trust trước khi xuất bản trên MoSpark.">
+<link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="seo-geo-score.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="/lab.html" target="_top" aria-label="Về Prototype Lab"><img src="../assets/images/momo-logo.svg" alt="MoMo"><img src="../assets/images/logo-web-platform.svg" alt="Web Platform" class="brand-wp" style="height:28px;width:28px;object-fit:contain"><span><strong>MoSpark</strong><small>Content Governance</small></span></a>
+    <div class="crumb"><span>SEO/GEO Project</span><b>/</b><strong>Content Score</strong></div>
+    <div class="top-actions"><span class="save-state" id="saveState"><i></i>Đã lưu bản nháp</span><button class="btn ghost" id="saveBtn" type="button">Lưu nháp</button></div>
+  </header>
+
+  <main class="workspace">
+    <section class="editor-pane">
+      <div class="page-heading">
+        <div><span class="eyebrow">Pre-publish quality gate</span><h1>SEO/GEO Content Score</h1><p>Kiểm tra nội dung có đủ điều kiện xuất bản, chỉ rõ evidence và việc cần sửa.</p></div>
+        <div class="draft-meta"><span>Draft ID</span><strong>MS-240621-018</strong></div>
+      </div>
+
+      <div class="policy-note"><span>i</span><div><strong>Scoring v2 · People-first</strong><p>Không dùng keyword density hoặc wordcount cố định làm chuẩn đạt. Điểm ưu tiên indexability, intent coverage, nguồn, trust và khả năng trả lời trực tiếp.</p></div></div>
+
+      <section class="card scenario-card">
+        <div class="card-head"><div><span class="card-kicker">Demo data</span><h2>Chọn trạng thái bài viết</h2></div><span class="auto-label">Tự chấm lại sau khi chỉnh sửa</span></div>
+        <div class="scenario-switch" role="group" aria-label="Chọn kịch bản">
+          <button type="button" data-scenario="ready">Sẵn sàng</button>
+          <button type="button" data-scenario="optimize" class="active">Cần tối ưu</button>
+          <button type="button" data-scenario="blocked">Bị chặn</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div><span class="card-kicker">Content context</span><h2>Thông tin bài viết</h2></div><span class="required-note">* Bắt buộc</span></div>
+        <div class="form-grid">
+          <label class="field"><span>Page type</span><select id="pageType"><option>Blog Article</option><option>Mini Web</option><option>Landing Page</option><option>Merchant Page</option></select></label>
+          <label class="field"><span>Risk profile</span><select id="riskProfile"><option value="ymyl">YMYL · Tài chính</option><option value="standard">Standard</option></select></label>
+          <label class="field full"><span>Canonical URL</span><input id="canonical" type="url"></label>
+          <label class="field full"><span>Primary Keyword *</span><div class="input-count"><input id="primaryKeyword" maxlength="50"><small id="keywordCount">0/50</small></div><em>1 keyword duy nhất từ Keyword Registry.</em></label>
+          <label class="field full"><span>Meta Title</span><div class="input-count"><input id="metaTitle" maxlength="80"><small id="titleCount">0/80</small></div></label>
+          <label class="field full"><span>Meta Description</span><div class="input-count"><textarea id="metaDescription" rows="2" maxlength="180"></textarea><small id="descriptionCount">0/180</small></div></label>
+          <label class="field full"><span>H1</span><input id="h1"></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div><span class="card-kicker">Content body</span><h2>Nội dung</h2></div><span class="word-stat" id="wordStat">0 từ · 0 heading</span></div>
+        <label class="field full"><span class="sr-only">Nội dung bài viết</span><textarea class="content-editor" id="contentBody" rows="18" spellcheck="false"></textarea></label>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div><span class="card-kicker">Detected signals</span><h2>Tín hiệu triển khai</h2></div><span class="auto-label">Mô phỏng DOM parser và CMS fields</span></div>
+        <div class="signal-grid" id="signalGrid">
+          <label><input type="checkbox" id="indexable"><span><b>Indexable</b><small>Không có noindex</small></span></label>
+          <label><input type="checkbox" id="schema"><span><b>Schema hợp lệ</b><small>Đúng nội dung hiển thị</small></span></label>
+          <label><input type="checkbox" id="og"><span><b>Open Graph</b><small>Title, description, URL, image</small></span></label>
+          <label><input type="checkbox" id="alt"><span><b>Image alt</b><small>Tất cả ảnh nội dung</small></span></label>
+          <label><input type="checkbox" id="internal"><span><b>Internal links</b><small>Link liên quan trên momo.vn</small></span></label>
+          <label><input type="checkbox" id="cta"><span><b>CTA rõ ràng</b><small>Phù hợp JTBD của trang</small></span></label>
+          <label><input type="checkbox" id="sources"><span><b>Nguồn cho claim</b><small>Claim quan trọng có dẫn nguồn</small></span></label>
+          <label><input type="checkbox" id="author"><span><b>Tác giả</b><small>Byline và hồ sơ tác giả</small></span></label>
+          <label><input type="checkbox" id="reviewer"><span><b>Reviewer</b><small>Bắt buộc với YMYL</small></span></label>
+          <label><input type="checkbox" id="disclaimer"><span><b>Disclaimer</b><small>Giới hạn nội dung tư vấn</small></span></label>
+          <label><input type="checkbox" id="updated"><span><b>Ngày cập nhật</b><small>Hiển thị và đồng bộ Schema</small></span></label>
+        </div>
+      </section>
+    </section>
+
+    <aside class="score-pane" aria-label="Kết quả chấm điểm">
+      <div class="score-sticky">
+        <section class="score-summary" id="scoreSummary">
+          <div class="score-top"><div><span class="score-label">SEO/GEO SCORE</span><div class="score-number"><strong id="totalScore">0</strong><span>/100</span></div></div><div class="score-ring" id="scoreRing"><span id="ringScore">0</span></div></div>
+          <div class="status-row"><span class="status-badge" id="statusBadge">Đang chấm</span><span id="lastRun">Auto-score</span></div>
+          <div class="score-bar"><i id="scoreBar"></i></div>
+          <div class="gate-alert" id="gateAlert"></div>
+          <div class="summary-stats"><span><b id="passCount">0</b> đạt</span><span><b id="failCount">0</b> cần sửa</span><span><b id="pendingCount">0</b> chờ đo</span></div>
+        </section>
+
+        <section class="block-list" id="blockList"></section>
+
+        <section class="priority-panel">
+          <div class="priority-head"><div><span>Ưu tiên xử lý</span><strong id="priorityCount">0 việc</strong></div></div>
+          <div id="priorityList"></div>
+        </section>
+
+        <section class="publish-panel">
+          <button class="btn cwv" id="cwvBtn" type="button">Chạy Lab Performance</button>
+          <div class="publish-actions"><button class="btn ghost" id="bottomSaveBtn" type="button">Lưu nháp</button><button class="btn publish" id="publishBtn" type="button">Publish</button></div>
+          <p id="publishHint">Hệ thống sẽ kiểm tra lại trên backend khi Publish.</p>
+        </section>
+      </div>
+    </aside>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="seo-geo-score.js"></script>
+</body>
+</html>
