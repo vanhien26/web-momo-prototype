@@ -21,7 +21,7 @@ export default function ModulesSection() {
         <div className="rv grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
           {/* 1. Landing Page Builder */}
-          <Card className="overflow-hidden p-0" style={{ border: "1px solid rgba(255,255,255,.1)", background: "#0f1117" }}>
+          <Card className="overflow-hidden p-0" style={{ border: "1px solid var(--module-card-border)", background: "var(--module-card-dark-bg)" }}>
             <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px" }}>
               <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 70% 20%,rgba(165,0,100,.2),transparent 65%)", pointerEvents: "none" }}></div>
               <div className="lp-frame-anim">
@@ -32,8 +32,8 @@ export default function ModulesSection() {
               </div>
             </div>
             <CardContent className="px-5 pb-5 pt-4">
-              <h3 className="mb-1.5 text-[15px] font-extrabold text-white">Landing Page Builder</h3>
-              <p className="text-[11.5px] leading-[1.7]" style={{ color: "rgba(255,255,255,.5)" }}>Tạo landing page nhanh từ brief hoặc prompt, dùng template chuẩn hóa và dễ handoff cho Dev.</p>
+              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "var(--module-card-dark-text)" }}>Landing Page Builder</h3>
+              <p className="text-[11.5px] leading-[1.7]" style={{ color: "var(--module-card-dark-sub)" }}>Tạo landing page nhanh từ brief hoặc prompt, dùng template chuẩn hóa và dễ handoff cho Dev.</p>
             </CardContent>
           </Card>
 
@@ -54,7 +54,7 @@ export default function ModulesSection() {
           </Card>
 
           {/* 3. Ads & Widget */}
-          <Card className="overflow-hidden p-0" style={{ border: "1px solid rgba(255,255,255,.1)", background: "#0f1117" }}>
+          <Card className="overflow-hidden p-0" style={{ border: "1px solid var(--module-card-border)", background: "var(--module-card-dark-bg)" }}>
             <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px" }}>
               <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 72% 30%,rgba(124,58,237,.18),transparent 64%)", pointerEvents: "none" }}></div>
               <div className="ads-frame-anim">
@@ -70,8 +70,8 @@ export default function ModulesSection() {
               </div>
             </div>
             <CardContent className="px-5 pb-5 pt-4">
-              <h3 className="mb-1.5 text-[15px] font-extrabold text-white">Ads &amp; Widget</h3>
-              <p className="text-[11.5px] leading-[1.7]" style={{ color: "rgba(255,255,255,.5)" }}>Quản lý product card, banner và utility widget theo ngữ cảnh từng trang, không hardcode theo từng sprint.</p>
+              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "var(--module-card-dark-text)" }}>Ads &amp; Widget</h3>
+              <p className="text-[11.5px] leading-[1.7]" style={{ color: "var(--module-card-dark-sub)" }}>Quản lý product card, banner và utility widget theo ngữ cảnh từng trang, không hardcode theo từng sprint.</p>
             </CardContent>
           </Card>
 
@@ -91,7 +91,7 @@ export default function ModulesSection() {
           </Card>
 
           {/* 5. SEO/GEO Project */}
-          <Card className="overflow-hidden p-0" style={{ border: "1px solid rgba(255,255,255,.1)", background: "#0f1117" }}>
+          <Card className="overflow-hidden p-0" style={{ border: "1px solid var(--module-card-border)", background: "var(--module-card-dark-bg)" }}>
             <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px" }}>
               <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 40% 20%,rgba(14,165,233,.16),transparent 62%)", pointerEvents: "none" }}></div>
               <div className="seo-chart-frame">
@@ -103,8 +103,8 @@ export default function ModulesSection() {
               </div>
             </div>
             <CardContent className="px-5 pb-5 pt-4">
-              <h3 className="mb-1.5 text-[15px] font-extrabold text-white">SEO/GEO Project</h3>
-              <p className="text-[11.5px] leading-[1.7]" style={{ color: "rgba(255,255,255,.5)" }}>Quản lý keyword, cấu trúc web, nội dung và hiệu suất cho Google Search và AI Search.</p>
+              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "var(--module-card-dark-text)" }}>SEO/GEO Project</h3>
+              <p className="text-[11.5px] leading-[1.7]" style={{ color: "var(--module-card-dark-sub)" }}>Quản lý keyword, cấu trúc web, nội dung và hiệu suất cho Google Search và AI Search.</p>
             </CardContent>
           </Card>
 
