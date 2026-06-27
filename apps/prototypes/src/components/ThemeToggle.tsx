@@ -67,10 +67,10 @@ export default function ThemeToggle() {
         }`}
         onClick={toggleContrast}
         aria-label="Toggle high contrast accessibility theme"
-        title="Độ tương phản cao"
+        title="High Contrast"
       >
         <Contrast className="h-4 w-4 shrink-0" />
-        <span>Tương phản cao</span>
+        <span>High Contrast</span>
       </button>
     </div>
   );
