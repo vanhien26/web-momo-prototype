@@ -38,8 +38,8 @@ export default function ModulesSection() {
           </Card>
 
           {/* 2. GenAI Content */}
-          <Card className="overflow-hidden p-0">
-            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px", background: "#f5f5f9" }}>
+          <Card className="overflow-hidden p-0" style={{ background: "var(--card-bg)", borderColor: "var(--border-color)" }}>
+            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px", background: "var(--secondary)" }}>
               <div className="ai-doc-frame">
                 <div className="ai-doc-hd"></div>
                 <div className="ai-doc-l1"></div>
@@ -48,8 +48,8 @@ export default function ModulesSection() {
               </div>
             </div>
             <CardContent className="px-5 pb-5 pt-4">
-              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "#101828" }}>GenAI Content</h3>
-              <p className="text-[11.5px] leading-[1.7]" style={{ color: "#667085" }}>Sản xuất outline, bài viết, FAQ và product embed dựa trên business context của từng PLG Project.</p>
+              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "var(--text-main)" }}>GenAI Content</h3>
+              <p className="text-[11.5px] leading-[1.7]" style={{ color: "var(--text-sub)" }}>Sản xuất outline, bài viết, FAQ và product embed dựa trên business context của từng PLG Project.</p>
             </CardContent>
           </Card>
 
@@ -76,8 +76,8 @@ export default function ModulesSection() {
           </Card>
 
           {/* 4. Chatbot */}
-          <Card className="overflow-hidden p-0">
-            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px", background: "#f5f5f9" }}>
+          <Card className="overflow-hidden p-0" style={{ background: "var(--card-bg)", borderColor: "var(--border-color)" }}>
+            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px", background: "var(--secondary)" }}>
               <div className="chat-frame-anim">
                 <div className="chat-u-msg">Vay nhanh điều kiện gì?</div>
                 <div className="chat-dots-anim"><span></span><span></span><span></span></div>
@@ -85,8 +85,8 @@ export default function ModulesSection() {
               </div>
             </div>
             <CardContent className="px-5 pb-5 pt-4">
-              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "#101828" }}>Chatbot</h3>
-              <p className="text-[11.5px] leading-[1.7]" style={{ color: "#667085" }}>Nhúng trợ lý vào mini web hoặc microsite để trả lời từ RAG và dẫn user tới hành động phù hợp.</p>
+              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "var(--text-main)" }}>Chatbot</h3>
+              <p className="text-[11.5px] leading-[1.7]" style={{ color: "var(--text-sub)" }}>Nhúng trợ lý vào mini web hoặc microsite để trả lời từ RAG và dẫn user tới hành động phù hợp.</p>
             </CardContent>
           </Card>
 
@@ -109,8 +109,8 @@ export default function ModulesSection() {
           </Card>
 
           {/* 6. SEO/GEO Score */}
-          <Card className="overflow-hidden p-0">
-            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px", background: "#f5f5f9" }}>
+          <Card className="overflow-hidden p-0" style={{ background: "var(--card-bg)", borderColor: "var(--border-color)" }}>
+            <div className="relative flex items-center justify-center overflow-hidden" style={{ height: "148px", background: "var(--secondary)" }}>
               <div className="score-gauge-frame">
                 <svg viewBox="0 0 100 100" width="88" height="88" style={{ transform: "rotate(-90deg)", position: "absolute" }}>
                   <circle cx="50" cy="50" r="38" fill="none" stroke="#e4e7ec" strokeWidth="7"/>
@@ -118,13 +118,13 @@ export default function ModulesSection() {
                 </svg>
                 <div className="sg-inner-label">
                   <span className="sg-num-anim">84</span>
-                  <span style={{ fontSize: "9px", color: "#9ca3af", fontWeight: 700 }}>/100</span>
+                  <span style={{ fontSize: "9px", color: "var(--text-sub)", fontWeight: 700 }}>/100</span>
                 </div>
               </div>
             </div>
             <CardContent className="px-5 pb-5 pt-4">
-              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "#101828" }}>SEO/GEO Score</h3>
-              <p className="text-[11.5px] leading-[1.7]" style={{ color: "#667085" }}>Chấm điểm nội dung trước publish để kiểm soát factuality, citation, readability và khả năng được AI trích dẫn.</p>
+              <h3 className="mb-1.5 text-[15px] font-extrabold" style={{ color: "var(--text-main)" }}>SEO/GEO Score</h3>
+              <p className="text-[11.5px] leading-[1.7]" style={{ color: "var(--text-sub)" }}>Chấm điểm nội dung trước publish để kiểm soát factuality, citation, readability và khả năng được AI trích dẫn.</p>
             </CardContent>
           </Card>
 
