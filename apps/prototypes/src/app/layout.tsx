@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${inter.variable} ${momoTrust.variable}`} suppressHydrationWarning>
       <body className="font-sans">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem themes={["light", "dark", "contrast"]}>
           {children}
         </ThemeProvider>
       </body>
