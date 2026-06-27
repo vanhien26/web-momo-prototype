@@ -1,45 +1,37 @@
-import Link from 'next/link';
-import { getGroupedPrototypes } from '@/data/prototypes';
+import type { Metadata } from "next";
+import "./mospark.css";
+
+import HeroSection from "@/components/mospark/HeroSection";
+import TickerBar from "@/components/mospark/TickerBar";
+import AIPartnersSection from "@/components/mospark/AIPartnersSection";
+import PlatformStorySection from "@/components/mospark/PlatformStorySection";
+import ModulesSection from "@/components/mospark/ModulesSection";
+import WorkflowSection from "@/components/mospark/WorkflowSection";
+import TimelineSection from "@/components/mospark/TimelineSection";
+import MerchantSection from "@/components/mospark/MerchantSection";
+import PageFooter from "@/components/mospark/PageFooter";
+
+export const metadata: Metadata = {
+  title: "MoSpark - Web Growth Platform | MoMo",
+  description:
+    "MoSpark là Web Growth Platform của MoMo: BU/PM tự build landing page bằng AI, nhúng widget, chạy ads và đo full-funnel từ web đến giao dịch.",
+};
 
 export default function HomePage() {
-  const groups = getGroupedPrototypes();
-
   return (
-    <div className="home-container">
-      {/* Hero */}
-      <div className="home-hero animate-fade-in">
-        <h1>MoMo Prototype Store</h1>
-        <p>
-          Kho prototype tương tác của Web Platform — duyệt theo nhóm, mở demo
-          trực tiếp trong sidebar hoặc click vào card bên dưới.
-        </p>
-      </div>
-
-      {/* Group Cards — dùng Mobase CSS tokens */}
-      <div className="home-grid">
-        {groups.map((group, gi) => (
-          <Link
-            key={group.name}
-            href={group.items[0] ? `/demo/${group.items[0].id}` : '#'}
-            className="home-card animate-fade-in"
-            style={{ animationDelay: `${gi * 80}ms` }}
-          >
-            <div className="home-card-header">
-              <span className="home-card-badge">{group.summary?.eyebrow || group.label}</span>
-              <span className="home-card-count">{group.items.length}</span>
-            </div>
-            <div className="home-card-title">
-              {group.summary?.title || group.label}
-            </div>
-            <div className="home-card-desc">
-              {group.summary?.description || `${group.items.length} prototype(s)`}
-            </div>
-            <div className="home-card-examples">
-              {group.summary?.examples || group.items.map((p) => p.name).join(' · ')}
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <main
+      className="overflow-x-hidden bg-white"
+      style={{ fontFamily: "var(--font-momo-trust-sans), -apple-system, BlinkMacSystemFont, sans-serif" }}
+    >
+      <HeroSection />
+      <TickerBar />
+      <AIPartnersSection />
+      <PlatformStorySection />
+      <ModulesSection />
+      <WorkflowSection />
+      <TimelineSection />
+      <MerchantSection />
+      <PageFooter />
+    </main>
   );
 }

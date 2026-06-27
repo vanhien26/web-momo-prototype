@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -29,12 +28,7 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${inter.variable} ${momoTrust.variable}`} suppressHydrationWarning>
       <body className="font-sans">
-        <div className="app-shell">
-          <Sidebar />
-          <main className="main-content">
-            {children}
-          </main>
-        </div>
+        {children}
       </body>
     </html>
   );
