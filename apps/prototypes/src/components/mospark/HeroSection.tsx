@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Button, buttonVariants } from "@momo-webplatform/mobase-next";
+import { buttonVariants } from "@momo-webplatform/mobase-next";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function HeroSection() {

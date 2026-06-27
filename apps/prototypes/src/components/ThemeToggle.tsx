@@ -2,7 +2,6 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Button } from "@momo-webplatform/mobase-next";
 import { Sun, Moon, Contrast } from "lucide-react";
 
 export default function ThemeToggle() {
@@ -38,11 +37,10 @@ export default function ThemeToggle() {
 
   return (
     <div className="flex items-center gap-1.5">
-      {/* Light/Dark Toggle Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className={`w-9 h-9 p-0 rounded-full flex items-center justify-center border transition-all ${
+      {/* Light/Dark Toggle — transparent icon button, chuẩn mobase transparent variant */}
+      <button
+        type="button"
+        className={`w-9 h-9 p-0 rounded-full flex items-center justify-center border transition-all cursor-pointer ${
           !isContrast
             ? "border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
             : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -56,15 +54,14 @@ export default function ThemeToggle() {
         ) : (
           <Sun className="h-4 w-4 text-amber-500" />
         )}
-      </Button>
+      </button>
 
-      {/* High Contrast Toggle Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className={`w-9 h-9 p-0 rounded-full flex items-center justify-center border transition-all ${
+      {/* High Contrast Toggle — transparent icon button */}
+      <button
+        type="button"
+        className={`w-9 h-9 p-0 rounded-full flex items-center justify-center border transition-all cursor-pointer ${
           isContrast
-            ? "border-pink-500 bg-pink-50 dark:bg-pink-950/30 text-pink-500"
+            ? "border-pink-500 bg-pink-50 dark:bg-pink-950/30"
             : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
         }`}
         onClick={toggleContrast}
@@ -72,7 +69,7 @@ export default function ThemeToggle() {
         title="Độ tương phản cao"
       >
         <Contrast className={`h-4 w-4 ${isContrast ? "text-pink-500" : "text-slate-600 dark:text-slate-400"}`} />
-      </Button>
+      </button>
     </div>
   );
 }

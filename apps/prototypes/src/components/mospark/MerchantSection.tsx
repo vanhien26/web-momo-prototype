@@ -57,7 +57,9 @@ export default function MerchantSection() {
             <div className="momo-display" style={{ fontSize: "52px", fontWeight: 900, color: "var(--text-main)", lineHeight: .92, letterSpacing: "-.04em", marginBottom: "8px" }}>Basic</div>
             <div style={{ fontSize: "12.5px", lineHeight: 1.6, color: "var(--text-sub)", marginBottom: "22px", maxWidth: "320px" }}>Trang SME định danh rõ ràng, chuẩn SEO/GEO và tích hợp Google Maps - đủ để được tìm thấy và tạo tin tưởng trước khi ghé.</div>
             <a href="/merchant" target="_blank" className="mb-6 block w-full no-underline">
-              <Button variant="outline" className="w-full bg-[#f3f4f6] dark:bg-[#1f2937] text-[#374151] dark:text-[#f3f4f6] border-[#e5e7eb] dark:border-[#374151] hover:bg-[#e5e7eb]" style={{ width: "100%", background: "var(--secondary)", borderColor: "var(--border-color)", color: "var(--text-sub)", fontWeight: 800 }}>Xem Demo Basic →</Button>
+              <Button variant="secondary" className="w-full">
+                Xem Demo Basic →
+              </Button>
             </a>
             <div style={{ fontSize: "8px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--text-sub)", fontFamily: "ui-monospace,monospace", marginBottom: "14px" }}>Bao gồm</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
@@ -84,8 +86,12 @@ export default function MerchantSection() {
               </div>
               <div className="momo-display" style={{ fontSize: "52px", fontWeight: 900, color: "#fff", lineHeight: .92, letterSpacing: "-.04em", marginBottom: "8px" }}>Premium</div>
               <div style={{ fontSize: "12.5px", lineHeight: 1.6, color: "rgba(255,255,255,.7)", marginBottom: "22px", maxWidth: "320px" }}>Trải nghiệm thương nhân đầy đủ nhất - từ định danh, bản đồ, review đến AI Overview và Video giới thiệu.</div>
-              <a href="/merchant-page-builder" target="_blank" className="mb-6 block w-full no-underline">
-                <Button variant="secondary" className="w-full bg-white text-[#a50064] border-none hover:bg-[#ffd6ec]" style={{ width: "100%", background: "#fff", color: "#a50064", fontWeight: 800, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,.15)" }}>Xem Demo Premium →</Button>
+              <a
+                href="/merchant-page-builder"
+                target="_blank"
+                className="mb-6 block w-full no-underline rounded-[var(--radius-button,9999px)] bg-white text-[#a50064] font-extrabold text-sm h-9 px-4 flex items-center justify-center transition-colors hover:bg-[#ffedf6] active:translate-y-px"
+              >
+                Xem Demo Premium →
               </a>
               <div style={{ fontSize: "8px", fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,255,255,.35)", fontFamily: "ui-monospace,monospace", marginBottom: "14px" }}>Tất cả tính năng</div>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
