@@ -21,32 +21,47 @@ export default function HeadingBlock({
 }: HeadingBlockProps) {
   const HeadingTag = tagHeading;
 
-  // Align styles
   const alignClass = align === "left" ? "text-left" : align === "right" ? "text-right" : "text-center";
 
-  // Tagline color
-  const taglineColor = colorScheme === "white" ? "text-white/70" : "text-pink-600";
+  // Dùng CSS variable thay vì Tailwind color class — hoạt động với mọi theme
+  const taglineStyle =
+    colorScheme === "white"
+      ? { color: "rgba(255,255,255,0.7)" }
+      : { color: "#d82d8b" }; // MoMo pink, không đổi theo theme
 
-  // Title color
-  const titleColor = colorScheme === "white" ? "text-white" : "text-slate-900";
+  const titleStyle =
+    colorScheme === "white"
+      ? { color: "#ffffff" }
+      : { color: "var(--text-main)" }; // tự thích nghi light/dark/contrast
 
-  // Description color
-  const descColor = colorScheme === "white" ? "text-white/60" : "text-slate-500";
+  const descStyle =
+    colorScheme === "white"
+      ? { color: "rgba(255,255,255,0.6)" }
+      : { color: "var(--text-sub)" }; // tự thích nghi light/dark/contrast
 
   return (
     <div className={`${alignClass} ${className} flex flex-col gap-2`}>
       {tagline && (
-        <span className={`${taglineColor} font-mono text-[10px] font-bold uppercase tracking-[.15em]`}>
+        <span
+          className="font-mono text-[10px] font-bold uppercase tracking-[.15em]"
+          style={taglineStyle}
+        >
           {tagline}
         </span>
       )}
       {title && (
-        <HeadingTag className={`${titleColor} momo-display text-[26px] font-black leading-tight tracking-tight sm:text-3xl md:text-4xl`}>
+        <HeadingTag
+          className="momo-display text-[26px] font-black leading-tight tracking-tight sm:text-3xl md:text-4xl"
+          style={titleStyle}
+        >
           {title}
         </HeadingTag>
       )}
       {description && (
-        <p className={`${descColor} mt-2 text-xs md:text-sm leading-relaxed max-w-2xl ${align === "center" ? "mx-auto" : ""}`}>
+        <p
+          className={`mt-2 text-xs md:text-sm leading-relaxed max-w-2xl ${align === "center" ? "mx-auto" : ""}`}
+          style={descStyle}
+        >
           {description}
         </p>
       )}
