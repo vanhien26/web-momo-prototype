@@ -124,7 +124,7 @@ const PROTOTYPES = [
     category: 'Platform',
     ownerGroup: 'Cell Team',
     maturity: 'PLG Page',
-    description: 'Trang chủ Cinema momo.vn/cinema — SEO/organic entry point. Gồm hero campaign, film grid 2-col dạng ticket stub, genre filter, coming soon, rạp gần bạn và PLG block.',
+    description: 'Trang chủ Cinema momo.vn/cinema — SEO/organic entry point. Gồm hero film, film grid 2-col dạng ticket stub, genre filter, coming soon, rạp gần bạn và PLG block.',
     jtbd: 'Browse phim đang chiếu, nhận cashback, chọn rạp và mua vé nhanh qua MoMo',
     northStar: 'Film card click-through → ticket purchase',
     loop: 'Organic search → Film browse → Pick film → Showtime → Mua vé',
@@ -137,16 +137,16 @@ const PROTOTYPES = [
       {
         id: 'cinema-film-detail',
         name: 'Film Detail',
-        category: 'Spoke',
+        category: 'Film Detail',
         ownerGroup: 'Cell Team',
-        maturity: 'Campaign Page',
-        description: 'Film Detail page cho Summer Campaign 2026 — tích hợp Hero campaign, Game Mở Khoá (Mua vé → Check-in → Review), Bundle Banner, Thông tin phim, Lịch chiếu và Đánh giá.',
-        jtbd: 'Mua vé và tham gia campaign ngay từ trang phim',
-        northStar: 'Game mission completion + ticket purchase',
-        loop: 'Hero → Game block → Buy ticket → Check-in → Review',
-        hypothesis: 'Tích hợp campaign gamification trực tiếp vào film detail tăng mission completion rate so với popup/banner riêng lẻ.',
-        value: 'Tạo luồng campaign mới cho Cinema: từ organic traffic vào film detail → mua vé → check-in → review → cashback.',
-        gate: 'Đo mission completion rate (1→2→3), ticket CTA CTR, check-in activation và review submission.',
+        maturity: 'Detail Page',
+        description: 'Film Detail page cho MoMo Cinema tập trung vào booking flow: poster, showtime, seat popup, popcorn popup và payment popup.',
+        jtbd: 'Chọn suất chiếu, giữ ghế, thêm bắp nước và thanh toán nhanh',
+        northStar: 'Ticket purchase completion',
+        loop: 'Film detail → Showtime → Seat popup → Popcorn popup → Payment',
+        hypothesis: 'Đặt vé theo chuỗi popup ngắn giảm ma sát so với campaign flow và giúp user đi thẳng tới checkout.',
+        value: 'Trang detail bám intent đặt vé, dẫn người dùng từ film overview tới seat, snack và payment trong một luồng rõ ràng.',
+        gate: 'Đo showtime CTR, seat selection, snack attach rate và payment completion.',
         src: 'demos/cinema-film-detail.html',
         address: 'web-momo-prototype.vercel.app/cinema/nghi-he-so-nghi-huu',
       },
@@ -358,6 +358,21 @@ const PROTOTYPES = [
         address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
       },
     ],
+  },
+  {
+    id: 'articles',
+    name: 'Articles & News Hub',
+    category: 'MoSpark',
+    maturity: 'Prototype',
+    description: 'Hub tin tức và khuyến mãi MoMo: feed bài viết đa danh mục (Tin tức, Khuyến mãi, Sự kiện, Hướng dẫn, Tài chính), ticker realtime, hero featured article, và reader panel slide-in inline. Mô hình phân phối nội dung in-app + out-app.',
+    jtbd: 'Người dùng khám phá tin tức và ưu đãi MoMo theo danh mục, tìm bài viết liên quan, đọc nội dung đầy đủ và chuyển đổi sang tính năng tương ứng.',
+    northStar: 'Article CTR from listing + Reader completion rate + CTA conversion',
+    loop: 'Browse feed → Filter category → Click article → Read full → CTA → Feature',
+    hypothesis: 'Feed tin tức + khuyến mãi tập trung trên một trang giúp người dùng khám phá ưu đãi hiệu quả hơn so với thông báo push rời rạc. Reader panel inline giảm drop-off so với mở trang mới.',
+    value: 'Bề mặt phân phối nội dung editorial MoMo (in-app + out-app): articles, promotions, events, guides. Ticker realtime là kênh highlight ưu đãi hot mà không cần push notification.',
+    gate: 'Đo: article CTR từ listing, reader scroll depth, category filter usage, CTA click rate, ticker interaction rate.',
+    src: 'demos/articles.html',
+    address: 'web-momo-prototype.vercel.app/articles',
   },
   {
     id: 'blog-editor',
@@ -626,7 +641,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
-  Database: ['supabase-editor', 'blog-category', 'blog-editor', 'merchant-page-builder'],
+  Database: ['supabase-editor', 'blog-category', 'blog-editor', 'articles', 'merchant-page-builder'],
   Modules:  ['ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
 };
 
@@ -635,7 +650,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'supabase-editor', 'blog-category', 'blog-editor', 'merchant-page-builder', 'ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'supabase-editor', 'blog-category', 'blog-editor', 'articles', 'merchant-page-builder', 'ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['widget-store', 'financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'merchant', 'dich-vu-cong'],
