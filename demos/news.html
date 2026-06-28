@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MoMo News - Cập nhật mới nhất</title>
+<link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="../assets/mobase-tokens.css">
+<style>
+:root {
+  --momo: var(--pink-600);
+  --momo-mid: var(--pink-500);
+  --ink: var(--grey-900);
+  --text: var(--grey-800);
+  --muted: var(--grey-500);
+  --line: var(--grey-200);
+  --canvas: #f7f8fb;
+  --surface: #fff;
+  --soft: #fff0f7;
+  --blue: #1d4ed8;
+  --green: #047857;
+  --orange: #b45309;
+  --violet: #6d28d9;
+  --radius: 8px;
+  --shadow: 0 16px 50px rgba(16, 24, 40, .08);
+  --font-display: 'MoMoTrustDisplay', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 15px;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--canvas);
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 64px;
+  padding: 12px clamp(18px, 4vw, 48px);
+  background: rgba(255, 255, 255, .94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--soft);
+  border: 1px solid rgba(165, 0, 100, .12);
+}
+
+.brand-mark img {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-text {
+  min-width: 0;
+}
+
+.brand-text strong {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.brand-text span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn,
+.back-btn {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.icon-btn {
+  width: 36px;
+  padding: 0;
+}
+
+.back-btn {
+  padding: 0 12px;
+}
+
+.page {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 36px) 56px;
+}
+
+.news-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(290px, .65fr);
+  gap: 22px;
+  align-items: stretch;
+  margin-bottom: 22px;
+}
+
+.lead-story {
+  overflow: hidden;
+  min-height: 360px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.lead-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 26px;
+  padding: clamp(22px, 4vw, 36px);
+}
+
+.kicker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  color: var(--momo);
+  background: var(--soft);
+  border: 1px solid rgba(165, 0, 100, .14);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.lead-title {
+  max-width: 680px;
+  margin: 16px 0 12px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 52px;
+  line-height: .98;
+  letter-spacing: 0;
+}
+
+.lead-summary {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.story-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.story-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 5px 10px;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.lead-visual {
+  min-height: 100%;
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  padding: 28px;
+  color: #fff;
+  background: linear-gradient(145deg, #a50064, #d4006e 48%, #7a004b);
+}
+
+.signal-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 8px;
+}
+
+.signal-card strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.signal-card span {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 255, 255, .82);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.live-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-head h2,
+.section-head h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: 0;
+}
+
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.live-dot i {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(4, 120, 87, .12);
+}
+
+.timeline {
+  display: grid;
+  gap: 0;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.timeline-item:last-child {
+  border-bottom: 0;
+}
+
+.time {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.timeline-item strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.timeline-item span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 16px;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-btn {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  border-color: rgba(165, 0, 100, .2);
+  background: var(--momo);
+  color: #fff;
+}
+
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 10px 0 14px;
+}
+
+.section-head p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.news-card {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 310px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, .05);
+}
+
+.news-thumb {
+  min-height: 126px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  color: #fff;
+}
+
+.news-thumb i {
+  font-size: 32px;
+}
+
+.news-thumb span {
+  max-width: 120px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, .78);
+}
+
+.thumb-product {
+  background: linear-gradient(135deg, #a50064, #db2777);
+}
+
+.thumb-campaign {
+  background: linear-gradient(135deg, #7c2d12, #f97316);
+}
+
+.thumb-partner {
+  background: linear-gradient(135deg, #065f46, #10b981);
+}
+
+.thumb-policy {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+}
+
+.thumb-platform {
+  background: linear-gradient(135deg, #4c1d95, #8b5cf6);
+}
+
+.thumb-community {
+  background: linear-gradient(135deg, #334155, #64748b);
+}
+
+.news-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.news-body h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.news-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.tag {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 26px;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--momo);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.ops-band {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.ops-item {
+  min-height: 112px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.ops-item span {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  color: var(--momo);
+  background: var(--soft);
+  border-radius: 8px;
+}
+
+.ops-item strong {
+  display: block;
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.ops-item p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+@media (max-width: 980px) {
+  .news-hero,
+  .lead-story {
+    grid-template-columns: 1fr;
+  }
+
+  .lead-visual {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-height: auto;
+  }
+
+  .news-grid,
+  .ops-band {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .brand-text span {
+    display: none;
+  }
+
+  .back-btn span {
+    display: none;
+  }
+
+  .page {
+    padding-top: 18px;
+  }
+
+  .lead-copy {
+    padding: 22px;
+  }
+
+  .lead-title {
+    font-size: 34px;
+  }
+
+  .lead-visual,
+  .news-grid,
+  .ops-band {
+    grid-template-columns: 1fr;
+  }
+
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/lab.html" target="_top" aria-label="Về Lab">
+      <span class="brand-mark"><img src="../assets/images/momo-logo.svg" alt="MoMo"></span>
+      <span class="brand-text">
+        <strong>MoMo News</strong>
+        <span>PLG Project của Web Platform</span>
+      </span>
+    </a>
+    <div class="topbar-actions">
+      <button class="icon-btn" type="button" title="Tìm kiếm"><i class="ti ti-search"></i></button>
+      <a class="back-btn" href="/lab.html" target="_top"><i class="ti ti-arrow-left"></i><span>Lab</span></a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="news-hero" aria-label="Tin nổi bật">
+      <article class="lead-story">
+        <div class="lead-copy">
+          <div>
+            <span class="kicker"><i class="ti ti-news"></i>Newsroom update</span>
+            <h1 class="lead-title">Cập nhật mới từ MoMo trong một newsroom riêng</h1>
+            <p class="lead-summary">News tập trung vào thông tin mới, launch notes, campaign và thông cáo. Blog vẫn là nơi giữ evergreen content theo chủ đề.</p>
+            <div class="story-meta">
+              <span><i class="ti ti-clock"></i>28/06/2026</span>
+              <span><i class="ti ti-bolt"></i>Product launch</span>
+              <span><i class="ti ti-target-arrow"></i>PLG CTA</span>
+            </div>
+          </div>
+        </div>
+        <aside class="lead-visual" aria-label="News signals">
+          <div class="signal-card"><strong>24</strong><span>updates this month</span></div>
+          <div class="signal-card"><strong>6</strong><span>active topics</span></div>
+          <div class="signal-card"><strong>3.8x</strong><span>CTA lift target</span></div>
+        </aside>
+      </article>
+
+      <aside class="live-panel">
+        <div class="panel-head">
+          <h2>Live Desk</h2>
+          <span class="live-dot"><i></i>Live</span>
+        </div>
+        <div class="timeline">
+          <article class="timeline-item">
+            <span class="time">09:30</span>
+            <div><strong>Ra mắt campaign thanh toán hè</strong><span>Gắn CTA về ví ưu đãi và merchant gần bạn.</span></div>
+          </article>
+          <article class="timeline-item">
+            <span class="time">11:15</span>
+            <div><strong>Cập nhật trải nghiệm Cinema</strong><span>Showtime, ghế, bắp nước và thanh toán nằm trong flow mới.</span></div>
+          </article>
+          <article class="timeline-item">
+            <span class="time">14:00</span>
+            <div><strong>Partner story mới</strong><span>Merchant hub bổ sung case study theo ngành hàng.</span></div>
+          </article>
+          <article class="timeline-item">
+            <span class="time">16:20</span>
+            <div><strong>Security bulletin</strong><span>Thông tin bảo vệ tài khoản và cảnh báo lừa đảo.</span></div>
+          </article>
+        </div>
+      </aside>
+    </section>
+
+    <div class="filters" aria-label="Lọc chủ đề">
+      <button class="filter-btn active" type="button" data-filter="all"><i class="ti ti-layout-grid"></i>Tất cả</button>
+      <button class="filter-btn" type="button" data-filter="product"><i class="ti ti-package"></i>Product</button>
+      <button class="filter-btn" type="button" data-filter="campaign"><i class="ti ti-speakerphone"></i>Campaign</button>
+      <button class="filter-btn" type="button" data-filter="partner"><i class="ti ti-building-store"></i>Partner</button>
+      <button class="filter-btn" type="button" data-filter="policy"><i class="ti ti-shield-check"></i>Trust</button>
+    </div>
+
+    <section aria-label="Danh sách tin">
+      <div class="section-head">
+        <div>
+          <h2>Bản tin mới nhất</h2>
+          <p>News ưu tiên tốc độ cập nhật, nguồn chính thức và CTA theo từng sự kiện.</p>
+        </div>
+      </div>
+
+      <div class="news-grid" id="newsGrid">
+        <article class="news-card" data-topic="product">
+          <div class="news-thumb thumb-product"><i class="ti ti-ticket"></i><span>Product</span></div>
+          <div class="news-body">
+            <span class="tag"><i class="ti ti-bolt"></i>Launch note</span>
+            <h3>MoMo Cinema cập nhật luồng chọn suất chiếu mới</h3>
+            <p>Film detail tách rõ rating, rạp, định dạng chiếu và các bước popup từ ghế đến thanh toán.</p>
+            <div class="card-footer"><span>28/06/2026</span><span>3 phút đọc</span></div>
+          </div>
+        </article>
+
+        <article class="news-card" data-topic="campaign">
+          <div class="news-thumb thumb-campaign"><i class="ti ti-confetti"></i><span>Campaign</span></div>
+          <div class="news-body">
+            <span class="tag"><i class="ti ti-speakerphone"></i>Campaign</span>
+            <h3>Chuỗi ưu đãi hè mở rộng cho nhóm giải trí</h3>
+            <p>News card dẫn người dùng từ thông tin chiến dịch đến CTA đặt vé, săn voucher hoặc xem merchant.</p>
+            <div class="card-footer"><span>27/06/2026</span><span>2 phút đọc</span></div>
+          </div>
+        </article>
+
+        <article class="news-card" data-topic="partner">
+          <div class="news-thumb thumb-partner"><i class="ti ti-building-store"></i><span>Partner</span></div>
+          <div class="news-body">
+            <span class="tag"><i class="ti ti-users"></i>Partner</span>
+            <h3>Merchant Hub thêm danh sách quán nổi bật theo khu vực</h3>
+            <p>Thông tin đối tác được xuất bản như news update, còn story dài sẽ chuyển sang Blog.</p>
+            <div class="card-footer"><span>26/06/2026</span><span>4 phút đọc</span></div>
+          </div>
+        </article>
+
+        <article class="news-card" data-topic="policy">
+          <div class="news-thumb thumb-policy"><i class="ti ti-shield-check"></i><span>Trust</span></div>
+          <div class="news-body">
+            <span class="tag"><i class="ti ti-lock-check"></i>Safety</span>
+            <h3>Khuyến nghị bảo vệ tài khoản khi thanh toán online</h3>
+            <p>Bản tin ngắn tập trung vào cảnh báo, checklist và đường dẫn về Scam Check.</p>
+            <div class="card-footer"><span>25/06/2026</span><span>3 phút đọc</span></div>
+          </div>
+        </article>
+
+        <article class="news-card" data-topic="product">
+          <div class="news-thumb thumb-platform"><i class="ti ti-search"></i><span>Platform</span></div>
+          <div class="news-body">
+            <span class="tag"><i class="ti ti-route"></i>Platform</span>
+            <h3>Universal Search gom dịch vụ, bài viết và merchant</h3>
+            <p>News dùng format update ngắn để thông báo năng lực mới và điều hướng người dùng vào surface chính.</p>
+            <div class="card-footer"><span>24/06/2026</span><span>2 phút đọc</span></div>
+          </div>
+        </article>
+
+        <article class="news-card" data-topic="campaign">
+          <div class="news-thumb thumb-community"><i class="ti ti-heart-handshake"></i><span>Community</span></div>
+          <div class="news-body">
+            <span class="tag"><i class="ti ti-heart"></i>Community</span>
+            <h3>MoMo cập nhật chương trình đóng góp cộng đồng</h3>
+            <p>Thông tin mới được tách khỏi Blog để người dùng đọc nhanh và chuyển đổi đúng hành động.</p>
+            <div class="card-footer"><span>23/06/2026</span><span>3 phút đọc</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="ops-band" aria-label="News operating model">
+      <article class="ops-item"><span><i class="ti ti-news"></i></span><strong>News</strong><p>Thông tin mới, có ngày giờ và CTA theo sự kiện.</p></article>
+      <article class="ops-item"><span><i class="ti ti-article"></i></span><strong>Blog</strong><p>Evergreen content, SEO/GEO và article depth.</p></article>
+      <article class="ops-item"><span><i class="ti ti-target-arrow"></i></span><strong>PLG</strong><p>Mỗi bản tin phải dẫn đến một hành động đo được.</p></article>
+      <article class="ops-item"><span><i class="ti ti-shield-check"></i></span><strong>Trust</strong><p>Source, timestamp và owner rõ trước khi publish.</p></article>
+    </section>
+  </main>
+
+<script>
+const filterButtons = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.news-card');
+
+filterButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const filter = button.dataset.filter;
+    filterButtons.forEach(item => item.classList.toggle('active', item === button));
+    cards.forEach(card => {
+      card.hidden = filter !== 'all' && card.dataset.topic !== filter;
+    });
+  });
+});
+</script>
+</body>
+</html>
