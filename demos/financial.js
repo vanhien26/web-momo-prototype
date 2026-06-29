@@ -272,7 +272,7 @@ const TOOLS = [
   },
   {
     id: 'tra-gop', name: 'Trả Góp Ví Trả Sau', category: 'Credit', abbr: 'TG',
-    intent: 'Commercial intent', panel: 'generic',
+    intent: 'Commercial intent', panel: 'generic', ui: 'calculator-product',
     description: 'Ước tính số tiền thanh toán hằng kỳ khi chuyển đổi trả góp dư nợ hoặc giao dịch qua Ví Trả Sau MoMo.',
     jtbd: 'Tôi đang muốn mua một món hàng trả góp qua Ví Trả Sau và phân vân chọn kỳ hạn nào phù hợp. Cần thấy ngay <b>số tiền gốc và phí trả mỗi tháng</b> cho từng kỳ hạn, để <b>cân đối tài chính cá nhân</b>.',
     formula: 'Trả mỗi kỳ = <b>(Dư nợ chuyển đổi ÷ Kỳ hạn) + 3% × Dư nợ chuyển đổi</b><br><em>Ví Trả Sau áp dụng phí chuyển đổi cố định 3%/tháng tính trên dư nợ đăng ký trả góp ban đầu.</em>',
@@ -302,7 +302,15 @@ const TOOLS = [
         { label: 'Phí dịch vụ/tháng', value: fmt(phiMonth) },
         { label: 'Tổng phí chuyển đổi', value: fmt(totalFee) },
         { label: 'Tổng tiền phải trả', value: fmt(total) },
-      ], insight: '💡 Phí dịch vụ Ví Trả Sau <b>33.000đ/tháng</b> chỉ phát sinh trong tháng có giao dịch (miễn phí 5 giao dịch đầu tiên sau khi mở ví).' };
+      ], badge: `${n} tháng`, visual: {
+        title: 'Cơ cấu thanh toán mỗi kỳ',
+        totalLabel: 'Tổng nghĩa vụ',
+        totalValue: fmt(total),
+        items: [
+          { label: 'Phí dịch vụ/tháng', value: fmt(phiMonth), amount: phiMonth, color: '#16b2ea' },
+          { label: 'Gốc trả/tháng', value: fmt(gocMonth), amount: gocMonth, color: '#143c8b' },
+        ],
+      }, insight: '💡 Phí dịch vụ Ví Trả Sau <b>33.000đ/tháng</b> chỉ phát sinh trong tháng có giao dịch (miễn phí 5 giao dịch đầu tiên sau khi mở ví).' };
     },
   },
   {
@@ -1437,6 +1445,7 @@ function renderGenericPanel(tool) {
   const panelEl = document.getElementById('genericPanel');
   const calculatorEl = panelEl?.querySelector('.calculator-layout');
   if (panelEl) panelEl.dataset.ui = tool.ui || 'default';
+  if (calculatorEl) calculatorEl.classList.toggle('calculator-product-layout', tool.ui === 'calculator-product');
   if (calculatorEl) calculatorEl.classList.toggle('debt-payoff-layout', tool.ui === 'debt-matrix');
   if (calculatorEl) calculatorEl.classList.toggle('goal-planner-layout', tool.ui === 'goal-planner');
   document.getElementById('genericCategory').textContent    = tool.category.toUpperCase();
@@ -1509,6 +1518,17 @@ function renderGenericPanel(tool) {
     ctaEl.textContent = tool.ctaText || 'Xem giải pháp phù hợp trên MoMo';
     ctaEl.onclick = () => momo_track('cta_click', { cta: tool.ctaText ? 'check_now' : 'view_solution', tool_id: tool.id });
   }
+  const pickerEl = document.getElementById('genericToolPicker');
+  if (pickerEl) {
+    const genericTools = TOOLS.filter(item => item.panel === 'generic');
+    pickerEl.innerHTML = genericTools.map(item =>
+      `<option value="${item.id}"${item.id === tool.id ? ' selected' : ''}>${item.name}</option>`
+    ).join('');
+    pickerEl.onchange = () => {
+      const nextTool = TOOLS.find(item => item.id === pickerEl.value);
+      if (nextTool) selectTool(nextTool.id);
+    };
+  }
 
   const container = document.getElementById('genericFields');
   const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
@@ -1541,6 +1561,7 @@ function renderGenericPanel(tool) {
           ${unitTag}
           <button type="button" class="num-step" data-target="${f.id}" data-dir="1" aria-label="Tăng">+</button>
         </div>
+        <input type="range" class="range-slider" id="${f.id}Range" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}" aria-label="${ariaLabel}">
         ${showChips && chips.length ? `<div class="num-chips">
           ${chips.map(c => `<button type="button" class="chip-btn${+c === +f.value ? ' active' : ''}" data-val="${c}">${formatChip(c, f)}</button>`).join('')}
         </div>` : ''}
@@ -1611,7 +1632,13 @@ function renderGenericPanel(tool) {
 
   tool.fields.forEach(f => {
     const el = document.getElementById(f.id);
+    const rangeEl = f.type === 'range' ? document.getElementById(`${f.id}Range`) : null;
+    if (rangeEl) setRangeFill(rangeEl);
     el.addEventListener('input', () => {
+      if (rangeEl && rangeEl.value !== el.value) {
+        rangeEl.value = el.value;
+        setRangeFill(rangeEl);
+      }
       if (f.type === 'range' || f.type === 'money') {
         const currentNum = f.type === 'money' ? parseMoney(el.value) : +el.value;
         document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
@@ -1647,6 +1674,11 @@ function renderGenericPanel(tool) {
       });
     }
     if (f.type === 'range') {
+      rangeEl?.addEventListener('input', () => {
+        el.value = rangeEl.value;
+        setRangeFill(rangeEl);
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
       document.querySelectorAll(`[data-field="${f.id}"] .num-step`).forEach(btn => {
         btn.addEventListener('click', () => {
           const dir = +btn.dataset.dir;
@@ -1679,6 +1711,14 @@ function autoChips(f) {
     const stepped = Math.round(v / f.step) * f.step;
     return +stepped.toFixed(4);
   });
+}
+
+function setRangeFill(el) {
+  const min = Number(el.min || 0);
+  const max = Number(el.max || 100);
+  const value = Number(el.value || min);
+  const ratio = max > min ? (value - min) / (max - min) : 0;
+  el.style.setProperty('--slider-fill', `${Math.max(0, Math.min(100, ratio * 100))}%`);
 }
 
 function formatChip(val, f) {
@@ -1731,6 +1771,54 @@ function computeGeneric(tool) {
   document.getElementById('resultDetails').innerHTML  = res.details.map(d =>
     `<div class="result-row"><span>${d.label}</span><strong>${d.value}</strong></div>`
   ).join('');
+  const badgeEl = document.getElementById('resultBadge');
+  if (badgeEl) {
+    if (res.badge) { badgeEl.textContent = res.badge; badgeEl.style.display = 'inline-flex'; }
+    else badgeEl.style.display = 'none';
+  }
+  const visualEl = document.getElementById('resultVisual');
+  if (visualEl) {
+    if (res.visual && res.visual.items?.length) {
+      const totalAmount = res.visual.items.reduce((sum, item) => sum + (item.amount || 0), 0) || 1;
+      let offset = 0;
+      const segments = res.visual.items.map(item => {
+        const pct = Math.max(0, (item.amount || 0) / totalAmount);
+        const start = Math.round(offset * 360);
+        offset += pct;
+        const end = Math.round(offset * 360);
+        return `${item.color} ${start}deg ${end}deg`;
+      }).join(', ');
+      visualEl.innerHTML = `
+        <div class="result-visual-head">
+          <strong>${res.visual.title}</strong>
+          <span>${res.visual.totalLabel}: <b>${res.visual.totalValue}</b></span>
+        </div>
+        <div class="result-visual-body">
+          <div class="result-visual-legend">
+            ${res.visual.items.map(item => `
+              <div class="result-legend-row">
+                <span class="result-legend-dot" style="background:${item.color}"></span>
+                <span>${item.label}</span>
+                <b>${item.value}</b>
+              </div>
+            `).join('')}
+          </div>
+          <div class="result-donut" style="--donut-fill: conic-gradient(${segments})">
+            <div class="result-donut-center">
+              <div>
+                <span>${res.visual.totalLabel}</span>
+                <strong>${res.visual.totalValue}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      visualEl.style.display = '';
+    } else {
+      visualEl.style.display = 'none';
+      visualEl.innerHTML = '';
+    }
+  }
   const insightEl = document.getElementById('resultInsight');
   if (insightEl) {
     if (res.insight) { insightEl.innerHTML = res.insight; insightEl.style.display = ''; }
@@ -3358,6 +3446,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(location.search);
   const isEmbed = params.get('embed') === '1';
   const toolParam = params.get('tool');
+  const target = toolParam || location.hash.slice(1);
+  const initialTool = TOOLS.find(t => t.id === target) || TOOLS[0];
+  currentToolId = initialTool.id;
   if (isEmbed) {
     document.body.classList.add('embed');
     injectEmbedBadge();
@@ -3367,7 +3458,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindToolList();
   renderRelatedTools();
   bindRelatedTools();
-  renderGenericPanel(TOOLS[0]);
+  renderGenericPanel(initialTool.panel === 'generic' ? initialTool : TOOLS[0]);
   initGoldPanel();
   initStockPanel();
   initCicPanel();
@@ -3375,12 +3466,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFxPanel();
   initFxComparePanel();
   initTravelBudgetPanel();
-
-  const target = toolParam || location.hash.slice(1);
-  if (target) {
-    const tool = TOOLS.find(t => t.id === target);
-    if (tool) selectTool(tool.id, { updateHash: !isEmbed, detail: true });
-  }
+  selectTool(initialTool.id, { updateHash: Boolean(target) && !isEmbed, detail: true });
 
   window.addEventListener('hashchange', () => {
     const tool = TOOLS.find(t => t.id === location.hash.slice(1));
