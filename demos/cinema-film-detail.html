@@ -3,2763 +3,930 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Supergirl — MoMo Cinema</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Supergirl: Woman of Tomorrow - Mua Vé | MoMo Cinema</title>
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+</style>
 <style>
 :root {
-  --momo: #AF0171;
-  --momo-dark: #8b0059;
-  --momo-light: #fff0f7;
-  --accent: #ff6a00;
-  --accent-2: #ff4f6d;
-  --warm: #fff4e6;
-  --warm-2: #ffe6cf;
-  --dark: #0f1724;
-  --dark-2: #111827;
-  --dark-3: #1a2537;
-  --dark-card: #162131;
-  --ink: #111827;
-  --muted: #667085;
-  --line: #e5e7eb;
-  --bg: #f3f4f6;
-  --white: #fff;
-  --green: #0a8a3f;
-  --green-bg: #d1fadf;
-  --star: #f59e0b;
-  --radius: 14px;
-  --radius-sm: 10px;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { background: var(--bg); }
-body {
-  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  padding: 16px 0 32px;
-}
-
-/* ── WRAPPER ───────────────────────────── */
-.page {
-  width: min(1180px, calc(100vw - 32px));
-  max-width: 1180px;
-  margin: 0 auto;
-  background: transparent;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* ── APP BAR ───────────────────────────── */
-.app-bar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px;
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(229,231,235,.9);
-  box-shadow: 0 4px 16px rgba(17,24,39,.06);
-}
-
-.bar-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #111827;
-  font-size: 14px;
-  transition: .15s;
-  flex-shrink: 0;
-  box-shadow: 0 1px 4px rgba(17,24,39,.08);
-}
-.bar-btn:hover { background: #fff7ef; color: var(--accent); }
-.bar-btn.liked svg path { fill: var(--momo); stroke: var(--momo); }
-
-.bar-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  flex: 1;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0 10px;
-}
-
-.bar-actions { display: flex; gap: 7px; }
-
-/* ── HERO ─────────────────────────────── */
-.hero {
-  position: relative;
-  background: linear-gradient(180deg, #fff 0%, #fff 65%, #fff7ef 100%);
-  overflow: hidden;
-  border: 1px solid rgba(229,231,235,.9);
-  box-shadow: 0 18px 44px rgba(17,24,39,.08);
-  border-radius: 20px;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient(90deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.93) 44%, rgba(255,247,239,.84) 100%),
-    linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,247,239,.95));
-}
-
-.hero-backdrop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  opacity: .24;
-  filter: saturate(1.06);
-  z-index: 0;
-}
-
-.hero-top {
-  position: relative;
-  padding: 20px 16px 18px;
-  z-index: 1;
-}
-
-.film-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--warm);
-  border: 1px solid var(--warm-2);
-  border-radius: 99px;
-  padding: 6px 12px;
-  font-size: 10px;
-  font-weight: 800;
-  color: #9a4b00;
-  letter-spacing: .4px;
-  margin-bottom: 14px;
-}
-
-.badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.hero-layout {
-  display: grid;
-  grid-template-columns: 108px 1fr;
-  gap: 18px;
-  align-items: start;
-}
-
-.hero-poster-frame {
-  aspect-ratio: 2 / 3;
-  border-radius: 16px;
-  background: #fff;
-  border: 1px solid rgba(229,231,235,.9);
-  box-shadow: 0 10px 28px rgba(17,24,39,.12);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0;
-  overflow: hidden;
-}
-
-.hero-poster-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.hero-poster-label {
-  display: none;
-}
-
-.hero-copy { min-width: 0; }
-
-.hero-title {
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--ink);
-  line-height: 1.1;
-  margin-bottom: 8px;
-  letter-spacing: 0;
-}
-
-.hero-sub {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.55;
-  margin-bottom: 14px;
-}
-
-.hero-rating-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.score-pill {
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 13px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  min-height: 72px;
-  box-shadow: 0 1px 3px rgba(17,24,39,.04);
-}
-
-.score-pill strong {
-  font-size: 18px;
-  line-height: 1;
-  color: var(--ink);
-}
-
-.score-pill small {
-  font-size: 10px;
-  color: var(--muted);
-  font-weight: 600;
-}
-
-.score-pill.momo strong { color: var(--momo); }
-.score-pill.imdb strong { color: #2563eb; }
-.score-pill.rotten strong { color: #dc2626; }
-.score-pill.popcorn strong { color: var(--green); }
-
-.hero-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.meta-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0 9px;
-  border-radius: 99px;
-  background: #fff;
-  border: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 600;
-  box-shadow: 0 1px 3px rgba(17,24,39,.04);
-}
-
-.meta-chip.strong {
-  background: #fff7ef;
-  border-color: #ffd8b2;
-  color: #9a4b00;
-}
-
-.hero-btns {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.btn-outline-hero {
-  height: 46px;
-  border: 1.5px solid var(--line);
-  border-radius: 13px;
-  background: #fff;
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  transition: .15s;
-}
-.btn-outline-hero:hover { background: #fff7ef; border-color: #ffd8b2; }
-
-.btn-fill-hero {
-  height: 50px;
-  border: none;
-  border-radius: 13px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 900;
-  cursor: pointer;
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 10px 26px rgba(255,106,0,.22);
-  transition: .15s;
-}
-.btn-fill-hero:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(255,106,0,.28); }
-
-.hero-note {
-  margin-top: 12px;
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.movie-info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.movie-info-card {
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  padding: 12px;
-  background: #fff;
-  min-width: 0;
-}
-
-.movie-info-card.wide {
-  grid-column: 1 / -1;
-}
-
-.movie-info-label {
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .35px;
-  margin-bottom: 7px;
-  font-weight: 800;
-}
-
-.movie-info-value {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1.45;
-}
-
-.movie-info-desc {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.65;
-}
-
-/* ── GAME BLOCK ────────────────────────── */
-.game-block {
-  background: var(--white);
-  padding: 18px 16px 20px;
-  position: relative;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  margin-top: 14px;
-  box-shadow: 0 10px 28px rgba(17,24,39,.06);
-}
-
-.game-block-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #fff7ef;
-  border: 1px solid #ffd8b2;
-  border-radius: 99px;
-  padding: 5px 10px;
-  font-size: 10px;
-  font-weight: 800;
-  color: #9a4b00;
-  letter-spacing: .3px;
-  margin-bottom: 12px;
-}
-
-.game-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(17,24,39,.06);
-}
-
-.game-card-body {
-  display: flex;
-  gap: 13px;
-  padding: 14px;
-}
-
-.film-thumb {
-  width: 70px;
-  height: 98px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #f8fafc 0%, #eef2f7 100%);
-  border: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  flex-shrink: 0;
-}
-
-.game-details { flex: 1; min-width: 0; }
-
-.game-film-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1.3;
-  margin-bottom: 5px;
-}
-
-.game-countdown {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.game-mission-list { display: flex; flex-direction: column; gap: 7px; }
-
-.gm {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-}
-
-.gm-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
-.gm.done .gm-icon { background: rgba(10,138,63,.14); color: #0a8a3f; }
-.gm.now .gm-icon  { background: rgba(255,106,0,.12); color: #9a4b00; }
-.gm.wait .gm-icon { background: rgba(17,24,39,.05); color: var(--muted); }
-
-.gm.done .gm-label { color: #cbd5e1; text-decoration: line-through; font-weight: 500; }
-.gm.now .gm-label  { color: var(--ink); font-weight: 700; }
-.gm.wait .gm-label { color: var(--muted); }
-
-.gm-pts {
-  margin-left: auto;
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--summer-yellow);
-  white-space: nowrap;
-}
-.gm.wait .gm-pts { opacity: .3; }
-.gm.done .gm-pts { opacity: .5; }
-
-.game-progress-bar {
-  height: 4px;
-  background: #e5e7eb;
-  border-radius: 2px;
-  margin: 14px 14px 0;
-  overflow: hidden;
-}
-.game-progress-fill {
-  height: 100%;
-  width: 25%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  border-radius: 2px;
-  transition: width 1.2s cubic-bezier(.4,0,.2,1);
-}
-
-.game-cta-row {
-  padding: 12px 14px 14px;
-}
-
-.btn-game {
-  width: 100%;
-  height: 46px;
-  border: none;
-  border-radius: 13px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  transition: .15s;
-  box-shadow: 0 10px 22px rgba(255,106,0,.18);
-}
-.btn-game:hover { opacity: .92; transform: translateY(-1px); }
-
-/* ── ADD ONS BANNER ─────────────────────── */
-.bundle {
-  background: linear-gradient(135deg, #fff 0%, #fff7ef 100%);
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  margin-top: 14px;
-  box-shadow: 0 8px 24px rgba(17,24,39,.06);
-}
-
-.bundle::after {
-  content: '';
-  position: absolute;
-  right: -20px;
-  top: -20px;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  background: rgba(255,106,0,.08);
-}
-
-.bundle-info { flex: 1; position: relative; z-index: 1; }
-.bundle-tag {
-  font-size: 10px;
-  font-weight: 800;
-  color: #9a4b00;
-  letter-spacing: .3px;
-  margin-bottom: 4px;
-}
-.bundle-name {
-  font-size: 17px;
-  font-weight: 900;
-  color: var(--ink);
-  line-height: 1.25;
-  margin-bottom: 3px;
-}
-.bundle-note { font-size: 12px; color: var(--muted); }
-
-.bundle-films {
-  display: flex;
-  position: relative;
-  z-index: 1;
-}
-.bundle-film-thumb {
-  width: 46px;
-  height: 64px;
-  border-radius: 10px;
-  background: #fff;
-  border: 1.5px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-  box-shadow: -4px 2px 12px rgba(17,24,39,.08);
-}
-.bundle-film-thumb + .bundle-film-thumb { margin-left: -14px; }
-.bundle-film-thumb:nth-child(2) { margin-top: 5px; }
-.bundle-film-thumb:nth-child(3) { margin-top: -4px; }
-
-/* ── BOOKING FLOW ──────────────────────── */
-.missions {
-  background: var(--white);
-  padding: 20px 16px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  margin-top: 14px;
-  box-shadow: 0 8px 24px rgba(17,24,39,.06);
-}
-
-.sec-hd {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.sec-title-dark {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: .4px;
-}
-.sec-prog { font-size: 11px; color: var(--muted); }
-.sec-prog strong { color: var(--accent); font-weight: 800; }
-
-.mission-item {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 13px 14px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: .15s;
-  position: relative;
-  overflow: hidden;
-}
-.mission-item:last-of-type { margin-bottom: 0; }
-.mission-item:hover { border-color: #ffd8b2; }
-
-.mission-ico {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background: #fff7ef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  color: #9a4b00;
-  flex-shrink: 0;
-}
-.mission-body { flex: 1; min-width: 0; }
-.mission-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 3px;
-  line-height: 1.3;
-}
-.mission-hint {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.4;
-}
-.mission-cta {
-  flex-shrink: 0;
-  height: 34px;
-  padding: 0 14px;
-  border: none;
-  border-radius: 10px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  white-space: nowrap;
-  transition: .15s;
-}
-.mission-cta:hover { filter: brightness(1.12); }
-
-.mission-reward {
-  text-align: right;
-  flex-shrink: 0;
-}
-.mission-amt {
-  display: block;
-  font-size: 14px;
-  font-weight: 900;
-  color: var(--summer-yellow);
-}
-.mission-item.done .mission-amt { opacity: .45; }
-.mission-item.locked .mission-amt { opacity: .2; }
-.mission-unit {
-  display: block;
-  font-size: 9px;
-  font-weight: 700;
-  color: rgba(255,255,255,.3);
-  margin-top: 1px;
-}
-
-.btn-open-app {
-  width: 100%;
-  height: 46px;
-  margin-top: 14px;
-  border: none;
-  border-radius: 12px;
-  background: #fff;
-  border: 1.5px solid var(--line);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  transition: .15s;
-}
-.btn-open-app:hover { background: #fff7ef; border-color: #ffd8b2; }
-
-/* ── SECTION DIVIDER ───────────────────── */
-.divider { height: 12px; background: transparent; }
-
-/* ── SHOWTIMES ─────────────────────────── */
-.showtimes {
-  background: var(--white);
-  padding: 20px 0;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(17,24,39,.06);
-  margin-top: 14px;
-}
-.showtimes-hd { padding: 0 16px 14px; }
-.showtimes-hd .section-title { margin-bottom: 0; }
-
-.showtime-summary {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.chain-count {
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 99px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-}
-
-.showtime-toolbar,
-.format-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 16px 14px;
-}
-
-.filter-chip,
-.near-chip,
-.format-chip {
-  height: 34px;
-  border-radius: 99px;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 0 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: .14s;
-}
-
-.filter-chip.active,
-.near-chip.active,
-.format-chip.active {
-  background: var(--momo);
-  border-color: var(--momo);
-  color: #fff;
-}
-
-.format-toolbar {
-  padding-top: 2px;
-}
-
-.showtime-key {
-  padding: 0 16px 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.key-badge {
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 99px;
-  background: #fff7ef;
-  border: 1px solid #ffd8b2;
-  color: #9a4b00;
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-}
-
-.key-badge.soft {
-  background: #f8fafc;
-  border-color: #e5e7eb;
-  color: var(--muted);
-}
-
-.date-row {
-  display: flex;
-  gap: 7px;
-  padding: 0 16px 14px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.date-row::-webkit-scrollbar { display: none; }
-
-.showtimes-note {
-  padding: 0 16px 12px;
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.45;
-}
-
-.date-pill {
-  flex-shrink: 0;
-  min-width: 58px;
-  padding: 8px 12px;
-  border-radius: 11px;
-  border: 1.5px solid var(--line);
-  background: var(--white);
-  text-align: center;
-  cursor: pointer;
-  transition: .14s;
-}
-.date-pill.on { border-color: var(--momo); background: var(--momo); }
-
-.dp-day { font-size: 10px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 2px; }
-.date-pill.on .dp-day { color: rgba(255,255,255,.8); }
-.dp-num { font-size: 18px; font-weight: 800; color: var(--ink); display: block; }
-.date-pill.on .dp-num { color: #fff; }
-
-.cinemas-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
-
-.cinema-card {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-.cinema-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--line);
-  gap: 14px;
-}
-.cinema-card:not(.open) .cinema-head { border-bottom: none; }
-
-.cinema-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.cinema-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  object-fit: contain;
-  background: #fff;
-  border: 1px solid var(--line);
-  flex-shrink: 0;
-}
-
-.cinema-nm { font-size: 13px; font-weight: 800; color: var(--ink); }
-.cinema-dt { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-.cinema-info { min-width: 0; }
-
-.cinema-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 6px;
-}
-
-.cinema-tag {
-  height: 22px;
-  padding: 0 8px;
-  border-radius: 99px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-}
-
-.cinema-features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 7px;
-}
-
-.cinema-feature {
-  height: 22px;
-  padding: 0 8px;
-  border-radius: 7px;
-  background: #fff7ef;
-  color: #9a4b00;
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-}
-
-.cinema-promo {
-  padding: 10px 14px 0;
-  font-size: 11px;
-  color: #9a4b00;
-  line-height: 1.45;
-}
-
-.cinema-promo span {
-  display: inline-flex;
-  padding: 6px 9px;
-  border-radius: 10px;
-  background: #fff7ef;
-  border: 1px solid #ffd8b2;
-}
-
-.cinema-aside {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.near-badge {
-  height: 24px;
-  padding: 0 9px;
-  border-radius: 99px;
-  background: #e9fff2;
-  color: #0a7c3b;
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-}
-
-.cinema-chev { font-size: 11px; color: var(--muted); transition: .2s; }
-.cinema-card.open .cinema-chev { transform: rotate(180deg); }
-
-.time-grid {
-  display: none;
-  padding: 12px 14px;
-}
-.cinema-card.open .time-grid { display: grid; gap: 12px; }
-
-.format-group {
-  display: grid;
-  gap: 8px;
-}
-
-.format-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.format-name {
-  font-size: 12px;
-  font-weight: 900;
-  color: var(--ink);
-}
-
-.format-note {
-  font-size: 10px;
-  color: var(--muted);
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.format-times {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.time-btn {
-  min-width: 86px;
-  min-height: 96px;
-  padding: 9px 10px;
-  border: 1.5px solid var(--line);
-  border-radius: 9px;
-  background: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink);
-  cursor: pointer;
-  font-family: inherit;
-  transition: .13s;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: center;
-  justify-content: center;
-}
-.time-btn:hover { border-color: var(--momo); color: var(--momo); }
-.time-btn.full {
-  background: var(--bg);
-  color: #c4c9d2;
-  text-decoration: line-through;
-  cursor: default;
-  border-color: var(--line);
-}
-.time-btn small { display: block; font-size: 9px; margin-top: 1px; }
-
-.time-main { font-size: 12px; font-weight: 800; }
-.time-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: center;
-}
-
-.time-tag {
-  font-size: 9px;
-  font-weight: 800;
-  color: var(--momo);
-  background: #fff0f7;
-  border: 1px solid #ffd3ea;
-  border-radius: 99px;
-  padding: 0 5px;
-  line-height: 16px;
-}
-
-.time-tag.soft {
-  color: var(--muted);
-  background: #f8fafc;
-  border-color: #e5e7eb;
-}
-
-.time-foot {
-  width: 100%;
-  margin-top: 2px;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.time-tactic,
-.time-seat {
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 15px;
-  border-radius: 99px;
-  padding: 0 5px;
-  background: #f8fafc;
-  color: var(--muted);
-}
-
-.time-tactic {
-  background: #e9fff2;
-  color: #0a7c3b;
-}
-
-/* ── REVIEWS ───────────────────────────── */
-.reviews {
-  background: var(--white);
-  padding: 20px 16px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(17,24,39,.06);
-  margin-top: 14px;
-}
-
-.rating-overview {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 18px;
-}
-
-.rating-left { text-align: center; flex-shrink: 0; }
-.big-score { font-size: 44px; font-weight: 900; color: var(--ink); line-height: 1; }
-.big-stars { font-size: 16px; color: var(--star); letter-spacing: 2px; margin: 4px 0 3px; }
-.big-count { font-size: 11px; color: var(--muted); }
-
-.bar-stack { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-.bar-row { display: flex; align-items: center; gap: 7px; font-size: 11px; }
-.bar-lbl { color: var(--muted); width: 12px; }
-.bar-track { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; background: var(--star); border-radius: 3px; }
-.bar-ct { color: var(--muted); width: 26px; text-align: right; font-size: 10px; }
-
-.review-list { display: flex; flex-direction: column; gap: 12px; }
-
-.review-card {
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  padding: 13px 14px;
-  background: #fff;
-}
-
-.rv-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-
-.reviewer { display: flex; align-items: center; gap: 9px; }
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.rv-name { font-size: 12px; font-weight: 700; color: var(--ink); }
-.rv-date { font-size: 10px; color: var(--muted); margin-top: 1px; }
-.rv-stars { font-size: 12px; color: var(--star); letter-spacing: 1px; }
-.rv-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
-.rv-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 10px;
-}
-.rv-tag {
-  height: 22px;
-  padding: 0 8px;
-  border-radius: 99px;
-  background: #fff7ef;
-  border: 1px solid #ffd8b2;
-  color: #9a4b00;
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-}
-.rv-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 9px;
-  font-size: 10px;
-  color: var(--muted);
-  font-weight: 700;
-}
-
-/* ── CAST & CREW ───────────────────────── */
-.credits {
-  background: var(--white);
-  padding: 20px 16px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(17,24,39,.06);
-  margin-top: 14px;
-}
-
-.credits-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-}
-
-.credit-panel {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
-  background: #fff;
-  min-width: 0;
-}
-
-.credit-panel-hd {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.credit-panel-title {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.credit-panel-note {
-  font-size: 10px;
-  color: var(--muted);
-}
-
-.source-note {
-  margin-top: 10px;
-  font-size: 10px;
-  color: var(--muted);
-  line-height: 1.45;
-}
-
-.rating-pills {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  min-width: 0;
-}
-
-.people-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.person-card {
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  padding: 12px;
-  background: #fff;
-}
-
-.person-role {
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .35px;
-  margin-bottom: 8px;
-  font-weight: 800;
-}
-
-.person-name {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1.35;
-}
-
-.cast-row {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.cast-row::-webkit-scrollbar { display: none; }
-
-.cast-card {
-  min-width: 124px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-  padding: 10px;
-}
-
-.cast-photo {
-  height: 112px;
-  border-radius: 11px;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-  border: 1px solid var(--line);
-  margin-bottom: 9px;
-  overflow: hidden;
-}
-
-.cast-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.cast-fallback {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #fff7ef, #eef2ff);
-  color: var(--momo);
-  font-size: 24px;
-  font-weight: 900;
-}
-
-.cast-name { font-size: 12px; font-weight: 800; color: var(--ink); }
-.cast-role { font-size: 10px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-
-
-/* ── MODAL ─────────────────────────────── */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  z-index: 200;
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  backdrop-filter: blur(3px);
-}
-.overlay.show { display: flex; }
-
-.sheet {
-  background: var(--white);
-  border-radius: 22px 22px 0 0;
-  padding: 20px;
-  width: 100%;
-  max-width: 430px;
-  max-height: 78vh;
-  overflow-y: auto;
-}
-
-.sheet-handle {
-  width: 40px;
-  height: 4px;
-  background: var(--line);
-  border-radius: 2px;
-  margin: 0 auto 20px;
-}
-
-.sheet-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 16px; }
-
-.booking-sheet { max-height: 84vh; }
-
-.booking-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.booking-sub {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 3px;
-}
-
-.booking-close {
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #fff;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.booking-stepper {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  margin-bottom: 12px;
-  scrollbar-width: none;
-}
-.booking-stepper::-webkit-scrollbar { display: none; }
-
-.step-pill {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 28px;
-  padding: 0 10px 0 4px;
-  border-radius: 99px;
-  background: #f1f5f9;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
-}
-.step-pill span {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  color: var(--muted);
-  font-size: 10px;
-}
-.step-pill.on {
-  background: var(--momo);
-  color: #fff;
-}
-.step-pill.on span {
-  background: rgba(255,255,255,.16);
-  color: #fff;
-}
-.step-pill.done {
-  background: #e9fff2;
-  color: #0a7c3b;
-}
-.step-pill.done span {
-  background: #c7f7db;
-  color: #0a7c3b;
-}
-
-.booking-layout {
-  display: grid;
-  gap: 12px;
-}
-
-.hall-card,
-.snack-card,
-.payment-card,
-.summary-card {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  background: #fff;
-}
-
-.hall-screen {
-  height: 28px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #dbe4ee 0%, #eef2f7 100%);
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.seat-legend {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 10px;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-.seat-legend span { display: inline-flex; align-items: center; gap: 5px; }
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  border: 1px solid transparent;
-}
-.legend-dot.free { background: #fff; border-color: #cbd5e1; }
-.legend-dot.taken { background: #e2e8f0; }
-.legend-dot.selected { background: var(--momo); }
-
-.seat-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.seat-row {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 6px;
-}
-.seat {
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  color: var(--ink);
-  font-size: 10px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-}
-.seat.taken {
-  background: #edf2f7;
-  color: #cbd5e1;
-  border-color: #e2e8f0;
-  text-decoration: line-through;
-  cursor: not-allowed;
-}
-.seat.selected {
-  background: var(--momo);
-  border-color: var(--momo);
-  color: #fff;
-}
-
-.summary-label {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--ink);
-  margin-bottom: 6px;
-}
-.summary-line {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.45;
-  margin-top: 5px;
-}
-
-.snack-grid,
-.payment-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.choice-card {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #fff;
-  padding: 10px 12px;
-  text-align: left;
-  font-family: inherit;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.choice-card strong {
-  font-size: 13px;
-  color: var(--ink);
-}
-.choice-card span {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.45;
-}
-.choice-card small {
-  font-size: 10px;
-  color: var(--momo);
-  font-weight: 700;
-}
-.choice-card.on {
-  border-color: var(--momo);
-  box-shadow: 0 0 0 1px rgba(175,1,113,.1);
-}
-
-.booking-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.btn-booking-primary {
-  height: 46px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #ff7c3c 0%, #d42d8b 100%);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.rule-row {
-  display: flex;
-  gap: 11px;
-  margin-bottom: 13px;
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.55;
-}
-.rule-n {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--momo);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.rule-row strong { color: var(--ink); }
-
-.btn-sheet-close {
-  width: 100%;
-  height: 46px;
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  background: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  cursor: pointer;
-  font-family: inherit;
-  margin-top: 16px;
-}
-
-/* ── TOAST ─────────────────────────────── */
-.toast-box {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(9,17,30,.93);
-  color: #fff;
-  padding: 11px 20px;
-  border-radius: 99px;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-  z-index: 999;
-  animation: fadeUp .22s ease;
-  max-width: 88%;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,.3);
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-@media (max-width: 440px) {
-  .page { max-width: 100%; }
-  .hero-layout { grid-template-columns: 84px 1fr; }
-  .score-pill { min-height: 66px; padding: 9px; }
-  .score-pill strong { font-size: 16px; }
-  .seat-row { gap: 4px; }
-  .seat { height: 28px; font-size: 9px; }
-  .booking-actions { grid-template-columns: 1fr; }
-}
-
-@media (min-width: 960px) {
-  body {
-    padding: 20px 0 40px;
-  }
-
-  .page {
-    width: min(1240px, calc(100vw - 40px));
-  }
-
-  .app-bar,
-  .hero,
-  .game-block,
-  .bundle,
-  .missions,
-  .showtimes,
-  .reviews,
-  .credits {
-    border-radius: 20px;
-    box-shadow: 0 18px 44px rgba(15, 23, 36, 0.08);
-  }
-
-  .app-bar {
-    margin-bottom: 16px;
-  }
-
-  .hero {
-    margin-bottom: 16px;
-  }
-
-  .hero-top {
-    padding: 28px;
-  }
-
-  .hero-layout {
-    grid-template-columns: 220px 1fr;
-    gap: 24px;
-    align-items: center;
-  }
-
-  .hero-poster-frame {
-    min-height: 320px;
-    padding: 0;
-  }
-
-  .hero-title {
-    font-size: 54px;
-    line-height: 1.05;
-    max-width: 10ch;
-  }
-
-  .hero-sub {
-    font-size: 16px;
-    max-width: 60ch;
-  }
-
-  .hero-meta-row {
-    gap: 8px;
-  }
-
-  .hero-rating-row {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    max-width: 800px;
-  }
-
-  .meta-chip {
-    min-height: 30px;
-    padding: 0 12px;
-    font-size: 12px;
-  }
-
-  .hero-btns {
-    flex-direction: row;
-    max-width: 540px;
-  }
-
-  .hero-btns > button {
-    flex: 1;
-  }
-
-  .game-block,
-  .bundle,
-  .missions,
-  .showtimes,
-  .reviews {
-    margin-bottom: 16px;
-  }
-
-  .game-card-body {
-    padding: 18px;
-    gap: 18px;
-  }
-
-  .game-film-title {
-    font-size: 18px;
-  }
-
-  .game-countdown {
-    font-size: 13px;
-  }
-
-  .game-cta-row {
-    padding: 0 18px 18px;
-  }
-
-  .btn-game {
-    height: 52px;
-  }
-
-  .showtimes { padding: 24px 0 28px; }
-
-  .showtimes-hd,
-  .showtimes-note,
-  .showtime-toolbar,
-  .format-toolbar,
-  .showtime-key,
-  .date-row,
-  .cinemas-list {
-    padding-left: 28px;
-    padding-right: 28px;
-  }
-
-  .showtimes-note {
-    font-size: 13px;
-  }
-
-  .date-pill {
-    min-width: 72px;
-  }
-
-  .cinemas-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .credits {
-    padding: 24px 28px;
-  }
-
-  .credits-grid {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-
-  .people-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .rating-pills {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .cast-row {
-    gap: 12px;
-  }
-
-  .time-btn {
-    min-width: 0;
-    width: 112px;
-  }
-
-  .reviews { padding: 24px 28px; }
-
-  .review-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .review-card {
-    min-height: 100%;
-  }
-
-  .booking-sheet {
-    max-width: 980px;
-    border-radius: 24px 24px 0 0;
-  }
-
-  .booking-layout {
-    grid-template-columns: 1.4fr 1fr;
-  }
-
-  .hall-card {
-    grid-row: span 2;
-  }
-}
+  --bg:        #F7F5FA;
+  --white:     #FFFFFF;
+  --pink-500:  #EB2F96;
+  --pink-600:  #C22181;
+  --pink-50:   #FFF0F9;
+  --pink-100:  #FFD6EE;
+  --pink-200:  #FFAEDD;
+  --gray-900:  #1C171A;
+  --gray-800:  #2C252A;
+  --gray-700:  #3D3541;
+  --gray-600:  #524A58;
+  --gray-500:  #6B6572;
+  --gray-400:  #9C97A3;
+  --gray-300:  #C5C0CC;
+  --gray-200:  #E8E5EC;
+  --gray-100:  #F0EEF3;
+  --gray-50:   #F7F5FA;
+  --amber-500: #F59E0B;
+  --amber-50:  #FFFBEB;
+  --green-500: #22C55E;
+  --green-50:  #F0FDF4;
+  --red-500:   #EF4444;
+  --blue-500:  #3B82F6;
+  --blue-50:   #EFF6FF;
+  --purple-500:#7C3AED;
+  --purple-50: #F5F3FF;
+  --shadow-s:  0 1px 4px rgba(28,23,26,.08);
+  --shadow-m:  0 4px 16px rgba(28,23,26,.10);
+  --shadow-l:  0 8px 32px rgba(28,23,26,.14);
+  --r-sm:      8px;
+  --r-md:      12px;
+  --r-lg:      16px;
+  --r-xl:      20px;
+  --content:   1100px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--gray-900);min-height:100vh}
+
+/* NAV */
+.site-nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--gray-200);box-shadow:var(--shadow-s)}
+.nav-inner{max-width:var(--content);margin:0 auto;height:56px;padding:0 20px;display:flex;align-items:center;gap:16px}
+.nav-back{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--gray-700);background:none;border:none;cursor:pointer;padding:8px 0;transition:color .15s}
+.nav-back:hover{color:var(--pink-500)}
+.nav-title{font-size:14px;font-weight:700;color:var(--gray-900);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-share{font-size:18px;background:none;border:none;cursor:pointer;padding:8px;color:var(--gray-500)}
+
+/* HERO */
+.film-hero{position:relative;overflow:hidden;background:var(--gray-900)}
+.hero-backdrop{position:absolute;inset:0;background-image:url('https://image.tmdb.org/t/p/w1280/xvk4SFoZcwzPgDMB0P0hEkSrUwJ.jpg');background-size:cover;background-position:center top;filter:blur(2px) brightness(.28);transform:scale(1.05)}
+.hero-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(28,23,26,.35) 0%,rgba(28,23,26,.65) 55%,var(--bg) 100%)}
+.hero-content{position:relative;z-index:1;max-width:var(--content);margin:0 auto;padding:32px 20px 52px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:end}
+.hero-poster{width:120px;flex-shrink:0;border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-l);aspect-ratio:2/3}
+.hero-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-info{color:#fff}
+.film-age-badge{display:inline-block;font-size:11px;font-weight:800;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);border-radius:4px;padding:2px 9px;margin-bottom:10px;letter-spacing:.04em}
+.hero-title{font-size:clamp(22px,4vw,32px);font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:8px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.75);margin-bottom:12px}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.hero-tag{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.2)}
+.hero-rating{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.rating-score{display:flex;align-items:baseline;gap:4px}
+.rating-num{font-size:28px;font-weight:900;color:#FFD700}
+.rating-of{font-size:13px;color:rgba(255,255,255,.5)}
+.rating-votes{font-size:12px;color:rgba(255,255,255,.5)}
+.rating-want{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);padding-left:10px;border-left:1px solid rgba(255,255,255,.2)}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-book-hero{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:12px 28px;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(235,47,150,.4)}
+.btn-book-hero:hover{background:var(--pink-600);transform:translateY(-1px)}
+.btn-trailer{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:600;color:rgba(255,255,255,.9);background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-sm);padding:12px 20px;cursor:pointer;transition:all .2s}
+.btn-trailer:hover{background:rgba(255,255,255,.25)}
+@media(max-width:600px){.hero-poster{width:88px}.hero-title{font-size:20px}}
+
+/* TABS */
+.tabs-bar{background:var(--white);border-bottom:1px solid var(--gray-200);position:sticky;top:56px;z-index:100}
+.tabs-inner{max-width:var(--content);margin:0 auto;padding:0 20px;display:flex;gap:2px}
+.tab-btn{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:700;color:var(--gray-400);background:none;border:none;cursor:pointer;padding:12px 20px;position:relative;transition:color .15s}
+.tab-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--pink-500);border-radius:2px 2px 0 0;opacity:0;transition:opacity .2s}
+.tab-btn.on{color:var(--pink-500)}
+.tab-btn.on::after{opacity:1}
+
+/* PAGE */
+.page-wrap{max-width:var(--content);margin:0 auto;padding:24px 20px 120px}
+
+/* DATE STRIP */
+.date-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:16px}
+.date-strip::-webkit-scrollbar{display:none}
+.date-pill{flex-shrink:0;font-family:'MoMoTrustSans',inherit;border-radius:var(--r-md);padding:10px 14px;cursor:pointer;text-align:center;transition:all .2s;border:1.5px solid var(--gray-200);background:var(--white);min-width:58px}
+.date-pill .dp-day{font-size:10px;font-weight:700;color:var(--gray-400);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.date-pill .dp-num{font-size:20px;font-weight:900;color:var(--gray-700);display:block}
+.date-pill .dp-mon{font-size:10px;font-weight:600;color:var(--gray-400);display:block}
+.date-pill.on{background:var(--pink-500);border-color:var(--pink-500)}
+.date-pill.on .dp-day,.date-pill.on .dp-num,.date-pill.on .dp-mon{color:#fff}
+
+/* FILTER CHIPS */
+.filter-row{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.chip{font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:700;color:var(--gray-500);background:var(--white);border:1.5px solid var(--gray-200);border-radius:20px;padding:6px 14px;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--pink-200);color:var(--pink-500)}
+.chip.on{background:var(--pink-50);border-color:var(--pink-500);color:var(--pink-500)}
+
+/* CINEMA GROUP */
+.cinema-group{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-s)}
+.cg-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background .15s}
+.cg-header:hover{background:var(--gray-50)}
+.cg-logo{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0}
+.cg-logo-cgv{background:#E3001B;color:#fff}
+.cg-logo-lotte{background:#E50020;color:#fff}
+.cg-logo-bhd{background:#F7C903;color:#000}
+.cg-logo-galaxy{background:#0066CC;color:#fff}
+.cg-logo-cinestar{background:#6B21A8;color:#fff}
+.cg-meta{flex:1}
+.cg-name{font-size:14px;font-weight:700;color:var(--gray-900)}
+.cg-info{font-size:12px;color:var(--gray-400)}
+.cg-dist{font-size:12px;font-weight:700;color:var(--green-500);background:var(--green-50);border-radius:4px;padding:3px 8px;flex-shrink:0}
+.cg-chevron{color:var(--gray-300);font-size:13px;transition:transform .2s;flex-shrink:0}
+.cg-header.open .cg-chevron{transform:rotate(180deg)}
+.cg-body{border-top:1px solid var(--gray-100)}
+.format-section{padding:12px 16px;border-bottom:1px solid var(--gray-100)}
+.format-section:last-child{border-bottom:none}
+.format-label{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.fmt-tag{font-size:10px;font-weight:800;padding:3px 9px;border-radius:4px;letter-spacing:.06em}
+.fmt-2d{background:var(--blue-50);color:var(--blue-500)}
+.fmt-4dx{background:#FF6B00;color:#fff}
+.fmt-imax{background:var(--gray-900);color:#FFD700}
+.fmt-3d{background:var(--purple-50);color:var(--purple-500)}
+.fmt-premium{background:var(--amber-50);color:var(--amber-500)}
+.format-price{font-size:12px;color:var(--gray-400)}
+.show-times-row{display:flex;gap:6px;flex-wrap:wrap}
+.show-time-btn{font-family:'MoMoTrustSans',inherit;font-size:13px;font-weight:700;color:var(--gray-700);background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--r-sm);padding:9px 16px;cursor:pointer;transition:all .15s;min-width:72px;text-align:center}
+.show-time-btn:hover:not(.sold){border-color:var(--pink-500);color:var(--pink-500);background:var(--pink-50)}
+.show-time-btn.on{border-color:var(--pink-500);color:var(--pink-500);background:var(--pink-50)}
+.show-time-btn.few{border-color:var(--amber-500);color:var(--amber-500);background:var(--amber-50)}
+.show-time-btn.sold{color:var(--gray-300);border-color:var(--gray-100);background:var(--gray-50);cursor:not-allowed;text-decoration:line-through}
+
+/* INFO PANEL */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:600px){.info-grid{grid-template-columns:1fr}}
+.info-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow-s)}
+.ic-label{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.ic-value{font-size:14px;font-weight:700;color:var(--gray-900);line-height:1.4}
+.ic-value.pink{color:var(--pink-500)}
+.synopsis{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-s)}
+.syn-title{font-size:14px;font-weight:800;color:var(--gray-900);margin-bottom:10px}
+.syn-text{font-size:13px;line-height:1.8;color:var(--gray-600)}
+.crew-section{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-s)}
+.crew-title{font-size:14px;font-weight:800;color:var(--gray-900);margin-bottom:14px}
+.crew-list{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none}
+.crew-list::-webkit-scrollbar{display:none}
+.crew-item{flex-shrink:0;text-align:center;width:72px}
+.crew-avatar{width:60px;height:60px;border-radius:50%;background:var(--gray-100);margin:0 auto 6px;overflow:hidden;border:2px solid var(--gray-200)}
+.crew-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.crew-name{font-size:11px;font-weight:700;color:var(--gray-900);line-height:1.3}
+.crew-role{font-size:10px;color:var(--gray-400)}
+
+/* BOOKING SHEET */
+.sheet-overlay{position:fixed;inset:0;z-index:500;background:rgba(28,23,26,.55);backdrop-filter:blur(4px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+.sheet-overlay.show{opacity:1;pointer-events:all}
+.booking-sheet{background:var(--white);border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-width:680px;margin:0 auto;max-height:92vh;display:flex;flex-direction:column;transform:translateY(60px);transition:transform .35s cubic-bezier(.32,.72,0,1);box-shadow:0 -8px 40px rgba(28,23,26,.18)}
+.sheet-overlay.show .booking-sheet{transform:translateY(0)}
+
+/* STEPPER */
+.sheet-header{padding:12px 20px 0;border-bottom:1px solid var(--gray-100)}
+.sheet-handle{width:40px;height:4px;background:var(--gray-200);border-radius:2px;margin:0 auto 14px}
+.stepper{display:flex;align-items:center;margin-bottom:14px}
+.step-item{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;transition:all .25s;flex-shrink:0}
+.step-dot.done{background:var(--pink-500);color:#fff}
+.step-dot.active{background:var(--pink-500);color:#fff;box-shadow:0 0 0 4px var(--pink-100)}
+.step-dot.future{background:var(--gray-100);color:var(--gray-400)}
+.step-label{font-size:11px;font-weight:700;color:var(--pink-500);white-space:nowrap}
+.step-label.future{color:var(--gray-400)}
+.step-line{flex:1;height:1.5px;background:var(--gray-200);min-width:6px}
+.step-line.done{background:var(--pink-500)}
+
+/* SHEET BODY */
+.sheet-body{flex:1;overflow-y:auto;padding:16px 20px;scrollbar-width:thin;scrollbar-color:var(--gray-200) transparent}
+.sheet-body::-webkit-scrollbar{width:4px}
+.sheet-body::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:2px}
+
+/* SHEET FOOTER */
+.sheet-footer{padding:14px 20px;border-top:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;background:var(--white)}
+.footer-total{flex:1}
+.footer-label{font-size:11px;color:var(--gray-400);margin-bottom:2px}
+.footer-amount{font-size:20px;font-weight:900;color:var(--gray-900)}
+.btn-next{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:800;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:14px 32px;cursor:pointer;transition:all .2s}
+.btn-next:hover:not(:disabled){background:var(--pink-600)}
+.btn-next:disabled{background:var(--gray-200);color:var(--gray-400);cursor:not-allowed}
+
+/* SEAT MAP */
+.seat-context{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r-md);padding:10px 14px;margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sc-item{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--gray-600)}
+.sc-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;background:var(--pink-50);color:var(--pink-500)}
+.screen-bar{background:linear-gradient(90deg,var(--pink-500),var(--purple-500));border-radius:4px;height:6px;margin-bottom:6px}
+.screen-label{text-align:center;font-size:11px;font-weight:600;color:var(--gray-400);margin-bottom:20px;letter-spacing:.1em}
+.seat-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;justify-content:center}
+.sl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500)}
+.sl-dot{width:16px;height:16px;border-radius:4px}
+.sl-std{background:var(--blue-50);border:2px solid #93C5FD}
+.sl-vip{background:var(--purple-50);border:2px solid #C4B5FD}
+.sl-couple{background:var(--pink-50);border:2px solid var(--pink-200)}
+.sl-taken{background:var(--gray-200);border:2px solid var(--gray-300)}
+.sl-sel{background:var(--pink-500);border:2px solid var(--pink-600)}
+.seat-map{display:flex;flex-direction:column;gap:6px;overflow-x:auto;padding-bottom:4px}
+.seat-row{display:flex;align-items:center;gap:5px}
+.row-label{width:18px;font-size:11px;font-weight:700;color:var(--gray-400);text-align:center;flex-shrink:0}
+.seat{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid transparent;flex-shrink:0}
+.seat.std{background:var(--blue-50);border-color:#93C5FD;color:var(--blue-500)}
+.seat.std:hover:not(.taken){background:#DBEAFE;border-color:var(--blue-500)}
+.seat.vip{background:var(--purple-50);border-color:#C4B5FD;color:var(--purple-500)}
+.seat.vip:hover:not(.taken){background:#EDE9FE;border-color:var(--purple-500)}
+.seat.couple{width:74px;background:var(--pink-50);border-color:var(--pink-200);color:var(--pink-500)}
+.seat.couple:hover:not(.taken){background:var(--pink-100);border-color:var(--pink-500)}
+.seat.taken{background:var(--gray-100);border-color:var(--gray-200);color:var(--gray-300);cursor:not-allowed}
+.seat.selected{background:var(--pink-500) !important;border-color:var(--pink-600) !important;color:#fff !important}
+.seat.aisle{background:transparent;border:none;cursor:default;width:16px;pointer-events:none}
+.selected-summary{background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-md);padding:12px 16px;margin-top:16px}
+.sel-sum-title{font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:8px}
+.sel-chips{display:flex;gap:6px;flex-wrap:wrap}
+.sel-chip{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;background:var(--white);border:1.5px solid var(--pink-200);border-radius:20px;padding:4px 10px;color:var(--pink-500)}
+.sel-chip-del{background:none;border:none;cursor:pointer;color:var(--pink-400);font-size:14px;line-height:1;padding:0 2px}
+
+/* FNB */
+.fnb-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-100)}
+.fnb-item:last-child{border-bottom:none}
+.fnb-icon-box{width:56px;height:56px;border-radius:var(--r-sm);background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.fnb-info{flex:1}
+.fnb-name{font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:3px}
+.fnb-desc{font-size:12px;color:var(--gray-400);margin-bottom:4px}
+.fnb-price{font-size:13px;font-weight:700;color:var(--pink-500)}
+.fnb-stepper{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.fnb-btn{width:30px;height:30px;border-radius:50%;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;border:1.5px solid var(--gray-200);background:var(--white);color:var(--gray-700)}
+.fnb-btn:hover:not(:disabled){border-color:var(--pink-500);color:var(--pink-500);background:var(--pink-50)}
+.fnb-btn:disabled{color:var(--gray-300);cursor:not-allowed}
+.fnb-qty{width:28px;text-align:center;font-size:15px;font-weight:800;color:var(--gray-900)}
+
+/* PAYMENT */
+.pay-section-title{font-size:12px;font-weight:800;color:var(--gray-500);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.06em}
+.pay-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid var(--gray-200);border-radius:var(--r-md);cursor:pointer;transition:all .2s;margin-bottom:8px;background:var(--white)}
+.pay-option:hover{border-color:var(--pink-200);background:var(--pink-50)}
+.pay-option.selected{border-color:var(--pink-500);background:var(--pink-50)}
+.pay-icon{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--gray-100);flex-shrink:0}
+.pay-detail{flex:1}
+.pay-name{font-size:14px;font-weight:700;color:var(--gray-900)}
+.pay-sub{font-size:12px;color:var(--gray-400)}
+.pay-badge{font-size:10px;font-weight:800;background:var(--amber-50);color:var(--amber-500);border-radius:4px;padding:2px 7px;margin-left:6px}
+.pay-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-300);transition:all .2s;flex-shrink:0}
+.pay-option.selected .pay-radio{border-color:var(--pink-500);background:var(--pink-500);box-shadow:inset 0 0 0 4px #fff}
+
+/* CONFIRM */
+.confirm-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-s)}
+.confirm-poster-strip{display:flex;gap:14px;padding:16px;align-items:flex-start;border-bottom:1px solid var(--gray-100)}
+.confirm-poster{width:72px;aspect-ratio:2/3;border-radius:var(--r-sm);overflow:hidden;flex-shrink:0}
+.confirm-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.confirm-film-title{font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:6px}
+.confirm-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:13px;color:var(--gray-600)}
+.confirm-icon{width:18px;text-align:center}
+.confirm-section{padding:14px 16px;border-bottom:1px solid var(--gray-100)}
+.confirm-section:last-child{border-bottom:none}
+.confirm-section-title{font-size:11px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.confirm-detail-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px}
+.confirm-detail-row .key{color:var(--gray-500)}
+.confirm-detail-row .val{font-weight:700;color:var(--gray-900)}
+.confirm-total-row{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1.5px solid var(--gray-200);margin-top:6px}
+.confirm-total-row .key{font-size:14px;font-weight:700;color:var(--gray-900)}
+.confirm-total-row .val{font-size:20px;font-weight:900;color:var(--pink-500)}
+.promo-input{display:flex;gap:8px;margin-top:12px}
+.promo-input input{flex:1;font-family:'MoMoTrustSans',inherit;font-size:13px;border:1.5px solid var(--gray-200);border-radius:var(--r-sm);padding:10px 14px;outline:none;color:var(--gray-900);transition:border-color .15s}
+.promo-input input:focus{border-color:var(--pink-500)}
+.promo-input input::placeholder{color:var(--gray-300)}
+.promo-apply{font-family:'MoMoTrustSans',inherit;font-size:13px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 20px;cursor:pointer}
+.consent-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--r-sm)}
+.consent-text{font-size:12px;color:var(--gray-500);line-height:1.6}
+.consent-text a{color:var(--pink-500);font-weight:600;text-decoration:none}
+
+/* TICKET */
+.ticket-wrap{background:var(--white);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-l);border:1px solid var(--gray-200)}
+.ticket-header{background:linear-gradient(135deg,var(--pink-500) 0%,#9B1FCC 100%);padding:24px 20px;position:relative;overflow:hidden}
+.ticket-header::before{content:'🎬';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:60px;opacity:.12}
+.ticket-success-icon{width:52px;height:52px;background:rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}
+.ticket-header-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:4px}
+.ticket-header-sub{font-size:13px;color:rgba(255,255,255,.75)}
+.ticket-film-strip{display:flex;gap:14px;padding:16px 20px;align-items:center;border-bottom:1px solid var(--gray-100)}
+.ticket-poster{width:60px;aspect-ratio:2/3;border-radius:var(--r-sm);overflow:hidden;flex-shrink:0;box-shadow:var(--shadow-s)}
+.ticket-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.ticket-film-name{font-size:15px;font-weight:800;color:var(--gray-900);margin-bottom:4px}
+.ticket-cinema-name{font-size:12px;color:var(--gray-500)}
+.perf-divider{display:flex;align-items:center;padding:0 0;margin:4px 0}
+.perf-circle{width:20px;height:20px;border-radius:50%;background:var(--gray-50);border:1px solid var(--gray-200);flex-shrink:0}
+.perf-line{flex:1;border-top:2px dashed var(--gray-200)}
+.ticket-grid{display:grid;grid-template-columns:1fr 1fr;padding:0 20px 16px}
+.ticket-field{padding:12px 0;border-bottom:1px solid var(--gray-100)}
+.ticket-field:nth-child(odd){padding-right:16px;border-right:1px solid var(--gray-100)}
+.ticket-field:nth-child(even){padding-left:16px}
+.ticket-field:nth-last-child(-n+2){border-bottom:none}
+.tf-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.tf-value{font-size:14px;font-weight:800;color:var(--gray-900);line-height:1.3}
+.tf-value.pink{color:var(--pink-500)}
+.qr-section{padding:16px 20px;border-top:1px solid var(--gray-100);display:flex;gap:16px;align-items:center}
+.qr-box{width:96px;height:96px;background:var(--gray-900);border-radius:var(--r-md);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.qr-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:1.5px;width:80px;height:80px}
+.qr-cell{border-radius:1px}
+.qr-hint-title{font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px}
+.qr-hint-desc{font-size:12px;color:var(--gray-400);line-height:1.5}
+.ticket-actions{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--gray-100)}
+.btn-save-ticket{flex:1;font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:14px;cursor:pointer;transition:all .2s}
+.btn-save-ticket:hover{background:var(--pink-600)}
+.btn-close-ticket{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:600;background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:14px 20px;cursor:pointer}
+
+/* PRESALE FOMO */
+.presale-ticker{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;margin-top:14px;width:fit-content}
+.pt-dot{width:6px;height:6px;background:#FFD700;border-radius:50%;animation:pulse 1.2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.pt-text{font-size:12px;font-weight:600;color:rgba(255,255,255,.85)}
+.pt-count{font-size:13px;font-weight:900;color:#FFD700}
+.pt-sep{color:rgba(255,255,255,.3)}
+
+/* HERO SCORE */
+.hero-score{display:flex;gap:8px;margin:10px 0 14px;flex-wrap:wrap}
+.hs-item{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:var(--r-sm);padding:6px 12px;min-width:64px}
+.hs-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.hs-num{font-size:17px;font-weight:900}
+.hs-num.c{color:#C4B5FD}
+.hs-num.a{color:#FDE68A}
+.hs-num.b{color:#FBCFE8}
+.hs-bar-bg{width:40px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:3px;overflow:hidden}
+.hs-bar-fill{height:100%;border-radius:2px}
+.hs-bar-fill.c{background:#C4B5FD}
+.hs-bar-fill.a{background:#FDE68A}
+.hs-bar-fill.b{background:#FBCFE8}
+
+/* GROUP INVITE */
+.group-panel{background:linear-gradient(135deg,var(--pink-50),#F0E8FF);border:1.5px solid var(--pink-100);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:16px}
+.group-panel-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.group-panel-left{flex:1}
+.group-panel-title{font-size:13px;font-weight:800;color:var(--gray-900);margin-bottom:3px}
+.group-panel-sub{font-size:11px;color:var(--gray-500)}
+.btn-group-invite{font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:8px 14px;cursor:pointer;flex-shrink:0;transition:background .15s}
+.btn-group-invite:hover{background:var(--pink-600)}
+.group-members{display:flex;align-items:center;gap:0;margin-top:10px}
+.gm-avatar{width:30px;height:30px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;margin-left:-6px;flex-shrink:0;box-shadow:var(--shadow-s)}
+.gm-avatar:first-child{margin-left:0}
+.gm-avatar.pending{background:var(--gray-200);color:var(--gray-400);border:2px dashed var(--gray-300);font-size:16px}
+.gm-info{font-size:11px;color:var(--gray-600);margin-left:10px;line-height:1.5}
+.gm-info .done{color:var(--green-500);font-weight:700}
+.gm-info .wait{color:var(--amber-500);font-weight:700}
+
+/* SOCIAL SEATS */
+.seat.friend{background:#FFF3CD !important;border-color:#F59E0B !important;color:#92400E !important;cursor:default;position:relative}
+.seat.friend:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100%+6px);left:50%;transform:translateX(-50%);background:var(--gray-900);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:10}
+.sl-friend{background:#FFF3CD;border:2px solid #F59E0B}
+.friend-sugg{display:flex;align-items:center;gap:10px;background:var(--amber-50);border:1.5px solid #FDE68A;border-radius:var(--r-sm);padding:10px 12px;margin-top:12px;cursor:pointer;transition:all .15s}
+.friend-sugg:hover{border-color:var(--amber-500)}
+.fs-ico{font-size:20px;flex-shrink:0}
+.fs-body{flex:1;font-size:12px;color:var(--gray-700);line-height:1.5}
+.fs-body strong{color:var(--amber-500)}
+.fs-cta{font-family:'MoMoTrustSans',inherit;font-size:11px;font-weight:700;background:var(--amber-500);color:#fff;border:none;border-radius:5px;padding:5px 10px;cursor:pointer;flex-shrink:0}
+
+/* STICKY CTA */
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--white);border-top:1px solid var(--gray-200);padding:12px 20px;box-shadow:0 -4px 16px rgba(28,23,26,.08)}
+.sticky-inner{max-width:var(--content);margin:0 auto;display:flex;align-items:center;gap:16px}
+.sticky-price{flex:1}
+.sticky-from{font-size:11px;color:var(--gray-400)}
+.sticky-amount{font-size:18px;font-weight:900;color:var(--gray-900)}
+.btn-book-sticky{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:800;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:14px 32px;cursor:pointer;transition:all .2s}
+.btn-book-sticky:hover{background:var(--pink-600)}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--gray-900);color:#fff;font-size:13px;font-weight:600;border-radius:var(--r-md);padding:12px 20px;opacity:0;transition:all .25s;z-index:9999;white-space:normal;box-shadow:var(--shadow-l);text-align:center;max-width:88vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* TRAILER */
+.trailer-overlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.trailer-overlay.show{opacity:1;pointer-events:all}
+.trailer-box{background:var(--white);border-radius:var(--r-lg);width:min(800px,95vw);overflow:hidden;box-shadow:var(--shadow-l)}
+.trailer-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--gray-200)}
+.trailer-close{font-family:'MoMoTrustSans',inherit;font-size:18px;color:var(--gray-400);background:none;border:none;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s}
+.trailer-close:hover{background:var(--gray-100);color:var(--gray-900)}
+.trailer-iframe-wrap{aspect-ratio:16/9;background:#000}
+.trailer-iframe-wrap iframe{width:100%;height:100%;border:none;display:block}
 </style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
-<div class="page">
-
-  <!-- App Bar -->
-  <header class="app-bar">
-    <button class="bar-btn" onclick="history.back()" aria-label="Quay lại">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+<nav class="site-nav">
+  <div class="nav-inner">
+    <button class="nav-back" onclick="window.location.href='/cinema'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Phim
     </button>
-    <span class="bar-title">Supergirl</span>
-    <div class="bar-actions">
-      <button class="bar-btn" id="likeBtn" aria-label="Yêu thích">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </button>
-      <button class="bar-btn" aria-label="Chia sẻ">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      </button>
+    <span class="nav-title">Supergirl: Woman of Tomorrow</span>
+    <button class="nav-share" onclick="toast('Đã sao chép link chia sẻ')" title="Chia sẻ">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="film-hero">
+  <div class="hero-backdrop"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div class="hero-poster">
+      <img src="https://cinema.momocdn.net/convert-webp/img/154902082106207596-PosterSUPERGIRLcompressed.jpg?size=M" alt="Supergirl">
     </div>
-  </header>
-
-  <!-- ── FILM HERO ───────────────────────── -->
-  <section class="hero">
-    <img class="hero-backdrop" src="https://image.tmdb.org/t/p/w780/28PGUwfIkAByymJOb6KkJt5SgYw.jpg" alt="">
-    <div class="hero-top">
-      <div class="film-badge">
-        <span class="badge-dot"></span>
-        MoMo Cinema · Khởi chiếu 26/06/2026
+    <div class="hero-info">
+      <div class="film-age-badge">T13</div>
+      <h1 class="hero-title">Supergirl: Woman of Tomorrow</h1>
+      <div class="hero-sub">2026 · DC Studios · 130 phút · Tiếng Anh (Phụ đề Việt)</div>
+      <div class="hero-tags">
+        <span class="hero-tag">Hành động</span>
+        <span class="hero-tag">Siêu anh hùng</span>
+        <span class="hero-tag">Phiêu lưu</span>
       </div>
-      <div class="hero-layout">
-        <div class="hero-poster">
-          <div class="hero-poster-frame">
-            <img src="https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM" alt="Supergirl poster">
-          </div>
+      <div class="hero-rating">
+        <div class="rating-score">
+          <div class="rating-num">8.2</div>
+          <div class="rating-of">/10</div>
         </div>
-        <div class="hero-copy">
-          <h1 class="hero-title">Supergirl</h1>
-          <p class="hero-sub">Khi một kẻ thù tàn nhẫn và không ngờ tới ra tay quá gần với những gì cô trân quý, Kara Zor-El, còn được biết đến với cái tên Supergirl, miễn cưỡng hợp tác với một người đồng hành không ai ngờ tới, bước vào hành trình liên thiên hà đầy sử thi để tìm kiếm sự trả thù và công lý.</p>
-          <div class="hero-meta-row">
-            <span class="meta-chip strong">108 phút</span>
-            <span class="meta-chip">C13 · 13+</span>
-            <span class="meta-chip">2D · Phụ đề</span>
-            <span class="meta-chip">Khoa học viễn tưởng</span>
-            <span class="meta-chip">Phiêu lưu · Hành động</span>
-            <span class="meta-chip">Sneak show 24/06</span>
-          </div>
-          <div class="hero-rating-row">
-            <div class="score-pill momo">
-              <small>MoMo</small>
-              <strong>7.5/10</strong>
-              <small>39 đánh giá</small>
-            </div>
-            <div class="score-pill imdb">
-              <small>IMDb</small>
-              <strong>6.1/10</strong>
-              <small>14,089 votes</small>
-            </div>
-            <div class="score-pill rotten">
-              <small>RT Tomatometer</small>
-              <strong>56%</strong>
-              <small>275 reviews</small>
-            </div>
-            <div class="score-pill popcorn">
-              <small>Popcornmeter</small>
-              <strong>77%</strong>
-              <small>2,500+ verified</small>
-            </div>
-          </div>
-          <div class="hero-btns">
-            <button class="btn-fill-hero" onclick="scrollToBooking()">
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              Đặt vé ngay
-            </button>
-            <button class="btn-outline-hero" onclick="scrollToShowtimes()">
-              Xem lịch chiếu
-            </button>
-          </div>
+        <div class="rating-votes">4,812 đánh giá</div>
+        <div class="rating-want">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#EB2F96"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <strong>18.2k</strong> muốn xem
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="credits">
-    <div class="section-title">Thông tin phim</div>
-    <div class="credits-grid">
-      <div class="credit-panel">
-        <div class="credit-panel-hd">
-          <div class="credit-panel-title">Supergirl trên MoMo</div>
-          <div class="credit-panel-note">C13 · 2D phụ đề</div>
-        </div>
-        <div class="movie-info-grid">
-          <div class="movie-info-card">
-            <div class="movie-info-label">Khởi chiếu</div>
-            <div class="movie-info-value">26/06/2026</div>
-          </div>
-          <div class="movie-info-card">
-            <div class="movie-info-label">Sneak show</div>
-            <div class="movie-info-value">24/06/2026</div>
-          </div>
-          <div class="movie-info-card">
-            <div class="movie-info-label">Thời lượng</div>
-            <div class="movie-info-value">108 phút</div>
-          </div>
-          <div class="movie-info-card">
-            <div class="movie-info-label">Giá vé MoMo</div>
-            <div class="movie-info-value">45.000đ - 130.000đ</div>
-          </div>
-          <div class="movie-info-card wide">
-            <div class="movie-info-label">Thể loại</div>
-            <div class="movie-info-value">Khoa học viễn tưởng, Phiêu lưu, Hành động</div>
-          </div>
-          <div class="movie-info-card wide">
-            <div class="movie-info-label">Nội dung</div>
-            <div class="movie-info-desc">Kara Zor-El miễn cưỡng hợp tác với một người đồng hành không ai ngờ tới, bước vào hành trình liên thiên hà để tìm kiếm sự trả thù và công lý.</div>
-          </div>
-        </div>
+      <div class="hero-score">
+        <div class="hs-item"><div class="hs-label">Critic</div><div class="hs-num c">78</div><div class="hs-bar-bg"><div class="hs-bar-fill c" style="width:78%"></div></div></div>
+        <div class="hs-item"><div class="hs-label">Khán giả</div><div class="hs-num a">82</div><div class="hs-bar-bg"><div class="hs-bar-fill a" style="width:82%"></div></div></div>
+        <div class="hs-item"><div class="hs-label">Buzz</div><div class="hs-num b">88</div><div class="hs-bar-bg"><div class="hs-bar-fill b" style="width:88%"></div></div></div>
       </div>
-
-      <div class="credit-panel">
-        <div class="credit-panel-hd">
-          <div class="credit-panel-title">Casting and crew</div>
-          <div class="credit-panel-note">DC Universe</div>
-        </div>
-        <div class="people-row">
-          <div class="person-card">
-            <div class="person-role">Đạo diễn</div>
-            <div class="person-name">Craig Gillespie</div>
-          </div>
-          <div class="person-card">
-            <div class="person-role">Biên kịch</div>
-            <div class="person-name">Ana Nogueira</div>
-          </div>
-          <div class="person-card">
-            <div class="person-role">Sản xuất</div>
-            <div class="person-name">James Gunn, Peter Safran</div>
-          </div>
-          <div class="person-card">
-            <div class="person-role">Producer credits</div>
-            <div class="person-name">Nigel Gostelow, Chantal Nong, Lars P. Winther</div>
-          </div>
-        </div>
-        <div class="cast-row">
-          <div class="cast-card">
-            <div class="cast-photo"><img src="https://resizing.flixster.com/y_94oXw4yMp3FX_hF0rzpDeXcGw=/68x102/v2/https://resizing.flixster.com/YC20c6yDo6WOwSLBooTnCtfST5c=/ems.cHJkLWVtcy1hc3NldHMvY2VsZWJyaXRpZXMvMGI3ZTFkZDctN2Y5ZC00ZGNlLTk0ZTktYmQ4NzY2YmEzYjg2LmpwZw==" alt="Milly Alcock"></div>
-            <div class="cast-name">Milly Alcock</div>
-            <div class="cast-role">Kara Zor-El / Supergirl</div>
-          </div>
-          <div class="cast-card">
-            <div class="cast-photo"><img src="https://resizing.flixster.com/Vj4zEnl6UHz5Bzyn4z01u5AG35w=/68x102/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/GNLZZGG00365DXW.jpg" alt="Matthias Schoenaerts"></div>
-            <div class="cast-name">Matthias Schoenaerts</div>
-            <div class="cast-role">Krem of the Yellow Hills</div>
-          </div>
-          <div class="cast-card">
-            <div class="cast-photo"><div class="cast-fallback">ER</div></div>
-            <div class="cast-name">Eve Ridley</div>
-            <div class="cast-role">Ruthye Marye Knoll</div>
-          </div>
-          <div class="cast-card">
-            <div class="cast-photo"><img src="https://resizing.flixster.com/mcfC-deKltQYx8wGeolko5XG0KI=/68x102/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/82280_v9_bc.jpg" alt="David Krumholtz"></div>
-            <div class="cast-name">David Krumholtz</div>
-            <div class="cast-role">Zor-El</div>
-          </div>
-          <div class="cast-card">
-            <div class="cast-photo"><img src="https://resizing.flixster.com/FF6MKLufgu5jgpIu2yVSAUBB9NA=/68x102/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/189304_v9_bd.jpg" alt="Jason Momoa"></div>
-            <div class="cast-name">Jason Momoa</div>
-            <div class="cast-role">Lobo</div>
-          </div>
-          <div class="cast-card">
-            <div class="cast-photo"><img src="https://resizing.flixster.com/-HWOS9V0D13Sd3Sxr9PgNtEKvQA=/68x102/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/502561_v9_bb.jpg" alt="Emily Beecham"></div>
-            <div class="cast-name">Emily Beecham</div>
-            <div class="cast-role">Alura In-Ze</div>
-          </div>
-        </div>
+      <div class="hero-actions">
+        <button class="btn-book-hero" onclick="openBooking()"><i data-lucide="ticket" width="15" height="15" stroke-width="2"></i> Mua vé ngay</button>
+        <button class="btn-trailer" onclick="openTrailer('wJO_vIDZn1Y')"><i data-lucide="play" width="14" height="14" stroke-width="2.5"></i> Trailer</button>
       </div>
-    </div>
-  </section>
-
-  <!-- ── SHOWTIMES ──────────────────────────── -->
-  <section class="showtimes">
-    <div class="showtimes-hd">
-      <div class="section-title">Lịch chiếu và cụm rạp</div>
-    </div>
-
-    <div class="date-row" id="dateRow"></div>
-    <div class="showtime-toolbar" id="theaterFilters"></div>
-    <div class="format-toolbar" id="formatFilters"></div>
-    <div class="cinemas-list" id="cinemasList"></div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── REVIEWS ────────────────────────────── -->
-  <section class="reviews">
-    <div class="section-title">Comment từ MoMo</div>
-
-    <div class="review-list">
-      <div class="review-card">
-        <div class="rv-top">
-          <div class="reviewer">
-            <div class="avatar" style="background:#dbeafe;color:#1d4ed8">K</div>
-            <div>
-              <div class="rv-name">Võ Phúc Khang</div>
-              <div class="rv-date">27/06/2026 · 10/10</div>
-            </div>
-          </div>
-          <div class="rv-stars">★★★★★</div>
-        </div>
-        <p class="rv-text">Ai trong đoàn làm phim dám làm phiền Aquaman vô trong bộ phim vậy trời, thấy phiền phức đến người ta luôn á. Mà thôi kệ có anh ấy là chiến như thần thật sự luôn. Tổng kết là phim quá hay, hành động mãn nhãn, dù trong vũ trụ DC mình vẫn là fan của Aquaman và Wonder Woman.</p>
-        <div class="rv-tags">
-          <span class="rv-tag">Tuyệt vời</span>
-          <span class="rv-tag">Giải trí</span>
-          <span class="rv-tag">Siêu phẩm</span>
-        </div>
-        <div class="rv-stats">
-          <span>Đã mua vé</span>
-          <span>42 lượt xem</span>
-        </div>
+      <div class="presale-ticker" id="presaleTicker">
+        <div class="pt-dot"></div>
+        <span class="pt-count" id="presaleCount">1,247</span>
+        <span class="pt-text">người đặt trong 2 giờ qua</span>
+        <span class="pt-sep">·</span>
+        <span class="pt-text" style="color:#FFD700">🔥 Đang hot</span>
       </div>
-
-      <div class="review-card">
-        <div class="rv-top">
-          <div class="reviewer">
-            <div class="avatar" style="background:#fef3c7;color:#92400e"><img src="https://avatar.momocdn.net/avatar/557f/fd9b6f42527ac761d2a499bc1326d09a8f451ea4f0e6b35b3b23014bf2cc.png" alt=""></div>
-            <div>
-              <div class="rv-name">Phạm Ngọc Thùy Trang</div>
-              <div class="rv-date">25/06/2026 · 8/10</div>
-            </div>
-          </div>
-          <div class="rv-stars">★★★★☆</div>
-        </div>
-        <p class="rv-text">Gu mình cũng khá dễ. Phim an toàn, có sự đầu tư, đánh đấm cũng ổn. Thích tích cách của nhân vật chính.</p>
-        <div class="rv-tags">
-          <span class="rv-tag">Đáng tiền</span>
-          <span class="rv-tag">Gay cấn</span>
-          <span class="rv-tag">Kịch tính</span>
-          <span class="rv-tag">Đồng cảm</span>
-          <span class="rv-tag">Hay</span>
-          <span class="rv-tag">Mãn nhãn</span>
-        </div>
-        <div class="rv-stats">
-          <span>Đã mua vé</span>
-          <span>9 thích</span>
-          <span>634 lượt xem</span>
-        </div>
-      </div>
-
-      <div class="review-card">
-        <div class="rv-top">
-          <div class="reviewer">
-            <div class="avatar" style="background:#ede9fe;color:#6d28d9"><img src="https://avatar.momocdn.net/avatar/ba75/aaf885010dd13250d6d56272661f368ab78cc79a89007405eb73c5cc5c5e.png" alt=""></div>
-            <div>
-              <div class="rv-name">Nguyễn Thành Hiếu</div>
-              <div class="rv-date">24/06/2026 · 1/10</div>
-            </div>
-          </div>
-          <div class="rv-stars">★☆☆☆☆</div>
-        </div>
-        <p class="rv-text">Phim có đủ tất cả điểm chê trừ khó hiểu. Tóm tắt phản diện qua 1 ảnh</p>
-        <div class="rv-tags">
-          <span class="rv-tag">Nhạt</span>
-          <span class="rv-tag">Phí tiền</span>
-          <span class="rv-tag">Thiếu chiều sâu</span>
-          <span class="rv-tag">Dài dòng</span>
-          <span class="rv-tag">Thất vọng</span>
-          <span class="rv-tag">Không điểm nhấn</span>
-          <span class="rv-tag">Buồn ngủ</span>
-        </div>
-        <div class="rv-stats">
-          <span>Đã mua vé</span>
-          <span>461 thích</span>
-          <span>116 bình luận</span>
-          <span>2.488 lượt xem</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div style="height:90px"></div>
-</div><!-- .page -->
-
-<!-- Bottom Bar -->
-
-<!-- Booking Sheet -->
-<div class="overlay" id="bookingOverlay" onclick="closeOverlay(event,'bookingOverlay')">
-  <div class="sheet booking-sheet">
-    <div class="sheet-handle"></div>
-    <div class="booking-head">
-      <div>
-        <div class="sheet-title">Đặt vé phim</div>
-        <div class="booking-sub" id="bookingSub">CGV Vincom Đồng Khởi · 19:15</div>
-      </div>
-      <button class="booking-close" onclick="closeBooking()">Đóng</button>
-    </div>
-    <div class="booking-stepper" id="bookingStepper"></div>
-    <div class="booking-layout">
-      <div class="hall-card">
-        <div class="hall-screen">Màn hình</div>
-        <div class="seat-legend">
-          <span><span class="legend-dot free"></span>Ghế trống</span>
-          <span><span class="legend-dot taken"></span>Đã giữ</span>
-          <span><span class="legend-dot selected"></span>Đang chọn</span>
-        </div>
-        <div class="seat-grid" id="seatGrid"></div>
-      </div>
-      <div class="snack-card">
-        <div class="summary-label">Popcorn popup</div>
-        <div class="summary-line">Thêm bắp, nước hoặc combo đôi trước khi thanh toán.</div>
-        <div class="snack-grid" id="snackGrid"></div>
-      </div>
-      <div class="payment-card">
-        <div class="summary-label">Payment popup</div>
-        <div class="summary-line">Chọn MoMo, thẻ hoặc QR để hoàn tất đơn vé.</div>
-        <div class="payment-grid" id="paymentGrid"></div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Tóm tắt</div>
-        <div class="summary-line" id="bookingSummaryCinema"></div>
-        <div class="summary-line" id="bookingSummarySeats"></div>
-        <div class="summary-line" id="bookingSummarySnack"></div>
-        <div class="summary-line" id="bookingSummaryPayment"></div>
-      </div>
-    </div>
-    <div class="booking-actions">
-      <button class="btn-sheet-close" onclick="goBookingBack()">Quay lại</button>
-      <button class="btn-booking-primary" onclick="goBookingNext()">Tiếp tục</button>
     </div>
   </div>
 </div>
 
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn on" onclick="switchTab('showtimes',this)">Lịch chiếu</button>
+    <button class="tab-btn" onclick="switchTab('info',this)">Thông tin</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <div id="panelShowtimes">
+    <div class="date-strip" id="dateStrip"></div>
+    <div class="filter-row" id="chainFilter"></div>
+    <div id="cinemaGroups"></div>
+  </div>
+
+  <div id="panelInfo" style="display:none">
+    <div class="info-grid">
+      <div class="info-card"><div class="ic-label">Đạo diễn</div><div class="ic-value">Craig Gillespie</div></div>
+      <div class="info-card"><div class="ic-label">Thể loại</div><div class="ic-value">Hành động · Siêu anh hùng</div></div>
+      <div class="info-card"><div class="ic-label">Thời lượng</div><div class="ic-value">130 phút</div></div>
+      <div class="info-card"><div class="ic-label">Khởi chiếu</div><div class="ic-value pink">01/08/2026</div></div>
+      <div class="info-card"><div class="ic-label">Ngôn ngữ</div><div class="ic-value">Tiếng Anh (Phụ đề Việt)</div></div>
+      <div class="info-card"><div class="ic-label">Giới hạn tuổi</div><div class="ic-value">T13 - Trên 13 tuổi</div></div>
+    </div>
+    <div class="synopsis">
+      <div class="syn-title">Nội dung phim</div>
+      <div class="syn-text">Kara Zor-El - một phiên bản trẻ trung và chưa trải đời của Supergirl - phải một mình tìm lại danh tính bản thân trong vũ trụ rộng lớn. Khác với người anh họ Superman lớn lên trong tình yêu thương, Kara mang nỗi đau của người cuối cùng còn lại từ Krypton.<br><br>Khi cô gái nông thôn Ruthye cầu xin giúp đỡ để trả thù kẻ giết cha, hai người cùng nhau lên đường truy lùng tên sát nhân bí ẩn xuyên thiên hà - hành trình buộc Kara phải đối mặt quá khứ và chọn lựa tương lai của mình.</div>
+    </div>
+    <div class="crew-section">
+      <div class="crew-title">Diễn viên</div>
+      <div class="crew-list">
+        <div class="crew-item"><div class="crew-avatar"><img src="https://image.tmdb.org/t/p/w185/aIBBcDmHBJEQMQ9bMkJJ6cSU1oM.jpg" alt="Milly Alcock" onerror="this.style.display='none'"></div><div class="crew-name">Milly Alcock</div><div class="crew-role">Supergirl</div></div>
+        <div class="crew-item"><div class="crew-avatar"></div><div class="crew-name">Eva Green</div><div class="crew-role">Kẻ phản diện</div></div>
+        <div class="crew-item"><div class="crew-avatar"></div><div class="crew-name">Matthias Schoenaerts</div><div class="crew-role">Lobo</div></div>
+        <div class="crew-item"><div class="crew-avatar"></div><div class="crew-name">Jason Momoa</div><div class="crew-role">Cameo</div></div>
+        <div class="crew-item"><div class="crew-avatar"></div><div class="crew-name">David Krumholtz</div><div class="crew-role">Dr. Midnite</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-cta" id="stickyCta">
+  <div class="sticky-inner">
+    <div class="sticky-price">
+      <div class="sticky-from">Giá từ</div>
+      <div class="sticky-amount">65,000đ/ghế</div>
+    </div>
+    <button class="btn-book-sticky" onclick="openBooking()">Đặt vé ngay</button>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<!-- BOOKING SHEET -->
+<div class="sheet-overlay" id="bookingSheet">
+  <div class="booking-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-header">
+      <div class="sheet-handle" onclick="closeBooking()" style="cursor:pointer"></div>
+      <div class="stepper" id="stepper"></div>
+    </div>
+    <div class="sheet-body" id="sheetBody"></div>
+    <div class="sheet-footer">
+      <div class="footer-total">
+        <div class="footer-label" id="footerLabel">Chưa chọn suất</div>
+        <div class="footer-amount" id="footerAmount"></div>
+      </div>
+      <button class="btn-next" id="btnNext" onclick="nextStep()" disabled>Tiếp tục →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRAILER -->
+<div class="trailer-overlay" id="trailerOverlay" onclick="if(event.target===this)closeTrailer()">
+  <div class="trailer-box">
+    <div class="trailer-header">
+      <span style="font-size:14px;font-weight:700;color:var(--gray-900)">Supergirl: Woman of Tomorrow</span>
+      <button class="trailer-close" onclick="closeTrailer()"><i data-lucide="x" width="18" height="18" stroke-width="2.5"></i></button>
+    </div>
+    <div class="trailer-iframe-wrap"><iframe id="trailerFrame" allow="autoplay;encrypted-media" allowfullscreen></iframe></div>
+  </div>
+</div>
+
 <script>
-// ── DATE STRIP ────────────────────────────
-const VI_DAYS = ['CN','T2','T3','T4','T5','T6','T7'];
-let selectedDayIndex = 0;
-let selectedChain = 'all';
-let selectedFormat = 'all';
-let nearMeEnabled = true;
-
-function buildDateStrip() {
-  const row = document.getElementById('dateRow');
-  const today = new Date();
-  let html = '';
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const label = i === 0 ? 'Hôm nay' : i === 1 ? 'Mai' : VI_DAYS[d.getDay()];
-    html += `<div class="date-pill${i===0?' on':''}" onclick="pickDate(this,${i})">
-      <span class="dp-day">${label}</span>
-      <span class="dp-num">${d.getDate()}</span>
-    </div>`;
-  }
-  row.innerHTML = html;
+function icon(name, size=16) {
+  const key = name.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('');
+  if (!window.lucide || !lucide[key]) return '';
+  return lucide.createElement(lucide[key], {width:size,height:size,'stroke-width':2,style:'display:inline-block;vertical-align:middle;flex-shrink:0'}).outerHTML;
 }
 
-function pickDate(el, idx) {
-  document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('on'));
-  el.classList.add('on');
-  selectedDayIndex = idx;
-  renderCinemas(idx);
-}
-
-// ── CINEMAS DATA ──────────────────────────
-const CINEMAS = [
-  {
-    id: 'cgv',
-    chain: 'CGV',
-    name: 'CGV Vincom Đồng Khởi',
-    district: 'Quận 1, TP.HCM',
-    distance: 1.2,
-    price: '79K',
-    logo: 'https://homepage.momocdn.net/cinema/momo-amazone-s3-api-240829164527-638605467276820522.png',
-    badges: ['79K', 'IMAX', 'Premium'],
-    features: ['Ghế đôi', 'Fast checkout', '2D phụ đề'],
-    promo: 'XEMGI - giảm 10.000đ khi đặt vé trên Website MoMo',
-    sessions: [
-      { time: '10:15', tags: ['Early bird', 'IMAX'], tactic: 'Giá sáng', seats: '18 ghế', full: false },
-      { time: '12:30', tags: ['Premium', '2D'], tactic: 'Lunch slot', seats: '22 ghế', full: false },
-      { time: '14:45', tags: ['Best seat'], tactic: 'Ghế đẹp', seats: '12 ghế', full: false },
-      { time: '17:00', tags: ['Fast checkout'], tactic: 'Tan làm', seats: '9 ghế', full: false },
-      { time: '19:15', tags: ['Sold out'], tactic: 'Peak slot', seats: '0 ghế', full: true },
-      { time: '21:30', tags: ['Late show'], tactic: 'Suất khuya', seats: '31 ghế', full: false },
-    ],
-  },
-  {
-    id: 'lotte',
-    chain: 'Lotte Cinema',
-    name: 'Lotte Cinema Nowzone',
-    district: 'Quận 1, TP.HCM',
-    distance: 1.9,
-    price: '89K',
-    logo: 'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170617-637584231772974269.png',
-    badges: ['89K', 'Comfort', 'Family'],
-    features: ['Snack bundle', 'Parking', 'Ghế rộng'],
-    promo: 'Ưu đãi 55K/vé 2D thứ 3, 89K/vé 2D cả tuần',
-    sessions: [
-      { time: '11:00', tags: ['Early bird'], tactic: 'Mua sớm', seats: '26 ghế', full: false },
-      { time: '13:30', tags: ['Family'], tactic: 'Gia đình', seats: '18 ghế', full: false },
-      { time: '16:00', tags: ['Premium'], tactic: 'Combo bắp', seats: '14 ghế', full: false },
-      { time: '18:30', tags: ['Best seat'], tactic: 'Giữ ghế tốt', seats: '6 ghế', full: false },
-      { time: '21:00', tags: ['Fast'], tactic: 'Thanh toán nhanh', seats: '21 ghế', full: false },
-    ],
-  },
-  {
-    id: 'bhd',
-    chain: 'BHD Star',
-    name: 'BHD Star Bitexco',
-    district: 'Quận 1, TP.HCM',
-    distance: 2.2,
-    price: '75K',
-    logo: 'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170453-637584230934981809.png',
-    badges: ['75K', 'Deal', 'Student'],
-    features: ['Giá tốt', 'Trung tâm', 'Voucher BHD'],
-    promo: '75K/vé 2D trong tuần, 95K/vé 2D cuối tuần',
-    sessions: [
-      { time: '09:45', tags: ['Early bird'], tactic: 'Giá tốt', seats: '34 ghế', full: false },
-      { time: '12:00', tags: ['Deal'], tactic: 'Student', seats: '20 ghế', full: false },
-      { time: '14:30', tags: ['Best seat'], tactic: 'Ghế giữa', seats: '15 ghế', full: false },
-      { time: '17:15', tags: ['Premium'], tactic: 'Prime time', seats: '8 ghế', full: false },
-      { time: '20:00', tags: ['Fast'], tactic: 'MoMo ưu tiên', seats: '19 ghế', full: false },
-    ],
-  },
-  {
-    id: 'galaxy',
-    chain: 'Galaxy Cinema',
-    name: 'Galaxy Nguyễn Du',
-    district: 'Quận 1, TP.HCM',
-    distance: 2.6,
-    price: '81K',
-    logo: 'https://homepage.momocdn.net/cinema/momo-upload-api-211123095138-637732578984425272.png',
-    badges: ['81K', 'Popular', 'Fast'],
-    features: ['Ghế đôi', 'Snack', 'Gần trung tâm'],
-    promo: 'XEMGI - giảm 10.000đ khi đặt vé trên Website MoMo',
-    sessions: [
-      { time: '10:30', tags: ['Sold out'], tactic: 'Hot slot', seats: '0 ghế', full: true },
-      { time: '13:15', tags: ['Best seat'], tactic: 'Ghế đẹp', seats: '11 ghế', full: false },
-      { time: '15:45', tags: ['Premium'], tactic: 'Ưu tiên combo', seats: '16 ghế', full: false },
-      { time: '18:15', tags: ['Family'], tactic: 'Sau giờ làm', seats: '7 ghế', full: false },
-      { time: '20:45', tags: ['Late show'], tactic: 'Suất khuya', seats: '28 ghế', full: false },
-    ],
-  },
-  {
-    id: 'beta',
-    chain: 'Beta Cinemas',
-    name: 'Beta Cinemas Quận 7',
-    district: 'Quận 7, TP.HCM',
-    distance: 7.8,
-    price: '62K',
-    logo: 'https://homepage.momocdn.net/cinema/momo-upload-api-210813104719-637644484394328824.png',
-    badges: ['62K', 'Low price', 'Family'],
-    features: ['Ưu đãi', 'Gần khu dân cư', 'Giá cả tuần'],
-    promo: '58K/vé 2D từ T2-T6, 62K/vé 2D từ T7-CN',
-    sessions: [
-      { time: '09:30', tags: ['Early bird'], tactic: 'Saver', seats: '40 ghế', full: false },
-      { time: '12:15', tags: ['Deal'], tactic: 'Giá tốt', seats: '31 ghế', full: false },
-      { time: '15:00', tags: ['Best seat'], tactic: 'Ghế đẹp', seats: '19 ghế', full: false },
-      { time: '18:00', tags: ['Fast'], tactic: 'Near home', seats: '10 ghế', full: false },
-    ],
-  },
-  {
-    id: 'cinestar',
-    chain: 'Cinestar',
-    name: 'Cinestar Hai Bà Trưng',
-    district: 'Quận 3, TP.HCM',
-    distance: 3.8,
-    price: '58K',
-    logo: 'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170530-637584231309495829.png',
-    badges: ['Value', 'Student', '2D'],
-    features: ['Giá rẻ', 'Trung tâm', 'Checkout nhanh'],
-    promo: 'XEMGI - giảm 10.000đ khi đặt vé trên Website MoMo',
-    sessions: [
-      { time: '10:00', tags: ['Early bird'], tactic: 'Giá sáng', seats: '29 ghế', full: false },
-      { time: '12:45', tags: ['Deal'], tactic: 'Lunch deal', seats: '25 ghế', full: false },
-      { time: '16:20', tags: ['Premium'], tactic: 'Ghế đôi', seats: '13 ghế', full: false },
-      { time: '19:50', tags: ['Fast'], tactic: 'MoMo pay', seats: '17 ghế', full: false },
-    ],
-  },
-  {
-    id: 'mega',
-    chain: 'Mega GS',
-    name: 'Mega GS Cao Thắng',
-    district: 'Quận 3, TP.HCM',
-    distance: 4.1,
-    price: '69K',
-    logo: 'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170511-637584231119272266.png',
-    badges: ['Saver', 'Parking', 'Snack'],
-    features: ['Dễ đậu xe', 'Snack', 'Rạp vừa'],
-    promo: 'XEMGI - giảm 10.000đ khi đặt vé trên Website MoMo',
-    sessions: [
-      { time: '11:15', tags: ['Deal'], tactic: 'Giá mềm', seats: '28 ghế', full: false },
-      { time: '14:00', tags: ['Best seat'], tactic: 'Ghế giữa', seats: '15 ghế', full: false },
-      { time: '17:20', tags: ['Premium'], tactic: 'Prime time', seats: '8 ghế', full: false },
-      { time: '20:10', tags: ['Fast'], tactic: 'Fast lane', seats: '24 ghế', full: false },
-    ],
-  },
-  {
-    id: 'cinemax',
-    chain: 'Cinemax',
-    name: 'Cinemax Bình Tân',
-    district: 'Bình Tân, TP.HCM',
-    distance: 12.6,
-    price: '45K',
-    logo: 'https://homepage.momocdn.net/cinema/momo-upload-api-221108100132-638034984925107129.png',
-    badges: ['45K', 'Value', 'Good'],
-    features: ['Giá thấp', 'Khu dân cư', '2D phụ đề'],
-    promo: 'XEMGI - giảm 10.000đ khi đặt vé trên Website MoMo',
-    sessions: [
-      { time: '09:20', tags: ['Early bird'], tactic: 'Giá thấp', seats: '42 ghế', full: false },
-      { time: '12:40', tags: ['Deal'], tactic: 'Lunch deal', seats: '27 ghế', full: false },
-      { time: '15:30', tags: ['Best seat'], tactic: 'Ghế đẹp', seats: '18 ghế', full: false },
-      { time: '18:50', tags: ['Fast'], tactic: 'Near home', seats: '11 ghế', full: false },
-    ],
-  },
-  {
-    id: 'dcine',
-    chain: 'DCINE',
-    name: 'DCINE Bến Thành',
-    district: 'Quận 1, TP.HCM',
-    distance: 1.7,
-    price: '65K',
-    logo: 'https://img.mservice.io/momo_app_v2/new_version/img/THAO.MAI/DcineLogo.png',
-    badges: ['Gần bạn', 'Value', '2D'],
-    features: ['Trung tâm', 'Nhanh', 'Ví MoMo'],
-    promo: 'XEMGI - giảm 10.000đ khi đặt vé trên Website MoMo',
-    sessions: [
-      { time: '10:45', tags: ['Early bird'], tactic: 'Gần bạn', seats: '36 ghế', full: false },
-      { time: '13:45', tags: ['Deal'], tactic: 'Giá tốt', seats: '24 ghế', full: false },
-      { time: '16:45', tags: ['Best seat'], tactic: 'Ghế đẹp', seats: '14 ghế', full: false },
-      { time: '19:30', tags: ['Premium'], tactic: 'Prime time', seats: '9 ghế', full: false },
-    ],
-  },
-  {
-    id: 'starlight',
-    chain: 'Starlight',
-    name: 'Starlight Dĩ An',
-    district: 'Bình Dương',
-    distance: 18.4,
-    price: '59K',
-    logo: 'https://cinema.momocdn.net/XS/starlight/image.png',
-    badges: ['Suburban', 'Family', 'Parking'],
-    features: ['Bãi đỗ xe', 'Ưu đãi', 'Gia đình'],
-    promo: 'Không có promotion riêng trên MoMo, vẫn đặt vé nhanh qua checkout',
-    sessions: [
-      { time: '09:50', tags: ['Early bird'], tactic: 'Gia đình', seats: '38 ghế', full: false },
-      { time: '12:20', tags: ['Deal'], tactic: 'Parking', seats: '30 ghế', full: false },
-      { time: '15:10', tags: ['Best seat'], tactic: 'Ghế đẹp', seats: '17 ghế', full: false },
-      { time: '18:40', tags: ['Fast'], tactic: 'Checkout nhanh', seats: '12 ghế', full: false },
-    ],
-  },
-  {
-    id: 'rio',
-    chain: 'Rio',
-    name: 'Rio Ciné - Bình Tân',
-    district: 'Bình Tân, TP.HCM',
-    distance: 14.2,
-    price: '55K',
-    logo: 'https://homepage.momocdn.net/img/momo-amazone-s3-api-250505103419-638820380597920724.png',
-    badges: ['Budget', 'Bảo trì'],
-    features: ['Giá thấp', 'Khu dân cư', 'Theo dõi mở lại'],
-    promo: 'Hệ thống hiện đang bảo trì trên MoMo, giữ cụm trong filter để user không mất ngữ cảnh',
-    sessions: [
-      { time: '10:20', tags: ['Bảo trì'], tactic: 'Thông báo lại', seats: 'Tạm khóa', full: true },
-      { time: '13:10', tags: ['Bảo trì'], tactic: 'Đổi rạp', seats: 'Tạm khóa', full: true },
-      { time: '16:30', tags: ['Bảo trì'], tactic: 'Theo dõi', seats: 'Tạm khóa', full: true },
-      { time: '19:10', tags: ['Bảo trì'], tactic: 'Sắp mở', seats: 'Tạm khóa', full: true },
-    ],
-  },
-  {
-    id: 'ncc',
-    chain: 'Trung tâm Chiếu phim Quốc gia',
-    name: 'Trung tâm Chiếu phim Quốc gia',
-    district: 'Hà Nội',
-    distance: 1718.0,
-    price: '70K',
-    logo: 'https://homepage.momocdn.net/cinema/ncclogo-260325100933.png',
-    badges: ['Landmark', 'Bảo trì'],
-    features: ['Rạp lớn', 'Hà Nội', 'Theo dõi mở lại'],
-    promo: 'Hệ thống hiện đang bảo trì trên MoMo, vẫn hiển thị để filter đủ cụm',
-    sessions: [
-      { time: '10:10', tags: ['Bảo trì'], tactic: 'Thông báo lại', seats: 'Tạm khóa', full: true },
-      { time: '13:00', tags: ['Bảo trì'], tactic: 'Đổi rạp', seats: 'Tạm khóa', full: true },
-      { time: '16:10', tags: ['Bảo trì'], tactic: 'Theo dõi', seats: 'Tạm khóa', full: true },
-      { time: '19:40', tags: ['Bảo trì'], tactic: 'Sắp mở', seats: 'Tạm khóa', full: true },
-    ],
-  },
+/* DATA */
+const SEAT_MAP = [
+  { row:'A', type:'vip',    cols:[1,2,3,4,'|',5,6,7,8], price:150000, taken:['A1','A2','A7'] },
+  { row:'B', type:'vip',    cols:[1,2,3,4,'|',5,6,7,8], price:150000, taken:['B3','B4'] },
+  { row:'C', type:'std',    cols:[1,2,3,4,'|',5,6,7,8], price:110000, taken:['C5','C6'] },
+  { row:'D', type:'std',    cols:[1,2,3,4,'|',5,6,7,8], price:110000, taken:['D2','D3','D7','D8'] },
+  { row:'E', type:'std',    cols:[1,2,3,4,'|',5,6,7,8], price:110000, taken:['E1','E4'] },
+  { row:'F', type:'std',    cols:[1,2,3,4,'|',5,6,7,8], price:110000, taken:['F2','F5','F6'] },
+  { row:'G', type:'couple', pairs:[[1,2],[3,4],[5,6],[7,8]],           price:240000, taken:['G5G6'] },
 ];
-
-function renderTheaterFilters() {
-  const el = document.getElementById('theaterFilters');
-  const chains = ['all', ...new Set(CINEMAS.map(item => item.chain))];
-  el.innerHTML = `
-    <button class="near-chip ${nearMeEnabled ? 'active' : ''}" onclick="toggleNearMe()">Gần tôi</button>
-    ${chains.map(chain => `
-      <button class="filter-chip ${selectedChain === chain ? 'active' : ''}" onclick="setChainFilter('${chain}')">
-        ${chain === 'all' ? 'Tất cả rạp' : chain}
-      </button>
-    `).join('')}
-  `;
-}
-
-function cinemaByChain() {
-  return CINEMAS.filter(item => selectedChain === 'all' || item.chain === selectedChain);
-}
-
-function sessionFormat(cinema, session) {
-  if (session.tags.includes('Bảo trì')) return 'Tạm khóa';
-  if (session.format) return session.format;
-  if (session.tags.includes('IMAX')) return 'IMAX 2D Phụ đề';
-  if (cinema.chain === 'CGV' && session.time === '17:00') return '4DX 2D Phụ đề';
-  if (cinema.chain === 'Galaxy Cinema' && session.tags.includes('Late show')) return 'ScreenX 2D Phụ đề';
-  if (session.tags.includes('Premium')) return 'Premium 2D Phụ đề';
-  if (session.tags.includes('Family')) return '2D Lồng tiếng';
-  return '2D Phụ đề';
-}
-
-function availableFormats() {
-  const formats = new Set();
-  cinemaByChain().forEach(cinema => {
-    cinema.sessions.forEach(session => {
-      const format = sessionFormat(cinema, session);
-      if (format !== 'Tạm khóa') formats.add(format);
-    });
-  });
-  return [...formats];
-}
-
-function renderFormatFilters() {
-  const el = document.getElementById('formatFilters');
-  if (!el) return;
-  const formats = availableFormats();
-  if (selectedFormat !== 'all' && !formats.includes(selectedFormat)) selectedFormat = 'all';
-  el.innerHTML = `
-    <button class="format-chip ${selectedFormat === 'all' ? 'active' : ''}" onclick="setFormatFilter('all')">Tất cả định dạng</button>
-    ${formats.map(format => `
-      <button class="format-chip ${selectedFormat === format ? 'active' : ''}" onclick="setFormatFilter('${format}')">${format}</button>
-    `).join('')}
-  `;
-}
-
-function setChainFilter(chain) {
-  selectedChain = chain;
-  renderTheaterFilters();
-  renderFormatFilters();
-  renderCinemas(selectedDayIndex);
-}
-
-function setFormatFilter(format) {
-  selectedFormat = format;
-  renderFormatFilters();
-  renderCinemas(selectedDayIndex);
-}
-
-function toggleNearMe() {
-  nearMeEnabled = !nearMeEnabled;
-  renderTheaterFilters();
-  renderCinemas(selectedDayIndex);
-}
-
-function visibleSessions(cinema) {
-  return cinema.sessions.filter(session => {
-    const format = sessionFormat(cinema, session);
-    return selectedFormat === 'all' || format === selectedFormat;
-  });
-}
-
-function groupSessions(cinema, sessions) {
-  const groups = new Map();
-  sessions.forEach(session => {
-    const format = sessionFormat(cinema, session);
-    if (!groups.has(format)) groups.set(format, []);
-    groups.get(format).push(session);
-  });
-  return [...groups.entries()];
-}
-
-function renderCinemas(dayIdx) {
-  const list = document.getElementById('cinemasList');
-  const source = cinemaByChain()
-    .filter(cinema => visibleSessions(cinema).length > 0)
-    .sort((a, b) => nearMeEnabled ? a.distance - b.distance : a.name.localeCompare(b.name));
-  list.innerHTML = source.map((c, i) => {
-    const openFirst = (dayIdx === 0 || dayIdx === '0') && i === 0;
-    const sessions = visibleSessions(c);
-    const formatGroups = groupSessions(c, sessions);
-    return `<div class="cinema-card${openFirst?' open':''}">
-      <div class="cinema-head" onclick="this.parentElement.classList.toggle('open')">
-        <div class="cinema-brand">
-          <img class="cinema-logo" src="${c.logo}" alt="${c.chain}">
-          <div class="cinema-info">
-            <div class="cinema-nm">${c.name}</div>
-            <div class="cinema-dt">${c.district} · ${c.distance >= 100 ? 'Hà Nội' : c.distance.toFixed(1) + ' km'} · ${c.price}</div>
-            <div class="cinema-tags">
-              <span class="cinema-tag">${c.chain}</span>
-              ${c.badges.map(badge => `<span class="cinema-tag">${badge}</span>`).join('')}
-            </div>
-            <div class="cinema-features">
-              ${c.features.map(feature => `<span class="cinema-feature">${feature}</span>`).join('')}
-            </div>
-          </div>
-        </div>
-        <div class="cinema-aside">
-          ${c.distance < 5 ? '<span class="near-badge">Gần bạn</span>' : ''}
-          <span class="cinema-chev">▼</span>
-        </div>
-      </div>
-      <div class="cinema-promo"><span>${c.promo}</span></div>
-      <div class="time-grid">
-        ${formatGroups.map(([format, items]) => {
-          return `<div class="format-group">
-            <div class="format-head">
-              <span class="format-name">${format}</span>
-              <span class="format-note">${items.length} suất</span>
-            </div>
-            <div class="format-times">
-              ${items.map(session => {
-                return `<button class="time-btn${session.full?' full':''}"${session.full?' disabled':''}
-                  onclick="${session.full?'':'selectTime(\''+c.name+'\',\''+session.time+'\',\''+format+'\')'}">
-                  <span class="time-main">${session.time}</span>
-                  <span class="time-tags">${session.tags.map(tag => `<span class="time-tag${tag === 'Best seat' ? '' : ' soft'}">${tag}</span>`).join('')}</span>
-                  <span class="time-foot">
-                    <span class="time-tactic">${session.tactic}</span>
-                    <span class="time-seat">${session.seats}</span>
-                  </span>
-                  ${session.full ? `<small>${session.tags.includes('Bảo trì') ? 'Tạm khóa' : 'Hết vé'}</small>` : ''}
-                </button>`;
-              }).join('')}
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function selectTime(cinema, time, format = '2D Phụ đề') {
-  openBooking(cinema, time, 0, format);
-}
-
-function scrollToBooking() {
-  const first = cinemaByChain()
-    .filter(cinema => visibleSessions(cinema).some(session => !session.full))
-    .sort((a, b) => nearMeEnabled ? a.distance - b.distance : a.name.localeCompare(b.name))[0] || CINEMAS[0];
-  const session = visibleSessions(first).find(item => !item.full) || first.sessions.find(item => !item.full) || first.sessions[0];
-  openBooking(first.name, session.time, 0, sessionFormat(first, session));
-}
-
-// ── BOOKING STATE ────────────────────────
-const BOOKING_STEPS = ['Seat', 'Popcorn', 'Payment'];
-const ROWS = ['A', 'B', 'C', 'D', 'E', 'F'];
-const COLS = [1,2,3,4,5,6,7,8];
-const TAKEN_SEATS = new Set(['A1','A2','B7','C4','D4','E2','E6','F1']);
-const SNACKS = [
-  { id: 'none', name: 'Không thêm', desc: 'Chỉ giữ vé xem phim', price: 0 },
-  { id: 'combo', name: 'Combo đôi', desc: 'Bắp lớn + 2 nước', price: 85000 },
-  { id: 'popcorn', name: 'Bắp lớn', desc: 'Bắp caramel cỡ lớn', price: 45000 },
-  { id: 'drink', name: 'Nước + snack', desc: 'Nước ngọt và khoai', price: 39000 },
+const FNB = [
+  { id:'none',   name:'Không thêm',          desc:'Chỉ xem phim thôi',       price:0,     max:1, icon:'🚫' },
+  { id:'combo2', name:'Combo 2',             desc:'2 bắp rang + 2 nước lớn', price:85000, max:3, icon:'🍿' },
+  { id:'pop',    name:'Bắp rang bơ (L)',     desc:'Muối hoặc caramel',        price:45000, max:4, icon:'🍿' },
+  { id:'drink',  name:'Nước lớn (L)',        desc:'Pepsi / 7Up / nước suối',  price:39000, max:4, icon:'🥤' },
+  { id:'nacho',  name:'Nachos + Cheese dip', desc:'Khoai tây lát + sốt phô mai', price:55000, max:2, icon:'🧀' },
 ];
 const PAYMENTS = [
-  { id: 'momo', name: 'MoMo', desc: 'Thanh toán nhanh trong app' },
-  { id: 'card', name: 'Thẻ', desc: 'Visa, Mastercard, JCB' },
-  { id: 'qr', name: 'QR', desc: 'Quét mã từ ví hoặc ngân hàng' },
+  { id:'momo_wallet', name:'Ví MoMo',         sub:'Số dư: 1,250,000đ',        icon:'💜', badge:'Ưu tiên' },
+  { id:'linked_card', name:'Thẻ Vietcombank', sub:'Debit ••4521',              icon:'💳', badge:'' },
+  { id:'pay_later',   name:'Ví Trả Sau',      sub:'Hạn mức 5,000,000đ · 0%', icon:'🕐', badge:'0% lãi' },
+  { id:'qr',          name:'QR Pay',          sub:'Quét QR tại quầy thanh toán', icon:'📷', badge:'' },
 ];
-const BOOKING_PRICE = 110000;
-const FILM_TITLE = 'Supergirl';
+const CINEMAS = [
+  { id:'cgv', name:'CGV Vincom Đồng Khởi', addr:'72 Lê Thánh Tôn, Q1', dist:'1.2km', chain:'cgv', label:'CGV', minPrice:79000,
+    formats:[
+      { fmt:'2D Phụ đề',    tag:'2d',      price:79000,  times:[{t:'10:30',avail:88},{t:'13:45',avail:20,few:true},{t:'17:00',avail:0,sold:true},{t:'20:15',avail:68},{t:'22:45',avail:91}] },
+      { fmt:'4DX',          tag:'4dx',     price:145000, times:[{t:'11:00',avail:60},{t:'15:30',avail:18,few:true},{t:'19:00',avail:72}] },
+      { fmt:'IMAX',         tag:'imax',    price:120000, times:[{t:'12:15',avail:35,few:true},{t:'16:00',avail:88},{t:'21:00',avail:55}] },
+    ]},
+  { id:'lotte', name:'Lotte Cinema Nowzone', addr:'235 Nguyễn Văn Cừ, Q1', dist:'2.1km', chain:'lotte', label:'LOTTE', minPrice:69000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:69000, times:[{t:'09:30',avail:92},{t:'12:00',avail:68},{t:'15:45',avail:25,few:true},{t:'18:30',avail:80},{t:'21:15',avail:55}] },
+      { fmt:'3D',        tag:'3d', price:95000, times:[{t:'11:30',avail:70},{t:'16:15',avail:28,few:true},{t:'20:00',avail:88}] },
+    ]},
+  { id:'bhd', name:'BHD Star Bitexco', addr:'2 Hải Triều, Q1', dist:'1.5km', chain:'bhd', label:'BHD', minPrice:75000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d',      price:75000,  times:[{t:'10:00',avail:85},{t:'14:30',avail:0,sold:true},{t:'18:00',avail:63},{t:'21:30',avail:78}] },
+      { fmt:'Premium',   tag:'premium', price:110000, times:[{t:'13:00',avail:22,few:true},{t:'19:45',avail:16,few:true}] },
+    ]},
+  { id:'galaxy', name:'Galaxy Nguyễn Du', addr:'116 Nguyễn Du, Q1', dist:'2.8km', chain:'galaxy', label:'GLX', minPrice:65000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:65000, times:[{t:'09:00',avail:96},{t:'11:30',avail:74},{t:'14:15',avail:60},{t:'17:00',avail:30,few:true},{t:'20:30',avail:82}] },
+    ]},
+  { id:'cinestar', name:'Cinestar Hai Bà Trưng', addr:'135 Hai Bà Trưng, Q3', dist:'3.4km', chain:'cinestar', label:'CS', minPrice:60000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:60000, times:[{t:'10:45',avail:90},{t:'13:30',avail:70},{t:'17:15',avail:40,few:true},{t:'20:45',avail:80}] },
+    ]},
+];
 
-let bookingState = {
-  cinema: 'CGV Vincom Đồng Khởi',
-  time: '19:15',
-  format: 'IMAX 2D Phụ đề',
-  step: 0,
-  seats: ['F7', 'F8'],
-  snack: 'combo',
-  payment: 'momo',
+// Group invite state
+const GROUP = {
+  active: false,
+  members: [
+    { name:'Minh', initials:'M', color:'#7C3AED', status:'selected', seats:['D5','D6'] },
+    { name:'Linh', initials:'L', color:'#EB2F96', status:'pending',  seats:['E7'] },
+  ],
+  friendSeats: {
+    'D5':{ name:'Minh', color:'#7C3AED' },
+    'D6':{ name:'Minh', color:'#7C3AED' },
+    'E7':{ name:'Linh (chờ)',color:'#EB2F96', pending:true },
+  }
 };
 
-function openBooking(cinema, time, step = 0, format = '2D Phụ đề') {
-  bookingState.cinema = cinema;
-  bookingState.time = time;
-  bookingState.format = format;
-  bookingState.step = step;
-  document.getElementById('bookingOverlay').classList.add('show');
-  renderBooking();
+const DAYS=['CN','T2','T3','T4','T5','T6','T7'];
+const today=new Date();
+const DATES=Array.from({length:7},(_,i)=>{ const d=new Date(today); d.setDate(today.getDate()+i); return {day:DAYS[d.getDay()],num:d.getDate(),mon:`Th.${d.getMonth()+1}`}; });
+
+const state={
+  activeDate:0, activeChain:'all', openCinemas:{cgv:true},
+  step:0, cinema:null, cinemaName:'', showtime:'', format:'',
+  seats:[], fnb:{none:1}, payment:'momo_wallet',
+};
+
+/* DATES */
+function renderDates(){
+  document.getElementById('dateStrip').innerHTML=DATES.map((d,i)=>`<button class="date-pill${i===state.activeDate?' on':''}" onclick="pickDate(${i})"><span class="dp-day">${i===0?'Hôm nay':d.day}</span><span class="dp-num">${d.num}</span><span class="dp-mon">${d.mon}</span></button>`).join('');
+}
+function pickDate(i){ state.activeDate=i; renderDates(); renderCinemas(); }
+
+function renderChainFilter(){
+  const chains=[{id:'all',name:'Tất cả'},...[...new Set(CINEMAS.map(c=>c.chain))].map(c=>({id:c,name:c.toUpperCase()}))];
+  document.getElementById('chainFilter').innerHTML=chains.map(c=>`<button class="chip${c.id===state.activeChain?' on':''}" onclick="pickChain('${c.id}')">${c.name}</button>`).join('');
+}
+function pickChain(id){ state.activeChain=id; renderChainFilter(); renderCinemas(); }
+
+function renderCinemas(){
+  const list=state.activeChain==='all'?CINEMAS:CINEMAS.filter(c=>c.chain===state.activeChain);
+  document.getElementById('cinemaGroups').innerHTML=list.map(c=>{
+    const open=state.openCinemas[c.id];
+    const fmtHTML=c.formats.map(f=>`<div class="format-section"><div class="format-label"><span class="fmt-tag fmt-${f.tag}">${f.fmt}</span><span class="format-price">${f.price.toLocaleString('vi')}đ/ghế</span></div><div class="show-times-row">${f.times.map(t=>`<button class="show-time-btn${t.sold?' sold':t.few?' few':''}" onclick="${t.sold?`toast('Suất này đã hết vé')`:''}_pick('${c.id}','${c.name.replace(/'/g,"\\'")}','${t.t}','${f.fmt}')">${t.t}${t.few&&!t.sold?`<br><span style="font-size:9px;font-weight:600;color:var(--amber-500)">Còn ${t.avail}</span>`:''}</button>`).join('')}</div></div>`).join('');
+    return `<div class="cinema-group"><div class="cg-header${open?' open':''}" onclick="toggleCinema('${c.id}')"><div class="cg-logo cg-logo-${c.chain}">${c.label}</div><div class="cg-meta"><div class="cg-name">${c.name}</div><div class="cg-info">${c.addr} · Từ ${c.minPrice.toLocaleString('vi')}đ</div></div><div class="cg-dist">${c.dist}</div><div class="cg-chevron">▼</div></div>${open?`<div class="cg-body">${fmtHTML}</div>`:''}</div>`;
+  }).join('');
+}
+function toggleCinema(id){ state.openCinemas[id]=!state.openCinemas[id]; renderCinemas(); }
+function _pick(cid,cname,time,fmt){ state.cinema=cid; state.cinemaName=cname; state.showtime=time; state.format=fmt; openBooking(); }
+
+/* TABS */
+function switchTab(tab,el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on')); el.classList.add('on');
+  document.getElementById('panelShowtimes').style.display=tab==='showtimes'?'':'none';
+  document.getElementById('panelInfo').style.display=tab==='info'?'':'none';
+  document.getElementById('stickyCta').style.display=tab==='info'?'flex':'flex';
 }
 
-function closeBooking() {
-  document.getElementById('bookingOverlay').classList.remove('show');
+/* BOOKING */
+function openBooking(){ state.step=0; document.getElementById('bookingSheet').classList.add('show'); renderStep(); }
+function closeBooking(){ document.getElementById('bookingSheet').classList.remove('show'); }
+
+const STEP_LABELS=['Chọn ghế','Bắp nước','Thanh toán','Xác nhận','Vé của bạn'];
+function renderStepper(){
+  const s=state.step;
+  let out='';
+  STEP_LABELS.forEach((l,i)=>{
+    const done=i<s,active=i===s;
+    out+=`<div class="step-item"><div class="step-dot ${done?'done':active?'active':'future'}">${done?'✓':i+1}</div>${active?`<div class="step-label">${l}</div>`:''}</div>`;
+    if(i<STEP_LABELS.length-1) out+=`<div class="step-line${i<s?' done':''}"></div>`;
+  });
+  document.getElementById('stepper').innerHTML=out;
 }
 
-function closeOverlay(e, id) {
-  if (e.target === e.currentTarget) document.getElementById(id).classList.remove('show');
+function renderStep(){ renderStepper(); const body=document.getElementById('sheetBody'); const s=state.step; if(s===0)renderSeatStep(body); else if(s===1)renderFnbStep(body); else if(s===2)renderPayStep(body); else if(s===3)renderConfirmStep(body); else renderTicketStep(body); updateFooter(); }
+
+function nextStep(){ if(state.step===0&&!state.seats.length){toast('Vui lòng chọn ít nhất 1 ghế');return;} if(state.step<4){state.step++;renderStep();document.getElementById('sheetBody').scrollTop=0;} }
+
+function updateFooter(){
+  const total=calcTotal();
+  const lbl=document.getElementById('footerLabel'),amt=document.getElementById('footerAmount'),btn=document.getElementById('btnNext');
+  if(state.step===4){lbl.textContent='Xem phim vui vẻ! 🎬';amt.textContent='';btn.style.display='none';return;}
+  btn.style.display='';
+  const n=state.seats.length;
+  if(state.step===0){lbl.textContent=n?`${n} ghế đã chọn`:state.showtime?`Suất: ${state.showtime}`:'Chọn suất & ghế';btn.disabled=!n||!state.showtime;}
+  else if(state.step===1){lbl.textContent=`${n} ghế + Bắp nước`;btn.disabled=false;}
+  else if(state.step===2){lbl.textContent='Phương thức thanh toán';btn.disabled=false;}
+  else if(state.step===3){lbl.textContent='Xác nhận đặt vé';btn.textContent='Thanh toán ngay';btn.disabled=false;btn.onclick=confirmPay;return;}
+  btn.textContent='Tiếp tục →';btn.onclick=nextStep;
+  amt.textContent=total>0?total.toLocaleString('vi')+'đ':'';
 }
 
-function scrollToShowtimes() {
-  document.querySelector('.showtimes').scrollIntoView({ behavior: 'smooth' });
+function calcTotal(){
+  const seatTotal=state.seats.reduce((sum,sid)=>{
+    for(const row of SEAT_MAP){
+      if(row.type==='couple'){if(row.pairs&&row.pairs.some(p=>`${row.row}${p[0]}${row.row}${p[1]}`===sid))return sum+row.price;}
+      else if(sid.startsWith(row.row))return sum+row.price;
+    }
+    return sum;
+  },0);
+  const fnbTotal=Object.entries(state.fnb).reduce((s,[id,qty])=>{const it=FNB.find(f=>f.id===id);return s+(it?it.price*qty:0);},0);
+  return seatTotal+fnbTotal;
 }
 
-function renderSeatGrid() {
-  const grid = document.getElementById('seatGrid');
-  grid.innerHTML = ROWS.map(row => `
-    <div class="seat-row">
-      ${COLS.map(col => {
-        const seat = `${row}${col}`;
-        const taken = TAKEN_SEATS.has(seat);
-        const selected = bookingState.seats.includes(seat);
-        return `<button class="seat${taken ? ' taken' : ''}${selected ? ' selected' : ''}" ${taken ? 'disabled' : ''} onclick="toggleSeat('${seat}')">${seat}</button>`;
-      }).join('')}
-    </div>
-  `).join('');
-}
-
-function renderStepHeader() {
-  const el = document.getElementById('bookingStepper');
-  el.innerHTML = BOOKING_STEPS.map((step, idx) => `
-    <div class="step-pill ${idx < bookingState.step ? 'done' : ''} ${idx === bookingState.step ? 'on' : ''}">
-      <span>${idx + 1}</span>${step}
-    </div>
-  `).join('');
-}
-
-function renderSnackGrid() {
-  const grid = document.getElementById('snackGrid');
-  grid.innerHTML = SNACKS.map(item => `
-    <button class="choice-card${bookingState.snack === item.id ? ' on' : ''}" onclick="selectSnack('${item.id}')">
-      <strong>${item.name}</strong>
-      <span>${item.desc}</span>
-      <small>${item.price ? item.price.toLocaleString('vi-VN') + 'đ' : 'Không phát sinh phí'}</small>
-    </button>
-  `).join('');
-}
-
-function renderPaymentGrid() {
-  const grid = document.getElementById('paymentGrid');
-  grid.innerHTML = PAYMENTS.map(item => `
-    <button class="choice-card${bookingState.payment === item.id ? ' on' : ''}" onclick="selectPayment('${item.id}')">
-      <strong>${item.name}</strong>
-      <span>${item.desc}</span>
-      <small>${item.id === 'momo' ? 'Được ưu tiên' : 'Hoàn tất trong popup'}</small>
-    </button>
-  `).join('');
-}
-
-function renderSummary() {
-  const snack = SNACKS.find(item => item.id === bookingState.snack) || SNACKS[0];
-  const seatsText = bookingState.seats.length ? bookingState.seats.join(', ') : 'Chưa chọn ghế';
-  document.getElementById('bookingSub').textContent = `${FILM_TITLE} · ${bookingState.format} · ${bookingState.cinema} · ${bookingState.time}`;
-  document.getElementById('bookingSummaryCinema').textContent = `${FILM_TITLE} · ${bookingState.format} · ${bookingState.cinema} · ${bookingState.time}`;
-  document.getElementById('bookingSummarySeats').textContent = `Ghế: ${seatsText}`;
-  document.getElementById('bookingSummarySnack').textContent = `Combo: ${snack.name}`;
-  document.getElementById('bookingSummaryPayment').textContent = `Thanh toán: ${PAYMENTS.find(item => item.id === bookingState.payment)?.name || 'MoMo'}`;
-  const total = BOOKING_PRICE * bookingState.seats.length + snack.price;
-  const nextBtn = document.querySelector('.btn-booking-primary');
-  if (nextBtn) nextBtn.textContent = bookingState.step < 2 ? 'Tiếp tục' : `Thanh toán ${total.toLocaleString('vi-VN')}đ`;
-}
-
-function renderBooking() {
-  renderStepHeader();
-  renderSeatGrid();
-  renderSnackGrid();
-  renderPaymentGrid();
-  renderSummary();
-}
-
-function setBookingStep(step) {
-  bookingState.step = Math.max(0, Math.min(2, step));
-  renderBooking();
-}
-
-function goBookingBack() {
-  if (bookingState.step === 0) return closeBooking();
-  bookingState.step -= 1;
-  renderBooking();
-}
-
-function goBookingNext() {
-  if (bookingState.step < 2) {
-    bookingState.step += 1;
-    renderBooking();
+/* STEP 0: SEAT */
+function renderSeatStep(body){
+  if(!state.showtime){
+    body.innerHTML=`<div style="padding:40px 20px;text-align:center"><div style="margin-bottom:14px;color:var(--gray-300)">${icon('clapperboard',48)}</div><div style="font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:8px">Chọn suất chiếu trước</div><div style="font-size:13px;color:var(--gray-400);margin-bottom:20px">Quay lại trang phim, chọn giờ chiếu rồi đặt vé</div><button onclick="closeBooking()" style="font-family:'MoMoTrustSans',inherit;font-size:13px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:8px;padding:10px 24px;cursor:pointer">Xem lịch chiếu</button></div>`;
     return;
   }
-  const snack = SNACKS.find(item => item.id === bookingState.snack) || SNACKS[0];
-  const total = BOOKING_PRICE * bookingState.seats.length + snack.price;
-  toast(`Đã giữ ${bookingState.seats.length} ghế · Thanh toán ${total.toLocaleString('vi-VN')}đ bằng ${bookingState.payment.toUpperCase()}`);
-  closeBooking();
+  // Group panel
+  const groupPanel = GROUP.active ? `
+    <div class="group-panel">
+      <div class="group-panel-row">
+        <div class="group-panel-left">
+          <div class="group-panel-title">${icon('users',15)} Phòng xem phim nhóm</div>
+          <div class="group-panel-sub">Chọn ghế riêng, thanh toán riêng</div>
+        </div>
+        <button class="btn-group-invite" onclick="copyGroupLink()">+ Mời thêm</button>
+      </div>
+      <div class="group-members">
+        <div class="gm-avatar" style="background:#EB2F96">Bạn</div>
+        <div class="gm-avatar" style="background:#7C3AED">M</div>
+        <div class="gm-avatar pending">+</div>
+        <div class="gm-info"><span class="done">${icon('check',13)} Minh đã chọn D5, D6</span><br><span class="wait">${icon('clock',13)} Đang chờ 1 người tham gia...</span></div>
+      </div>
+    </div>` : `
+    <div class="group-panel" style="cursor:pointer" onclick="activateGroup()">
+      <div class="group-panel-row">
+        <div class="group-panel-left">
+          <div class="group-panel-title">${icon('users',15)} Xem phim cùng bạn bè?</div>
+          <div class="group-panel-sub">Tạo phòng — mỗi người chọn ghế &amp; trả tiền riêng</div>
+        </div>
+        <button class="btn-group-invite" onclick="event.stopPropagation();activateGroup()">Tạo phòng</button>
+      </div>
+    </div>`;
+
+  const seatRows=SEAT_MAP.map(row=>{
+    let cells='';
+    if(row.type==='couple'){
+      (row.pairs||[]).forEach((pair,pi)=>{
+        const sid=`${row.row}${pair[0]}${row.row}${pair[1]}`;
+        const taken=(row.taken||[]).includes(sid),sel=state.seats.includes(sid);
+        cells+=`<div class="seat couple${taken?' taken':sel?' selected':''}" ${taken?'':'onclick="_toggleSeat(\''+sid+'\',\'couple\',\''+row.row+'\')"'}>${taken?'✕':sel?'♥':pair[0]+'-'+pair[1]}</div>`;
+        if(pi===1) cells+=`<div class="seat aisle"></div>`;
+      });
+    } else {
+      row.cols.forEach(col=>{
+        if(col==='|'){cells+=`<div class="seat aisle"></div>`;return;}
+        const sid=`${row.row}${col}`;
+        const taken=(row.taken||[]).includes(sid);
+        const sel=state.seats.includes(sid);
+        const friend=GROUP.active&&GROUP.friendSeats[sid];
+        if(friend){
+          const initial=friend.name.charAt(0);
+          cells+=`<div class="seat friend" style="border-color:${friend.color}" data-tip="${friend.name}" title="${friend.name}">${initial}</div>`;
+        } else {
+          cells+=`<div class="seat ${row.type}${taken?' taken':sel?' selected':''}" ${taken?'':'onclick="_toggleSeat(\''+sid+'\',\''+row.type+'\',\''+row.row+'\')"'}>${taken?'✕':col}</div>`;
+        }
+      });
+    }
+    return `<div class="seat-row"><div class="row-label">${row.row}</div>${cells}</div>`;
+  }).join('');
+
+  // Friend seat suggestion
+  const friendSugg = GROUP.active ? `
+    <div class="friend-sugg" onclick="_toggleSeat('D7','std','D');_toggleSeat('D8','std','D')">
+      <div class="fs-ico" style="color:var(--pink-500)">${icon('armchair',24)}</div>
+      <div class="fs-body"><strong>Ngồi cạnh Minh</strong> tại hàng D?<br>D7, D8 còn trống ngay bên cạnh.</div>
+      <button class="fs-cta">Chọn D7, D8</button>
+    </div>` : '';
+
+  const legendFriend = GROUP.active ? `<div class="sl-item"><div class="sl-dot sl-friend"></div>Bạn bè</div>` : '';
+  const selSum=state.seats.length?`<div class="selected-summary"><div class="sel-sum-title">Ghế đã chọn (${state.seats.length})</div><div class="sel-chips">${state.seats.map(sid=>`<div class="sel-chip">${sid}<button class="sel-chip-del" onclick="_toggleSeat('${sid}','','')">×</button></div>`).join('')}</div></div>`:'';
+
+  body.innerHTML=`${groupPanel}<div class="seat-context"><div class="sc-item">${icon('clapperboard',14)} <strong>${state.cinemaName}</strong></div><div class="sc-item"><span class="sc-badge">${state.showtime}</span></div><div class="sc-item" style="color:var(--gray-400)">${state.format}</div></div><div class="screen-bar"></div><div class="screen-label">MÀN HÌNH</div><div class="seat-legend"><div class="sl-item"><div class="sl-dot sl-std"></div>Tiêu chuẩn</div><div class="sl-item"><div class="sl-dot sl-vip"></div>VIP</div><div class="sl-item"><div class="sl-dot sl-couple"></div>Couple</div><div class="sl-item"><div class="sl-dot sl-taken"></div>Đã bán</div><div class="sl-item"><div class="sl-dot sl-sel"></div>Đang chọn</div>${legendFriend}</div><div class="seat-map">${seatRows}</div>${friendSugg}${selSum}`;
 }
 
-function toggleSeat(seat) {
-  if (TAKEN_SEATS.has(seat)) return;
-  const idx = bookingState.seats.indexOf(seat);
-  if (idx >= 0) bookingState.seats.splice(idx, 1);
-  else bookingState.seats.push(seat);
-  bookingState.seats.sort();
-  renderSeatGrid();
-  renderSummary();
-}
-
-function selectSnack(id) {
-  bookingState.snack = id;
-  renderSnackGrid();
-  renderSummary();
-}
-
-function selectPayment(id) {
-  bookingState.payment = id;
-  renderPaymentGrid();
-  renderSummary();
-}
-
-let liked = false;
-document.getElementById('likeBtn').addEventListener('click', function () {
-  liked = !liked;
-  const path = this.querySelector('path');
-  if (liked) {
-    path.setAttribute('fill', '#AF0171');
-    path.setAttribute('stroke', '#AF0171');
-    toast('Đã lưu vào danh sách yêu thích');
-  } else {
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', 'currentColor');
+function _toggleSeat(sid){
+  if(!state.showtime){toast('Vui lòng chọn suất chiếu trước');return;}
+  const idx=state.seats.indexOf(sid);
+  if(idx>=0){state.seats.splice(idx,1);}
+  else{
+    if(state.seats.length>=8){toast('Tối đa 8 ghế mỗi lần đặt');return;}
+    if(wouldCreateIsolation(sid)){toast('Không thể để trống ghế đơn lẻ giữa hai ghế đã chọn');return;}
+    state.seats.push(sid);
   }
-});
-
-function handleCheckin() {
-  openBooking('CGV Vincom Đồng Khởi', '19:15', 0, 'IMAX 2D Phụ đề');
+  renderStep();
 }
 
-// ── TOAST ─────────────────────────────────
-function toast(msg) {
-  const existing = document.querySelector('.toast-box');
-  if (existing) existing.remove();
-  const el = document.createElement('div');
-  el.className = 'toast-box';
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2800);
+function wouldCreateIsolation(newSid){
+  const testSeats=[...state.seats,newSid];
+  for(const row of SEAT_MAP){
+    if(row.type==='couple') continue;
+    const taken=row.taken||[];
+    const realCols=row.cols.filter(c=>c!=='|');
+    for(const col of realCols){
+      const sid=`${row.row}${col}`;
+      if(testSeats.includes(sid)||taken.includes(sid)) continue;
+      const lSid=col>1?`${row.row}${col-1}`:null;
+      const rSid=col<8?`${row.row}${col+1}`:null;
+      const lBlocked=!lSid||(testSeats.includes(lSid)||taken.includes(lSid));
+      const rBlocked=!rSid||(testSeats.includes(rSid)||taken.includes(rSid));
+      if(lBlocked&&rBlocked) return true;
+    }
+  }
+  return false;
 }
 
-// ── INIT ──────────────────────────────────
-buildDateStrip();
-renderTheaterFilters();
-renderFormatFilters();
-renderCinemas(0);
-renderBooking();
+/* STEP 1: FNB */
+function renderFnbStep(body){
+  body.innerHTML=`<div style="margin-bottom:16px"><div style="font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:4px">Bắp rang &amp; Nước uống</div><div style="font-size:13px;color:var(--gray-400)">Combo tiết kiệm hơn mua lẻ đến 30%</div></div>`+FNB.map(item=>`<div class="fnb-item"><div class="fnb-icon-box">${item.icon}</div><div class="fnb-info"><div class="fnb-name">${item.name}</div><div class="fnb-desc">${item.desc}</div>${item.price?`<div class="fnb-price">${item.price.toLocaleString('vi')}đ/phần</div>`:''}</div><div class="fnb-stepper"><button class="fnb-btn" onclick="_fnbDec('${item.id}')" ${!(state.fnb[item.id]>0)?'disabled':''}>−</button><div class="fnb-qty">${state.fnb[item.id]||0}</div><button class="fnb-btn" onclick="_fnbInc('${item.id}',${item.max})" ${(state.fnb[item.id]||0)>=item.max?'disabled':''}>+</button></div></div>`).join('');
+}
+function _fnbInc(id,max){ if((state.fnb[id]||0)<max){ if(id==='none'){state.fnb={none:1};}else{delete state.fnb.none;state.fnb[id]=(state.fnb[id]||0)+1;} renderStep();} }
+function _fnbDec(id){ if(state.fnb[id]>0){ state.fnb[id]--; if(!state.fnb[id])delete state.fnb[id]; if(!Object.keys(state.fnb).length)state.fnb={none:0}; renderStep();} }
+
+/* STEP 2: PAYMENT */
+function renderPayStep(body){
+  body.innerHTML=`<div class="pay-section-title">Phương thức thanh toán</div>`+PAYMENTS.map(p=>`<div class="pay-option${p.id===state.payment?' selected':''}" onclick="_pickPay('${p.id}')"><div class="pay-icon">${p.icon}</div><div class="pay-detail"><div class="pay-name">${p.name}${p.badge?`<span class="pay-badge">${p.badge}</span>`:''}</div><div class="pay-sub">${p.sub}</div></div><div class="pay-radio"></div></div>`).join('');
+}
+function _pickPay(id){ state.payment=id; renderStep(); }
+
+/* STEP 3: CONFIRM */
+function renderConfirmStep(body){
+  const payInfo=PAYMENTS.find(p=>p.id===state.payment);
+  const seatTotal=state.seats.reduce((sum,sid)=>{for(const row of SEAT_MAP){if(row.type==='couple'){if(row.pairs&&row.pairs.some(p=>`${row.row}${p[0]}${row.row}${p[1]}`===sid))return sum+row.price;}else if(sid.startsWith(row.row))return sum+row.price;}return sum;},0);
+  const fnbTotal=Object.entries(state.fnb).reduce((s,[id,qty])=>{const it=FNB.find(f=>f.id===id);return s+(it?it.price*qty:0);},0);
+  const fnbLines=Object.entries(state.fnb).filter(([id,qty])=>qty>0).map(([id,qty])=>{const it=FNB.find(f=>f.id===id);return it&&it.price?`<div class="confirm-detail-row"><span class="key">${it.name} × ${qty}</span><span class="val">${(it.price*qty).toLocaleString('vi')}đ</span></div>`:null;}).filter(Boolean).join('');
+  body.innerHTML=`<div class="confirm-card">
+    <div class="confirm-poster-strip">
+      <div class="confirm-poster"><img src="https://cinema.momocdn.net/convert-webp/img/154902082106207596-PosterSUPERGIRLcompressed.jpg?size=M" alt="Supergirl"></div>
+      <div>
+        <div class="confirm-film-title">Supergirl: Woman of Tomorrow</div>
+        <div class="confirm-row"><span class="confirm-icon">${icon('clapperboard',14)}</span>${state.cinemaName}</div>
+        <div class="confirm-row"><span class="confirm-icon">${icon('clock',14)}</span>${state.showtime} · ${state.format}</div>
+        <div class="confirm-row"><span class="confirm-icon">${icon('armchair',14)}</span>${state.seats.join(', ')}</div>
+      </div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-section-title">Chi tiết giá</div>
+      <div class="confirm-detail-row"><span class="key">Ghế (${state.seats.length})</span><span class="val">${seatTotal.toLocaleString('vi')}đ</span></div>
+      ${fnbLines}
+      <div class="confirm-detail-row"><span class="key">Phí dịch vụ</span><span class="val" style="color:var(--green-500)">Miễn phí</span></div>
+      <div class="confirm-total-row"><span class="key">Tổng cộng</span><span class="val">${calcTotal().toLocaleString('vi')}đ</span></div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-section-title">Thanh toán qua</div>
+      <div class="pay-option selected" style="margin-bottom:0;cursor:default"><div class="pay-icon">${payInfo.icon}</div><div class="pay-detail"><div class="pay-name">${payInfo.name}</div><div class="pay-sub">${payInfo.sub}</div></div><div class="pay-radio"></div></div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-section-title">Mã khuyến mãi</div>
+      <div class="promo-input"><input type="text" id="promoInput" placeholder="Nhập mã giảm giá..."><button class="promo-apply" onclick="applyPromo()">Áp dụng</button></div>
+    </div>
+    <div class="confirm-section">
+      <div class="consent-row"><span style="font-size:16px">ℹ️</span><div class="consent-text">Bằng việc đặt vé, bạn đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách hoàn vé</a> của MoMo Cinema.</div></div>
+    </div>
+  </div>`;
+}
+function applyPromo(){ const v=document.getElementById('promoInput')?.value?.trim(); toast(v?`Mã "${v}" không hợp lệ hoặc đã hết hạn`:'Vui lòng nhập mã khuyến mãi'); }
+
+function confirmPay(){ const btn=document.getElementById('btnNext'); btn.disabled=true; btn.textContent='Đang xử lý...'; setTimeout(()=>{state.step=4;renderStep();},1600); }
+
+/* STEP 4: TICKET */
+function renderTicketStep(body){
+  const code='MO'+Math.random().toString(36).substr(2,6).toUpperCase();
+  const d=DATES[state.activeDate];
+  const qr=Array.from({length:81},(_,i)=>{const r=Math.floor(i/9),c=i%9;const corner=(r<3&&c<3)||(r<3&&c>=6)||(r>=6&&c<3);return `<div class="qr-cell" style="background:${corner||Math.random()>.5?'#fff':'#EB2F96'}"></div>`;}).join('');
+  body.innerHTML=`<div class="ticket-wrap">
+    <div class="ticket-header">
+      <div class="ticket-success-icon">✓</div>
+      <div class="ticket-header-title">Đặt vé thành công!</div>
+      <div class="ticket-header-sub">Vé đã lưu trong MoMo · ${new Date().toLocaleDateString('vi-VN')}</div>
+    </div>
+    <div class="ticket-film-strip">
+      <div class="ticket-poster"><img src="https://cinema.momocdn.net/convert-webp/img/154902082106207596-PosterSUPERGIRLcompressed.jpg?size=M" alt="Supergirl"></div>
+      <div><div class="ticket-film-name">Supergirl: Woman of Tomorrow</div><div class="ticket-cinema-name">${state.cinemaName}</div></div>
+    </div>
+    <div class="perf-divider"><div class="perf-circle"></div><div class="perf-line"></div><div class="perf-circle"></div></div>
+    <div class="ticket-grid">
+      <div class="ticket-field"><div class="tf-label">Giờ chiếu</div><div class="tf-value pink">${state.showtime}</div></div>
+      <div class="ticket-field"><div class="tf-label">Ngày</div><div class="tf-value">${d.num}/${d.mon.replace('Th.','')}/2026</div></div>
+      <div class="ticket-field"><div class="tf-label">Ghế</div><div class="tf-value pink">${state.seats.join(', ')}</div></div>
+      <div class="ticket-field"><div class="tf-label">Phòng chiếu</div><div class="tf-value">Phòng ${Math.floor(Math.random()*8)+1}</div></div>
+      <div class="ticket-field"><div class="tf-label">Định dạng</div><div class="tf-value">${state.format}</div></div>
+      <div class="ticket-field"><div class="tf-label">Mã đặt vé</div><div class="tf-value pink">${code}</div></div>
+    </div>
+    <div class="perf-divider"><div class="perf-circle"></div><div class="perf-line"></div><div class="perf-circle"></div></div>
+    <div class="qr-section">
+      <div class="qr-box"><div class="qr-grid">${qr}</div></div>
+      <div class="qr-hint"><div class="qr-hint-title">Quét mã tại cổng vào</div><div class="qr-hint-desc">Nhân viên rạp sẽ quét mã QR này. Không cần in vé giấy. Vé hợp lệ 1 lần sử dụng.</div></div>
+    </div>
+    <div class="ticket-actions">
+      <button class="btn-save-ticket" onclick="toast('Đã lưu vé vào Ví MoMo ✓')">${icon('save',14)} Lưu vé vào MoMo</button>
+      <button class="btn-close-ticket" onclick="closeBooking()">Đóng</button>
+    </div>
+  </div>`;
+}
+
+/* GROUP INVITE */
+function activateGroup(){
+  GROUP.active=true;
+  const code=Math.random().toString(36).substr(2,8).toUpperCase();
+  navigator.clipboard?.writeText(`momo.vn/cinema/room/${code}`).catch(()=>{});
+  toast('👥 Đã tạo phòng xem phim! Link đã copy — gửi cho Minh & Linh để họ chọn ghế.');
+  renderStep();
+}
+function copyGroupLink(){
+  const code=Math.random().toString(36).substr(2,8).toUpperCase();
+  navigator.clipboard?.writeText(`momo.vn/cinema/room/${code}`).catch(()=>{});
+  toast('🔗 Đã sao chép link mời — gửi cho bạn bè qua MoMo, Zalo, Facebook');
+}
+
+/* PRESALE COUNTER ANIMATION */
+(function(){
+  let count=1247;
+  setInterval(()=>{
+    count+=Math.floor(Math.random()*4)+1;
+    const el=document.getElementById('presaleCount');
+    if(el) el.textContent=count.toLocaleString('vi');
+  },3500);
+})();
+
+/* TRAILER */
+function openTrailer(id){ document.getElementById('trailerFrame').src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`; document.getElementById('trailerOverlay').classList.add('show'); }
+function closeTrailer(){ document.getElementById('trailerOverlay').classList.remove('show'); document.getElementById('trailerFrame').src='about:blank'; }
+
+/* TOAST */
+let _tt;
+function toast(msg){ const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2600); }
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeTrailer();closeBooking();} });
+document.getElementById('bookingSheet').addEventListener('click',e=>{ if(e.target===document.getElementById('bookingSheet'))closeBooking(); });
+lucide.createIcons();
+
+/* INIT */
+renderDates(); renderChainFilter(); renderCinemas();
 </script>
-
 </body>
 </html>
