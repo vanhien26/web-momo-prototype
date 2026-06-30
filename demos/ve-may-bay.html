@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vé Máy Bay Quốc Tế - MoMo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#f8f8f8;color:#1c1c1e;min-height:100vh}
+.hdr{background:#fff;border-bottom:1px solid #f0f0f0;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.back-btn{display:flex;align-items:center;gap:6px;text-decoration:none;color:#666;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;border:1px solid #e5e5e5}
+.logo{height:28px}
+.hdr-cta{background:#AF0171;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
+.hero{background:linear-gradient(135deg,#1a237e 0%,#283593 50%,#3949ab 100%);padding:36px 20px 28px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:clamp(24px,5vw,40px);font-weight:900;color:#fff;margin-bottom:8px}
+.hero p{font-size:14px;color:rgba(255,255,255,.75);max-width:420px;margin:0 auto}
+
+/* Search form */
+.search-card{max-width:860px;margin:-0px auto;background:#fff;border-radius:24px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.12);margin:24px auto 0;margin-left:auto;margin-right:auto;max-width:860px;padding-left:20px;padding-right:20px}
+.search-wrap{max-width:860px;margin:24px auto 0;padding:0 16px}
+.search-card2{background:#fff;border-radius:24px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.trip-type{display:flex;gap:8px;margin-bottom:16px}
+.trip-btn{padding:7px 16px;border-radius:20px;border:1.5px solid #e5e5e5;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;font-family:inherit;transition:all .2s}
+.trip-btn.active{background:#AF0171;border-color:#AF0171;color:#fff}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.field{}
+.field-lbl{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.field-input{background:#f5f5f5;border:2px solid #f0f0f0;border-radius:12px;padding:11px 14px;font-family:inherit;font-size:14px;font-weight:600;color:#1c1c1e;outline:none;width:100%;cursor:pointer;transition:border-color .2s}
+.field-input:focus{border-color:#AF0171}
+.airport-wrap{position:relative}
+.airport-wrap::after{content:'✈';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#aaa;pointer-events:none}
+.swap-airports{background:none;border:none;cursor:pointer;font-size:20px;padding:4px;color:#AF0171;position:absolute;right:-18px;top:50%;transform:translateY(-50%);z-index:1}
+.airports-row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:12px}
+.search-btn{width:100%;background:#AF0171;color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:background .2s}
+.search-btn:hover{background:#8f0060}
+
+/* Results */
+.results-wrap{max-width:860px;margin:24px auto;padding:0 16px}
+.results-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.results-title{font-size:15px;font-weight:800}
+.sort-select{border:1.5px solid #e5e5e5;border-radius:10px;padding:7px 12px;font-family:inherit;font-size:12px;font-weight:600;color:#555;outline:none;cursor:pointer}
+
+.flight-card{background:#fff;border-radius:18px;padding:18px 20px;border:1px solid #f0f0f0;margin-bottom:10px;transition:all .2s;cursor:pointer}
+.flight-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.08);border-color:#e0e0e0}
+.flight-card.featured{border:2px solid #AF0171;background:#fff5fb}
+.fc-top{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.fc-airline{display:flex;align-items:center;gap:8px}
+.airline-logo{width:32px;height:32px;border-radius:8px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:16px}
+.airline-name{font-size:12px;font-weight:700;color:#444}
+.airline-type{font-size:10px;color:#aaa}
+.fc-badges{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px}
+.badge.cheap{background:#e8f5e9;color:#2e7d32}
+.badge.direct{background:#e3f2fd;color:#1565c0}
+.badge.top{background:#fff8e1;color:#e65100}
+.badge.momo{background:#fff0fa;color:#AF0171}
+
+.fc-mid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:14px}
+.time-block{text-align:center}
+.time-main{font-size:22px;font-weight:900}
+.time-airport{font-size:11px;color:#888;margin-top:2px}
+.flight-line{text-align:center}
+.fl-duration{font-size:11px;font-weight:700;color:#888;margin-bottom:3px}
+.fl-line{display:flex;align-items:center;gap:4px;justify-content:center}
+.fl-dot{width:6px;height:6px;border-radius:50%;background:#aaa}
+.fl-dash{flex:1;height:1px;background:#ddd}
+.fl-icon{font-size:12px}
+.fl-stop{font-size:10px;color:#aaa;margin-top:3px}
+
+.fc-bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.fc-price-wrap{}
+.fc-label{font-size:10px;color:#888;margin-bottom:2px}
+.fc-price{font-size:22px;font-weight:900;color:#AF0171}
+.fc-price-sub{font-size:11px;color:#aaa}
+.fc-actions{display:flex;gap:8px}
+.btn-detail{border:1.5px solid #e5e5e5;background:#fff;color:#444;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-book{background:#AF0171;color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+
+/* Filter sidebar */
+.layout{display:grid;grid-template-columns:220px 1fr;gap:16px;max-width:860px;margin:0 auto;padding:0 16px}
+.filter-panel{background:#fff;border-radius:18px;padding:16px;border:1px solid #f0f0f0;height:fit-content;position:sticky;top:72px}
+.filter-title{font-size:13px;font-weight:800;margin-bottom:12px}
+.filter-section{margin-bottom:16px}
+.filter-sec-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+.filter-check{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
+.filter-check input{accent-color:#AF0171}
+.filter-check label{font-size:12px;font-weight:600;color:#444;cursor:pointer}
+.filter-range{width:100%;accent-color:#AF0171;margin-top:4px}
+.price-label{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:4px}
+
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .filter-panel{display:none}
+  .fc-mid{grid-template-columns:1fr auto 1fr}
+  .form-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <a href="/lab.html" class="back-btn">← Lab</a>
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" class="logo">
+  </div>
+  <button class="hdr-cta" onclick="openApp()">Mở App MoMo</button>
+</header>
+
+<section class="hero">
+  <p class="hero-eyebrow">MoMo · Vé máy bay</p>
+  <h1>Vé máy bay giá tốt<br>đặt ngay trong MoMo</h1>
+  <p>So sánh hàng trăm hãng bay, đặt vé thanh toán bằng ví MoMo — nhanh chóng và an toàn.</p>
+</section>
+
+<!-- Search form -->
+<div class="search-wrap">
+  <div class="search-card2">
+    <div class="trip-type">
+      <button class="trip-btn active" onclick="setTrip('roundtrip',this)">↔ Khứ hồi</button>
+      <button class="trip-btn" onclick="setTrip('oneway',this)">→ Một chiều</button>
+      <button class="trip-btn" onclick="setTrip('multi',this)">+ Nhiều chặng</button>
+    </div>
+    <div class="airports-row">
+      <div class="field">
+        <div class="field-lbl">Điểm đi</div>
+        <div class="airport-wrap">
+          <select class="field-input" id="fromAirport">
+            <option value="HAN">HAN - Hà Nội (Nội Bài)</option>
+            <option value="SGN" selected>SGN - TP.HCM (Tân Sơn Nhất)</option>
+            <option value="DAD">DAD - Đà Nẵng</option>
+          </select>
+        </div>
+      </div>
+      <button class="swap-airports" onclick="swapAirports()">⇄</button>
+      <div class="field">
+        <div class="field-lbl">Điểm đến</div>
+        <div class="airport-wrap">
+          <select class="field-input" id="toAirport" onchange="renderResults()">
+            <option value="BKK">BKK - Bangkok, Thái Lan</option>
+            <option value="SIN">SIN - Singapore</option>
+            <option value="NRT">NRT - Tokyo, Nhật Bản</option>
+            <option value="ICN">ICN - Seoul, Hàn Quốc</option>
+            <option value="CDG">CDG - Paris, Pháp</option>
+            <option value="SYD">SYD - Sydney, Úc</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <div class="field-lbl">Ngày đi</div>
+        <input type="date" class="field-input" id="depDate" value="2026-07-15">
+      </div>
+      <div class="field">
+        <div class="field-lbl">Ngày về</div>
+        <input type="date" class="field-input" id="retDate" value="2026-07-22">
+      </div>
+      <div class="field">
+        <div class="field-lbl">Hành khách</div>
+        <select class="field-input">
+          <option>1 người lớn</option>
+          <option>2 người lớn</option>
+          <option>2 người lớn + 1 trẻ em</option>
+          <option>Thêm hành khách</option>
+        </select>
+      </div>
+    </div>
+    <button class="search-btn" onclick="renderResults()">✈ Tìm chuyến bay</button>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="layout" style="margin-top:24px">
+  <div class="filter-panel">
+    <div class="filter-title">Bộ lọc</div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Số điểm dừng</div>
+      <label class="filter-check"><input type="checkbox" checked><label>Bay thẳng</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>1 điểm dừng</label></label>
+    </div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Hãng hàng không</div>
+      <label class="filter-check"><input type="checkbox" checked><label>VietJet Air</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Vietnam Airlines</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Bamboo Airways</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Singapore Airlines</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Thai Airways</label></label>
+    </div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Giờ khởi hành</div>
+      <label class="filter-check"><input type="checkbox" checked><label>Sáng sớm (00-06h)</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Buổi sáng (06-12h)</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Buổi chiều (12-18h)</label></label>
+      <label class="filter-check"><input type="checkbox" checked><label>Buổi tối (18-24h)</label></label>
+    </div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Mức giá tối đa</div>
+      <input type="range" class="filter-range" min="1000000" max="20000000" value="10000000" oninput="updatePriceLabel(this)">
+      <div class="price-label"><span>1 tr</span><span id="priceMax">10 tr</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="results-hdr">
+      <div class="results-title" id="resultsTitle">Đang tải...</div>
+      <select class="sort-select">
+        <option>Giá thấp nhất</option>
+        <option>Thời gian bay</option>
+        <option>Giờ khởi hành</option>
+        <option>Khuyến nghị</option>
+      </select>
+    </div>
+    <div id="flightResults"></div>
+  </div>
+</div>
+
+<script>
+const FLIGHTS_DB = {
+  BKK:[
+    {from:'SGN',to:'BKK',dep:'07:05',arr:'08:40',dur:'2h35',airline:'VietJet Air',logo:'🟠',type:'Không hành lý ký gửi',price:1800000,stops:0,badges:['cheap'],momo:true},
+    {from:'SGN',to:'BKK',dep:'10:20',arr:'12:00',dur:'2h40',airline:'Bangkok Airways',logo:'🔵',type:'Hành lý 20kg',price:2350000,stops:0,badges:['direct'],momo:false},
+    {from:'SGN',to:'BKK',dep:'14:15',arr:'15:55',dur:'2h40',airline:'Thai Airways',logo:'🟣',type:'Hành lý 30kg + Bữa ăn',price:3100000,stops:0,badges:['top'],momo:true},
+    {from:'HAN',to:'BKK',dep:'06:00',arr:'09:10',dur:'4h10',airline:'VietJet Air',logo:'🟠',type:'1 điểm dừng tại SGN',price:2100000,stops:1,badges:[],momo:true},
+  ],
+  SIN:[
+    {from:'SGN',to:'SIN',dep:'08:30',arr:'11:50',dur:'3h20',airline:'VietJet Air',logo:'🟠',type:'Không hành lý ký gửi',price:2100000,stops:0,badges:['cheap'],momo:true},
+    {from:'SGN',to:'SIN',dep:'11:00',arr:'14:25',dur:'3h25',airline:'Scoot',logo:'🟡',type:'Hành lý 20kg',price:2350000,stops:0,badges:[],momo:false},
+    {from:'SGN',to:'SIN',dep:'15:30',arr:'18:55',dur:'3h25',airline:'Singapore Airlines',logo:'⭐',type:'Hành lý 25kg + Bữa ăn',price:2800000,stops:0,badges:['top'],momo:true},
+  ],
+  NRT:[
+    {from:'SGN',to:'NRT',dep:'07:00',arr:'15:30',dur:'6h30',airline:'VietJet Air',logo:'🟠',type:'Không hành lý ký gửi',price:4500000,stops:0,badges:['cheap'],momo:true},
+    {from:'SGN',to:'NRT',dep:'10:15',arr:'18:50',dur:'6h35',airline:'Vietnam Airlines',logo:'🌸',type:'Hành lý 23kg + Bữa ăn',price:5200000,stops:0,badges:['direct'],momo:true},
+    {from:'SGN',to:'NRT',dep:'22:30',arr:'07:00+1',dur:'6h30',airline:'Japan Airlines',logo:'🔴',type:'Hành lý 23kg + Bữa ăn',price:5800000,stops:0,badges:['top'],momo:false},
+  ],
+  ICN:[
+    {from:'SGN',to:'ICN',dep:'08:00',arr:'15:20',dur:'5h20',airline:'VietJet Air',logo:'🟠',type:'Không hành lý ký gửi',price:3200000,stops:0,badges:['cheap'],momo:true},
+    {from:'SGN',to:'ICN',dep:'14:30',arr:'21:55',dur:'5h25',airline:'Asiana Airlines',logo:'🔵',type:'Hành lý 23kg + Bữa ăn',price:3800000,stops:0,badges:[],momo:false},
+    {from:'SGN',to:'ICN',dep:'10:00',arr:'17:30',dur:'5h30',airline:'Korean Air',logo:'💙',type:'Hành lý 23kg + Bữa ăn',price:4100000,stops:0,badges:['top'],momo:true},
+  ],
+};
+
+const BADGE_LABEL = {cheap:'Rẻ nhất',direct:'Bay thẳng',top:'Chất lượng cao',momo:'MoMo Deal'};
+const BADGE_CLASS = {cheap:'cheap',direct:'direct',top:'top',momo:'momo'};
+
+function fmtVND(n){ return new Intl.NumberFormat('vi-VN').format(n)+'đ'; }
+function updatePriceLabel(el){ document.getElementById('priceMax').textContent = (el.value/1000000).toFixed(0)+' tr'; }
+function setTrip(t,el){ document.querySelectorAll('.trip-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+function swapAirports(){ const f=document.getElementById('fromAirport'),t=document.getElementById('toAirport'); [f.value,t.value]=[t.value,f.value]; renderResults(); }
+
+function renderResults(){
+  const dest = document.getElementById('toAirport').value;
+  const flights = FLIGHTS_DB[dest] || FLIGHTS_DB.BKK;
+  document.getElementById('resultsTitle').textContent = flights.length + ' chuyến bay tìm thấy';
+  document.getElementById('flightResults').innerHTML = flights.map((f,i) => {
+    const allBadges = [...f.badges, ...(f.momo?['momo']:[])] ;
+    return `
+    <div class="flight-card ${i===0?'featured':''}">
+      <div class="fc-top">
+        <div class="fc-airline">
+          <div class="airline-logo">${f.logo}</div>
+          <div><div class="airline-name">${f.airline}</div><div class="airline-type">${f.type}</div></div>
+        </div>
+        <div class="fc-badges">${allBadges.map(b=>`<span class="badge ${BADGE_CLASS[b]}">${BADGE_LABEL[b]}</span>`).join('')}</div>
+      </div>
+      <div class="fc-mid">
+        <div class="time-block"><div class="time-main">${f.dep}</div><div class="time-airport">${f.from}</div></div>
+        <div class="flight-line">
+          <div class="fl-duration">${f.dur}</div>
+          <div class="fl-line"><div class="fl-dot"></div><div class="fl-dash"></div><span class="fl-icon">✈</span><div class="fl-dash"></div><div class="fl-dot"></div></div>
+          <div class="fl-stop">${f.stops===0?'Bay thẳng':f.stops+' điểm dừng'}</div>
+        </div>
+        <div class="time-block"><div class="time-main">${f.arr}</div><div class="time-airport">${f.to}</div></div>
+      </div>
+      <div class="fc-bot">
+        <div class="fc-price-wrap">
+          <div class="fc-label">Giá / người · khứ hồi</div>
+          <div class="fc-price">${fmtVND(f.price)}</div>
+          <div class="fc-price-sub">Đã gồm thuế phí</div>
+        </div>
+        <div class="fc-actions">
+          <button class="btn-detail">Chi tiết</button>
+          <button class="btn-book" onclick="openApp()">Đặt ngay</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openApp(){ window.location.href='momo://app/travel/flight'; }
+renderResults();
+</script>
+</body>
+</html>

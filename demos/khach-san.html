@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đặt Khách Sạn Quốc Tế - MoMo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#f8f8f8;color:#1c1c1e;min-height:100vh}
+.hdr{background:#fff;border-bottom:1px solid #f0f0f0;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.back-btn{display:flex;align-items:center;gap:6px;text-decoration:none;color:#666;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;border:1px solid #e5e5e5}
+.logo{height:28px}
+.hdr-cta{background:#AF0171;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
+.hero{background:linear-gradient(135deg,#4a148c 0%,#7b1fa2 50%,#ab47bc 100%);padding:36px 20px 28px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:clamp(24px,5vw,40px);font-weight:900;color:#fff;margin-bottom:8px}
+.hero p{font-size:14px;color:rgba(255,255,255,.75);max-width:420px;margin:0 auto}
+
+/* Search */
+.search-wrap{max-width:900px;margin:24px auto 0;padding:0 16px}
+.search-card{background:#fff;border-radius:24px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.form-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.field-lbl{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.field-input{background:#f5f5f5;border:2px solid #f0f0f0;border-radius:12px;padding:11px 14px;font-family:inherit;font-size:13px;font-weight:600;color:#1c1c1e;outline:none;width:100%;transition:border-color .2s}
+.field-input:focus{border-color:#AF0171}
+.search-btn{width:100%;background:#AF0171;color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+
+/* City tabs */
+.city-tabs{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:16px;background:#fff;border-bottom:1px solid #f0f0f0;margin-top:0}
+.city-tabs::-webkit-scrollbar{display:none}
+.ctab{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1.5px solid #e5e5e5;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;font-family:inherit;transition:all .2s}
+.ctab.active{background:#7b1fa2;border-color:#7b1fa2;color:#fff}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:240px 1fr;gap:16px;max-width:900px;margin:20px auto;padding:0 16px}
+.filter-panel{background:#fff;border-radius:18px;padding:16px;border:1px solid #f0f0f0;height:fit-content;position:sticky;top:72px}
+.filter-title{font-size:13px;font-weight:800;margin-bottom:12px}
+.filter-section{margin-bottom:16px}
+.filter-sec-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+.filter-check{display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;font-size:12px;font-weight:600;color:#444}
+.filter-check input{accent-color:#7b1fa2}
+.star-filter{display:flex;gap:6px}
+.star-btn{width:32px;height:32px;border:1.5px solid #e5e5e5;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;font-weight:700;transition:all .2s}
+.star-btn.active{background:#7b1fa2;border-color:#7b1fa2;color:#fff}
+.price-row{display:flex;gap:8px;flex-wrap:wrap}
+.price-chip{border:1.5px solid #e5e5e5;border-radius:10px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;background:#fff;color:#555;font-family:inherit;transition:all .2s}
+.price-chip.active{background:#7b1fa2;border-color:#7b1fa2;color:#fff}
+
+/* Hotel cards */
+.results-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.results-title{font-size:14px;font-weight:800}
+.sort-select{border:1.5px solid #e5e5e5;border-radius:10px;padding:7px 12px;font-family:inherit;font-size:12px;font-weight:600;color:#555;outline:none}
+
+.hotel-card{background:#fff;border-radius:18px;overflow:hidden;border:1px solid #f0f0f0;margin-bottom:12px;display:grid;grid-template-columns:200px 1fr;transition:all .2s;cursor:pointer}
+.hotel-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.1)}
+.hotel-card.featured{border:2px solid #7b1fa2}
+.hotel-img{background:linear-gradient(135deg,#f3e5f5,#e1bee7);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
+.hotel-img-badge{position:absolute;top:8px;left:8px;background:#7b1fa2;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px}
+.hotel-body{padding:16px}
+.hotel-name{font-size:15px;font-weight:800;margin-bottom:3px}
+.hotel-location{font-size:12px;color:#888;margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.hotel-stars{color:#f59e0b;font-size:13px}
+.hotel-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.htag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;background:#f5f5f5;color:#666}
+.hotel-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.hotel-price-wrap{}
+.hotel-label{font-size:10px;color:#888}
+.hotel-price{font-size:20px;font-weight:900;color:#7b1fa2}
+.hotel-price-sub{font-size:11px;color:#aaa}
+.hotel-rating{display:flex;align-items:center;gap:6px}
+.rating-badge{background:#f3e5f5;color:#7b1fa2;font-size:13px;font-weight:900;padding:4px 8px;border-radius:8px}
+.rating-txt{font-size:11px;color:#888}
+.hotel-btn{background:#7b1fa2;color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+
+.combo-banner{background:linear-gradient(135deg,#AF0171,#7b1fa2);border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.combo-txt h3{color:#fff;font-size:15px;font-weight:900;margin-bottom:3px}
+.combo-txt p{color:rgba(255,255,255,.7);font-size:12px}
+.combo-btn{background:#fff;color:#7b1fa2;border:none;border-radius:10px;padding:9px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .filter-panel{display:none}
+  .hotel-card{grid-template-columns:120px 1fr}
+  .hotel-img{font-size:32px}
+  .form-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <a href="/lab.html" class="back-btn">← Lab</a>
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" class="logo">
+  </div>
+  <button class="hdr-cta" onclick="openApp()">Mở App MoMo</button>
+</header>
+
+<section class="hero">
+  <p class="hero-eyebrow">MoMo · Khách sạn</p>
+  <h1>Đặt khách sạn quốc tế<br>giảm thêm khi combo vé bay</h1>
+  <p>Giá tốt nhất từ Booking.com, Agoda, Hotels.com — đặt và thanh toán bằng ví MoMo.</p>
+</section>
+
+<div class="search-wrap">
+  <div class="search-card">
+    <div class="form-grid">
+      <div>
+        <div class="field-lbl">Điểm đến</div>
+        <select class="field-input" id="destSelect" onchange="renderHotels()">
+          <option value="BKK">Bangkok, Thái Lan</option>
+          <option value="SIN">Singapore</option>
+          <option value="TYO">Tokyo, Nhật Bản</option>
+          <option value="SEL">Seoul, Hàn Quốc</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-lbl">Nhận phòng</div>
+        <input type="date" class="field-input" value="2026-07-15">
+      </div>
+      <div>
+        <div class="field-lbl">Trả phòng</div>
+        <input type="date" class="field-input" value="2026-07-22">
+      </div>
+      <div>
+        <div class="field-lbl">Khách / Phòng</div>
+        <select class="field-input">
+          <option>2 khách · 1 phòng</option>
+          <option>2 khách · 2 phòng</option>
+          <option>4 khách · 2 phòng</option>
+        </select>
+      </div>
+    </div>
+    <button class="search-btn" onclick="renderHotels()">🏨 Tìm khách sạn</button>
+  </div>
+</div>
+
+<div class="city-tabs" id="cityTabs"></div>
+
+<div class="layout">
+  <div class="filter-panel">
+    <div class="filter-title">Bộ lọc</div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Hạng sao</div>
+      <div class="star-filter">
+        <button class="star-btn">2★</button>
+        <button class="star-btn">3★</button>
+        <button class="star-btn active">4★</button>
+        <button class="star-btn active">5★</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Giá / đêm</div>
+      <div class="price-row">
+        <button class="price-chip">Dưới 1 tr</button>
+        <button class="price-chip active">1–2 tr</button>
+        <button class="price-chip active">2–4 tr</button>
+        <button class="price-chip">Trên 4 tr</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Tiện ích</div>
+      <label class="filter-check"><input type="checkbox" checked> Wifi miễn phí</label>
+      <label class="filter-check"><input type="checkbox" checked> Bể bơi</label>
+      <label class="filter-check"><input type="checkbox"> Bãi đỗ xe</label>
+      <label class="filter-check"><input type="checkbox" checked> Bữa sáng</label>
+      <label class="filter-check"><input type="checkbox"> Gym</label>
+    </div>
+    <div class="filter-section">
+      <div class="filter-sec-title">Khu vực</div>
+      <label class="filter-check"><input type="checkbox" checked> Trung tâm</label>
+      <label class="filter-check"><input type="checkbox"> Gần sân bay</label>
+      <label class="filter-check"><input type="checkbox"> Khu mua sắm</label>
+      <label class="filter-check"><input type="checkbox"> Bãi biển</label>
+    </div>
+  </div>
+  <div>
+    <div class="combo-banner">
+      <div class="combo-txt">
+        <h3>✈🏨 Combo vé bay + khách sạn</h3>
+        <p>Đặt cùng lúc — giảm thêm 100,000đ · Thanh toán ví MoMo 1 chạm</p>
+      </div>
+      <button class="combo-btn" onclick="openApp()">Xem combo</button>
+    </div>
+    <div class="results-hdr">
+      <div class="results-title" id="resultsTitle">Đang tải...</div>
+      <select class="sort-select">
+        <option>Giá thấp nhất</option>
+        <option>Đánh giá cao nhất</option>
+        <option>Gần trung tâm nhất</option>
+        <option>Mới nhất</option>
+      </select>
+    </div>
+    <div id="hotelResults"></div>
+  </div>
+</div>
+
+<script>
+const HOTELS_DB = {
+  BKK:[
+    {name:'Mandarin Oriental Bangkok',emoji:'🏯',stars:5,location:'Charoen Krung · 200m tới sông Chao Phraya',price:4200000,rating:9.4,reviews:2841,tags:['Bể bơi','Spa','Nhà hàng fine-dining'],badge:'Đề xuất',area:'Trung tâm'},
+    {name:'Centara Grand at CentralWorld',emoji:'🌆',stars:5,location:'Ratchaprasong · Tim trung tâm mua sắm',price:3100000,rating:8.9,reviews:5102,tags:['Bể bơi vô cực','Gym','Wifi'],badge:''},
+    {name:'Novotel Bangkok Sukhumvit 4',emoji:'🏢',stars:4,location:'Sukhumvit · Gần BTS Nana',price:1650000,rating:8.5,reviews:3210,tags:['Wifi','Bữa sáng','Bể bơi'],badge:'Giá tốt'},
+    {name:'Ibis Styles Bangkok Khaosan',emoji:'🎒',stars:3,location:'Khaosan Road · Khu du lịch bụi',price:890000,rating:8.1,reviews:1892,tags:['Wifi','Tiện lợi'],badge:''},
+  ],
+  SIN:[
+    {name:'Marina Bay Sands',emoji:'🏙️',stars:5,location:'Marina Bay · Biểu tượng Singapore',price:8500000,rating:9.2,reviews:12043,tags:['Bể bơi vô cực 57 tầng','Casino','3 nhà hàng'],badge:'Iconic'},
+    {name:'The Fullerton Hotel Singapore',emoji:'🏛️',stars:5,location:'Fullerton Square · Di tích lịch sử',price:5200000,rating:9.0,reviews:4211,tags:['Lịch sử','Bể bơi','Spa'],badge:''},
+    {name:'Hotel Jen Orchardgateway',emoji:'🛍️',stars:4,location:'Orchard · Trung tâm mua sắm',price:2800000,rating:8.7,reviews:6891,tags:['Bể bơi','Wifi','Bữa sáng'],badge:'Đề xuất'},
+    {name:'Ibis Budget Singapore',emoji:'💼',stars:2,location:'Bencoolen · Gần MRT',price:1200000,rating:7.9,reviews:9102,tags:['Sạch sẽ','Tiện lợi'],badge:'Rẻ nhất'},
+  ],
+  TYO:[
+    {name:'Park Hyatt Tokyo',emoji:'🗼',stars:5,location:'Shinjuku · Tầm nhìn núi Phú Sĩ',price:9500000,rating:9.5,reviews:3102,tags:['Bể bơi tầng 47','Gym','Fine-dining'],badge:'Luxury'},
+    {name:'The Tokyo Station Hotel',emoji:'🚂',stars:5,location:'Marunouchi · Ngay ga Tokyo',price:6800000,rating:9.1,reviews:4501,tags:['Lịch sử','Nhà hàng','Vị trí đắc địa'],badge:'Đề xuất'},
+    {name:'APA Hotel Shinjuku',emoji:'🏨',stars:3,location:'Shinjuku · Gần ga JR',price:1850000,rating:8.3,reviews:12891,tags:['Wifi','Tắm onsen'],badge:'Phổ biến'},
+    {name:'Dormy Inn Asakusa',emoji:'⛩️',stars:3,location:'Asakusa · Gần chùa Senso-ji',price:1600000,rating:8.5,reviews:7201,tags:['Tắm onsen','Wifi','Bữa sáng'],badge:''},
+  ],
+  SEL:[
+    {name:'Signiel Seoul',emoji:'🌃',stars:5,location:'Lotte World Tower · Tầng 76-101',price:7200000,rating:9.3,reviews:2801,tags:['Tầm nhìn Seoul','Bể bơi','Michelin'],badge:'Luxury'},
+    {name:'Park Hyatt Seoul',emoji:'🏙️',stars:5,location:'Gangnam · Trung tâm tài chính',price:5100000,rating:9.0,reviews:3412,tags:['Gym','Spa','Fine-dining'],badge:''},
+    {name:'Travelodge Myeongdong',emoji:'🛒',stars:3,location:'Myeongdong · Trung tâm mua sắm',price:1750000,rating:8.4,reviews:9201,tags:['Vị trí','Wifi','Sạch sẽ'],badge:'Đề xuất'},
+    {name:'Ibis Styles Seoul Gangnam',emoji:'🎵',stars:3,location:'Gangnam · Gần địa điểm Gangnam Style',price:1400000,rating:8.1,reviews:5102,tags:['Wifi','Tiện lợi'],badge:'Rẻ nhất'},
+  ],
+};
+
+const CITY_TABS = {BKK:'Bangkok 🇹🇭',SIN:'Singapore 🇸🇬',TYO:'Tokyo 🇯🇵',SEL:'Seoul 🇰🇷'};
+
+function fmtVND(n){ return new Intl.NumberFormat('vi-VN').format(n)+'đ'; }
+
+function renderCityTabs(){
+  const dest = document.getElementById('destSelect').value;
+  document.getElementById('cityTabs').innerHTML = Object.entries(CITY_TABS).map(([k,v])=>`
+    <button class="ctab ${k===dest?'active':''}" onclick="document.getElementById('destSelect').value='${k}';renderHotels()">${v}</button>
+  `).join('');
+}
+
+function renderHotels(){
+  renderCityTabs();
+  const dest = document.getElementById('destSelect').value;
+  const hotels = HOTELS_DB[dest] || [];
+  document.getElementById('resultsTitle').textContent = hotels.length + ' khách sạn tìm thấy · 7 đêm';
+  document.getElementById('hotelResults').innerHTML = hotels.map((h,i)=>`
+    <div class="hotel-card ${i===0?'featured':''}">
+      <div class="hotel-img">
+        <span>${h.emoji}</span>
+        ${h.badge?`<span class="hotel-img-badge">${h.badge}</span>`:''}
+      </div>
+      <div class="hotel-body">
+        <div class="hotel-name">${h.name}</div>
+        <div class="hotel-location">📍 ${h.location}</div>
+        <div class="hotel-stars">${'★'.repeat(h.stars)}</div>
+        <div class="hotel-tags" style="margin-top:6px">${h.tags.map(t=>`<span class="htag">${t}</span>`).join('')}</div>
+        <div class="hotel-footer" style="margin-top:12px">
+          <div class="hotel-price-wrap">
+            <div class="hotel-label">Giá / đêm</div>
+            <div class="hotel-price">${fmtVND(h.price)}</div>
+            <div class="hotel-price-sub">Đã gồm thuế · Miễn phí hủy 24h</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <div class="hotel-rating">
+              <span class="rating-badge">${h.rating}</span>
+              <span class="rating-txt">${h.reviews.toLocaleString()} đánh giá</span>
+            </div>
+            <button class="hotel-btn" onclick="openApp()">Đặt phòng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openApp(){ window.location.href='momo://app/travel/hotel'; }
+renderHotels();
+</script>
+</body>
+</html>

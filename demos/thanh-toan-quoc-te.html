@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh Toán QR Quốc Tế - MoMo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#f8f8f8;color:#1c1c1e;min-height:100vh}
+.hdr{background:#fff;border-bottom:1px solid #f0f0f0;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.back-btn{display:flex;align-items:center;gap:6px;text-decoration:none;color:#666;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;border:1px solid #e5e5e5}
+.logo{height:28px}
+.hdr-cta{background:#AF0171;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+
+.hero{background:linear-gradient(135deg,#004d40 0%,#00897b 50%,#26c6da 100%);padding:40px 20px 100px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:clamp(26px,6vw,44px);font-weight:900;color:#fff;margin-bottom:10px;line-height:1.1}
+.hero p{font-size:14px;color:rgba(255,255,255,.75);max-width:420px;margin:0 auto 24px}
+.hero-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.hbadge{background:rgba(255,255,255,.15);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.25)}
+
+/* Country tabs */
+.country-tabs-wrap{max-width:900px;margin:-60px auto 0;padding:0 16px}
+.country-tabs{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:16px}
+.country-tabs::-webkit-scrollbar{display:none}
+.ctab{flex-shrink:0;background:rgba(255,255,255,.9);border:2px solid transparent;border-radius:16px;padding:12px 16px;cursor:pointer;text-align:center;min-width:90px;transition:all .2s;backdrop-filter:blur(8px)}
+.ctab.active{background:#fff;border-color:#AF0171;box-shadow:0 4px 20px rgba(175,1,113,.15)}
+.ctab-flag{font-size:24px;margin-bottom:4px}
+.ctab-name{font-size:11px;font-weight:800;color:#1c1c1e}
+.ctab-sys{font-size:10px;color:#888}
+
+/* Country panel */
+.cpanel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.cpanel-hdr{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.cpanel-flag{font-size:48px}
+.cpanel-meta{}
+.cpanel-name{font-size:20px;font-weight:900;margin-bottom:4px}
+.cpanel-system{font-size:14px;font-weight:700;color:#AF0171;margin-bottom:6px}
+.cpanel-desc{font-size:13px;color:#666;line-height:1.6}
+
+/* Steps */
+.steps-title{font-size:13px;font-weight:800;color:#1c1c1e;margin-bottom:12px;margin-top:20px}
+.steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;align-items:flex-start;gap:12px;padding:12px;background:#f8f8f8;border-radius:12px}
+.step-num{width:24px;height:24px;background:#AF0171;color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px}
+.step-txt{font-size:13px;color:#444;line-height:1.5}
+
+/* Venues */
+.venues-title{font-size:13px;font-weight:800;color:#1c1c1e;margin-bottom:10px;margin-top:20px}
+.venues-strip{display:flex;gap:8px;flex-wrap:wrap}
+.venue{background:#f0f9f0;color:#2e7d32;font-size:11px;font-weight:700;padding:5px 11px;border-radius:10px}
+
+/* Comparison */
+.compare-wrap{max-width:900px;margin:32px auto;padding:0 16px}
+.compare-title{font-size:16px;font-weight:800;margin-bottom:12px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.cmp-card{border-radius:16px;padding:20px}
+.cmp-card.momo{background:linear-gradient(135deg,#AF0171,#cc0088)}
+.cmp-card.card{background:#f5f5f5}
+.cmp-label{font-size:11px;font-weight:700;margin-bottom:8px;opacity:.7}
+.cmp-card.momo .cmp-label{color:#fff}
+.cmp-card.card .cmp-label{color:#555}
+.cmp-main{font-size:28px;font-weight:900;line-height:1}
+.cmp-card.momo .cmp-main{color:#fff}
+.cmp-card.card .cmp-main{color:#333}
+.cmp-sub{font-size:11px;margin-top:6px;opacity:.7}
+.cmp-card.momo .cmp-sub{color:#fff}
+.cmp-card.card .cmp-sub{color:#888}
+
+/* Coverage */
+.coverage-wrap{max-width:900px;margin:0 auto 40px;padding:0 16px}
+.coverage-title{font-size:16px;font-weight:800;margin-bottom:12px}
+.coverage-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.cov-item{background:#fff;border-radius:14px;padding:12px 14px;border:1px solid #f0f0f0;display:flex;align-items:center;gap:10px}
+.cov-flag{font-size:22px}
+.cov-info{}
+.cov-country{font-size:12px;font-weight:800}
+.cov-system{font-size:10px;color:#888}
+.cov-check{margin-left:auto;color:#2e7d32;font-size:14px;font-weight:900}
+
+.cta-banner{max-width:900px;margin:0 auto 40px;padding:0 16px}
+.cta-inner{background:linear-gradient(135deg,#1a0033,#AF0171);border-radius:20px;padding:28px;text-align:center}
+.cta-inner h3{color:#fff;font-size:20px;font-weight:900;margin-bottom:6px}
+.cta-inner p{color:rgba(255,255,255,.7);font-size:13px;margin-bottom:20px}
+.cta-inner button{background:#fff;color:#AF0171;border:none;border-radius:14px;padding:13px 28px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+
+@media(max-width:500px){.compare-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <a href="/lab.html" class="back-btn">← Lab</a>
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" class="logo">
+  </div>
+  <button class="hdr-cta" onclick="openApp()">Mở App MoMo</button>
+</header>
+
+<section class="hero">
+  <p class="hero-eyebrow">MoMo · Thanh toán Quốc tế</p>
+  <h1>Quét QR trả tiền<br>khắp thế giới</h1>
+  <p>Không cần đổi tiền mặt. Tỷ giá thực tế. Phí 0%. Hoạt động tại 30+ quốc gia.</p>
+  <div class="hero-badges">
+    <span class="hbadge">✅ 0% phí chuyển đổi</span>
+    <span class="hbadge">⚡ Giao dịch trong 3 giây</span>
+    <span class="hbadge">🌏 30+ quốc gia</span>
+  </div>
+</section>
+
+<div class="country-tabs-wrap">
+  <div class="country-tabs" id="countryTabs"></div>
+  <div class="cpanel" id="countryPanel"></div>
+</div>
+
+<div class="compare-wrap">
+  <h2 class="compare-title">💰 So sánh chi phí thanh toán</h2>
+  <div class="compare-grid">
+    <div class="cmp-card momo">
+      <div class="cmp-label">🟢 QR MoMo</div>
+      <div class="cmp-main">0%</div>
+      <div class="cmp-sub">Phí chuyển đổi ngoại tệ<br>Tỷ giá liên ngân hàng thực tế</div>
+    </div>
+    <div class="cmp-card card">
+      <div class="cmp-label">🔴 Thẻ tín dụng thông thường</div>
+      <div class="cmp-main">3.5%</div>
+      <div class="cmp-sub">Phí chuyển đổi ngoại tệ<br>Chi 10 triệu → tốn thêm 350,000đ</div>
+    </div>
+  </div>
+</div>
+
+<div class="coverage-wrap">
+  <h2 class="coverage-title">🌍 Phủ sóng tại các quốc gia</h2>
+  <div class="coverage-grid" id="coverageGrid"></div>
+</div>
+
+<div class="cta-banner">
+  <div class="cta-inner">
+    <h3>Kích hoạt QR Quốc tế ngay</h3>
+    <p>Mở App MoMo → Quét QR → Tự động nhận diện mã quốc tế. Không cần cài đặt thêm.</p>
+    <button onclick="openApp()">📱 Mở App MoMo</button>
+  </div>
+</div>
+
+<script>
+const COUNTRIES = [
+  {
+    id:'thai-lan', flag:'🇹🇭', name:'Thái Lan', system:'PromptPay',
+    desc:'Hệ thống QR quốc gia Thái Lan. Chấp nhận tại hơn 10 triệu điểm bán từ Big C đến xe đẩy đường phố.',
+    steps:['Mở App MoMo → chọn Quét QR','Hướng camera vào mã PromptPay tại quầy','MoMo tự quy đổi VNĐ → THB theo tỷ giá thực','Xác nhận bằng Face ID hoặc mã PIN','Giao dịch hoàn tất trong 3 giây'],
+    venues:['7-Eleven','Big C','Lotus\'s','Makro','Central','Siam Paragon','Grab Thailand','Foodpanda'],
+  },
+  {
+    id:'singapore', flag:'🇸🇬', name:'Singapore', system:'NETS / PayNow',
+    desc:'Hệ thống QR chính thức tại Singapore. Phủ sóng toàn bộ hawker centres, NTUC FairPrice và hầu hết cửa hàng.',
+    steps:['Mở App MoMo → chọn Quét QR','Nhận diện mã NETS hoặc PayNow','MoMo chuyển đổi VNĐ → SGD tức thì','Xác nhận số tiền','Nhận biên lai điện tử trong App'],
+    venues:['NTUC FairPrice','Cold Storage','Hawker Centre','Grab SG','Shopee SG','CapitaMall','Changi Airport'],
+  },
+  {
+    id:'nhat-ban', flag:'🇯🇵', name:'Nhật Bản', system:'PayPay',
+    desc:'65 triệu người dùng PayPay tại Nhật. Chấp nhận tại convenience store, siêu thị và hầu hết nhà hàng.',
+    steps:['Mở App MoMo → chọn Quét QR','Nhận diện mã PayPay tại quầy','Tỷ giá JPY cập nhật thời gian thực','Thanh toán bằng số dư ví MoMo','Xác nhận tức thì'],
+    venues:['Family Mart','Lawson','7-Eleven','Don Quijote','Aeon','McDonald\'s Japan','Uber Eats Japan'],
+  },
+  {
+    id:'han-quoc', flag:'🇰🇷', name:'Hàn Quốc', system:'Kakao Pay / Naver Pay',
+    desc:'Hệ thống thanh toán số dẫn đầu Hàn Quốc. Phủ sóng toàn bộ cửa hàng CU, GS25, E-Mart và nhà hàng.',
+    steps:['Mở App MoMo → chọn Quét QR','Hướng camera vào mã QR tại quầy','MoMo tự quy đổi VNĐ → KRW','Xác nhận và hoàn tất','Thông báo xác nhận trong 2 giây'],
+    venues:['CU Convenience','GS25','E-Mart','Lotte Mart','Olive Young','Kakao Friends','Daiso Korea'],
+  },
+];
+
+const COVERAGE = [
+  {flag:'🇹🇭',country:'Thái Lan',system:'PromptPay'},
+  {flag:'🇸🇬',country:'Singapore',system:'NETS/PayNow'},
+  {flag:'🇯🇵',country:'Nhật Bản',system:'PayPay'},
+  {flag:'🇰🇷',country:'Hàn Quốc',system:'Kakao Pay'},
+  {flag:'🇺🇸',country:'Mỹ',system:'Zelle/Venmo'},
+  {flag:'🇬🇧',country:'Anh',system:'Open Banking'},
+  {flag:'🇦🇺',country:'Úc',system:'NPP/PayID'},
+  {flag:'🇫🇷',country:'Pháp',system:'Paylib'},
+  {flag:'🇩🇪',country:'Đức',system:'GiroCode'},
+  {flag:'🇮🇳',country:'Ấn Độ',system:'UPI'},
+  {flag:'🇲🇾',country:'Malaysia',system:'DuitNow'},
+  {flag:'🇵🇭',country:'Philippines',system:'QRPh'},
+];
+
+let active = 'thai-lan';
+
+function renderTabs() {
+  document.getElementById('countryTabs').innerHTML = COUNTRIES.map(c => `
+    <button class="ctab ${c.id===active?'active':''}" onclick="setCountry('${c.id}')">
+      <div class="ctab-flag">${c.flag}</div>
+      <div class="ctab-name">${c.name}</div>
+      <div class="ctab-sys">${c.system}</div>
+    </button>
+  `).join('');
+}
+
+function renderPanel() {
+  const c = COUNTRIES.find(x=>x.id===active);
+  document.getElementById('countryPanel').innerHTML = `
+    <div class="cpanel-hdr">
+      <div class="cpanel-flag">${c.flag}</div>
+      <div class="cpanel-meta">
+        <div class="cpanel-name">${c.name}</div>
+        <div class="cpanel-system">${c.system}</div>
+        <div class="cpanel-desc">${c.desc}</div>
+      </div>
+    </div>
+    <div class="steps-title">Cách thực hiện</div>
+    <div class="steps">${c.steps.map((s,i)=>`<div class="step"><span class="step-num">${i+1}</span><span class="step-txt">${s}</span></div>`).join('')}</div>
+    <div class="venues-title">Nơi chấp nhận phổ biến</div>
+    <div class="venues-strip">${c.venues.map(v=>`<span class="venue">✓ ${v}</span>`).join('')}</div>
+    <button onclick="openApp()" style="margin-top:20px;width:100%;background:#AF0171;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">Kích hoạt QR tại ${c.name}</button>
+  `;
+}
+
+function setCountry(id) {
+  active = id;
+  renderTabs();
+  renderPanel();
+}
+
+function renderCoverage() {
+  document.getElementById('coverageGrid').innerHTML = COVERAGE.map(c=>`
+    <div class="cov-item">
+      <span class="cov-flag">${c.flag}</span>
+      <div class="cov-info"><div class="cov-country">${c.country}</div><div class="cov-system">${c.system}</div></div>
+      <span class="cov-check">✓</span>
+    </div>
+  `).join('');
+}
+
+function openApp() { window.location.href = 'momo://app/payment/qr_roaming'; }
+
+renderTabs();
+renderPanel();
+renderCoverage();
+</script>
+</body>
+</html>
