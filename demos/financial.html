@@ -6,7 +6,7 @@
   <title>MoMo Money Lab</title>
   <meta name="description" content="Money Lab cho các quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.">
   <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
-  <link rel="stylesheet" href="/demos/financial.css?v=34">
+  <link rel="stylesheet" href="/demos/financial.css?v=36">
 </head>
 <body>
   <header class="site-header">
@@ -19,7 +19,7 @@
     </div>
     <nav aria-label="Điều hướng trang">
       <a href="/demos/financial.html" aria-label="Mở trang chủ Money Lab">Công cụ</a>
-      <span class="status"><i></i>31 utilities live</span>
+      <span class="status"><i></i>32 utilities live</span>
     </nav>
   </header>
 
@@ -27,7 +27,7 @@
   <div id="moneyLabCatalog" style="display:none">
     <div class="mlc-hero">
       <div class="mlc-hero-inner">
-        <p class="mlc-kicker">31 Financial Utilities</p>
+        <p class="mlc-kicker">32 Financial Utilities</p>
         <h1 class="mlc-title">Money Lab</h1>
         <p class="mlc-sub">Chọn nhu cầu tài chính - mọi tính toán ngay trên trình duyệt, không cần tài khoản.</p>
         <div class="mlc-pills" id="mlcPills"></div>
@@ -44,7 +44,7 @@
         <section class="tool-switcher-card tool-switcher-global" aria-label="Tool switcher">
           <div class="tool-switcher-head">
             <span class="tool-switcher-kicker">Calculator switcher</span>
-            <strong id="genericToolCount">31/31 tools</strong>
+            <strong id="genericToolCount">32/32 tools</strong>
           </div>
           <label class="sr-only" for="genericToolSearch">Tìm công cụ tài chính</label>
           <input id="genericToolSearch" class="tool-search-input" type="search" placeholder="Search tool, category, keyword">
@@ -328,7 +328,7 @@
             <div>
               <span class="panel-kicker">SAVINGS / DEPOSIT</span>
               <h2>Lãi suất ngân hàng</h2>
-              <p>So sánh lãi suất tiền gửi từ 6 ngân hàng lớn. Tính lợi tức thực nhận theo số tiền và kỳ hạn chọn.</p>
+              <p>So sánh nhanh lãi suất niêm yết tham khảo từ 10 ngân hàng và ngân hàng số phổ biến. Quy đổi ra lãi dự kiến và tổng nhận cuối kỳ theo số tiền và kỳ hạn chọn.</p>
             </div>
             <div class="data-status"><i></i><span><b>Snapshot tham chiếu</b><small>13/06/2026</small></span></div>
           </div>
@@ -343,7 +343,7 @@
               <div class="section-label"><span>01</span><strong>Số tiền gửi</strong></div>
               <label class="input-label" for="bankDeposit" style="margin-top:8px">Số tiền</label>
               <div class="money-input" style="margin-top:4px">
-                <input id="bankDeposit" type="number" min="1000000" step="1000000" value="100000000">
+                <input id="bankDeposit" type="text" inputmode="numeric" value="100.000.000">
                 <span>VNĐ</span>
               </div>
               <div class="quick-values" style="margin-top:8px">
@@ -361,7 +361,7 @@
             </div>
             <div id="bankRateTable" class="bank-rate-table"></div>
           </div>
-          <p class="source-note">Lãi suất tham chiếu từ bảng công bố chính thức trên website từng ngân hàng tháng 6/2026. Lãi tiết kiệm cá nhân tại TCTD được miễn thuế TNCN theo Điều 4 Luật Thuế TNCN.</p>
+          <p class="source-note">Lãi suất tham chiếu từ bảng công bố công khai tháng 6/2026 của 10 đơn vị phổ biến trên thị trường. Mô phỏng theo lãi suất niêm yết và lĩnh lãi cuối kỳ, chưa tách riêng đầy đủ giữa kênh online, tại quầy hoặc mọi tier số tiền. Lãi tiết kiệm cá nhân tại TCTD được miễn thuế TNCN theo Điều 4 Luật Thuế TNCN.</p>
         </section>
 
         <section class="tool-panel fire-panel" id="fxPanel" hidden>
@@ -666,6 +666,228 @@
           <div class="formula-box" id="fireFormula"></div>
         </section>
 
+        <section class="tool-panel ci-care-panel" id="ciCarePanel" hidden>
+          <div class="panel-heading">
+            <div>
+              <span class="panel-kicker" style="background:rgba(175,1,113,.08);color:#af0171;">INSURANCE / CRITICAL ILLNESS</span>
+              <h2 class="panel-title">MoMoCare | Bảo hiểm Sức khỏe+</h2>
+              <p class="panel-desc">Tính chi trả thực tế khi gặp 37 bệnh hiểm nghèo. Đồng chi trả 20% — Chubb Life chi 80% sau hạn mức.</p>
+            </div>
+          </div>
+          <div class="ci-care-body">
+            <div class="ci-care-left">
+              <div class="ci-field-group">
+                <label class="ci-label">Chọn bệnh hiểm nghèo</label>
+                <select class="ci-select" id="ciDiseaseSelect" onchange="ciOnDiseaseChange()">
+                  <optgroup label="🎗️ Ung thư &amp; U (3 bệnh)">
+                    <option value="1">Ung thư đe dọa tính mạng</option>
+                    <option value="18">U não</option>
+                    <option value="33">Phẫu thuật cắt bỏ khối u tuyến yên</option>
+                  </optgroup>
+                  <optgroup label="❤️ Tim mạch (9 bệnh)">
+                    <option value="2">Nhồi máu cơ tim</option>
+                    <option value="3">Mổ bắc cầu động mạch vành</option>
+                    <option value="4">Phẫu thuật van tim qua mổ tim hở</option>
+                    <option value="5">Phẫu thuật động mạch chủ</option>
+                    <option value="14">Viêm cơ tim cấp do vi rút - suy tim không hồi phục</option>
+                    <option value="16">Bệnh động mạch vành nghiêm trọng</option>
+                    <option value="24">Tăng áp động mạch phổi nguyên phát</option>
+                    <option value="34">Cấy máy tạo nhịp tim</option>
+                    <option value="35">Cấy máy khử rung tim</option>
+                  </optgroup>
+                  <optgroup label="🧠 Não &amp; Thần kinh (10 bệnh)">
+                    <option value="11">Di chứng TK vĩnh viễn sau chấn thương đầu</option>
+                    <option value="13">Tai biến mạch máu não - thương tật vĩnh viễn</option>
+                    <option value="15">Phẫu thuật não (mở sọ)</option>
+                    <option value="19">Viêm màng não vi khuẩn - di chứng TK vĩnh viễn</option>
+                    <option value="20">Viêm não do vi rút - di chứng TK vĩnh viễn</option>
+                    <option value="21">Hôn mê trên 96 giờ</option>
+                    <option value="22">Liệt tay chân (mất chức năng 2 chi)</option>
+                    <option value="23">Bệnh Parkinson vô căn nghiêm trọng</option>
+                    <option value="25">Bệnh thần kinh vận động</option>
+                    <option value="29">Bệnh Creutzfeldt-Jakob</option>
+                  </optgroup>
+                  <optgroup label="🫁 Nội tạng (8 bệnh)">
+                    <option value="6">Suy thận mạn giai đoạn cuối</option>
+                    <option value="7">Xơ gan giai đoạn cuối</option>
+                    <option value="8">Bệnh phổi giai đoạn cuối</option>
+                    <option value="9">Phẫu thuật ghép tạng chủ</option>
+                    <option value="17">Viêm gan siêu vi thể tối cấp</option>
+                    <option value="30">Viêm tụy mạn tính tái phát</option>
+                    <option value="32">Phẫu thuật cắt bỏ toàn bộ ruột non</option>
+                    <option value="37">Phẫu thuật cắt bỏ một bên phổi</option>
+                  </optgroup>
+                  <optgroup label="🩸 Máu &amp; Miễn dịch (4 bệnh)">
+                    <option value="26">Thiếu máu bất sản không hồi phục</option>
+                    <option value="27">Bệnh đa xơ cứng tái phát và tiến triển</option>
+                    <option value="28">Viêm thận do Lupus ban đỏ hệ thống</option>
+                    <option value="31">Xơ cứng bì tiến triển</option>
+                  </optgroup>
+                  <optgroup label="💥 Tổn thương nặng (3 bệnh)">
+                    <option value="10">Bỏng nghiêm trọng (≥20% diện tích da)</option>
+                    <option value="12">Viêm cân mạc hoại tử</option>
+                    <option value="36">Đứt lìa chi</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="ci-section-title">🏥 Nội trú &amp; điều trị</div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group">
+                  <label class="ci-label">Số ngày giường thường <span class="ci-cap">max 60 ngày</span></label>
+                  <div class="ci-slider-row">
+                    <input type="range" class="ci-range" id="ciHospDays" min="0" max="60" step="1" value="10" oninput="ciCalc()">
+                    <span class="ci-range-val" id="ciHospDaysVal">10 ngày</span>
+                  </div>
+                  <span class="ci-input-note">BH hạn mức 3.000.000đ/ngày</span>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">Chi phí thực/ngày giường</label>
+                  <input type="number" class="ci-input" id="ciHospCostPerDay" value="1500000" step="100000" min="0" oninput="ciCalc()">
+                </div>
+              </div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group">
+                  <label class="ci-label">Số ngày ICU <span class="ci-cap">max 30 ngày</span></label>
+                  <div class="ci-slider-row">
+                    <input type="range" class="ci-range" id="ciIcuDays" min="0" max="30" step="1" value="0" oninput="ciCalc()">
+                    <span class="ci-range-val" id="ciIcuDaysVal">0 ngày</span>
+                  </div>
+                  <span class="ci-input-note">Thực tế, không có trần/ngày ICU</span>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">Chi phí thực/ngày ICU</label>
+                  <input type="number" class="ci-input" id="ciIcuCostPerDay" value="5000000" step="100000" min="0" oninput="ciCalc()">
+                </div>
+              </div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group">
+                  <label class="ci-label">Chi phí phẫu thuật</label>
+                  <input type="number" class="ci-input" id="ciSurgery" value="0" step="1000000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Chi trả thực tế</span>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">Chi phí nội trú khác</label>
+                  <input type="number" class="ci-input" id="ciOther" value="0" step="500000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Xét nghiệm, hình ảnh, thuốc nội trú...</span>
+                </div>
+              </div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group">
+                  <label class="ci-label">Trước nhập viện <span class="ci-cap">30 ngày</span></label>
+                  <input type="number" class="ci-input" id="ciPreHosp" value="0" step="100000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Thực tế, trong vòng 30 ngày trước nhập viện</span>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">Sau xuất viện <span class="ci-cap">60 ngày</span></label>
+                  <input type="number" class="ci-input" id="ciPostHosp" value="0" step="100000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Thực tế, trong vòng 60 ngày sau xuất viện</span>
+                </div>
+              </div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group">
+                  <label class="ci-label">Xe cấp cứu</label>
+                  <input type="number" class="ci-input" id="ciAmbulance" value="0" step="100000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Xe 115: thực tế · Xe khác: max 15tr/năm</span>
+                </div>
+              </div>
+
+              <div class="ci-section-title">⭐ Quyền lợi đặc biệt</div>
+
+              <div class="ci-field-row" id="ciCancerRow">
+                <div class="ci-field-group">
+                  <label class="ci-label">Chi phí điều trị ung thư</label>
+                  <input type="number" class="ci-input" id="ciCancer" value="0" step="1000000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Hóa trị, xạ trị, liệu pháp đích... thực tế</span>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">PT tái tạo sau ung thư <span class="ci-cap">max 25tr/lần</span></label>
+                  <input type="number" class="ci-input" id="ciReconSurgery" value="0" step="1000000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Tối đa 1 lần/loại phẫu thuật</span>
+                </div>
+              </div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group" id="ciDialysisGroup">
+                  <label class="ci-label">Số tuần chạy thận <span class="ci-cap">max 250tr/năm</span></label>
+                  <div class="ci-slider-row">
+                    <input type="range" class="ci-range" id="ciDialysisWeeks" min="0" max="52" step="1" value="0" oninput="ciCalc()">
+                    <span class="ci-range-val" id="ciDialysisWeeksVal">0 tuần</span>
+                  </div>
+                  <span class="ci-input-note">~1.2tr/lần × 3 lần/tuần = ~3.6tr/tuần</span>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">Ghép nội tạng (chi phí pt)</label>
+                  <input type="number" class="ci-input" id="ciOrgTransplant" value="0" step="1000000" min="0" oninput="ciCalc()">
+                  <span class="ci-input-note">Chi trả thực tế</span>
+                </div>
+              </div>
+
+              <div class="ci-field-row">
+                <div class="ci-field-group">
+                  <label class="ci-label">Số ngày chăm sóc sau ĐT <span class="ci-cap">max 30 ngày · 1.5tr/ngày</span></label>
+                  <div class="ci-slider-row">
+                    <input type="range" class="ci-range" id="ciConvDays" min="0" max="30" step="1" value="0" oninput="ciCalc()">
+                    <span class="ci-range-val" id="ciConvDaysVal">0 ngày</span>
+                  </div>
+                </div>
+                <div class="ci-field-group">
+                  <label class="ci-label">Chăm sóc giảm nhẹ <span class="ci-cap">1 lần · max 60tr</span></label>
+                  <input type="number" class="ci-input" id="ciPalliative" value="0" step="1000000" min="0" max="60000000" oninput="ciCalc()">
+                  <span class="ci-input-note">Áp dụng 1 lần suốt thời gian HĐ</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ci-care-right">
+              <div class="ci-result-card">
+                <div class="ci-result-header">
+                  <span class="ci-result-label">CHUBB LIFE CHI TRẢ</span>
+                  <span class="ci-result-amount" id="ciResultAmount">0 đ</span>
+                </div>
+                <div class="ci-copay-note">Đồng chi trả 20% · Bạn tự lo <strong id="ciUserPaysInline">0 đ</strong></div>
+
+                <div class="ci-breakdown" id="ciBreakdown"></div>
+
+                <div class="ci-summary-rows">
+                  <div class="ci-summary-row">
+                    <span>Tổng chi phí điều trị</span>
+                    <span id="ciTotalCost">0 đ</span>
+                  </div>
+                  <div class="ci-summary-row">
+                    <span>Sau áp hạn mức BH</span>
+                    <span id="ciCappedCost">0 đ</span>
+                  </div>
+                  <div class="ci-summary-row ci-row-payout">
+                    <span><strong>Chubb Life chi trả (80%)</strong></span>
+                    <span id="ciInsurancePays"><strong>0 đ</strong></span>
+                  </div>
+                  <div class="ci-summary-row ci-row-user">
+                    <span>Bạn tự trả (20% + vượt hạn mức)</span>
+                    <span id="ciUserPays2">0 đ</span>
+                  </div>
+                </div>
+
+                <div class="ci-insight" id="ciInsight"></div>
+
+                <a class="ci-cta-btn" href="https://momo.vn/bao-hiem" target="_blank" onclick="momo_track('cta_click',{cta:'buy_momocare',location:'ci_care_panel'})">
+                  Mua MoMoCare trên MoMo →
+                </a>
+
+                <p class="ci-disclaimer">
+                  Mệnh giá 5 tỷ đ · Đồng chi trả 20% · Tổng tối đa 10 tỷ/3 năm HĐ<br>
+                  Thời gian chờ 90 ngày · Tuổi tham gia 18–50 · Số liệu mang tính tham khảo
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </section>
 
@@ -683,7 +905,7 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="/demos/financial.js?v=50"></script>
+  <script src="/demos/financial.js?v=56"></script>
   <style>
     /* Money Lab Catalog */
     #moneyLabCatalog { background: #f7f7f8; min-height: calc(100vh - 60px); }
