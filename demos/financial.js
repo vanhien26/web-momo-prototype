@@ -4141,7 +4141,18 @@ function injectEmbedBadge() {
 }
 
 // ─── CI Care Panel ─────────────────────────────────────────────────
-const CI_CANCER_IDS = new Set([1, 18, 33]);
+const CI_CANCER_IDS    = new Set([1, 18, 33]);
+const CI_KIDNEY_IDS    = new Set([6]);
+const CI_TRANSPLANT_IDS = new Set([9]);
+
+// Which special benefit groups are applicable per disease
+function ciApplicable(diseaseId) {
+  return {
+    cancer:    CI_CANCER_IDS.has(diseaseId),
+    dialysis:  CI_KIDNEY_IDS.has(diseaseId),
+    transplant: CI_TRANSPLANT_IDS.has(diseaseId),
+  };
+}
 
 function initCiCarePanel() {
   ciOnDiseaseChange();
@@ -4150,8 +4161,39 @@ function initCiCarePanel() {
 
 function ciOnDiseaseChange() {
   const id = parseInt(document.getElementById('ciDiseaseSelect').value, 10);
+  const app = ciApplicable(id);
+
+  // Show/hide rows and reset hidden fields to 0 to prevent stale values
   const cancerRow = document.getElementById('ciCancerRow');
-  if (cancerRow) cancerRow.style.display = CI_CANCER_IDS.has(id) ? '' : 'none';
+  if (cancerRow) {
+    cancerRow.style.display = app.cancer ? '' : 'none';
+    if (!app.cancer) {
+      ['ciCancer', 'ciReconSurgery'].forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.value = 0;
+      });
+    }
+  }
+
+  const dialysisGroup = document.getElementById('ciDialysisGroup');
+  if (dialysisGroup) {
+    dialysisGroup.style.display = app.dialysis ? '' : 'none';
+    if (!app.dialysis) {
+      const el = document.getElementById('ciDialysisWeeks');
+      if (el) { el.value = 0; }
+      const lbl = document.getElementById('ciDialysisWeeksVal');
+      if (lbl) lbl.textContent = '0 tuần';
+    }
+  }
+
+  const transplantInput = document.getElementById('ciOrgTransplant');
+  const transplantGroup = transplantInput?.closest('.ci-field-group');
+  if (transplantGroup) {
+    transplantGroup.style.display = app.transplant ? '' : 'none';
+    if (!app.transplant && transplantInput) transplantInput.value = 0;
+  }
+
+  ciCalc();
 }
 
 function ciCalc() {
@@ -4160,36 +4202,37 @@ function ciCalc() {
   const gi = id => parseInt(g(id)?.value || 0, 10) || 0;
 
   const diseaseId = parseInt(g('ciDiseaseSelect')?.value || 1, 10);
+  const app = ciApplicable(diseaseId);
 
   const hospDays      = gi('ciHospDays');
   const icuDays       = gi('ciIcuDays');
-  const dialysisWeeks = gi('ciDialysisWeeks');
+  const dialysisWeeks = app.dialysis  ? gi('ciDialysisWeeks') : 0;
   const convDays      = gi('ciConvDays');
   if (g('ciHospDaysVal'))      g('ciHospDaysVal').textContent      = hospDays + ' ngày';
   if (g('ciIcuDaysVal'))       g('ciIcuDaysVal').textContent       = icuDays + ' ngày';
   if (g('ciDialysisWeeksVal')) g('ciDialysisWeeksVal').textContent = dialysisWeeks + ' tuần';
   if (g('ciConvDaysVal'))      g('ciConvDaysVal').textContent      = convDays + ' ngày';
 
-  const hospCostPerDay  = gv('ciHospCostPerDay');
-  const icuCostPerDay   = gv('ciIcuCostPerDay');
-  const rawHosp         = hospDays * hospCostPerDay;
-  const rawIcu          = icuDays  * icuCostPerDay;
-  const rawSurgery      = gv('ciSurgery');
-  const rawOther        = gv('ciOther');
-  const rawPre          = gv('ciPreHosp');
-  const rawPost         = gv('ciPostHosp');
-  const rawAmbulance    = gv('ciAmbulance');
-  const rawCancer       = CI_CANCER_IDS.has(diseaseId) ? gv('ciCancer') : 0;
-  const rawRecon        = CI_CANCER_IDS.has(diseaseId) ? gv('ciReconSurgery') : 0;
-  const rawDialysis     = dialysisWeeks * 3 * 1200000;
-  const rawTransplant   = gv('ciOrgTransplant');
-  const rawConv         = convDays * 1500000;
-  const rawPall         = gv('ciPalliative');
+  const hospCostPerDay = gv('ciHospCostPerDay');
+  const icuCostPerDay  = gv('ciIcuCostPerDay');
+  const rawHosp        = hospDays * hospCostPerDay;
+  const rawIcu         = icuDays  * icuCostPerDay;
+  const rawSurgery     = gv('ciSurgery');
+  const rawOther       = gv('ciOther');
+  const rawPre         = gv('ciPreHosp');
+  const rawPost        = gv('ciPostHosp');
+  const rawAmbulance   = gv('ciAmbulance');
+  const rawCancer      = app.cancer    ? gv('ciCancer')        : 0;
+  const rawRecon       = app.cancer    ? gv('ciReconSurgery')  : 0;
+  const rawDialysis    = app.dialysis  ? dialysisWeeks * 3 * 1200000 : 0;
+  const rawTransplant  = app.transplant ? gv('ciOrgTransplant') : 0;
+  const rawConv        = convDays * 1500000;
+  const rawPall        = gv('ciPalliative');
 
-  const CAP_HOSP_DAY  = 3000000;
-  const CAP_AMBULANCE = 15000000;
-  const CAP_DIALYSIS  = 250000000;
-  const CAP_RECON     = 25000000;
+  const CAP_HOSP_DAY   = 3000000;
+  const CAP_AMBULANCE  = 15000000;
+  const CAP_DIALYSIS   = 250000000;
+  const CAP_RECON      = 25000000;
   const CAP_PALLIATIVE = 60000000;
 
   const cappedHosp      = hospDays * Math.min(hospCostPerDay, CAP_HOSP_DAY);
@@ -4229,13 +4272,13 @@ function ciCalc() {
     { label: 'Trước nhập viện', raw: rawPre, capped: cappedPre },
     { label: 'Sau xuất viện', raw: rawPost, capped: cappedPost },
     { label: 'Xe cấp cứu', raw: rawAmbulance, capped: cappedAmbulance, note: rawAmbulance > CAP_AMBULANCE ? 'Hạn mức 15tr/năm' : null },
-    { label: 'Điều trị ung thư', raw: rawCancer, capped: cappedCancer, showIf: CI_CANCER_IDS.has(diseaseId) },
-    { label: 'PT tái tạo ung thư', raw: rawRecon, capped: cappedRecon, note: rawRecon > CAP_RECON ? 'Hạn mức 25tr/lần' : null, showIf: CI_CANCER_IDS.has(diseaseId) },
-    { label: 'Chạy thận (' + dialysisWeeks + ' tuần)', raw: rawDialysis, capped: cappedDialysis, note: rawDialysis > CAP_DIALYSIS ? 'Hạn mức 250tr/năm' : null, showIf: dialysisWeeks > 0 },
-    { label: 'Ghép nội tạng', raw: rawTransplant, capped: cappedTransplant, showIf: rawTransplant > 0 },
-    { label: 'Chăm sóc sau ĐT (' + convDays + ' ngày)', raw: rawConv, capped: cappedConv, note: rawConv > 1500000 * 30 ? 'Hạn mức 45tr' : null, showIf: convDays > 0 },
-    { label: 'Chăm sóc giảm nhẹ', raw: rawPall, capped: cappedPall, note: rawPall > CAP_PALLIATIVE ? 'Hạn mức 60tr' : null, showIf: rawPall > 0 },
-  ].filter(r => (r.showIf === undefined || r.showIf) && r.raw > 0);
+    { label: 'Điều trị ung thư', raw: rawCancer, capped: cappedCancer },
+    { label: 'PT tái tạo ung thư', raw: rawRecon, capped: cappedRecon, note: rawRecon > CAP_RECON ? 'Hạn mức 25tr/lần' : null },
+    { label: 'Chạy thận (' + dialysisWeeks + ' tuần)', raw: rawDialysis, capped: cappedDialysis, note: rawDialysis > CAP_DIALYSIS ? 'Hạn mức 250tr/năm' : null },
+    { label: 'Ghép nội tạng', raw: rawTransplant, capped: cappedTransplant },
+    { label: 'Chăm sóc sau ĐT (' + convDays + ' ngày)', raw: rawConv, capped: cappedConv, note: rawConv > 1500000 * 30 ? 'Hạn mức 45tr' : null },
+    { label: 'Chăm sóc giảm nhẹ', raw: rawPall, capped: cappedPall, note: rawPall > CAP_PALLIATIVE ? 'Hạn mức 60tr' : null },
+  ].filter(r => r.raw > 0);
 
   const bdEl = g('ciBreakdown');
   if (bdEl) {
