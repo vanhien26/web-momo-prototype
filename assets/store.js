@@ -13,7 +13,7 @@ const PROTOTYPES = [
     id: 'financial',
     name: 'Money Lab',
     category: 'Widget',
-    navigationOnly: true,
+    utilitiesPage: true,
     maturity: 'Interactive',
     description: 'Biến search intent tài chính thành trải nghiệm tính toán hữu ích, dẫn người dùng đến hành động phù hợp trong hệ sinh thái MoMo.',
     jtbd: 'Tính nhanh, hiểu rõ, hành động ngay',
@@ -22,11 +22,14 @@ const PROTOTYPES = [
     hypothesis: 'Interactive utility tạo information gain tốt hơn content thuần và thu tín hiệu intent có giá trị cho funnel Web-to-App.',
     value: 'Mở rộng organic acquisition cho Credit, Insurance và Personal Finance với asset có khả năng tái sử dụng.',
     gate: 'Đo completion rate, CTA CTR, Web-to-App conversion và chất lượng traffic theo từng utility.',
-    src: 'demos/financial.html',
+    src: '/financial-utilities',
     address: 'web-momo-prototype.vercel.app/financial-utilities',
     tools: [
       { id: 'vay-nhanh',       name: 'Vay Nhanh',          category: 'Credit',     description: 'Ước tính số tiền trả hằng tháng theo số tiền vay, lãi suất và kỳ hạn.',               jtbd: 'Biết trước gánh nặng tài chính trước khi vay' },
       { id: 'tra-gop',         name: 'Trả Góp Ví Trả Sau', category: 'Credit',     description: 'Ước tính số tiền thanh toán hằng kỳ khi chuyển đổi trả góp dư nợ hoặc giao dịch qua Ví Trả Sau MoMo.', jtbd: 'Biết số tiền gốc và phí trả mỗi tháng qua Ví Trả Sau để cân đối chi tiêu.' },
+      { id: 'vay-mua-nha',     name: 'Vay Mua Nhà',        category: 'Credit',     description: 'Ước tính khoản vay mua nhà, số tiền trả hàng tháng, tổng lãi và áp lực DTI sau khi vay.', jtbd: 'Biết mình vay mua nhà được bao nhiêu và trả mỗi tháng ra sao' },
+      { id: 'dieu-kien-vay-mua-nha', name: 'Điều Kiện Vay Mua Nhà', category: 'Credit', description: 'Pre-check khả năng vay mua nhà theo thu nhập, vốn tự có và hệ số DTI.', jtbd: 'Biết hồ sơ có đủ điều kiện vay sơ bộ trước khi gặp ngân hàng' },
+      { id: 'lai-the-tin-dung', name: 'Lãi Thẻ Tín Dụng', category: 'Credit', description: 'Ước tính lãi thẻ tín dụng nếu chỉ trả tối thiểu và số tiền cần trả để dứt nợ nhanh hơn.', jtbd: 'Biết cái giá của việc trả tối thiểu và cách thoát nợ thẻ' },
       { id: 'cic-score',       name: 'CIC Score',          category: 'Credit',     description: 'Mô phỏng điểm tín dụng CIC theo các yếu tố thanh toán, sử dụng hạn mức và lịch sử.', jtbd: 'Biết điểm CIC hiện tại và cách cải thiện' },
       { id: 'cic-stimulator',  name: 'CIC Stimulator',     category: 'Credit',     description: 'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.',        jtbd: 'Lên kế hoạch cải thiện điểm CIC trước khi vay' },
       { id: 'net-worth',       name: 'Giá Trị Tài Sản Ròng', category: 'Financial Health', description: 'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng tại một thời điểm.', jtbd: 'Biết vị thế tài chính ròng để ưu tiên tăng tài sản hoặc giảm nợ' },
@@ -36,6 +39,7 @@ const PROTOTYPES = [
       { id: 'bhxh',            name: 'BHXH',               category: 'Insurance',  description: 'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.',                  jtbd: 'Hiểu quyền lợi BHXH để quyết định đóng tự nguyện' },
       { id: 'luong-huu',       name: 'Lương Hưu',          category: 'Insurance',  description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.', jtbd: 'Biết trước lương hưu để lập kế hoạch nghỉ hưu' },
       { id: 'bhxh-1-lan',      name: 'BHXH 1 Lần',         category: 'Insurance',  description: 'Ước tính số tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024: 1,5 tháng MBQTL/năm trước 2014, 2 tháng/năm từ 2014, auto trượt giá CPI.', jtbd: 'Cân nhắc rút BHXH một lần hay giữ tiếp để lương hưu' },
+      { id: 'tro-cap-that-nghiep', name: 'Trợ Cấp Thất Nghiệp', category: 'Insurance', description: 'Ước tính mức hưởng và thời gian nhận trợ cấp thất nghiệp theo lương đóng và số tháng tham gia.', jtbd: 'Biết mình được nhận bao nhiêu và trong bao lâu khi nghỉ việc' },
       { id: 'tiet-kiem',       name: 'Tiết Kiệm',          category: 'Savings',    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',                 jtbd: 'Biết trước lợi tức để chọn kỳ hạn tiết kiệm phù hợp' },
       { id: 'nuoi-con',        name: 'Kế Hoạch Nuôi Con',  category: 'Savings',    description: 'Ước tính chi phí nuôi dạy con đến 18 tuổi và số tiền cần tích lũy hằng tháng cho quỹ đại học.', jtbd: 'Biết trước chi phí nuôi con để lập kế hoạch tài chính gia đình vững vàng.' },
       { id: 'lai-suat',        name: 'Lãi Suất Ngân Hàng', category: 'Savings',    description: 'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận theo số tiền và kỳ hạn.', jtbd: 'Chọn ngân hàng và kỳ hạn cho lãi suất tốt nhất' },
@@ -900,7 +904,7 @@ function renderNav() {
           <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
           <span class="proto-nav-label">
             <strong>${p.name}</strong>
-            <small>${p.navigationOnly ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category)))}</small>
+            <small>${p.utilitiesPage ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category)))}</small>
           </span>
           ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
         </button>
@@ -1096,7 +1100,7 @@ function buildHomeCard(proto) {
   return `<article class="hl-card" data-open-proto="${proto.id}">
     <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${proto.maturity}</span>
     <h3 class="hl-card-name">${proto.name}</h3>
-    <button class="hl-open-btn" type="button">${proto.navigationOnly ? `Xem ${proto.tools.length} utilities ↓` : 'Preview ↗'}</button>
+    <button class="hl-open-btn" type="button">${proto.utilitiesPage ? `Xem ${proto.tools.length} utilities ↓` : 'Preview ↗'}</button>
   </article>`;
 }
 
@@ -1464,7 +1468,7 @@ function buildProtoView(proto) {
 
 function buildToolView(proto, tool, toolPath = [tool]) {
   const tc  = CAT_COLOR[tool.category] || CAT_COLOR['Planning'];
-  const src = tool.src || `demos/financial.html#${tool.id}`;
+  const src = tool.src || `${proto.src}#${tool.id}`;
   const preview = previewSrc(src);
   const address = tool.address || `${proto.address}#${tool.id}`;
   const parentTool = toolPath.length > 1 ? toolPath.at(-2) : null;

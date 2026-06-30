@@ -11,9 +11,9 @@ const PROTOTYPES = [
   },
   {
     id: 'financial',
-    name: 'Widget Store',
+    name: 'Money Lab',
     category: 'Widget',
-    navigationOnly: true,
+    utilitiesPage: true,
     maturity: 'Interactive',
     description: 'Biến search intent tài chính thành trải nghiệm tính toán hữu ích, dẫn người dùng đến hành động phù hợp trong hệ sinh thái MoMo.',
     jtbd: 'Tính nhanh, hiểu rõ, hành động ngay',
@@ -22,11 +22,14 @@ const PROTOTYPES = [
     hypothesis: 'Interactive utility tạo information gain tốt hơn content thuần và thu tín hiệu intent có giá trị cho funnel Web-to-App.',
     value: 'Mở rộng organic acquisition cho Credit, Insurance và Personal Finance với asset có khả năng tái sử dụng.',
     gate: 'Đo completion rate, CTA CTR, Web-to-App conversion và chất lượng traffic theo từng utility.',
-    src: 'demos/financial.html',
+    src: '/financial-utilities',
     address: 'web-momo-prototype.vercel.app/financial-utilities',
     tools: [
       { id: 'vay-nhanh',       name: 'Vay Nhanh',          category: 'Credit',     description: 'Ước tính số tiền trả hằng tháng theo số tiền vay, lãi suất và kỳ hạn.',               jtbd: 'Biết trước gánh nặng tài chính trước khi vay' },
       { id: 'tra-gop',         name: 'Trả Góp Ví Trả Sau', category: 'Credit',     description: 'Ước tính số tiền thanh toán hằng kỳ khi chuyển đổi trả góp dư nợ hoặc giao dịch qua Ví Trả Sau MoMo.', jtbd: 'Biết số tiền gốc và phí trả mỗi tháng qua Ví Trả Sau để cân đối chi tiêu.' },
+      { id: 'vay-mua-nha',     name: 'Vay Mua Nhà',        category: 'Credit',     description: 'Ước tính khoản vay mua nhà, số tiền trả hàng tháng, tổng lãi và áp lực DTI sau khi vay.', jtbd: 'Biết mình vay mua nhà được bao nhiêu và trả mỗi tháng ra sao' },
+      { id: 'dieu-kien-vay-mua-nha', name: 'Điều Kiện Vay Mua Nhà', category: 'Credit', description: 'Pre-check khả năng vay mua nhà theo thu nhập, vốn tự có và hệ số DTI.', jtbd: 'Biết hồ sơ có đủ điều kiện vay sơ bộ trước khi gặp ngân hàng' },
+      { id: 'lai-the-tin-dung', name: 'Lãi Thẻ Tín Dụng', category: 'Credit', description: 'Ước tính lãi thẻ tín dụng nếu chỉ trả tối thiểu và số tiền cần trả để dứt nợ nhanh hơn.', jtbd: 'Biết cái giá của việc trả tối thiểu và cách thoát nợ thẻ' },
       { id: 'cic-score',       name: 'CIC Score',          category: 'Credit',     description: 'Mô phỏng điểm tín dụng CIC theo các yếu tố thanh toán, sử dụng hạn mức và lịch sử.', jtbd: 'Biết điểm CIC hiện tại và cách cải thiện' },
       { id: 'cic-stimulator',  name: 'CIC Stimulator',     category: 'Credit',     description: 'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.',        jtbd: 'Lên kế hoạch cải thiện điểm CIC trước khi vay' },
       { id: 'net-worth',       name: 'Giá Trị Tài Sản Ròng', category: 'Financial Health', description: 'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng tại một thời điểm.', jtbd: 'Biết vị thế tài chính ròng để ưu tiên tăng tài sản hoặc giảm nợ' },
@@ -36,6 +39,7 @@ const PROTOTYPES = [
       { id: 'bhxh',            name: 'BHXH',               category: 'Insurance',  description: 'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.',                  jtbd: 'Hiểu quyền lợi BHXH để quyết định đóng tự nguyện' },
       { id: 'luong-huu',       name: 'Lương Hưu',          category: 'Insurance',  description: 'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.', jtbd: 'Biết trước lương hưu để lập kế hoạch nghỉ hưu' },
       { id: 'bhxh-1-lan',      name: 'BHXH 1 Lần',         category: 'Insurance',  description: 'Ước tính số tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024: 1,5 tháng MBQTL/năm trước 2014, 2 tháng/năm từ 2014, auto trượt giá CPI.', jtbd: 'Cân nhắc rút BHXH một lần hay giữ tiếp để lương hưu' },
+      { id: 'tro-cap-that-nghiep', name: 'Trợ Cấp Thất Nghiệp', category: 'Insurance', description: 'Ước tính mức hưởng và thời gian nhận trợ cấp thất nghiệp theo lương đóng và số tháng tham gia.', jtbd: 'Biết mình được nhận bao nhiêu và trong bao lâu khi nghỉ việc' },
       { id: 'tiet-kiem',       name: 'Tiết Kiệm',          category: 'Savings',    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',                 jtbd: 'Biết trước lợi tức để chọn kỳ hạn tiết kiệm phù hợp' },
       { id: 'nuoi-con',        name: 'Kế Hoạch Nuôi Con',  category: 'Savings',    description: 'Ước tính chi phí nuôi dạy con đến 18 tuổi và số tiền cần tích lũy hằng tháng cho quỹ đại học.', jtbd: 'Biết trước chi phí nuôi con để lập kế hoạch tài chính gia đình vững vàng.' },
       { id: 'lai-suat',        name: 'Lãi Suất Ngân Hàng', category: 'Savings',    description: 'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận theo số tiền và kỳ hạn.', jtbd: 'Chọn ngân hàng và kỳ hạn cho lãi suất tốt nhất' },
@@ -79,8 +83,8 @@ const PROTOTYPES = [
     category: 'Platform',
     ownerGroup: 'Web Platform',
     maturity: 'Hub',
-    description: 'Hub Merchant của MoMo - cửa hàng chấp nhận Ví Trả Sau và voucher. Listing theo khu vực kèm bản đồ (Airbnb/Groupon style), kết nối tới Merchant Discovery (card stack swipe) và Merchant Detail (trang chi tiết). User vào Hub thấy nhanh quán quanh đây, deep-link xuống sub-page khi cần khám phá hoặc xem chi tiết.',
-    jtbd: 'Tìm merchant phù hợp trong khu vực và dùng dịch vụ ngay',
+    description: 'Hub Merchant của MoMo - tổng hợp các merchant chấp nhận Ví Trả Sau, phân nhóm theo bối cảnh và dẫn sang Merchant Discovery hoặc Merchant Detail khi user cần xem sâu hơn.',
+    jtbd: 'Xem nhanh danh sách merchant có Ví Trả Sau theo nhu cầu và chọn nơi phù hợp',
     northStar: 'Voucher redeem rate per Hub session',
     loop: 'Browse hub map → Discovery/Detail → Redeem voucher → Pay',
     hypothesis: 'Hub gom 3 pattern khám phá (map listing, swipe stack, detail) vào một surface giúp user chuyển intent linh hoạt theo bối cảnh sử dụng, tăng coverage so với 3 trang đứng riêng.',
@@ -109,12 +113,12 @@ const PROTOTYPES = [
       },
       {
         id: 'vts-merchant-finder',
-        name: 'Listing Page (pSEO)',
+        name: 'Listing Merchant Page',
         category: 'Sub-page',
-        description: 'Listing page pSEO — tìm cửa hàng VTS theo địa điểm (mall, chợ, khu vực). Template data-driven: zone filter tự ẩn/hiện theo location_type. Demo: Crescent Mall với 5 tầng, 25 merchants, 34 tỉnh/TP từ vietnamese-provinces-database.',
-        jtbd: 'Biết ngay cửa hàng nào tại địa điểm này nhận Ví Trả Sau và hoàn tiền bao nhiêu',
+        description: 'Listing Merchant Page — tổng hợp merchant có Ví Trả Sau theo địa điểm (mall, chợ, khu vực). Template data-driven: zone filter tự ẩn/hiện theo location_type. Demo: Crescent Mall với 5 tầng, 25 merchants, 34 tỉnh/TP từ vietnamese-provinces-database.',
+        jtbd: 'Biết ngay merchant nào tại địa điểm này nhận Ví Trả Sau và hoàn tiền bao nhiêu',
         src: 'demos/vts-merchant-finder.html',
-        address: 'web-momo-prototype.vercel.app/merchant/listing',
+        address: 'web-momo-prototype.vercel.app/listing-merchant-page',
       },
     ],
   },
@@ -140,7 +144,7 @@ const PROTOTYPES = [
         category: 'Film Detail',
         ownerGroup: 'Cell Team',
         maturity: 'Detail Page',
-        description: 'Film Detail page cho MoMo Cinema tập trung vào booking flow: poster, showtime, seat popup, popcorn popup và payment popup.',
+        description: 'Film Detail page cho MoMo Cinema tập trung vào Supergirl: poster, rating, casting, cụm rạp, showtime tactics, seat popup, popcorn popup và payment popup.',
         jtbd: 'Chọn suất chiếu, giữ ghế, thêm bắp nước và thanh toán nhanh',
         northStar: 'Ticket purchase completion',
         loop: 'Film detail → Showtime → Seat popup → Popcorn popup → Payment',
@@ -148,7 +152,7 @@ const PROTOTYPES = [
         value: 'Trang detail bám intent đặt vé, dẫn người dùng từ film overview tới seat, snack và payment trong một luồng rõ ràng.',
         gate: 'Đo showtime CTR, seat selection, snack attach rate và payment completion.',
         src: 'demos/cinema-film-detail.html',
-        address: 'web-momo-prototype.vercel.app/cinema/nghi-he-so-nghi-huu',
+        address: 'web-momo-prototype.vercel.app/cinema/supergirl-24851',
       },
     ],
   },
@@ -289,17 +293,6 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/world-cup-2026',
   },
   {
-    id: 'widget-store',
-    name: 'Widget Store Manager',
-    category: 'Widget',
-    maturity: 'Interactive',
-    description: 'Trang quản lý toàn bộ Widget Store: 33 công cụ chia 3 category (Financial, Payments, Security) hiển thị với đa dạng UI/UX — domain color taxonomy, featured cards, service tile grid, threat monitor. Có domain filter, list/grid toggle và copy embed code.',
-    jtbd: 'Xem tổng quan và quản lý toàn bộ widget có thể nhúng vào MoMo platform',
-    northStar: 'Widget discovery và embed adoption rate',
-    src: 'demos/widget-store.html',
-    address: 'web-momo-prototype.vercel.app/widget-store',
-  },
-  {
     id: 'payments',
     name: 'Billpay',
     category: 'Widget',
@@ -334,60 +327,67 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/scam-check',
   },
   {
+    id: 'news',
+    name: 'News',
+    category: 'Platform',
+    ownerGroup: 'Web Platform',
+    maturity: 'News Hub',
+    description: 'News là dự án PLG của Web Platform cho thông tin mới, thông cáo, cập nhật sản phẩm và chiến dịch. Surface ưu tiên tính thời sự, newsroom feed, topic filters và CTA theo từng bản tin.',
+    jtbd: 'Nắm nhanh thông tin mới từ MoMo và đi tiếp đến sản phẩm, chiến dịch hoặc bài viết liên quan.',
+    northStar: 'News engagement -> product CTA conversion',
+    loop: 'Browse News -> Filter Topic -> Read Update -> Follow CTA',
+    hypothesis: 'Một News Hub tách khỏi Blog giúp nội dung thời sự không bị lẫn với bài evergreen, tăng khả năng quét tin nhanh và giảm nhiễu intent.',
+    value: 'Tạo surface PLG riêng cho update chính thức, launch notes, campaign brief và thông cáo, phù hợp traffic cần thông tin mới.',
+    gate: 'Đo news card CTR, topic filter usage, update read depth, product CTA conversion và return visits.',
+    src: 'demos/news.html',
+    address: 'web-momo-prototype.vercel.app/news',
+    tools: [
+      {
+        id: 'news-detail',
+        name: 'News Detail',
+        category: 'Child Page',
+        description: 'Trang detail cho newsroom update: hero, tóm tắt, thay đổi chính, related updates và CTA theo slug bản tin.',
+        jtbd: 'Đọc bản tin chi tiết và chuyển ngay sang hành động hoặc surface liên quan.',
+        src: 'demos/news-detail.html',
+        address: 'web-momo-prototype.vercel.app/news/cinema-update',
+      },
+    ],
+  },
+  {
     id: 'blog-category',
-    name: 'MoSpark Blog',
-    category: 'MoSpark',
-    maturity: 'Listing',
-    description: 'Blog Hub-and-Spoke: Category là cha (listing 8 danh mục Use Case + featured article + filter tabs), Article là child page chuyên sâu (full-width + quiz tương tác + floating TOC + inline ads). Pattern Cate → Article giống Investopedia/Cloudflare Learning.',
-    jtbd: 'Khám phá nội dung blog theo danh mục Use Case rồi đi sâu vào bài cụ thể, kiểm tra hiểu biết qua quiz và chuyển đổi sang dịch vụ MoMo.',
-    northStar: 'Category → Article CTR + Article completion + CTA conversion',
-    loop: 'Browse Category → Filter → Click Article → Read → Quiz → Convert',
-    hypothesis: 'Cấu trúc Category (cha) → Article (con) tập trung internal link equity về Hub Category cho từng Use Case, tăng entity authority. Article có quiz + contextual ad theo chủ đề tăng engagement và conversion so với blog phẳng.',
-    value: 'Tạo bề mặt điều hướng nội dung 2 tầng (8 category × N article) cho SEO/GEO, mỗi Category là entity hub củng cố Link Equity, mỗi Article là content depth target từng query.',
-    gate: 'Đo category filter usage, article CTR từ listing, scroll depth article, quiz completion, CTA conversion cả category lẫn article.',
+    name: 'Blog',
+    category: 'Platform',
+    ownerGroup: 'Web Platform',
+    maturity: 'Content Hub',
+    description: 'Blog là dự án PLG của Web Platform theo mô hình Hub-and-Spoke: Category là parent project, Blog Article là child page front-end cho reader, và Blog Editor là child page back-end cho CMS authoring. Pattern Category -> Article/Editor giúp Dev và PO nhìn rõ lớp reader-facing và lớp vận hành nội dung.',
+    jtbd: 'Khám phá nội dung evergreen theo danh mục Use Case, đọc bài chi tiết ở front-end, đồng thời quản trị draft và publish flow ở back-end trên cùng một project.',
+    northStar: 'Blog category -> Article CTR + Article completion + publish throughput',
+    loop: 'Browse Category -> Open Article -> Read/Convert -> Edit Draft -> Preview -> Publish',
+    hypothesis: 'Gom front-end reader và back-end authoring vào cùng Blog project giúp team giữ chung content contract, giảm handoff rời rạc giữa content, SEO và Dev.',
+    value: 'Tạo bề mặt nội dung 2 tầng cho SEO/GEO, đồng thời cho thấy rõ cặp child page front-end/back-end đang vận hành cùng một Blog architecture.',
+    gate: 'Đo category filter usage, article CTR từ listing, scroll depth article, preview-to-publish rate và publish cycle time.',
     src: 'demos/blog-category.html',
     address: 'web-momo-prototype.vercel.app/mospark-blog',
     tools: [
       {
         id: 'blog',
         name: 'Blog Article',
-        category: 'Child Page',
-        description: 'Article child page chuyên sâu: full-width + quiz tương tác + floating TOC + inline ads (Universal + Contextual) + static aggregate rating + progressive reading. Mỗi Article thuộc về 1 Category cha.',
-        jtbd: 'Đọc bài chuyên sâu về chủ đề cụ thể, test hiểu biết qua quiz inline rồi chuyển sang app MoMo nếu phù hợp.',
+        category: 'Front-end',
+        description: 'Blog article child page ở lớp front-end: reader experience full-width với floating TOC, quiz tương tác, inline ads và progressive reading. Đây là bề mặt user-facing sau khi draft được publish từ CMS.',
+        jtbd: 'Đọc bài chuyên sâu về chủ đề cụ thể, test hiểu biết qua quiz inline và chuyển sang dịch vụ MoMo nếu phù hợp.',
         src: 'demos/blog.html',
-        address: 'web-momo-prototype.vercel.app/mospark-blog/phạt-nguội',
+        address: 'web-momo-prototype.vercel.app/mospark-blog/phat-nguoi',
+      },
+      {
+        id: 'blog-editor',
+        name: 'Blog Editor (Tiptap)',
+        category: 'Back-end',
+        description: 'Child page ở lớp back-end cho CMS authoring: editor Tiptap để tạo, format, preview và publish draft sang Blog Article front-end trên cùng data contract.',
+        jtbd: 'Soạn thảo và quản trị draft blog trực quan, sau đó preview và publish ra Blog Article mà không cần chạm HTML.',
+        src: 'demos/blog-editor.html',
+        address: 'web-momo-prototype.vercel.app/mospark-blog/editor',
       },
     ],
-  },
-  {
-    id: 'articles',
-    name: 'Articles & News Hub',
-    category: 'MoSpark',
-    maturity: 'Prototype',
-    description: 'Hub tin tức và khuyến mãi MoMo: feed bài viết đa danh mục (Tin tức, Khuyến mãi, Sự kiện, Hướng dẫn, Tài chính), ticker realtime, hero featured article, và reader panel slide-in inline. Mô hình phân phối nội dung in-app + out-app.',
-    jtbd: 'Người dùng khám phá tin tức và ưu đãi MoMo theo danh mục, tìm bài viết liên quan, đọc nội dung đầy đủ và chuyển đổi sang tính năng tương ứng.',
-    northStar: 'Article CTR from listing + Reader completion rate + CTA conversion',
-    loop: 'Browse feed → Filter category → Click article → Read full → CTA → Feature',
-    hypothesis: 'Feed tin tức + khuyến mãi tập trung trên một trang giúp người dùng khám phá ưu đãi hiệu quả hơn so với thông báo push rời rạc. Reader panel inline giảm drop-off so với mở trang mới.',
-    value: 'Bề mặt phân phối nội dung editorial MoMo (in-app + out-app): articles, promotions, events, guides. Ticker realtime là kênh highlight ưu đãi hot mà không cần push notification.',
-    gate: 'Đo: article CTR từ listing, reader scroll depth, category filter usage, CTA click rate, ticker interaction rate.',
-    src: 'demos/articles.html',
-    address: 'web-momo-prototype.vercel.app/articles',
-  },
-  {
-    id: 'blog-editor',
-    name: 'Blog Editor (Tiptap)',
-    category: 'MoSpark',
-    maturity: 'Prototype',
-    description: 'Tiptap-based rich text editor cho MoSpark CMS. Notion-style block editor với slash commands (/), bubble menu khi bôi chọn text, 12 block types (paragraph, heading, callout, list, table, codeblock, image, divider...) và AI assist inline. Pre-loaded bài mẫu Ví Trả Sau MoMo.',
-    jtbd: 'Content editor viết và format bài blog trực quan — không cần biết HTML/Markdown. Slash commands + block types rich giúp tạo nội dung SEO-structured nhanh hơn 3x so với plain textarea.',
-    northStar: 'Time-to-publish (draft → publish) giảm + Content quality score tăng (SEO checklist auto)',
-    loop: 'Open draft → Write với slash commands → Insert blocks → Preview → Publish',
-    hypothesis: 'Editor có block types rõ ràng (callout, table, structured list) giúp content creator tự nhiên tạo ra content structured data-rich, tăng khả năng được AI Overview / GEO citation so với plain text.',
-    value: 'Giảm dependency vào dev cho content formatting. Editor enforce cấu trúc SEO (H1→H2→H3, callout cho FAQ, table cho comparison) ngay từ lúc viết.',
-    gate: 'Đo: time-to-draft, block type diversity per article, slash command usage rate, article publish rate.',
-    src: 'demos/blog-editor.html',
-    address: 'web-momo-prototype.vercel.app/blog-editor',
   },
   {
     id: 'orchestrator',
@@ -622,6 +622,8 @@ const CAT_COLOR = {
   'Other':      { bg: '#f1f5f9', text: '#475569' },
   'Destination':{ bg: '#fff0f7', text: '#a50064' },
   'Child Page':  { bg: '#fff0f7', text: '#a50064' },
+  'Front-end':  { bg: '#eefbf3', text: '#15803d' },
+  'Back-end':   { bg: '#eff6ff', text: '#1d4ed8' },
 };
 
 const GROUP_LABEL = {
@@ -641,7 +643,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
-  Database: ['supabase-editor', 'blog-category', 'blog-editor', 'articles', 'merchant-page-builder'],
+  Database: ['supabase-editor', 'merchant-page-builder'],
   Modules:  ['ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
 };
 
@@ -650,10 +652,10 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'supabase-editor', 'blog-category', 'blog-editor', 'articles', 'merchant-page-builder', 'ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'supabase-editor', 'merchant-page-builder', 'ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
   MiniWeb: ['mini-web-overview'],
-  Widget: ['widget-store', 'financial', 'payments', 'scam-check'],
-  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'merchant', 'dich-vu-cong'],
+  Widget: ['financial', 'payments', 'scam-check'],
+  Platform: ['phat-nguoi', 'esim-du-lich', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center'],
 };
 
@@ -662,7 +664,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'MoSpark Platform',
     title: 'MoSpark Platform',
     description: 'Chia thành 3 cụm: GenAI (năng lực tạo sinh & orchestration), Database (data layer & content tools), Modules (bề mặt vận hành & tăng trưởng).',
-    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Supabase · Blog · Merchant Builder | Modules: Ads · SEO/GEO',
+    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Supabase · Blog Editor · Merchant Builder | Modules: Ads · SEO/GEO',
   },
   MiniWeb: {
     eyebrow: 'Mini Web Overview',
@@ -685,8 +687,8 @@ const GROUP_SUMMARY = {
   Platform: {
     eyebrow: 'PLG Project',
     title: 'PLG Project',
-    description: 'Cell Team triển khai các use case theo ngành hàng; Web Platform xây các surface dùng chung cho Merchant và Search.',
-    examples: 'Cell Team: Phạt Nguội · eSIM · Cinema | Web Platform: Search · Merchant Discovery · Merchant',
+    description: 'Cell Team triển khai các use case theo ngành hàng; Web Platform xây các surface PLG dùng chung cho News, Blog, Merchant và Search.',
+    examples: 'Cell Team: Phạt Nguội · eSIM · Cinema | Web Platform: News · Blog · Merchant Discovery · Merchant',
   },
 };
 
@@ -902,7 +904,7 @@ function renderNav() {
           <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
           <span class="proto-nav-label">
             <strong>${p.name}</strong>
-            <small>${p.navigationOnly ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category)))}</small>
+            <small>${p.utilitiesPage ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category)))}</small>
           </span>
           ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
         </button>
@@ -980,9 +982,10 @@ const MOSPARK_HOME_CAPABILITIES = [
     proto: 'genai-image',
   },
   {
-    title: 'GenAI Content',
-    text: 'Sản xuất outline, article, FAQ và product embed từ Content Plan đã duyệt, có Business Context và quality gate.',
+    title: 'Content Editor',
+    text: 'Child page back-end của Blog project: soạn thảo article, FAQ và product embed từ Content Plan đã duyệt rồi preview sang Blog Article front-end.',
     proto: 'blog-category',
+    tool: 'blog-editor',
   },
   {
     title: 'Ads & Widget',
@@ -1026,7 +1029,7 @@ function buildMoSparkHomeIntro() {
         <h1>Product Led Growth trên Web MoMo</h1>
         <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
         <div class="mh-actions">
-          <button type="button" class="mh-primary" data-open-proto="blog">Mở demo Phạt Nguội</button>
+          <button type="button" class="mh-primary" data-open-proto="blog-category" data-open-tool="blog">Mở demo Phạt Nguội</button>
           <button type="button" class="mh-secondary" data-open-proto="seo-geo-project">Xem SEO/GEO Project</button>
         </div>
       </div>
@@ -1045,7 +1048,7 @@ function buildMoSparkHomeIntro() {
       </div>
       <div class="mh-cap-grid">
         ${MOSPARK_HOME_CAPABILITIES.map(cap => `
-          <article class="mh-cap-card" data-open-proto="${cap.proto}">
+          <article class="mh-cap-card" data-open-proto="${cap.proto}"${cap.tool ? ` data-open-tool="${cap.tool}"` : ''}>
             <h3>${cap.title}</h3>
             <p>${cap.text}</p>
             <button type="button">Open prototype ↗</button>
@@ -1097,7 +1100,7 @@ function buildHomeCard(proto) {
   return `<article class="hl-card" data-open-proto="${proto.id}">
     <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${proto.maturity}</span>
     <h3 class="hl-card-name">${proto.name}</h3>
-    <button class="hl-open-btn" type="button">${proto.navigationOnly ? `Xem ${proto.tools.length} utilities ↓` : 'Preview ↗'}</button>
+    <button class="hl-open-btn" type="button">${proto.utilitiesPage ? `Xem ${proto.tools.length} utilities ↓` : 'Preview ↗'}</button>
   </article>`;
 }
 
@@ -1465,7 +1468,7 @@ function buildProtoView(proto) {
 
 function buildToolView(proto, tool, toolPath = [tool]) {
   const tc  = CAT_COLOR[tool.category] || CAT_COLOR['Planning'];
-  const src = tool.src || `demos/financial.html#${tool.id}`;
+  const src = tool.src || `${proto.src}#${tool.id}`;
   const preview = previewSrc(src);
   const address = tool.address || `${proto.address}#${tool.id}`;
   const parentTool = toolPath.length > 1 ? toolPath.at(-2) : null;
@@ -1555,7 +1558,10 @@ function previewSrc(src) {
 
 function wireHome(ws) {
   ws.querySelectorAll('[data-open-proto]').forEach(btn => {
-    btn.addEventListener('click', () => selectProto(btn.dataset.openProto));
+    btn.addEventListener('click', () => {
+      if (btn.dataset.openTool) selectTool(btn.dataset.openProto, btn.dataset.openTool);
+      else selectProto(btn.dataset.openProto);
+    });
   });
 
   const mt = ws.querySelector('#menuToggle');

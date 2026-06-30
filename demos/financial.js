@@ -15,6 +15,21 @@ const fmtM = n => {
   return fmt(n);
 };
 const parseMoney = s => +String(s).replace(/[^\d]/g, '') || 0;
+const FINANCIAL_ICON_SPRITE = '/assets/icons/momo/financial-sharp.svg';
+const svgIcon = (id, className = 'fin-svg-icon') =>
+  `<svg class="${className}" aria-hidden="true" focusable="false"><use href="${FINANCIAL_ICON_SPRITE}#${id}"></use></svg>`;
+const calcMonthlyPayment = (principal, annualRate, months) => {
+  const monthlyRate = annualRate / 100 / 12;
+  if (months <= 0) return 0;
+  if (monthlyRate === 0) return principal / months;
+  return principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+};
+const calcLoanCapacity = (monthlyPayment, annualRate, months) => {
+  const monthlyRate = annualRate / 100 / 12;
+  if (months <= 0) return 0;
+  if (monthlyRate === 0) return monthlyPayment * months;
+  return monthlyPayment * (1 - Math.pow(1 + monthlyRate, -months)) / monthlyRate;
+};
 
 // ─── CIC Data
 const CIC_BANDS = [
@@ -188,6 +203,127 @@ const NPL_GROUPS = [
   },
 ];
 
+const AUTO_INSURANCE_SCENARIOS = {
+  collision: {
+    label: 'Va chạm',
+    damageRatio: 0.28,
+    description: 'Đâm va thân vỏ, móp méo, thay cản, đèn và sơn lại nhiều hạng mục.',
+  },
+  flood: {
+    label: 'Thủy kích',
+    damageRatio: 0.42,
+    description: 'Nước vào khoang máy hoặc nội thất, cần xử lý động cơ và điện.',
+  },
+  fire: {
+    label: 'Cháy nổ',
+    damageRatio: 0.78,
+    description: 'Thiệt hại lớn tới khoang máy và thân xe, cần phục hồi sâu hoặc thay cụm lớn.',
+  },
+  glass: {
+    label: 'Vỡ kính',
+    damageRatio: 0.07,
+    description: 'Kính lái hoặc kính sườn vỡ, thay mới và hiệu chỉnh cảm biến liên quan.',
+  },
+  theft: {
+    label: 'Mất cắp bộ phận',
+    damageRatio: 0.18,
+    description: 'Mất gương, đèn, camera, lazang hoặc chi tiết ngoại thất có giá trị.',
+  },
+};
+
+const AUTO_INSURANCE_PARTNERS = [
+  {
+    id: 'pvi',
+    name: 'Bảo hiểm PVI',
+    logo: 'PVI',
+    brandColor: '#1f4f9b',
+    accidentCover: 1,
+    compensation: { collision: 0.92, flood: 0.82, fire: 0.95, glass: 0.93, theft: 0.85 },
+    deductible: { collision: 1000000, flood: 2500000, fire: 1000000, glass: 500000, theft: 1500000 },
+    note: 'Mạng garage mạnh ở thành phố lớn, thủy kích cần có điều khoản mở rộng.',
+  },
+  {
+    id: 'baoviet',
+    name: 'Bảo hiểm Bảo Việt',
+    logo: 'Bảo Việt',
+    brandColor: '#1c6ab6',
+    accidentCover: 1,
+    compensation: { collision: 0.9, flood: 0.78, fire: 0.94, glass: 0.91, theft: 0.83 },
+    deductible: { collision: 1000000, flood: 3000000, fire: 1000000, glass: 500000, theft: 2000000 },
+    note: 'Phù hợp xe gia đình, hồ sơ đầy đủ thì bồi thường ổn định.',
+  },
+  {
+    id: 'mic',
+    name: 'Bảo hiểm MIC',
+    logo: 'MIC',
+    brandColor: '#178a4b',
+    accidentCover: 1,
+    compensation: { collision: 0.88, flood: 0.8, fire: 0.9, glass: 0.9, theft: 0.8 },
+    deductible: { collision: 1500000, flood: 2500000, fire: 1200000, glass: 500000, theft: 1800000 },
+    note: 'Có lợi thế khi sửa chữa tại hệ sinh thái đối tác quân đội và tỉnh thành.',
+  },
+  {
+    id: 'pjico',
+    name: 'Bảo hiểm PJICO',
+    logo: 'PJICO',
+    brandColor: '#0e5fa8',
+    accidentCover: 1,
+    compensation: { collision: 0.87, flood: 0.74, fire: 0.89, glass: 0.88, theft: 0.79 },
+    deductible: { collision: 1500000, flood: 3500000, fire: 1500000, glass: 700000, theft: 2000000 },
+    note: 'Thường cạnh tranh về phí nhưng mức miễn thường cao hơn ở ca phức tạp.',
+  },
+  {
+    id: 'dbv',
+    name: 'Bảo hiểm DBV',
+    logo: 'DBV',
+    brandColor: '#0f8c4d',
+    accidentCover: 1,
+    compensation: { collision: 0.85, flood: 0.72, fire: 0.88, glass: 0.86, theft: 0.76 },
+    deductible: { collision: 1800000, flood: 3500000, fire: 1800000, glass: 800000, theft: 2200000 },
+    note: 'Phù hợp bài toán tối ưu phí, nên đọc kỹ điều khoản xe ngập nước.',
+  },
+  {
+    id: 'pti',
+    name: 'Bảo hiểm PTI',
+    logo: 'PTI',
+    brandColor: '#f28c28',
+    accidentCover: 1,
+    compensation: { collision: 0.86, flood: 0.76, fire: 0.88, glass: 0.87, theft: 0.78 },
+    deductible: { collision: 1500000, flood: 3000000, fire: 1500000, glass: 700000, theft: 1800000 },
+    note: 'Tỷ lệ chi trả cân bằng, xử lý tốt ca thay phụ tùng và kính xe.',
+  },
+  {
+    id: 'liberty',
+    name: 'Bảo hiểm Liberty',
+    logo: 'Liberty',
+    brandColor: '#253b80',
+    accidentCover: 1,
+    compensation: { collision: 0.91, flood: 0.84, fire: 0.96, glass: 0.94, theft: 0.88 },
+    deductible: { collision: 1000000, flood: 2200000, fire: 1000000, glass: 400000, theft: 1500000 },
+    note: 'Nhóm top nếu ưu tiên trải nghiệm claim và mức chi trả cao hơn mặt bằng.',
+  },
+  {
+    id: 'gic',
+    name: 'Bảo hiểm GIC',
+    logo: 'GIC',
+    brandColor: '#165fa7',
+    accidentCover: 1,
+    compensation: { collision: 0.84, flood: 0.7, fire: 0.86, glass: 0.85, theft: 0.75 },
+    deductible: { collision: 1800000, flood: 3800000, fire: 1800000, glass: 800000, theft: 2200000 },
+    note: 'Mạnh ở nhóm xe phổ thông, bồi thường nên kỳ vọng theo phương án tiêu chuẩn.',
+  },
+  {
+    id: 'baolong',
+    name: 'Bảo hiểm Bảo Long',
+    logo: 'Bảo Long',
+    brandColor: '#c88821',
+    accidentCover: 1,
+    compensation: { collision: 0.85, flood: 0.73, fire: 0.87, glass: 0.86, theft: 0.77 },
+    deductible: { collision: 1800000, flood: 3200000, fire: 1600000, glass: 700000, theft: 2000000 },
+    note: 'Phù hợp xe kinh doanh và xe lâu năm, cần chốt rõ phương án garage liên kết.',
+  },
+];
+
 // ─── Lookup lãi suất Vay Nhanh theo (amount, term) — empirical từ momo.vn (range 2,20% - 4,08%/tháng)
 function lookupVayNhanhRate(amount, term) {
   const M = amount / 1000000;
@@ -208,10 +344,10 @@ const TOOLS = [
     description: 'Hạn mức đến 100 triệu, kỳ hạn 6 - 48 tháng. Lãi suất 2,20% - 4,08%/tháng (tự động theo gói vay). Tính theo dư nợ giảm dần, cộng phí thu hộ 20.000đ/tháng.',
     jtbd: 'Tôi đang cần một khoản tiền gấp nhưng phân vân không biết vay bao nhiêu, kỳ hạn nào sẽ phù hợp. Cần thấy ngay <b>tiền trả mỗi tháng và lãi suất áp dụng cho gói vay của mình</b>, để chọn được khoản vay <b>vừa đủ tiêu vừa trả nổi mà không gãy ngân sách hàng tháng</b>.',
     highlights: [
-      { icon: '📅', text: 'Trả góp đến 48 tháng' },
-      { icon: '⚡', text: 'Duyệt trong 1 phút' },
-      { icon: '📄', text: 'Không cần CM thu nhập' },
-      { icon: '🌐', text: '100% online' },
+      { icon: 'calendar', text: 'Trả góp đến 48 tháng' },
+      { icon: 'fast-approval', text: 'Duyệt trong 1 phút' },
+      { icon: 'document-check', text: 'Không cần CM thu nhập' },
+      { icon: 'online', text: '100% online' },
     ],
     partners: [
       { abbr: 'EVF', name: 'EVN Finance',  color: '#0f766e' },
@@ -314,8 +450,134 @@ const TOOLS = [
     },
   },
   {
+    id: 'vay-mua-nha', name: 'Vay Mua Nhà', category: 'Credit', abbr: 'VMN',
+    intent: 'Commercial intent', panel: 'generic', ui: 'calculator-product',
+    description: 'Ước tính khoản vay mua nhà, số tiền trả hàng tháng, tổng lãi và áp lực DTI sau khi vay.',
+    jtbd: 'Tôi muốn biết với giá nhà hiện tại và số vốn tự có của mình thì phải vay bao nhiêu, trả mỗi tháng bao nhiêu và có chịu nổi không, để quyết định nên mua ngay hay tiếp tục tích lũy thêm.',
+    formula: 'Khoản vay = <b>Giá nhà − Vốn tự có</b><br>Trả hàng tháng = <b>PMT(khoản vay, lãi suất tháng, số tháng vay)</b><br>DTI sau vay = <b>(Nợ hiện tại + trả nhà hàng tháng) ÷ Thu nhập tháng</b>',
+    resultLabel: 'TRẢ NHÀ MỖI THÁNG',
+    fields: [
+      { id: 'homePrice',      label: 'Giá căn nhà',          type: 'money', min: 500000000, max: 20000000000, step: 50000000, value: 2500000000, chips: [1500000000, 2500000000, 4000000000] },
+      { id: 'downPayment',    label: 'Vốn tự có / trả trước',type: 'money', min: 100000000, max: 10000000000, step: 50000000, value: 750000000, chips: [500000000, 750000000, 1200000000] },
+      { id: 'mortgageRate',   label: 'Lãi suất vay/năm',     type: 'range', min: 4, max: 16, step: 0.25, value: 8.5, unit: '%', chips: [6.5, 8.5, 10.5, 12] },
+      { id: 'mortgageYears',  label: 'Thời hạn vay',         type: 'select', options: [
+        { value: 10, label: '10 năm' }, { value: 15, label: '15 năm' }, { value: 20, label: '20 năm' },
+        { value: 25, label: '25 năm' }, { value: 30, label: '30 năm' },
+      ], value: 20 },
+      { id: 'mortgageIncome', label: 'Thu nhập hộ gia đình/tháng', type: 'money', min: 5000000, max: 500000000, step: 500000, value: 45000000, chips: [25000000, 45000000, 70000000] },
+      { id: 'mortgageDebt',   label: 'Nghĩa vụ nợ khác/tháng', type: 'money', min: 0, max: 100000000, step: 500000, value: 4000000, chips: [0, 4000000, 10000000] },
+    ],
+    compute(v) {
+      const loanAmount = Math.max(0, v.homePrice - v.downPayment);
+      const months = v.mortgageYears * 12;
+      const monthly = calcMonthlyPayment(loanAmount, v.mortgageRate, months);
+      const totalInterest = Math.max(0, monthly * months - loanAmount);
+      const dtiAfter = v.mortgageIncome > 0 ? ((v.mortgageDebt + monthly) / v.mortgageIncome) * 100 : 0;
+      const downPaymentRatio = v.homePrice > 0 ? (v.downPayment / v.homePrice) * 100 : 0;
+      const stressRate = v.mortgageRate + 2;
+      const stressPayment = calcMonthlyPayment(loanAmount, stressRate, months);
+      const status = dtiAfter <= 40 ? 'Trong ngưỡng an toàn' : (dtiAfter <= 50 ? 'Cần cân đối thêm' : 'Áp lực cao');
+      return { result: fmt(monthly), details: [
+        { label: 'Khoản vay dự kiến', value: fmtM(loanAmount) },
+        { label: 'Tỷ lệ trả trước', value: downPaymentRatio.toFixed(1) + '%' },
+        { label: 'DTI sau vay', value: dtiAfter.toFixed(1) + '% · ' + status },
+        { label: 'Tổng lãi phải trả', value: fmtM(totalInterest) },
+        { label: `Nếu lãi tăng lên ${stressRate.toFixed(2)}%`, value: fmtM(stressPayment) + '/tháng' },
+      ], insight: dtiAfter <= 40
+        ? `Khoản vay này đang ở vùng chịu đựng tương đối tốt. Điểm cần theo dõi là quỹ dự phòng và kịch bản lãi suất tăng lên <b>${stressRate.toFixed(2)}%</b>.`
+        : `Khoản trả nhà đang chiếm tỷ trọng lớn trong thu nhập. Hãy thử tăng vốn tự có hoặc kéo dài kỳ hạn để đưa DTI về dưới <b>40%</b>.` };
+    },
+  },
+  {
+    id: 'dieu-kien-vay-mua-nha', name: 'Điều Kiện Vay Mua Nhà', category: 'Credit', abbr: 'DKN',
+    intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
+    description: 'Pre-check khả năng vay mua nhà theo thu nhập, trả trước, hệ số DTI và loại hồ sơ thu nhập.',
+    jtbd: 'Tôi muốn biết hồ sơ của mình có đủ điều kiện vay mua nhà sơ bộ hay chưa trước khi đi gặp ngân hàng, để tránh mất thời gian chuẩn bị khi tỷ lệ đậu còn thấp.',
+    formula: 'Vay đề xuất = <b>Giá nhà − Vốn tự có</b><br>LTV = <b>Khoản vay ÷ Giá nhà</b><br>Điểm sơ bộ dựa trên <b>DTI, tỷ lệ trả trước, loại thu nhập và biên an toàn dòng tiền</b>',
+    resultLabel: 'ĐÁNH GIÁ SƠ BỘ',
+    fields: [
+      { id: 'eligibilityHomePrice',   label: 'Giá căn nhà',                type: 'money', min: 500000000, max: 20000000000, step: 50000000, value: 2500000000, chips: [1500000000, 2500000000, 4000000000] },
+      { id: 'eligibilityDownPayment', label: 'Vốn tự có',                  type: 'money', min: 100000000, max: 10000000000, step: 50000000, value: 700000000, chips: [500000000, 700000000, 1200000000] },
+      { id: 'eligibilityIncome',      label: 'Thu nhập hộ gia đình/tháng', type: 'money', min: 5000000, max: 500000000, step: 500000, value: 40000000, chips: [25000000, 40000000, 70000000] },
+      { id: 'eligibilityDebt',        label: 'Nghĩa vụ nợ khác/tháng',     type: 'money', min: 0, max: 100000000, step: 500000, value: 3000000, chips: [0, 3000000, 10000000] },
+      { id: 'eligibilityProfile',     label: 'Loại hồ sơ thu nhập',        type: 'select', options: [
+        { value: 'salary', label: 'Lương chuyển khoản ổn định' },
+        { value: 'mixed', label: 'Lương + kinh doanh / hoa hồng' },
+        { value: 'business', label: 'Kinh doanh / tự doanh' },
+      ], value: 'salary' },
+      { id: 'eligibilityYears',       label: 'Thời hạn vay dự kiến',       type: 'select', options: [
+        { value: 15, label: '15 năm' }, { value: 20, label: '20 năm' }, { value: 25, label: '25 năm' }, { value: 30, label: '30 năm' },
+      ], value: 20 },
+    ],
+    compute(v) {
+      const loanAmount = Math.max(0, v.eligibilityHomePrice - v.eligibilityDownPayment);
+      const ltv = v.eligibilityHomePrice > 0 ? (loanAmount / v.eligibilityHomePrice) * 100 : 0;
+      const payment = calcMonthlyPayment(loanAmount, 9.5, v.eligibilityYears * 12);
+      const dti = v.eligibilityIncome > 0 ? ((v.eligibilityDebt + payment) / v.eligibilityIncome) * 100 : 0;
+      const downRatio = v.eligibilityHomePrice > 0 ? (v.eligibilityDownPayment / v.eligibilityHomePrice) * 100 : 0;
+      let score = 0;
+      if (downRatio >= 30) score += 2; else if (downRatio >= 20) score += 1;
+      if (dti <= 40) score += 2; else if (dti <= 50) score += 1;
+      score += { salary: 2, mixed: 1, business: 0 }[v.eligibilityProfile] || 0;
+      const status = score >= 5 ? 'Đạt sơ bộ' : (score >= 3 ? 'Cần bổ sung hồ sơ / vốn tự có' : 'Khó đạt ở cấu hình hiện tại');
+      const maxSafePayment = Math.max(0, v.eligibilityIncome * 0.4 - v.eligibilityDebt);
+      const maxLoan = calcLoanCapacity(maxSafePayment, 9.5, v.eligibilityYears * 12);
+      return { result: status, details: [
+        { label: 'Khoản vay đang xin', value: fmtM(loanAmount) },
+        { label: 'LTV ước tính', value: ltv.toFixed(1) + '%' },
+        { label: 'DTI giả định sau vay', value: dti.toFixed(1) + '%' },
+        { label: 'Mức trả nhà chịu được/tháng', value: fmtM(maxSafePayment) },
+        { label: 'Khoản vay tối đa theo dòng tiền', value: fmtM(maxLoan) },
+      ], insight: score >= 5
+        ? `Hồ sơ đang ở vùng có thể đi tiếp sang bước làm việc với ngân hàng. Điểm mạnh là tỷ lệ trả trước <b>${downRatio.toFixed(1)}%</b> và DTI <b>${dti.toFixed(1)}%</b>.`
+        : `Điểm nghẽn chính nằm ở ${downRatio < 20 ? '<b>tỷ lệ trả trước thấp</b>' : '<b>áp lực DTI sau vay</b>'}. Hãy tăng vốn tự có hoặc giảm giá trị căn nhà để hồ sơ dễ đậu hơn.` };
+    },
+  },
+  {
+    id: 'lai-the-tin-dung', name: 'Lãi Thẻ Tín Dụng', category: 'Credit', abbr: 'LTTD',
+    intent: 'Informational intent', panel: 'generic', ui: 'goal-planner',
+    description: 'Ước tính lãi thẻ tín dụng nếu chỉ trả tối thiểu và tính số tiền cần trả để dứt nợ trong thời hạn mục tiêu.',
+    jtbd: 'Tôi muốn biết nếu chỉ trả tối thiểu dư nợ thẻ thì sẽ tốn bao nhiêu lãi và cần trả bao nhiêu mỗi tháng để thoát nợ nhanh hơn, nhằm tránh sa vào vòng xoáy finance charge.',
+    formula: 'Lãi tháng = <b>Dư nợ còn lại × Lãi suất năm ÷ 12</b><br>Trả tối thiểu = <b>Dư nợ × Tỷ lệ tối thiểu</b><br>Trả mục tiêu = <b>PMT(dư nợ, lãi tháng, số tháng muốn tất toán)</b>',
+    resultLabel: 'TRẢ ĐỂ DỨT NỢ / THÁNG',
+    fields: [
+      { id: 'cardBalance',      label: 'Dư nợ thẻ hiện tại',        type: 'money', min: 1000000, max: 500000000, step: 500000, value: 35000000, chips: [10000000, 35000000, 70000000] },
+      { id: 'cardAnnualRate',   label: 'Lãi suất thẻ/năm',          type: 'range', min: 12, max: 48, step: 0.5, value: 30, unit: '%', chips: [24, 30, 36, 42] },
+      { id: 'cardMinRate',      label: 'Tỷ lệ trả tối thiểu',       type: 'select', options: [
+        { value: 3, label: '3% dư nợ' }, { value: 4, label: '4% dư nợ' }, { value: 5, label: '5% dư nợ' },
+      ], value: 5 },
+      { id: 'cardTargetMonths', label: 'Muốn tất toán sau',         type: 'select', options: [
+        { value: 6, label: '6 tháng' }, { value: 12, label: '12 tháng' }, { value: 18, label: '18 tháng' }, { value: 24, label: '24 tháng' },
+      ], value: 12 },
+    ],
+    compute(v) {
+      const targetPayment = calcMonthlyPayment(v.cardBalance, v.cardAnnualRate, v.cardTargetMonths);
+      const monthlyRate = v.cardAnnualRate / 100 / 12;
+      const firstMinPayment = Math.max(v.cardBalance * v.cardMinRate / 100, 50000);
+      let balance = v.cardBalance;
+      let minMonths = 0;
+      let minInterest = 0;
+      while (balance > 0 && minMonths < 600) {
+        const interest = balance * monthlyRate;
+        const payment = Math.min(balance + interest, Math.max(balance * v.cardMinRate / 100, 50000));
+        minInterest += interest;
+        balance = Math.max(0, balance + interest - payment);
+        minMonths += 1;
+        if (payment <= interest + 1000) break;
+      }
+      const targetInterest = Math.max(0, targetPayment * v.cardTargetMonths - v.cardBalance);
+      return { result: fmt(targetPayment), details: [
+        { label: 'Trả tối thiểu tháng này', value: fmtM(firstMinPayment) },
+        { label: 'Nếu chỉ trả tối thiểu', value: `${minMonths} tháng · ${fmtM(minInterest)} tiền lãi` },
+        { label: 'Tổng lãi nếu dứt nợ đúng mục tiêu', value: fmtM(targetInterest) },
+        { label: 'Tiết kiệm lãi so với trả tối thiểu', value: fmtM(Math.max(0, minInterest - targetInterest)) },
+        { label: 'Lãi tháng đầu tiên', value: fmtM(v.cardBalance * monthlyRate) },
+      ], insight: `Nếu chỉ trả tối thiểu, dư nợ sẽ kéo dài rất lâu và finance charge tích lũy mạnh. Mốc hợp lý hơn là trả <b>${fmtM(targetPayment)}/tháng</b> để dứt nợ trong <b>${v.cardTargetMonths} tháng</b>.` };
+    },
+  },
+  {
     id: 'cic-score', name: 'CIC Score', category: 'Credit', abbr: 'CIC',
-    intent: 'Informational intent', panel: 'generic',
+    intent: 'Informational intent', panel: 'cic',
     description: 'Tra cứu hạng tín dụng CIC theo điểm số và xem điều kiện vay vốn tương ứng.',
     jtbd: 'Tôi vừa biết điểm CIC của mình nhưng chưa rõ điểm này tương ứng hạng tín dụng nào và triển vọng vay vốn ra sao. Cần biết ngay <b>mình đang ở hạng nào và có vay được không</b>, để <b>chuẩn bị phương án vay phù hợp trước khi đi nộp hồ sơ</b>.',
     formula: '<b>5 yếu tố ảnh hưởng điểm CIC:</b><br>Lịch sử thanh toán (35%) &nbsp;·&nbsp; Tổng dư nợ (30%) &nbsp;·&nbsp; Số lượng tín dụng (15%) &nbsp;·&nbsp; Độ dài lịch sử (10%) &nbsp;·&nbsp; Chất lượng quan hệ (10%)',
@@ -522,12 +784,13 @@ const TOOLS = [
     },
   },
   {
-    id: 'bao-hiem-o-to', name: 'BH Ô Tô', category: 'Insurance', abbr: 'BH',
+    id: 'bao-hiem-o-to', name: 'Bảo Hiểm Ô Tô', category: 'Insurance', abbr: 'BH',
     intent: 'Commercial intent', panel: 'generic',
     description: 'Mô phỏng phí bảo hiểm vật chất ô tô (BHVC tự nguyện) theo giá trị xe và độ tuổi xe. Tỷ lệ tham chiếu thị trường 2026 từ Bảo Việt, PJICO, OPES, MIC: 1,4% - 2% giá trị xe.',
     jtbd: 'Tôi sắp mua hoặc gia hạn bảo hiểm vật chất cho xe và muốn biết phải trả bao nhiêu. Cần biết ngay <b>phí bảo hiểm năm dự kiến theo giá trị xe và độ tuổi xe của mình</b>, để <b>dự trù ngân sách và so sánh giữa các gói trước khi quyết định mua</b>.',
     formula: 'Phí BHVC/năm = <b>Giá trị xe × Tỷ lệ phí (%)</b> + <b>VAT 10%</b><br><em>Tỷ lệ thị trường: xe con dưới 3 năm 1,4% &nbsp;·&nbsp; 3-6 năm 1,6% &nbsp;·&nbsp; trên 6 năm 1,8% &nbsp;·&nbsp; SUV/Pickup +0,2%</em>',
     resultLabel: 'PHÍ BẢO HIỂM NĂM',
+    partners: AUTO_INSURANCE_PARTNERS,
     fields: [
       { id: 'carValue',      label: 'Giá trị xe',  type: 'money',  min: 100000000, max: 5000000000, step: 10000000, value: 500000000, chips: [200000000, 500000000, 1000000000] },
       { id: 'insuranceRate', label: 'Loại xe và độ tuổi', type: 'select', options: [
@@ -536,15 +799,46 @@ const TOOLS = [
         {value:1.8, label:'1,80% - Xe con trên 6 năm hoặc SUV/Pickup 3-6 năm'},
         {value:2.0, label:'2,00% - SUV/Pickup trên 6 năm'},
       ], value: 1.4 },
+      { id: 'partnerId', label: 'Đối tác bảo hiểm', type: 'select-items', options: AUTO_INSURANCE_PARTNERS.map(partner => ({
+        value: partner.id,
+        label: partner.logo,
+      })), value: 'pvi' },
+      { id: 'incidentType', label: 'Tình huống xe bị tổn thất', type: 'select', options: [
+        { value: 'collision', label: 'Va chạm thân vỏ / đâm va' },
+        { value: 'flood', label: 'Thủy kích / ngập nước' },
+        { value: 'fire', label: 'Cháy nổ' },
+        { value: 'glass', label: 'Vỡ kính' },
+        { value: 'theft', label: 'Mất cắp bộ phận' },
+      ], value: 'collision' },
     ],
     compute(v) {
       const p = v.carValue * v.insuranceRate / 100, vat = p * 0.1;
+      const scenario = AUTO_INSURANCE_SCENARIOS[v.incidentType] || AUTO_INSURANCE_SCENARIOS.collision;
+      const damageEstimate = v.carValue * scenario.damageRatio;
+      const selectedPartner = AUTO_INSURANCE_PARTNERS.find(partner => partner.id === v.partnerId) || AUTO_INSURANCE_PARTNERS[0];
+      const partnerQuotes = AUTO_INSURANCE_PARTNERS.map(partner => {
+        const coverFactor = partner.compensation[v.incidentType] || 0;
+        const deductible = partner.deductible[v.incidentType] || 0;
+        return {
+          partner,
+          payout: Math.max(0, Math.min(v.carValue, damageEstimate * coverFactor - deductible)),
+          deductible,
+          coverFactor,
+        };
+      }).sort((a, b) => b.payout - a.payout);
+      const best = partnerQuotes[0];
+      const selectedQuote = partnerQuotes.find(item => item.partner.id === selectedPartner.id) || best;
       return { result: fmt(p + vat), details: [
+        { label: 'Đối tác đang chọn', value: selectedPartner.name },
         { label: 'Phí bảo hiểm thuần', value: fmt(p) },
         { label: 'VAT (10%)', value: fmt(vat) },
         { label: 'Bồi thường tối đa', value: fmtM(v.carValue) },
         { label: 'Tỷ lệ phí áp dụng', value: v.insuranceRate.toFixed(2) + '%' },
-      ]};
+        { label: `Thiệt hại tham chiếu - ${scenario.label}`, value: fmtM(damageEstimate) },
+        { label: `${selectedPartner.logo} chi trả dự kiến`, value: fmtM(selectedQuote.payout) },
+        { label: 'Điều khoản áp dụng', value: `${Math.round(selectedQuote.coverFactor * 100)}% tổn thất · miễn thường ${fmtM(selectedQuote.deductible)}` },
+        { label: 'Mốc tham chiếu tốt nhất', value: `${best.partner.name} - ${fmtM(best.payout)}` },
+      ], insight: `${scenario.description} Với ${selectedPartner.name}, mức bồi thường dự kiến là <b>${fmtM(selectedQuote.payout)}</b>. ${selectedPartner.note}` };
     },
   },
   {
@@ -766,6 +1060,66 @@ const TOOLS = [
     },
   },
   {
+    id: 'tro-cap-that-nghiep', name: 'Trợ Cấp Thất Nghiệp', category: 'Insurance', abbr: 'TCTN',
+    intent: 'Informational intent', panel: 'generic',
+    description: 'Ước tính trợ cấp thất nghiệp theo bình quân lương đóng BHTN 6 tháng cuối, số tháng đã đóng và mức trần theo vùng lương.',
+    jtbd: 'Tôi muốn biết nếu nghỉ việc bây giờ thì mình có được hưởng trợ cấp thất nghiệp không, mỗi tháng nhận bao nhiêu và nhận trong bao lâu, để chủ động dòng tiền trong giai đoạn chuyển việc.',
+    formula: 'Mức hưởng tháng = <b>60% × Bình quân lương đóng BHTN 6 tháng cuối</b>, nhưng không vượt <b>5 × mức lương tối thiểu vùng</b> hoặc <b>5 × lương cơ sở</b><br>Thời gian hưởng: <b>12-36 tháng đóng = 3 tháng</b>, sau đó <b>cứ thêm đủ 12 tháng = +1 tháng</b>, tối đa <b>12 tháng</b>',
+    resultLabel: 'TRỢ CẤP THÁNG ƯỚC TÍNH',
+    fields: [
+      { id: 'unemploymentAvgSalary', label: 'Bình quân lương đóng BHTN 6 tháng cuối', type: 'money', min: 3000000, max: 100000000, step: 500000, value: 18000000, chips: [10000000, 18000000, 30000000] },
+      { id: 'unemploymentMonths', label: 'Tổng số tháng đã đóng BHTN', type: 'range', min: 0, max: 180, step: 1, value: 48, unit: 'tháng', chips: [12, 36, 60, 120] },
+      { id: 'unemploymentSystem', label: 'Nhóm người lao động', type: 'select', options: [
+        { value: 'regional', label: 'Doanh nghiệp hưởng trần theo lương tối thiểu vùng' },
+        { value: 'public', label: 'Khối nhà nước hưởng trần theo lương cơ sở' },
+      ], value: 'regional' },
+      { id: 'unemploymentRegion', label: 'Vùng lương tối thiểu', type: 'select', options: [
+        { value: 1, label: 'Vùng I' },
+        { value: 2, label: 'Vùng II' },
+        { value: 3, label: 'Vùng III' },
+        { value: 4, label: 'Vùng IV' },
+      ], value: 1, condition: { field: 'unemploymentSystem', value: 'regional' } },
+    ],
+    compute(v) {
+      if (v.unemploymentMonths < 12) {
+        return {
+          result: 'Chưa đủ ĐK',
+          details: [
+            { label: 'Số tháng đã đóng', value: `${v.unemploymentMonths} tháng` },
+            { label: 'Điều kiện tối thiểu', value: 'Cần từ 12 tháng đóng BHTN' },
+          ],
+          insight: 'Chưa đủ điều kiện hưởng trợ cấp thất nghiệp. Cần ít nhất 12 tháng đóng BHTN trong giai đoạn luật quy định để nộp hồ sơ.',
+        };
+      }
+
+      const regionalCaps = { 1: 5310000, 2: 4730000, 3: 4140000, 4: 3700000 };
+      const baseSalary = 2340000;
+      const capSource = v.unemploymentSystem === 'regional'
+        ? 5 * regionalCaps[v.unemploymentRegion || 1]
+        : 5 * baseSalary;
+      const monthlyBenefit = Math.min(v.unemploymentAvgSalary * 0.6, capSource);
+      const durationMonths = Math.min(12, v.unemploymentMonths <= 36 ? 3 : 3 + Math.floor((v.unemploymentMonths - 36) / 12));
+      const totalBenefit = monthlyBenefit * durationMonths;
+      const capLabel = v.unemploymentSystem === 'regional'
+        ? `5 × lương tối thiểu vùng ${v.unemploymentRegion}`
+        : '5 × lương cơ sở';
+      const capped = monthlyBenefit < v.unemploymentAvgSalary * 0.6;
+
+      return {
+        result: fmt(monthlyBenefit),
+        details: [
+          { label: '60% lương bình quân', value: fmt(v.unemploymentAvgSalary * 0.6) + '/tháng' },
+          { label: `Trần áp dụng (${capLabel})`, value: fmt(capSource) + '/tháng' },
+          { label: 'Số tháng được hưởng', value: `${durationMonths} tháng` },
+          { label: 'Tổng trợ cấp ước tính', value: fmt(totalBenefit) },
+        ],
+        insight: capped
+          ? `Mức hưởng bị chặn bởi trần ${capLabel}. Bạn dự kiến nhận ${fmt(monthlyBenefit)}/tháng trong ${durationMonths} tháng.`
+          : `Bạn dự kiến nhận ${fmt(monthlyBenefit)}/tháng trong ${durationMonths} tháng, tổng khoảng ${fmt(totalBenefit)} nếu hồ sơ đủ điều kiện và nộp đúng hạn.`,
+      };
+    },
+  },
+  {
     id: 'tiet-kiem', name: 'Tiết Kiệm', category: 'Savings', abbr: 'TK',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất. Lãi tiết kiệm cá nhân tại TCTD được miễn thuế TNCN theo Điều 4 Luật Thuế TNCN.',
@@ -880,10 +1234,10 @@ const TOOLS = [
     resultLabel: 'THUẾ TNCN ƯỚC TÍNH',
     fields: [
       { id: 'incomeType', label: 'Loại thu nhập', type: 'select', options: [
-        {value:'luong-hd',     label:'💼 Lương từ HĐLĐ (biểu lũy tiến 5 bậc)'},
-        {value:'ctv',          label:'🧑‍💻 CTV / Freelance (khấu trừ 10% tại nguồn)'},
-        {value:'dau-tu',       label:'📈 Đầu tư vốn / Cổ tức (5% cố định)'},
-        {value:'trung-thuong', label:'🎁 Trúng thưởng / Quà tặng (10% vượt 10tr)'},
+        {value:'luong-hd',     label:'Lương từ HĐLĐ (biểu lũy tiến 5 bậc)'},
+        {value:'ctv',          label:'CTV / Freelance (khấu trừ 10% tại nguồn)'},
+        {value:'dau-tu',       label:'Đầu tư vốn / Cổ tức (5% cố định)'},
+        {value:'trung-thuong', label:'Trúng thưởng / Quà tặng (10% vượt 10tr)'},
       ], value: 'luong-hd' },
       { id: 'grossSalary', label: 'Thu nhập/tháng', type: 'money', min: 1000000, max: 500000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000] },
       { id: 'salaryBh',    label: 'Lương đóng BH/tháng (HĐLĐ) - để trống nếu = lương gross', type: 'money', min: 0, max: 100000000, step: 500000, value: 0, chips: [0, 5000000, 10000000, 15000000], condition: { field: 'incomeType', value: 'luong-hd' } },
@@ -1117,10 +1471,10 @@ const TOOLS = [
     },
   },
   {
-    id: 'gold',  name: 'Giá Vàng & Sức Mua', category: 'Investment', abbr: 'AU',  panel: 'gold',
+    id: 'gold',  name: 'Giá Vàng', category: 'Investment', abbr: 'AU',  panel: 'gold',
   },
   {
-    id: 'stock', name: 'Tập Đầu Tư CK',      category: 'Investment', abbr: 'CK',  panel: 'stock',
+    id: 'stock', name: 'Chứng Khoán',        category: 'Investment', abbr: 'CK',  panel: 'stock',
   },
   {
     id: 'lai-suat', name: 'Lãi Suất Ngân Hàng', category: 'Savings', abbr: 'LS', panel: 'bank-rate',
@@ -1313,6 +1667,7 @@ const TOOLS = [
 // ─── State
 let currentToolId = TOOLS[0].id;
 let detailMode = false;
+let toolPickerQuery = '';
 
 // ─── Sidebar
 function renderSidebar() {
@@ -1347,6 +1702,11 @@ function bindToolList() {
     if (!btn || !list.contains(btn)) return;
     event.preventDefault();
     selectTool(btn.dataset.id);
+    const workspace = document.getElementById('tools');
+    if (workspace) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      workspace.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
   });
 }
 
@@ -1373,7 +1733,6 @@ function selectTool(id, options = {}) {
   setDetailMode(detail);
   if (updateHash) syncHash(id);
   renderSidebar();
-  renderRelatedTools();
   document.getElementById('genericPanel').hidden = tool.panel !== 'generic';
   document.getElementById('goldPanel').hidden    = tool.panel !== 'gold';
   document.getElementById('stockPanel').hidden   = tool.panel !== 'stock';
@@ -1392,52 +1751,62 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'fx-compare') initFxComparePanel();
   if (tool.panel === 'travel-budget') initTravelBudgetPanel();
   if (tool.panel === 'fire')      initFirePanel();
+  renderToolPicker();
 }
 
-// ─── Related Tools (bottom-of-page navigation)
-function renderRelatedTools() {
-  const grid = document.getElementById('relatedToolsGrid');
-  if (!grid) return;
-  const current = TOOLS.find(t => t.id === currentToolId);
-  const others = TOOLS.filter(t => t.id !== currentToolId);
-  const titleEl = document.getElementById('relatedToolsTitle');
-  const subEl = document.getElementById('relatedToolsSub');
-  if (titleEl && current) titleEl.textContent = `Khám phá utilities khác ngoài ${current.name}`;
-  if (subEl) subEl.textContent = `Còn ${others.length} công cụ tài chính khác trong Money Lab cho các quyết định khác của bạn.`;
-  const categories = [...new Set(others.map(t => t.category))];
-  grid.innerHTML = categories.map(cat => {
-    const items = others.filter(t => t.category === cat);
-    return `<div class="related-tool-group">
-      <div class="related-tool-group-head"><span>${cat}</span><b>${items.length}</b></div>
-      <div class="related-tool-group-items">
-        ${items.map(t => `
-          <button class="related-tool-card" data-id="${t.id}" type="button">
-            <span class="related-tool-icon">${t.abbr}</span>
-            <span class="related-tool-meta">
-              <strong>${t.name}</strong>
-              <small>${(t.description || '').slice(0, 60).replace(/\.\s.*$/, '') || t.category}</small>
-            </span>
-            <span class="related-tool-arrow" aria-hidden="true">→</span>
-          </button>
-        `).join('')}
-      </div>
-    </div>`;
-  }).join('');
-}
+function renderToolPicker() {
+  const listEl = document.getElementById('genericToolPicker');
+  const searchEl = document.getElementById('genericToolSearch');
+  const countEl = document.getElementById('genericToolCount');
+  if (!listEl || !searchEl || !countEl) return;
 
-function bindRelatedTools() {
-  const grid = document.getElementById('relatedToolsGrid');
-  if (!grid || grid.dataset.bound === '1') return;
-  grid.dataset.bound = '1';
-  grid.addEventListener('click', event => {
-    const btn = event.target.closest('.related-tool-card');
-    if (!btn || !grid.contains(btn)) return;
-    event.preventDefault();
-    const fromId = currentToolId;
-    selectTool(btn.dataset.id);
-    document.getElementById('top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    momo_track('related_tool_click', { from: fromId, to: btn.dataset.id });
+  const query = (searchEl.value || '').trim().toLowerCase();
+  toolPickerQuery = query;
+  const items = TOOLS.filter(tool => {
+    if (!query) return true;
+    return [tool.name, tool.category, tool.description, tool.id]
+      .some(value => String(value || '').toLowerCase().includes(query));
   });
+
+  countEl.textContent = `${items.length}/${TOOLS.length} tools`;
+  listEl.innerHTML = items.length ? items.map(tool => `
+    <button
+      type="button"
+      class="tool-switcher-item${tool.id === currentToolId ? ' active' : ''}"
+      role="option"
+      aria-selected="${tool.id === currentToolId}"
+      data-id="${tool.id}">
+      <span class="tool-switcher-item-main">
+        <strong>${tool.name}</strong>
+        <small>${tool.category}</small>
+      </span>
+      <span class="tool-switcher-item-code">${tool.abbr}</span>
+    </button>
+  `).join('') : `<div class="tool-switcher-empty">Không có tool khớp với từ khóa hiện tại.</div>`;
+}
+
+function bindToolPicker() {
+  const listEl = document.getElementById('genericToolPicker');
+  const searchEl = document.getElementById('genericToolSearch');
+  if (!listEl || !searchEl || listEl.dataset.bound === '1') return;
+
+  listEl.dataset.bound = '1';
+  searchEl.value = toolPickerQuery;
+  searchEl.addEventListener('input', () => renderToolPicker());
+  searchEl.addEventListener('keydown', event => {
+    if (event.key !== 'Enter') return;
+    const firstBtn = listEl.querySelector('.tool-switcher-item');
+    if (!firstBtn) return;
+    event.preventDefault();
+    selectTool(firstBtn.dataset.id);
+  });
+  listEl.addEventListener('click', event => {
+    const btn = event.target.closest('.tool-switcher-item');
+    if (!btn || !listEl.contains(btn)) return;
+    event.preventDefault();
+    selectTool(btn.dataset.id);
+  });
+  renderToolPicker();
 }
 
 // ─── Generic Panel
@@ -1474,7 +1843,7 @@ function renderGenericPanel(tool) {
     if (tool.highlights && tool.highlights.length) {
       hlEl.innerHTML = tool.highlights.map(h => `
         <div class="highlight-item">
-          <span class="highlight-icon">${h.icon}</span>
+          <span class="highlight-icon">${svgIcon(h.icon, 'highlight-svg')}</span>
           <span class="highlight-text">${h.text}</span>
         </div>
       `).join('');
@@ -1484,26 +1853,7 @@ function renderGenericPanel(tool) {
     }
   }
 
-  // Partners row
-  const partEl = document.getElementById('genericPartners');
-  if (partEl) {
-    if (tool.partners && tool.partners.length) {
-      partEl.innerHTML = `
-        <div class="partners-title">Đối tác Vay Nhanh</div>
-        <div class="partners-grid">
-          ${tool.partners.map(p => `
-            <div class="partner-card">
-              <span class="partner-abbr" style="background:${p.color}">${p.abbr}</span>
-              <span class="partner-name">${p.name}</span>
-            </div>
-          `).join('')}
-        </div>
-      `;
-      partEl.style.display = '';
-    } else {
-      partEl.style.display = 'none';
-    }
-  }
+  renderToolPartners(tool);
 
   // Disclaimer
   const discEl = document.getElementById('genericDisclaimer');
@@ -1517,17 +1867,6 @@ function renderGenericPanel(tool) {
   if (ctaEl) {
     ctaEl.textContent = tool.ctaText || 'Xem giải pháp phù hợp trên MoMo';
     ctaEl.onclick = () => momo_track('cta_click', { cta: tool.ctaText ? 'check_now' : 'view_solution', tool_id: tool.id });
-  }
-  const pickerEl = document.getElementById('genericToolPicker');
-  if (pickerEl) {
-    const genericTools = TOOLS.filter(item => item.panel === 'generic');
-    pickerEl.innerHTML = genericTools.map(item =>
-      `<option value="${item.id}"${item.id === tool.id ? ' selected' : ''}>${item.name}</option>`
-    ).join('');
-    pickerEl.onchange = () => {
-      const nextTool = TOOLS.find(item => item.id === pickerEl.value);
-      if (nextTool) selectTool(nextTool.id);
-    };
   }
 
   const container = document.getElementById('genericFields');
@@ -1573,6 +1912,18 @@ function renderGenericPanel(tool) {
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="pills-grid" role="group" aria-label="${ariaLabel}">
           ${f.options.map(o => `<button type="button" class="pill-btn${o.note ? ' pill-btn-explained' : ''}${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}"><span>${o.label}</span>${o.note ? `<small>${o.note}</small>` : ''}</button>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (f.type === 'select-items') {
+      return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
+        <label class="field-label" for="${f.id}">${f.label}</label>
+        <input type="hidden" id="${f.id}" value="${f.value}">
+        <div class="select-items-grid" role="group" aria-label="${ariaLabel}">
+          ${f.options.map(o => `<button type="button" class="select-item-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}">
+            <span class="select-item-mark">${o.label}</span>
+            ${o.note ? `<small>${o.note}</small>` : ''}
+          </button>`).join('')}
         </div>
       </div>`;
     }
@@ -1652,6 +2003,13 @@ function renderGenericPanel(tool) {
           btn.setAttribute('aria-pressed', String(isActive));
         });
       }
+      if (f.type === 'select-items') {
+        document.querySelectorAll(`[data-field="${f.id}"] .select-item-btn`).forEach(btn => {
+          const isActive = String(btn.dataset.val) === String(el.value);
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
+      }
       applyConditionalFields();
       computeGeneric(tool);
     });
@@ -1669,6 +2027,14 @@ function renderGenericPanel(tool) {
           } else {
             el.value = btn.dataset.val;
           }
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+      });
+    }
+    if (f.type === 'select-items') {
+      document.querySelectorAll(`[data-field="${f.id}"] .select-item-btn`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          el.value = btn.dataset.val;
           el.dispatchEvent(new Event('input', { bubbles: true }));
         });
       });
@@ -1702,6 +2068,35 @@ function renderGenericPanel(tool) {
   });
 
   computeGeneric(tool);
+}
+
+function renderToolPartners(tool, vals = null) {
+  const partEl = document.getElementById('genericPartners');
+  if (!partEl) return;
+
+  if (tool.id === 'bao-hiem-o-to') {
+    partEl.innerHTML = '';
+    partEl.style.display = 'none';
+    return;
+  }
+
+  partEl.className = 'partners-row';
+  if (tool.partners && tool.partners.length) {
+    partEl.innerHTML = `
+      <div class="partners-title">${tool.partnerTitle || 'Đối tác đề xuất'}</div>
+      <div class="partners-grid">
+        ${tool.partners.map(p => `
+          <div class="partner-card">
+            <span class="partner-abbr" style="background:${p.color}">${p.abbr}</span>
+            <span class="partner-name">${p.name}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    partEl.style.display = '';
+  } else {
+    partEl.style.display = 'none';
+  }
 }
 
 function autoChips(f) {
@@ -1766,6 +2161,7 @@ function computeGeneric(tool) {
     }
   });
   const res = tool.compute(vals);
+  renderToolPartners(tool, vals);
   document.getElementById('resultLabel').textContent  = tool.resultLabel;
   document.getElementById('resultValue').textContent  = res.result;
   document.getElementById('resultDetails').innerHTML  = res.details.map(d =>
@@ -1995,7 +2391,8 @@ function initGoldPanel() {
   const usdSell = GOLD_USD_VND;
   const vniValue = 1382.45;
   const vniDelta = -12.30;
-  document.getElementById('quickMarket').innerHTML = `
+  const quickMarket = document.getElementById('quickMarket');
+  if (quickMarket) quickMarket.innerHTML = `
     <div class="quick-market-card">
       <span>SJC 1 lượng (bán)</span>
       <strong>${fmtM(sjcRef.sell)}</strong>
@@ -2058,13 +2455,16 @@ function initGoldPanel() {
   }).join('');
 
   // News feed
-  document.getElementById('goldNewsList').innerHTML = GOLD_NEWS.map(n => `
-    <a class="gold-news-item" href="#" onclick="event.preventDefault();momo_track('news_click',{title:'${n.title.replace(/'/g,"\\'")}',source:'${n.source}'})">
-      <span class="gold-news-tag">${n.tag}</span>
-      <strong class="gold-news-title">${n.title}</strong>
-      <small class="gold-news-meta">${n.time} · ${n.source}</small>
-    </a>
-  `).join('');
+  const goldNewsList = document.getElementById('goldNewsList');
+  if (goldNewsList) {
+    goldNewsList.innerHTML = GOLD_NEWS.map(n => `
+      <a class="gold-news-item" href="#" onclick="event.preventDefault();momo_track('news_click',{title:'${n.title.replace(/'/g,"\\'")}',source:'${n.source}'})">
+        <span class="gold-news-tag">${n.tag}</span>
+        <strong class="gold-news-title">${n.title}</strong>
+        <small class="gold-news-meta">${n.time} · ${n.source}</small>
+      </a>
+    `).join('');
+  }
 
   // Chart product selector (only lượng-based products to keep prices comparable)
   const chartProducts = GOLD_PRODUCTS.filter(p => p.unit === 'lượng');
@@ -2172,6 +2572,9 @@ function computeGold() {
 
 // Tính premium VN vs thế giới + vị trí 30D + đánh giá spread
 function renderGoldDecision() {
+  const goldDecision = document.getElementById('goldDecision');
+  if (!goldDecision) return;
+
   const sjc = GOLD_PRODUCTS.find(p => p.id === 'sjc-luong');
   // Premium = SJC sell - (XAU/USD × lượng/oz × USD/VND)
   const worldPerLuong = GOLD_WORLD.price * LUONG_PER_OUNCE * GOLD_USD_VND;
@@ -2223,7 +2626,7 @@ function renderGoldDecision() {
     verdictTone = 'neutral';
   }
 
-  document.getElementById('goldDecision').innerHTML = `
+  goldDecision.innerHTML = `
     <div class="gold-decision-grid">
       <div class="gold-decision-card primary">
         <span class="gold-decision-label">Chênh lệch VN vs thế giới</span>
@@ -2491,15 +2894,19 @@ function showToast(msg) {
 // ─── CIC Score Panel
 let cicScore = 570;
 let selectedNplGroup = 1;
+let cicSimFactor = 'A';
+let cicSimScenario = 'a1';
 
 function getBand(score) {
   return CIC_BANDS.find(b => score >= b.min && score <= b.max) || CIC_BANDS[CIC_BANDS.length - 1];
 }
 
 function initCicPanel() {
-  // Render rank ticks 10 → 1 (left = worst, right = best)
-  const ticksEl = document.getElementById('cicV2Ticks');
-  ticksEl.innerHTML = [10,9,8,7,6,5,4,3,2,1].map(n => `<span>${n}</span>`).join('');
+  // Rank ticks 10 → 1 (left = worst, right = best)
+  document.getElementById('cicV2Ticks').innerHTML = [10,9,8,7,6,5,4,3,2,1].map(n => `<span>${n}</span>`).join('');
+
+  // Score axis marks at band boundaries
+  document.getElementById('cicScoreAxis').innerHTML = [300, 421, 541, 621, 701, 821, 900].map(s => `<span>${s}</span>`).join('');
 
   const slider = document.getElementById('cicV2Slider');
   if (!initCicPanel._bound) {
@@ -2507,6 +2914,7 @@ function initCicPanel() {
     slider.addEventListener('input', e => {
       cicScore = +e.target.value;
       updateCicV2();
+      if (currentToolId === 'cic-stimulator') renderCicSimulator();
     });
   }
   slider.value = cicScore;
@@ -2631,36 +3039,141 @@ function updateCicV2() {
   const bubble = document.getElementById('cicV2Bubble');
   bubble.textContent = cicScore;
   const pct = (cicScore - 300) / 600;
-  // Account for thumb width (≈ 20px). We approximate via calc on left position.
-  bubble.style.left = `calc(${(pct * 100).toFixed(1)}% )`;
+  bubble.style.left = `clamp(28px, ${(pct * 100).toFixed(1)}%, calc(100% - 28px))`;
 
-  // Band range
-  document.getElementById('cicV2RangeMin').textContent = `${band.min} điểm`;
-  document.getElementById('cicV2RangeMax').textContent = `${band.max} điểm`;
-
-  // Band info
-  const prospect = band.hang <= 2 ? 'Dễ vay, lãi suất ưu đãi tốt nhất'
-    : band.hang <= 4 ? 'Vay được với điều kiện thuận lợi'
-    : band.hang === 5 ? 'Một số tổ chức tín dụng có thể xét duyệt'
-    : band.hang <= 7 ? 'Khó vay, thường cần tài sản đảm bảo'
-    : 'Hầu hết tổ chức tín dụng từ chối';
-  document.getElementById('cicV2BandInfo').innerHTML = `
-    <div class="cic-v2-band-row"><small>HẠNG</small><b style="color:${band.color}">Hạng ${band.hang} · ${band.label}</b></div>
-    <div class="cic-v2-band-row"><small>KHOẢNG ĐIỂM</small><b>${band.min} - ${band.max}</b></div>
-    <div class="cic-v2-band-row"><small>TRIỂN VỌNG VAY VỐN</small><b>${prospect}</b></div>
-  `;
-
-  // Phone gauge + labels
+  // Gauge
   document.getElementById('cicV2Gauge').innerHTML = renderCicGauge(cicScore);
-  document.getElementById('cicV2RankLabel').textContent = band.label;
-  document.getElementById('cicV2RankLabel').style.color = band.color;
-  document.getElementById('cicV2RankDesc').textContent = band.desc;
+
+  // Rank badge: emoji + rank + credit label
+  const creditLabel = band.hang === 1 ? 'Hạn mức cao'
+    : band.hang === 2 ? 'Hạn mức tốt'
+    : band.hang === 3 ? 'Hạn mức khá'
+    : band.hang === 4 ? 'Hạn mức trung bình'
+    : band.hang === 5 ? 'Hạn mức thấp'
+    : band.hang === 6 ? 'Hạn mức hạn chế'
+    : 'Khó được duyệt';
+  const badgeBg = band.hang <= 3 ? '#dcfce7' : band.hang <= 5 ? '#fef9c3' : '#fee2e2';
+  const badgeColor = band.hang <= 3 ? '#15803d' : band.hang <= 5 ? '#854d0e' : '#b91c1c';
+  const badge = document.getElementById('cicRankBadge');
+  badge.textContent = `Hạng ${band.hang} · ${creditLabel}`;
+  badge.style.background = badgeBg;
+  badge.style.color = badgeColor;
 }
 
 function renderCicPanel() {
+  const isSimulator = currentToolId === 'cic-stimulator';
+  const panel = document.getElementById('cicPanel');
+  panel.classList.toggle('cic-score-mode', !isSimulator);
+  panel.classList.toggle('cic-simulator-mode', isSimulator);
+
+  const copy = isSimulator ? {
+    kicker: 'CREDIT / CIC SIMULATOR',
+    title: 'CIC Simulator',
+    desc: 'Mô phỏng tác động của từng hành vi tín dụng lên điểm CIC và hạng vay vốn.',
+    sliderTitle: 'Điểm nền hiện tại',
+    sliderHint: 'Kéo để đặt baseline',
+    cta: 'Xem cách cải thiện điểm CIC',
+    disclaimer: 'Mô phỏng dựa trên trọng số tham khảo của hành vi tín dụng. Kết quả không thay thế điểm CIC chính thức.',
+  } : {
+    kicker: 'CREDIT / CIC SCORE',
+    title: 'Tra cứu hạng tín dụng CIC',
+    desc: 'Nhập điểm CIC hiện tại để xem hạng tín dụng và khả năng tiếp cận khoản vay.',
+    sliderTitle: 'Điểm CIC hiện tại',
+    sliderHint: 'Kéo để tra hạng',
+    cta: 'Kiểm tra điểm CIC ngay',
+    disclaimer: 'Điểm CIC được chấm và quản lý bởi Trung tâm Thông tin Tín dụng Quốc gia Việt Nam (CIC). Kết quả ở đây mang tính tham khảo theo công thức xếp hạng công khai.',
+  };
+
+  document.getElementById('cicPanelKicker').textContent = copy.kicker;
+  document.getElementById('cicPanelTitle').textContent = copy.title;
+  document.getElementById('cicPanelDesc').textContent = copy.desc;
+  document.getElementById('cicSliderTitle').textContent = copy.sliderTitle;
+  document.getElementById('cicSliderHint').textContent = copy.sliderHint;
+  document.getElementById('cicCtaBtn').textContent = copy.cta;
+  document.getElementById('cicDisclaimerText').textContent = copy.disclaimer;
+
+  document.getElementById('cicSimSection').hidden = !isSimulator;
+  document.getElementById('nplSection').hidden = isSimulator;
+
   updateCicV2();
-  renderNplSelector();
-  renderNplImpact(selectedNplGroup);
+  if (isSimulator) {
+    renderCicSimulator();
+  } else {
+    renderNplSelector();
+    renderNplImpact(selectedNplGroup);
+  }
+}
+
+function getCicSimScenario() {
+  const group = CIC_BEHAVIORS[cicSimFactor] || CIC_BEHAVIORS.A;
+  return group.scenarios.find(s => s.id === cicSimScenario) || group.scenarios[0];
+}
+
+function renderCicSimulator() {
+  const factorGrid = document.getElementById('cicFactorGrid');
+  const scenarioList = document.getElementById('cicScenarioList');
+  const result = document.getElementById('cicSimResult');
+  if (!factorGrid || !scenarioList || !result) return;
+
+  factorGrid.innerHTML = Object.entries(CIC_BEHAVIORS).map(([key, group]) => `
+    <button class="cic-factor-card${key === cicSimFactor ? ' active' : ''}" type="button" data-factor="${key}">
+      <small>${key}</small>
+      <strong>${group.label}</strong>
+      <span>${group.sub}</span>
+    </button>
+  `).join('');
+
+  factorGrid.querySelectorAll('[data-factor]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cicSimFactor = btn.dataset.factor;
+      cicSimScenario = CIC_BEHAVIORS[cicSimFactor].scenarios[0].id;
+      renderCicSimulator();
+    });
+  });
+
+  const group = CIC_BEHAVIORS[cicSimFactor] || CIC_BEHAVIORS.A;
+  scenarioList.innerHTML = `
+    <div class="cic-scenario-panel-head">
+      <span>${group.label}</span>
+      <strong>${group.sub}</strong>
+    </div>
+    ${group.scenarios.map(s => `
+      <button class="cic-sim-scenario${s.id === cicSimScenario ? ' active' : ''}" type="button" data-scenario="${s.id}">
+        <span>${s.label}</span>
+        <b class="${s.delta >= 0 ? 'pos' : 'neg'}">${s.delta >= 0 ? '+' : ''}${s.delta}</b>
+      </button>
+    `).join('')}
+  `;
+
+  scenarioList.querySelectorAll('[data-scenario]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cicSimScenario = btn.dataset.scenario;
+      renderCicSimulator();
+    });
+  });
+
+  const scenario = getCicSimScenario();
+  const projected = Math.max(300, Math.min(900, cicScore + scenario.delta));
+  const baseBand = getBand(cicScore);
+  const projectedBand = getBand(projected);
+  const deltaClass = scenario.delta >= 0 ? 'pos' : 'neg';
+  const bandShift = projectedBand.hang === baseBand.hang
+    ? `Giữ Hạng ${baseBand.hang}`
+    : projectedBand.hang < baseBand.hang
+      ? `Tăng từ Hạng ${baseBand.hang} lên Hạng ${projectedBand.hang}`
+      : `Giảm từ Hạng ${baseBand.hang} xuống Hạng ${projectedBand.hang}`;
+
+  result.innerHTML = `
+    <div class="cic-sim-score-row">
+      <div><small>Điểm nền</small><strong>${cicScore}</strong><span>Hạng ${baseBand.hang}</span></div>
+      <div class="cic-sim-delta ${deltaClass}">${scenario.delta >= 0 ? '+' : ''}${scenario.delta}</div>
+      <div><small>Dự phóng</small><strong>${projected}</strong><span>Hạng ${projectedBand.hang}</span></div>
+    </div>
+    <div class="cic-sim-verdict">
+      <strong>${bandShift}</strong>
+      <p>${scenario.rec}</p>
+    </div>
+  `;
 }
 
 // ─── FIRE Panel (chart-first)
@@ -3253,11 +3766,11 @@ const TRAVEL_DESTINATIONS = [
 ];
 
 const TRAVEL_BREAKDOWN = {
-  lodging: { name:'Lưu trú',    weight:0.40, icon:'🏨' },
-  food:    { name:'Ăn uống',    weight:0.25, icon:'🍜' },
-  transport:{ name:'Di chuyển', weight:0.15, icon:'🚇' },
-  activity:{ name:'Tham quan',  weight:0.15, icon:'🎟️' },
-  misc:    { name:'Chi khác',   weight:0.05, icon:'🛍️' },
+  lodging: { name:'Lưu trú',    weight:0.40, icon:'lodging' },
+  food:    { name:'Ăn uống',    weight:0.25, icon:'food' },
+  transport:{ name:'Di chuyển', weight:0.15, icon:'transport' },
+  activity:{ name:'Tham quan',  weight:0.15, icon:'activity' },
+  misc:    { name:'Chi khác',   weight:0.05, icon:'misc' },
 };
 
 const TB_STATE = { destCode:'JP', days:7, tier:'mid' };
@@ -3310,7 +3823,7 @@ function renderTravelBudget() {
   const breakdownHtml = Object.entries(TRAVEL_BREAKDOWN).map(([k, v]) => {
     const amt = total * v.weight;
     return `<div class="tb-row">
-      <span class="tb-icon">${v.icon}</span>
+      <span class="tb-icon">${svgIcon(v.icon, 'tb-icon-svg')}</span>
       <span class="tb-name">${v.name}</span>
       <div class="tb-bar"><div class="tb-bar-fill" style="width:${v.weight*100}%"></div></div>
       <strong class="tb-amt">${fmtM(amt)}</strong>
@@ -3322,9 +3835,9 @@ function renderTravelBudget() {
   const dailyCard = document.getElementById('tbDailyCard');
   if (dailyCard) {
     const tiers = [
-      { id:'budget', label:'Tiết kiệm', icon:'💸' },
-      { id:'mid',    label:'Cân bằng',  icon:'⚖️' },
-      { id:'luxury', label:'Cao cấp',   icon:'✨' },
+      { id:'budget', label:'Tiết kiệm', icon:'tier-budget' },
+      { id:'mid',    label:'Cân bằng',  icon:'tier-mid' },
+      { id:'luxury', label:'Cao cấp',   icon:'tier-luxury' },
     ];
     const maxDaily = Math.max(...tiers.map(t => dest.dailyVND[t.id]));
     dailyCard.innerHTML = `
@@ -3337,7 +3850,7 @@ function renderTravelBudget() {
           const d = dest.dailyVND[t.id];
           const on = t.id === TB_STATE.tier;
           return `<button type="button" class="tb-tier-row${on?' on':''}" data-tier="${t.id}">
-            <span class="tb-tier-label">${t.icon} ${t.label}</span>
+            <span class="tb-tier-label">${svgIcon(t.icon, 'tb-tier-icon')} ${t.label}</span>
             <span class="tb-tier-bar"><span class="tb-tier-fill" style="width:${Math.round(d/maxDaily*100)}%"></span></span>
             <span class="tb-tier-amt">${fmtM(d)}</span>
           </button>`;
@@ -3367,12 +3880,12 @@ function renderTbPayment(dest, total) {
     box.classList.add('tb-pay-fallback');
     box.innerHTML = `
       <div class="tb-pay-unsupported">
-        <strong>🚫 MoMo chưa thanh toán được tại ${dest.name}</strong>
+        <strong>${svgIcon('not-supported', 'tb-status-svg')} MoMo chưa thanh toán được tại ${dest.name}</strong>
         <p>Network chưa cover. Dùng thẻ + cash thay thế:</p>
       </div>
       <div class="tb-pay-backup tb-pay-backup-primary">
         <div class="tb-pay-row">
-          <div class="tb-pay-icon">💳</div>
+          <div class="tb-pay-icon">${svgIcon('card', 'tb-pay-svg')}</div>
           <div class="tb-pay-info">
             <strong>Card quốc tế (chính)</strong>
             <small>Visa / Master / Amex — hotel, mall, online booking</small>
@@ -3380,7 +3893,7 @@ function renderTbPayment(dest, total) {
           <div class="tb-pay-amount"><b>${cardPct}%</b><small>${fmtM(total * cardPct / 100)}</small></div>
         </div>
         <div class="tb-pay-row">
-          <div class="tb-pay-icon">💵</div>
+          <div class="tb-pay-icon">${svgIcon('cash', 'tb-pay-svg')}</div>
           <div class="tb-pay-info">
             <strong>Cash (dự phòng)</strong>
             <small>Tip, taxi, market nhỏ — đổi tại NH/Hà Trung trước chuyến</small>
@@ -3404,7 +3917,7 @@ function renderTbPayment(dest, total) {
   box.innerHTML = `
     <div class="tb-pay-primary">
       <div class="tb-pay-primary-head">
-        <div class="tb-pay-logo">💚</div>
+        <div class="tb-pay-logo">${svgIcon('momo-wallet', 'tb-wallet-svg')}</div>
         <div class="tb-pay-primary-info">
           <strong>MoMo Wallet · Primary</strong>
           <small>${dest.flag} ${dest.name} · Coverage <b>${m.coverage}%</b>${m.network?` · qua ${m.network}`:''}</small>
@@ -3423,7 +3936,7 @@ function renderTbPayment(dest, total) {
     <div class="tb-pay-backup">
       <small class="tb-pay-backup-label">Card + Cash cho phần MoMo chưa cover</small>
       <div class="tb-pay-row">
-        <div class="tb-pay-icon">💳</div>
+        <div class="tb-pay-icon">${svgIcon('card', 'tb-pay-svg')}</div>
         <div class="tb-pay-info">
           <strong>Card quốc tế</strong>
           <small>Hotel, premium mall, online booking ngoài MoMo network</small>
@@ -3431,7 +3944,7 @@ function renderTbPayment(dest, total) {
         <div class="tb-pay-amount"><b>${cardPct}%</b><small>${fmtM(cardAmt)}</small></div>
       </div>
       <div class="tb-pay-row">
-        <div class="tb-pay-icon">💵</div>
+        <div class="tb-pay-icon">${svgIcon('cash', 'tb-pay-svg')}</div>
         <div class="tb-pay-info">
           <strong>Cash local</strong>
           <small>Tip, taxi không-app, chợ truyền thống, đền/chùa</small>
@@ -3447,7 +3960,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const isEmbed = params.get('embed') === '1';
   const toolParam = params.get('tool');
   const target = toolParam || location.hash.slice(1);
-  const initialTool = TOOLS.find(t => t.id === target) || TOOLS[0];
+  const targetTool = TOOLS.find(t => t.id === target);
+  const initialTool = targetTool || TOOLS[0];
   currentToolId = initialTool.id;
   if (isEmbed) {
     document.body.classList.add('embed');
@@ -3456,8 +3970,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderSidebar();
   bindToolList();
-  renderRelatedTools();
-  bindRelatedTools();
+  bindToolPicker();
   renderGenericPanel(initialTool.panel === 'generic' ? initialTool : TOOLS[0]);
   initGoldPanel();
   initStockPanel();
@@ -3466,7 +3979,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFxPanel();
   initFxComparePanel();
   initTravelBudgetPanel();
-  selectTool(initialTool.id, { updateHash: Boolean(target) && !isEmbed, detail: true });
+  selectTool(initialTool.id, { updateHash: Boolean(targetTool) && !isEmbed, detail: true });
 
   window.addEventListener('hashchange', () => {
     const tool = TOOLS.find(t => t.id === location.hash.slice(1));
