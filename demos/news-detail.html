@@ -1,0 +1,1510 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MoMo News Detail</title>
+<link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="../assets/mobase-tokens.css">
+<style>
+@font-face {
+  font-family: 'MoMoTrustSans';
+  src: url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MoMoTrustSans';
+  src: url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MoMoTrustDisplay';
+  src: url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --momo: #D72B8A;
+  --momo-dark: #8B0057;
+  --ink: #111111;
+  --text: #333333;
+  --muted: #71717A;
+  --line: #E4E4E7;
+  --bg: #FFFFFF;
+  --bg-tint: #F4F4F5;
+  --blush: #FFF0F7;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --font-display: 'MoMoTrustDisplay', 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg-tint);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid rgba(215, 43, 138, .3);
+  outline-offset: 3px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 58px;
+  padding: 0 clamp(16px, 4vw, 48px);
+  background: rgba(255, 255, 255, .96);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.brand-mark img { width: 24px; height: 24px; }
+
+.brand-text strong {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: -.01em;
+}
+
+.brand-text span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn,
+.back-btn {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.icon-btn { width: 36px; padding: 0; }
+.back-btn { padding: 0 14px; }
+
+.page {
+  width: min(1220px, 100%);
+  margin: 0 auto;
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06);
+}
+
+.hero {
+  background: #fff;
+  padding: 28px clamp(20px, 6vw, 80px) 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.story {
+  position: relative;
+  max-width: 860px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(215, 43, 138, .08);
+  border-radius: 999px;
+  color: var(--momo);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.story-title {
+  max-width: 820px;
+  margin: 0 0 16px;
+  color: var(--momo);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 36px);
+  font-weight: 900;
+  letter-spacing: -.01em;
+  line-height: 1.08;
+}
+
+.deck {
+  max-width: 64ch;
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.55;
+}
+
+.deck-copy {
+  display: block;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 12px 4px 0;
+  margin-right: 12px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.article-rail {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  position: sticky;
+  top: 78px;
+  align-self: start;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 720px) minmax(260px, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 40px clamp(20px, 6vw, 80px) 80px;
+  background: #fff;
+}
+
+.article {
+  max-width: 720px;
+}
+
+.article section + section { margin-top: 40px; }
+
+.article h2,
+.article-rail h2 {
+  margin: 0 0 16px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.article p {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.article > section:first-child > p:first-of-type::first-letter {
+  float: left;
+  margin: 6px 8px 0 0;
+  color: var(--momo);
+  font-family: var(--font-display);
+  font-size: 46px;
+  line-height: .78;
+  font-weight: 700;
+}
+
+.promo-banner {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  background: var(--blush);
+  border-radius: var(--radius-md);
+  border: 0;
+}
+
+.promo-banner strong {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.promo-code {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.code-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  border: 2px dashed var(--momo);
+  background: #fff;
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: .12em;
+  font-family: var(--font-display);
+}
+
+.copy-btn {
+  height: 50px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--momo);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.promo-note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.rail-offer {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  background: var(--blush);
+  border-radius: var(--radius-md);
+  border: 0;
+}
+
+.rail-offer .code-pill {
+  width: 100%;
+  justify-content: center;
+  font-size: 22px;
+  min-height: 58px;
+}
+
+.rail-offer p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.rail-copy-btn {
+  width: 100%;
+  justify-content: center;
+  height: 50px;
+  border-radius: var(--radius-sm);
+}
+
+/* === GUIDELINE LAYOUT === */
+.guideline-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.guideline-phone-col { position: sticky; top: 90px; }
+
+.phone-frame {
+  background: #1C1C1E;
+  border-radius: 38px;
+  padding: 10px;
+  box-shadow: 0 24px 56px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.06);
+  overflow: hidden;
+}
+
+.phone-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 14px 4px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  background: #1C1C1E;
+}
+
+.phone-display {
+  border-radius: 28px;
+  overflow: hidden;
+  min-height: 480px;
+  background: #fff;
+}
+
+/* Steps list */
+.guideline-steps-col {
+  display: grid;
+  gap: 0;
+  padding: 4px 0;
+}
+
+.step-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  position: relative;
+  padding-bottom: 4px;
+  cursor: pointer;
+}
+
+.step-row:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 38px;
+  bottom: 0;
+  width: 2px;
+  border-left: 2px dashed var(--line);
+}
+
+.step-num {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  background: var(--blush);
+  color: var(--momo);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  transition: background .15s, color .15s;
+}
+
+.step-row.active .step-num {
+  background: var(--momo);
+  color: #fff;
+}
+
+.step-row-body {
+  padding-top: 6px;
+  padding-bottom: 20px;
+}
+
+.step-row-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.step-row.active .step-row-title {
+  color: var(--momo);
+  font-weight: 800;
+}
+
+.step-row-desc {
+  display: none;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.step-row.active .step-row-desc { display: block; }
+
+/* phone screen content */
+.pscreen-appbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px; font-weight: 700; color: var(--ink);
+  gap: 8px;
+}
+.pscreen-appbar .back-label { color: var(--momo); font-size: 13px; }
+
+.pscreen-body {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  background: #F8F8F8;
+  min-height: 440px;
+}
+
+.pscreen-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+}
+
+.pscreen-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.pscreen-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.pscreen-input {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.pscreen-radio {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px; color: var(--ink);
+}
+.pscreen-radio:last-child { border: 0; }
+.pscreen-radio-dot {
+  width: 16px; height: 16px; border-radius: 999px;
+  border: 2px solid var(--momo);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pscreen-radio-dot.checked::after {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  background: var(--momo);
+}
+
+.pscreen-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pscreen-chip {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--blush);
+  color: var(--momo);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pscreen-btn {
+  background: var(--momo);
+  color: #fff;
+  border-radius: 10px;
+  padding: 13px 14px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.pscreen-highlight { background: #fff5f9; border: 1px solid rgba(215,43,138,.2); }
+
+.step-no { display: none; }
+
+.app-input,
+.app-chip-row,
+.app-id-card,
+.app-bank-card,
+.app-gift-ticket {
+  border: 1px solid rgba(165, 0, 100, .12);
+  background: #fff8fc;
+}
+
+.app-input {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.app-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 7px 8px;
+  border-radius: 8px;
+}
+
+.app-chip-row span {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--momo);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.app-id-card,
+.app-bank-card,
+.app-gift-ticket {
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border-radius: 9px;
+}
+
+.app-id-card strong,
+.app-bank-card strong,
+.app-gift-ticket strong {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.app-id-card span,
+.app-bank-card span,
+.app-gift-ticket span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.app-progress {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.app-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--momo);
+}
+
+.step-action {
+  margin-top: 14px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--momo);
+  color: #fff;
+  font-weight: 900;
+}
+
+.gift-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.gift-card {
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tint);
+  border: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.gift-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--momo);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.gift-card:nth-child(2)::before { background: #10B981; }
+.gift-card:nth-child(3)::before { background: #F59E0B; }
+.gift-card:nth-child(4)::before { background: #6366F1; }
+
+.gift-card strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 800;
+}
+
+.gift-card span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.faq-list {
+  display: grid;
+  gap: 8px;
+}
+
+.faq-item {
+  border-radius: var(--radius-sm);
+  border: 0;
+  background: var(--bg-tint);
+  overflow: hidden;
+}
+
+.faq-item.open {
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 15px;
+  text-align: left;
+}
+
+.faq-a {
+  display: none;
+  padding: 0 16px 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.faq-item.open .faq-a {
+  display: block;
+}
+
+.terms {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tint);
+  border: 0;
+}
+
+.terms li {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.callout {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tint);
+  border-left: 4px solid var(--momo);
+}
+
+.callout strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.list {
+  display: grid;
+  gap: 0;
+}
+
+.list-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.list-item:first-child { padding-top: 0; }
+.list-item:last-child { border-bottom: 0; }
+.list-item strong {
+  display: block;
+  color: var(--ink);
+  font-size: 16px;
+}
+.list-item span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sidebar {
+  padding: 0;
+}
+
+.related {
+  display: grid;
+  gap: 0;
+}
+
+.related a {
+  display: block;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.related a:first-child { border-top: 0; padding-top: 0; }
+
+.related a strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.related a span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.cta {
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 15px;
+  background: #fff;
+  color: var(--momo);
+  border: 0;
+}
+
+.cta.secondary {
+  background: rgba(255, 255, 255, .18);
+  color: #fff;
+}
+
+.hero-img-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: var(--blush);
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-img {
+  width: 100%;
+  aspect-ratio: 770 / 370;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+@media (max-width: 980px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .guideline-layout {
+    grid-template-columns: 1fr;
+  }
+  .guideline-phone-col { position: static; }
+
+  .article-rail {
+    position: static;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+
+  .article-rail .rail-offer {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-text span,
+  .back-btn span { display: none; }
+  .hero { padding: 32px 20px 36px; }
+  .story-title { font-size: clamp(24px, 7vw, 38px); line-height: 1.1; }
+  .content-grid { padding: 24px 20px 60px; }
+  .gift-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" id="brandLink" aria-label="Về News">
+      <span class="brand-mark"><img src="../assets/images/momo-logo.svg" alt="MoMo"></span>
+      <span class="brand-text">
+        <strong>MoMo News</strong>
+        <span>Daily edition</span>
+      </span>
+    </a>
+    <div class="topbar-actions">
+      <a class="icon-btn" href="./news.html" title="Mở trang News" aria-label="Mở trang News"><i class="ti ti-news"></i></a>
+      <a class="back-btn" href="#" id="backLink" aria-label="Quay lại News"><i class="ti ti-arrow-left"></i><span>News</span></a>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="hero-img-wrap" id="heroImgWrap" hidden>
+      <img class="hero-img" id="heroImg" src="" alt="">
+    </div>
+
+    <section class="hero" aria-label="News detail hero">
+      <article class="story">
+        <span class="kicker" id="category"></span>
+        <h1 class="story-title" id="storyTitle"></h1>
+        <p class="deck" id="deck"></p>
+        <div class="meta" id="meta"></div>
+        <div class="cta-row">
+          <a class="cta" id="primaryCta" href="#article"></a>
+        </div>
+      </article>
+    </section>
+
+    <section class="content-grid" id="article">
+      <article class="article">
+        <section>
+          <h2 id="sectionTitle">Tóm tắt</h2>
+          <p id="sectionBody"></p>
+          <div class="callout">
+            <strong>Điểm đáng chú ý</strong>
+            <span id="calloutText"></span>
+          </div>
+        </section>
+
+        <section id="promoArea" hidden>
+          <span class="code-pill" id="promoCode" hidden></span>
+        </section>
+
+        <section>
+          <h2>Nội dung chính</h2>
+          <div class="list" id="changeList"></div>
+        </section>
+
+        <section>
+          <h2>Bước tiếp theo</h2>
+          <p id="nextSteps"></p>
+        </section>
+
+        <section id="promoGifts" hidden>
+          <h2>Bộ quà chính</h2>
+          <div class="gift-grid" id="giftGrid"></div>
+        </section>
+
+        <section id="promoGuidelines" hidden>
+          <h2>Cách tham gia</h2>
+          <div class="guideline-layout">
+            <div class="guideline-phone-col">
+              <div class="phone-frame">
+                <div class="phone-status-bar">
+                  <span>00:51</span>
+                  <span><i class="ti ti-wifi"></i> <i class="ti ti-battery"></i></span>
+                </div>
+                <div class="phone-display" id="guidelineCarousel"></div>
+              </div>
+            </div>
+            <div class="guideline-steps-col" id="guidelineDots"></div>
+          </div>
+          <button id="guidelinePrev" hidden></button>
+          <button id="guidelineNext" hidden></button>
+        </section>
+
+        <section id="promoFaq" hidden>
+          <h2>FAQ</h2>
+          <div class="faq-list" id="faqList"></div>
+        </section>
+
+        <section id="promoTerms" hidden>
+          <h2>Điều kiện</h2>
+          <ul class="terms" id="termsList"></ul>
+        </section>
+      </article>
+      <aside class="article-rail" aria-label="Thông tin phụ">
+        <div class="rail-offer" id="railOffer" hidden>
+          <span class="code-pill" id="railPromoCode">CHONMOMO</span>
+          <p id="railPromoNote">Sao chép mã để nhập trong app MoMo.</p>
+          <button class="copy-btn rail-copy-btn" type="button" id="railCopyCodeBtn"><i class="ti ti-copy"></i>Sao chép mã</button>
+        </div>
+        <div>
+          <h2>Tin liên quan</h2>
+          <div class="related" id="related"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const STORIES = {
+      'cinema-update': {
+        category: 'Product',
+        title: 'MoMo Cinema cập nhật luồng chọn suất chiếu mới',
+        deck: 'Film detail được tách thành các bước đọc được hơn: rating, rạp, định dạng chiếu, và cụm CTA rõ từ ghế đến thanh toán.',
+        meta: ['28/06/2026', 'Launch note', '3 phút đọc'],
+        statValue: '24',
+        statLabel: 'updates this month',
+        focus: 'Product update / launch note',
+        route: '/news/cinema-update',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Cinema detail update',
+        sectionBody: 'Bản tin này mô tả cách MoMo Cinema chuyển từ một detail page nặng thông tin sang một luồng có thứ tự. Người đọc nắm được nhanh phim nào đang được ưu tiên và bước nào là bước chốt.',
+        calloutText: 'Một newsroom tốt phải giúp người dùng hiểu chuyện gì vừa thay đổi và phải đi đâu tiếp theo. Không nên biến news thành trang list vô nghĩa.',
+        changes: [
+          ['Hero rõ hơn', 'Định vị cập nhật Cinema như một thay đổi sản phẩm, không chỉ là một bài PR.'],
+          ['CTA theo intent', 'Đưa người đọc đi sang thao tác có thể đo được thay vì dừng ở đọc tin.'],
+          ['Nguồn tin ngắn', 'Giữ ngắn gọn, đủ ý, không nhồi nhiều lớp mô tả.'],
+        ],
+        nextSteps: 'Nếu thông tin này liên quan tới đặt vé, deep-link nên dẫn sang film detail hoặc suất chiếu cụ thể thay vì quay lại một feed chung.',
+        related: [
+          ['summer-deals', 'Chuỗi ưu đãi hè mở rộng', 'Campaign update cho nhóm giải trí.'],
+          ['security-bulletin', 'Khuyến nghị bảo vệ tài khoản', 'Trust update cho safety surface.'],
+        ],
+      },
+      'summer-deals': {
+        category: 'Campaign',
+        title: 'Chuỗi ưu đãi hè mở rộng cho nhóm giải trí',
+        deck: 'Bản tin campaign nhấn mạnh voucher, đặt vé và merchant discovery, giúp người dùng chuyển từ đọc sang hành động.',
+        meta: ['27/06/2026', 'Campaign', '2 phút đọc'],
+        statValue: '3.8x',
+        statLabel: 'CTA lift target',
+        focus: 'Campaign brief / conversion',
+        route: '/news/summer-deals',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Tổng quan campaign',
+        sectionBody: 'Mục tiêu của bản tin campaign là làm rõ ưu đãi dành cho ai, hành động nào được khuyến khích, và giá trị thực tế nằm ở đâu.',
+        calloutText: 'Nếu người dùng đọc xong mà không biết bấm đi đâu, campaign đã thất bại ở newsroom.',
+        changes: [
+          ['Clear CTA', 'Tách ưu đãi và điểm đến thành một đường đi ngắn.'],
+          ['Audience focus', 'Giữ thông điệp theo nhóm giải trí thay vì nói chung chung.'],
+          ['Commerce link', 'Dẫn sang voucher hoặc merchant surface có chuyển đổi.'],
+        ],
+        nextSteps: 'Ưu đãi nên có link trực tiếp đến merchant, booking hoặc landing campaign, không để người dùng tự đoán.',
+        related: [
+          ['cinema-update', 'Cinema luồng chọn suất', 'Product update từ film detail.'],
+          ['community-program', 'Chương trình cộng đồng', 'Community update dành cho trust.'],
+        ],
+      },
+      'merchant-hub-updates': {
+        category: 'Partner',
+        title: 'Merchant Hub thêm danh sách quán nổi bật theo khu vực',
+        deck: 'Thông tin đối tác được xuất bản như update ngắn, còn story dài chuyển sang Blog để giữ ranh giới content rõ ràng.',
+        meta: ['26/06/2026', 'Partner', '4 phút đọc'],
+        statValue: '6',
+        statLabel: 'active topics',
+        focus: 'Partner update / discovery',
+        route: '/news/merchant-hub-updates',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Tổng quan đối tác',
+        sectionBody: 'Bản tin này phù hợp khi một merchant hub có thêm coverage mới, hoặc khi người đọc cần một summary nhanh trước khi đi sâu.',
+        calloutText: 'News và Blog phải tách rạch ròi. News là nơi update ngắn, Blog là nơi kể chuyện dài hơn.',
+        changes: [
+          ['Area-based discovery', 'Cho người dùng quét theo khu vực trước khi vào merchant detail.'],
+          ['Short summary', 'Giữ đúng tính chất news: ngắn, mới, có điểm kết thúc rõ.'],
+          ['Routing', 'Nếu cần bài dài, chuyển sang Blog thay vì kéo dài news feed.'],
+        ],
+        nextSteps: 'Đối tác nên đi thẳng vào merchant discovery hoặc merchant detail khi đã đủ intent.',
+        related: [
+          ['cinema-update', 'Cinema luồng chọn suất', 'Product update liên quan trải nghiệm.'],
+          ['universal-search-update', 'Universal Search update', 'Platform surface mới.'],
+        ],
+      },
+      'security-bulletin': {
+        category: 'Trust',
+        title: 'Khuyến nghị bảo vệ tài khoản khi thanh toán online',
+        deck: 'Bản tin trust cần ngắn, trực tiếp, và phải dẫn ngay đến hành động bảo vệ thay vì chỉ kể lại cảnh báo.',
+        meta: ['25/06/2026', 'Safety', '3 phút đọc'],
+        statValue: '1',
+        statLabel: 'risk first mindset',
+        focus: 'Trust bulletin / safety',
+        route: '/news/security-bulletin',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Tổng quan an toàn',
+        sectionBody: 'Nội dung này nên đứng riêng khỏi các campaign và product update để người đọc thấy được mức độ quan trọng và hành động cần làm ngay.',
+        calloutText: 'Một bản tin trust tốt phải giảm rủi ro nhận thức, không chỉ tăng traffic.',
+        changes: [
+          ['Checklist rõ', 'Đưa checklist bảo vệ ngắn, có thể scan trong vài giây.'],
+          ['Link an toàn', 'Dẫn sang Scam Check hoặc các trang an toàn liên quan.'],
+          ['Tone control', 'Giữ giọng điệu nghiêm túc, không giật tít.'],
+        ],
+        nextSteps: 'Bất kỳ cảnh báo nào cũng nên có next step rõ: kiểm tra, xác minh, hoặc mở công cụ an toàn.',
+        related: [
+          ['community-program', 'Chương trình cộng đồng', 'Campaign có yếu tố trust.'],
+          ['cinema-update', 'Cinema luồng chọn suất', 'Product update liên quan.'],
+        ],
+      },
+      'universal-search-update': {
+        category: 'Platform',
+        title: 'Universal Search gom dịch vụ, bài viết và merchant',
+        deck: 'Search update cần thể hiện khả năng gom intent chéo giữa dịch vụ, content và merchant để người dùng đi đúng đường.',
+        meta: ['24/06/2026', 'Platform', '2 phút đọc'],
+        statValue: 'Search',
+        statLabel: 'cross-surface entry',
+        focus: 'Platform update / search',
+        route: '/news/universal-search-update',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Tổng quan nền tảng',
+        sectionBody: 'Bản tin này đóng vai trò như một thông báo năng lực mới trên platform, thay vì chỉ là một bài giới thiệu tính năng.',
+        calloutText: 'Nếu platform có năng lực mới, newsroom là nơi để báo cho người dùng biết năng lực đó tồn tại.',
+        changes: [
+          ['Cross category', 'Dịch vụ, bài viết và merchant cùng xuất hiện trong một entry point.'],
+          ['Intent clarity', 'Giúp người dùng không phải nghĩ quá nhiều trước khi bấm.'],
+          ['Search as hub', 'Search không còn là input, mà là surface điều hướng.'],
+        ],
+        nextSteps: 'Search nên có đường dẫn sâu rõ ràng, tránh dừng ở kết quả tổng hợp nông.',
+        related: [
+          ['cinema-update', 'Cinema luồng chọn suất', 'Product update liên quan.'],
+          ['merchant-hub-updates', 'Merchant hub update', 'Partner update liên quan.'],
+        ],
+      },
+      'community-program': {
+        category: 'Community',
+        title: 'MoMo cập nhật chương trình đóng góp cộng đồng',
+        deck: 'Bản tin cộng đồng nên tách rõ khỏi Blog để người dùng đọc nhanh, hiểu tác động và chuyển sang hành động đúng.',
+        meta: ['23/06/2026', 'Community', '3 phút đọc'],
+        statValue: '3',
+        statLabel: 'community signals',
+        focus: 'Community update / impact',
+        route: '/news/community-program',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Tổng quan cộng đồng',
+        sectionBody: 'Tin cộng đồng nên giữ đúng tinh thần news: cập nhật, ngắn, và có hành động tiếp theo rõ ràng.',
+        calloutText: 'Một newsroom tốt phải làm người đọc tin hơn, không làm họ mệt hơn.',
+        changes: [
+          ['Short update', 'Không kéo dài câu chuyện nếu mục tiêu chỉ là cập nhật.'],
+          ['Visible impact', 'Cho thấy đóng góp hoặc tác động cộng đồng rõ ràng.'],
+          ['Directional CTA', 'Dẫn sang trang hành động hoặc trang thông tin liên quan.'],
+        ],
+        nextSteps: 'Nếu thông tin có thể chuyển đổi, CTA phải xuất hiện ngay trong bản tin hoặc cuối bài.',
+        related: [
+          ['security-bulletin', 'Security bulletin', 'Trust update liên quan.'],
+          ['summer-deals', 'Summer deals', 'Campaign update liên quan.'],
+        ],
+      },
+      'ban-moi-nhap-ma-chonmomo-co-qua-500000d-giam-8225': {
+        kind: 'promo',
+        category: 'Khuyến mãi',
+        title: 'Bạn mới nhập mã CHONMOMO: Có quà 500.000đ giảm nhiều dịch vụ, thêm tiền thưởng đến 1 triệu',
+        deck: 'Nhập mã CHONMOMO để nhận bộ thẻ quà 500.000đ giảm nhiều dịch vụ, có thêm cơ hội nhận tiền thưởng đến 1 triệu và voucher riêng cho Ví Trả Sau.',
+        meta: ['01/04/2026', 'Khuyến mãi', '3 phút đọc'],
+        statValue: '1.000.000đ',
+        statLabel: 'tiền thưởng tối đa',
+        focus: 'Promo / voucher / copy code',
+        route: '/news/ban-moi-nhap-ma-chonmomo-co-qua-500000d-giam-8225',
+        source: 'MoMo Tin tức khuyến mãi',
+        owner: 'MoMo',
+        sectionTitle: 'Tổng quan ưu đãi',
+        sectionBody: 'Người mới chỉ cần nhập mã CHONMOMO và làm theo hướng dẫn để nhận ngay bộ thẻ quà 500.000đ giảm mọi dịch vụ, kèm cơ hội nhận tiền thưởng ngẫu nhiên đến 1.000.000đ. Chương trình còn có quà riêng cho Ví Trả Sau để tiếp sức trải nghiệm mua trước trả sau.',
+        calloutText: 'Bạn có thể kiểm tra nhanh mã, quyền lợi, điều kiện và từng bước tham gia trước khi đăng ký MoMo để không bỏ lỡ ưu đãi.',
+        changes: [
+          ['Mã CHONMOMO', 'Đặt mã CHONMOMO ngay trong bài để người đọc có thể sao chép nhanh.'],
+          ['Bộ thẻ quà 500.000đ', 'Thẻ quà gồm nhiều mệnh giá giảm dịch vụ, QR, data, vé phim, giao vận và mua sắm.'],
+          ['Cách tham gia', 'Tách 5 bước tham gia thành các thẻ dễ scan theo thứ tự.'],
+        ],
+        nextSteps: 'Sau khi xem xong, người dùng nên biết rõ cách nhập mã, cách xác thực, cách liên kết ngân hàng và cách nhận bộ quà trong mục Quà của tôi.',
+        heroImage: 'https://homepage.momocdn.net/blogscontents/770x370-11-1-260410122905.jpg',
+        promoCode: 'CHONMOMO',
+        promoCodeNote: 'Nhập mã CHONMOMO trong luồng đăng ký để nhận quà theo bài khuyến mãi.',
+        gifts: [
+          ['500.000đ giảm mọi dịch vụ', 'Bộ thẻ quà gồm các mức giảm 10k, 20k, 50k và 140k cho nhiều bối cảnh thanh toán.'],
+          ['Tiền thưởng đến 1.000.000đ', 'Phần thưởng ngẫu nhiên được trả trực tiếp vào Túi Thần Tài trên MoMo.'],
+          ['Quà riêng cho Ví Trả Sau', 'Có voucher riêng và cơ hội mở Ví Trả Sau rất nhanh.'],
+          ['Thời gian chương trình', 'Áp dụng từ 01/04/2026 đến 16h00 ngày 30/06/2026.'],
+        ],
+        guidelines: [
+          ['1', 'Đăng ký tài khoản', 'Đăng ký MoMo bằng số điện thoại trùng với số đăng ký Internet Banking.'],
+          ['2', 'Nhập mã khuyến mãi', 'Tại màn hình Nhập mã khuyến mãi, nhập mã CHONMOMO.'],
+          ['3', 'Xác thực tài khoản', 'Chụp CCCD gắn chip, xác thực sinh trắc học hoặc VNeID mức 2, rồi xác thực khuôn mặt.'],
+          ['4', 'Liên kết ngân hàng', 'Liên kết ngân hàng với MoMo và nạp tối thiểu 10.000đ, riêng Agribank là 50.000đ.'],
+          ['5', 'Nhận quà', 'Bộ quà CHONMOMO sẽ nằm trong mục Quà của tôi để khám phá và sử dụng.'],
+        ],
+        faq: [
+          ['Mã CHONMOMO dùng để làm gì?', 'Đây là mã để nhận bộ quà 500.000đ và cơ hội nhận tiền thưởng ngẫu nhiên đến 1 triệu.'],
+          ['Tôi có thể sao chép mã ở đâu?', 'Nút Sao chép mã đặt ngay trong bài để bạn lấy mã nhanh.'],
+          ['Chương trình áp dụng khi nào?', 'Từ 01/04/2026 đến 16h00 ngày 30/06/2026.'],
+          ['FAQ này có giúp trước khi nhập mã không?', 'Có, vì chương trình có bước xác thực và liên kết ngân hàng trước khi nhận quà.'],
+        ],
+        terms: [
+          'Chương trình chỉ áp dụng cho khách hàng lần đầu tiên liên kết tài khoản ngân hàng với MoMo.',
+          'Mỗi khách hàng chỉ được nhận thưởng tối đa một lần cho một tài khoản, một CCCD, một ngân hàng và một thiết bị.',
+          'Khách hàng cần hoàn tất xác thực sinh trắc học để được nhận thưởng.',
+          'Ngân sách thẻ quà có giới hạn và chương trình có thể kết thúc sớm khi hết ngân sách.',
+        ],
+        related: [
+          ['summer-deals', 'Chuỗi ưu đãi hè mở rộng', 'Campaign update cho nhóm giải trí.'],
+          ['cinema-update', 'MoMo Cinema cập nhật luồng chọn suất chiếu mới', 'Product update liên quan trải nghiệm.'],
+        ],
+      },
+      default: {
+        category: 'News',
+        title: 'MoMo News detail',
+        deck: 'Trang detail mẫu cho newsroom update.',
+        meta: ['28/06/2026', 'News', '3 phút đọc'],
+        statValue: '24',
+        statLabel: 'updates this month',
+        focus: 'Generic news detail',
+        route: '/news/cinema-update',
+        source: 'MoMo Newsroom',
+        owner: 'Web Platform',
+        sectionTitle: 'Tóm tắt',
+        sectionBody: 'Nội dung chi tiết sẽ được map theo slug của bản tin.',
+        calloutText: 'News Detail cần đủ ngắn để scan, đủ rõ để hiểu và đủ trực tiếp để đi tiếp.',
+        changes: [
+          ['Hero', 'Mở đầu bằng tiêu đề và bối cảnh của bản tin.'],
+          ['Summary', 'Cho biết điều gì vừa thay đổi.'],
+          ['CTA', 'Dẫn người đọc sang action liên quan.'],
+        ],
+        nextSteps: 'Tạo thêm bài viết cụ thể theo từng slug khi nội dung thực tế được chốt.',
+        related: [],
+      },
+    };
+
+    const params = new URLSearchParams(location.search);
+    const slugFromQuery = params.get('slug');
+    const slugFromPath = location.pathname.split('/').filter(Boolean).pop() || '';
+    const slug = slugFromQuery || slugFromPath;
+    const story = STORIES[slug] || STORIES['ban-moi-nhap-ma-chonmomo-co-qua-500000d-giam-8225'];
+    function buildNewsHref(targetSlug) {
+      return `./news-detail.html?slug=${encodeURIComponent(targetSlug)}`;
+    }
+
+    function buildListHref() {
+      return './news.html';
+    }
+
+    const categoryEl = document.getElementById('category');
+    const storyTitleEl = document.getElementById('storyTitle');
+    const deckEl = document.getElementById('deck');
+    const metaEl = document.getElementById('meta');
+    const primaryCta = document.getElementById('primaryCta');
+    const promoAreaEl = document.getElementById('promoArea');
+    const promoGiftsEl = document.getElementById('promoGifts');
+    const promoGuidelinesEl = document.getElementById('promoGuidelines');
+    const promoFaqEl = document.getElementById('promoFaq');
+    const promoTermsEl = document.getElementById('promoTerms');
+    const promoCodeEl = document.getElementById('promoCode');
+    const promoCodeNoteEl = document.getElementById('promoCodeNote');
+    const railOfferEl = document.getElementById('railOffer');
+    const railPromoCodeEl = document.getElementById('railPromoCode');
+    const railPromoNoteEl = document.getElementById('railPromoNote');
+    const railCopyCodeBtnEl = document.getElementById('railCopyCodeBtn');
+    const giftGridEl = document.getElementById('giftGrid');
+    const guidelineCarouselEl = document.getElementById('guidelineCarousel');
+    const guidelineDotsEl = document.getElementById('guidelineDots');
+    const guidelinePrevEl = document.getElementById('guidelinePrev');
+    const guidelineNextEl = document.getElementById('guidelineNext');
+    const faqListEl = document.getElementById('faqList');
+    const termsListEl = document.getElementById('termsList');
+    const sectionTitleEl = document.getElementById('sectionTitle');
+    const sectionBodyEl = document.getElementById('sectionBody');
+    const calloutTextEl = document.getElementById('calloutText');
+    const changeListEl = document.getElementById('changeList');
+    const nextStepsEl = document.getElementById('nextSteps');
+    const relatedEl = document.getElementById('related');
+
+    if (story.heroImage) {
+      const wrap = document.getElementById('heroImgWrap');
+      const img = document.getElementById('heroImg');
+      img.src = story.heroImage;
+      img.alt = story.title;
+      wrap.hidden = false;
+    }
+
+    document.title = `${story.title} - MoMo News`;
+    document.getElementById('brandLink').href = buildListHref();
+    document.getElementById('backLink').href = buildListHref();
+    categoryEl.innerHTML = `<i class="ti ti-news"></i>${story.category}`;
+    storyTitleEl.textContent = story.title;
+    deckEl.textContent = story.deck;
+    metaEl.innerHTML = story.meta.map(item => `<span>${item}</span>`).join('');
+    const isPromo = story.kind === 'promo';
+    primaryCta.textContent = isPromo ? 'Xem ưu đãi' : (story.category === 'Trust' ? 'Mở hướng dẫn an toàn' : 'Đọc bản tin');
+    primaryCta.href = isPromo ? '#promoArea' : '#article';
+    sectionTitleEl.textContent = story.sectionTitle;
+    sectionBodyEl.textContent = story.sectionBody;
+    calloutTextEl.textContent = story.calloutText;
+    nextStepsEl.textContent = story.nextSteps;
+    changeListEl.innerHTML = story.changes.map(([title, text]) => `
+      <div class="list-item">
+        <strong>${title}</strong>
+        <span>${text}</span>
+      </div>
+    `).join('');
+
+    promoAreaEl.hidden = true;
+    promoGiftsEl.hidden = !isPromo;
+    promoGuidelinesEl.hidden = !isPromo;
+    promoFaqEl.hidden = !isPromo;
+    promoTermsEl.hidden = !isPromo;
+
+    function setCopyFeedback(button, label) {
+      const original = button.innerHTML;
+      button.innerHTML = `<i class="ti ti-check"></i>${label}`;
+      setTimeout(() => {
+        button.innerHTML = original;
+      }, 1600);
+    }
+
+    async function copyPromoCode(button) {
+      try {
+        await navigator.clipboard.writeText(railPromoCodeEl.textContent.trim());
+        setCopyFeedback(button, 'Đã sao chép');
+      } catch (_) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(railPromoCodeEl);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        setCopyFeedback(button, 'Đã chọn mã');
+      }
+    }
+
+    if (isPromo) {
+      let guidelineIndex = 0;
+      function renderPhoneScreen(no) {
+        const screens = {
+          '1': `
+            <div class="pscreen-appbar">
+              <span class="back-label"><i class="ti ti-arrow-left"></i> Đăng ký MoMo</span>
+              <i class="ti ti-home" style="color:var(--muted)"></i>
+            </div>
+            <div class="pscreen-body">
+              <div class="pscreen-card">
+                <div class="pscreen-label">Số điện thoại</div>
+                <div class="pscreen-input">09xx xxx xxx</div>
+              </div>
+              <div class="pscreen-card">
+                <div class="pscreen-label">Xác thực OTP</div>
+                <div class="pscreen-chips">
+                  <span class="pscreen-chip">OTP</span>
+                  <span class="pscreen-chip">Số trùng ngân hàng</span>
+                </div>
+              </div>
+              <div class="pscreen-btn">Tiếp tục</div>
+            </div>`,
+          '2': `
+            <div class="pscreen-appbar">
+              <span class="back-label"><i class="ti ti-arrow-left"></i> Nhập mã khuyến mãi</span>
+              <i class="ti ti-home" style="color:var(--muted)"></i>
+            </div>
+            <div class="pscreen-body">
+              <div class="pscreen-card pscreen-highlight">
+                <div class="pscreen-label">Mã khuyến mãi</div>
+                <div class="pscreen-title" style="color:var(--momo);letter-spacing:.08em">CHONMOMO</div>
+              </div>
+              <div class="pscreen-card">
+                <div class="pscreen-chips">
+                  <span class="pscreen-chip">Áp dụng mã</span>
+                  <span class="pscreen-chip">Bộ quà 500.000đ</span>
+                </div>
+              </div>
+              <div class="pscreen-btn">Áp dụng</div>
+            </div>`,
+          '3': `
+            <div class="pscreen-appbar">
+              <span class="back-label"><i class="ti ti-arrow-left"></i> Xác thực tài khoản</span>
+              <i class="ti ti-home" style="color:var(--muted)"></i>
+            </div>
+            <div class="pscreen-body">
+              <div class="pscreen-card">
+                <div class="pscreen-label">Chọn phương thức</div>
+                <div class="pscreen-radio"><div class="pscreen-radio-dot checked"></div> CCCD gắn chip</div>
+                <div class="pscreen-radio"><div class="pscreen-radio-dot"></div> VNeID mức 2</div>
+                <div class="pscreen-radio"><div class="pscreen-radio-dot"></div> Sinh trắc học</div>
+              </div>
+              <div class="pscreen-btn">Chụp CCCD</div>
+            </div>`,
+          '4': `
+            <div class="pscreen-appbar">
+              <span class="back-label"><i class="ti ti-arrow-left"></i> Liên kết ngân hàng</span>
+              <i class="ti ti-home" style="color:var(--muted)"></i>
+            </div>
+            <div class="pscreen-body">
+              <div class="pscreen-card">
+                <div class="pscreen-label">Chọn ngân hàng</div>
+                <div class="pscreen-input">Vietcombank ▾</div>
+              </div>
+              <div class="pscreen-card">
+                <div class="pscreen-label">Nạp tiền tối thiểu</div>
+                <div class="pscreen-title">10.000đ</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:4px">Riêng Agribank: 50.000đ</div>
+              </div>
+              <div class="pscreen-btn">Liên kết ngay</div>
+            </div>`,
+          '5': `
+            <div class="pscreen-appbar">
+              <span class="back-label"><i class="ti ti-arrow-left"></i> Quà của tôi</span>
+              <i class="ti ti-home" style="color:var(--muted)"></i>
+            </div>
+            <div class="pscreen-body">
+              <div class="pscreen-card pscreen-highlight">
+                <div class="pscreen-label">Bộ quà CHONMOMO</div>
+                <div class="pscreen-title">500.000đ giảm dịch vụ</div>
+                <div class="pscreen-chips" style="margin-top:10px">
+                  <span class="pscreen-chip">Voucher</span>
+                  <span class="pscreen-chip">Túi Thần Tài</span>
+                  <span class="pscreen-chip">Ví Trả Sau</span>
+                </div>
+              </div>
+              <div class="pscreen-btn">Khám phá quà</div>
+            </div>`,
+        };
+        return screens[no] || screens['1'];
+      }
+
+      function renderGuidelineCarousel() {
+        const items = story.guidelines || [];
+        if (!items.length) return;
+
+        guidelineCarouselEl.innerHTML = renderPhoneScreen(items[guidelineIndex][0]);
+
+        guidelineDotsEl.innerHTML = items.map(([no, title, text], index) => `
+          <div class="step-row ${index === guidelineIndex ? 'active' : ''}" data-gi="${index}">
+            <div class="step-num">${no}</div>
+            <div class="step-row-body">
+              <div class="step-row-title">${title}</div>
+              <div class="step-row-desc">${text}</div>
+            </div>
+          </div>
+        `).join('');
+
+        guidelineDotsEl.querySelectorAll('.step-row').forEach(row => {
+          row.addEventListener('click', () => {
+            guidelineIndex = Number(row.dataset.gi);
+            renderGuidelineCarousel();
+          });
+        });
+      }
+
+      promoCodeEl.textContent = story.promoCode || 'CHONMOMO';
+      promoCodeNoteEl.textContent = story.promoCodeNote || '';
+      railOfferEl.hidden = false;
+      railPromoCodeEl.textContent = story.promoCode || 'CHONMOMO';
+      railPromoNoteEl.textContent = story.promoCodeNote || 'Sao chép mã để nhập trong app MoMo.';
+      giftGridEl.innerHTML = story.gifts.map(([title, text]) => `
+        <div class="gift-card">
+          <strong>${title}</strong>
+          <span>${text}</span>
+        </div>
+      `).join('');
+      renderGuidelineCarousel();
+      faqListEl.innerHTML = story.faq.map(([q, a]) => `
+        <article class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            <span>${q}</span>
+            <i class="ti ti-plus"></i>
+          </button>
+          <div class="faq-a">${a}</div>
+        </article>
+      `).join('');
+      termsListEl.innerHTML = story.terms.map(item => `<li>${item}</li>`).join('');
+
+      const faqButtons = faqListEl.querySelectorAll('.faq-q');
+      faqButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const item = button.closest('.faq-item');
+          const open = item.classList.toggle('open');
+          button.setAttribute('aria-expanded', open ? 'true' : 'false');
+          const icon = button.querySelector('i');
+          icon.className = open ? 'ti ti-minus' : 'ti ti-plus';
+        });
+      });
+
+      railCopyCodeBtnEl.addEventListener('click', () => copyPromoCode(railCopyCodeBtnEl));
+
+    }
+
+    const defaultRelated = [
+      ['cinema-update', 'MoMo Cinema cập nhật luồng chọn suất chiếu mới', 'Product update liên quan trải nghiệm đặt vé.'],
+      ['summer-deals', 'Chuỗi ưu đãi hè mở rộng cho nhóm giải trí', 'Campaign update cho nhóm giải trí.'],
+    ];
+    const relatedItems = story.related.length ? story.related : defaultRelated;
+    relatedEl.innerHTML = relatedItems.map(([key, title, text]) => `
+      <a href="${buildNewsHref(key)}">
+        <strong>${title}</strong>
+        <span>${text}</span>
+      </a>
+    `).join('');
+  </script>
+</body>
+</html>

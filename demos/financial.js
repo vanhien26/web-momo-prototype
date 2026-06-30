@@ -15,6 +15,11 @@ const fmtM = n => {
   return fmt(n);
 };
 const parseMoney = s => +String(s).replace(/[^\d]/g, '') || 0;
+const escapeHtml = s => String(s)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
 const FINANCIAL_ICON_SPRITE = '/assets/icons/momo/financial-sharp.svg';
 const svgIcon = (id, className = 'fin-svg-icon') =>
   `<svg class="${className}" aria-hidden="true" focusable="false"><use href="${FINANCIAL_ICON_SPRITE}#${id}"></use></svg>`;
@@ -612,13 +617,13 @@ const TOOLS = [
     resultLabel: 'GIÁ TRỊ TÀI SẢN RÒNG',
     disclaimer: 'Kết quả là ảnh chụp tài chính tại thời điểm nhập dữ liệu, không phải tư vấn đầu tư hoặc định giá tài sản chuyên nghiệp.',
     fields: [
-      { id: 'nwCash', label: 'Tiền mặt và tiết kiệm', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 100000000, chips: [20000000, 100000000, 500000000] },
-      { id: 'nwInvestments', label: 'Đầu tư tài chính', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 150000000, chips: [0, 100000000, 500000000] },
-      { id: 'nwProperty', label: 'Nhà, đất và phương tiện', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 1500000000, chips: [0, 1000000000, 3000000000] },
-      { id: 'nwOtherAssets', label: 'Tài sản khác', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 200000000] },
-      { id: 'nwMortgage', label: 'Dư nợ vay nhà, xe', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 900000000, chips: [0, 500000000, 1500000000] },
-      { id: 'nwConsumerDebt', label: 'Dư nợ thẻ và vay tiêu dùng', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 30000000, chips: [0, 30000000, 100000000] },
-      { id: 'nwOtherDebt', label: 'Khoản nợ khác', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 0, chips: [0, 50000000, 200000000] },
+      { id: 'nwCash', label: 'Tiền mặt và tiết kiệm', tooltip: 'Gồm tiền mặt, tiền trong tài khoản thanh toán, sổ tiết kiệm và các khoản có thể quy đổi ra tiền gần như ngay lập tức.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 100000000, chips: [20000000, 100000000, 500000000] },
+      { id: 'nwInvestments', label: 'Đầu tư tài chính', tooltip: 'Gồm cổ phiếu, quỹ, trái phiếu, vàng đầu tư, crypto hoặc các khoản đầu tư tài chính khác theo giá trị ước tính hiện tại.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 150000000, chips: [0, 100000000, 500000000] },
+      { id: 'nwProperty', label: 'Nhà, đất và phương tiện', tooltip: 'Ghi theo giá trị thị trường ước tính hiện tại của bất động sản, ô tô, xe máy hoặc tài sản lớn phục vụ sử dụng lâu dài.', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 1500000000, chips: [0, 1000000000, 3000000000] },
+      { id: 'nwOtherAssets', label: 'Tài sản khác', tooltip: 'Gồm đồ giá trị cao, khoản phải thu, vốn góp cá nhân hoặc tài sản khác chưa nằm trong các nhóm phía trên.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 200000000] },
+      { id: 'nwMortgage', label: 'Dư nợ vay nhà, xe', tooltip: 'Là phần gốc còn nợ của các khoản vay mua nhà, mua xe hoặc khoản vay thế chấp tương tự tại thời điểm hiện tại.', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 900000000, chips: [0, 500000000, 1500000000] },
+      { id: 'nwConsumerDebt', label: 'Dư nợ thẻ và vay tiêu dùng', tooltip: 'Bao gồm dư nợ thẻ tín dụng, vay tiêu dùng tín chấp, trả góp và các khoản vay cá nhân ngắn hoặc trung hạn.', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 30000000, chips: [0, 30000000, 100000000] },
+      { id: 'nwOtherDebt', label: 'Khoản nợ khác', tooltip: 'Các nghĩa vụ nợ còn lại như vay người thân, công nợ kinh doanh, thuế phải trả hoặc khoản nợ chưa xếp vào nhóm trên.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 0, chips: [0, 50000000, 200000000] },
     ],
     compute(v) {
       const totalAssets = v.nwCash + v.nwInvestments + v.nwProperty + v.nwOtherAssets;
@@ -1871,6 +1876,18 @@ function renderGenericPanel(tool) {
 
   const container = document.getElementById('genericFields');
   const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
+  const renderFieldLabel = f => `
+    <span class="field-label-main">
+      <span>${f.label}</span>
+      ${f.tooltip ? `
+        <button
+          type="button"
+          class="field-help"
+          aria-label="Giải thích cho trường ${escapeHtml(f.label)}"
+          data-tooltip="${escapeHtml(f.tooltip)}">i</button>
+      ` : ''}
+    </span>
+  `;
   const renderField = (f, options = {}) => {
     const compactClass = options.compact ? ' compact-field' : '';
     const showChips = !options.hideChips;
@@ -1878,7 +1895,7 @@ function renderGenericPanel(tool) {
     if (f.type === 'money') {
       const formattedInitial = (f.value || 0).toLocaleString('vi-VN');
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <div class="money-input-row">
           <input type="text" inputmode="numeric" id="${f.id}" value="${formattedInitial}" aria-label="${ariaLabel}">
           <span class="unit-tag">đ</span>
@@ -1893,7 +1910,7 @@ function renderGenericPanel(tool) {
       const unitTag = unitTxt ? `<span class="unit-tag">${unitTxt}</span>` : '';
       const chips = f.chips || autoChips(f);
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <div class="num-input-row">
           <button type="button" class="num-step" data-target="${f.id}" data-dir="-1" aria-label="Giảm">−</button>
           <input type="number" id="${f.id}" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}" aria-label="${ariaLabel}">
@@ -1908,7 +1925,7 @@ function renderGenericPanel(tool) {
     }
     if (f.type === 'pills') {
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="pills-grid" role="group" aria-label="${ariaLabel}">
           ${f.options.map(o => `<button type="button" class="pill-btn${o.note ? ' pill-btn-explained' : ''}${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}"><span>${o.label}</span>${o.note ? `<small>${o.note}</small>` : ''}</button>`).join('')}
@@ -1917,7 +1934,7 @@ function renderGenericPanel(tool) {
     }
     if (f.type === 'select-items') {
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="select-items-grid" role="group" aria-label="${ariaLabel}">
           ${f.options.map(o => `<button type="button" class="select-item-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}">
@@ -1929,7 +1946,7 @@ function renderGenericPanel(tool) {
     }
     const opts = f.options.map(o => `<option value="${o.value}"${String(o.value) === String(f.value) ? ' selected' : ''}>${o.label}</option>`).join('');
     return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-      <label class="field-label" for="${f.id}">${f.label}</label>
+      <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
       <select id="${f.id}" aria-label="${ariaLabel}">${opts}</select>
     </div>`;
   };
