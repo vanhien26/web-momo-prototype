@@ -18,7 +18,7 @@
       <span><strong>Money Lab</strong><small>MoSpark · Financial Utilities</small></span>
     </div>
     <nav aria-label="Điều hướng trang">
-      <a href="#tools">Công cụ</a>
+      <a href="/demos/financial.html" aria-label="Mở trang chủ Money Lab">Công cụ</a>
       <span class="status"><i></i>27 utilities live</span>
     </nav>
   </header>
@@ -40,14 +40,6 @@
 
   <main id="top">
     <section class="lab" id="tools">
-      <aside class="tool-sidebar">
-        <div class="sidebar-heading">
-          <span>UTILITY CATALOG</span>
-          <strong>Chọn nhu cầu</strong>
-        </div>
-        <div class="tool-list" id="toolList"></div>
-      </aside>
-
       <div class="tool-workspace">
         <section class="tool-panel generic-panel" id="genericPanel">
           <div class="panel-heading">
@@ -441,7 +433,7 @@
               </div>
 
               <details class="fire-advanced">
-                <summary>💱 Bảng tỷ giá 6 ngoại tệ <span>USD · EUR · JPY · CNY · KRW · SGD</span></summary>
+                <summary><svg class="summary-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/momo/financial-sharp.svg#exchange"></use></svg>Bảng tỷ giá 6 ngoại tệ <span>USD · EUR · JPY · CNY · KRW · SGD</span></summary>
                 <div class="fire-adv-body"><div class="fx-rate-list" id="fxRateGrid"></div></div>
               </details>
             </div>
@@ -563,9 +555,9 @@
 
               <div class="section-label" style="margin-top:20px"><span>03</span><strong>Chuẩn chi tiêu</strong></div>
               <div class="segmented-control" id="tbTierControl" style="margin-top:8px">
-                <button type="button" data-tier="budget">💸 Tiết kiệm</button>
-                <button type="button" data-tier="mid" class="active">⚖️ Cân bằng</button>
-                <button type="button" data-tier="luxury">✨ Cao cấp</button>
+                <button type="button" data-tier="budget"><svg class="tb-seg-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/momo/financial-sharp.svg#tier-budget"></use></svg>Tiết kiệm</button>
+                <button type="button" data-tier="mid" class="active"><svg class="tb-seg-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/momo/financial-sharp.svg#tier-mid"></use></svg>Cân bằng</button>
+                <button type="button" data-tier="luxury"><svg class="tb-seg-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/momo/financial-sharp.svg#tier-luxury"></use></svg>Cao cấp</button>
               </div>
 
               <div class="tb-daily-card" id="tbDailyCard"></div>
@@ -646,7 +638,7 @@
               </div>
 
               <details class="fire-advanced">
-                <summary>⚙ Giả định nâng cao <span>Lạm phát 4% · Rút vốn 3,5% · Lợi suất 8%</span></summary>
+                <summary><svg class="summary-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/momo/financial-sharp.svg#grid"></use></svg>Giả định nâng cao <span>Lạm phát 4% · Rút vốn 3,5% · Lợi suất 8%</span></summary>
                 <div class="fire-adv-body">
                   <div class="fire-adv-row">
                     <label for="fireInflationInp">Lạm phát chi tiêu/năm</label>
@@ -708,13 +700,15 @@
       </div>
     </section>
 
-    <section class="related-tools" id="relatedTools" aria-label="Khám phá công cụ khác">
-      <div class="related-tools-head">
-        <span class="related-tools-kicker">Money Lab Utilities</span>
-        <h3 id="relatedToolsTitle">Khám phá công cụ khác</h3>
-        <p id="relatedToolsSub">Các utilities còn lại trong Money Lab cho mọi quyết định tài chính.</p>
+    <section class="tool-library" id="toolLibrary" aria-label="Danh sách công cụ Money Lab">
+      <div class="tool-library-head">
+        <div>
+          <span class="tool-library-kicker">Money Lab Utilities</span>
+          <h3>Chọn công cụ khác</h3>
+        </div>
+        <p>Toàn bộ utility tài chính được nhóm theo nhu cầu. Chọn một item để mở tool ở phần trên.</p>
       </div>
-      <div class="related-tools-grid" id="relatedToolsGrid"></div>
+      <div class="tool-list" id="toolList"></div>
     </section>
 
   </main>
@@ -762,9 +756,13 @@
       cursor: pointer;
       transition: all .15s;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .mlc-pill:hover { background: rgba(255,255,255,.2); }
     .mlc-pill.active { background: #fff; color: #AF0171; border-color: #fff; font-weight: 600; }
+    .mlc-pill-icon { width: 15px; height: 15px; flex: none; }
 
     .mlc-grid-wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 48px; }
     .mlc-grid {
@@ -837,59 +835,61 @@
     const ARROW_SVG = `<svg class="mlc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`;
 
     const CATS = [
-      {id:'all',            label:'Tất cả'},
-      {id:'Credit',         label:'💳 Tín dụng'},
-      {id:'Insurance',      label:'🛡 Bảo hiểm'},
-      {id:'Savings',        label:'🏦 Tiết kiệm'},
-      {id:'Investment',     label:'📈 Đầu tư'},
-      {id:'Tax',            label:'📋 Thuế'},
-      {id:'FX',             label:'💱 Tỷ giá'},
-      {id:'Financial Health',label:'❤️ Sức khỏe TC'},
-      {id:'Planning',       label:'🗓 Kế hoạch'},
+      {id:'all',             icon:'grid',             label:'Tất cả'},
+      {id:'Credit',          icon:'card',             label:'Tín dụng'},
+      {id:'Insurance',       icon:'social-insurance', label:'Bảo hiểm'},
+      {id:'Savings',         icon:'savings',          label:'Tiết kiệm'},
+      {id:'Investment',      icon:'stock',            label:'Đầu tư'},
+      {id:'Tax',             icon:'tax',              label:'Thuế'},
+      {id:'FX',              icon:'exchange',         label:'Tỷ giá'},
+      {id:'Financial Health',icon:'dti',              label:'Sức khỏe TC'},
+      {id:'Planning',        icon:'calendar',         label:'Kế hoạch'},
     ];
     const WIDGETS = [
-      {id:'vay-nhanh',      name:'Vay Nhanh',              cat:'Credit',          icon:'06_vay_nhanh.png',                    desc:'Ước tính số tiền trả hàng tháng theo số tiền vay, lãi suất và kỳ hạn.'},
-      {id:'tra-gop',        name:'Trả Góp Ví Trả Sau',     cat:'Credit',          icon:'05_vi_tra_sau.png',                   desc:'Ước tính khoản trả hằng kỳ khi chuyển đổi trả góp dư nợ qua Ví Trả Sau.'},
-      {id:'cic-score',      name:'CIC Score',              cat:'Credit',          icon:'07_credittech_tai_chinh_sieu_toc.png',desc:'Mô phỏng điểm tín dụng CIC theo thanh toán, sử dụng hạn mức và lịch sử.'},
-      {id:'cic-stimulator', name:'CIC Stimulator',         cat:'Credit',          icon:'07_credittech_tai_chinh_sieu_toc.png',desc:'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.'},
-      {id:'bao-hiem-o-to',  name:'Bảo Hiểm Ô Tô',         cat:'Insurance',       icon:'07_bao_hiem.png',                     desc:'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí thị trường.'},
-      {id:'bhxh',           name:'BHXH',                  cat:'Insurance',       icon:'06_vien-phi.svg',                     desc:'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.'},
-      {id:'luong-huu',      name:'Lương Hưu',              cat:'Insurance',       icon:'06_vien-phi.svg',                     desc:'Ước tính lương hưu hàng tháng theo số năm đóng BHXH và lương bình quân.'},
-      {id:'bhxh-1-lan',     name:'BHXH 1 Lần',            cat:'Insurance',       icon:'15_hoan-tien.svg',                    desc:'Ước tính tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024.'},
-      {id:'tiet-kiem',      name:'Tiết Kiệm',              cat:'Savings',         icon:'08_tiet_kiem.png',                    desc:'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.'},
-      {id:'nuoi-con',       name:'Kế Hoạch Nuôi Con',      cat:'Savings',         icon:'🧒',                                 desc:'Ước tính chi phí nuôi dạy con đến 18 tuổi và tích lũy quỹ đại học.'},
-      {id:'lai-suat',       name:'Lãi Suất Ngân Hàng',     cat:'Savings',         icon:'01_lai_suat_ngan_hang.png',           desc:'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận.'},
-      {id:'chung-chi-quy',  name:'Chứng Chỉ Quỹ',         cat:'Investment',      icon:'05_mutual_funds_chung_chi_quy.png',   desc:'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.'},
-      {id:'gold',           name:'Giá Vàng',               cat:'Investment',      icon:'03_gia_vang.png',                     desc:'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và hòa vốn theo kịch bản.'},
-      {id:'stock',          name:'Chứng Khoán',            cat:'Investment',      icon:'02_chung_khoan.png',                  desc:'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.'},
-      {id:'thue-tncn',      name:'Thuế TNCN',              cat:'Tax',             icon:'04_thue_tncn.png',                    desc:'Ước tính thuế TNCN theo biểu lũy tiến 5 bậc và giảm trừ gia cảnh.'},
-      {id:'quyet-toan-tncn',name:'Quyết Toán TNCN',        cat:'Tax',             icon:'05_quyet_toan_tncn.png',              desc:'Quyết toán thuế TNCN cuối năm: phải nộp thêm hay được hoàn trước 30/04.'},
-      {id:'thue-tndn-sme',  name:'Thuế TNDN SME',          cat:'Tax',             icon:'06_thue_tndn_sme.png',                desc:'Tính thuế TNDN cho SME theo Luật 67/2025: 15%/17%/20%, miễn 3 năm DN mới.'},
-      {id:'ty-gia',         name:'Tỷ Giá',                 cat:'FX',              icon:'07_ty_gia.png',                       desc:'Converter A/B: chọn cặp tiền, xem chart, chênh lệch bank-mid và số nhận ròng.'},
-      {id:'fx-compare',     name:'So Sánh Tỷ Giá NH',      cat:'FX',              icon:'08_so_sanh_ty_gia_ngan_hang.png',     desc:'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ.'},
-      {id:'travel-budget',  name:'Budget Du Lịch',         cat:'FX',              icon:'11_du_lich.png',                      desc:'Lập ngân sách chuyến đi 10 điểm đến × 3 tier × N ngày, breakdown chi tiết.'},
-      {id:'net-worth',      name:'Giá Trị Tài Sản Ròng',  cat:'Financial Health',icon:'09_gia_tri_tai_san_rong.png',          desc:'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng.'},
-      {id:'dti',            name:'Tỷ Lệ Nợ/Thu Nhập',     cat:'Financial Health',icon:'14_quan-ly-chi-tieu.svg',              desc:'Tính tỷ lệ thu nhập gộp hàng tháng đang dùng để thanh toán nợ.'},
-      {id:'debt-payoff',    name:'Kế Hoạch Trả Nợ',       cat:'Financial Health',icon:'06_vay_nhanh.png',                     desc:'So sánh chiến lược Avalanche và Snowball khi trả nhiều khoản nợ cùng lúc.'},
-      {id:'quy-du-phong',   name:'Quỹ Dự Phòng',          cat:'Financial Health',icon:'10_quy_du_phong.png',                  desc:'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian và lạm phát dự kiến.'},
-      {id:'tu-do-tai-chinh',name:'Tự Do Tài Chính',       cat:'Planning',        icon:'15_hoan-tien.svg',                    desc:'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư và dòng tiền góp hàng tháng.'},
-      {id:'dam-cuoi',       name:'Kế Hoạch Đám Cưới',     cat:'Planning',        icon:'11_ke_hoach_dam_cuoi.png',             desc:'Lập ngân sách cưới: số khách, tiệc, chi phí cố định, tiền mừng và dự phòng.'},
-      {id:'hoc-phi',        name:'Học Phí Tương Lai',      cat:'Planning',        icon:'05_hoc-phi.svg',                      desc:'Ước tính học phí thực tế theo lạm phát và số tiền cần chuẩn bị từ hôm nay.'},
+      {id:'vay-nhanh',      name:'Vay Nhanh',              cat:'Credit',          icon:'financial-sharp.svg#loan',            desc:'Ước tính số tiền trả hàng tháng theo số tiền vay, lãi suất và kỳ hạn.'},
+      {id:'tra-gop',        name:'Trả Góp Ví Trả Sau',     cat:'Credit',          icon:'financial-sharp.svg#installment',     desc:'Ước tính khoản trả hằng kỳ khi chuyển đổi trả góp dư nợ qua Ví Trả Sau.'},
+      {id:'cic-score',      name:'CIC Score',              cat:'Credit',          icon:'financial-sharp.svg#credit-score',    desc:'Mô phỏng điểm tín dụng CIC theo thanh toán, sử dụng hạn mức và lịch sử.'},
+      {id:'cic-stimulator', name:'CIC Stimulator',         cat:'Credit',          icon:'financial-sharp.svg#credit-simulator',desc:'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.'},
+      {id:'bao-hiem-o-to',  name:'Bảo Hiểm Ô Tô',         cat:'Insurance',       icon:'financial-sharp.svg#car-insurance',   desc:'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí thị trường.'},
+      {id:'bhxh',           name:'BHXH',                  cat:'Insurance',       icon:'financial-sharp.svg#social-insurance',desc:'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.'},
+      {id:'luong-huu',      name:'Lương Hưu',              cat:'Insurance',       icon:'financial-sharp.svg#pension',         desc:'Ước tính lương hưu hàng tháng theo số năm đóng BHXH và lương bình quân.'},
+      {id:'bhxh-1-lan',     name:'BHXH 1 Lần',            cat:'Insurance',       icon:'financial-sharp.svg#lump-sum',        desc:'Ước tính tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024.'},
+      {id:'tiet-kiem',      name:'Tiết Kiệm',              cat:'Savings',         icon:'financial-sharp.svg#savings',         desc:'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.'},
+      {id:'nuoi-con',       name:'Kế Hoạch Nuôi Con',      cat:'Savings',         icon:'financial-sharp.svg#child-plan',      desc:'Ước tính chi phí nuôi dạy con đến 18 tuổi và tích lũy quỹ đại học.'},
+      {id:'lai-suat',       name:'Lãi Suất Ngân Hàng',     cat:'Savings',         icon:'financial-sharp.svg#bank-rate',       desc:'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận.'},
+      {id:'chung-chi-quy',  name:'Chứng Chỉ Quỹ',         cat:'Investment',      icon:'financial-sharp.svg#mutual-fund',     desc:'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.'},
+      {id:'gold',           name:'Giá Vàng',               cat:'Investment',      icon:'financial-sharp.svg#gold',            desc:'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và hòa vốn theo kịch bản.'},
+      {id:'stock',          name:'Chứng Khoán',            cat:'Investment',      icon:'financial-sharp.svg#stock',           desc:'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.'},
+      {id:'thue-tncn',      name:'Thuế TNCN',              cat:'Tax',             icon:'financial-sharp.svg#tax',             desc:'Ước tính thuế TNCN theo biểu lũy tiến 5 bậc và giảm trừ gia cảnh.'},
+      {id:'quyet-toan-tncn',name:'Quyết Toán TNCN',        cat:'Tax',             icon:'financial-sharp.svg#tax-filing',      desc:'Quyết toán thuế TNCN cuối năm: phải nộp thêm hay được hoàn trước 30/04.'},
+      {id:'thue-tndn-sme',  name:'Thuế TNDN SME',          cat:'Tax',             icon:'financial-sharp.svg#business-tax',    desc:'Tính thuế TNDN cho SME theo Luật 67/2025: 15%/17%/20%, miễn 3 năm DN mới.'},
+      {id:'ty-gia',         name:'Tỷ Giá',                 cat:'FX',              icon:'financial-sharp.svg#exchange',        desc:'Converter A/B: chọn cặp tiền, xem chart, chênh lệch bank-mid và số nhận ròng.'},
+      {id:'fx-compare',     name:'So Sánh Tỷ Giá NH',      cat:'FX',              icon:'financial-sharp.svg#bank-compare',    desc:'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ.'},
+      {id:'travel-budget',  name:'Budget Du Lịch',         cat:'FX',              icon:'financial-sharp.svg#travel-budget',   desc:'Lập ngân sách chuyến đi 10 điểm đến × 3 tier × N ngày, breakdown chi tiết.'},
+      {id:'net-worth',      name:'Giá Trị Tài Sản Ròng',  cat:'Financial Health',icon:'financial-sharp.svg#net-worth',       desc:'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng.'},
+      {id:'dti',            name:'Tỷ Lệ Nợ/Thu Nhập',     cat:'Financial Health',icon:'financial-sharp.svg#dti',             desc:'Tính tỷ lệ thu nhập gộp hàng tháng đang dùng để thanh toán nợ.'},
+      {id:'debt-payoff',    name:'Kế Hoạch Trả Nợ',       cat:'Financial Health',icon:'financial-sharp.svg#debt-payoff',     desc:'So sánh chiến lược Avalanche và Snowball khi trả nhiều khoản nợ cùng lúc.'},
+      {id:'quy-du-phong',   name:'Quỹ Dự Phòng',          cat:'Financial Health',icon:'financial-sharp.svg#emergency-fund',  desc:'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian và lạm phát dự kiến.'},
+      {id:'tu-do-tai-chinh',name:'Tự Do Tài Chính',       cat:'Planning',        icon:'financial-sharp.svg#fire',            desc:'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư và dòng tiền góp hàng tháng.'},
+      {id:'dam-cuoi',       name:'Kế Hoạch Đám Cưới',     cat:'Planning',        icon:'financial-sharp.svg#wedding',         desc:'Lập ngân sách cưới: số khách, tiệc, chi phí cố định, tiền mừng và dự phòng.'},
+      {id:'hoc-phi',        name:'Học Phí Tương Lai',      cat:'Planning',        icon:'financial-sharp.svg#tuition',         desc:'Ước tính học phí thực tế theo lạm phát và số tiền cần chuẩn bị từ hôm nay.'},
     ];
 
     let activeCat = 'all';
     const catalog = document.getElementById('moneyLabCatalog');
     const mainEl  = document.getElementById('top');
 
+    function isSpriteIcon(s){ return /\.svg#[\w-]+$/i.test(s); }
     function isFileIcon(s){ return /\.(png|svg|jpg|webp)$/i.test(s); }
     function iconHtml(icon){
+      if(isSpriteIcon(icon)) return `<svg class="mlc-icon" aria-hidden="true" focusable="false"><use href="${ICON_BASE}${icon}"></use></svg>`;
       if(isFileIcon(icon)) return `<img class="mlc-icon" src="${ICON_BASE}${icon}" alt="" loading="lazy">`;
       return `<div class="mlc-icon-emoji">${icon}</div>`;
     }
 
     function renderPills(){
       document.getElementById('mlcPills').innerHTML = CATS.map(c =>
-        `<button class="mlc-pill${c.id===activeCat?' active':''}" data-cat="${c.id}">${c.label}</button>`
+        `<button class="mlc-pill${c.id===activeCat?' active':''}" data-cat="${c.id}"><svg class="mlc-pill-icon" aria-hidden="true" focusable="false"><use href="${ICON_BASE}financial-sharp.svg#${c.icon}"></use></svg>${c.label}</button>`
       ).join('');
       document.getElementById('mlcPills').addEventListener('click', e => {
         const btn = e.target.closest('.mlc-pill');
