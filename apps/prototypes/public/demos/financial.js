@@ -15,6 +15,11 @@ const fmtM = n => {
   return fmt(n);
 };
 const parseMoney = s => +String(s).replace(/[^\d]/g, '') || 0;
+const escapeHtml = s => String(s)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
 const FINANCIAL_ICON_SPRITE = '/assets/icons/momo/financial-sharp.svg';
 const svgIcon = (id, className = 'fin-svg-icon') =>
   `<svg class="${className}" aria-hidden="true" focusable="false"><use href="${FINANCIAL_ICON_SPRITE}#${id}"></use></svg>`;
@@ -414,10 +419,10 @@ const TOOLS = [
     formula: 'Trả mỗi kỳ = <b>(Dư nợ chuyển đổi ÷ Kỳ hạn) + 3% × Dư nợ chuyển đổi</b><br><em>Ví Trả Sau áp dụng phí chuyển đổi cố định 3%/tháng tính trên dư nợ đăng ký trả góp ban đầu.</em>',
     resultLabel: 'TRẢ MỖI THÁNG (gồm gốc & phí)',
     fields: [
-      { id: 'postpaidAmount', label: 'Số tiền cần trả góp', type: 'money', min: 100000, max: 30000000, step: 100000, value: 3000000, chips: [1000000, 3000000, 10000000] },
-      { id: 'installmentTerm', label: 'Kỳ hạn trả góp', type: 'select', options: [
-        {value:3,label:'3 tháng (phí 3%/tháng)'},{value:6,label:'6 tháng (phí 3%/tháng)'},
-        {value:9,label:'9 tháng (phí 3%/tháng)'},{value:12,label:'12 tháng (phí 3%/tháng)'},
+      { id: 'postpaidAmount', label: 'Số tiền cần trả góp', type: 'money', ui: { valueType: 'money', precision: 'exact', decisionMode: 'confirm', sampleNumbers: true }, min: 100000, max: 30000000, step: 100000, value: 3000000, chips: [1000000, 3000000, 10000000] },
+      { id: 'installmentTerm', label: 'Kỳ hạn trả góp', tooltip: 'Phí chuyển đổi hiện là 3% mỗi tháng và cố định như nhau giữa các kỳ hạn, nên ở đây chỉ cần chọn số tháng để so sánh tổng nghĩa vụ.', type: 'pills', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', optionCount: 4 }, options: [
+        {value:3,label:'3 tháng'},{value:6,label:'6 tháng'},
+        {value:9,label:'9 tháng'},{value:12,label:'12 tháng'},
       ], value: 6 },
     ],
     compute(v) {
@@ -442,6 +447,7 @@ const TOOLS = [
         title: 'Cơ cấu thanh toán mỗi kỳ',
         totalLabel: 'Tổng nghĩa vụ',
         totalValue: fmt(total),
+        showHeadSummary: false,
         items: [
           { label: 'Phí dịch vụ/tháng', value: fmt(phiMonth), amount: phiMonth, color: '#16b2ea' },
           { label: 'Gốc trả/tháng', value: fmt(gocMonth), amount: gocMonth, color: '#143c8b' },
@@ -541,12 +547,12 @@ const TOOLS = [
     formula: 'Lãi tháng = <b>Dư nợ còn lại × Lãi suất năm ÷ 12</b><br>Trả tối thiểu = <b>Dư nợ × Tỷ lệ tối thiểu</b><br>Trả mục tiêu = <b>PMT(dư nợ, lãi tháng, số tháng muốn tất toán)</b>',
     resultLabel: 'TRẢ ĐỂ DỨT NỢ / THÁNG',
     fields: [
-      { id: 'cardBalance',      label: 'Dư nợ thẻ hiện tại',        type: 'money', min: 1000000, max: 500000000, step: 500000, value: 35000000, chips: [10000000, 35000000, 70000000] },
-      { id: 'cardAnnualRate',   label: 'Lãi suất thẻ/năm',          type: 'range', min: 12, max: 48, step: 0.5, value: 30, unit: '%', chips: [24, 30, 36, 42] },
-      { id: 'cardMinRate',      label: 'Tỷ lệ trả tối thiểu',       type: 'select', options: [
+      { id: 'cardBalance',      label: 'Dư nợ thẻ hiện tại',        type: 'money', ui: { valueType: 'money', precision: 'exact', decisionMode: 'confirm', sampleNumbers: true }, min: 1000000, max: 500000000, step: 500000, value: 35000000, chips: [10000000, 35000000, 70000000] },
+      { id: 'cardAnnualRate',   label: 'Lãi suất thẻ/năm',          type: 'range', ui: { valueType: 'percent', precision: 'approximate', decisionMode: 'explore', sampleNumbers: true }, min: 12, max: 48, step: 0.5, value: 30, unit: '%', chips: [24, 30, 36, 42] },
+      { id: 'cardMinRate',      label: 'Tỷ lệ trả tối thiểu',       type: 'select', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'confirm', optionCount: 3 }, options: [
         { value: 3, label: '3% dư nợ' }, { value: 4, label: '4% dư nợ' }, { value: 5, label: '5% dư nợ' },
       ], value: 5 },
-      { id: 'cardTargetMonths', label: 'Muốn tất toán sau',         type: 'select', options: [
+      { id: 'cardTargetMonths', label: 'Muốn tất toán sau',         type: 'select', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'confirm', optionCount: 4 }, options: [
         { value: 6, label: '6 tháng' }, { value: 12, label: '12 tháng' }, { value: 18, label: '18 tháng' }, { value: 24, label: '24 tháng' },
       ], value: 12 },
     ],
@@ -612,13 +618,13 @@ const TOOLS = [
     resultLabel: 'GIÁ TRỊ TÀI SẢN RÒNG',
     disclaimer: 'Kết quả là ảnh chụp tài chính tại thời điểm nhập dữ liệu, không phải tư vấn đầu tư hoặc định giá tài sản chuyên nghiệp.',
     fields: [
-      { id: 'nwCash', label: 'Tiền mặt và tiết kiệm', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 100000000, chips: [20000000, 100000000, 500000000] },
-      { id: 'nwInvestments', label: 'Đầu tư tài chính', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 150000000, chips: [0, 100000000, 500000000] },
-      { id: 'nwProperty', label: 'Nhà, đất và phương tiện', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 1500000000, chips: [0, 1000000000, 3000000000] },
-      { id: 'nwOtherAssets', label: 'Tài sản khác', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 200000000] },
-      { id: 'nwMortgage', label: 'Dư nợ vay nhà, xe', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 900000000, chips: [0, 500000000, 1500000000] },
-      { id: 'nwConsumerDebt', label: 'Dư nợ thẻ và vay tiêu dùng', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 30000000, chips: [0, 30000000, 100000000] },
-      { id: 'nwOtherDebt', label: 'Khoản nợ khác', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 0, chips: [0, 50000000, 200000000] },
+      { id: 'nwCash', label: 'Tiền mặt và tiết kiệm', tooltip: 'Gồm tiền mặt, tiền trong tài khoản thanh toán, sổ tiết kiệm và các khoản có thể quy đổi ra tiền gần như ngay lập tức.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 100000000, chips: [20000000, 100000000, 500000000] },
+      { id: 'nwInvestments', label: 'Đầu tư tài chính', tooltip: 'Gồm cổ phiếu, quỹ, trái phiếu, vàng đầu tư, crypto hoặc các khoản đầu tư tài chính khác theo giá trị ước tính hiện tại.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 150000000, chips: [0, 100000000, 500000000] },
+      { id: 'nwProperty', label: 'Nhà, đất và phương tiện', tooltip: 'Ghi theo giá trị thị trường ước tính hiện tại của bất động sản, ô tô, xe máy hoặc tài sản lớn phục vụ sử dụng lâu dài.', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 1500000000, chips: [0, 1000000000, 3000000000] },
+      { id: 'nwOtherAssets', label: 'Tài sản khác', tooltip: 'Gồm đồ giá trị cao, khoản phải thu, vốn góp cá nhân hoặc tài sản khác chưa nằm trong các nhóm phía trên.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 50000000, chips: [0, 50000000, 200000000] },
+      { id: 'nwMortgage', label: 'Dư nợ vay nhà, xe', tooltip: 'Là phần gốc còn nợ của các khoản vay mua nhà, mua xe hoặc khoản vay thế chấp tương tự tại thời điểm hiện tại.', type: 'money', min: 0, max: 100000000000, step: 10000000, value: 900000000, chips: [0, 500000000, 1500000000] },
+      { id: 'nwConsumerDebt', label: 'Dư nợ thẻ và vay tiêu dùng', tooltip: 'Bao gồm dư nợ thẻ tín dụng, vay tiêu dùng tín chấp, trả góp và các khoản vay cá nhân ngắn hoặc trung hạn.', type: 'money', min: 0, max: 5000000000, step: 1000000, value: 30000000, chips: [0, 30000000, 100000000] },
+      { id: 'nwOtherDebt', label: 'Khoản nợ khác', tooltip: 'Các nghĩa vụ nợ còn lại như vay người thân, công nợ kinh doanh, thuế phải trả hoặc khoản nợ chưa xếp vào nhóm trên.', type: 'money', min: 0, max: 50000000000, step: 1000000, value: 0, chips: [0, 50000000, 200000000] },
     ],
     compute(v) {
       const totalAssets = v.nwCash + v.nwInvestments + v.nwProperty + v.nwOtherAssets;
@@ -799,7 +805,7 @@ const TOOLS = [
         {value:1.8, label:'1,80% - Xe con trên 6 năm hoặc SUV/Pickup 3-6 năm'},
         {value:2.0, label:'2,00% - SUV/Pickup trên 6 năm'},
       ], value: 1.4 },
-      { id: 'partnerId', label: 'Đối tác bảo hiểm', type: 'select-items', options: AUTO_INSURANCE_PARTNERS.map(partner => ({
+      { id: 'partnerId', label: 'Đối tác bảo hiểm', type: 'select-items', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', compareOptions: true, optionCount: AUTO_INSURANCE_PARTNERS.length }, options: AUTO_INSURANCE_PARTNERS.map(partner => ({
         value: partner.id,
         label: partner.logo,
       })), value: 'pvi' },
@@ -1471,6 +1477,16 @@ const TOOLS = [
     },
   },
   {
+    id: 'ci-care',
+    name: 'MoMoCare BHN',
+    category: 'Insurance',
+    abbr: 'CI',
+    panel: 'ci-care',
+    intent: 'Transactional intent',
+    description: 'Tính chi trả thực tế của MoMoCare | Bảo hiểm Sức khỏe+ (Chubb Life) khi gặp một trong 37 bệnh hiểm nghèo. Nhập chi phí điều trị dự kiến — tool tính sau đồng chi trả 20% và áp hạn mức từng quyền lợi.',
+    jtbd: 'Tôi vừa được chẩn đoán bệnh hiểm nghèo và cần biết ngay <b>MoMoCare sẽ chi trả được bao nhiêu</b>, để <b>biết phần tôi phải tự lo và lập kế hoạch tài chính cho đợt điều trị</b>.',
+  },
+  {
     id: 'gold',  name: 'Giá Vàng', category: 'Investment', abbr: 'AU',  panel: 'gold',
   },
   {
@@ -1664,10 +1680,65 @@ const TOOLS = [
   },
 ];
 
+const UI_DECISION_FALLBACKS = {
+  money: { valueType: 'money', precision: 'exact', decisionMode: 'confirm' },
+  range: { valueType: 'number', precision: 'approximate', decisionMode: 'explore' },
+  select: { valueType: 'enum', precision: 'exact', decisionMode: 'confirm' },
+  pills: { valueType: 'enum', precision: 'exact', decisionMode: 'compare' },
+  'select-items': { valueType: 'enum', precision: 'exact', decisionMode: 'compare', compareOptions: true },
+};
+
+function deriveFieldUi(field) {
+  const fallback = UI_DECISION_FALLBACKS[field.type] || {};
+  return {
+    ...fallback,
+    sampleNumbers: Array.isArray(field.chips) && field.chips.length > 0,
+    optionCount: Array.isArray(field.options) ? field.options.length : undefined,
+    ...field.ui,
+  };
+}
+
+function inferFieldControl(field) {
+  const ui = deriveFieldUi(field);
+  if (ui.control) return ui.control;
+
+  if (Array.isArray(field.options) && field.options.length) {
+    if (ui.compareOptions) return 'select-items';
+    if ((ui.decisionMode === 'compare' || field.type === 'pills') && field.options.length <= 4) return 'pills';
+    if (field.type === 'select-items') return 'select-items';
+    return 'select';
+  }
+
+  if (ui.valueType === 'money') return 'money';
+  if (ui.decisionMode === 'explore' || ui.valueType === 'percent' || ui.valueType === 'score') return 'range';
+  return field.type || 'money';
+}
+
+function normalizeFieldDefinition(field) {
+  const ui = deriveFieldUi(field);
+  return {
+    ...field,
+    declaredType: field.type,
+    ui,
+    type: inferFieldControl({ ...field, ui }),
+  };
+}
+
+function normalizeToolDefinition(tool) {
+  if (!Array.isArray(tool.fields)) return tool;
+  return {
+    ...tool,
+    fields: tool.fields.map(normalizeFieldDefinition),
+  };
+}
+
+for (let i = 0; i < TOOLS.length; i += 1) {
+  TOOLS[i] = normalizeToolDefinition(TOOLS[i]);
+}
+
 // ─── State
 let currentToolId = TOOLS[0].id;
 let detailMode = false;
-let toolPickerQuery = '';
 
 // ─── Sidebar
 function renderSidebar() {
@@ -1726,7 +1797,7 @@ function syncHash(id) {
 }
 
 function selectTool(id, options = {}) {
-  const { updateHash = true, detail = true } = options;
+  const { updateHash = true, detail = true, focusPanel = true } = options;
   const tool = TOOLS.find(t => t.id === id);
   if (!tool) return;
   currentToolId = id;
@@ -1742,6 +1813,7 @@ function selectTool(id, options = {}) {
   document.getElementById('fxComparePanel').hidden     = tool.panel !== 'fx-compare';
   document.getElementById('travelBudgetPanel').hidden  = tool.panel !== 'travel-budget';
   document.getElementById('firePanel').hidden          = tool.panel !== 'fire';
+  document.getElementById('ciCarePanel').hidden        = tool.panel !== 'ci-care';
   if (tool.panel === 'generic')   renderGenericPanel(tool);
   if (tool.panel === 'gold')      initGoldPanel();
   if (tool.panel === 'stock')     renderStockTable();
@@ -1751,25 +1823,24 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'fx-compare') initFxComparePanel();
   if (tool.panel === 'travel-budget') initTravelBudgetPanel();
   if (tool.panel === 'fire')      initFirePanel();
+  if (tool.panel === 'ci-care')   initCiCarePanel();
   renderToolPicker();
+  if (focusPanel) {
+    const activePanel = document.querySelector('.tool-panel:not([hidden])');
+    if (activePanel) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      activePanel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
 }
 
 function renderToolPicker() {
   const listEl = document.getElementById('genericToolPicker');
-  const searchEl = document.getElementById('genericToolSearch');
   const countEl = document.getElementById('genericToolCount');
-  if (!listEl || !searchEl || !countEl) return;
+  if (!listEl || !countEl) return;
 
-  const query = (searchEl.value || '').trim().toLowerCase();
-  toolPickerQuery = query;
-  const items = TOOLS.filter(tool => {
-    if (!query) return true;
-    return [tool.name, tool.category, tool.description, tool.id]
-      .some(value => String(value || '').toLowerCase().includes(query));
-  });
-
-  countEl.textContent = `${items.length}/${TOOLS.length} tools`;
-  listEl.innerHTML = items.length ? items.map(tool => `
+  countEl.textContent = `${TOOLS.length} tools`;
+  listEl.innerHTML = TOOLS.map(tool => `
     <button
       type="button"
       class="tool-switcher-item${tool.id === currentToolId ? ' active' : ''}"
@@ -1782,24 +1853,14 @@ function renderToolPicker() {
       </span>
       <span class="tool-switcher-item-code">${tool.abbr}</span>
     </button>
-  `).join('') : `<div class="tool-switcher-empty">Không có tool khớp với từ khóa hiện tại.</div>`;
+  `).join('');
 }
 
 function bindToolPicker() {
   const listEl = document.getElementById('genericToolPicker');
-  const searchEl = document.getElementById('genericToolSearch');
-  if (!listEl || !searchEl || listEl.dataset.bound === '1') return;
+  if (!listEl || listEl.dataset.bound === '1') return;
 
   listEl.dataset.bound = '1';
-  searchEl.value = toolPickerQuery;
-  searchEl.addEventListener('input', () => renderToolPicker());
-  searchEl.addEventListener('keydown', event => {
-    if (event.key !== 'Enter') return;
-    const firstBtn = listEl.querySelector('.tool-switcher-item');
-    if (!firstBtn) return;
-    event.preventDefault();
-    selectTool(firstBtn.dataset.id);
-  });
   listEl.addEventListener('click', event => {
     const btn = event.target.closest('.tool-switcher-item');
     if (!btn || !listEl.contains(btn)) return;
@@ -1871,6 +1932,18 @@ function renderGenericPanel(tool) {
 
   const container = document.getElementById('genericFields');
   const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
+  const renderFieldLabel = f => `
+    <span class="field-label-main">
+      <span>${f.label}</span>
+      ${f.tooltip ? `
+        <button
+          type="button"
+          class="field-help"
+          aria-label="Giải thích cho trường ${escapeHtml(f.label)}"
+          data-tooltip="${escapeHtml(f.tooltip)}">i</button>
+      ` : ''}
+    </span>
+  `;
   const renderField = (f, options = {}) => {
     const compactClass = options.compact ? ' compact-field' : '';
     const showChips = !options.hideChips;
@@ -1878,7 +1951,7 @@ function renderGenericPanel(tool) {
     if (f.type === 'money') {
       const formattedInitial = (f.value || 0).toLocaleString('vi-VN');
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <div class="money-input-row">
           <input type="text" inputmode="numeric" id="${f.id}" value="${formattedInitial}" aria-label="${ariaLabel}">
           <span class="unit-tag">đ</span>
@@ -1893,7 +1966,7 @@ function renderGenericPanel(tool) {
       const unitTag = unitTxt ? `<span class="unit-tag">${unitTxt}</span>` : '';
       const chips = f.chips || autoChips(f);
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <div class="num-input-row">
           <button type="button" class="num-step" data-target="${f.id}" data-dir="-1" aria-label="Giảm">−</button>
           <input type="number" id="${f.id}" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}" aria-label="${ariaLabel}">
@@ -1908,7 +1981,7 @@ function renderGenericPanel(tool) {
     }
     if (f.type === 'pills') {
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="pills-grid" role="group" aria-label="${ariaLabel}">
           ${f.options.map(o => `<button type="button" class="pill-btn${o.note ? ' pill-btn-explained' : ''}${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}"><span>${o.label}</span>${o.note ? `<small>${o.note}</small>` : ''}</button>`).join('')}
@@ -1917,7 +1990,7 @@ function renderGenericPanel(tool) {
     }
     if (f.type === 'select-items') {
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-        <label class="field-label" for="${f.id}">${f.label}</label>
+        <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="select-items-grid" role="group" aria-label="${ariaLabel}">
           ${f.options.map(o => `<button type="button" class="select-item-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}">
@@ -1929,7 +2002,7 @@ function renderGenericPanel(tool) {
     }
     const opts = f.options.map(o => `<option value="${o.value}"${String(o.value) === String(f.value) ? ' selected' : ''}>${o.label}</option>`).join('');
     return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
-      <label class="field-label" for="${f.id}">${f.label}</label>
+      <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
       <select id="${f.id}" aria-label="${ariaLabel}">${opts}</select>
     </div>`;
   };
@@ -2099,6 +2172,34 @@ function renderToolPartners(tool, vals = null) {
   }
 }
 
+function normalizeDetailText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function formatDonutValue(value) {
+  return String(value || '').replace(/\sđ$/, '&nbsp;đ');
+}
+
+function dedupeVisualDetails(details, visual) {
+  if (!visual || !Array.isArray(details) || visual.dedupeDetails === false) return details;
+  const visualLabels = new Set((visual.items || []).map(item => normalizeDetailText(item.label)));
+  const visualValues = new Set((visual.items || []).map(item => normalizeDetailText(item.value)));
+  const totalLabel = normalizeDetailText(visual.totalLabel);
+  const totalValue = normalizeDetailText(visual.totalValue);
+
+  return details.filter(detail => {
+    const label = normalizeDetailText(detail.label);
+    const value = normalizeDetailText(detail.value);
+    if (visualLabels.has(label) || visualValues.has(value)) return false;
+    if (value === totalValue && (label.includes('tổng') || label === totalLabel)) return false;
+    return true;
+  });
+}
+
 function autoChips(f) {
   const range = f.max - f.min;
   const raw = [f.min + range * 0.25, f.min + range * 0.5, f.min + range * 0.75];
@@ -2164,7 +2265,8 @@ function computeGeneric(tool) {
   renderToolPartners(tool, vals);
   document.getElementById('resultLabel').textContent  = tool.resultLabel;
   document.getElementById('resultValue').textContent  = res.result;
-  document.getElementById('resultDetails').innerHTML  = res.details.map(d =>
+  const detailRows = dedupeVisualDetails(res.details, res.visual);
+  document.getElementById('resultDetails').innerHTML  = detailRows.map(d =>
     `<div class="result-row"><span>${d.label}</span><strong>${d.value}</strong></div>`
   ).join('');
   const badgeEl = document.getElementById('resultBadge');
@@ -2187,15 +2289,17 @@ function computeGeneric(tool) {
       visualEl.innerHTML = `
         <div class="result-visual-head">
           <strong>${res.visual.title}</strong>
-          <span>${res.visual.totalLabel}: <b>${res.visual.totalValue}</b></span>
+          ${res.visual.showHeadSummary ? `<span>${res.visual.totalLabel}: <b>${res.visual.totalValue}</b></span>` : ''}
         </div>
         <div class="result-visual-body">
           <div class="result-visual-legend">
             ${res.visual.items.map(item => `
               <div class="result-legend-row">
                 <span class="result-legend-dot" style="background:${item.color}"></span>
-                <span>${item.label}</span>
-                <b>${item.value}</b>
+                <div class="result-legend-copy">
+                  <span>${item.label}</span>
+                  <b>${item.value}</b>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -2203,7 +2307,7 @@ function computeGeneric(tool) {
             <div class="result-donut-center">
               <div>
                 <span>${res.visual.totalLabel}</span>
-                <strong>${res.visual.totalValue}</strong>
+                <strong>${formatDonutValue(res.visual.totalValue)}</strong>
               </div>
             </div>
           </div>
@@ -3297,6 +3401,10 @@ function drawFireChart(traj, target, years) {
 // ─── Init
 // ─── Bank Rate Panel
 const BANK_RATES = [
+  { id: 'cake', name: 'Cake by VPBank', abbr: 'CAKE', color: '#ec4899', rates: { 1: 4.75, 3: 4.75, 6: 7.2, 12: 7.4 } },
+  { id: 'stb',  name: 'Sacombank',      abbr: 'STB',  color: '#2563eb', rates: { 1: 4.6, 3: 4.6, 6: 6.6, 12: 6.8 } },
+  { id: 'hdb',  name: 'HDBank',         abbr: 'HDB',  color: '#f97316', rates: { 1: 3.5, 3: 3.6, 6: 5.4, 12: 5.7 } },
+  { id: 'agr',  name: 'Agribank',       abbr: 'AGR',  color: '#15803d', rates: { 1: 2.6, 3: 2.9, 6: 4.0, 12: 5.2 } },
   { id: 'vcb',  name: 'Vietcombank', abbr: 'VCB', color: '#005c2f', rates: { 1: 1.6, 3: 2.0, 6: 3.0, 12: 4.7 } },
   { id: 'bidv', name: 'BIDV',        abbr: 'BID', color: '#1a56db', rates: { 1: 1.7, 3: 2.2, 6: 3.3, 12: 4.8 } },
   { id: 'vtb',  name: 'Vietinbank',  abbr: 'CTG', color: '#b91c1c', rates: { 1: 1.7, 3: 2.2, 6: 3.3, 12: 4.8 } },
@@ -3306,6 +3414,11 @@ const BANK_RATES = [
 ];
 
 let bankTerm = 6;
+
+function formatBankDepositValue(value) {
+  const amount = parseMoney(value);
+  return amount ? amount.toLocaleString('vi-VN') : '';
+}
 
 function initBankRatePanel() {
   document.querySelectorAll('#bankTermControl button').forEach(btn => {
@@ -3320,31 +3433,46 @@ function initBankRatePanel() {
     btn.addEventListener('click', () => {
       document.querySelectorAll('[data-deposit]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('bankDeposit').value = btn.dataset.deposit;
+      document.getElementById('bankDeposit').value = (+btn.dataset.deposit).toLocaleString('vi-VN');
       computeBankRate();
     });
   });
-  document.getElementById('bankDeposit').addEventListener('input', computeBankRate);
+  document.getElementById('bankDeposit').addEventListener('input', () => {
+    const input = document.getElementById('bankDeposit');
+    const deposit = parseMoney(input.value);
+    input.value = formatBankDepositValue(input.value);
+    document.querySelectorAll('[data-deposit]').forEach(btn => {
+      btn.classList.toggle('active', +btn.dataset.deposit === deposit);
+    });
+    computeBankRate();
+  });
+  document.getElementById('bankDeposit').addEventListener('blur', () => {
+    const input = document.getElementById('bankDeposit');
+    input.value = formatBankDepositValue(input.value) || '1.000.000';
+  });
   computeBankRate();
 }
 
 function computeBankRate() {
-  const principal = +document.getElementById('bankDeposit').value || 100000000;
+  const principal = parseMoney(document.getElementById('bankDeposit').value) || 100000000;
   const term = bankTerm;
   const sorted = [...BANK_RATES].sort((a, b) => b.rates[term] - a.rates[term]);
   const maxRate = sorted[0].rates[term];
+  const topInterest = principal * maxRate / 100 / 12 * term;
+  const topCount = sorted.filter(bank => bank.rates[term] === maxRate).length;
   document.getElementById('bankRateTable').innerHTML =
-    `<div class="bank-rate-header"><span>Ngân hàng</span><span>Lãi suất/năm</span><span>Lợi nhuận / Tổng nhận</span></div>` +
-    sorted.map((b, i) => {
+    `<div class="bank-rate-header"><span>Ngân hàng</span><span>Lãi suất/năm</span><span>Lãi dự kiến / Tổng cuối kỳ</span></div>` +
+    sorted.map((b) => {
       const rate = b.rates[term];
       const interest = principal * rate / 100 / 12 * term;
       const total = principal + interest;
-      const isBest = i === 0;
+      const isBest = rate === maxRate;
+      const delta = Math.max(0, topInterest - interest);
       return `<div class="bank-rate-row${isBest ? ' best' : ''}">
         <div class="bank-name">
           <span class="bank-abbr" style="background:${b.color}">${b.abbr}</span>
           <span>${b.name}</span>
-          ${isBest ? '<span class="best-badge">Cao nhất</span>' : ''}
+          ${isBest ? `<span class="best-badge">${topCount > 1 ? 'Đồng hạng top' : 'Top rate'}</span>` : ''}
         </div>
         <div class="bank-rate-pct">${rate.toFixed(1)}%
           <div class="rate-bar"><div class="rate-fill" style="width:${(rate / maxRate * 100).toFixed(0)}%"></div></div>
@@ -3352,6 +3480,7 @@ function computeBankRate() {
         <div class="bank-net">
           <strong class="bank-net-profit">+${fmtM(interest)}</strong>
           <small class="bank-net-total">Tổng: ${fmtM(total)}</small>
+          ${!isBest && delta > 0 ? `<small class="bank-net-gap">Ít hơn top: ${fmtM(delta)}</small>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -3996,4 +4125,169 @@ function injectEmbedBadge() {
   badge.className = 'embed-badge';
   badge.innerHTML = `<span>Công cụ cung cấp bởi</span><strong>MoMo Money Lab</strong>`;
   ws.appendChild(badge);
+}
+
+// ─── CI Care Panel ─────────────────────────────────────────────────
+const CI_CANCER_IDS    = new Set([1, 18, 33]);
+const CI_KIDNEY_IDS    = new Set([6]);
+const CI_TRANSPLANT_IDS = new Set([9]);
+
+// Which special benefit groups are applicable per disease
+function ciApplicable(diseaseId) {
+  return {
+    cancer:    CI_CANCER_IDS.has(diseaseId),
+    dialysis:  CI_KIDNEY_IDS.has(diseaseId),
+    transplant: CI_TRANSPLANT_IDS.has(diseaseId),
+  };
+}
+
+function initCiCarePanel() {
+  ciOnDiseaseChange();
+  ciCalc();
+}
+
+function ciOnDiseaseChange() {
+  const id = parseInt(document.getElementById('ciDiseaseSelect').value, 10);
+  const app = ciApplicable(id);
+
+  // Show/hide rows and reset hidden fields to 0 to prevent stale values
+  const cancerRow = document.getElementById('ciCancerRow');
+  if (cancerRow) {
+    cancerRow.style.display = app.cancer ? '' : 'none';
+    if (!app.cancer) {
+      ['ciCancer', 'ciReconSurgery'].forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.value = 0;
+      });
+    }
+  }
+
+  const dialysisGroup = document.getElementById('ciDialysisGroup');
+  if (dialysisGroup) {
+    dialysisGroup.style.display = app.dialysis ? '' : 'none';
+    if (!app.dialysis) {
+      const el = document.getElementById('ciDialysisWeeks');
+      if (el) { el.value = 0; }
+      const lbl = document.getElementById('ciDialysisWeeksVal');
+      if (lbl) lbl.textContent = '0 tuần';
+    }
+  }
+
+  const transplantInput = document.getElementById('ciOrgTransplant');
+  const transplantGroup = transplantInput?.closest('.ci-field-group');
+  if (transplantGroup) {
+    transplantGroup.style.display = app.transplant ? '' : 'none';
+    if (!app.transplant && transplantInput) transplantInput.value = 0;
+  }
+
+  ciCalc();
+}
+
+function ciCalc() {
+  const g  = id => document.getElementById(id);
+  const gv = id => parseFloat(g(id)?.value || 0) || 0;
+  const gi = id => parseInt(g(id)?.value || 0, 10) || 0;
+
+  const diseaseId = parseInt(g('ciDiseaseSelect')?.value || 1, 10);
+  const app = ciApplicable(diseaseId);
+
+  const hospDays      = gi('ciHospDays');
+  const icuDays       = gi('ciIcuDays');
+  const dialysisWeeks = app.dialysis  ? gi('ciDialysisWeeks') : 0;
+  const convDays      = gi('ciConvDays');
+  if (g('ciHospDaysVal'))      g('ciHospDaysVal').textContent      = hospDays + ' ngày';
+  if (g('ciIcuDaysVal'))       g('ciIcuDaysVal').textContent       = icuDays + ' ngày';
+  if (g('ciDialysisWeeksVal')) g('ciDialysisWeeksVal').textContent = dialysisWeeks + ' tuần';
+  if (g('ciConvDaysVal'))      g('ciConvDaysVal').textContent      = convDays + ' ngày';
+
+  const hospCostPerDay = gv('ciHospCostPerDay');
+  const icuCostPerDay  = gv('ciIcuCostPerDay');
+  const rawHosp        = hospDays * hospCostPerDay;
+  const rawIcu         = icuDays  * icuCostPerDay;
+  const rawSurgery     = gv('ciSurgery');
+  const rawOther       = gv('ciOther');
+  const rawPre         = gv('ciPreHosp');
+  const rawPost        = gv('ciPostHosp');
+  const rawAmbulance   = gv('ciAmbulance');
+  const rawCancer      = app.cancer    ? gv('ciCancer')        : 0;
+  const rawRecon       = app.cancer    ? gv('ciReconSurgery')  : 0;
+  const rawDialysis    = app.dialysis  ? dialysisWeeks * 3 * 1200000 : 0;
+  const rawTransplant  = app.transplant ? gv('ciOrgTransplant') : 0;
+  const rawConv        = convDays * 1500000;
+  const rawPall        = gv('ciPalliative');
+
+  const CAP_HOSP_DAY   = 3000000;
+  const CAP_AMBULANCE  = 15000000;
+  const CAP_DIALYSIS   = 250000000;
+  const CAP_RECON      = 25000000;
+  const CAP_PALLIATIVE = 60000000;
+
+  const cappedHosp      = hospDays * Math.min(hospCostPerDay, CAP_HOSP_DAY);
+  const cappedIcu       = rawIcu;
+  const cappedSurgery   = rawSurgery;
+  const cappedOther     = rawOther;
+  const cappedPre       = rawPre;
+  const cappedPost      = rawPost;
+  const cappedAmbulance = Math.min(rawAmbulance, CAP_AMBULANCE);
+  const cappedCancer    = rawCancer;
+  const cappedRecon     = Math.min(rawRecon, CAP_RECON);
+  const cappedDialysis  = Math.min(rawDialysis, CAP_DIALYSIS);
+  const cappedTransplant = rawTransplant;
+  const cappedConv      = Math.min(rawConv, 1500000 * 30);
+  const cappedPall      = Math.min(rawPall, CAP_PALLIATIVE);
+
+  const totalRaw    = rawHosp + rawIcu + rawSurgery + rawOther + rawPre + rawPost
+    + rawAmbulance + rawCancer + rawRecon + rawDialysis + rawTransplant + rawConv + rawPall;
+  const totalCapped = cappedHosp + cappedIcu + cappedSurgery + cappedOther + cappedPre + cappedPost
+    + cappedAmbulance + cappedCancer + cappedRecon + cappedDialysis + cappedTransplant + cappedConv + cappedPall;
+
+  const insurancePays = totalCapped * 0.8;
+  const userPays      = totalRaw - insurancePays;
+
+  if (g('ciResultAmount'))   g('ciResultAmount').textContent    = fmtM(insurancePays);
+  if (g('ciUserPaysInline')) g('ciUserPaysInline').textContent  = fmtM(userPays);
+  if (g('ciTotalCost'))      g('ciTotalCost').textContent       = fmtM(totalRaw);
+  if (g('ciCappedCost'))     g('ciCappedCost').textContent      = fmtM(totalCapped);
+  if (g('ciInsurancePays'))  g('ciInsurancePays').innerHTML     = '<strong>' + fmtM(insurancePays) + '</strong>';
+  if (g('ciUserPays2'))      g('ciUserPays2').textContent       = fmtM(userPays);
+
+  const rows = [
+    { label: 'Giường (' + hospDays + ' ngày)', raw: rawHosp, capped: cappedHosp, note: hospCostPerDay > CAP_HOSP_DAY ? 'Hạn mức 3tr/ngày' : null },
+    { label: 'ICU (' + icuDays + ' ngày)', raw: rawIcu, capped: cappedIcu },
+    { label: 'Phẫu thuật', raw: rawSurgery, capped: cappedSurgery },
+    { label: 'Chi phí nội trú khác', raw: rawOther, capped: cappedOther },
+    { label: 'Trước nhập viện', raw: rawPre, capped: cappedPre },
+    { label: 'Sau xuất viện', raw: rawPost, capped: cappedPost },
+    { label: 'Xe cấp cứu', raw: rawAmbulance, capped: cappedAmbulance, note: rawAmbulance > CAP_AMBULANCE ? 'Hạn mức 15tr/năm' : null },
+    { label: 'Điều trị ung thư', raw: rawCancer, capped: cappedCancer },
+    { label: 'PT tái tạo ung thư', raw: rawRecon, capped: cappedRecon, note: rawRecon > CAP_RECON ? 'Hạn mức 25tr/lần' : null },
+    { label: 'Chạy thận (' + dialysisWeeks + ' tuần)', raw: rawDialysis, capped: cappedDialysis, note: rawDialysis > CAP_DIALYSIS ? 'Hạn mức 250tr/năm' : null },
+    { label: 'Ghép nội tạng', raw: rawTransplant, capped: cappedTransplant },
+    { label: 'Chăm sóc sau ĐT (' + convDays + ' ngày)', raw: rawConv, capped: cappedConv, note: rawConv > 1500000 * 30 ? 'Hạn mức 45tr' : null },
+    { label: 'Chăm sóc giảm nhẹ', raw: rawPall, capped: cappedPall, note: rawPall > CAP_PALLIATIVE ? 'Hạn mức 60tr' : null },
+  ].filter(r => r.raw > 0);
+
+  const bdEl = g('ciBreakdown');
+  if (bdEl) {
+    bdEl.innerHTML = rows.length ? rows.map(r => {
+      const isCapped = r.note && r.capped < r.raw;
+      return `<div class="ci-breakdown-row">
+        <span class="ci-bd-label">${r.label}${r.note ? '<br><small style="color:#b45309">⚠ ' + r.note + '</small>' : ''}</span>
+        <span class="ci-bd-val">${isCapped ? '<span class="ci-bd-val ci-capped">' + fmtM(r.raw) + '</span> ' : ''}${fmtM(r.capped * 0.8)}</span>
+      </div>`;
+    }).join('') : '<p style="font-size:12px;color:var(--muted);padding:8px 0;margin:0">Nhập chi phí dự kiến để xem chi tiết.</p>';
+  }
+
+  const insightEl = g('ciInsight');
+  if (insightEl) {
+    if (totalRaw === 0) {
+      insightEl.innerHTML = 'Nhập ít nhất một khoản chi phí bên trái để xem kết quả tính toán.';
+    } else {
+      const coverRate = Math.round(insurancePays / totalRaw * 100);
+      const capLoss   = totalRaw - totalCapped;
+      let txt = `Tổng chi phí <b>${fmtM(totalRaw)}</b> — MoMoCare chi trả <b>${fmtM(insurancePays)}</b> (${coverRate}%), bạn tự lo <b>${fmtM(userPays)}</b>.`;
+      if (capLoss > 500000) txt += ` <span style="color:#b45309">Phần vượt hạn mức không được bồi thường: <b>${fmtM(capLoss)}</b>.</span>`;
+      insightEl.innerHTML = txt;
+    }
+  }
 }

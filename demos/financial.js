@@ -1739,7 +1739,6 @@ for (let i = 0; i < TOOLS.length; i += 1) {
 // ─── State
 let currentToolId = TOOLS[0].id;
 let detailMode = false;
-let toolPickerQuery = '';
 
 // ─── Sidebar
 function renderSidebar() {
@@ -1798,7 +1797,7 @@ function syncHash(id) {
 }
 
 function selectTool(id, options = {}) {
-  const { updateHash = true, detail = true } = options;
+  const { updateHash = true, detail = true, focusPanel = true } = options;
   const tool = TOOLS.find(t => t.id === id);
   if (!tool) return;
   currentToolId = id;
@@ -1826,24 +1825,22 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'fire')      initFirePanel();
   if (tool.panel === 'ci-care')   initCiCarePanel();
   renderToolPicker();
+  if (focusPanel) {
+    const activePanel = document.querySelector('.tool-panel:not([hidden])');
+    if (activePanel) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      activePanel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
 }
 
 function renderToolPicker() {
   const listEl = document.getElementById('genericToolPicker');
-  const searchEl = document.getElementById('genericToolSearch');
   const countEl = document.getElementById('genericToolCount');
-  if (!listEl || !searchEl || !countEl) return;
+  if (!listEl || !countEl) return;
 
-  const query = (searchEl.value || '').trim().toLowerCase();
-  toolPickerQuery = query;
-  const items = TOOLS.filter(tool => {
-    if (!query) return true;
-    return [tool.name, tool.category, tool.description, tool.id]
-      .some(value => String(value || '').toLowerCase().includes(query));
-  });
-
-  countEl.textContent = `${items.length}/${TOOLS.length} tools`;
-  listEl.innerHTML = items.length ? items.map(tool => `
+  countEl.textContent = `${TOOLS.length} tools`;
+  listEl.innerHTML = TOOLS.map(tool => `
     <button
       type="button"
       class="tool-switcher-item${tool.id === currentToolId ? ' active' : ''}"
@@ -1856,24 +1853,14 @@ function renderToolPicker() {
       </span>
       <span class="tool-switcher-item-code">${tool.abbr}</span>
     </button>
-  `).join('') : `<div class="tool-switcher-empty">Không có tool khớp với từ khóa hiện tại.</div>`;
+  `).join('');
 }
 
 function bindToolPicker() {
   const listEl = document.getElementById('genericToolPicker');
-  const searchEl = document.getElementById('genericToolSearch');
-  if (!listEl || !searchEl || listEl.dataset.bound === '1') return;
+  if (!listEl || listEl.dataset.bound === '1') return;
 
   listEl.dataset.bound = '1';
-  searchEl.value = toolPickerQuery;
-  searchEl.addEventListener('input', () => renderToolPicker());
-  searchEl.addEventListener('keydown', event => {
-    if (event.key !== 'Enter') return;
-    const firstBtn = listEl.querySelector('.tool-switcher-item');
-    if (!firstBtn) return;
-    event.preventDefault();
-    selectTool(firstBtn.dataset.id);
-  });
   listEl.addEventListener('click', event => {
     const btn = event.target.closest('.tool-switcher-item');
     if (!btn || !listEl.contains(btn)) return;
