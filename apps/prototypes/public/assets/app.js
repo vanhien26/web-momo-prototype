@@ -1,12 +1,12 @@
 const demos = {
   financial: {
-    name: 'Money Lab',
-    title: 'Money Lab',
+    name: 'Widget Store',
+    title: 'Widget Store',
     type: 'PLG / SEO',
     maturity: 'Interactive prototype',
     src: 'demos/financial.html',
-    address: 'prototype.momo.vn/financial-utilities',
-    description: 'Workspace gọn cho quyết định tài chính: vay, tiết kiệm, đầu tư, bảo hiểm và tỷ giá.',
+    address: 'prototype.momo.vn/widget-store',
+    description: 'Workspace gọn cho hệ widget tài chính: vay, tiết kiệm, đầu tư, bảo hiểm, tỷ giá và chi tiêu thường ngày.',
     jtbd: 'Tính nhanh, hiểu rõ, hành động ngay',
     northStar: 'Qualified tool completion',
     loop: 'Search → Utility → App',

@@ -1505,6 +1505,69 @@ const TOOLS = [
     id: 'travel-budget', name: 'Budget Du Lịch', category: 'FX',     abbr: 'TB',  panel: 'travel-budget',
   },
   {
+    id: 'gia-xang-e10', name: 'Giá Xăng E10', category: 'Daily Spend', abbr: 'E10',
+    intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
+    description: 'Tính nhanh chi phí đổ xăng E10 theo số lít hoặc quy đổi ngược từ số tiền dự chi.',
+    jtbd: 'Tôi muốn biết đổ <b>x lít xăng E10 hết bao nhiêu tiền</b> hoặc với <b>y đồng thì mua được bao nhiêu lít</b>, để quyết định mức đổ phù hợp cho xe máy hay ô tô ngay tại cây xăng.',
+    formula: 'Chi phí = <b>Số lít × Đơn giá/lít</b><br>Số lít quy đổi = <b>Ngân sách ÷ Đơn giá/lít</b>',
+    resultLabel: 'CHI PHÍ ĐỔ XĂNG E10',
+    ctaText: 'Xem thêm công cụ chi tiêu trên MoMo',
+    disclaimer: 'Giá tham chiếu theo ảnh mẫu ngày 05/06/2026, gồm VAT và thuế BVMT: E10 RON 95-V = 23.230 đ/lít, E10 RON 95-III = 22.330 đ/lít. Cần cập nhật dataset khi kỳ điều hành giá thay đổi.',
+    fields: [
+      { id: 'fuelGrade', label: 'Loại xăng E10', type: 'select-items', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', compareOptions: true, optionCount: 2 }, options: [
+        { value: 'e10-95-v', label: 'E10 RON 95-V', note: '23.230 đ/lít' },
+        { value: 'e10-95-iii', label: 'E10 RON 95-III', note: '22.330 đ/lít' },
+      ], value: 'e10-95-iii', tooltip: 'Chọn loại xăng E10 bạn muốn tính. Mỗi loại có đơn giá theo lít khác nhau nên tổng chi phí và số lít quy đổi sẽ thay đổi theo lựa chọn này.' },
+      { id: 'fuelMode', label: 'Bạn muốn tính theo', type: 'pills', options: [
+        { value: 'liters', label: 'Nhập số lít' },
+        { value: 'budget', label: 'Nhập số tiền' },
+      ], value: 'liters' },
+      { id: 'fuelLiters', label: 'Số lít cần đổ', type: 'range', min: 1, max: 80, step: 0.5, value: 5, unit: 'L', chips: [2, 5, 10, 20, 30], condition: { field: 'fuelMode', value: 'liters' } },
+      { id: 'fuelBudget', label: 'Ngân sách dự chi', type: 'money', min: 10000, max: 5000000, step: 10000, value: 100000, chips: [50000, 100000, 300000], condition: { field: 'fuelMode', value: 'budget' } },
+    ],
+    compute(v) {
+      const FUEL_PRICES = {
+        'e10-95-v': { name: 'E10 RON 95-V', price: 23230 },
+        'e10-95-iii': { name: 'E10 RON 95-III', price: 22330 },
+      };
+      const selectedFuel = FUEL_PRICES[v.fuelGrade] || FUEL_PRICES['e10-95-iii'];
+      const price = selectedFuel.price;
+      const liters = v.fuelMode === 'budget' ? Math.max(0, v.fuelBudget / price) : Math.max(0, v.fuelLiters);
+      const totalCost = liters * price;
+      const scooterTank = 5 * price;
+      const carTank = 50 * price;
+      const tenKmCost = (10 / 45) * price;
+      if (v.fuelMode === 'budget') {
+        return {
+          resultLabel: 'SỐ LÍT XĂNG E10 QUY ĐỔI',
+          result: liters.toFixed(2) + ' L',
+          badge: selectedFuel.name,
+          details: [
+            { label: 'Đơn giá hiện tại', value: fmtM(price) + '/lít' },
+            { label: 'Ngân sách đang nhập', value: fmtM(v.fuelBudget) },
+            { label: 'Chi phí xe máy ~5 lít', value: fmtM(scooterTank) },
+            { label: 'Chi phí ô tô ~50 lít', value: fmtM(carTank) },
+            { label: 'Ước tính 10 km xe máy', value: fmtM(tenKmCost) },
+          ],
+          insight: `Với <b>${fmtM(v.fuelBudget)}</b>, bạn có thể đổ khoảng <b>${liters.toFixed(2)} lít ${selectedFuel.name}</b>. Nếu chỉ đi nội thành bằng xe máy, mức này tương đương khoảng <b>${(liters * 45).toFixed(0)} km</b> theo giả định 45 km/lít.`
+        };
+      }
+      return {
+        resultLabel: 'CHI PHÍ ĐỔ XĂNG E10',
+        result: fmt(totalCost),
+        badge: liters.toFixed(liters % 1 === 0 ? 0 : 1) + ' lít',
+        details: [
+          { label: 'Đơn giá hiện tại', value: fmtM(price) + '/lít' },
+          { label: 'Loại xăng đang chọn', value: selectedFuel.name },
+          { label: 'Chi phí xe máy ~5 lít', value: fmtM(scooterTank) },
+          { label: 'Chi phí ô tô ~50 lít', value: fmtM(carTank) },
+          { label: 'Ước tính 10 km xe máy', value: fmtM(tenKmCost) },
+        ],
+        insight: `Đổ <b>${liters.toFixed(liters % 1 === 0 ? 0 : 1)} lít</b> ${selectedFuel.name} cần khoảng <b>${fmtM(totalCost)}</b>. Nếu muốn kiểm soát ngân sách, mốc dễ nhớ là <b>100.000 đ ≈ ${(100000 / price).toFixed(2)} lít</b>.`
+      };
+    },
+  },
+  {
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Financial Health', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic', ui: 'goal-planner',
     description: 'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian hoàn thành và lạm phát dự kiến.',
@@ -2263,7 +2326,7 @@ function computeGeneric(tool) {
   });
   const res = tool.compute(vals);
   renderToolPartners(tool, vals);
-  document.getElementById('resultLabel').textContent  = tool.resultLabel;
+  document.getElementById('resultLabel').textContent  = res.resultLabel || tool.resultLabel;
   document.getElementById('resultValue').textContent  = res.result;
   const detailRows = dedupeVisualDetails(res.details, res.visual);
   document.getElementById('resultDetails').innerHTML  = detailRows.map(d =>
@@ -4123,7 +4186,7 @@ function injectEmbedBadge() {
   const badge = document.createElement('div');
   badge.id = 'embedBadge';
   badge.className = 'embed-badge';
-  badge.innerHTML = `<span>Công cụ cung cấp bởi</span><strong>MoMo Money Lab</strong>`;
+  badge.innerHTML = `<span>Công cụ cung cấp bởi</span><strong>MoMo Widget Store</strong>`;
   ws.appendChild(badge);
 }
 

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Du lịch Quốc tế - MoMo Destination Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink: #EB2F96;
+      --pink-dark: #C4177A;
+      --text: #0F172A;
+      --text-2: #475569;
+      --text-3: #94A3B8;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --cp: #0D9488;
+      --ca: #F59E0B;
+      --cp-light: #CCFBF1;
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-brand img { width: 40px; height: 40px; }
+    .nav-brand-copy { line-height: 1.2; }
+    .nav-brand-copy strong { display: block; font-size: 14px; font-weight: 700; color: var(--text); }
+    .nav-brand-copy small { font-size: 11px; color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 16px; }
+    .nav-back { text-decoration: none; color: var(--text-2); font-size: 13px; font-weight: 600; }
+    .nav-back:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--pink); color: white; border: none;
+      padding: 9px 18px; border-radius: 100px;
+      font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    /* HERO */
+    .hero { padding: 52px 24px 36px; max-width: 1100px; margin: 0 auto; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--cp-light); color: var(--cp);
+      padding: 4px 12px; border-radius: 100px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; margin-bottom: 20px;
+      transition: background 0.4s, color 0.4s;
+    }
+    .hero-title {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: clamp(34px, 5.5vw, 62px);
+      font-weight: 800; line-height: 1.08; letter-spacing: -2px;
+      margin-bottom: 16px;
+    }
+    .hero-title em { font-style: normal; color: var(--cp); transition: color 0.4s; }
+    .hero-sub { font-size: 16px; color: var(--text-2); max-width: 500px; line-height: 1.7; }
+
+    /* COUNTRY GRID */
+    .country-selector { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .country-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    @media(max-width:640px){ .country-grid { grid-template-columns: 1fr; } }
+
+    .country-card {
+      border-radius: var(--radius); padding: 24px;
+      cursor: pointer; transition: all 0.25s cubic-bezier(.4,0,.2,1);
+      border: 2px solid var(--border); background: var(--surface);
+    }
+    .country-card.active { border-color: var(--cp); background: var(--cp-light); }
+    .country-card:hover:not(.active) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    .country-flag { font-size: 40px; margin-bottom: 12px; display: block; }
+    .country-name { font-family: 'Be Vietnam Pro', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .country-meta { font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
+    .country-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .country-tag {
+      font-size: 11px; font-weight: 600; padding: 3px 8px;
+      border-radius: 100px; background: var(--border); color: var(--text-2); transition: all 0.3s;
+    }
+    .country-card.active .country-tag { background: white; color: var(--cp); }
+    .country-from { font-size: 13px; color: var(--text-2); }
+    .country-from strong { font-family: 'Be Vietnam Pro', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); }
+
+    /* DESTINATION SECTION */
+    .dest-section { max-width: 1100px; margin: 0 auto; padding: 0 24px 40px; }
+    .section-label {
+      display: flex; align-items: center; gap: 12px;
+      margin: 36px 0 24px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 22px; font-weight: 700;
+    }
+    .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+    /* TABS */
+    .tabs {
+      display: flex; gap: 4px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 4px; margin-bottom: 28px; overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1; min-width: max-content; padding: 10px 16px;
+      border: none; border-radius: 8px; background: transparent;
+      color: var(--text-2); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; transition: all 0.2s; white-space: nowrap;
+    }
+    .tab-btn.active { background: var(--cp); color: white; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* FLIGHT */
+    .flight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; }
+    .flight-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; transition: box-shadow 0.2s;
+    }
+    .flight-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+    .flight-route { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .flight-city { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 20px; }
+    .flight-arrow { color: var(--text-3); }
+    .flight-tag {
+      margin-left: auto; font-size: 11px; background: var(--cp-light);
+      color: var(--cp); padding: 2px 8px; border-radius: 100px; font-weight: 600;
+    }
+    .flight-airline { font-size: 12px; color: var(--text-2); margin-bottom: 14px; }
+    .flight-price { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 22px; color: var(--pink); }
+    .flight-price-note { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+    .btn-primary {
+      width: 100%; margin-top: 14px; background: var(--pink); color: white;
+      border: none; padding: 12px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--pink-dark); }
+
+    /* HOTEL */
+    .hotel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
+    .hotel-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .hotel-thumb {
+      height: 130px; display: flex; align-items: center; justify-content: center;
+      font-size: 52px; background: var(--cp-light); transition: background 0.4s;
+    }
+    .hotel-body { padding: 16px; }
+    .hotel-name { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+    .hotel-loc { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
+    .hotel-stars { color: #F59E0B; font-size: 13px; margin-bottom: 14px; }
+    .hotel-foot { display: flex; align-items: center; justify-content: space-between; }
+    .hotel-price { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 20px; }
+    .hotel-per { font-size: 12px; color: var(--text-3); }
+    .btn-sm {
+      padding: 8px 14px; background: var(--pink); color: white;
+      border: none; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    /* ESIM */
+    .esim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 16px; margin-bottom: 20px; }
+    .esim-card {
+      background: var(--surface); border: 2px solid var(--border);
+      border-radius: var(--radius); padding: 24px; position: relative; cursor: pointer; transition: border-color 0.2s;
+    }
+    .esim-card:hover { border-color: var(--cp); }
+    .esim-card.popular { border-color: var(--cp); }
+    .esim-popular-badge {
+      position: absolute; top: -1px; right: 16px; background: var(--cp); color: white;
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 0 0 8px 8px;
+    }
+    .esim-days { font-family: 'Be Vietnam Pro', sans-serif; font-size: 42px; font-weight: 800; color: var(--cp); line-height: 1; margin-bottom: 2px; }
+    .esim-days-label { font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
+    .esim-specs { list-style: none; margin-bottom: 18px; }
+    .esim-specs li { font-size: 13px; color: var(--text-2); padding: 3px 0; display: flex; gap: 6px; }
+    .esim-specs li::before { content: '✓'; color: var(--cp); font-weight: 700; flex-shrink: 0; }
+    .esim-price-row { display: flex; align-items: baseline; gap: 6px; }
+    .esim-price { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 800; font-size: 22px; }
+    .esim-original { font-size: 13px; color: var(--text-3); text-decoration: line-through; }
+    .esim-device-box {
+      background: #FFF7ED; border: 1px solid #FED7AA;
+      border-radius: var(--radius-sm); padding: 16px; margin-top: 4px;
+    }
+    .esim-device-title { font-size: 13px; font-weight: 600; color: #92400E; margin-bottom: 10px; }
+    .device-row { display: flex; gap: 8px; }
+    .device-select {
+      flex: 1; padding: 8px 12px; border: 1px solid #FED7AA;
+      border-radius: 8px; font-size: 13px; font-family: 'Be Vietnam Pro', sans-serif; background: white;
+    }
+    .btn-check {
+      padding: 8px 14px; background: #F59E0B; color: white;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .device-result { margin-top: 8px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; display: none; }
+    .device-result.ok { background: #D1FAE5; color: #065F46; display: block; }
+    .device-result.err { background: #FEE2E2; color: #991B1B; display: block; }
+
+    /* PAYMENT GUIDE */
+    .payment-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width:640px){ .payment-guide { grid-template-columns: 1fr; } }
+    .payment-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .payment-flag { font-size: 32px; margin-bottom: 10px; }
+    .payment-name { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 6px; }
+    .payment-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px; }
+    .qr-mock {
+      width: 90px; height: 90px; background: var(--border); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 44px; margin-bottom: 10px;
+    }
+    .qr-label { font-size: 11px; color: var(--text-3); margin-bottom: 16px; }
+    .payment-steps { list-style: none; counter-reset: step; }
+    .payment-steps li {
+      counter-increment: step; font-size: 13px; color: var(--text-2);
+      padding: 7px 0 7px 28px; position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .payment-steps li:last-child { border-bottom: none; }
+    .payment-steps li::before {
+      content: counter(step); position: absolute; left: 0; top: 7px;
+      width: 18px; height: 18px; background: var(--cp); color: white;
+      border-radius: 50%; font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .payment-note {
+      margin-top: 14px; padding: 12px; background: var(--cp-light);
+      border-radius: 8px; font-size: 12px; color: var(--text-2);
+    }
+    .payment-note strong { color: var(--cp); }
+
+    /* CROSS-SELL */
+    .crosssell-wrap { max-width: 1100px; margin: 0 auto 36px; padding: 0 24px; }
+    .crosssell-card {
+      background: linear-gradient(135deg, var(--cp) 0%, var(--pink) 100%);
+      border-radius: var(--radius); padding: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; flex-wrap: wrap; transition: background 0.4s;
+    }
+    .crosssell-eyebrow { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.75); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .crosssell-title { font-family: 'Be Vietnam Pro', sans-serif; font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; }
+    .crosssell-sub { font-size: 13px; color: rgba(255,255,255,.85); }
+    .crosssell-btn {
+      background: white; color: var(--pink); border: none;
+      padding: 14px 28px; border-radius: 10px; font-size: 14px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    /* CALCULATOR */
+    .calc-section { background: var(--text); color: white; padding: 56px 24px; margin: 0 0 40px; }
+    .calc-inner { max-width: 1100px; margin: 0 auto; }
+    .calc-title { font-family: 'Be Vietnam Pro', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .calc-sub { color: #94A3B8; font-size: 15px; margin-bottom: 36px; }
+    .calc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    @media(max-width:640px){ .calc-layout { grid-template-columns: 1fr; } }
+    .calc-form { display: flex; flex-direction: column; gap: 20px; }
+    .calc-field-label { font-size: 11px; font-weight: 600; color: #94A3B8; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+    .calc-currency-row { display: flex; gap: 8px; }
+    .calc-cur-btn {
+      padding: 9px 16px; border-radius: 8px; border: 1px solid #334155;
+      background: transparent; color: #94A3B8; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; transition: all 0.2s;
+    }
+    .calc-cur-btn.active { background: var(--cp); border-color: var(--cp); color: white; }
+    .calc-input {
+      width: 100%; padding: 14px 16px; border: 1px solid #334155;
+      border-radius: 10px; background: #1E293B; color: white;
+      font-size: 22px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700;
+    }
+    .calc-input:focus { outline: none; border-color: var(--cp); }
+    .calc-hint { color: #64748B; font-size: 12px; margin-top: 6px; }
+    .calc-result { display: flex; flex-direction: column; gap: 14px; }
+    .calc-card { border-radius: var(--radius-sm); padding: 20px; }
+    .calc-card.momo { background: var(--cp); transition: background 0.4s; }
+    .calc-card.bank { background: #1E293B; border: 1px solid #334155; }
+    .calc-card-label { font-size: 12px; font-weight: 600; opacity: 0.8; margin-bottom: 6px; }
+    .calc-amount { font-family: 'Be Vietnam Pro', sans-serif; font-size: 28px; font-weight: 800; }
+    .calc-amount-note { font-size: 11px; opacity: 0.65; margin-top: 3px; }
+    .calc-savings {
+      background: #FEF9C3; color: #713F12;
+      border-radius: var(--radius-sm); padding: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .calc-savings-label { font-size: 13px; font-weight: 600; }
+    .calc-savings-num { font-family: 'Be Vietnam Pro', sans-serif; font-size: 22px; font-weight: 800; color: #16A34A; }
+
+    /* W2A */
+    .w2a-section { max-width: 1100px; margin: 0 auto 64px; padding: 0 24px; }
+    .w2a-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    @media(max-width:640px){ .w2a-grid { grid-template-columns: 1fr; } }
+    .w2a-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; text-align: center;
+    }
+    .w2a-icon { font-size: 36px; margin-bottom: 12px; }
+    .w2a-title { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+    .w2a-desc { font-size: 13px; color: var(--text-2); margin-bottom: 16px; line-height: 1.5; }
+    .btn-outline {
+      width: 100%; padding: 12px; background: transparent;
+      border: 2px solid var(--pink); color: var(--pink); border-radius: 10px;
+      font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { background: var(--pink); color: white; }
+
+    /* FOOTER */
+    footer {
+      background: var(--text); color: #475569;
+      padding: 28px 24px; text-align: center; font-size: 13px;
+    }
+    footer a { color: #94A3B8; text-decoration: none; }
+    footer a:hover { color: white; }
+
+    /* TOAST */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity:1; transform: translateX(-50%) translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="../lab.html">
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+    <div class="nav-brand-copy">
+      <strong>Destination Hub</strong>
+      <small>Du lịch Quốc tế · Prototype</small>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <a class="nav-back" href="../lab.html">← Lab</a>
+    <button class="nav-cta" onclick="openApp('home')">Mở App MoMo</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow" id="heroEyebrow">✈ Du lịch Quốc tế</div>
+  <h1 class="hero-title">
+    Chuẩn bị hành trình<br>
+    <em id="heroCountry">Thái Lan</em><br>
+    từ A đến Z
+  </h1>
+  <p class="hero-sub">Vé máy bay, khách sạn, eSIM và thanh toán quốc tế - mọi thứ trong một nơi. Không phí ẩn, không rủi ro tài chính.</p>
+</section>
+
+<!-- COUNTRY SELECTOR -->
+<section class="country-selector">
+  <div class="country-grid" id="countryGrid"></div>
+</section>
+
+<!-- DESTINATION DETAIL -->
+<section class="dest-section">
+  <div class="section-label" id="destLabel">🇹🇭 Thái Lan</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('flight',this)">✈ Vé máy bay</button>
+    <button class="tab-btn" onclick="switchTab('hotel',this)">🏨 Khách sạn</button>
+    <button class="tab-btn" onclick="switchTab('esim',this)">📡 eSIM du lịch</button>
+    <button class="tab-btn" onclick="switchTab('payment',this)">💳 Thanh toán QR</button>
+  </div>
+
+  <div class="tab-content active" id="tab-flight">
+    <div class="flight-grid" id="flightGrid"></div>
+  </div>
+  <div class="tab-content" id="tab-hotel">
+    <div class="hotel-grid" id="hotelGrid"></div>
+  </div>
+  <div class="tab-content" id="tab-esim">
+    <div class="esim-grid" id="esimGrid"></div>
+    <div class="esim-device-box">
+      <div class="esim-device-title">⚠ Kiểm tra thiết bị hỗ trợ eSIM trước khi mua</div>
+      <div class="device-row">
+        <select class="device-select" id="deviceSelect">
+          <option value="">Chọn dòng máy...</option>
+          <option value="ok">iPhone XS trở lên</option>
+          <option value="ok">Samsung Galaxy S20 trở lên</option>
+          <option value="ok">Google Pixel 3 trở lên</option>
+          <option value="err">iPhone 7 / 8 / X (không hỗ trợ)</option>
+          <option value="err">Samsung Galaxy S10 trở xuống (không hỗ trợ)</option>
+        </select>
+        <button class="btn-check" onclick="checkDevice()">Kiểm tra</button>
+      </div>
+      <div class="device-result" id="deviceResult"></div>
+    </div>
+  </div>
+  <div class="tab-content" id="tab-payment">
+    <div class="payment-guide" id="paymentGuide"></div>
+  </div>
+</section>
+
+<!-- CROSS-SELL -->
+<div class="crosssell-wrap">
+  <div class="crosssell-card">
+    <div>
+      <div class="crosssell-eyebrow">Combo tiết kiệm</div>
+      <div class="crosssell-title" id="crossTitle">Đã có vé bay? Thêm eSIM Thái Lan giảm 15%</div>
+      <div class="crosssell-sub" id="crossSub">Mua eSIM kèm vé bay - nhận mã kích hoạt trong 2 phút, hạ cánh là có mạng.</div>
+    </div>
+    <button class="crosssell-btn" onclick="openApp('esim')">Thêm eSIM ngay →</button>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<section class="calc-section">
+  <div class="calc-inner">
+    <div class="calc-title">MoMo QR tiết kiệm bao nhiêu?</div>
+    <div class="calc-sub">Nhập số tiền ngoại tệ dự kiến chi - so sánh ngay với thẻ tín dụng thông thường.</div>
+    <div class="calc-layout">
+      <div class="calc-form">
+        <div>
+          <div class="calc-field-label">Tiền tệ điểm đến</div>
+          <div class="calc-currency-row">
+            <button class="calc-cur-btn active" onclick="setCurrency('THB',this)">🇹🇭 THB</button>
+          </div>
+        </div>
+        <div>
+          <div class="calc-field-label">Số tiền bạn muốn chi</div>
+          <input class="calc-input" type="number" id="calcInput" value="3000" oninput="calculate()">
+          <div class="calc-hint" id="calcHint">3,000 THB ≈ 3 ngày chi tiêu thoải mái tại Bangkok</div>
+        </div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-card momo">
+          <div class="calc-card-label">🟢 Quét QR MoMo (0% phí)</div>
+          <div class="calc-amount" id="momoAmt">2,250,000đ</div>
+          <div class="calc-amount-note">Tỷ giá liên ngân hàng thực tế</div>
+        </div>
+        <div class="calc-card bank">
+          <div class="calc-card-label">🔴 Thẻ tín dụng ngân hàng thông thường (+3.5%)</div>
+          <div class="calc-amount" id="bankAmt">2,328,750đ</div>
+          <div class="calc-amount-note">Tỷ giá ngân hàng + phí chuyển đổi ngoại tệ</div>
+        </div>
+        <div class="calc-savings">
+          <div class="calc-savings-label">💰 Bạn tiết kiệm được</div>
+          <div class="calc-savings-num" id="savingsAmt">+78,750đ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- W2A -->
+<section class="w2a-section">
+  <div class="section-label">Bắt đầu ngay trên App MoMo</div>
+  <div class="w2a-grid">
+    <div class="w2a-card">
+      <div class="w2a-icon">✈</div>
+      <div class="w2a-title">Đặt vé máy bay</div>
+      <div class="w2a-desc">Giá tốt nhất, thanh toán 1 chạm từ ví MoMo. Không nhập lại thông tin thẻ.</div>
+      <button class="btn-outline" onclick="openApp('flight')">Tìm vé rẻ trên App →</button>
+    </div>
+    <div class="w2a-card">
+      <div class="w2a-icon">📡</div>
+      <div class="w2a-title">Mua eSIM du lịch</div>
+      <div class="w2a-desc">Nhận mã QR kích hoạt trong 2 phút. Hạ cánh là có mạng, không chờ SIM vật lý.</div>
+      <button class="btn-outline" onclick="openApp('esim')">Mua eSIM & Nhận mã ngay →</button>
+    </div>
+    <div class="w2a-card">
+      <div class="w2a-icon">🌐</div>
+      <div class="w2a-title">Bật QR Quốc tế</div>
+      <div class="w2a-desc">Quét PromptPay, NETS, PayPay. Tỷ giá thực, 0% phí chuyển đổi ngoại tệ.</div>
+      <button class="btn-outline" onclick="openApp('qr')">Kích hoạt QR Quốc tế →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>MoMo Destination Hub · Prototype v1.0 · Phase 1: Thái Lan</div>
+  <div style="margin-top:8px;">
+    <a href="#">Chính sách hoàn hủy eSIM</a> ·
+    <a href="#">Điều khoản thanh toán quốc tế</a> ·
+    <a href="#">Hỗ trợ 24/7</a>
+  </div>
+</footer>
+
+<script>
+const DATA = {
+  thailand: {
+    id:'thailand', flag:'🇹🇭', name:'Thái Lan', nameEn:'Thailand',
+    theme:{ cp:'#0D9488', ca:'#F59E0B', cpLight:'#CCFBF1' },
+    tags:['Bangkok','Phuket','Chiang Mai'],
+    fromPrice:'1,800,000đ', currency:'THB', rate:750,
+    flights:[
+      { from:'HAN', to:'BKK', airline:'VietJet Air · Không hành lý ký gửi', price:'1,800,000', tag:'Rẻ nhất' },
+      { from:'SGN', to:'BKK', airline:'Thai Airways · Hành lý 23kg', price:'2,450,000', tag:'' },
+      { from:'HAN', to:'HKT', airline:'Bangkok Airways · Bay thẳng Phuket', price:'3,100,000', tag:'Bay thẳng' },
+    ],
+    hotels:[
+      { name:'COMO Metropolitan Bangkok', loc:'Sathorn, Bangkok', stars:'★★★★★', price:'1,850,000', emoji:'🏙' },
+      { name:'Amari Phuket Resort', loc:'Patong Beach, Phuket', stars:'★★★★', price:'980,000', emoji:'🏖' },
+      { name:'Anantara Chiang Mai', loc:'Old City, Chiang Mai', stars:'★★★★★', price:'2,200,000', emoji:'🌿' },
+    ],
+    esims:[
+      { days:3, data:'3GB/ngày', price:'89,000', original:'105,000', popular:false },
+      { days:7, data:'5GB/ngày', price:'119,000', original:'140,000', popular:true },
+      { days:15, data:'Không giới hạn', price:'179,000', original:'210,000', popular:false },
+    ],
+    payment:{
+      name:'PromptPay', flag:'🇹🇭',
+      desc:'Hệ thống thanh toán QR quốc gia Thái Lan. Chấp nhận tại hơn 10 triệu điểm bán lẻ, từ siêu thị Big C đến quán ăn đường phố và chợ nổi.',
+      steps:['Mở App MoMo → chọn Quét QR','Hướng camera vào mã PromptPay tại quầy','MoMo tự quy đổi VNĐ → THB theo tỷ giá thực','Xác nhận bằng Face ID hoặc mã PIN','Giao dịch hoàn tất trong 3 giây'],
+    }
+  },
+};
+
+let active = 'thailand';
+let calcCur = 'THB';
+
+function applyTheme(id) {
+  const t = DATA[id].theme;
+  const s = document.documentElement.style;
+  s.setProperty('--cp', t.cp);
+  s.setProperty('--ca', t.ca);
+  s.setProperty('--cp-light', t.cpLight);
+}
+
+function selectCountry(id) {
+  active = id;
+  applyTheme(id);
+  renderCards();
+  renderDest();
+  document.getElementById('heroCountry').textContent = DATA[id].name;
+  // sync calc currency + reset defaults
+  const cur = DATA[id].currency;
+  calcCur = cur;
+  document.querySelectorAll('.calc-cur-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(cur)));
+  const defaults = { THB:3000 };
+  const hints = { THB:'3,000 THB ≈ 3 ngày chi tiêu thoải mái tại Bangkok' };
+  document.getElementById('calcInput').value = defaults[cur];
+  document.getElementById('calcHint').textContent = hints[cur];
+  calculate();
+}
+
+function renderCards() {
+  document.getElementById('countryGrid').innerHTML = Object.values(DATA).map(c => `
+    <div class="country-card ${c.id===active?'active':''}" onclick="selectCountry('${c.id}')">
+      <span class="country-flag">${c.flag}</span>
+      <div class="country-name">${c.name}</div>
+      <div class="country-meta">${c.nameEn}</div>
+      <div class="country-tags">${c.tags.map(t=>`<span class="country-tag">${t}</span>`).join('')}</div>
+      <div class="country-from">Vé từ <strong>${c.fromPrice}</strong></div>
+    </div>
+  `).join('');
+}
+
+function renderDest() {
+  const c = DATA[active];
+  document.getElementById('destLabel').textContent = `${c.flag} ${c.name}`;
+
+  // Flights
+  document.getElementById('flightGrid').innerHTML = c.flights.map(f=>`
+    <div class="flight-card">
+      <div class="flight-route">
+        <span class="flight-city">${f.from}</span>
+        <span class="flight-arrow">→</span>
+        <span class="flight-city">${f.to}</span>
+        ${f.tag?`<span class="flight-tag">${f.tag}</span>`:''}
+      </div>
+      <div class="flight-airline">${f.airline}</div>
+      <div class="flight-price">${f.price}đ</div>
+      <div class="flight-price-note">/ người · khứ hồi</div>
+      <button class="btn-primary" onclick="openApp('flight')">Đặt vé trên App MoMo</button>
+    </div>
+  `).join('');
+
+  // Hotels
+  document.getElementById('hotelGrid').innerHTML = c.hotels.map(h=>`
+    <div class="hotel-card">
+      <div class="hotel-thumb">${h.emoji}</div>
+      <div class="hotel-body">
+        <div class="hotel-name">${h.name}</div>
+        <div class="hotel-loc">📍 ${h.loc}</div>
+        <div class="hotel-stars">${h.stars}</div>
+        <div class="hotel-foot">
+          <div><span class="hotel-price">${h.price}đ</span><span class="hotel-per"> / đêm</span></div>
+          <button class="btn-sm" onclick="openApp('hotel')">Đặt ngay</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // eSIMs
+  document.getElementById('esimGrid').innerHTML = c.esims.map(e=>`
+    <div class="esim-card ${e.popular?'popular':''}">
+      ${e.popular?'<div class="esim-popular-badge">Phổ biến nhất</div>':''}
+      <div class="esim-days">${e.days}</div>
+      <div class="esim-days-label">ngày · ${e.data}</div>
+      <ul class="esim-specs">
+        <li>Toàn quốc ${c.name}</li>
+        <li>Kích hoạt bằng mã QR</li>
+        <li>Hoàn tiền 100% trong 7 ngày</li>
+        <li>Hỗ trợ iOS & Android</li>
+      </ul>
+      <div class="esim-price-row">
+        <span class="esim-price">${e.price}đ</span>
+        <span class="esim-original">${e.original}đ</span>
+      </div>
+      <button class="btn-primary" style="margin-top:14px;" onclick="openApp('esim')">Mua eSIM ngay</button>
+    </div>
+  `).join('');
+
+  // Payment
+  const p = c.payment;
+  document.getElementById('paymentGuide').innerHTML = `
+    <div class="payment-card">
+      <div class="payment-flag">${p.flag}</div>
+      <div class="payment-name">${p.name}</div>
+      <div class="payment-desc">${p.desc}</div>
+      <div class="qr-mock">⬜</div>
+      <div class="qr-label">Mã QR demo · Thực tế hiển thị tại điểm bán</div>
+      <button class="btn-primary" onclick="openApp('qr')">Kích hoạt QR Quốc tế</button>
+    </div>
+    <div class="payment-card">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;">Cách thực hiện giao dịch</div>
+      <ol class="payment-steps">${p.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+      <div class="payment-note"><strong>Miễn phí 0% phí giao dịch.</strong> Tỷ giá cập nhật mỗi 30 giây theo tỷ giá liên ngân hàng thực tế.</div>
+    </div>
+  `;
+
+  // Cross-sell
+  document.getElementById('crossTitle').textContent = `Đã có vé bay? Thêm eSIM ${c.name} giảm 15%`;
+  document.getElementById('crossSub').textContent = `Mua eSIM ${c.name} kèm vé bay - nhận mã kích hoạt trong 2 phút, hạ cánh là có mạng ngay.`;
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setCurrency(cur, btn) {
+  calcCur = cur;
+  document.querySelectorAll('.calc-cur-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const defaults = { THB:3000 };
+  const hints = { THB:'3,000 THB ≈ 3 ngày chi tiêu thoải mái tại Bangkok' };
+  document.getElementById('calcInput').value = defaults[cur];
+  document.getElementById('calcHint').textContent = hints[cur];
+  calculate();
+}
+
+function calculate() {
+  const amt = parseFloat(document.getElementById('calcInput').value)||0;
+  const rates = { THB:750 };
+  const rate = rates[calcCur]||750;
+  const momo = Math.round(amt*rate);
+  const bank = Math.round(amt*rate*1.035);
+  const save = bank-momo;
+  document.getElementById('momoAmt').textContent = momo.toLocaleString('vi-VN')+'đ';
+  document.getElementById('bankAmt').textContent = bank.toLocaleString('vi-VN')+'đ';
+  document.getElementById('savingsAmt').textContent = '+'+save.toLocaleString('vi-VN')+'đ';
+}
+
+function checkDevice() {
+  const sel = document.getElementById('deviceSelect');
+  const res = document.getElementById('deviceResult');
+  if(!sel.value){ res.className='device-result err'; res.textContent='Vui lòng chọn dòng máy.'; return; }
+  if(sel.value==='ok'){
+    res.className='device-result ok';
+    res.textContent='✓ Thiết bị hỗ trợ eSIM. Bạn có thể mua và kích hoạt ngay trên App MoMo.';
+  } else {
+    res.className='device-result err';
+    res.textContent='✗ Thiết bị này không hỗ trợ eSIM. Vui lòng chọn gói SIM vật lý hoặc nâng cấp thiết bị.';
+  }
+}
+
+function openApp(action) {
+  const c = DATA[active];
+  const links = {
+    home: `momo://app/travel?destination=${c.id}`,
+    flight: `momo://app/travel/flight?destination=${c.id}&promo=true`,
+    esim: `momo://app/telecom/esim?country=${c.id}&partner=gohub`,
+    hotel: `momo://app/travel/hotel?destination=${c.id}`,
+    qr: `momo://app/payment/qr_roaming`,
+  };
+  showToast('Đang mở App MoMo... ' + links[action]);
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0F172A;color:white;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;max-width:380px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// Init
+renderCards();
+renderDest();
+calculate();
+</script>
+</body>
+</html>
