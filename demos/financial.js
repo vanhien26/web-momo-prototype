@@ -1774,6 +1774,9 @@ const TOOLS = [
     id: 'travel-budget', name: 'Budget Du Lịch', category: 'FX',     abbr: 'TB',  panel: 'travel-budget',
   },
   {
+    id: 'kieu-hoi', name: 'Kiều Hối',            category: 'FX',      abbr: 'KH', panel: 'kieu-hoi',
+  },
+  {
     id: 'chi-phi-di-lai', name: 'Chi Phí Đi Lại', category: 'Phương tiện', abbr: 'KM',
     intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
     description: 'Ước tính chi phí đi lại theo quãng đường, số ngày di chuyển và loại phương tiện đang dùng.',
@@ -2351,6 +2354,7 @@ function selectTool(id, options = {}) {
   document.getElementById('fxPanel').hidden       = tool.panel !== 'fx';
   document.getElementById('fxComparePanel').hidden     = tool.panel !== 'fx-compare';
   document.getElementById('travelBudgetPanel').hidden  = tool.panel !== 'travel-budget';
+  document.getElementById('khPanel').hidden            = tool.panel !== 'kieu-hoi';
   document.getElementById('firePanel').hidden          = tool.panel !== 'fire';
   document.getElementById('ciCarePanel').hidden        = tool.panel !== 'ci-care';
   document.getElementById('phatNguoiPanel').hidden     = tool.panel !== 'phat-nguoi';
@@ -2362,6 +2366,7 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'fx')        computeFx();
   if (tool.panel === 'fx-compare') initFxComparePanel();
   if (tool.panel === 'travel-budget') initTravelBudgetPanel();
+  if (tool.panel === 'kieu-hoi')     initKhPanel();
   if (tool.panel === 'fire')      initFirePanel();
   if (tool.panel === 'ci-care')   initCiCarePanel();
   if (tool.panel === 'phat-nguoi') initPhatNguoiPanel();
@@ -2499,6 +2504,7 @@ function renderGenericPanel(tool) {
           <input type="text" inputmode="numeric" id="${f.id}" value="${formattedInitial}" aria-label="${ariaLabel}">
           <span class="unit-tag">đ</span>
         </div>
+        <div class="money-smart-chips" id="${f.id}SmartChips" hidden></div>
         ${showChips ? `<div class="money-chips">
           ${(f.chips || []).map(c => `<button type="button" class="chip-btn${c === f.value ? ' active' : ''}" data-val="${c}">${fmtChip(c)}</button>`).join('')}
         </div>` : ''}
@@ -2653,6 +2659,32 @@ function renderGenericPanel(tool) {
           btn.classList.toggle('active', +btn.dataset.val === currentNum);
         });
       }
+      if (f.type === 'money') {
+        const raw = el.value.replace(/[^\d]/g, '');
+        const bare = +raw;
+        const smartEl = document.getElementById(`${f.id}SmartChips`);
+        if (smartEl && raw.length > 0 && raw === el.value.replace(/\s/g, '') && bare > 0 && bare <= 9999) {
+          const mults = [1_000_000, 10_000_000, 100_000_000];
+          if (bare <= 99) mults.push(1_000_000_000);
+          const suggs = mults.map(m => bare * m).filter(v => v >= 1_000_000 && v <= (f.max || 100_000_000_000));
+          if (suggs.length) {
+            smartEl.innerHTML = '<span class="smart-chips-hint">Ý bạn muốn nhập:</span>' +
+              suggs.map(v => `<button type="button" class="chip-btn smart-chip" data-val="${v}">${fmtSmartChip(v)}</button>`).join('');
+            smartEl.hidden = false;
+            smartEl.onclick = e => {
+              const btn = e.target.closest('.smart-chip');
+              if (!btn) return;
+              el.value = (+btn.dataset.val).toLocaleString('vi-VN');
+              smartEl.hidden = true;
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+            };
+          } else {
+            smartEl.hidden = true;
+          }
+        } else if (smartEl) {
+          smartEl.hidden = true;
+        }
+      }
       if (f.type === 'pills') {
         document.querySelectorAll(`[data-field="${f.id}"] .pill-btn`).forEach(btn => {
           const isActive = String(btn.dataset.val) === String(el.value);
@@ -2675,6 +2707,8 @@ function renderGenericPanel(tool) {
       el.addEventListener('blur', () => {
         const num = parseMoney(el.value);
         el.value = num.toLocaleString('vi-VN');
+        const smartEl = document.getElementById(`${f.id}SmartChips`);
+        if (smartEl) smartEl.hidden = true;
       });
     }
     if (f.type === 'money' || f.type === 'range' || f.type === 'stepper') {
@@ -2901,6 +2935,15 @@ function fmtChip(val) {
   if (val >= 1e9) return (val / 1e9 % 1 === 0 ? val / 1e9 : +(val / 1e9).toFixed(1)) + ' tỷ';
   if (val >= 1e6) return (val / 1e6 % 1 === 0 ? val / 1e6 : +(val / 1e6).toFixed(1)) + ' tr';
   return fmtM(val);
+}
+
+function fmtSmartChip(val) {
+  if (val >= 1e9) {
+    const b = val / 1e9;
+    return (b % 1 === 0 ? b : b.toFixed(1)) + ' tỷ';
+  }
+  const m = val / 1e6;
+  return (m % 1 === 0 ? m : m.toFixed(1)) + ' triệu';
 }
 
 function computeGeneric(tool) {
@@ -3189,6 +3232,7 @@ function initGoldPanel() {
   // Price table với cột "Hôm qua" + delta
   document.getElementById('goldPriceTable').innerHTML = GOLD_PRODUCTS.map(p => {
     const delta = p.sell - p.prevSell;
+    const deltaPct = p.prevSell > 0 ? (delta / p.prevSell * 100) : 0;
     const deltaClass = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
     const deltaSign = delta > 0 ? '+' : '';
     const deltaIcon = delta > 0 ? '▲' : delta < 0 ? '▼' : '—';
@@ -3198,8 +3242,7 @@ function initGoldPanel() {
       <span class="gold-row-name"><b>${p.brand}</b>${p.name.replace(p.brand, '').replace(p.location || '~~no-loc~~', '').trim()} ${locTag}</span>
       <span class="gold-row-buy">${fmtM(p.buy)}<small>/${p.unit}</small></span>
       <span class="gold-row-sell">${fmtM(p.sell)}<small>/${p.unit}</small></span>
-      <span class="gold-row-prev">${fmtM(p.prevSell)}</span>
-      <span class="gold-row-delta ${deltaClass}">${deltaIcon} ${deltaSign}${fmtM(delta)}</span>
+      <span class="gold-row-delta ${deltaClass}">${deltaIcon} ${deltaSign}${fmtM(delta)}<small>${deltaSign}${deltaPct.toFixed(2)}%</small></span>
     </div>`;
   }).join('');
 
@@ -3218,7 +3261,7 @@ function initGoldPanel() {
   // Chart product selector (only lượng-based products to keep prices comparable)
   const chartProducts = GOLD_PRODUCTS.filter(p => p.unit === 'lượng');
   document.getElementById('goldChartProductCtrl').innerHTML = chartProducts.map(p =>
-    `<button type="button" data-chart-product="${p.id}"${p.id === goldChartProductId ? ' class="active"' : ''}>${p.brand}</button>`
+    `<button type="button" data-chart-product="${p.id}"${p.id === goldChartProductId ? ' class="active"' : ''}>${p.brand}${p.location ? ' ' + p.location : ''}</button>`
   ).join('');
 
   // Calculator select
@@ -5096,4 +5139,213 @@ function formatPlate(raw) {
   // 29A12345 → 29A·12345
   const m = raw.match(/^(\d{2}[A-Z]{1,2})(\d+)$/);
   return m ? `${m[1]}·${m[2]}` : raw;
+}
+
+// ─── KIỀU HỐI PANEL ────────────────────────────────────────────────────────
+
+const KH_CORRIDORS = [
+  { code: 'US', flag: '🇺🇸', name: 'Mỹ',       currency: 'USD', midRate: 25500, per: 1 },
+  { code: 'AU', flag: '🇦🇺', name: 'Úc',        currency: 'AUD', midRate: 16800, per: 1 },
+  { code: 'KR', flag: '🇰🇷', name: 'Hàn Quốc', currency: 'KRW', midRate: 18.5,  per: 1 },
+  { code: 'JP', flag: '🇯🇵', name: 'Nhật',     currency: 'JPY', midRate: 170,   per: 1 },
+  { code: 'DE', flag: '🇩🇪', name: 'EU',        currency: 'EUR', midRate: 27800, per: 1 },
+  { code: 'TW', flag: '🇹🇼', name: 'Đài Loan', currency: 'TWD', midRate: 790,   per: 1 },
+];
+
+const KH_PROVIDERS = [
+  {
+    id: 'momo',  name: 'MoMo',          emoji: '💜',
+    tag: 'Đối tác MoMo', tagClass: 'kh-tag-primary',
+    feeFixed: 50000, feePct: 0,    rateSpread: 0.005,
+    timeLabel: 'Trong ngày', timeClass: 'kh-time-fast',
+    note: 'Lock tỷ giá ngay khi gửi, không phí ẩn',
+  },
+  {
+    id: 'wise',  name: 'Wise',          emoji: '🌿',
+    tag: 'Tỷ giá tốt nhất', tagClass: 'kh-tag-best',
+    feeFixed: 0, feePct: 0.007, rateSpread: 0.001,
+    timeLabel: '1–2 ngày', timeClass: 'kh-time-normal',
+    note: 'Tỷ giá giữa thị trường, phí thấp nhất ngành',
+  },
+  {
+    id: 'wu',    name: 'Western Union', emoji: '🟡',
+    tag: 'Phổ biến',       tagClass: 'kh-tag-neutral',
+    feeFixed: 0, feePct: 0.025, rateSpread: 0.02,
+    timeLabel: 'Tức thì',  timeClass: 'kh-time-fast',
+    note: 'Nhận tiền mặt tại điểm toàn cầu, không cần TK',
+  },
+  {
+    id: 'remitly', name: 'Remitly',    emoji: '📲',
+    tag: 'App quốc tế',    tagClass: 'kh-tag-neutral',
+    feeFixed: 0, feePct: 0.015, rateSpread: 0.012,
+    timeLabel: '1–3 ngày', timeClass: 'kh-time-normal',
+    note: 'Chuyển qua app, hỗ trợ nhiều quốc gia',
+  },
+  {
+    id: 'bank',  name: 'Ngân hàng',    emoji: '🏦',
+    tag: 'Truyền thống',   tagClass: 'kh-tag-slow',
+    feeFixed: 300000, feePct: 0.001, rateSpread: 0.025,
+    timeLabel: '2–3 ngày', timeClass: 'kh-time-slow',
+    note: 'Phí SWIFT + chênh lệch tỷ giá cao',
+  },
+];
+
+let KH_STATE = { corridor: 'US', amount: 10000000, bound: false };
+
+function initKhPanel() {
+  const grid = document.getElementById('khCorridorGrid');
+  if (grid && !grid.dataset.init) {
+    grid.dataset.init = '1';
+    grid.innerHTML = KH_CORRIDORS.map(c =>
+      `<button type="button" class="kh-corridor-btn${c.code === KH_STATE.corridor ? ' active' : ''}" data-code="${c.code}">
+        <span class="kh-corr-flag">${c.flag}</span>
+        <span class="kh-corr-name">${c.name}</span>
+        <span class="kh-corr-cur">${c.currency}</span>
+      </button>`
+    ).join('');
+    grid.onclick = e => {
+      const btn = e.target.closest('[data-code]');
+      if (!btn) return;
+      KH_STATE.corridor = btn.dataset.code;
+      grid.querySelectorAll('.kh-corridor-btn').forEach(b => b.classList.toggle('active', b.dataset.code === KH_STATE.corridor));
+      renderKh();
+    };
+  }
+
+  const qv = document.getElementById('khQuickValues');
+  if (qv && !qv.dataset.init) {
+    qv.dataset.init = '1';
+    qv.onclick = e => {
+      const btn = e.target.closest('[data-kh]');
+      if (!btn) return;
+      KH_STATE.amount = +btn.dataset.kh;
+      const inp = document.getElementById('khAmount');
+      inp.value = KH_STATE.amount.toLocaleString('vi-VN');
+      qv.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.kh === KH_STATE.amount));
+      renderKh();
+    };
+  }
+
+  if (!KH_STATE.bound) {
+    KH_STATE.bound = true;
+    const inp = document.getElementById('khAmount');
+    inp.addEventListener('input', () => {
+      KH_STATE.amount = parseFireMoney(inp.value) || 0;
+      renderKh();
+    });
+    inp.addEventListener('blur', () => {
+      inp.value = KH_STATE.amount.toLocaleString('vi-VN');
+    });
+  }
+
+  renderKh();
+}
+
+function computeKhProvider(p, corridor, amount) {
+  const rate = corridor.midRate * (1 - p.rateSpread);
+  const fee = p.feeFixed + amount * p.feePct;
+  const netSend = Math.max(0, amount - fee);
+  const received = netSend / corridor.midRate * corridor.midRate / corridor.midRate * (1 / (1 + p.rateSpread));
+  // received = (amount - fee) / (midRate * (1 + rateSpread)) — VND → foreign
+  const receivedAmt = (amount - fee) / (corridor.midRate * (1 + p.rateSpread));
+  return { fee, rate, receivedAmt: Math.max(0, receivedAmt) };
+}
+
+function fmtKhForeign(val, currency, midRate) {
+  if (!isFinite(val) || val <= 0) return '--';
+  if (currency === 'KRW' || currency === 'JPY') {
+    return Math.round(val).toLocaleString('vi-VN') + ' ' + currency;
+  }
+  return val.toLocaleString('vi-VN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency;
+}
+
+function fmtKhRate(rate, currency) {
+  const decimals = rate < 100 ? 2 : 0;
+  return '1 ' + currency + ' = ' + rate.toLocaleString('vi-VN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + ' đ';
+}
+
+function renderKh() {
+  const corridor = KH_CORRIDORS.find(c => c.code === KH_STATE.corridor);
+  if (!corridor) return;
+  const amount = KH_STATE.amount;
+
+  // Mid rate info
+  const midEl = document.getElementById('khMidRate');
+  if (midEl) {
+    midEl.innerHTML = `<span class="kh-mid-label">Tỷ giá tham chiếu</span> <span class="kh-mid-val">1 ${corridor.currency} = ${corridor.midRate.toLocaleString('vi-VN')} đ</span>`;
+  }
+
+  // Compute all providers
+  const results = KH_PROVIDERS.map(p => {
+    const { fee, rate, receivedAmt } = computeKhProvider(p, corridor, amount);
+    return { ...p, fee, rate, receivedAmt };
+  });
+
+  // Sort by received descending
+  const sorted = [...results].sort((a, b) => b.receivedAmt - a.receivedAmt);
+  const best = sorted[0];
+  const worst = sorted[sorted.length - 1];
+  const saving = best.receivedAmt - worst.receivedAmt;
+
+  const el = document.getElementById('khResults');
+  if (!el) return;
+
+  const isMini = amount < 100000;
+
+  el.innerHTML = `
+    <div class="kh-best-card">
+      <div class="kh-best-eyebrow">Kênh tốt nhất cho bạn</div>
+      <div class="kh-best-provider">
+        <span class="kh-best-emoji">${best.emoji}</span>
+        <div>
+          <strong>${best.name}</strong>
+          <span class="kh-tag ${best.tagClass}">${best.tag}</span>
+        </div>
+      </div>
+      <div class="kh-best-received">
+        <span class="kh-best-label">Người nhận được</span>
+        <strong class="kh-best-val">${fmtKhForeign(best.receivedAmt, corridor.currency, corridor.midRate)}</strong>
+      </div>
+      <div class="kh-best-meta">
+        <span>Phí: <b>${fmtM(best.fee)}</b></span>
+        <span>·</span>
+        <span>${fmtKhRate(best.rate, corridor.currency, corridor.midRate)}</span>
+        <span>·</span>
+        <span class="${best.timeClass}">${best.timeLabel}</span>
+      </div>
+      <div class="kh-best-note">${best.note}</div>
+    </div>
+
+    <div class="kh-compare-head">So sánh tất cả kênh <span class="kh-cur-badge">${corridor.flag} ${corridor.currency}</span></div>
+    <div class="kh-compare-table">
+      <div class="kh-row kh-row-head">
+        <span>Kênh</span>
+        <span>Nhận được</span>
+        <span>Phí</span>
+        <span>Tỷ giá</span>
+        <span>Thời gian</span>
+      </div>
+      ${sorted.map((p, i) => `
+        <div class="kh-row${i === 0 ? ' kh-row-best' : ''}">
+          <span class="kh-row-provider">
+            <span class="kh-row-emoji">${p.emoji}</span>
+            <span class="kh-row-name">${p.name}</span>
+            ${i === 0 ? '<span class="kh-badge-best">Tốt nhất</span>' : ''}
+          </span>
+          <span class="kh-row-received">${fmtKhForeign(p.receivedAmt, corridor.currency, corridor.midRate)}</span>
+          <span class="kh-row-fee">${p.fee > 0 ? fmtM(p.fee) : 'Miễn phí'}</span>
+          <span class="kh-row-rate">${fmtKhRate(p.rate, corridor.currency, corridor.midRate)}</span>
+          <span class="kh-row-time ${p.timeClass}">${p.timeLabel}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    ${saving > 0.001 ? `
+    <div class="fire-lever" style="margin-top:12px">
+      <span class="fire-lever-ico">💡</span>
+      <span>Dùng <b>${best.name}</b> thay vì <b>${worst.name}</b>, người nhận được thêm <b>${fmtKhForeign(saving, corridor.currency, corridor.midRate)}</b> — tương đương <b>${fmtM(saving * corridor.midRate)}</b>.</span>
+    </div>` : ''}
+
+    <button class="fire-cta" type="button" style="margin-top:16px" onclick="momo_track('cta_click',{cta:'kieu_hoi',location:'kh_panel'})">Chuyển tiền quốc tế qua MoMo</button>
+  `;
 }
