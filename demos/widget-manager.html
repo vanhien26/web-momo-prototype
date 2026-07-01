@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MoSpark Ads Manager — Prototype</title>
+<title>MoSpark Widget Manager — Prototype</title>
 <style>
 /* ── Klaus Design System tokens (adapted) ─────────────────────────
    Source: VanHien design system. We replace the default slate-navy
@@ -1081,6 +1081,104 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   .mng-kpi-val{font-size:20px}
   .mng-search{display:none}
 }
+
+/* Widget manager */
+.wm-shell{padding:26px 28px 40px;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.wm-stage,.wm-main{background:var(--white);border:1.5px solid var(--gray-300);border-radius:var(--r-md);box-shadow:var(--shadow-sm)}
+.wm-stage{padding:18px}
+.wm-main{padding:22px}
+.wm-flow-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wm-flow-btn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 13px;border:1.5px solid var(--gray-300);border-radius:12px;background:var(--white);font:inherit;text-align:left;cursor:pointer;color:var(--slate);transition:.15s}
+.wm-flow-btn:hover{border-color:var(--gray-500)}
+.wm-flow-btn.active{border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary);background:var(--primary-tint)}
+.wm-flow-title{font-size:13px;font-weight:800}
+.wm-flow-sub{font-size:11px;line-height:1.45;color:var(--gray-500)}
+.wm-stage-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.wm-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.wm-title{font-size:20px;font-weight:700;color:var(--slate);letter-spacing:-.02em}
+.wm-sub{font-size:13px;color:var(--gray-500);line-height:1.6}
+.wm-search{width:100%;padding:11px 14px;border:1.5px solid var(--gray-300);border-radius:var(--r-sm);font:inherit;font-size:13px}
+.wm-section-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500)}
+.wm-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.wm-summary-card{padding:12px;border:1.5px solid var(--gray-300);border-radius:12px;background:var(--gray-100)}
+.wm-summary-value{font-size:20px;font-weight:900;line-height:1;color:var(--slate)}
+.wm-summary-label{font-size:11px;color:var(--gray-500);margin-top:5px}
+.wm-list{display:flex;flex-direction:column;gap:8px;max-height:560px;overflow:auto;padding-right:2px}
+.wm-item{width:100%;border:1.5px solid var(--gray-300);border-radius:12px;background:var(--white);padding:12px 13px;text-align:left;cursor:pointer;display:flex;gap:10px;align-items:flex-start;font-family:var(--font);transition:.15s}
+.wm-item:hover{border-color:var(--gray-500)}
+.wm-item.active{border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary);background:var(--primary-tint)}
+.wm-item-icon{width:34px;height:34px;border-radius:10px;background:var(--gray-100);display:grid;place-items:center;flex-shrink:0;font-size:16px}
+.wm-item.active .wm-item-icon{background:var(--primary);color:var(--white)}
+.wm-item-name{font-size:13px;font-weight:700;color:var(--slate);line-height:1.35}
+.wm-item-meta{font-size:11px;color:var(--gray-500);margin-top:2px;line-height:1.4}
+.wm-item-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.wm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;background:var(--gray-100);font-size:10px;font-weight:700;color:var(--gray-700)}
+.wm-actions{display:flex;gap:8px;flex-wrap:wrap}
+.wm-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--gray-300);background:var(--white);font:inherit;font-size:13px;font-weight:600;color:var(--slate);cursor:pointer}
+.wm-btn.primary{background:var(--primary);border-color:var(--primary);color:var(--white)}
+.wm-btn:hover{border-color:var(--gray-500)}
+.wm-btn.primary:hover{background:var(--primary-hover);border-color:var(--primary-hover)}
+.wm-cta-stack{display:flex;flex-direction:column;gap:8px;min-width:220px}
+.wm-workflow-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.wm-workflow-tab{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid var(--gray-300);border-radius:12px;background:var(--white);cursor:pointer;transition:.15s}
+.wm-workflow-tab.active{border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary);background:var(--primary-tint)}
+.wm-workflow-index{width:24px;height:24px;border-radius:999px;background:var(--gray-100);display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--gray-700)}
+.wm-workflow-tab.active .wm-workflow-index{background:var(--primary);color:var(--white)}
+.wm-workflow-copy{display:flex;flex-direction:column;gap:2px}
+.wm-workflow-title{font-size:12px;font-weight:800;color:var(--slate)}
+.wm-workflow-sub{font-size:10px;color:var(--gray-500)}
+.wm-screen{display:flex;flex-direction:column;gap:18px}
+.wm-screen-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.wm-screen-body{display:flex;flex-direction:column;gap:16px}
+.wm-screen-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.wm-library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wm-library-card{border:1.5px solid var(--gray-300);border-radius:14px;background:var(--white);padding:15px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.15s;text-align:left}
+.wm-library-card:hover{border-color:var(--gray-500)}
+.wm-library-card.active{border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary);background:var(--primary-tint)}
+.wm-library-head{display:flex;align-items:flex-start;gap:10px}
+.wm-library-meta{font-size:11px;color:var(--gray-500);line-height:1.4}
+.wm-library-name{font-size:14px;font-weight:800;color:var(--slate);line-height:1.35}
+.wm-library-desc{font-size:12px;color:var(--gray-700);line-height:1.55}
+.wm-preview-frame{background:linear-gradient(180deg,#f8f9fc 0%,#eef2f7 100%);border:1.5px solid var(--gray-300);border-radius:20px;padding:18px}
+.wm-form{display:flex;flex-direction:column;gap:18px}
+.wm-card{border:1.5px solid var(--gray-300);border-radius:14px;padding:16px;background:var(--white)}
+.wm-card-title{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:10px}
+.wm-card-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.wm-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.wm-field:last-child{margin-bottom:0}
+.wm-field label{font-size:12px;font-weight:700;color:var(--gray-700)}
+.wm-field input,.wm-field textarea,.wm-field select{width:100%;padding:10px 12px;border:1.5px solid var(--gray-300);border-radius:10px;font:inherit;font-size:13px;color:var(--slate);background:var(--white)}
+.wm-field textarea{resize:vertical;min-height:78px;line-height:1.55}
+.wm-hint{font-size:11px;color:var(--gray-500);line-height:1.45}
+.wm-divider{height:1px;background:var(--gray-300);margin:4px 0 0}
+.wm-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wm-preview-shell{background:linear-gradient(180deg,#f8f9fc 0%,#eef2f7 100%);border:1.5px solid var(--gray-300);border-radius:20px;padding:18px;min-height:520px}
+.wm-preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.wm-preview-title{font-size:13px;font-weight:800;color:var(--slate);letter-spacing:.04em;text-transform:uppercase}
+.wm-preview-chip{font-size:10px;font-weight:800;padding:4px 9px;border-radius:99px;background:var(--white);color:var(--gray-700);border:1px solid var(--gray-300)}
+.wm-canvas{display:flex;flex-direction:column;gap:14px}
+.wm-widget{background:var(--white);border:1.5px solid var(--gray-300);border-radius:18px;padding:18px;box-shadow:var(--shadow-md)}
+.wm-widget.utility .wm-widget-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.wm-widget-title{font-size:22px;font-weight:800;line-height:1.15;letter-spacing:-.03em;color:var(--slate);margin-bottom:10px}
+.wm-widget-copy{font-size:13px;line-height:1.65;color:var(--gray-700);margin-bottom:14px}
+.wm-widget-disclaimer{font-size:11px;line-height:1.5;color:var(--gray-500);padding:10px 12px;background:var(--gray-100);border-radius:10px;border:1px solid var(--gray-300);margin-top:12px}
+.wm-cta{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:10px;background:var(--primary);color:var(--white);font-size:13px;font-weight:700}
+.wm-fields-preview{display:grid;gap:10px;margin-top:14px}
+.wm-field-preview{padding:11px 12px;border:1.5px solid var(--gray-300);border-radius:12px;background:var(--white)}
+.wm-field-preview-label{font-size:11px;font-weight:800;color:var(--gray-500);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+.wm-field-preview-help{font-size:12px;color:var(--gray-700);line-height:1.45}
+.wm-number-card{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.wm-number-icon{width:46px;height:46px;border-radius:14px;background:var(--primary-tint);display:grid;place-items:center;font-size:22px}
+.wm-number-value{font-size:28px;font-weight:900;line-height:1;color:var(--slate)}
+.wm-number-label{font-size:12px;color:var(--gray-500);margin-top:4px}
+.wm-content-card-cover{height:120px;border-radius:14px;background:linear-gradient(135deg,#1f2937,#a50064);margin-bottom:14px}
+.wm-content-card-tag{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.wm-empty{padding:70px 20px;text-align:center;color:var(--gray-500);font-size:13px}
+@media (max-width:980px){
+  .wm-flow-switch,.wm-summary,.wm-row2,.wm-library-grid{grid-template-columns:1fr}
+  .wm-stage-top,.wm-screen-head{flex-direction:column}
+  .wm-cta-stack{min-width:0}
+}
 </style>
 </head>
 <body>
@@ -1091,19 +1189,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <span class="bar-sep"></span>
     <span class="brand-logo"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block"></span>
     <span class="brand-logo" style="background:#fff;border:1px solid rgba(0,0,0,.08)"><img src="https://homepage.momocdn.net/img/4f2fa6b0-9f96-4077-b210-6e848b7d7104-1-260622153405.png" alt="Web Platform" style="width:100%;height:100%;object-fit:contain;display:block"></span>
-    <span><strong>MoSpark Ads Manager</strong><small>MoSpark · Ad Campaign Control</small></span>
+    <span><strong>MoSpark Widget Manager</strong><small>MoSpark · Widget Distribution Control</small></span>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
-    <span class="tp-badge">Research Prototype</span>
+    <span class="tp-badge">Widget Ops Prototype</span>
   </div>
 </header>
 
 <div class="main-shell">
   <nav class="mod-nav">
-    <button class="mod-btn active" id="mbtn-manage" onclick="showMod('manage')">Ads Management</button>
-    <button class="mod-btn" id="mbtn-builder" onclick="showMod('builder')" style="display:none">Set Ads</button>
-    <button class="mod-btn" id="mbtn-engine" onclick="showMod('engine')">Delivery Rules</button>
-    <button class="mod-btn" id="mbtn-abtest" onclick="showMod('abtest')">Optimize</button>
+    <button class="mod-btn active" id="mbtn-widget" onclick="showMod('widget')">Widget Manager</button>
   </nav>
 
   <div class="builder-shell">
@@ -1274,6 +1369,79 @@ let device = 'mobile';
 let previewPage = 'blog';
 let previewCampaign = null;
 let abState = {ratio:50,declared:null,running:false};
+const WIDGET_LIBRARY = [
+  {
+    id:'w-utility-saving',
+    name:'Tiết Kiệm',
+    widgetType:'utility',
+    channel:'Widget Store',
+    icon:'💰',
+    title:'Tiết Kiệm',
+    subtitle:'Calculator utility',
+    ctaLabel:'Tính ngay',
+    ctaUrl:'/widget-store#tiet-kiem',
+    description:'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.',
+    disclaimer:'Kết quả mang tính mô phỏng tham khảo, chưa bao gồm thay đổi biểu lãi suất thực tế theo thời điểm.',
+    fieldCopy:[
+      { id:'principal', label:'Số tiền gửi ban đầu', help:'Nhập số tiền dự định gửi để hệ thống mô phỏng tổng gốc và lãi.' },
+      { id:'term', label:'Kỳ hạn áp dụng', help:'Chọn kỳ hạn đang được ngân hàng hoặc sản phẩm tích lũy áp dụng.' }
+    ]
+  },
+  {
+    id:'w-utility-pension',
+    name:'Lương Hưu',
+    widgetType:'utility',
+    channel:'Widget Store',
+    icon:'🧓',
+    title:'Lương Hưu',
+    subtitle:'Insurance utility',
+    ctaLabel:'Xem ước tính',
+    ctaUrl:'/widget-store#luong-huu',
+    description:'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và mức bình quân lương.',
+    disclaimer:'Kết quả dựa trên mô hình ước tính và giả định luật hiện hành, không thay thế kết quả tra cứu chính thức từ cơ quan BHXH.',
+    fieldCopy:[
+      { id:'lhGender', label:'Giới tính', help:'Dùng để áp đúng lộ trình tuổi nghỉ hưu và công thức tỷ lệ hưởng.' },
+      { id:'lhBirthYear', label:'Năm sinh', help:'Chọn năm sinh để suy ra mốc đủ tuổi nghỉ hưu theo lộ trình hiện hành.' }
+    ]
+  },
+  {
+    id:'w-content-number',
+    name:'Number Card',
+    widgetType:'number-card',
+    channel:'Content widget',
+    icon:'🔢',
+    title:'2.1 triệu',
+    subtitle:'Lượt tìm kiếm / tháng',
+    ctaLabel:'Xem methodology',
+    ctaUrl:'/plg-project',
+    description:'Card số liệu nhanh để nhấn mạnh market size, uplift hoặc KPI chính trong landing / article.',
+    disclaimer:'Số liệu cần map với nguồn dữ liệu gốc trước khi publish ra bề mặt public.',
+    metricLabel:'Nhu cầu tìm kiếm',
+    metricValue:'2.1 triệu',
+    metricIcon:'📈'
+  },
+  {
+    id:'w-content-article',
+    name:'Content Card',
+    widgetType:'content-card',
+    channel:'Content widget',
+    icon:'📰',
+    title:'Mẹo chuẩn bị giấy tờ trước khi nộp phạt nguội',
+    subtitle:'Editorial card',
+    ctaLabel:'Đọc chi tiết',
+    ctaUrl:'/phat-nguoi',
+    description:'Card nội dung nhẹ để dẫn xuống bài viết, FAQ hoặc flow tiếp theo mà không cần utility form.',
+    disclaimer:'Nội dung card cần bám đúng context màn, tránh biến thành ads block không liên quan.',
+    coverLabel:'PLG editorial'
+  }
+];
+let widgetManagerState = {
+  flow:'edit-utility',
+  screen:'library',
+  query:'',
+  selectedId:'w-utility-saving',
+  library:WIDGET_LIBRARY.map(item => JSON.parse(JSON.stringify(item))),
+};
 
 const AD_FIELD_KEYS = [
   'adName','projectId','placementId','format','adType','creativeHeadline','creativeBody',
@@ -1473,6 +1641,7 @@ function syncGlobals() {
   window.previewPage = previewPage;
   window.previewCampaign = previewCampaign;
   window.abState = abState;
+  window.widgetManagerState = widgetManagerState;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1493,6 +1662,7 @@ function showMod(mod) {
     nav.style.display = 'none';
     if (mod === 'engine') renderEngine();
     else if (mod === 'abtest') renderAbTest();
+    else if (mod === 'widget') renderWidgetManager();
     else if (mod === 'manage') renderManage();
   }
   syncGlobals();
@@ -2973,6 +3143,485 @@ function renderManage(){
   syncGlobals();
 }
 
+function getSelectedWidgetRecord() {
+  return widgetManagerState.library.find(item => item.id === widgetManagerState.selectedId) || null;
+}
+
+function filteredWidgetLibrary() {
+  const q = (widgetManagerState.query || '').trim().toLowerCase();
+  const source = widgetManagerState.flow === 'edit-utility' ? getUtilityWidgets() : getStaticWidgets();
+  if (!q) return source;
+  return source.filter(item =>
+    [item.name, item.title, item.channel, item.widgetType, item.description]
+      .filter(Boolean)
+      .some(value => String(value).toLowerCase().includes(q))
+  );
+}
+
+function renderWidgetManager() {
+  const selected = getSelectedWidgetRecord();
+  const items = filteredWidgetLibrary();
+  const wrap = document.getElementById('modContent');
+  const isUtilityFlow = widgetManagerState.flow === 'edit-utility';
+  const utilityCount = getUtilityWidgets().length;
+  const staticCount = getStaticWidgets().length;
+  const workflowTabs = [
+    { id:'overview', title:'Overview', sub:isUtilityFlow ? 'Chọn utility và xem nhanh' : 'Chọn template và xem nhanh' },
+    { id:'config', title:'Config', sub:isUtilityFlow ? 'Chỉnh utility chi tiết' : 'Chỉnh static widget chi tiết' }
+  ];
+  wrap.innerHTML = `
+    <div class="wm-shell">
+      <section class="wm-stage">
+        <div class="wm-stage-top">
+          <div style="flex:1;display:flex;flex-direction:column;gap:14px">
+            <div class="wm-flow-switch">
+              <button type="button" class="wm-flow-btn ${isUtilityFlow ? 'active' : ''}" onclick="setWidgetManagerFlow('edit-utility')">
+                <span class="wm-flow-title">Edit Utility</span>
+                <span class="wm-flow-sub">Flow vận hành utility widget</span>
+              </button>
+              <button type="button" class="wm-flow-btn ${!isUtilityFlow ? 'active' : ''}" onclick="setWidgetManagerFlow('create-static')">
+                <span class="wm-flow-title">Create Static</span>
+                <span class="wm-flow-sub">Flow tạo card widget mới</span>
+              </button>
+            </div>
+            <div>
+              <div class="wm-title">${isUtilityFlow ? 'Edit Utility Widgets' : 'Create Static Widgets'}</div>
+              <div class="wm-sub">${isUtilityFlow ? 'Chỉ tập trung chỉnh CTA, disclaimer, field copy và title cho utility hiện có.' : 'Dành riêng cho Score Card, Content Card và các widget content không có form nhập liệu.'}</div>
+            </div>
+            <div class="wm-summary">
+              <div class="wm-summary-card">
+                <div class="wm-summary-value">${utilityCount}</div>
+                <div class="wm-summary-label">Utility widgets</div>
+              </div>
+              <div class="wm-summary-card">
+                <div class="wm-summary-value">${staticCount}</div>
+                <div class="wm-summary-label">Static widgets</div>
+              </div>
+            </div>
+          </div>
+          <div class="wm-cta-stack">
+            ${isUtilityFlow
+              ? `
+                <button type="button" class="wm-btn primary" onclick="duplicateWidgetRecord()">Nhân bản utility đang chọn</button>
+                <button type="button" class="wm-btn" onclick="showToast('Flow này chỉ chỉnh utility hiện có','t-green')">Không tạo utility mới</button>
+              `
+              : `
+                <button type="button" class="wm-btn primary" onclick="createWidgetRecord('number-card')">+ Score Card</button>
+                <button type="button" class="wm-btn" onclick="createWidgetRecord('content-card')">+ Content Card</button>
+              `}
+          </div>
+        </div>
+
+        <div class="wm-workflow-tabs">
+          ${workflowTabs.map((tab, index) => `
+            <button type="button" class="wm-workflow-tab ${widgetManagerState.screen === tab.id ? 'active' : ''}" onclick="setWidgetManagerScreen('${tab.id}')">
+              <span class="wm-workflow-index">${index + 1}</span>
+              <span class="wm-workflow-copy">
+                <span class="wm-workflow-title">${tab.title}</span>
+                <span class="wm-workflow-sub">${tab.sub}</span>
+              </span>
+            </button>
+          `).join('')}
+        </div>
+      </section>
+
+      <section class="wm-main">
+        ${selected ? renderWidgetManagerScreen(selected, items) : `<div class="wm-empty">Chọn một widget để tiếp tục.</div>`}
+      </section>
+    </div>
+  `;
+  syncGlobals();
+}
+
+function renderWidgetManagerScreen(widget, items) {
+  if (widgetManagerState.screen === 'overview') return renderWidgetOverviewScreen(widget, items);
+  return renderWidgetManagerEditor(widget);
+}
+
+function renderWidgetOverviewScreen(selected, items) {
+  const isUtilityFlow = widgetManagerState.flow === 'edit-utility';
+  return `
+    <div class="wm-screen">
+      <div class="wm-screen-head">
+        <div>
+          <div class="wm-title">Overview</div>
+          <div class="wm-sub">${isUtilityFlow ? 'Chọn utility cần chỉnh và xem preview nhanh trước khi vào cấu hình.' : 'Chọn template static widget và xem preview nhanh trước khi vào cấu hình.'}</div>
+        </div>
+        <div style="min-width:280px">
+          <input class="wm-search" placeholder="Tìm widget theo tên, loại hoặc channel" value="${escapeHtml(widgetManagerState.query)}" oninput="setWidgetQuery(this.value)">
+        </div>
+      </div>
+      <div class="wm-section-label">${items.length} widget khả dụng</div>
+      <div class="wm-library-grid">
+        ${items.length ? items.map(item => `
+          <button type="button" class="wm-library-card${selected?.id === item.id ? ' active' : ''}" onclick="selectWidgetRecord('${item.id}')">
+            <div class="wm-library-head">
+              <span class="wm-item-icon">${item.icon || '🧩'}</span>
+              <div style="flex:1;min-width:0">
+                <div class="wm-library-name">${item.name}</div>
+                <div class="wm-library-meta">${item.channel} · ${getWidgetTypeLabel(item.widgetType)}</div>
+              </div>
+            </div>
+            <div class="wm-library-desc">${item.description || ''}</div>
+            <div class="wm-item-badges">
+              <span class="wm-badge">${getWidgetTypeLabel(item.widgetType)}</span>
+              <span class="wm-badge">${item.ctaLabel || 'No CTA'}</span>
+            </div>
+          </button>
+        `).join('') : `<div class="wm-empty">Không có widget khớp từ khóa đang tìm.</div>`}
+      </div>
+      <div class="wm-preview-frame">
+        <div class="wm-preview-shell">
+          <div class="wm-preview-head">
+            <div class="wm-preview-title">Quick Preview</div>
+            <span class="wm-preview-chip">${getWidgetTypeLabel(selected.widgetType)}</span>
+          </div>
+          <div class="wm-canvas">${renderWidgetPreview(selected)}</div>
+        </div>
+      </div>
+      <div class="wm-screen-actions">
+        <span class="wm-hint">${selected ? `Đang chọn: ${selected.name}` : 'Chưa chọn widget nào.'}</span>
+        <button type="button" class="wm-btn primary" onclick="setWidgetManagerScreen('config')" ${selected ? '' : 'disabled'}>Tiếp tục cấu hình</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderWidgetManagerEditor(widget) {
+  if (widgetManagerState.flow === 'edit-utility') return renderUtilityEditor(widget);
+  return renderStaticWidgetBuilder(widget);
+}
+
+function renderUtilityEditor(widget) {
+  const fieldsMarkup = widget.widgetType === 'utility'
+    ? (widget.fieldCopy || []).map((field, index) => `
+      <div class="wm-card">
+        <div class="wm-card-kicker">Field ${index + 1}</div>
+        <div class="wm-card-title">${field.id}</div>
+        <div class="wm-field">
+          <label>Nhãn field</label>
+          <input value="${escapeHtml(field.label || '')}" oninput="updateWidgetField(${index}, 'label', this.value)">
+        </div>
+        <div class="wm-field">
+          <label>Mô tả / helper text</label>
+          <textarea oninput="updateWidgetField(${index}, 'help', this.value)">${escapeHtml(field.help || '')}</textarea>
+        </div>
+      </div>
+    `).join('')
+    : `<div class="wm-card"><div class="wm-card-title">Field copy</div><div class="wm-hint">Widget dạng content không có field form. Chỉ cần quản trị title, description, CTA và metric / cover copy.</div></div>`;
+
+  return `
+    <div class="wm-head">
+      <div>
+        <div class="wm-title">${widget.name}</div>
+        <div class="wm-sub">${widget.channel} · Utility widget có form field. Flow này không dùng cho static card.</div>
+      </div>
+      <div class="wm-actions">
+        <button type="button" class="wm-btn" onclick="duplicateWidgetRecord()">Nhân bản</button>
+        <button type="button" class="wm-btn" onclick="showToast('Đã lưu bản nháp widget','t-green')">Lưu draft</button>
+      </div>
+    </div>
+
+    <div class="wm-screen">
+      <div class="wm-screen-body">
+        <div class="wm-card">
+          <div class="wm-card-kicker">Utility metadata</div>
+          <div class="wm-card-title">Core config</div>
+          <div class="wm-row2">
+            <div class="wm-field">
+              <label>Tên widget</label>
+              <input value="${escapeHtml(widget.name || '')}" oninput="updateWidgetProp('name', this.value)">
+            </div>
+            <div class="wm-field">
+              <label>Icon</label>
+              <input value="${escapeHtml(widget.icon || '')}" oninput="updateWidgetProp('icon', this.value)">
+            </div>
+          </div>
+          <div class="wm-field">
+            <label>Tiêu đề utility / card</label>
+            <input value="${escapeHtml(widget.title || '')}" oninput="updateWidgetProp('title', this.value)">
+          </div>
+          <div class="wm-field">
+            <label>Subtitle</label>
+            <input value="${escapeHtml(widget.subtitle || '')}" oninput="updateWidgetProp('subtitle', this.value)">
+          </div>
+          <div class="wm-field">
+            <label>Mô tả widget</label>
+            <textarea oninput="updateWidgetProp('description', this.value)">${escapeHtml(widget.description || '')}</textarea>
+          </div>
+        </div>
+
+        <div class="wm-card">
+          <div class="wm-card-kicker">Operational copy</div>
+          <div class="wm-card-title">CTA & disclaimer</div>
+          <div class="wm-row2">
+            <div class="wm-field">
+              <label>CTA label</label>
+              <input value="${escapeHtml(widget.ctaLabel || '')}" oninput="updateWidgetProp('ctaLabel', this.value)">
+            </div>
+            <div class="wm-field">
+              <label>CTA URL</label>
+              <input value="${escapeHtml(widget.ctaUrl || '')}" oninput="updateWidgetProp('ctaUrl', this.value)">
+            </div>
+          </div>
+          <div class="wm-field">
+            <label>Disclaimer</label>
+            <textarea oninput="updateWidgetProp('disclaimer', this.value)">${escapeHtml(widget.disclaimer || '')}</textarea>
+          </div>
+          <div class="wm-hint">Dùng để chỉnh copy vận hành ngay trong kênh phân phối widget mà không cần mở source utility.</div>
+        </div>
+
+        ${fieldsMarkup}
+      </div>
+      <div class="wm-screen-actions">
+        <button type="button" class="wm-btn" onclick="setWidgetManagerScreen('overview')">Quay lại overview</button>
+        <button type="button" class="wm-btn primary" onclick="showToast('Đã lưu bản nháp widget','t-green')">Lưu draft</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderStaticWidgetBuilder(widget) {
+  const typeSpecific = widget.widgetType === 'number-card'
+    ? `
+      <div class="wm-card">
+        <div class="wm-card-kicker">Score content</div>
+        <div class="wm-card-title">Score Card content</div>
+        <div class="wm-row2">
+          <div class="wm-field">
+            <label>Metric value</label>
+            <input value="${escapeHtml(widget.metricValue || '')}" oninput="updateWidgetProp('metricValue', this.value)">
+          </div>
+          <div class="wm-field">
+            <label>Metric label</label>
+            <input value="${escapeHtml(widget.metricLabel || '')}" oninput="updateWidgetProp('metricLabel', this.value)">
+          </div>
+        </div>
+        <div class="wm-field">
+          <label>Icon</label>
+          <input value="${escapeHtml(widget.metricIcon || '')}" oninput="updateWidgetProp('metricIcon', this.value)">
+        </div>
+      </div>`
+    : `
+      <div class="wm-card">
+        <div class="wm-card-kicker">Editorial content</div>
+        <div class="wm-card-title">Content Card content</div>
+        <div class="wm-field">
+          <label>Cover label</label>
+          <input value="${escapeHtml(widget.coverLabel || '')}" oninput="updateWidgetProp('coverLabel', this.value)">
+        </div>
+      </div>`;
+
+  return `
+    <div class="wm-head">
+      <div>
+        <div class="wm-title">${widget.name}</div>
+        <div class="wm-sub">${widget.channel} · Flow riêng để tạo static widget như Score Card, Content Card.</div>
+      </div>
+      <div class="wm-actions">
+        <button type="button" class="wm-btn" onclick="duplicateWidgetRecord()">Nhân bản mẫu</button>
+        <button type="button" class="wm-btn" onclick="showToast('Đã lưu cấu hình static widget','t-green')">Lưu template</button>
+      </div>
+    </div>
+
+    <div class="wm-screen">
+      <div class="wm-screen-body">
+        <div class="wm-card">
+          <div class="wm-card-kicker">Widget template</div>
+          <div class="wm-card-title">Card identity</div>
+          <div class="wm-row2">
+            <div class="wm-field">
+              <label>Tên widget</label>
+              <input value="${escapeHtml(widget.name || '')}" oninput="updateWidgetProp('name', this.value)">
+            </div>
+            <div class="wm-field">
+              <label>Icon</label>
+              <input value="${escapeHtml(widget.icon || '')}" oninput="updateWidgetProp('icon', this.value)">
+            </div>
+          </div>
+          <div class="wm-field">
+            <label>Card title</label>
+            <input value="${escapeHtml(widget.title || '')}" oninput="updateWidgetProp('title', this.value)">
+          </div>
+          <div class="wm-field">
+            <label>Subtitle</label>
+            <input value="${escapeHtml(widget.subtitle || '')}" oninput="updateWidgetProp('subtitle', this.value)">
+          </div>
+          <div class="wm-field">
+            <label>Description</label>
+            <textarea oninput="updateWidgetProp('description', this.value)">${escapeHtml(widget.description || '')}</textarea>
+          </div>
+        </div>
+
+        ${typeSpecific}
+
+        <div class="wm-card">
+          <div class="wm-card-kicker">Click-through config</div>
+          <div class="wm-card-title">CTA & disclaimer</div>
+          <div class="wm-row2">
+            <div class="wm-field">
+              <label>CTA label</label>
+              <input value="${escapeHtml(widget.ctaLabel || '')}" oninput="updateWidgetProp('ctaLabel', this.value)">
+            </div>
+            <div class="wm-field">
+              <label>CTA URL</label>
+              <input value="${escapeHtml(widget.ctaUrl || '')}" oninput="updateWidgetProp('ctaUrl', this.value)">
+            </div>
+          </div>
+          <div class="wm-field">
+            <label>Disclaimer</label>
+            <textarea oninput="updateWidgetProp('disclaimer', this.value)">${escapeHtml(widget.disclaimer || '')}</textarea>
+          </div>
+          <div class="wm-hint">Static widget cần CTA rõ, text ngắn và disclaimer đủ context vì không có input logic.</div>
+        </div>
+      </div>
+      <div class="wm-screen-actions">
+        <button type="button" class="wm-btn" onclick="setWidgetManagerScreen('overview')">Quay lại overview</button>
+        <button type="button" class="wm-btn primary" onclick="showToast('Đã lưu cấu hình static widget','t-green')">Lưu template</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderWidgetPreview(widget) {
+  if (widget.widgetType === 'number-card') {
+    return `
+      <div class="wm-widget">
+        <div class="wm-number-card">
+          <div class="wm-number-icon">${widget.metricIcon || '📊'}</div>
+          <div>
+            <div class="wm-number-value">${widget.metricValue || '0'}</div>
+            <div class="wm-number-label">${widget.metricLabel || 'Metric label'}</div>
+          </div>
+        </div>
+        <div class="wm-widget-copy" style="margin-top:14px">${widget.description || ''}</div>
+        <div class="wm-cta">${widget.ctaLabel || 'Xem thêm'}</div>
+        <div class="wm-widget-disclaimer">${widget.disclaimer || ''}</div>
+      </div>
+    `;
+  }
+  if (widget.widgetType === 'content-card') {
+    return `
+      <div class="wm-widget">
+        <div class="wm-content-card-cover"></div>
+        <div class="wm-content-card-tag">${widget.coverLabel || 'Content widget'}</div>
+        <div class="wm-widget-title" style="font-size:20px">${widget.title || ''}</div>
+        <div class="wm-widget-copy">${widget.description || ''}</div>
+        <div class="wm-cta">${widget.ctaLabel || 'Đọc thêm'}</div>
+        <div class="wm-widget-disclaimer">${widget.disclaimer || ''}</div>
+      </div>
+    `;
+  }
+  return `
+    <div class="wm-widget utility">
+      <div class="wm-widget-kicker">${widget.subtitle || 'Utility widget'}</div>
+      <div class="wm-widget-title">${widget.title || ''}</div>
+      <div class="wm-widget-copy">${widget.description || ''}</div>
+      <div class="wm-cta">${widget.ctaLabel || 'Tính ngay'}</div>
+      <div class="wm-fields-preview">
+        ${(widget.fieldCopy || []).map(field => `
+          <div class="wm-field-preview">
+            <div class="wm-field-preview-label">${field.label || ''}</div>
+            <div class="wm-field-preview-help">${field.help || ''}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="wm-widget-disclaimer">${widget.disclaimer || ''}</div>
+    </div>
+  `;
+}
+
+function selectWidgetRecord(id) {
+  widgetManagerState.selectedId = id;
+  renderWidgetManager();
+}
+
+function setWidgetManagerFlow(flow) {
+  widgetManagerState.flow = flow;
+  widgetManagerState.screen = 'overview';
+  widgetManagerState.query = '';
+  const target = flow === 'edit-utility' ? getUtilityWidgets()[0] : getStaticWidgets()[0];
+  if (target) widgetManagerState.selectedId = target.id;
+  renderWidgetManager();
+}
+
+function setWidgetManagerScreen(screen) {
+  widgetManagerState.screen = screen;
+  renderWidgetManager();
+}
+
+function setWidgetQuery(value) {
+  widgetManagerState.query = value;
+  renderWidgetManager();
+}
+
+function updateWidgetProp(key, value) {
+  const widget = getSelectedWidgetRecord();
+  if (!widget) return;
+  widget[key] = value;
+  renderWidgetManager();
+}
+
+function updateWidgetField(index, key, value) {
+  const widget = getSelectedWidgetRecord();
+  if (!widget || !widget.fieldCopy?.[index]) return;
+  widget.fieldCopy[index][key] = value;
+  renderWidgetManager();
+}
+
+function createWidgetRecord(type) {
+  const baseId = `w-${type}-${Date.now().toString(36)}`;
+  const next = type === 'number-card'
+    ? {
+        id:baseId,
+        name:'Score Card mới',
+        widgetType:'number-card',
+        channel:'Content widget',
+        icon:'🔢',
+        title:'Score Card mới',
+        subtitle:'Content widget',
+        ctaLabel:'Xem chi tiết',
+        ctaUrl:'/widget-store',
+        description:'Widget số liệu nhanh để highlight KPI hoặc value proposition.',
+        disclaimer:'Cần map số liệu thật trước khi publish.',
+        metricLabel:'Metric',
+        metricValue:'0',
+        metricIcon:'📈'
+      }
+    : {
+        id:baseId,
+        name:'Content Card mới',
+        widgetType:'content-card',
+        channel:'Content widget',
+        icon:'📰',
+        title:'Content Card mới',
+        subtitle:'Content widget',
+        ctaLabel:'Đọc thêm',
+        ctaUrl:'/widget-store',
+        description:'Card nội dung nhẹ để dẫn traffic vào use case hoặc bài viết.',
+        disclaimer:'Card này không có form utility, chỉ có content và CTA.',
+        coverLabel:'Editorial card'
+      };
+  widgetManagerState.library.unshift(next);
+  widgetManagerState.selectedId = next.id;
+  widgetManagerState.screen = 'config';
+  widgetManagerState.query = '';
+  renderWidgetManager();
+  showToast(`Đã tạo ${next.name}`,'t-green');
+}
+
+function duplicateWidgetRecord() {
+  const widget = getSelectedWidgetRecord();
+  if (!widget) return;
+  const copy = JSON.parse(JSON.stringify(widget));
+  copy.id = `w-copy-${Date.now().toString(36)}`;
+  copy.name = `${widget.name} - Bản sao`;
+  widgetManagerState.library.unshift(copy);
+  widgetManagerState.selectedId = copy.id;
+  renderWidgetManager();
+  showToast('Đã nhân bản widget','t-green');
+}
+
 function setManageFilter(f){manageFilter=f;renderManage();}
 function filterManageRows(q){
   q=(q||'').trim().toLowerCase();
@@ -3429,6 +4078,30 @@ function logCta(url, format) {
 /* ═══════════════════════════════════════════════════════════════════════════
    UTILS
 ═══════════════════════════════════════════════════════════════════════════ */
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+     .replace(/"/g, '&quot;')
+     .replace(/'/g, '&#39;');
+}
+
+function getWidgetTypeLabel(widgetType) {
+  if (widgetType === 'utility') return 'Utility';
+  if (widgetType === 'number-card') return 'Score Card';
+  if (widgetType === 'content-card') return 'Content Card';
+  return widgetType || 'Widget';
+}
+
+function getUtilityWidgets() {
+  return widgetManagerState.library.filter(item => item.widgetType === 'utility');
+}
+
+function getStaticWidgets() {
+  return widgetManagerState.library.filter(item => item.widgetType !== 'utility');
+}
+
 function fmtK(n) { return n>=1000?(n/1000).toFixed(1)+'K':n; }
 function updateMetrics() {
   document.getElementById('mTotal').textContent = campaigns.length;
@@ -3442,7 +4115,7 @@ function showToast(msg,cls='') {
 /* ═══════════════════════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════════════════════ */
-showMod('manage');
+showMod('widget');
 Object.assign(window, {
   showMod,
   renderBuilder,

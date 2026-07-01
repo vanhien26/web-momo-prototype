@@ -52,6 +52,7 @@ const PROTOTYPES = [
       { id: 'ty-gia',          name: 'Tỷ Giá',             category: 'FX',         description: 'Converter A/B: chọn cặp tiền, đảo chiều, xem chart, chênh lệch bank-mid, tỷ giá hiệu dụng và số nhận ròng.', jtbd: 'Biết đổi từ tiền nào sang tiền nào, rate đang biến động ra sao và nhận ròng bao nhiêu' },
       { id: 'fx-compare',      name: 'So Sánh Tỷ Giá NH',  category: 'FX',         description: 'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ, highlight rate tốt nhất / kém nhất, sort theo best rate.', jtbd: 'Chọn ngân hàng đổi tiền có rate tốt nhất' },
       { id: 'travel-budget',   name: 'Budget Du Lịch',     category: 'FX',         description: 'Lập ngân sách chuyến đi cho 10 điểm đến × 3 tier (budget/mid/luxury) × N ngày, breakdown theo lưu trú / ăn / di chuyển / hoạt động / dự phòng.', jtbd: 'Biết cần mang bao nhiêu tiền cho chuyến đi' },
+      { id: 'kieu-hoi',        name: 'Kiều Hối',           category: 'FX',         description: 'So sánh phí và tỷ giá của 5 kênh chuyển tiền quốc tế (MoMo, Wise, Western Union, Remitly, NH) theo corridor VN → US/AU/KR/JP/DE/TW.', jtbd: 'Biết người nhận thực nhận bao nhiêu và chọn kênh chuyển tiền tốt nhất' },
       { id: 'quy-du-phong',    name: 'Quỹ Dự Phòng',      category: 'Financial Health', description: 'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian hoàn thành và lạm phát dự kiến.', jtbd: 'Xác định đúng mức quỹ dự phòng cần tích lũy' },
       { id: 'tu-do-tai-chinh', name: 'Tự Do Tài Chính',   category: 'Planning',   description: 'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư, tỷ lệ rút vốn an toàn và dòng tiền góp hàng tháng.', jtbd: 'Biết mình cần bao nhiêu, tốc độ góp có đủ không và thiếu ở đâu' },
       { id: 'dam-cuoi',        name: 'Kế Hoạch Đám Cưới', category: 'Planning',   description: 'Lập ngân sách cưới theo số khách, bàn tiệc, chi phí cố định, tiền mừng dự kiến, dự phòng và quỹ sau cưới.', jtbd: 'Biết cần chuẩn bị bao nhiêu tiền mặt để cưới xong không hụt dòng tiền' },
@@ -182,7 +183,7 @@ const PROTOTYPES = [
   },
   {
     id: 'ads-manager',
-    name: 'Ads & Widget Manager',
+    name: 'Ads Manager',
     category: 'MoSpark',
     maturity: 'Interactive',
     description: 'Mô phỏng quy trình tạo chiến dịch quảng cáo trên MoMo Web: setup campaign, chọn vị trí, visualize real-time trên Desktop và Mobile.',
@@ -194,6 +195,21 @@ const PROTOTYPES = [
     gate: 'Đo placement selection rate, preview interaction depth, campaign publish intent.',
     src: 'demos/ads.html',
     address: 'web-momo-prototype.vercel.app/ads-manager',
+  },
+  {
+    id: 'widget-manager',
+    name: 'Widget Manager',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Màn vận hành riêng để cấu hình widget trong Widget Store: sửa CTA, disclaimer, field copy, title utility và tạo widget content như Number Card hoặc Content Card.',
+    jtbd: 'Quản trị nội dung và cấu hình widget mà không phải chỉnh trực tiếp source utility',
+    northStar: 'Widget config publish readiness',
+    loop: 'Chọn widget → Cập nhật copy / CTA → Preview → Lưu draft',
+    hypothesis: 'Tách widget operations khỏi ads campaign flow giúp team vận hành widget nhanh hơn và giảm nhầm lẫn giữa inventory ads với inventory widget.',
+    value: 'Tạo lớp CMS nhẹ cho Widget Store và các content widget để team PLG hoặc vận hành có thể cập nhật nhanh copy phân phối.',
+    gate: 'Đo số widget được cấu hình, thời gian cập nhật copy, tỷ lệ draft-to-publish và độ nhất quán CTA / disclaimer.',
+    src: '/widget-manager',
+    address: 'web-momo-prototype.vercel.app/widget-manager',
   },
   {
     id: 'chatbot',
@@ -212,25 +228,25 @@ const PROTOTYPES = [
   },
   {
     id: 'seo-geo-project',
-    name: 'SEO/GEO Project Hub',
+    name: 'PLG Project Hub',
     category: 'MoSpark',
     maturity: 'Interactive',
-    description: 'Tổng hành dinh quản lý Use Case SEO/GEO: cây Topic → Cluster → Keyword 3 tầng, Keyword Registry với quy tắc 1-1 anti-cannibalization, Business Context 12 trường làm nguồn sự thật cho GenAI content, và kick-off sản xuất nội dung.',
+    description: 'Tổng hành dinh quản lý PLG Project: cây Topic → Cluster → Keyword 3 tầng, Keyword Registry với quy tắc 1-1 anti-cannibalization, Business Context 12 trường làm nguồn sự thật cho GenAI content, và kick-off sản xuất nội dung.',
     jtbd: 'Quản lý toàn bộ Use Case, Cluster và Keyword trong một surface - không bỏ sót, không trùng lặp',
     northStar: 'Use case coverage rate và keyword uniqueness index',
     loop: 'Use Case → Cluster → Keyword → Business Context → GenAI Content',
     hypothesis: 'Tập trung quản lý keyword trong một registry duy nhất với quy tắc 1 keyword = 1 URL sẽ loại bỏ cannibalization và tạo nền tảng vững cho content production quy mô lớn.',
-    value: 'Single source of truth cho toàn bộ SEO/GEO portfolio: SoV per use case, funnel TOFU/MOFU/BOFU, Business Context đủ 12 trường là gate bắt buộc trước khi GenAI sản xuất.',
+    value: 'Single source of truth cho toàn bộ PLG Project portfolio: SoV per use case, funnel TOFU/MOFU/BOFU, Business Context đủ 12 trường là gate bắt buộc trước khi GenAI sản xuất.',
     gate: 'Đo use case coverage (% có keyword đầy đủ), Business Context completeness rate, keyword uniqueness index và GenAI kickoff rate per cluster.',
-    src: 'demos/seo-geo-project.html',
-    address: 'web-momo-prototype.vercel.app/seo-geo-project',
+    src: '/plg-project',
+    address: 'web-momo-prototype.vercel.app/plg-project',
   },
   {
     id: 'merchant-page-builder',
     name: 'Merchant Page Manager',
     category: 'MoSpark',
     maturity: 'Interactive',
-    description: 'Quản lý Merchant record đã được khởi tạo từ SEO/GEO Content Plan: liên kết Merchant ID, enrich dữ liệu, kiểm tra Overview rồi mở Editor cho Logo, GenAI Content, Banner AI, Internal Links và Information Display.',
+    description: 'Quản lý Merchant record đã được khởi tạo từ PLG Content Plan: liên kết Merchant ID, enrich dữ liệu, kiểm tra Overview rồi mở Editor cho Logo, GenAI Content, Banner AI, Internal Links và Information Display.',
     jtbd: 'Hoàn thiện Merchant record và page content từ một Merchant đã có sẵn trong Content Plan',
     northStar: 'Verified Merchant Page draft completion',
     loop: 'Merchant List → Edit → Sync Merchant ID → Overview → Edit Content',
@@ -241,38 +257,8 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/merchant-page-builder',
   },
   {
-    id: 'merchant-list',
-    name: 'Merchant List',
-    category: 'MoSpark',
-    maturity: 'Interactive',
-    description: 'Danh sách toàn bộ merchants kéo trực tiếp từ Supabase — xem giờ mở cửa hôm nay, cashback, status và mở nhanh vào Page Builder.',
-    jtbd: 'Xem toàn cảnh Merchant database và navigate vào từng record để build page',
-    northStar: 'Merchant List → Builder navigation',
-    loop: 'Load from Supabase → Filter/Search → Open in Builder',
-    hypothesis: 'Xem list trước khi vào Builder giúp chọn đúng record và giảm nhập ID thủ công.',
-    value: 'Kết nối trực tiếp Supabase database với prototype workflow.',
-    gate: 'Đo thời gian từ mở list đến bắt đầu edit trong Builder.',
-    src: 'demos/merchant-list.html',
-    address: 'web-momo-prototype.vercel.app/merchant-list',
-  },
-  {
-    id: 'supabase-editor',
-    name: 'Supabase Table Editor',
-    category: 'MoSpark',
-    maturity: 'Interactive',
-    description: 'Clone giao diện Supabase Table Editor — xem và filter toàn bộ data trong 3 tables: merchants, merchant_hours, merchant_promotions. Data load trực tiếp từ Supabase production.',
-    jtbd: 'Inspect và debug data Merchant trực tiếp trong prototype mà không cần mở tab Supabase',
-    northStar: 'Data visibility trong prototype workflow',
-    loop: 'Switch table → Filter → Click FK → Navigate',
-    hypothesis: 'Xem raw data ngay trong prototype giúp verify nhanh hơn mở dashboard riêng.',
-    value: 'Supabase Table Editor experience embedded trong MoSpark prototype.',
-    gate: 'Đo số lần dùng để debug vs mở Supabase dashboard trực tiếp.',
-    src: 'demos/supabase-editor.html',
-    address: 'web-momo-prototype.vercel.app/supabase-editor',
-  },
-  {
     id: 'seo-geo-score',
-    name: 'SEO/GEO Content Score',
+    name: 'PLG Content Score',
     category: 'MoSpark',
     maturity: 'Governance Gate',
     description: 'Pre-publish scoring system kiểm tra Technical SEO, Content, GEO và Trust. Mỗi rule có evidence, mức độ ưu tiên và hành động sửa; backend Hard Gate bảo vệ domain trước nội dung chưa đạt chuẩn.',
@@ -282,8 +268,8 @@ const PROTOTYPES = [
     hypothesis: 'Một score có evidence và rule theo JTBD giúp Editor sửa đúng lỗi nhanh hơn checklist nhị phân hoặc review thủ công.',
     value: 'Chuẩn hóa quality gate cho mọi page type mà không khuyến khích keyword stuffing, wordcount máy móc hoặc số liệu không nguồn.',
     gate: 'Đo pass rate lần đầu, hard-gate failure, time-to-fix, rule failure distribution và publish override attempt.',
-    src: 'demos/seo-geo-score.html',
-    address: 'web-momo-prototype.vercel.app/seo-geo-score',
+    src: '/plg-score',
+    address: 'web-momo-prototype.vercel.app/plg-score',
   },
   {
     id: 'universal-search',
@@ -667,8 +653,8 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
-  Database: ['supabase-editor', 'merchant-page-builder'],
-  Modules:  ['ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
+  Database: ['merchant-page-builder'],
+  Modules:  ['ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -676,7 +662,7 @@ function getMoSparkCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'supabase-editor', 'merchant-page-builder', 'ads-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot', 'merchant-list'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant'],
@@ -688,7 +674,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'MoSpark Platform',
     title: 'MoSpark Platform',
     description: 'Chia thành 3 cụm: GenAI (năng lực tạo sinh & orchestration), Database (data layer & content tools), Modules (bề mặt vận hành & tăng trưởng).',
-    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Supabase · Blog Editor · Merchant Builder | Modules: Ads · SEO/GEO',
+    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Merchant Builder | Modules: Ads · PLG Project',
   },
   MiniWeb: {
     eyebrow: 'Mini Web Overview',
@@ -778,7 +764,7 @@ const MOSPARK_STACK = [
 const MOSPARK_GROWTH_STEPS = [
   {
     index: '01',
-    title: 'SEO/GEO Inventory',
+    title: 'PLG Project Inventory',
     text: 'Nhìn thị trường tìm kiếm theo từng use case để biết cơ hội lớn ở đâu, MoMo đang đứng ở đâu và gap nằm ở đâu.',
     tag: 'market data',
   },
@@ -1022,7 +1008,7 @@ const MOSPARK_HOME_CAPABILITIES = [
     proto: 'merchant-page-builder',
   },
   {
-    title: 'SEO/GEO Project',
+    title: 'PLG Project',
     text: 'Quản lý Use Case, Cluster, Keyword Registry, Business Context và performance trên Google Search lẫn AI Search.',
     proto: 'seo-geo-project',
   },
@@ -1037,7 +1023,7 @@ const MOSPARK_PRODUCTION_STEPS = [
   { icon: '💡', name: 'Ideation', oldTime: '1 week', oldText: 'Brief thủ công', newTime: '2 days', newText: 'AI concept từ market gap' },
   { icon: '🔎', name: 'Research', oldTime: '2 weeks', oldText: 'Keyword rời rạc', newTime: '1 week', newText: 'Inventory và registry' },
   { icon: '✍️', name: 'Production', oldTime: '7 weeks', oldText: 'Viết tay, sửa nhiều vòng', newTime: '2 weeks', newText: 'Outline, draft, FAQ, embed' },
-  { icon: '🛡️', name: 'Gate', oldTime: '1 week', oldText: 'Review không nhất quán', newTime: '2 days', newText: 'SEO/GEO score và PM approve' },
+  { icon: '🛡️', name: 'Gate', oldTime: '1 week', oldText: 'Review không nhất quán', newTime: '2 days', newText: 'PLG score và PM approve' },
   { icon: '🧩', name: 'Widget Sync', oldTime: '2 weeks', oldText: 'Nhờ Dev nhúng CTA', newTime: '3 days', newText: 'Component sẵn để embed' },
   { icon: '📊', name: 'Measure', oldTime: '3 weeks', oldText: 'Pageview rời rạc', newTime: '1 week', newText: 'Web-to-App và transaction' },
 ];
@@ -1054,7 +1040,7 @@ function buildMoSparkHomeIntro() {
         <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
         <div class="mh-actions">
           <button type="button" class="mh-primary" data-open-proto="blog-category" data-open-tool="blog">Mở demo Phạt Nguội</button>
-          <button type="button" class="mh-secondary" data-open-proto="seo-geo-project">Xem SEO/GEO Project</button>
+          <button type="button" class="mh-secondary" data-open-proto="seo-geo-project">Xem PLG Project</button>
         </div>
       </div>
       <div class="mh-stack">

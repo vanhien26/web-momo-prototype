@@ -21,17 +21,32 @@ def load_rewrites() -> dict[str, str]:
     return {
         item["source"]: item["destination"]
         for item in config.get("rewrites", [])
-        if ":" not in item.get("source", "")
+        if item.get("source") and item.get("destination")
     }
 
 
 REWRITES = load_rewrites()
 
 
+def apply_rewrite(request_path: str) -> str:
+    direct = REWRITES.get(request_path)
+    if direct:
+        return direct
+
+    for source, destination in REWRITES.items():
+        if ":path*" not in source:
+            continue
+        base = source.replace("/:path*", "")
+        if request_path == base or request_path.startswith(base + "/"):
+            return destination.replace("/:path*", "")
+
+    return request_path
+
+
 class CleanUrlHandler(SimpleHTTPRequestHandler):
     def translate_path(self, path: str) -> str:
         request_path = unquote(urlsplit(path).path)
-        request_path = REWRITES.get(request_path, request_path)
+        request_path = apply_rewrite(request_path)
 
         if request_path in {"", "/"}:
             return str(ROOT / "index.html")
