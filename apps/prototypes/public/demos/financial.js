@@ -1505,7 +1505,125 @@ const TOOLS = [
     id: 'travel-budget', name: 'Budget Du Lịch', category: 'FX',     abbr: 'TB',  panel: 'travel-budget',
   },
   {
-    id: 'gia-xang-e10', name: 'Giá Xăng E10', category: 'Daily Spend', abbr: 'E10',
+    id: 'chi-phi-di-lai', name: 'Chi Phí Đi Lại', category: 'Phương tiện', abbr: 'KM',
+    intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
+    description: 'Ước tính chi phí đi lại theo quãng đường, số ngày di chuyển và loại phương tiện đang dùng.',
+    jtbd: 'Tôi muốn biết mình đang tốn <b>bao nhiêu tiền cho việc đi lại mỗi ngày và mỗi tháng</b> theo số km thực tế, để quyết định có nên đổi phương tiện, đổi lộ trình hay điều chỉnh ngân sách di chuyển.',
+    formula: 'Chi phí năng lượng/tháng = <b>Km mỗi ngày × Số ngày di chuyển × Chi phí/km</b><br>Tổng chi phí = <b>Chi phí năng lượng + Phí gửi xe</b>',
+    resultLabel: 'CHI PHÍ ĐI LẠI MỖI THÁNG',
+    ctaText: 'Khám phá thêm tiện ích Phương tiện trên MoMo',
+    disclaimer: 'Chi phí/km dùng giả định tham chiếu theo giá E10 RON 95-III = 22.330 đ/lít và điện sinh hoạt/sạc phổ biến = 3.500 đ/kWh. Chưa gồm khấu hao, bảo dưỡng và cầu đường.',
+    fields: [
+      { id: 'commuteVehicle', label: 'Loại phương tiện', type: 'select-items', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', compareOptions: true, optionCount: 4 }, options: [
+        { value: 'motorbike-gas', label: 'Xe máy xăng', note: '~540 đ/km' },
+        { value: 'car-gas', label: 'Ô tô xăng', note: '~1.675 đ/km' },
+        { value: 'motorbike-ev', label: 'Xe máy điện', note: '~88 đ/km' },
+        { value: 'car-ev', label: 'Ô tô điện', note: '~525 đ/km' },
+      ], value: 'motorbike-gas', tooltip: 'Chọn phương tiện bạn đang dùng thường xuyên nhất để hệ thống áp dụng mức tiêu hao tham chiếu trên mỗi km.' },
+      { id: 'commuteKmPerDay', label: 'Quãng đường đi mỗi ngày', type: 'range', min: 2, max: 250, step: 1, value: 24, unit: 'km', chips: [10, 24, 50, 100] },
+      { id: 'commuteDays', label: 'Số ngày di chuyển/tháng', type: 'range', min: 4, max: 31, step: 1, value: 22, unit: 'ngày', chips: [12, 22, 26, 30] },
+      { id: 'parkingPerDay', label: 'Phí gửi xe mỗi ngày', type: 'money', min: 0, max: 500000, step: 1000, value: 5000, chips: [0, 5000, 10000, 20000], tooltip: 'Gồm phí gửi xe tại nơi làm việc, chung cư, trung tâm thương mại hoặc các điểm dừng lặp lại hằng ngày.' },
+    ],
+    compute(v) {
+      const profiles = {
+        'motorbike-gas': { name: 'Xe máy xăng', costPerKm: 22330 / 42, note: 'Tiêu hao giả định 42 km/lít' },
+        'car-gas': { name: 'Ô tô xăng', costPerKm: 22330 * 7.5 / 100, note: 'Tiêu hao giả định 7,5 lít/100 km' },
+        'motorbike-ev': { name: 'Xe máy điện', costPerKm: 3500 * 2.5 / 100, note: 'Tiêu hao giả định 2,5 kWh/100 km' },
+        'car-ev': { name: 'Ô tô điện', costPerKm: 3500 * 15 / 100, note: 'Tiêu hao giả định 15 kWh/100 km' },
+      };
+      const selected = profiles[v.commuteVehicle] || profiles['motorbike-gas'];
+      const monthlyKm = Math.max(0, v.commuteKmPerDay * v.commuteDays);
+      const energyCost = monthlyKm * selected.costPerKm;
+      const parkingCost = Math.max(0, v.parkingPerDay) * v.commuteDays;
+      const totalCost = energyCost + parkingCost;
+      const avgPerDay = v.commuteDays > 0 ? totalCost / v.commuteDays : 0;
+      return {
+        result: fmt(totalCost),
+        badge: selected.name,
+        details: [
+          { label: 'Tổng quãng đường/tháng', value: fmtM(monthlyKm).replace(' đ', '') + ' km' },
+          { label: 'Chi phí năng lượng/km', value: Math.round(selected.costPerKm).toLocaleString('vi-VN') + ' đ/km' },
+          { label: 'Chi phí năng lượng/tháng', value: fmtM(energyCost) },
+          { label: 'Phí gửi xe/tháng', value: parkingCost > 0 ? fmtM(parkingCost) : '0 đ' },
+          { label: 'Bình quân mỗi ngày', value: fmtM(avgPerDay) },
+        ],
+        insight: `Với <b>${v.commuteKmPerDay} km/ngày</b> trong <b>${v.commuteDays} ngày/tháng</b>, ${selected.name.toLowerCase()} đang tiêu tốn khoảng <b>${fmtM(totalCost)}/tháng</b>. Phần năng lượng chiếm <b>${Math.round((energyCost / Math.max(totalCost, 1)) * 100)}%</b> tổng chi phí đi lại trực tiếp.`
+      };
+    },
+  },
+  {
+    id: 'so-sanh-xang-dien', name: 'So Sánh Xe Xăng và Xe Điện', category: 'Phương tiện', abbr: 'EV',
+    intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
+    description: 'So sánh chi phí vận hành theo bình xăng hoặc pin đầy và quãng đường bạn thực sự đi mỗi tháng.',
+    jtbd: 'Tôi muốn biết với <b>dung tích bình xăng hoặc pin thực tế của xe</b> thì đi cùng một quãng đường mỗi tháng, <b>xe điện tiết kiệm hơn xe xăng bao nhiêu tiền</b>, để đánh giá nhanh có nên chuyển đổi phương tiện hay không.',
+    formula: 'Chi phí một lần nạp đầy xe xăng = <b>Dung tích bình × Giá xăng</b><br>Chi phí một lần sạc đầy = <b>Dung lượng pin × Giá điện</b><br>Chi phí tháng = <b>Km/tháng ÷ Quãng đường mỗi lần nạp đầy × Chi phí mỗi lần nạp</b>',
+    resultLabel: 'TIẾT KIỆM MỖI THÁNG KHI ĐI XE ĐIỆN',
+    ctaText: 'Xem thêm tiện ích Phương tiện trên MoMo',
+    disclaimer: 'Mô phỏng dùng giá tham chiếu E10 RON 95-III = 22.330 đ/lít và điện/sạc = 3.500 đ/kWh. Chỉ phản ánh chi phí năng lượng, chưa gồm giá mua xe, pin, bảo dưỡng, cầu đường hay chi phí sạc ngoài nhà.',
+    fields: [
+      { id: 'compareSegment', label: 'Nhóm phương tiện', type: 'pills', options: [
+        { value: 'motorbike', label: 'Xe máy' },
+        { value: 'car', label: 'Ô tô' },
+      ], value: 'motorbike' },
+      { id: 'compareMonthlyKm', label: 'Quãng đường đi mỗi tháng', type: 'range', min: 100, max: 5000, step: 50, value: 800, unit: 'km', chips: [400, 800, 1500, 3000] },
+      { id: 'motorFuelTank', label: 'Dung tích bình xăng xe máy', type: 'range', min: 2, max: 8, step: 0.1, value: 4.5, unit: 'L', chips: [3, 4.5, 5.5, 6.5], condition: { field: 'compareSegment', value: 'motorbike' }, tooltip: 'Là số lít xăng khi bạn đổ đầy bình một lần. Thông số này thường có trong sổ xe hoặc tài liệu sản phẩm.' },
+      { id: 'motorFuelRange', label: 'Xe máy xăng đi được mỗi bình đầy', type: 'range', min: 80, max: 300, step: 5, value: 170, unit: 'km', chips: [120, 170, 220, 260], condition: { field: 'compareSegment', value: 'motorbike' } },
+      { id: 'motorEvBattery', label: 'Dung lượng pin xe máy điện', type: 'range', min: 1, max: 8, step: 0.1, value: 3.5, unit: 'kWh', chips: [2, 3.5, 5, 6.5], condition: { field: 'compareSegment', value: 'motorbike' }, tooltip: 'Nếu bạn chỉ nhớ theo Wh, có thể quy đổi: 3.500 Wh = 3,5 kWh.' },
+      { id: 'motorEvRange', label: 'Xe máy điện đi được mỗi lần sạc đầy', type: 'range', min: 40, max: 250, step: 5, value: 120, unit: 'km', chips: [80, 120, 160, 200], condition: { field: 'compareSegment', value: 'motorbike' } },
+      { id: 'carFuelTank', label: 'Dung tích bình xăng ô tô', type: 'range', min: 30, max: 80, step: 1, value: 45, unit: 'L', chips: [35, 45, 55, 65], condition: { field: 'compareSegment', value: 'car' }, tooltip: 'Là số lít xăng khi bạn đổ đầy bình một lần. Có thể xem trong tài liệu xe hoặc thông số hãng công bố.' },
+      { id: 'carFuelRange', label: 'Ô tô xăng đi được mỗi bình đầy', type: 'range', min: 250, max: 900, step: 10, value: 520, unit: 'km', chips: [350, 520, 650, 780], condition: { field: 'compareSegment', value: 'car' } },
+      { id: 'carEvBattery', label: 'Dung lượng pin ô tô điện', type: 'range', min: 20, max: 120, step: 1, value: 45, unit: 'kWh', chips: [30, 45, 60, 80], condition: { field: 'compareSegment', value: 'car' }, tooltip: 'Là tổng dung lượng pin hữu dụng hoặc dung lượng danh nghĩa gần đúng mà bạn thường thấy trong thông số mẫu xe.' },
+      { id: 'carEvRange', label: 'Ô tô điện đi được mỗi lần sạc đầy', type: 'range', min: 150, max: 700, step: 10, value: 320, unit: 'km', chips: [220, 320, 450, 550], condition: { field: 'compareSegment', value: 'car' } },
+    ],
+    compute(v) {
+      const GAS_PRICE = 22330;
+      const POWER_PRICE = 3500;
+      const isMotorbike = v.compareSegment === 'motorbike';
+      const segmentName = isMotorbike ? 'Xe máy' : 'Ô tô';
+      const fuelCapacity = isMotorbike ? v.motorFuelTank : v.carFuelTank;
+      const fuelRange = isMotorbike ? v.motorFuelRange : v.carFuelRange;
+      const evCapacity = isMotorbike ? v.motorEvBattery : v.carEvBattery;
+      const evRange = isMotorbike ? v.motorEvRange : v.carEvRange;
+      const fuelFullCost = fuelCapacity * GAS_PRICE;
+      const evFullCost = evCapacity * POWER_PRICE;
+      const fuelMonthly = fuelRange > 0 ? (v.compareMonthlyKm / fuelRange) * fuelFullCost : 0;
+      const evMonthly = evRange > 0 ? (v.compareMonthlyKm / evRange) * evFullCost : 0;
+      const monthlySaving = fuelMonthly - evMonthly;
+      const yearlySaving = monthlySaving * 12;
+      const savingRate = fuelMonthly > 0 ? (monthlySaving / fuelMonthly) * 100 : 0;
+      const fuelCostPerKm = fuelRange > 0 ? fuelFullCost / fuelRange : 0;
+      const evCostPerKm = evRange > 0 ? evFullCost / evRange : 0;
+      return {
+        result: (monthlySaving >= 0 ? fmt(monthlySaving) : '- ' + fmt(Math.abs(monthlySaving))),
+        badge: segmentName,
+        details: [
+          { label: 'Chi phí đổ đầy xe xăng', value: fmtM(fuelFullCost) },
+          { label: 'Chi phí sạc đầy xe điện', value: fmtM(evFullCost) },
+          { label: 'Chi phí xe xăng/tháng', value: fmtM(fuelMonthly) },
+          { label: 'Chi phí xe điện/tháng', value: fmtM(evMonthly) },
+          { label: 'Chi phí xe xăng/km', value: Math.round(fuelCostPerKm).toLocaleString('vi-VN') + ' đ/km' },
+          { label: 'Chi phí xe điện/km', value: Math.round(evCostPerKm).toLocaleString('vi-VN') + ' đ/km' },
+          { label: 'Chênh lệch mỗi năm', value: yearlySaving >= 0 ? fmtM(yearlySaving) : '- ' + fmtM(Math.abs(yearlySaving)) },
+          { label: 'Tỷ lệ tiết kiệm', value: (monthlySaving >= 0 ? '+' : '') + savingRate.toFixed(1) + '%' },
+        ],
+        visual: {
+          title: 'Chi phí vận hành theo tháng',
+          totalLabel: 'TỔNG 2 KỊCH BẢN',
+          totalValue: fmtM(fuelMonthly + evMonthly),
+          showHeadSummary: false,
+          items: [
+            { label: 'Xe xăng', value: fmtM(fuelMonthly), amount: fuelMonthly, color: '#21479c' },
+            { label: 'Xe điện', value: fmtM(evMonthly), amount: evMonthly, color: '#29b6f6' },
+          ],
+        },
+        insight: monthlySaving >= 0
+          ? `Với <b>${v.compareMonthlyKm.toLocaleString('vi-VN')} km/tháng</b>, nếu ${segmentName.toLowerCase()} xăng đi được <b>${fuelRange} km/bình</b> và ${segmentName.toLowerCase()} điện đi được <b>${evRange} km/lần sạc</b>, bản điện đang tiết kiệm khoảng <b>${fmtM(monthlySaving)}/tháng</b>.`
+          : `Theo bộ thông số hiện tại, ${segmentName.toLowerCase()} điện chưa rẻ hơn xe xăng về chi phí năng lượng. Hãy kiểm tra lại <b>dung lượng pin</b> hoặc <b>quãng đường đi được mỗi lần sạc đầy</b> của mẫu xe bạn đang cân nhắc.`
+      };
+    },
+  },
+  {
+    id: 'gia-xang-e10', name: 'Giá Xăng E10', category: 'Phương tiện', abbr: 'E10',
     intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
     description: 'Tính nhanh chi phí đổ xăng E10 theo số lít hoặc quy đổi ngược từ số tiền dự chi.',
     jtbd: 'Tôi muốn biết đổ <b>x lít xăng E10 hết bao nhiêu tiền</b> hoặc với <b>y đồng thì mua được bao nhiêu lít</b>, để quyết định mức đổ phù hợp cho xe máy hay ô tô ngay tại cây xăng.',
