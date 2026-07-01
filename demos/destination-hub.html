@@ -338,12 +338,18 @@
   </a>
   <div class="nav-actions">
     <a class="nav-back" href="../lab.html">← Lab</a>
+    <a class="nav-back" href="diem-den.html" style="color:var(--cp);font-weight:700;">🌏 Điểm đến</a>
     <button class="nav-cta" onclick="openApp('home')">Mở App MoMo</button>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
+  <nav style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);margin-bottom:16px;flex-wrap:wrap;">
+    <a href="diem-den.html" style="color:var(--text-3);text-decoration:none;font-weight:600;">🌏 Điểm đến</a>
+    <span>›</span>
+    <span style="color:var(--cp);font-weight:700;" id="heroBreadcrumb">🇹🇭 Thái Lan</span>
+  </nav>
   <div class="hero-eyebrow" id="heroEyebrow">✈ Du lịch Quốc tế</div>
   <h1 class="hero-title">
     Chuẩn bị hành trình<br>
@@ -371,12 +377,27 @@
 
   <div class="tab-content active" id="tab-flight">
     <div class="flight-grid" id="flightGrid"></div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="ve-may-bay.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--cp);font-weight:700;font-size:14px;text-decoration:none;padding:10px 20px;border:2px solid var(--cp);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='var(--cp)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--cp)'">
+        Xem tất cả vé bay · So sánh thêm hãng ›
+      </a>
+    </div>
   </div>
   <div class="tab-content" id="tab-hotel">
     <div class="hotel-grid" id="hotelGrid"></div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="khach-san.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--cp);font-weight:700;font-size:14px;text-decoration:none;padding:10px 20px;border:2px solid var(--cp);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='var(--cp)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--cp)'">
+        Xem tất cả khách sạn · Filter theo sao &amp; giá ›
+      </a>
+    </div>
   </div>
   <div class="tab-content" id="tab-esim">
     <div class="esim-grid" id="esimGrid"></div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="esim-du-lich.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--cp);font-weight:700;font-size:14px;text-decoration:none;padding:10px 20px;border:2px solid var(--cp);border-radius:12px;transition:all .2s;" onmouseover="this.style.background='var(--cp)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--cp)'">
+        Xem đầy đủ gói eSIM · Kiểm tra thiết bị ›
+      </a>
+    </div>
     <div class="esim-device-box">
       <div class="esim-device-title">⚠ Kiểm tra thiết bị hỗ trợ eSIM trước khi mua</div>
       <div class="device-row">
@@ -406,14 +427,17 @@
       <div class="crosssell-title" id="crossTitle">Đã có vé bay? Thêm eSIM Thái Lan giảm 15%</div>
       <div class="crosssell-sub" id="crossSub">Mua eSIM kèm vé bay - nhận mã kích hoạt trong 2 phút, hạ cánh là có mạng.</div>
     </div>
-    <button class="crosssell-btn" onclick="openApp('esim')">Thêm eSIM ngay →</button>
+    <button class="crosssell-btn" onclick="switchTab('esim',document.querySelectorAll('.tab-btn')[2]);document.querySelector('.dest-section').scrollIntoView({behavior:'smooth'})">Thêm eSIM ngay →</button>
   </div>
 </div>
 
 <!-- CALCULATOR -->
 <section class="calc-section">
   <div class="calc-inner">
-    <div class="calc-title">MoMo QR tiết kiệm bao nhiêu?</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+      <div class="calc-title" style="margin-bottom:0">MoMo QR tiết kiệm bao nhiêu?</div>
+      <a href="ty-gia.html" style="font-size:12px;font-weight:700;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid rgba(255,255,255,.3);padding:5px 12px;border-radius:20px;">Xem tỷ giá đầy đủ ›</a>
+    </div>
     <div class="calc-sub">Nhập số tiền ngoại tệ dự kiến chi - so sánh ngay với thẻ tín dụng thông thường.</div>
     <div class="calc-layout">
       <div class="calc-form">
@@ -557,6 +581,8 @@ function renderCards() {
 function renderDest() {
   const c = DATA[active];
   document.getElementById('destLabel').textContent = `${c.flag} ${c.name}`;
+  const bc = document.getElementById('heroBreadcrumb');
+  if(bc) bc.textContent = `${c.flag} ${c.name}`;
 
   // Flights
   document.getElementById('flightGrid').innerHTML = c.flights.map(f=>`
@@ -620,6 +646,7 @@ function renderDest() {
       <div class="qr-mock">⬜</div>
       <div class="qr-label">Mã QR demo · Thực tế hiển thị tại điểm bán</div>
       <button class="btn-primary" onclick="openApp('qr')">Kích hoạt QR Quốc tế</button>
+      <a href="thanh-toan-quoc-te.html" style="display:block;text-align:center;margin-top:10px;color:var(--cp);font-size:13px;font-weight:700;text-decoration:none;">Xem hướng dẫn đầy đủ theo quốc gia ›</a>
     </div>
     <div class="payment-card">
       <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;">Cách thực hiện giao dịch</div>
@@ -637,8 +664,21 @@ function switchTab(tab, btn) {
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
 }
+
+// Auto-switch tab from query param ?tab=payment|esim|hotel|flight
+(function(){
+  const p = new URLSearchParams(location.search).get('tab');
+  if(p){
+    const map = {flight:0,hotel:1,esim:2,payment:3};
+    const idx = map[p];
+    if(idx !== undefined){
+      const btns = document.querySelectorAll('.tab-btn');
+      if(btns[idx]) switchTab(p, btns[idx]);
+    }
+  }
+})();
 
 function setCurrency(cur, btn) {
   calcCur = cur;
