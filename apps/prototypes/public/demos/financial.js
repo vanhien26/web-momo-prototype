@@ -210,9 +210,14 @@ const NPL_GROUPS = [
 
 const AUTO_INSURANCE_SCENARIOS = {
   collision: {
-    label: 'Va chạm',
+    label: 'Va chạm & tai nạn giao thông',
     damageRatio: 0.28,
-    description: 'Đâm va thân vỏ, móp méo, thay cản, đèn và sơn lại nhiều hạng mục.',
+    description: 'Đâm va thân vỏ, móp méo, thay cản, đèn và sơn lại nhiều hạng mục sau tai nạn giao thông.',
+  },
+  waterlogging: {
+    label: 'Ngập nước',
+    damageRatio: 0.18,
+    description: 'Xe bị ngập nhẹ, ảnh hưởng nội thất, sàn xe, cảm biến hoặc cụm điện thấp.',
   },
   flood: {
     label: 'Thủy kích',
@@ -230,9 +235,46 @@ const AUTO_INSURANCE_SCENARIOS = {
     description: 'Kính lái hoặc kính sườn vỡ, thay mới và hiệu chỉnh cảm biến liên quan.',
   },
   theft: {
-    label: 'Mất cắp bộ phận',
+    label: 'Mất cắp phụ tùng',
     damageRatio: 0.18,
     description: 'Mất gương, đèn, camera, lazang hoặc chi tiết ngoại thất có giá trị.',
+  },
+  naturalDisaster: {
+    label: 'Thiên tai',
+    damageRatio: 0.34,
+    description: 'Mưa đá, cây đổ, lốc, sạt lở hoặc vật thể từ thiên tai gây hư hỏng nhiều hạng mục thân vỏ.',
+  },
+  totalTheft: {
+    label: 'Mất cắp toàn bộ xe',
+    damageRatio: 0.92,
+    description: 'Xe bị mất cắp hoàn toàn, hồ sơ bồi thường thường cần thêm xác minh từ cơ quan chức năng và điều khoản loại trừ rõ ràng.',
+  },
+};
+
+const AUTO_INSURANCE_PROFILES = {
+  standard: {
+    label: 'Xe tiêu chuẩn',
+    premiumFactor: 1,
+    payoutFactor: 1,
+    note: 'Áp dụng logic chuẩn cho xe xăng/dầu/hybrid không có điều khoản đặc biệt.',
+  },
+  ev: {
+    label: 'Xe điện',
+    premiumFactor: 1.08,
+    payoutFactor: 1.02,
+    note: 'Xe điện thường có phụ phí do hệ thống điện áp cao và chi phí linh kiện chuyên biệt.',
+  },
+  evBattery: {
+    label: 'Xe điện kèm pin',
+    premiumFactor: 1.16,
+    payoutFactor: 1.08,
+    note: 'Nếu pin nằm trong phạm vi bảo hiểm, mức phí và giá trị bồi thường thường tăng đáng kể so với xe điện không kèm pin.',
+  },
+  financed: {
+    label: 'Xe trả góp',
+    premiumFactor: 1.04,
+    payoutFactor: 1,
+    note: 'Xe trả góp thường cần bổ sung bên thụ hưởng là ngân hàng và kiểm tra kỹ điều khoản toàn bộ tổn thất hoặc mất cắp.',
   },
 };
 
@@ -243,8 +285,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'PVI',
     brandColor: '#1f4f9b',
     accidentCover: 1,
-    compensation: { collision: 0.92, flood: 0.82, fire: 0.95, glass: 0.93, theft: 0.85 },
-    deductible: { collision: 1000000, flood: 2500000, fire: 1000000, glass: 500000, theft: 1500000 },
+    compensation: { collision: 0.92, waterlogging: 0.76, flood: 0.82, fire: 0.95, glass: 0.93, theft: 0.85, naturalDisaster: 0.8, totalTheft: 0.88 },
+    deductible: { collision: 1000000, waterlogging: 1800000, flood: 2500000, fire: 1000000, glass: 500000, theft: 1500000, naturalDisaster: 2000000, totalTheft: 3000000 },
     note: 'Mạng garage mạnh ở thành phố lớn, thủy kích cần có điều khoản mở rộng.',
   },
   {
@@ -253,8 +295,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'Bảo Việt',
     brandColor: '#1c6ab6',
     accidentCover: 1,
-    compensation: { collision: 0.9, flood: 0.78, fire: 0.94, glass: 0.91, theft: 0.83 },
-    deductible: { collision: 1000000, flood: 3000000, fire: 1000000, glass: 500000, theft: 2000000 },
+    compensation: { collision: 0.9, waterlogging: 0.74, flood: 0.78, fire: 0.94, glass: 0.91, theft: 0.83, naturalDisaster: 0.79, totalTheft: 0.86 },
+    deductible: { collision: 1000000, waterlogging: 2000000, flood: 3000000, fire: 1000000, glass: 500000, theft: 2000000, naturalDisaster: 2200000, totalTheft: 3500000 },
     note: 'Phù hợp xe gia đình, hồ sơ đầy đủ thì bồi thường ổn định.',
   },
   {
@@ -263,8 +305,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'MIC',
     brandColor: '#178a4b',
     accidentCover: 1,
-    compensation: { collision: 0.88, flood: 0.8, fire: 0.9, glass: 0.9, theft: 0.8 },
-    deductible: { collision: 1500000, flood: 2500000, fire: 1200000, glass: 500000, theft: 1800000 },
+    compensation: { collision: 0.88, waterlogging: 0.75, flood: 0.8, fire: 0.9, glass: 0.9, theft: 0.8, naturalDisaster: 0.77, totalTheft: 0.84 },
+    deductible: { collision: 1500000, waterlogging: 1800000, flood: 2500000, fire: 1200000, glass: 500000, theft: 1800000, naturalDisaster: 2200000, totalTheft: 3200000 },
     note: 'Có lợi thế khi sửa chữa tại hệ sinh thái đối tác quân đội và tỉnh thành.',
   },
   {
@@ -273,8 +315,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'PJICO',
     brandColor: '#0e5fa8',
     accidentCover: 1,
-    compensation: { collision: 0.87, flood: 0.74, fire: 0.89, glass: 0.88, theft: 0.79 },
-    deductible: { collision: 1500000, flood: 3500000, fire: 1500000, glass: 700000, theft: 2000000 },
+    compensation: { collision: 0.87, waterlogging: 0.7, flood: 0.74, fire: 0.89, glass: 0.88, theft: 0.79, naturalDisaster: 0.74, totalTheft: 0.81 },
+    deductible: { collision: 1500000, waterlogging: 2500000, flood: 3500000, fire: 1500000, glass: 700000, theft: 2000000, naturalDisaster: 2600000, totalTheft: 3800000 },
     note: 'Thường cạnh tranh về phí nhưng mức miễn thường cao hơn ở ca phức tạp.',
   },
   {
@@ -283,8 +325,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'DBV',
     brandColor: '#0f8c4d',
     accidentCover: 1,
-    compensation: { collision: 0.85, flood: 0.72, fire: 0.88, glass: 0.86, theft: 0.76 },
-    deductible: { collision: 1800000, flood: 3500000, fire: 1800000, glass: 800000, theft: 2200000 },
+    compensation: { collision: 0.85, waterlogging: 0.68, flood: 0.72, fire: 0.88, glass: 0.86, theft: 0.76, naturalDisaster: 0.72, totalTheft: 0.79 },
+    deductible: { collision: 1800000, waterlogging: 2600000, flood: 3500000, fire: 1800000, glass: 800000, theft: 2200000, naturalDisaster: 2800000, totalTheft: 4000000 },
     note: 'Phù hợp bài toán tối ưu phí, nên đọc kỹ điều khoản xe ngập nước.',
   },
   {
@@ -293,8 +335,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'PTI',
     brandColor: '#f28c28',
     accidentCover: 1,
-    compensation: { collision: 0.86, flood: 0.76, fire: 0.88, glass: 0.87, theft: 0.78 },
-    deductible: { collision: 1500000, flood: 3000000, fire: 1500000, glass: 700000, theft: 1800000 },
+    compensation: { collision: 0.86, waterlogging: 0.72, flood: 0.76, fire: 0.88, glass: 0.87, theft: 0.78, naturalDisaster: 0.75, totalTheft: 0.8 },
+    deductible: { collision: 1500000, waterlogging: 2200000, flood: 3000000, fire: 1500000, glass: 700000, theft: 1800000, naturalDisaster: 2400000, totalTheft: 3500000 },
     note: 'Tỷ lệ chi trả cân bằng, xử lý tốt ca thay phụ tùng và kính xe.',
   },
   {
@@ -303,8 +345,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'Liberty',
     brandColor: '#253b80',
     accidentCover: 1,
-    compensation: { collision: 0.91, flood: 0.84, fire: 0.96, glass: 0.94, theft: 0.88 },
-    deductible: { collision: 1000000, flood: 2200000, fire: 1000000, glass: 400000, theft: 1500000 },
+    compensation: { collision: 0.91, waterlogging: 0.8, flood: 0.84, fire: 0.96, glass: 0.94, theft: 0.88, naturalDisaster: 0.83, totalTheft: 0.9 },
+    deductible: { collision: 1000000, waterlogging: 1800000, flood: 2200000, fire: 1000000, glass: 400000, theft: 1500000, naturalDisaster: 1800000, totalTheft: 2800000 },
     note: 'Nhóm top nếu ưu tiên trải nghiệm claim và mức chi trả cao hơn mặt bằng.',
   },
   {
@@ -313,8 +355,8 @@ const AUTO_INSURANCE_PARTNERS = [
     logo: 'GIC',
     brandColor: '#165fa7',
     accidentCover: 1,
-    compensation: { collision: 0.84, flood: 0.7, fire: 0.86, glass: 0.85, theft: 0.75 },
-    deductible: { collision: 1800000, flood: 3800000, fire: 1800000, glass: 800000, theft: 2200000 },
+    compensation: { collision: 0.84, waterlogging: 0.67, flood: 0.7, fire: 0.86, glass: 0.85, theft: 0.75, naturalDisaster: 0.7, totalTheft: 0.77 },
+    deductible: { collision: 1800000, waterlogging: 2800000, flood: 3800000, fire: 1800000, glass: 800000, theft: 2200000, naturalDisaster: 3000000, totalTheft: 4200000 },
     note: 'Mạnh ở nhóm xe phổ thông, bồi thường nên kỳ vọng theo phương án tiêu chuẩn.',
   },
   {
@@ -328,6 +370,54 @@ const AUTO_INSURANCE_PARTNERS = [
     note: 'Phù hợp xe kinh doanh và xe lâu năm, cần chốt rõ phương án garage liên kết.',
   },
 ];
+
+const AUTO_INSURANCE_CAR_CATALOG = {
+  ACURA: ['ILX', 'MDX', 'RDX', 'RL', 'TL', 'TSX', 'ZDX'],
+  AUDI: ['A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'R8', 'TT'],
+  BAIC: ['Beijing X7'],
+  BMW: ['Series 7', 'Series 1', 'Series 2', 'Series 3', 'Series 4', 'Series 5', 'Series 6', 'i8', 'M', 'X1', 'X3', 'X4', 'X5', 'X6', 'Z4'],
+  CHEVROLET: ['Aveo', 'Camaro', 'Captiva', 'Colorado', 'Cruze', 'Lacetti', 'Orlando', 'Spark', 'Suburban', 'TrailBlazer', 'TRAX', 'Vivant'],
+  DAEWOO: ['Gentra', 'Lacetti'],
+  FORD: ['Ecosport', 'Edge', 'Escape', 'Everest', 'Expedition', 'Explorer', 'F-150', 'Fiesta', 'Focus', 'I-Max', 'Laser', 'Mondeo', 'Mustang', 'Ranger', 'Territory', 'Transit', 'Tourneo'],
+  HONDA: ['Accord', 'Brio', 'BR-V', 'City', 'Civic', 'CR-V', 'CR-Z', 'Fit', 'HR-V', 'Jazz', 'Odyssey', 'Pilot'],
+  HYUNDAI: ['Accent', 'Venue', 'Avante', 'Azera', 'Creta', 'Custin', 'Elantra', 'Equus', 'Genesis', 'GETZ', 'i10', 'Starex', 'Grandeur', 'i20', 'Kona', 'SantaFe', 'Sonata', 'Stargazer', 'Tucson', 'Veracruz', 'Palisade'],
+  ISUZU: ['DMax', 'HiLander', 'MU-X'],
+  JAGUAR: ['E-PACE', 'F-PACE', 'F-TYPE', 'XE', 'XF', 'XJ', 'XJL'],
+  KIA: ['Carens', 'Carnival', 'Cerato', 'Forte', 'K3', 'K5', 'Morning', 'Sorento', 'Optima', 'Picanto', 'Quoris', 'Rio', 'Rondo', 'Sedona', 'Seltos', 'Soluto', 'Sonet', 'Soul', 'Sportage'],
+  LEXUS: ['ES', 'GS', 'GX', 'IS', 'LS', 'LX', 'NX', 'RX'],
+  MAZDA: ['Mazda_3', 'Mazda_6', 'Mazda_2', 'BT50', 'CX3', 'CX30', 'CX5', 'CX8', 'CX9'],
+  'MERCEDES BENZ': ['A-Class', 'C-Class', 'CLA', 'CLS', 'E-Class', 'G-Class', 'GLC', 'GLE', 'GLK', 'GLS', 'S-Class', 'SLC', 'V-Class', 'GLB', 'EQS'],
+  MG: ['5', 'HS', 'ZS', 'RX5', '4', '7'],
+  MINI: ['Cooper', 'JCW', 'ONE'],
+  MITSUBISHI: ['Attrage', 'Lancer', 'Mirage', 'OutLander', 'Pajero', 'Triton', 'Xforce', 'Xpander'],
+  NISSAN: ['Almera', 'Navara', 'Sunny', 'Teana', 'Terra', 'Tiida', 'X-TRAIL', 'Kicks'],
+  PEUGEOT: ['5008', '2008', '3008', '408', 'Traveller'],
+  RENAULT: ['Megane'],
+  SUBARU: ['Forester', 'Impreza', 'Legacy', 'Outback', 'Crosstrek', 'Levorg', 'BRZ', 'WRX'],
+  SUZUKI: ['Celerio', 'Ciaz', 'Ertiga', 'Jimny', 'Swift', 'Vitara', 'XL7'],
+  TOYOTA: ['Alphard', 'Avalon', 'Avanza', 'Camry', 'Corolla', 'Altis', 'Cross', 'Fortuner', 'HighLander', 'Hilux', 'Innova', 'Land Cruiser', 'Prado', 'Raize', 'RAV4', 'Rush', 'Sienna', 'Veloz', 'Venza', 'Vios', 'Wigo', 'Yaris'],
+  VINFAST: ['Fadil', 'Lux', 'VF', 'VFe', 'Green', 'Minio'],
+  VOLKSWAGEN: ['Passat', 'Polo', 'Scirocco', 'Teramont', 'Tiguan', 'Touareg'],
+  VOLVO: ['S60', 'S90', 'V90', 'XC40', 'XC60', 'XC90'],
+  JAECOO: ['J7'],
+  BYD: ['Atto3', 'Dolphin', 'Seal', 'Sealion', 'HAN', 'M6'],
+  OMODA: ['C5'],
+  SKODA: ['Karoq', 'Kodiaq', 'Slavia', 'Kushaq'],
+  GEELY: ['Coolray'],
+  PORSCHE: ['MACAN', 'Cayenne'],
+};
+
+const AUTO_INSURANCE_BRAND_OPTIONS = Object.keys(AUTO_INSURANCE_CAR_CATALOG).map(brand => ({
+  value: brand,
+  label: brand,
+}));
+
+function getAutoInsuranceModelOptions(brand) {
+  return (AUTO_INSURANCE_CAR_CATALOG[brand] || []).map(model => ({
+    value: model,
+    label: model,
+  }));
+}
 
 // ─── Lookup lãi suất Vay Nhanh theo (amount, term) — empirical từ momo.vn (range 2,20% - 4,08%/tháng)
 function lookupVayNhanhRate(amount, term) {
@@ -798,6 +888,8 @@ const TOOLS = [
     resultLabel: 'PHÍ BẢO HIỂM NĂM',
     partners: AUTO_INSURANCE_PARTNERS,
     fields: [
+      { id: 'carBrand',      label: 'Hãng xe', type: 'select', options: AUTO_INSURANCE_BRAND_OPTIONS, value: 'TOYOTA' },
+      { id: 'carModel',      label: 'Dòng xe', type: 'select', options: vals => getAutoInsuranceModelOptions(vals?.carBrand || 'TOYOTA'), value: 'Vios' },
       { id: 'carValue',      label: 'Giá trị xe',  type: 'money',  min: 100000000, max: 5000000000, step: 10000000, value: 500000000, chips: [200000000, 500000000, 1000000000] },
       { id: 'insuranceRate', label: 'Loại xe và độ tuổi', type: 'select', options: [
         {value:1.4, label:'1,40% - Xe con dưới 3 năm'},
@@ -809,16 +901,29 @@ const TOOLS = [
         value: partner.id,
         label: partner.logo,
       })), value: 'pvi' },
+      { id: 'vehicleProfile', label: 'Đặc tính xe hoặc hợp đồng', type: 'select', options: [
+        { value: 'standard', label: 'Xe tiêu chuẩn' },
+        { value: 'ev', label: 'Xe điện' },
+        { value: 'evBattery', label: 'Xe điện kèm pin' },
+        { value: 'financed', label: 'Xe trả góp' },
+      ], value: 'standard' },
       { id: 'incidentType', label: 'Tình huống xe bị tổn thất', type: 'select', options: [
-        { value: 'collision', label: 'Va chạm thân vỏ / đâm va' },
-        { value: 'flood', label: 'Thủy kích / ngập nước' },
-        { value: 'fire', label: 'Cháy nổ' },
+        { value: 'waterlogging', label: 'Ngập nước' },
+        { value: 'flood', label: 'Thủy kích' },
+        { value: 'theft', label: 'Mất cắp phụ tùng' },
+        { value: 'naturalDisaster', label: 'Thiên tai' },
+        { value: 'collision', label: 'Va chạm & Tai nạn giao thông' },
+        { value: 'totalTheft', label: 'Mất cắp toàn bộ xe' },
+        { value: 'fire', label: 'Cháy nổ xe ô tô' },
         { value: 'glass', label: 'Vỡ kính' },
-        { value: 'theft', label: 'Mất cắp bộ phận' },
       ], value: 'collision' },
     ],
     compute(v) {
-      const p = v.carValue * v.insuranceRate / 100, vat = p * 0.1;
+      const modelOptions = getAutoInsuranceModelOptions(v.carBrand);
+      const selectedModel = modelOptions.some(option => option.value === v.carModel) ? v.carModel : (modelOptions[0]?.value || 'Chưa chọn');
+      const profile = AUTO_INSURANCE_PROFILES[v.vehicleProfile] || AUTO_INSURANCE_PROFILES.standard;
+      const adjustedRate = v.insuranceRate * profile.premiumFactor;
+      const p = v.carValue * adjustedRate / 100, vat = p * 0.1;
       const scenario = AUTO_INSURANCE_SCENARIOS[v.incidentType] || AUTO_INSURANCE_SCENARIOS.collision;
       const damageEstimate = v.carValue * scenario.damageRatio;
       const selectedPartner = AUTO_INSURANCE_PARTNERS.find(partner => partner.id === v.partnerId) || AUTO_INSURANCE_PARTNERS[0];
@@ -827,7 +932,7 @@ const TOOLS = [
         const deductible = partner.deductible[v.incidentType] || 0;
         return {
           partner,
-          payout: Math.max(0, Math.min(v.carValue, damageEstimate * coverFactor - deductible)),
+          payout: Math.max(0, Math.min(v.carValue, damageEstimate * coverFactor * profile.payoutFactor - deductible)),
           deductible,
           coverFactor,
         };
@@ -835,16 +940,18 @@ const TOOLS = [
       const best = partnerQuotes[0];
       const selectedQuote = partnerQuotes.find(item => item.partner.id === selectedPartner.id) || best;
       return { result: fmt(p + vat), details: [
+        { label: 'Xe đang chọn', value: `${v.carBrand} ${selectedModel}` },
         { label: 'Đối tác đang chọn', value: selectedPartner.name },
+        { label: 'Đặc tính đang áp dụng', value: profile.label },
         { label: 'Phí bảo hiểm thuần', value: fmt(p) },
         { label: 'VAT (10%)', value: fmt(vat) },
         { label: 'Bồi thường tối đa', value: fmtM(v.carValue) },
-        { label: 'Tỷ lệ phí áp dụng', value: v.insuranceRate.toFixed(2) + '%' },
+        { label: 'Tỷ lệ phí áp dụng', value: adjustedRate.toFixed(2) + '%' },
         { label: `Thiệt hại tham chiếu - ${scenario.label}`, value: fmtM(damageEstimate) },
         { label: `${selectedPartner.logo} chi trả dự kiến`, value: fmtM(selectedQuote.payout) },
         { label: 'Điều khoản áp dụng', value: `${Math.round(selectedQuote.coverFactor * 100)}% tổn thất · miễn thường ${fmtM(selectedQuote.deductible)}` },
         { label: 'Mốc tham chiếu tốt nhất', value: `${best.partner.name} - ${fmtM(best.payout)}` },
-      ], insight: `${scenario.description} Với ${selectedPartner.name}, mức bồi thường dự kiến là <b>${fmtM(selectedQuote.payout)}</b>. ${selectedPartner.note}` };
+      ], insight: `Mẫu xe đang mô phỏng là <b>${v.carBrand} ${selectedModel}</b>. ${scenario.description} Với nhóm <b>${profile.label.toLowerCase()}</b> và ${selectedPartner.name}, mức bồi thường dự kiến là <b>${fmtM(selectedQuote.payout)}</b>. ${profile.note} ${selectedPartner.note}` };
     },
   },
   {
@@ -856,7 +963,10 @@ const TOOLS = [
     resultLabel: 'THỰC ĐÓNG QUA MOMO/THÁNG',
     fields: [
       { id: 'salary',        label: 'Mức bạn muốn đóng/tháng (tự chọn)', type: 'money', min: 1500000, max: 46800000, step: 100000, value: 5000000, chips: [1500000, 5000000, 10000000, 20000000] },
-      { id: 'months',        label: 'Số tháng dự kiến tham gia',          type: 'range', min: 12, max: 360, step: 12, value: 240, unit: 'tháng', chips: [60, 120, 240, 360] },
+      { id: 'months',        label: 'Số tháng dự kiến tham gia',          type: 'select', options: Array.from({ length: 30 }, (_, index) => {
+        const value = (index + 1) * 12;
+        return { value, label: `${value} tháng (${Math.round(value / 12)} năm)` };
+      }), value: 240 },
       { id: 'subsidyGroup',  label: 'Nhóm đối tượng hỗ trợ',              type: 'select', options: [
         {value:'normal',    label:'👤 Đối tượng khác (hỗ trợ 33.000đ/tháng)'},
         {value:'near-poor', label:'🏠 Hộ cận nghèo (hỗ trợ 82.500đ/tháng)'},
@@ -910,10 +1020,13 @@ const TOOLS = [
     resultLabel: 'LƯƠNG HƯU ƯỚC TÍNH/THÁNG',
     fields: [
       { id: 'lhGender', label: 'Giới tính', type: 'select', options: [
-        {value:0,label:'Lao động nữ'},{value:1,label:'Lao động nam'},
+        {value:0,label:'Nữ'},{value:1,label:'Nam'},
       ], value: 0 },
-      { id: 'lhBirthYear', label: 'Năm sinh',          type: 'range', min: 1960,    max: 2005,     step: 1,      value: 1980,      unit: '', chips: [1970, 1980, 1990, 2000] },
-      { id: 'lhYears',     label: 'Số năm đã đóng BHXH', type: 'range', min: 1,       max: 40,       step: 1,      value: 20,        unit: 'năm', chips: [15, 20, 30, 35] },
+      { id: 'lhBirthYear', label: 'Năm sinh', type: 'select', value: 1980, options: Array.from({ length: 2005 - 1960 + 1 }, (_, index) => {
+        const year = 2005 - index;
+        return { value: year, label: String(year) };
+      }) },
+      { id: 'lhYears',     label: 'Số năm đã đóng BHXH', type: 'stepper', min: 1,       max: 40,       step: 1,      value: 20,        unit: 'năm', chips: [15, 20, 30, 35] },
       { id: 'lhSalary',    label: 'Lương đóng BHXH/tháng (hiện tại)', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
     ],
     compute(v) {
@@ -1020,8 +1133,8 @@ const TOOLS = [
     resultLabel: 'BHXH 1 LẦN ƯỚC TÍNH',
     fields: [
       { id: 'monthlySalary',  label: 'Mức lương đóng BHXH/tháng (hiện tại)', type: 'money', min: 1500000, max: 50600000, step: 100000, value: 10000000, chips: [5000000, 10000000, 20000000] },
-      { id: 'yearsPre2014',   label: 'Số năm đóng trước 2014',                type: 'range', min: 0, max: 25, step: 0.5, value: 0,  unit: 'năm', chips: [0, 5, 10, 15, 20] },
-      { id: 'yearsPost2014',  label: 'Số năm đóng từ 2014',                   type: 'range', min: 0, max: 15, step: 0.5, value: 10, unit: 'năm', chips: [0, 5, 10, 15] },
+      { id: 'yearsPre2014',   label: 'Số năm đóng trước 2014',                type: 'stepper', min: 0, max: 25, step: 0.5, value: 0,  unit: 'năm', chips: [0, 5, 10, 15, 20] },
+      { id: 'yearsPost2014',  label: 'Số năm đóng từ 2014',                   type: 'stepper', min: 0, max: 15, step: 0.5, value: 10, unit: 'năm', chips: [0, 5, 10, 15] },
       { id: 'joinedAfter725', label: 'Thời điểm tham gia BHXH lần đầu',       type: 'select', options: [
         {value:0, label:'Trước 01/07/2025 (được rút 1 lần)'},
         {value:1, label:'Sau 01/07/2025 (không được rút, trừ trường hợp đặc biệt)'},
@@ -1074,7 +1187,7 @@ const TOOLS = [
     resultLabel: 'TRỢ CẤP THÁNG ƯỚC TÍNH',
     fields: [
       { id: 'unemploymentAvgSalary', label: 'Bình quân lương đóng BHTN 6 tháng cuối', type: 'money', min: 3000000, max: 100000000, step: 500000, value: 18000000, chips: [10000000, 18000000, 30000000] },
-      { id: 'unemploymentMonths', label: 'Tổng số tháng đã đóng BHTN', type: 'range', min: 0, max: 180, step: 1, value: 48, unit: 'tháng', chips: [12, 36, 60, 120] },
+      { id: 'unemploymentMonths', label: 'Tổng số tháng đã đóng BHTN', type: 'stepper', min: 0, max: 180, step: 1, value: 48, unit: 'tháng', chips: [12, 36, 60, 120] },
       { id: 'unemploymentSystem', label: 'Nhóm người lao động', type: 'select', options: [
         { value: 'regional', label: 'Doanh nghiệp hưởng trần theo lương tối thiểu vùng' },
         { value: 'public', label: 'Khối nhà nước hưởng trần theo lương cơ sở' },
@@ -1128,25 +1241,82 @@ const TOOLS = [
   {
     id: 'tiet-kiem', name: 'Tiết Kiệm', category: 'Savings', abbr: 'TK',
     intent: 'Informational intent', panel: 'generic',
-    description: 'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất. Lãi tiết kiệm cá nhân tại TCTD được miễn thuế TNCN theo Điều 4 Luật Thuế TNCN.',
-    jtbd: 'Tôi có một khoản tiền nhàn rỗi và muốn ước tính nhận được bao nhiêu lãi nếu gửi tiết kiệm. Cần biết ngay <b>số tiền thực nhận khi đáo hạn theo lãi suất và kỳ hạn</b>, để <b>so sánh với gửi MoMo, mua vàng hoặc đầu tư khác trước khi quyết định</b>.',
-    formula: 'Lãi = <b>Gốc × Lãi suất/năm × Kỳ hạn (tháng) ÷ 12</b><br>Tổng nhận = <b>Gốc + Lãi</b><br><em>Áp dụng lãi đơn cuối kỳ (không ghép lãi). Lãi tiết kiệm cá nhân được miễn thuế TNCN.</em>',
+    description: 'Tính tiền nhận khi gửi 1 lần hoặc giá trị tích lũy khi gửi đều hàng tháng theo bảng lãi suất niêm yết của Tiết Kiệm Online MoMo ngày 23/6/2026.',
+    jtbd: 'Tôi có tiền nhàn rỗi và muốn biết <b>nên gửi 1 lần hay gửi đều hàng tháng thì nhận được bao nhiêu</b>, để <b>so sánh phương án tích lũy trước khi quyết định giữ tiền, gửi MoMo hay đầu tư kênh khác</b>.',
+    formula: 'Gửi 1 lần: <b>Lãi = Gốc × Lãi suất/năm × Kỳ hạn ÷ 12</b><br>Tổng nhận = <b>Gốc + Lãi</b><br>Gửi đều hàng tháng: <b>FV = M × ((1 + mr)<sup>n</sup> - 1) / mr</b><br><em>mr = lãi suất tháng, n = số tháng tích lũy. Bảng lãi suất niêm yết ngày 23/6/2026.</em>',
     resultLabel: 'NHẬN KHI ĐÁO HẠN',
     fields: [
-      { id: 'principal', label: 'Số tiền gửi',    type: 'money',  min: 1000000, max: 2000000000, step: 1000000, value: 50000000, chips: [10000000, 50000000, 200000000] },
-      { id: 'rate',      label: 'Lãi suất/năm',  type: 'range',  min: 2, max: 8, step: 0.1, value: 5.5, unit: '%', chips: [4, 5, 6, 7] },
-      { id: 'term',      label: 'Kỳ hạn',         type: 'select', options: [
-        {value:1,label:'1 tháng'},{value:3,label:'3 tháng'},
-        {value:6,label:'6 tháng'},{value:12,label:'12 tháng'},{value:24,label:'24 tháng'},
+      { id: 'savingMode', label: 'Hình thức gửi', type: 'pills', value: 'single', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare' }, options: [
+        { value: 'single', label: 'Gửi 1 lần', note: 'Lãi đơn theo kỳ hạn' },
+        { value: 'monthly', label: 'Gửi đều', note: 'Tích lũy hàng tháng' },
+      ] },
+      { id: 'principal', label: 'Số tiền gửi', type: 'money', min: 1000000, max: 2000000000, step: 1000000, value: 100000000, chips: [10000000, 100000000, 200000000] },
+      { id: 'term', label: 'Kỳ hạn áp dụng', type: 'select', options: [
+        { value: 1, label: '1 tháng · 4,75%/năm' },
+        { value: 2, label: '2 tháng · 4,75%/năm' },
+        { value: 3, label: '3 tháng · 4,75%/năm' },
+        { value: 4, label: '4 tháng · 4,75%/năm' },
+        { value: 5, label: '5 tháng · 4,75%/năm' },
+        { value: 6, label: '6 tháng · 7,00%/năm' },
+        { value: 9, label: '9 tháng · 7,00%/năm' },
+        { value: 12, label: '12 tháng · 7,00%/năm' },
+        { value: 24, label: '24 tháng · 7,20%/năm' },
       ], value: 12 },
+      { id: 'horizonYears', label: 'Thời gian tích lũy', type: 'select', value: 10, condition: { field: 'savingMode', value: 'monthly' }, options: [
+        { value: 1, label: '1 năm' },
+        { value: 5, label: '5 năm' },
+        { value: 10, label: '10 năm' },
+        { value: 15, label: '15 năm' },
+        { value: 20, label: '20 năm' },
+      ] },
     ],
     compute(v) {
-      const interest = v.principal * v.rate / 100 / 12 * v.term;
-      return { result: fmt(v.principal + interest), details: [
-        { label: 'Tiền gốc', value: fmt(v.principal) },
-        { label: 'Lãi nhận', value: fmt(interest) },
-        { label: 'Thuế TNCN', value: 'Miễn (Điều 4 Luật TNCN)' },
-      ]};
+      const SAVINGS_RATES = {
+        1: 4.75,
+        2: 4.75,
+        3: 4.75,
+        4: 4.75,
+        5: 4.75,
+        6: 7.0,
+        9: 7.0,
+        12: 7.0,
+        24: 7.2,
+      };
+      const rate = SAVINGS_RATES[v.term] || 4.75;
+      if (v.savingMode === 'monthly') {
+        const totalMonths = (Number(v.horizonYears) || 1) * 12;
+        const monthlyRate = rate / 100 / 12;
+        const futureValue = monthlyRate > 0
+          ? v.principal * ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate)
+          : v.principal * totalMonths;
+        const totalContributed = v.principal * totalMonths;
+        const totalInterest = futureValue - totalContributed;
+        return {
+          resultLabel: 'GIÁ TRỊ TÍCH LŨY ƯỚC TÍNH',
+          result: fmt(futureValue),
+          details: [
+            { label: 'Gửi mỗi tháng', value: fmt(v.principal) },
+            { label: 'Kỳ hạn áp dụng', value: `${v.term} tháng` },
+            { label: 'Lãi suất niêm yết', value: `${rate.toFixed(2)}%/năm` },
+            { label: 'Tổng tiền đã gửi', value: fmt(totalContributed) },
+            { label: 'Lãi tích lũy', value: fmt(totalInterest) },
+          ],
+          insight: `Nếu gửi đều ${fmt(v.principal)}/tháng trong ${v.horizonYears} năm và tái gửi theo mức ${rate.toFixed(2)}%/năm, bạn tích lũy khoảng ${fmt(futureValue)}.`,
+        };
+      }
+      const interest = v.principal * rate / 100 / 12 * v.term;
+      return {
+        resultLabel: 'NHẬN KHI ĐÁO HẠN',
+        result: fmt(v.principal + interest),
+        details: [
+          { label: 'Tiền gốc', value: fmt(v.principal) },
+          { label: 'Kỳ hạn', value: `${v.term} tháng` },
+          { label: 'Lãi suất niêm yết', value: `${rate.toFixed(2)}%/năm` },
+          { label: 'Lãi nhận', value: fmt(interest) },
+          { label: 'Thuế TNCN', value: 'Miễn với lãi tiền gửi cá nhân tại TCTD' },
+        ],
+        insight: `Với kỳ hạn ${v.term} tháng theo bảng niêm yết ngày 23/6/2026, khoản ${fmt(v.principal)} dự kiến sinh lãi ${fmt(interest)}.`,
+      };
     },
   },
   {
@@ -1232,6 +1402,105 @@ const TOOLS = [
     },
   },
   {
+    id: 'luong-gross-net', name: 'Lương Gross → Net', category: 'Tax', abbr: 'G→N',
+    intent: 'Transactional intent', panel: 'generic',
+    description: 'Tính lương NET nhận về từ lương Gross theo Luật TNCN 109/2025/QH15 · NQ 110/2025/UBTVQH15 · Luật BHXH 41/2024/QH15 · NĐ 293/2025/NĐ-CP. Hỗ trợ biểu thuế 5 bậc 2026 và 7 bậc cũ (≤2025), 4 vùng lương.',
+    jtbd: 'Tôi nhận được offer lương Gross và cần biết <b>thực nhận bao nhiêu mỗi tháng</b> sau khi trừ BHXH/BHYT/BHTN và thuế TNCN, để <b>so sánh các offer và lập kế hoạch chi tiêu</b>.',
+    formula: 'NET = Gross − BHXH (8%) − BHYT (1,5%) − BHTN (1%) − Thuế TNCN<br>Trần BHXH/BHYT: 50,600,000đ · Trần BHTN: theo vùng (Vùng I: 106,200,000đ)<br><em>Biểu thuế 2026 (5 bậc): ≤10tr 5% · 10-30tr 10% · 30-60tr 20% · 60-100tr 30% · &gt;100tr 35%<br>Giảm trừ 2026: bản thân 15,5tr + NPT 6,2tr/người</em>',
+    resultLabel: 'LƯƠNG NET NHẬN VỀ',
+    fields: [
+      { id: 'grossSalary',  label: 'Lương Gross/tháng', type: 'money', min: 1000000, max: 500000000, step: 500000, value: 20000000, chips: [10000000, 20000000, 50000000, 100000000] },
+      { id: 'dependents',   label: 'Số người phụ thuộc (NPT)', type: 'select', options: [
+        {value:0,label:'0 người'},{value:1,label:'1 người'},
+        {value:2,label:'2 người'},{value:3,label:'3 người'},{value:4,label:'4 người trở lên'},
+      ], value: 0 },
+      { id: 'salaryBh',     label: 'Lương đóng BH/tháng (để trống nếu = Gross)', type: 'money', min: 0, max: 500000000, step: 500000, value: 0, chips: [0, 5000000, 10000000, 15000000] },
+      { id: 'vung',         label: 'Vùng lương', type: 'select', options: [
+        {value:'I',   label:'Vùng I — HCM, Hà Nội (106,200,000đ)'},
+        {value:'II',  label:'Vùng II (94,600,000đ)'},
+        {value:'III', label:'Vùng III (82,800,000đ)'},
+        {value:'IV',  label:'Vùng IV (60,000,000đ)'},
+      ], value: 'I' },
+      { id: 'taxSchedule',  label: 'Biểu thuế áp dụng', type: 'select', options: [
+        {value:'2026',    label:'2026 — 5 bậc (từ 01/01/2026)'},
+        {value:'pre2026', label:'Trước 2026 — 7 bậc (≤31/12/2025)'},
+      ], value: '2026' },
+    ],
+    compute(v) {
+      const gross = v.grossSalary;
+      const npt   = Number(v.dependents) || 0;
+      const bhxhCap = 50600000;
+      const bhtnCapMap = { I: 106200000, II: 94600000, III: 82800000, IV: 60000000 };
+      const bhtnCap = bhtnCapMap[v.vung] || 106200000;
+      const salaryBh = (v.salaryBh > 0 && v.salaryBh < gross) ? v.salaryBh : gross;
+
+      // BH
+      const bhxh = Math.floor(Math.min(salaryBh, bhxhCap) * 0.08 / 1000) * 1000;
+      const bhyt = Math.floor(Math.min(salaryBh, bhxhCap) * 0.015 / 1000) * 1000;
+      const bhtn = Math.floor(Math.min(salaryBh, bhtnCap) * 0.01 / 1000) * 1000;
+      const totalBh = bhxh + bhyt + bhtn;
+
+      // Giảm trừ gia cảnh
+      const is2026 = v.taxSchedule !== 'pre2026';
+      const personalDeduct = is2026 ? 15500000 : 11000000;
+      const depDeduct      = is2026 ? 6200000  : 4400000;
+      const giamTruGC      = personalDeduct + npt * depDeduct;
+
+      // Thu nhập tính thuế
+      const tntt = Math.max(0, gross - totalBh - giamTruGC);
+
+      // Thuế TNCN
+      let tax = 0;
+      if (is2026) {
+        // 5 bậc 2026
+        if      (tntt <= 10e6)  tax = tntt * 0.05;
+        else if (tntt <= 30e6)  tax = tntt * 0.10 - 500000;
+        else if (tntt <= 60e6)  tax = tntt * 0.20 - 3500000;
+        else if (tntt <= 100e6) tax = tntt * 0.30 - 9500000;
+        else                    tax = tntt * 0.35 - 14500000;
+      } else {
+        // 7 bậc cũ
+        if      (tntt <= 5e6)   tax = tntt * 0.05;
+        else if (tntt <= 10e6)  tax = tntt * 0.10 - 250000;
+        else if (tntt <= 18e6)  tax = tntt * 0.15 - 750000;
+        else if (tntt <= 32e6)  tax = tntt * 0.20 - 1650000;
+        else if (tntt <= 52e6)  tax = tntt * 0.25 - 3250000;
+        else if (tntt <= 80e6)  tax = tntt * 0.30 - 5850000;
+        else                    tax = tntt * 0.35 - 9850000;
+      }
+      tax = Math.max(0, Math.floor(tax / 1000) * 1000);
+
+      const net = gross - totalBh - tax;
+      const effectiveRate = gross > 0 ? (tax / gross * 100).toFixed(1) : 0;
+      const bhDiff = gross - salaryBh;
+
+      const details = [];
+      if (bhDiff > 0) {
+        details.push({ label: 'Lương Gross', value: fmt(gross) });
+        details.push({ label: 'Lương đóng BH (thấp hơn Gross)', value: fmt(salaryBh) });
+      }
+      details.push(
+        { label: 'BHXH (8%)',                              value: `- ${fmt(bhxh)}` },
+        { label: 'BHYT (1,5%)',                            value: `- ${fmt(bhyt)}` },
+        { label: `BHTN (1% · Vùng ${v.vung})`,            value: `- ${fmt(bhtn)}` },
+        { label: 'Tổng đóng bảo hiểm',                    value: fmt(totalBh) },
+        { label: 'Giảm trừ gia cảnh (BT + NPT)',          value: fmt(giamTruGC) },
+        { label: 'Thu nhập tính thuế (TNTT)',              value: fmt(tntt) },
+        { label: `Thuế TNCN (${is2026 ? '5 bậc 2026' : '7 bậc cũ'})`, value: `- ${fmt(tax)}` },
+      );
+
+      const insight = tax === 0
+        ? `Thu nhập tính thuế ${fmt(tntt)} chưa vượt bậc 1 → thuế = 0. Lương NET = Gross ${fmt(gross)} − BH ${fmt(totalBh)} = ${fmt(net)}.`
+        : `Tỷ lệ thuế thực ${effectiveRate}% trên Gross. Mỗi đồng tăng lương trên ${is2026 ? fmt(tntt) : fmt(tntt)} đang chịu thuế suất ${
+            is2026
+              ? (tntt <= 10e6 ? '5%' : tntt <= 30e6 ? '10%' : tntt <= 60e6 ? '20%' : tntt <= 100e6 ? '30%' : '35%')
+              : (tntt <= 5e6 ? '5%' : tntt <= 10e6 ? '10%' : tntt <= 18e6 ? '15%' : tntt <= 32e6 ? '20%' : tntt <= 52e6 ? '25%' : tntt <= 80e6 ? '30%' : '35%')
+          } biên.`;
+
+      return { result: fmt(net), details, insight };
+    },
+  },
+  {
     id: 'thue-tncn', name: 'Thuế TNCN', category: 'Tax', abbr: 'TC',
     intent: 'Informational intent', panel: 'generic',
     description: 'Tính thuế TNCN cho 4 loại thu nhập theo Luật Thuế TNCN sửa đổi 2025: Lương từ HĐLĐ (biểu lũy tiến 5 bậc + giảm trừ gia cảnh 15,5tr/NPT 6,2tr), Cộng tác viên/Freelance (10% tại nguồn), Đầu tư vốn/Cổ tức (5% cố định), Trúng thưởng/Quà tặng (10% phần vượt 10tr).',
@@ -1257,7 +1526,7 @@ const TOOLS = [
       const income = v.grossSalary;
       // ── Lương từ HĐLĐ
       if (type === 'luong-hd') {
-        const bhxhCap = 50600000, bhtnCap = 93600000; // 20× lương cơ sở / 20× lương tối thiểu vùng I
+        const bhxhCap = 50600000, bhtnCap = 106200000; // 20× lương cơ sở / 20× 5,310,000 vùng I (NĐ 293/2025/NĐ-CP)
         // Lương đóng BH: nếu user nhập > 0 và < lương gross, dùng giá trị đó; ngược lại dùng lương gross
         const salaryBh = (v.salaryBh > 0 && v.salaryBh < income) ? v.salaryBh : income;
         const bhDiff = income - salaryBh;
@@ -1552,73 +1821,156 @@ const TOOLS = [
     },
   },
   {
-    id: 'so-sanh-xang-dien', name: 'So Sánh Xe Xăng và Xe Điện', category: 'Phương tiện', abbr: 'EV',
+    id: 'chi-phi-xe-xang', name: 'Chi Phí Xe Xăng', category: 'Phương tiện', abbr: 'XZ',
     intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
-    description: 'So sánh chi phí vận hành theo bình xăng hoặc pin đầy và quãng đường bạn thực sự đi mỗi tháng.',
-    jtbd: 'Tôi muốn biết với <b>dung tích bình xăng hoặc pin thực tế của xe</b> thì đi cùng một quãng đường mỗi tháng, <b>xe điện tiết kiệm hơn xe xăng bao nhiêu tiền</b>, để đánh giá nhanh có nên chuyển đổi phương tiện hay không.',
-    formula: 'Chi phí một lần nạp đầy xe xăng = <b>Dung tích bình × Giá xăng</b><br>Chi phí một lần sạc đầy = <b>Dung lượng pin × Giá điện</b><br>Chi phí tháng = <b>Km/tháng ÷ Quãng đường mỗi lần nạp đầy × Chi phí mỗi lần nạp</b>',
-    resultLabel: 'TIẾT KIỆM MỖI THÁNG KHI ĐI XE ĐIỆN',
+    description: 'Ước tính chi phí nhiên liệu xăng mỗi tháng theo dòng xe và quãng đường đi mỗi ngày.',
+    jtbd: 'Tôi muốn biết mỗi tháng mình <b>tốn bao nhiêu tiền xăng</b> với dòng xe đang dùng và quãng đường thực sự đang đi mỗi ngày, để kiểm soát chi tiêu phương tiện.',
+    formula: 'Chi phí đổ đầy = <b>Dung tích bình × Giá xăng/lít</b><br>Chi phí tháng = <b>(Km/ngày × 30) ÷ Km/bình đầy × Chi phí đổ đầy</b>',
+    resultLabel: 'CHI PHÍ XĂNG MỖI THÁNG',
     ctaText: 'Xem thêm tiện ích Phương tiện trên MoMo',
-    disclaimer: 'Mô phỏng dùng giá tham chiếu E10 RON 95-III = 22.330 đ/lít và điện/sạc = 3.500 đ/kWh. Chỉ phản ánh chi phí năng lượng, chưa gồm giá mua xe, pin, bảo dưỡng, cầu đường hay chi phí sạc ngoài nhà.',
+    disclaimer: 'Mô phỏng dùng giá tham chiếu E10 RON 95-III = 22.330 đ/lít. Quãng đường/bình theo công bố nhà sản xuất — thực tế có thể thấp hơn tùy điều kiện đường và tải trọng. Chưa gồm bảo dưỡng, cầu đường và hao mòn xe.',
     fields: [
-      { id: 'compareSegment', label: 'Nhóm phương tiện', type: 'pills', options: [
+      { id: 'fuelSegment', label: 'Loại xe', type: 'pills', options: [
         { value: 'motorbike', label: 'Xe máy' },
         { value: 'car', label: 'Ô tô' },
       ], value: 'motorbike' },
-      { id: 'compareMonthlyKm', label: 'Quãng đường đi mỗi tháng', type: 'range', min: 100, max: 5000, step: 50, value: 800, unit: 'km', chips: [400, 800, 1500, 3000] },
-      { id: 'motorFuelTank', label: 'Dung tích bình xăng xe máy', type: 'range', min: 2, max: 8, step: 0.1, value: 4.5, unit: 'L', chips: [3, 4.5, 5.5, 6.5], condition: { field: 'compareSegment', value: 'motorbike' }, tooltip: 'Là số lít xăng khi bạn đổ đầy bình một lần. Thông số này thường có trong sổ xe hoặc tài liệu sản phẩm.' },
-      { id: 'motorFuelRange', label: 'Xe máy xăng đi được mỗi bình đầy', type: 'range', min: 80, max: 300, step: 5, value: 170, unit: 'km', chips: [120, 170, 220, 260], condition: { field: 'compareSegment', value: 'motorbike' } },
-      { id: 'motorEvBattery', label: 'Dung lượng pin xe máy điện', type: 'range', min: 1, max: 8, step: 0.1, value: 3.5, unit: 'kWh', chips: [2, 3.5, 5, 6.5], condition: { field: 'compareSegment', value: 'motorbike' }, tooltip: 'Nếu bạn chỉ nhớ theo Wh, có thể quy đổi: 3.500 Wh = 3,5 kWh.' },
-      { id: 'motorEvRange', label: 'Xe máy điện đi được mỗi lần sạc đầy', type: 'range', min: 40, max: 250, step: 5, value: 120, unit: 'km', chips: [80, 120, 160, 200], condition: { field: 'compareSegment', value: 'motorbike' } },
-      { id: 'carFuelTank', label: 'Dung tích bình xăng ô tô', type: 'range', min: 30, max: 80, step: 1, value: 45, unit: 'L', chips: [35, 45, 55, 65], condition: { field: 'compareSegment', value: 'car' }, tooltip: 'Là số lít xăng khi bạn đổ đầy bình một lần. Có thể xem trong tài liệu xe hoặc thông số hãng công bố.' },
-      { id: 'carFuelRange', label: 'Ô tô xăng đi được mỗi bình đầy', type: 'range', min: 250, max: 900, step: 10, value: 520, unit: 'km', chips: [350, 520, 650, 780], condition: { field: 'compareSegment', value: 'car' } },
-      { id: 'carEvBattery', label: 'Dung lượng pin ô tô điện', type: 'range', min: 20, max: 120, step: 1, value: 45, unit: 'kWh', chips: [30, 45, 60, 80], condition: { field: 'compareSegment', value: 'car' }, tooltip: 'Là tổng dung lượng pin hữu dụng hoặc dung lượng danh nghĩa gần đúng mà bạn thường thấy trong thông số mẫu xe.' },
-      { id: 'carEvRange', label: 'Ô tô điện đi được mỗi lần sạc đầy', type: 'range', min: 150, max: 700, step: 10, value: 320, unit: 'km', chips: [220, 320, 450, 550], condition: { field: 'compareSegment', value: 'car' } },
+      { id: 'fuelMotorModel', label: 'Dòng xe máy', type: 'select-items', condition: { field: 'fuelSegment', value: 'motorbike' }, value: 'fm-wave', options: [
+        { value: 'fm-wave',    label: 'Honda Wave',        note: '1.3L · 180 km/bình' },
+        { value: 'fm-vision',  label: 'Honda Vision',      note: '4.2L · 200 km/bình' },
+        { value: 'fm-air',     label: 'Honda Air Blade',   note: '3.7L · 170 km/bình' },
+        { value: 'fm-vario',   label: 'Yamaha Grande',     note: '4.5L · 170 km/bình' },
+        { value: 'fm-exciter', label: 'Yamaha Exciter',    note: '4.2L · 160 km/bình' },
+        { value: 'fm-custom',  label: 'Nhập tay',          note: 'tuỳ mẫu xe' },
+      ]},
+      { id: 'fuelCarModel', label: 'Dòng ô tô', type: 'select-items', condition: { field: 'fuelSegment', value: 'car' }, value: 'fc-vios', options: [
+        { value: 'fc-vios',    label: 'Toyota Vios',       note: '42L · 600 km/bình' },
+        { value: 'fc-city',    label: 'Honda City',        note: '40L · 580 km/bình' },
+        { value: 'fc-xpander', label: 'Mitsubishi Xpander',note: '48L · 600 km/bình' },
+        { value: 'fc-crv',     label: 'Honda CR-V',        note: '57L · 650 km/bình' },
+        { value: 'fc-fortuner',label: 'Toyota Fortuner',   note: '72L · 700 km/bình' },
+        { value: 'fc-custom',  label: 'Nhập tay',          note: 'tuỳ mẫu xe' },
+      ]},
+      { id: 'fuelMotorTank', label: 'Dung tích bình xăng', type: 'range', min: 1, max: 8, step: 0.1, value: 1.3, unit: 'L', chips: [1.3, 3.7, 4.2, 4.5], condition: { field: 'fuelMotorModel', value: 'fm-custom' }, tooltip: 'Số lít xăng khi đổ đầy bình một lần. Thường có trong sổ xe hoặc tài liệu sản phẩm.' },
+      { id: 'fuelMotorRange', label: 'Đi được mỗi bình đầy', type: 'range', min: 80, max: 300, step: 5, value: 180, unit: 'km', chips: [130, 170, 200, 260], condition: { field: 'fuelMotorModel', value: 'fm-custom' } },
+      { id: 'fuelCarTank', label: 'Dung tích bình xăng', type: 'range', min: 30, max: 90, step: 1, value: 42, unit: 'L', chips: [40, 48, 57, 72], condition: { field: 'fuelCarModel', value: 'fc-custom' }, tooltip: 'Số lít xăng khi đổ đầy bình một lần. Có thể xem trong tài liệu xe hoặc thông số hãng công bố.' },
+      { id: 'fuelCarRange', label: 'Đi được mỗi bình đầy', type: 'range', min: 300, max: 900, step: 10, value: 600, unit: 'km', chips: [500, 600, 650, 750], condition: { field: 'fuelCarModel', value: 'fc-custom' } },
+      { id: 'fuelDailyKm', label: 'Quãng đường đi mỗi ngày', type: 'range', min: 5, max: 100, step: 5, value: 20, unit: 'km', chips: [10, 20, 30, 50] },
     ],
     compute(v) {
       const GAS_PRICE = 22330;
-      const POWER_PRICE = 3500;
-      const isMotorbike = v.compareSegment === 'motorbike';
+      const FUEL_DATA = {
+        'fm-wave':    { tank: 1.3,  range: 180, name: 'Honda Wave' },
+        'fm-vision':  { tank: 4.2,  range: 200, name: 'Honda Vision' },
+        'fm-air':     { tank: 3.7,  range: 170, name: 'Honda Air Blade' },
+        'fm-vario':   { tank: 4.5,  range: 170, name: 'Yamaha Grande' },
+        'fm-exciter': { tank: 4.2,  range: 160, name: 'Yamaha Exciter' },
+        'fc-vios':    { tank: 42,   range: 600, name: 'Toyota Vios' },
+        'fc-city':    { tank: 40,   range: 580, name: 'Honda City' },
+        'fc-xpander': { tank: 48,   range: 600, name: 'Mitsubishi Xpander' },
+        'fc-crv':     { tank: 57,   range: 650, name: 'Honda CR-V' },
+        'fc-fortuner':{ tank: 72,   range: 700, name: 'Toyota Fortuner' },
+      };
+      const isMotorbike = v.fuelSegment === 'motorbike';
       const segmentName = isMotorbike ? 'Xe máy' : 'Ô tô';
-      const fuelCapacity = isMotorbike ? v.motorFuelTank : v.carFuelTank;
-      const fuelRange = isMotorbike ? v.motorFuelRange : v.carFuelRange;
-      const evCapacity = isMotorbike ? v.motorEvBattery : v.carEvBattery;
-      const evRange = isMotorbike ? v.motorEvRange : v.carEvRange;
-      const fuelFullCost = fuelCapacity * GAS_PRICE;
-      const evFullCost = evCapacity * POWER_PRICE;
-      const fuelMonthly = fuelRange > 0 ? (v.compareMonthlyKm / fuelRange) * fuelFullCost : 0;
-      const evMonthly = evRange > 0 ? (v.compareMonthlyKm / evRange) * evFullCost : 0;
-      const monthlySaving = fuelMonthly - evMonthly;
-      const yearlySaving = monthlySaving * 12;
-      const savingRate = fuelMonthly > 0 ? (monthlySaving / fuelMonthly) * 100 : 0;
-      const fuelCostPerKm = fuelRange > 0 ? fuelFullCost / fuelRange : 0;
-      const evCostPerKm = evRange > 0 ? evFullCost / evRange : 0;
+      const modelKey = isMotorbike ? v.fuelMotorModel : v.fuelCarModel;
+      const modelData = FUEL_DATA[modelKey];
+      const tank = modelData ? modelData.tank : (isMotorbike ? v.fuelMotorTank : v.fuelCarTank);
+      const range = modelData ? modelData.range : (isMotorbike ? v.fuelMotorRange : v.fuelCarRange);
+      const modelName = modelData ? modelData.name : 'xe của bạn';
+      const monthlyKm = v.fuelDailyKm * 30;
+      const fullCost = tank * GAS_PRICE;
+      const monthly = range > 0 ? (monthlyKm / range) * fullCost : 0;
+      const costPerKm = range > 0 ? fullCost / range : 0;
+      const fills = range > 0 ? monthlyKm / range : 0;
       return {
-        result: (monthlySaving >= 0 ? fmt(monthlySaving) : '- ' + fmt(Math.abs(monthlySaving))),
+        result: fmt(monthly),
         badge: segmentName,
         details: [
-          { label: 'Chi phí đổ đầy xe xăng', value: fmtM(fuelFullCost) },
-          { label: 'Chi phí sạc đầy xe điện', value: fmtM(evFullCost) },
-          { label: 'Chi phí xe xăng/tháng', value: fmtM(fuelMonthly) },
-          { label: 'Chi phí xe điện/tháng', value: fmtM(evMonthly) },
-          { label: 'Chi phí xe xăng/km', value: Math.round(fuelCostPerKm).toLocaleString('vi-VN') + ' đ/km' },
-          { label: 'Chi phí xe điện/km', value: Math.round(evCostPerKm).toLocaleString('vi-VN') + ' đ/km' },
-          { label: 'Chênh lệch mỗi năm', value: yearlySaving >= 0 ? fmtM(yearlySaving) : '- ' + fmtM(Math.abs(yearlySaving)) },
-          { label: 'Tỷ lệ tiết kiệm', value: (monthlySaving >= 0 ? '+' : '') + savingRate.toFixed(1) + '%' },
+          { label: 'Dòng xe', value: modelName },
+          { label: 'Quãng đường mỗi tháng', value: monthlyKm.toLocaleString('vi-VN') + ' km' },
+          { label: 'Chi phí đổ đầy một lần', value: fmtM(fullCost) },
+          { label: 'Số lần đổ mỗi tháng', value: fills.toFixed(1) + ' lần' },
+          { label: 'Chi phí mỗi km', value: Math.round(costPerKm).toLocaleString('vi-VN') + ' đ/km' },
+          { label: 'Chi phí mỗi năm', value: fmtM(monthly * 12) },
         ],
-        visual: {
-          title: 'Chi phí vận hành theo tháng',
-          totalLabel: 'TỔNG 2 KỊCH BẢN',
-          totalValue: fmtM(fuelMonthly + evMonthly),
-          showHeadSummary: false,
-          items: [
-            { label: 'Xe xăng', value: fmtM(fuelMonthly), amount: fuelMonthly, color: '#21479c' },
-            { label: 'Xe điện', value: fmtM(evMonthly), amount: evMonthly, color: '#29b6f6' },
-          ],
-        },
-        insight: monthlySaving >= 0
-          ? `Với <b>${v.compareMonthlyKm.toLocaleString('vi-VN')} km/tháng</b>, nếu ${segmentName.toLowerCase()} xăng đi được <b>${fuelRange} km/bình</b> và ${segmentName.toLowerCase()} điện đi được <b>${evRange} km/lần sạc</b>, bản điện đang tiết kiệm khoảng <b>${fmtM(monthlySaving)}/tháng</b>.`
-          : `Theo bộ thông số hiện tại, ${segmentName.toLowerCase()} điện chưa rẻ hơn xe xăng về chi phí năng lượng. Hãy kiểm tra lại <b>dung lượng pin</b> hoặc <b>quãng đường đi được mỗi lần sạc đầy</b> của mẫu xe bạn đang cân nhắc.`
+        insight: `Với <b>${modelName}</b>, đi <b>${v.fuelDailyKm} km/ngày</b> (~${monthlyKm.toLocaleString('vi-VN')} km/tháng), bạn đổ xăng khoảng <b>${fills.toFixed(1)} lần/tháng</b>, tốn khoảng <b>${fmtM(monthly)}/tháng</b>.`,
+      };
+    },
+  },
+  {
+    id: 'chi-phi-xe-dien', name: 'Chi Phí Xe Điện', category: 'Phương tiện', abbr: 'XĐ',
+    intent: 'Informational intent', panel: 'generic', ui: 'calculator-product',
+    description: 'Ước tính chi phí sạc điện mỗi tháng theo dòng xe và quãng đường thực tế.',
+    jtbd: 'Tôi muốn biết mỗi tháng mình <b>tốn bao nhiêu tiền điện để sạc xe</b> với dòng xe đang dùng và quãng đường thực sự đang đi, để kiểm soát chi tiêu phương tiện.',
+    formula: 'Chi phí sạc đầy = <b>Dung lượng pin × Giá điện/kWh</b><br>Chi phí tháng = <b>Km/tháng ÷ Km/lần sạc đầy × Chi phí sạc đầy</b>',
+    resultLabel: 'CHI PHÍ SẠC ĐIỆN MỖI THÁNG',
+    ctaText: 'Xem thêm tiện ích Phương tiện trên MoMo',
+    disclaimer: 'Quãng đường tham chiếu theo chu trình WLTP hoặc công bố nhà sản xuất — thực tế có thể thấp hơn 15-20% tùy điều kiện đường và tốc độ. Giá điện tham chiếu 3.500 đ/kWh. Chưa gồm giá mua xe, thay pin, bảo dưỡng và chi phí sạc ngoài nhà.',
+    fields: [
+      { id: 'evSegment', label: 'Loại xe', type: 'pills', options: [
+        { value: 'motorbike', label: 'Xe máy' },
+        { value: 'car', label: 'Ô tô' },
+      ], value: 'motorbike' },
+      { id: 'evDailyKm', label: 'Quãng đường đi mỗi ngày', type: 'range', min: 5, max: 100, step: 5, value: 20, unit: 'km', chips: [10, 20, 30, 50] },
+      { id: 'evMotorModel', label: 'Dòng xe máy điện', type: 'select-items', condition: { field: 'evSegment', value: 'motorbike' }, value: 'motor-theon', options: [
+        { value: 'motor-yadea',    label: 'Yadea / Pega',       note: '1.5 kWh · 65 km' },
+        { value: 'motor-theon',    label: 'VF Theon / Ludo',    note: '2.2 kWh · 80 km' },
+        { value: 'motor-impes',    label: 'VF Impes S',         note: '3.5 kWh · 115 km' },
+        { value: 'motor-datbike',  label: 'DatBike Weaver++',   note: '4.0 kWh · 150 km' },
+        { value: 'motor-custom',   label: 'Nhập tay',           note: 'tuỳ mẫu xe' },
+      ]},
+      { id: 'evMotorBattery', label: 'Dung lượng pin', type: 'range', min: 1, max: 5, step: 0.1, value: 2.2, unit: 'kWh', chips: [1.5, 2.2, 3.5, 4.0], condition: { field: 'evMotorModel', value: 'motor-custom' }, tooltip: 'Nếu chỉ nhớ theo Wh, quy đổi: 2.200 Wh = 2,2 kWh.' },
+      { id: 'evMotorRange', label: 'Đi được mỗi lần sạc đầy', type: 'range', min: 40, max: 200, step: 5, value: 80, unit: 'km', chips: [60, 80, 115, 150], condition: { field: 'evMotorModel', value: 'motor-custom' } },
+      { id: 'evCarModel', label: 'Dòng xe ô tô điện', type: 'select-items', condition: { field: 'evSegment', value: 'car' }, value: 'car-vf6', options: [
+        { value: 'car-vf3',     label: 'VinFast VF3',        note: '23.6 kWh · 210 km' },
+        { value: 'car-vf5',     label: 'VinFast VF5',        note: '37.1 kWh · 326 km' },
+        { value: 'car-vf6',     label: 'VinFast VF6',        note: '49.8 kWh · 399 km' },
+        { value: 'car-vf8',     label: 'VinFast VF8',        note: '82.0 kWh · 471 km' },
+        { value: 'car-byd',     label: 'BYD Dolphin / Atto', note: '60.5 kWh · 427 km' },
+        { value: 'car-mg',      label: 'MG ZS EV',           note: '50.3 kWh · 320 km' },
+        { value: 'car-custom',  label: 'Nhập tay',           note: 'tuỳ mẫu xe' },
+      ]},
+      { id: 'evCarBattery', label: 'Dung lượng pin', type: 'range', min: 20, max: 95, step: 1, value: 50, unit: 'kWh', chips: [23, 37, 50, 82], condition: { field: 'evCarModel', value: 'car-custom' }, tooltip: 'Dung lượng pin hữu dụng theo thông số nhà sản xuất công bố.' },
+      { id: 'evCarRange', label: 'Đi được mỗi lần sạc đầy', type: 'range', min: 150, max: 500, step: 10, value: 400, unit: 'km', chips: [210, 326, 399, 471], condition: { field: 'evCarModel', value: 'car-custom' } },
+    ],
+    compute(v) {
+      const POWER_PRICE = 3500;
+      const EV_DATA = {
+        'motor-yadea':   { battery: 1.5,  range: 65,  name: 'Yadea/Pega' },
+        'motor-theon':   { battery: 2.2,  range: 80,  name: 'VF Theon/Ludo' },
+        'motor-impes':   { battery: 3.5,  range: 115, name: 'VF Impes S' },
+        'motor-datbike': { battery: 4.0,  range: 150, name: 'DatBike Weaver++' },
+        'car-vf3':       { battery: 23.6, range: 210, name: 'VinFast VF3' },
+        'car-vf5':       { battery: 37.1, range: 326, name: 'VinFast VF5' },
+        'car-vf6':       { battery: 49.8, range: 399, name: 'VinFast VF6' },
+        'car-vf8':       { battery: 82.0, range: 471, name: 'VinFast VF8' },
+        'car-byd':       { battery: 60.5, range: 427, name: 'BYD Dolphin/Atto' },
+        'car-mg':        { battery: 50.3, range: 320, name: 'MG ZS EV' },
+      };
+      const isMotorbike = v.evSegment === 'motorbike';
+      const segmentName = isMotorbike ? 'Xe máy' : 'Ô tô';
+      const modelKey = isMotorbike ? v.evMotorModel : v.evCarModel;
+      const modelData = EV_DATA[modelKey];
+      const battery = modelData ? modelData.battery : (isMotorbike ? v.evMotorBattery : v.evCarBattery);
+      const range = modelData ? modelData.range : (isMotorbike ? v.evMotorRange : v.evCarRange);
+      const modelName = modelData ? modelData.name : 'xe của bạn';
+      const monthlyKm = v.evDailyKm * 30;
+      const fullCost = battery * POWER_PRICE;
+      const monthly = range > 0 ? (monthlyKm / range) * fullCost : 0;
+      const costPerKm = range > 0 ? fullCost / range : 0;
+      const charges = range > 0 ? monthlyKm / range : 0;
+      return {
+        result: fmt(monthly),
+        badge: segmentName,
+        details: [
+          { label: 'Dòng xe', value: modelName },
+          { label: 'Quãng đường mỗi tháng', value: monthlyKm.toLocaleString('vi-VN') + ' km' },
+          { label: 'Chi phí sạc đầy một lần', value: fmtM(fullCost) },
+          { label: 'Số lần sạc mỗi tháng', value: charges.toFixed(1) + ' lần' },
+          { label: 'Chi phí mỗi km', value: Math.round(costPerKm).toLocaleString('vi-VN') + ' đ/km' },
+          { label: 'Chi phí mỗi năm', value: fmtM(monthly * 12) },
+        ],
+        insight: `Với <b>${modelName}</b>, đi <b>${v.evDailyKm} km/ngày</b> (~${monthlyKm.toLocaleString('vi-VN')} km/tháng), bạn sạc khoảng <b>${charges.toFixed(1)} lần/tháng</b>, tốn khoảng <b>${fmtM(monthly)}/tháng</b> tiền điện.`,
       };
     },
   },
@@ -1844,7 +2196,7 @@ const TOOLS = [
         {value:1,label:'1 năm'},{value:3,label:'3 năm'},{value:5,label:'5 năm'},
         {value:10,label:'10 năm'},{value:15,label:'15 năm'},{value:18,label:'18 năm'},
       ], value: 5 },
-      { id: 'feeInflation', label: 'Tăng học phí/năm',       type: 'range',  min: 3, max: 20, step: 0.5, value: 8, unit: '%', chips: [5, 8, 12, 15] },
+      { id: 'feeInflation', label: 'Tăng học phí/năm',       type: 'range',  min: 3, max: 20, step: 0.5, value: 8, unit: '%', chips: [5, 8, 12, 15], chipLabels: ['Công lập', 'Ngoài CL', 'Tư thục CLC', 'Quốc tế'] },
     ],
     compute(v) {
       const future = v.currentFee * Math.pow(1 + v.feeInflation / 100, v.yearsUntil);
@@ -1858,6 +2210,12 @@ const TOOLS = [
         { label: 'Tăng so với hiện tại', value: fmtM(future - v.currentFee) },
       ], insight };
     },
+  },
+  {
+    id: 'phat-nguoi', name: 'Tra cứu Phạt Nguội', category: 'Platform', abbr: 'PN',
+    intent: 'Transactional intent', panel: 'phat-nguoi',
+    description: 'Kiểm tra biển số có vi phạm giao thông đang chờ xử lý. Kết quả mô phỏng theo dữ liệu Cục CSGT và hệ thống giám sát.',
+    jtbd: 'Tôi muốn kiểm tra nhanh <b>xe của mình có bị phạt nguội không</b> trước khi đăng kiểm hoặc sang tên, để <b>xử lý kịp thời và tránh bị giữ xe</b>.',
   },
 ];
 
@@ -1995,6 +2353,7 @@ function selectTool(id, options = {}) {
   document.getElementById('travelBudgetPanel').hidden  = tool.panel !== 'travel-budget';
   document.getElementById('firePanel').hidden          = tool.panel !== 'fire';
   document.getElementById('ciCarePanel').hidden        = tool.panel !== 'ci-care';
+  document.getElementById('phatNguoiPanel').hidden     = tool.panel !== 'phat-nguoi';
   if (tool.panel === 'generic')   renderGenericPanel(tool);
   if (tool.panel === 'gold')      initGoldPanel();
   if (tool.panel === 'stock')     renderStockTable();
@@ -2005,6 +2364,7 @@ function selectTool(id, options = {}) {
   if (tool.panel === 'travel-budget') initTravelBudgetPanel();
   if (tool.panel === 'fire')      initFirePanel();
   if (tool.panel === 'ci-care')   initCiCarePanel();
+  if (tool.panel === 'phat-nguoi') initPhatNguoiPanel();
   renderToolPicker();
   if (focusPanel) {
     const activePanel = document.querySelector('.tool-panel:not([hidden])');
@@ -2056,7 +2416,7 @@ function renderGenericPanel(tool) {
   const panelEl = document.getElementById('genericPanel');
   const calculatorEl = panelEl?.querySelector('.calculator-layout');
   if (panelEl) panelEl.dataset.ui = tool.ui || 'default';
-  if (calculatorEl) calculatorEl.classList.toggle('calculator-product-layout', tool.ui === 'calculator-product');
+  if (calculatorEl) calculatorEl.classList.toggle('calculator-product-layout', tool.ui === 'calculator-product' || tool.ui === 'vehicle-compare');
   if (calculatorEl) calculatorEl.classList.toggle('debt-payoff-layout', tool.ui === 'debt-matrix');
   if (calculatorEl) calculatorEl.classList.toggle('goal-planner-layout', tool.ui === 'goal-planner');
   document.getElementById('genericCategory').textContent    = tool.category.toUpperCase();
@@ -2112,7 +2472,9 @@ function renderGenericPanel(tool) {
   }
 
   const container = document.getElementById('genericFields');
+  if (container) container.dataset.toolId = tool.id;
   const condAttr = f => f.condition ? ` data-cond-field="${f.condition.field}" data-cond-value="${[].concat(f.condition.value).join(',')}"` : '';
+  const initialFieldValues = Object.fromEntries(tool.fields.map(f => [f.id, f.value]));
   const renderFieldLabel = f => `
     <span class="field-label-main">
       <span>${f.label}</span>
@@ -2142,10 +2504,13 @@ function renderGenericPanel(tool) {
         </div>` : ''}
       </div>`;
     }
-    if (f.type === 'range') {
+    if (f.type === 'range' || f.type === 'stepper') {
       const unitTxt = (f.unit || '').trim();
       const unitTag = unitTxt ? `<span class="unit-tag">${unitTxt}</span>` : '';
       const chips = f.chips || autoChips(f);
+      const sliderMarkup = f.type === 'range'
+        ? `<input type="range" class="range-slider" id="${f.id}Range" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}" aria-label="${ariaLabel}">`
+        : '';
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <div class="num-input-row">
@@ -2154,34 +2519,37 @@ function renderGenericPanel(tool) {
           ${unitTag}
           <button type="button" class="num-step" data-target="${f.id}" data-dir="1" aria-label="Tăng">+</button>
         </div>
-        <input type="range" class="range-slider" id="${f.id}Range" value="${f.value}" min="${f.min}" max="${f.max}" step="${f.step}" aria-label="${ariaLabel}">
-        ${showChips && chips.length ? `<div class="num-chips">
-          ${chips.map(c => `<button type="button" class="chip-btn${+c === +f.value ? ' active' : ''}" data-val="${c}">${formatChip(c, f)}</button>`).join('')}
+        ${sliderMarkup}
+        ${showChips && chips.length ? `<div class="num-chips${f.chipLabels ? ' num-chips-labeled' : ''}">
+          ${chips.map((c, i) => `<button type="button" class="chip-btn${f.chipLabels?.[i] ? ' chip-labeled' : ''}${+c === +f.value ? ' active' : ''}" data-val="${c}"><span>${formatChip(c, f)}</span>${f.chipLabels?.[i] ? `<small>${f.chipLabels[i]}</small>` : ''}</button>`).join('')}
         </div>` : ''}
       </div>`;
     }
     if (f.type === 'pills') {
+      const optionsList = resolveFieldOptions(f, initialFieldValues);
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="pills-grid" role="group" aria-label="${ariaLabel}">
-          ${f.options.map(o => `<button type="button" class="pill-btn${o.note ? ' pill-btn-explained' : ''}${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}"><span>${o.label}</span>${o.note ? `<small>${o.note}</small>` : ''}</button>`).join('')}
+          ${optionsList.map(o => `<button type="button" class="pill-btn${o.note ? ' pill-btn-explained' : ''}${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}"><span>${o.label}</span>${o.note ? `<small>${o.note}</small>` : ''}</button>`).join('')}
         </div>
       </div>`;
     }
     if (f.type === 'select-items') {
+      const optionsList = resolveFieldOptions(f, initialFieldValues);
       return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
         <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
         <input type="hidden" id="${f.id}" value="${f.value}">
         <div class="select-items-grid" role="group" aria-label="${ariaLabel}">
-          ${f.options.map(o => `<button type="button" class="select-item-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}">
+          ${optionsList.map(o => `<button type="button" class="select-item-btn${String(o.value) === String(f.value) ? ' active' : ''}" data-val="${o.value}" aria-pressed="${String(o.value) === String(f.value)}">
             <span class="select-item-mark">${o.label}</span>
             ${o.note ? `<small>${o.note}</small>` : ''}
           </button>`).join('')}
         </div>
       </div>`;
     }
-    const opts = f.options.map(o => `<option value="${o.value}"${String(o.value) === String(f.value) ? ' selected' : ''}>${o.label}</option>`).join('');
+    const optionsList = resolveFieldOptions(f, initialFieldValues);
+    const opts = optionsList.map(o => `<option value="${o.value}"${String(o.value) === String(f.value) ? ' selected' : ''}>${o.label}</option>`).join('');
     return `<div class="field-group${compactClass}" data-field="${f.id}"${condAttr(f)}>
       <label class="field-label" for="${f.id}">${renderFieldLabel(f)}</label>
       <select id="${f.id}" aria-label="${ariaLabel}">${opts}</select>
@@ -2226,10 +2594,45 @@ function renderGenericPanel(tool) {
     </div>`;
   };
 
+  const renderVehicleCompare = () => {
+    const sharedFields = tool.fields.filter(f => f.group === 'shared');
+    const fuelFields = tool.fields.filter(f => f.group === 'fuel');
+    const evFields = tool.fields.filter(f => f.group === 'ev');
+    return `
+      <div class="vc-shared">
+        ${sharedFields.map(f => renderField(f)).join('')}
+      </div>
+      <div class="vc-columns">
+        <div class="vc-col vc-col-fuel">
+          <div class="vc-col-header">
+            <span class="vc-col-dot vc-col-dot-fuel" aria-hidden="true"></span>
+            <div>
+              <strong>Xe xăng</strong>
+              <small>Chi phí nhiên liệu</small>
+            </div>
+          </div>
+          ${fuelFields.map(f => renderField(f)).join('')}
+        </div>
+        <div class="vc-col vc-col-ev">
+          <div class="vc-col-header">
+            <span class="vc-col-dot vc-col-dot-ev" aria-hidden="true"></span>
+            <div>
+              <strong>Xe điện</strong>
+              <small>Chi phí sạc điện</small>
+            </div>
+          </div>
+          ${evFields.map(f => renderField(f)).join('')}
+        </div>
+      </div>`;
+  };
+
   container.classList.toggle('debt-payoff-fields', tool.ui === 'debt-matrix');
   container.classList.toggle('goal-planner-fields', tool.ui === 'goal-planner');
+  container.classList.toggle('vehicle-compare-fields', tool.ui === 'vehicle-compare');
   container.innerHTML = tool.ui === 'debt-matrix'
     ? renderDebtMatrix()
+    : tool.ui === 'vehicle-compare'
+    ? renderVehicleCompare()
     : tool.fields.map(f => renderField(f)).join('');
 
   // Conditional field visibility based on data-cond-field/value
@@ -2244,7 +2647,7 @@ function renderGenericPanel(tool) {
         rangeEl.value = el.value;
         setRangeFill(rangeEl);
       }
-      if (f.type === 'range' || f.type === 'money') {
+      if (f.type === 'range' || f.type === 'stepper' || f.type === 'money') {
         const currentNum = f.type === 'money' ? parseMoney(el.value) : +el.value;
         document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
           btn.classList.toggle('active', +btn.dataset.val === currentNum);
@@ -2264,6 +2667,7 @@ function renderGenericPanel(tool) {
           btn.setAttribute('aria-pressed', String(isActive));
         });
       }
+      refreshDynamicFieldOptions(tool);
       applyConditionalFields();
       computeGeneric(tool);
     });
@@ -2273,7 +2677,7 @@ function renderGenericPanel(tool) {
         el.value = num.toLocaleString('vi-VN');
       });
     }
-    if (f.type === 'money' || f.type === 'range') {
+    if (f.type === 'money' || f.type === 'range' || f.type === 'stepper') {
       document.querySelectorAll(`[data-field="${f.id}"] .chip-btn`).forEach(btn => {
         btn.addEventListener('click', () => {
           if (f.type === 'money') {
@@ -2293,7 +2697,7 @@ function renderGenericPanel(tool) {
         });
       });
     }
-    if (f.type === 'range') {
+    if (f.type === 'range' || f.type === 'stepper') {
       rangeEl?.addEventListener('input', () => {
         el.value = rangeEl.value;
         setRangeFill(rangeEl);
@@ -2321,6 +2725,7 @@ function renderGenericPanel(tool) {
     }
   });
 
+  refreshDynamicFieldOptions(tool);
   computeGeneric(tool);
 }
 
@@ -2410,6 +2815,43 @@ function formatChip(val, f) {
   return val + (unit ? ' ' + unit : '');
 }
 
+function readToolFieldValues(tool) {
+  const vals = {};
+  tool.fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const raw = el ? el.value : f.value;
+    if (f.type === 'money') {
+      vals[f.id] = parseMoney(raw);
+    } else {
+      const num = +raw;
+      vals[f.id] = (raw !== '' && !isNaN(num)) ? num : raw;
+    }
+  });
+  return vals;
+}
+
+function resolveFieldOptions(field, vals = {}) {
+  const options = typeof field.options === 'function' ? field.options(vals) : field.options;
+  return Array.isArray(options) ? options : [];
+}
+
+function refreshDynamicFieldOptions(tool) {
+  const vals = readToolFieldValues(tool);
+  tool.fields.forEach(f => {
+    if (typeof f.options !== 'function' || f.type !== 'select') return;
+    const el = document.getElementById(f.id);
+    if (!el) return;
+    const options = resolveFieldOptions(f, vals);
+    const currentValue = String(el.value || '');
+    const nextValue = options.some(option => String(option.value) === currentValue)
+      ? currentValue
+      : String(options[0]?.value || '');
+    el.innerHTML = options.map(option => `<option value="${option.value}"${String(option.value) === nextValue ? ' selected' : ''}>${option.label}</option>`).join('');
+    el.value = nextValue;
+    vals[f.id] = nextValue;
+  });
+}
+
 function applyConditionalFields() {
   document.querySelectorAll('[data-cond-field]').forEach(el => {
     const fieldId = el.dataset.condField;
@@ -2417,6 +2859,36 @@ function applyConditionalFields() {
     const current = document.getElementById(fieldId)?.value;
     el.style.display = allowed.includes(String(current)) ? '' : 'none';
   });
+}
+
+function syncTietKiemUi(tool, vals) {
+  if (tool.id !== 'tiet-kiem') return;
+  const isMonthly = vals.savingMode === 'monthly';
+  const setFieldLabel = (fieldId, text) => {
+    const labelSpan = document.querySelector(`[data-field="${fieldId}"] .field-label-main > span`);
+    if (labelSpan) labelSpan.textContent = text;
+  };
+  const setFieldTooltip = (fieldId, text) => {
+    const helpEl = document.querySelector(`[data-field="${fieldId}"] .field-help`);
+    if (helpEl) helpEl.setAttribute('data-tooltip', text);
+  };
+
+  setFieldLabel('principal', isMonthly ? 'Số tiền gửi mỗi tháng' : 'Số tiền gửi ban đầu');
+  setFieldLabel('term', isMonthly ? 'Kỳ hạn tái gửi áp dụng' : 'Kỳ hạn gửi');
+  setFieldTooltip(
+    'term',
+    isMonthly
+      ? 'Đây là kỳ hạn của sản phẩm tiết kiệm dùng để áp bảng lãi suất niêm yết khi bạn gửi đều và tái gửi tự động, không phải thời gian mục tiêu tích lũy.'
+      : 'Đây là kỳ hạn của khoản tiền gửi 1 lần. Lãi suất niêm yết được map cố định theo bảng sản phẩm ngày 23/6/2026.'
+  );
+
+  const formulaEl = document.getElementById('genericFormula');
+  if (formulaEl) {
+    formulaEl.innerHTML = isMonthly
+      ? 'Gửi đều hàng tháng: <b>FV = M × ((1 + mr)<sup>n</sup> - 1) / mr</b><br><em>M = số tiền gửi mỗi tháng, mr = lãi suất tháng, n = số tháng tích lũy. Kỳ hạn tái gửi quyết định mức lãi suất niêm yết áp dụng.</em>'
+      : 'Gửi 1 lần: <b>Lãi = Gốc × Lãi suất/năm × Kỳ hạn ÷ 12</b><br>Tổng nhận = <b>Gốc + Lãi</b><br><em>Áp dụng lãi đơn cuối kỳ theo bảng niêm yết ngày 23/6/2026.</em>';
+    formulaEl.style.display = '';
+  }
 }
 
 function fmtField(f, val) {
@@ -2432,16 +2904,8 @@ function fmtChip(val) {
 }
 
 function computeGeneric(tool) {
-  const vals = {};
-  tool.fields.forEach(f => {
-    const raw = document.getElementById(f.id).value;
-    if (f.type === 'money') {
-      vals[f.id] = parseMoney(raw);
-    } else {
-      const num = +raw;
-      vals[f.id] = (raw !== '' && !isNaN(num)) ? num : raw;
-    }
-  });
+  const vals = readToolFieldValues(tool);
+  syncTietKiemUi(tool, vals);
   const res = tool.compute(vals);
   renderToolPartners(tool, vals);
   document.getElementById('resultLabel').textContent  = res.resultLabel || tool.resultLabel;
@@ -4471,4 +4935,165 @@ function ciCalc() {
       insightEl.innerHTML = txt;
     }
   }
+}
+
+// ─── PHẠT NGUỘI PANEL ───────────────────────────────────────────────────────
+
+const PN_MOCK = {
+  // plates with violations
+  '29A12345': {
+    violations: [
+      { date: '14/05/2026', time: '07:32', location: 'Đường Giải Phóng, Hà Nội', type: 'Vượt đèn đỏ', unit: 'PC08 Hà Nội', fine: 4000000, status: 'Chưa xử lý', ref: 'VPHC-2026-00412' },
+      { date: '02/04/2026', time: '16:55', location: 'Vành đai 3, Hoàng Mai, Hà Nội', type: 'Quá tốc độ từ 10–20 km/h', unit: 'PC08 Hà Nội', fine: 800000, status: 'Chưa xử lý', ref: 'VPHC-2026-00287' },
+    ],
+  },
+  '51G999': {
+    violations: [
+      { date: '21/06/2026', time: '08:10', location: 'Đinh Tiên Hoàng, Q.1, TP.HCM', type: 'Đi ngược chiều', unit: 'PC08 TP.HCM', fine: 1200000, status: 'Chưa xử lý', ref: 'VPHC-2026-01155' },
+    ],
+  },
+  '43B56789': {
+    violations: [
+      { date: '30/05/2026', time: '22:14', location: 'Nguyễn Văn Linh, Đà Nẵng', type: 'Không đội mũ bảo hiểm', unit: 'PC08 Đà Nẵng', fine: 400000, status: 'Đã xử lý', ref: 'VPHC-2026-00801' },
+    ],
+  },
+};
+
+let pnVehicle = 'oto';
+
+function initPhatNguoiPanel() {
+  const formula = document.getElementById('pnFormula');
+  if (formula) formula.style.display = 'block';
+  pnReset();
+}
+
+function pnReset() {
+  const el = document.getElementById('pnResult');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="pn-empty-state">
+      <div class="pn-empty-icon">🔍</div>
+      <p>Nhập biển số và nhấn <strong>Tra cứu</strong> để kiểm tra vi phạm</p>
+      <p class="pn-hint">Thử: <span class="pn-sample" onclick="pnSample('29A12345')">29A·12345</span> · <span class="pn-sample" onclick="pnSample('51G999')">51G·999</span> · <span class="pn-sample" onclick="pnSample('CLEAN')">Không vi phạm</span></p>
+    </div>`;
+}
+
+function pnOnInput() {
+  const inp = document.getElementById('pnPlateInput');
+  if (!inp) return;
+  // auto uppercase, strip spaces
+  inp.value = inp.value.toUpperCase().replace(/\s/g, '');
+}
+
+function pnSetVehicle(v, btn) {
+  pnVehicle = v;
+  document.querySelectorAll('.pn-vtab').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+}
+
+function pnSample(plate) {
+  const inp = document.getElementById('pnPlateInput');
+  if (!inp) return;
+  inp.value = plate === 'CLEAN' ? '30H99999' : plate;
+  pnSearch();
+}
+
+function pnSearch() {
+  const inp = document.getElementById('pnPlateInput');
+  const el  = document.getElementById('pnResult');
+  const btn = document.getElementById('pnSearchBtn');
+  const lbl = document.getElementById('pnBtnLabel');
+  if (!inp || !el) return;
+
+  const raw   = inp.value.trim().toUpperCase().replace(/[·.\-\s]/g, '');
+  if (!raw) { el.innerHTML = '<p class="pn-error">Vui lòng nhập biển số trước khi tra cứu.</p>'; return; }
+
+  // Loading state
+  lbl.textContent = 'Đang tra cứu…';
+  btn.disabled = true;
+  el.innerHTML = '<div class="pn-loading"><span class="pn-spinner"></span><span>Đang kết nối hệ thống CSGT…</span></div>';
+
+  setTimeout(() => {
+    lbl.textContent = 'Tra cứu';
+    btn.disabled = false;
+
+    const data = PN_MOCK[raw];
+    if (data) {
+      const total = data.violations.reduce((s, v) => s + (v.status === 'Chưa xử lý' ? v.fine : 0), 0);
+      const pending = data.violations.filter(v => v.status === 'Chưa xử lý');
+      el.innerHTML = `
+        <div class="pn-result-header ${pending.length ? 'has-violation' : 'all-clear'}">
+          <div class="pn-result-icon">${pending.length ? '⚠️' : '✅'}</div>
+          <div>
+            <div class="pn-result-plate">${formatPlate(raw)}</div>
+            <div class="pn-result-summary">${pending.length ? `<strong>${pending.length} vi phạm chưa xử lý</strong> · Tổng phạt ước tính <strong>${fmt(total)}</strong>` : 'Không có vi phạm đang chờ xử lý'}</div>
+          </div>
+        </div>
+        <div class="pn-violations">
+          ${data.violations.map(v => `
+          <div class="pn-violation-card ${v.status === 'Đã xử lý' ? 'resolved' : ''}">
+            <div class="pn-violation-top">
+              <span class="pn-vtype">${v.type}</span>
+              <span class="pn-vstatus ${v.status === 'Đã xử lý' ? 'done' : 'pending'}">${v.status}</span>
+            </div>
+            <div class="pn-violation-meta">
+              <span>📅 ${v.date} lúc ${v.time}</span>
+              <span>📍 ${v.location}</span>
+              <span>🏛️ ${v.unit}</span>
+              <span>🔖 Mã: ${v.ref}</span>
+            </div>
+            <div class="pn-violation-fine">
+              <span class="pn-fine-label">Mức phạt tham chiếu</span>
+              <span class="pn-fine-amt ${v.status === 'Đã xử lý' ? 'resolved' : ''}">${fmt(v.fine)}</span>
+            </div>
+            ${v.status === 'Chưa xử lý' ? `<button class="pn-pay-btn" onclick="pnShowPay('${v.ref}')">Nộp phạt qua MoMo →</button>` : ''}
+          </div>`).join('')}
+        </div>
+        <p class="pn-disclaimer">Kết quả mô phỏng. Tra cứu chính thức tại <a href="https://www.csgt.vn" target="_blank" rel="noopener">csgt.vn</a> hoặc trên ứng dụng MoMo.</p>`;
+    } else {
+      // No violations
+      el.innerHTML = `
+        <div class="pn-result-header all-clear">
+          <div class="pn-result-icon">✅</div>
+          <div>
+            <div class="pn-result-plate">${formatPlate(raw)}</div>
+            <div class="pn-result-summary">Không tìm thấy vi phạm đang chờ xử lý</div>
+          </div>
+        </div>
+        <div class="pn-clear-body">
+          <p>Hệ thống không ghi nhận vi phạm chưa xử lý cho biển số này tại thời điểm tra cứu.</p>
+          <ul class="pn-clear-notes">
+            <li>Vi phạm mới có thể chưa được đồng bộ (thường mất 3–7 ngày)</li>
+            <li>Nên tra cứu lại sau các chuyến đi dài hoặc trước kỳ đăng kiểm</li>
+            <li>Tra cứu chính thức tại <a href="https://www.csgt.vn" target="_blank" rel="noopener">csgt.vn</a> để xác nhận</li>
+          </ul>
+          <button class="pn-recheck-btn" onclick="document.getElementById('pnPlateInput').value='';document.getElementById('pnPlateInput').focus()">Tra cứu biển số khác</button>
+        </div>
+        <p class="pn-disclaimer">Kết quả mô phỏng — không thay thế kết quả chính thức từ cơ quan chức năng.</p>`;
+    }
+  }, 900);
+}
+
+function pnShowPay(ref) {
+  const el = document.getElementById('pnResult');
+  const existing = document.querySelector('.pn-pay-modal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.className = 'pn-pay-modal';
+  modal.innerHTML = `
+    <div class="pn-pay-inner">
+      <div class="pn-pay-header"><strong>Nộp phạt qua MoMo</strong><button onclick="this.closest('.pn-pay-modal').remove()">✕</button></div>
+      <div class="pn-pay-steps">
+        <div class="pn-pay-step"><span>1</span><p>Mở ứng dụng MoMo → Tiện ích → <strong>Phạt Nguội</strong></p></div>
+        <div class="pn-pay-step"><span>2</span><p>Nhập biển số hoặc mã quyết định <strong>${ref}</strong></p></div>
+        <div class="pn-pay-step"><span>3</span><p>Xác nhận thông tin và thanh toán bằng số dư MoMo hoặc tài khoản ngân hàng</p></div>
+      </div>
+      <button class="pn-pay-cta" onclick="this.closest('.pn-pay-modal').remove()">Đã hiểu</button>
+    </div>`;
+  document.getElementById('phatNguoiPanel').appendChild(modal);
+}
+
+function formatPlate(raw) {
+  // 29A12345 → 29A·12345
+  const m = raw.match(/^(\d{2}[A-Z]{1,2})(\d+)$/);
+  return m ? `${m[1]}·${m[2]}` : raw;
 }

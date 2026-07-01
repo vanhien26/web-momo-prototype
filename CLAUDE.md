@@ -204,3 +204,116 @@ node -e "require('./assets/store.js')"
 # Serve test
 curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/seo-geo-project
 ```
+
+---
+
+## 11. MONEY LAB UTILITY UI RULES
+
+Áp dụng cho `demos/financial.html`, `demos/financial.js`, `demos/financial.css` và mọi utility mới trong Money Lab.
+
+### A. Chọn input control theo bản chất quyết định
+
+Không chọn UI control theo cảm tính. Dùng rule này:
+
+- `money + exact + confirm` → numeric money input + sample chips
+- `percent/score + explore` → range/slider + numeric steppers
+- `integer/step-based` → stepper `+/-`, chỉ dùng slider nếu user cần thử nhiều kịch bản nhanh
+- `enum + many options + không cần so sánh trực diện` → native select
+- `enum + few options + cần so sánh nhanh` → pills / segmented control
+- `enum + brand/partner/options cần nhìn cùng lúc` → `select-items`, không dùng listing card lớn
+
+Rule bổ sung để tránh lạm dụng control:
+
+- Slider chỉ dùng cho giá trị liên tục hoặc gần liên tục khi user đang explore tradeoff, không cần chốt giá trị tuyệt đối chính xác ngay.
+- Không dùng slider cho dữ liệu rời rạc như năm sinh, tháng sinh, quận huyện, nhóm nghề, mốc luật, kỳ hạn pháp lý hoặc mã phân loại.
+- Checkbox chỉ dùng cho yes/no, bật tắt, hoặc nhiều điều kiện độc lập có thể cùng đúng một lúc.
+- Không dùng checkbox nếu các lựa chọn loại trừ nhau và user chỉ được chọn một phương án.
+- Native dropdown dùng cho dữ liệu rời rạc cần chọn chính xác, đặc biệt khi option dài hoặc nhiều hơn khoảng 5 lựa chọn.
+- Nếu chỉ có 2 đến 4 lựa chọn ngắn và cần so nhanh, ưu tiên pills hoặc segmented control thay vì dropdown.
+
+### A2. Mobase component intent mapping
+
+Khi dùng component theo Mobase, map intent như sau:
+
+- `Button`: CTA hoặc action rõ ràng, có variant, size, state. Không dùng button để giả lập select hay toggle.
+- `Checkbox`: chỉ dùng khi user có thể chọn nhiều option trong một list, hoặc một điều kiện yes/no độc lập.
+- `Radio Group`: dùng khi user phải chọn đúng một option từ danh sách nhiều hơn 2 lựa chọn.
+- `Toggle switch`: chỉ dùng cho bật/tắt trạng thái có hiệu lực ngay. Không thêm label trạng thái dư thừa kiểu `On/Off` lặp lại bên cạnh.
+- `Select`: dùng khi hiển thị một danh sách option để user chọn chính xác, đặc biệt khi option dài hoặc nhiều.
+- `Slider`: chỉ dùng để chọn một giá trị hoặc một khoảng giá trị trong một range preset.
+- `Stepper`: dùng để tăng giảm numeric value khi độ lệch quanh default nhỏ và user cần bấm tăng giảm thay vì kéo.
+
+Field schema nên có `ui` metadata nếu field quan trọng:
+
+```js
+ui: {
+  valueType: 'money' | 'percent' | 'number' | 'enum' | 'score',
+  precision: 'exact' | 'approximate',
+  decisionMode: 'confirm' | 'explore' | 'compare',
+  compareOptions: true | false,
+  optionCount: number,
+  sampleNumbers: true | false,
+}
+```
+
+`financial.js` hiện có decision layer để normalize field control từ metadata này. Khi thêm utility mới, ưu tiên khai báo `ui` thay vì chỉ khai báo `type`.
+
+### B. Result panel hierarchy
+
+Mỗi utility luôn có 1 result chính ở cột phải. Các lớp khác chỉ được show khi giúp user ra quyết định tốt hơn:
+
+- `Result only`: khi chỉ cần 1 kết luận, chart không tăng insight
+- `Result + details`: khi cần 1 đến 3 driver bổ sung
+- `Result + breakdown chart`: khi user cần hiểu tỷ trọng hoặc cơ cấu thành phần
+- `Result + trend/comparison chart`: khi user cần thấy xu hướng hoặc tradeoff
+
+Không được lặp lại cùng một meaning giữa:
+
+- formula
+- detail rows
+- chart legend
+- chart center summary
+- insight copy
+
+Nếu chart đã giải thích cơ cấu, `details` chỉ giữ phần bổ sung như total fee, risk, delta, threshold hoặc recommendation. Không đọc lại legend bằng text lần thứ hai.
+
+### C. Chart rules
+
+Chỉ show chart khi nó trả lời một trong các câu hỏi sau:
+
+- cơ cấu gồm những phần nào
+- thành phần nào đang chiếm tỷ trọng lớn
+- xu hướng đang đi lên hay đi xuống
+- 2 chiến lược khác nhau lệch nhau ra sao
+
+Không show chart nếu:
+
+- chỉ minh họa lại đúng con số đã có
+- không làm đổi quyết định
+- legend, label, summary gây chồng chữ hoặc lặp thông tin
+
+### D. Layout rules cho chart và legend
+
+- Text trong legend phải có khung ổn định, không đặt `label` và `value` vào layout gây đè nhau khi panel hẹp
+- Khi panel hẹp, legend và chart phải tự chuyển từ ngang sang dọc
+- Text trong donut/pie center phải giữ `value + unit` trên một dòng nếu khả thi
+- Không để chart center, legend hoặc badge phá hierarchy của result chính
+
+### E. Tooltips cho field
+
+Tooltip chỉ thêm khi user có thể không hiểu con số đại diện cho gì. Tooltip giải thích định nghĩa hoặc phạm vi dữ liệu, không lặp label theo cách khác.
+
+### F. Harness expectation
+
+Khi sửa Money Lab UI, chạy:
+
+```bash
+node scripts/ui-harness-check.mjs
+```
+
+Harness phải tiếp tục bao phủ:
+
+- decision rule layer tồn tại
+- selector density rules
+- label/input hierarchy
+- future additions không quay lại dropdown/card sai loại
