@@ -1,266 +1,302 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Widget Store — MoSpark</title>
-<style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilities Tool — MoSpark · MoMo Utilities</title>
+  <meta name="description" content="Utilities Tool là thư viện MoMo Utilities đa dạng cho nhiều industry, từ tính toán, mô phỏng đến công cụ tương tác và trải nghiệm nhúng.">
+  <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
+  <style>
 @font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
-@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 800;font-display:swap}
 @font-face{font-family:'MoMoTrustDisplay';src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-display:swap}
+
 :root{
-  --pink:#a50064;--pink-light:#f9e8f4;--pink-mid:#e8a0cc;
-  --ink:#111827;--muted:#6b7280;--muted2:#9ca3af;--line:#e5e7eb;--canvas:#f4faf5;--white:#fff;
-  --r:18px;--r-sm:10px;
+  --momo:#a50064;
+  --ink:#1d2939;
+  --muted:#667085;
+  --line:#e4e7ec;
+  --canvas:#f2f4f7;
+  --white:#fff;
+  --rounded-lg:8px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'MoMoTrustSans',-apple-system,sans-serif;background:var(--canvas);color:var(--ink);min-height:100vh}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5}
+h1,h2,h3{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;cursor:pointer}
 
-/* NAV */
-.nav{position:sticky;top:0;z-index:50;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav-left{display:flex;align-items:center;gap:12px}
-.back-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r-sm);font-size:12px;font-weight:700;color:var(--muted);text-decoration:none;border:1.5px solid var(--line);background:var(--white);transition:all .15s}
-.back-btn:hover{color:var(--ink);border-color:var(--muted2)}
-.nav-brand{font-size:13px;font-weight:800;color:var(--ink)}
-.nav-tag{font-size:10px;font-weight:700;color:var(--pink);background:var(--pink-light);border-radius:4px;padding:2px 7px}
+/* ── Site Header */
+.site-header{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink)}
+.back-link{font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:color .12s;white-space:nowrap}
+.back-link:hover{color:var(--ink)}
+.bar-sep{width:1px;height:18px;background:var(--line);flex-shrink:0}
+.brand-mark{width:34px;height:34px;border-radius:var(--rounded-lg);background:var(--momo);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800;line-height:.75;text-align:center;overflow:hidden}
+.brand strong{display:block;font-size:13px}
+.brand small{display:block;font-size:10px;color:var(--muted)}
+.site-header nav{display:flex;align-items:center;gap:20px}
+.site-header nav a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none}
+.site-header nav a:hover{color:var(--momo)}
+.status{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#15803d}
+.status i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#12b76a;box-shadow:0 0 0 3px #d1fadf}
 
-/* HERO */
-.hero{background:linear-gradient(160deg,#e6f5ea 0%,#f9fdf9 60%,var(--canvas) 100%);padding:48px 24px 36px;border-bottom:1px solid #d3ead8}
-.hero-inner{max-width:1160px;margin:0 auto}
-.hero-eyebrow{font-size:11px;font-weight:800;color:#2d7a3a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.hero h1{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1;letter-spacing:-.03em;color:var(--ink);margin-bottom:12px}
-.hero-sub{font-size:14px;line-height:1.8;color:var(--muted);max-width:560px;margin-bottom:28px}
-.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
-.hero-stat{display:flex;flex-direction:column;gap:3px}
-.hero-stat-n{font-size:28px;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
-.hero-stat-l{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#5a8a62}
+/* ── Hero */
+.mlc-hero{background:linear-gradient(135deg,#1a0a14 0%,#3d0a28 60%,#6b0f3d 100%);padding:56px 24px 48px;text-align:center;color:#fff}
+.mlc-hero-inner{max-width:700px;margin:0 auto}
+.mlc-kicker{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:16px}
+.mlc-title{font-size:clamp(32px,6vw,52px);font-weight:800;margin:0 0 12px;line-height:1.1}
+.mlc-sub{font-size:15px;color:rgba(255,255,255,.7);margin:0 0 28px;line-height:1.6}
 
-/* CONTROLS */
-.controls{max-width:1160px;margin:0 auto;padding:22px 24px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.search-wrap{position:relative;width:240px;flex-shrink:0}
-.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted2)}
-.search-input{width:100%;height:38px;padding:0 12px 0 34px;border:1.5px solid var(--line);border-radius:20px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--white);outline:none;transition:border-color .15s}
-.search-input:focus{border-color:#3d9e50}
-.filter-row{display:flex;gap:6px;flex-wrap:wrap}
-.pill{font-family:inherit;font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;border:1.5px solid var(--line);background:var(--white);color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
-.pill:hover{border-color:#3d9e50;color:#2d7a3a}
-.pill.on{background:#2d7a3a;border-color:#2d7a3a;color:#fff}
-.count-badge{margin-left:auto;font-size:12px;font-weight:600;color:var(--muted2)}
+/* ── Search */
+.mlc-search{max-width:560px;margin:0 auto 22px;text-align:left}
+.mlc-search-label{display:inline-block;margin-bottom:8px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.74)}
+.mlc-search-field{display:flex;align-items:center;gap:10px;min-height:54px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.mlc-search-field:focus-within{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.16);box-shadow:0 0 0 4px rgba(255,255,255,.08)}
+.mlc-search-icon{flex:none;color:rgba(255,255,255,.68)}
+.mlc-search-field input{flex:1;min-width:0;border:0;background:transparent;color:#fff;font-size:14px;outline:0}
+.mlc-search-field input::placeholder{color:rgba(255,255,255,.48)}
+.mlc-search-clear{width:28px;height:28px;flex:none;border:0;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font-size:20px;line-height:1;display:grid;place-items:center;padding:0}
+.mlc-search-clear:hover{background:rgba(255,255,255,.22)}
+.mlc-search-meta{margin:10px 0 0;font-size:12px;color:rgba(255,255,255,.68);line-height:1.5}
 
-/* GRID */
-.grid-wrap{max-width:1160px;margin:0 auto;padding:8px 24px 72px}
-.widget-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-.empty{padding:72px;text-align:center;color:var(--muted2);font-size:14px;font-weight:600}
+/* ── Pills */
+.mlc-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.mlc-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.mlc-pill:hover{background:rgba(255,255,255,.2)}
+.mlc-pill.active{background:#fff;color:#AF0171;border-color:#fff;font-weight:600}
+.mlc-pill-icon{width:15px;height:15px;flex:none}
 
-/* CARD — NerdWallet style */
-.w-card{position:relative;background:var(--white);border:1.5px solid #d9edd9;border-radius:var(--r);padding:22px 20px 20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;transition:border-color .2s,box-shadow .2s,transform .15s;cursor:pointer;min-height:210px}
-.w-card:hover{border-color:#3d9e50;box-shadow:0 6px 24px rgba(45,122,58,.12),0 2px 6px rgba(0,0,0,.05);transform:translateY(-2px)}
-.w-arrow{position:absolute;top:14px;right:16px;color:#9ca3af;transition:color .15s,transform .15s}
-.w-card:hover .w-arrow{color:#2d7a3a;transform:translate(2px,-2px)}
-.w-img{width:88px;height:88px;object-fit:contain;margin:4px auto 14px;display:block;flex-shrink:0}
-.w-img-svg{width:88px;height:88px;margin:4px auto 14px;display:block;flex-shrink:0}
-.w-img-svg svg{width:100%;height:100%;display:block}
-.w-img-emoji{width:88px;height:88px;display:flex;align-items:center;justify-content:center;font-size:52px;margin:4px auto 14px;flex-shrink:0}
-.w-name{font-size:15px;font-weight:800;color:var(--ink);line-height:1.3;margin-bottom:8px}
-.w-desc{font-size:12px;line-height:1.7;color:var(--muted);flex:1}
+/* ── Grid */
+.mlc-grid-wrap{max-width:1120px;margin:0 auto;padding:32px 24px 64px}
+.mlc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+@media(max-width:1100px){.mlc-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:820px){.mlc-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.mlc-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
+@media(max-width:360px){.mlc-grid{grid-template-columns:1fr}}
 
-/* Section label */
-.sec-label{max-width:1160px;margin:0 auto;padding:20px 24px 10px;font-size:18px;font-weight:800;color:var(--ink)}
+/* ── Card */
+.mlc-card{position:relative;background:#fff;border-radius:16px;padding:20px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;border:1.5px solid transparent;box-shadow:0 1px 4px rgba(0,0,0,.07);transition:box-shadow .15s,border-color .15s,transform .12s;text-decoration:none;color:inherit}
+.mlc-card:hover{box-shadow:0 6px 20px rgba(175,1,113,.12);border-color:rgba(175,1,113,.25);transform:translateY(-2px)}
+.mlc-arrow{position:absolute;top:14px;right:14px;color:#ccc;transition:color .15s}
+.mlc-card:hover .mlc-arrow{color:#AF0171}
+.mlc-icon{width:72px;height:72px;object-fit:contain;display:block}
+.mlc-icon-emoji{width:72px;height:72px;font-size:42px;display:flex;align-items:center;justify-content:center}
+.mlc-name{font-size:13px;font-weight:700;color:#1a1a2e;text-align:center;line-height:1.3}
+.mlc-desc{font-size:11.5px;color:#666;text-align:center;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mlc-empty{grid-column:1/-1;padding:32px 24px;border-radius:20px;border:1px dashed rgba(175,1,113,.22);background:linear-gradient(180deg,#fff 0%,#fff7fb 100%);text-align:center;color:#475467}
+.mlc-empty strong{display:block;margin-bottom:6px;font-size:16px;color:#1a1a2e}
+.mlc-empty p{margin:0;font-size:13px;line-height:1.6}
 
-@media(max-width:1000px){.widget-grid{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:760px){.widget-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:520px){
-  .widget-grid{grid-template-columns:repeat(2,1fr)}
-  .hero{padding:32px 16px 28px}
-  .controls,.grid-wrap{padding-left:16px;padding-right:16px}
+@media(max-width:560px){
+  .site-header{height:auto;padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
+  .site-header nav{flex-wrap:wrap;gap:12px}
+  .mlc-search{margin-bottom:18px}
+  .mlc-search-field{min-height:50px;padding:0 14px}
+  .mlc-search-field input{font-size:13px}
 }
-</style>
+  </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-left">
-    <a href="/lab" class="back-btn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      Lab
-    </a>
-    <span class="nav-brand">Widget Store</span>
+<header class="site-header">
+  <div class="brand">
+    <a href="/lab" class="back-link">← Lab</a>
+    <span class="bar-sep"></span>
+    <span class="brand-mark"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" style="width:80%;height:80%;object-fit:contain;display:block"></span>
+    <span class="brand-mark" style="background:#fff;border:1px solid rgba(0,0,0,.08)"><img src="https://homepage.momocdn.net/img/4f2fa6b0-9f96-4077-b210-6e848b7d7104-1-260622153405.png" alt="Web Platform" style="width:100%;height:100%;object-fit:contain;display:block"></span>
+    <span><strong>Utilities Tool</strong><small>MoSpark · MoMo Utilities</small></span>
   </div>
-  <span class="nav-tag">MoSpark</span>
-</nav>
+  <nav aria-label="Điều hướng trang">
+    <a href="/financial-utilities">Money Lab</a>
+    <span class="status"><i></i><span id="navCount">37</span> widgets live</span>
+  </nav>
+</header>
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow">MoSpark Platform</div>
-    <h1>Widget Store</h1>
-    <p class="hero-sub">Thư viện widget & tool tương tác có thể nhúng vào MiniWeb, landing page, blog và campaign. Chọn widget, xem demo và tích hợp ngay.</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><span class="hero-stat-n" id="statTotal">21</span><span class="hero-stat-l">Widgets</span></div>
-      <div class="hero-stat"><span class="hero-stat-n" id="statCats">—</span><span class="hero-stat-l">Categories</span></div>
-      <div class="hero-stat"><span class="hero-stat-n">∞</span><span class="hero-stat-l">Embed points</span></div>
+<div class="mlc-hero">
+  <div class="mlc-hero-inner">
+    <p class="mlc-kicker" id="heroKicker">37 MoMo Widgets</p>
+    <h1 class="mlc-title">Utilities Tool</h1>
+    <p class="mlc-sub">Thư viện MoMo Utilities đa dạng cho nhiều industry và use case. Chọn utility để mở ngay trải nghiệm tương ứng.</p>
+    <div class="mlc-search" role="search" aria-label="Tìm kiếm utility">
+      <label class="mlc-search-label" for="mlcSearchInput">Tìm utility</label>
+      <div class="mlc-search-field">
+        <svg class="mlc-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="mlcSearchInput" type="search" placeholder="Tìm theo tên utility, use case, mô tả..." autocomplete="off">
+        <button class="mlc-search-clear" id="mlcSearchClear" type="button" aria-label="Xóa từ khóa" hidden>&times;</button>
+      </div>
+      <p class="mlc-search-meta" id="mlcSearchMeta"></p>
     </div>
+    <div class="mlc-pills" id="mlcPills"></div>
   </div>
 </div>
 
-<div class="controls">
-  <div class="search-wrap">
-    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input class="search-input" id="searchQ" type="search" placeholder="Tìm widget..." autocomplete="off">
-  </div>
-  <div class="filter-row" id="filterRow"></div>
-  <span class="count-badge" id="countBadge"></span>
-</div>
-
-<div class="grid-wrap">
-  <div class="widget-grid" id="grid"></div>
-  <div class="empty" id="emptyMsg" style="display:none">Không tìm thấy widget phù hợp.</div>
+<div class="mlc-grid-wrap">
+  <div class="mlc-grid" id="mlcGrid"></div>
 </div>
 
 <script>
-const ICON_BASE = '../assets/icons/momo/';
-const ICONS = {
-  'vay-nhanh': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="44" cy="44" r="30"/><path d="M45 26v36"/><path d="M36 33c0-4 4-7 9-7 6 0 10 4 10 9 0 6-5 9-11 11-7 2-11 5-11 11 0 6 5 10 12 10 6 0 10-2 12-6"/><path d="M16 39h8M16 49h8"/></svg>',
-  'tra-gop': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="24" width="52" height="38" rx="8"/><path d="M24 38h40M24 48h18"/><circle cx="58" cy="46" r="9"/><path d="M58 41v10M53 46h10"/></svg>',
-  'vay-mua-nha': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 44 44 24l24 20"/><path d="M26 40v24h36V40"/><path d="M35 64V48h18v16"/><path d="M16 44h8M64 44h8"/></svg>',
-  'dieu-kien-vay-mua-nha': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="34" cy="34" r="18"/><path d="M46 46l18 18"/><path d="M58 24h14M58 34h14M58 44h14"/><path d="M34 26v16M26 34h16"/></svg>',
-  'lai-the-tin-dung': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="24" width="52" height="36" rx="8"/><path d="M24 38h40M24 48h18"/><circle cx="58" cy="47" r="9"/><path d="M58 42v10M53 47h10"/></svg>',
-  'cic-score': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 56a24 24 0 1 1 48 0"/><path d="M44 44l13-13"/><path d="M44 56h22"/><path d="M26 56a18 18 0 0 1 36 0"/></svg>',
-  'cic-stimulator': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="20" width="52" height="48" rx="10"/><path d="M28 52h32"/><path d="M30 44l10-10 10 6 12-16"/><path d="M60 24h8v8"/></svg>',
-  'bao-hiem-o-to': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M44 18 68 28v14c0 16-10 28-24 34-14-6-24-18-24-34V28l24-10Z"/><path d="M44 34v20"/><path d="M34 44h20"/></svg>',
-  'bhxh': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M44 18 68 28v16c0 15-11 26-24 32-13-6-24-17-24-32V28l24-10Z"/><path d="M44 34v20"/><path d="M34 44h20"/></svg>',
-  'luong-huu': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="44" cy="30" r="12"/><path d="M26 66c3-12 11-18 18-18s15 6 18 18"/><path d="M22 24l-8-6M66 24l8-6"/></svg>',
-  'bhxh-1-lan': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="26" width="56" height="36" rx="8"/><path d="M30 44h28"/><path d="M44 30v28"/><circle cx="62" cy="56" r="10"/><path d="M58 56h8"/></svg>',
-  'tiet-kiem': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="44" cy="44" r="22"/><path d="M44 26v18l12 8"/><path d="M56 26h10"/><path d="M16 44h6M66 44h6"/></svg>',
-  'nuoi-con': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="44" cy="28" r="10"/><path d="M22 66c4-13 14-20 22-20s18 7 22 20"/><path d="M28 26l-8-6M60 26l8-6"/></svg>',
-  'lai-suat': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 64h52"/><path d="M26 64V42h10v22M40 64V32h10v32M54 64V24h10v40"/><path d="M60 20l10-8"/><path d="M64 20h6v6"/></svg>',
-  'chung-chi-quy': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 64 36 32l16 18 16-26"/><path d="M18 64h52"/><path d="M36 32h16"/><path d="M58 18h10v10"/></svg>',
-  'gold': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M28 34h32l8 16-24 20-24-20 8-16Z"/><path d="M34 34 44 18l10 16"/><path d="M44 34v36"/><path d="M18 52h10"/></svg>',
-  'stock': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="20" width="52" height="48" rx="8"/><path d="M28 54l10-10 8 6 16-20"/><path d="M54 26h8v8"/></svg>',
-  'thue-tncn': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 18h30l14 14v38H22V18Z"/><path d="M52 18v14h14"/><path d="M30 50h28M30 60h14"/><path d="M56 54l8 8-8 8"/></svg>',
-  'quyet-toan-tncn': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 18h30l14 14v38H22V18Z"/><path d="M52 18v14h14"/><path d="M30 52h16"/><path d="M30 62h10"/><path d="M54 54l8 8-8 8"/></svg>',
-  'thue-tndn-sme': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 18h30l14 14v38H22V18Z"/><path d="M52 18v14h14"/><path d="M28 46h24M28 56h18"/><path d="M56 52l8 8-8 8"/></svg>',
-  'ty-gia': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="44" cy="44" r="18"/><path d="M44 26v36"/><path d="M36 34c0-4 4-7 8-7 6 0 10 4 10 8 0 5-4 8-10 10-6 2-10 5-10 10 0 5 4 8 10 8 5 0 9-2 11-5"/><path d="M64 30h8M64 44h8M64 58h8"/></svg>',
-  'fx-compare': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 30h44M22 46h44M22 62h44"/><path d="M56 22l10 8-10 8"/><path d="M56 54l10 8-10 8"/></svg>',
-  'travel-budget': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 60h48"/><path d="M28 60V38h10v22M42 60V28h10v32M56 60V46h10v14"/><path d="M58 24h10M63 19v10"/></svg>',
-  'net-worth': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="30" r="10"/><circle cx="56" cy="30" r="10"/><path d="M22 64c3-10 10-16 20-16s17 6 20 16"/><path d="M24 24l-6-6M64 24l6-6"/></svg>',
-  'dti': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 60h44"/><path d="M28 60V44h8v16M40 60V28h8v32M52 60V36h8v24"/><path d="M26 24h36"/><path d="M56 24l10 10"/></svg>',
-  'debt-payoff': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 58h44"/><path d="M28 58V40h8v18M40 58V30h8v28M52 58V22h8v36"/><path d="M60 24l10-10"/><path d="M58 18h12v12"/></svg>',
-  'quy-du-phong': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M28 60h32l-4-28H32l-4 28Z"/><path d="M36 32 44 20l8 12"/><path d="M22 60h44"/><path d="M60 24h10"/></svg>',
-  'tu-do-tai-chinh': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="44" cy="44" r="22"/><path d="M44 26v18l12 8"/><path d="M18 44h8M62 44h8"/><path d="M24 24l-6-6M64 24l6-6"/></svg>',
-  'dam-cuoi': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 62h48"/><path d="M28 62V40h32v22"/><path d="M26 40 44 24l18 16"/><path d="M38 24h12"/></svg>',
-  'hoc-phi': '<svg viewBox="0 0 88 88" fill="none" stroke="#f04d9f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 18h30l14 14v38H22V18Z"/><path d="M52 18v14h14"/><path d="M30 46h24M30 56h16"/><path d="M54 52l8 8-8 8"/></svg>'
-};
+/* ─────────────────────────────────────────────────────────────────
+   Utilities Tool — source of truth cho utilities catalog
+   Khi thêm widget mới: thêm vào WIDGETS array bên dưới.
+   financial.html nhúng catalog riêng — cần sync thủ công khi có thay đổi.
+   ───────────────────────────────────────────────────────────────── */
+(function(){
+  const ICON_BASE = '/assets/icons/momo/';
+  const ARROW_SVG = `<svg class="mlc-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`;
 
-const CATS = [
-  { id:'all',        label:'Tất cả' },
-  { id:'Credit',     label:'💳 Tín dụng' },
-  { id:'Insurance',  label:'🛡 Bảo hiểm' },
-  { id:'Savings',    label:'🏦 Tiết kiệm' },
-  { id:'Investment', label:'📈 Đầu tư' },
-  { id:'Tax',        label:'📋 Thuế' },
-  { id:'FX',         label:'💱 Tỷ giá' },
-  { id:'Financial Health', label:'❤️ Sức khỏe TC' },
-  { id:'Planning',   label:'🗓 Kế hoạch' },
-];
+  const CATS = [
+    {id:'all',              icon:'grid',             label:'Tất cả'},
+    {id:'Credit',           icon:'card',             label:'Tín dụng'},
+    {id:'Insurance',        icon:'social-insurance', label:'Bảo hiểm'},
+    {id:'Savings',          icon:'savings',          label:'Tiết kiệm'},
+    {id:'Investment',       icon:'stock',            label:'Đầu tư'},
+    {id:'Tax',              icon:'tax',              label:'Thuế'},
+    {id:'FX',               icon:'exchange',         label:'Tỷ giá'},
+    {id:'Phương tiện',      icon:'transport',        label:'Phương tiện'},
+    {id:'Financial Health', icon:'dti',              label:'Sức khỏe TC'},
+    {id:'Planning',         icon:'calendar',         label:'Kế hoạch'},
+  ];
 
-const BASE = '/widget-store#';
-const WIDGETS = [
-  // Credit
-  {id:'vay-nhanh',      name:'Vay Nhanh',               cat:'Credit',          icon:'06_vay_nhanh.png',                    href:BASE+'vay-nhanh',       desc:'Ước tính số tiền trả hàng tháng theo số tiền vay, lãi suất và kỳ hạn.'},
-  {id:'tra-gop',        name:'Trả Góp Ví Trả Sau',      cat:'Credit',          icon:'05_vi_tra_sau.png',                   href:BASE+'tra-gop',         desc:'Ước tính khoản trả hằng kỳ khi chuyển đổi trả góp dư nợ qua Ví Trả Sau MoMo.'},
-  {id:'cic-score',      name:'CIC Score',               cat:'Credit',          icon:'07_credittech_tai_chinh_sieu_toc.png',href:BASE+'cic-score',       desc:'Mô phỏng điểm tín dụng CIC theo thanh toán, sử dụng hạn mức và lịch sử.'},
-  {id:'cic-stimulator', name:'CIC Stimulator',          cat:'Credit',          icon:'07_credittech_tai_chinh_sieu_toc.png',href:BASE+'cic-stimulator',  desc:'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.'},
-  // Insurance
-  {id:'bao-hiem-o-to',  name:'Bảo Hiểm Ô Tô',          cat:'Insurance',       icon:'07_bao_hiem.png',                     href:BASE+'bao-hiem-o-to',   desc:'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí thị trường.'},
-  {id:'bhxh',           name:'BHXH',                   cat:'Insurance',       icon:'06_vien-phi.svg',                     href:BASE+'bhxh',            desc:'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.'},
-  {id:'luong-huu',      name:'Lương Hưu',               cat:'Insurance',       icon:'06_vien-phi.svg',                     href:BASE+'luong-huu',       desc:'Ước tính lương hưu hàng tháng theo số năm đóng BHXH, giới tính và lương bình quân.'},
-  {id:'bhxh-1-lan',     name:'BHXH 1 Lần',             cat:'Insurance',       icon:'15_hoan-tien.svg',                    href:BASE+'bhxh-1-lan',      desc:'Ước tính tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024.'},
-  // Savings
-  {id:'tiet-kiem',      name:'Tiết Kiệm',               cat:'Savings',         icon:'08_tiet_kiem.png',                    href:BASE+'tiet-kiem',       desc:'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.'},
-  {id:'nuoi-con',       name:'Kế Hoạch Nuôi Con',       cat:'Savings',         icon:'🧒',                                  href:BASE+'nuoi-con',        desc:'Ước tính chi phí nuôi dạy con đến 18 tuổi và tích lũy quỹ đại học.'},
-  {id:'lai-suat',       name:'Lãi Suất Ngân Hàng',      cat:'Savings',         icon:'01_lai_suat_ngan_hang.png',           href:BASE+'lai-suat',        desc:'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận.'},
-  // Investment
-  {id:'chung-chi-quy',  name:'Chứng Chỉ Quỹ',          cat:'Investment',      icon:'05_mutual_funds_chung_chi_quy.png',   href:BASE+'chung-chi-quy',   desc:'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.'},
-  {id:'gold',           name:'Giá Vàng',                cat:'Investment',      icon:'03_gia_vang.png',                     href:BASE+'gold',            desc:'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và hòa vốn theo kịch bản.'},
-  {id:'stock',          name:'Chứng Khoán',             cat:'Investment',      icon:'02_chung_khoan.png',                  href:BASE+'stock',           desc:'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.'},
-  // Tax
-  {id:'thue-tncn',      name:'Thuế TNCN',               cat:'Tax',             icon:'04_thue_tncn.png',                    href:BASE+'thue-tncn',       desc:'Ước tính thuế thu nhập cá nhân theo biểu lũy tiến 5 bậc và giảm trừ gia cảnh.'},
-  {id:'quyet-toan-tncn',name:'Quyết Toán TNCN',         cat:'Tax',             icon:'05_quyet_toan_tncn.png',              href:BASE+'quyet-toan-tncn', desc:'Quyết toán thuế TNCN cuối năm: phải nộp thêm hay được hoàn trước 30/04.'},
-  {id:'thue-tndn-sme',  name:'Thuế TNDN SME',           cat:'Tax',             icon:'06_thue_tndn_sme.png',                href:BASE+'thue-tndn-sme',   desc:'Tính thuế TNDN cho SME theo Luật 67/2025: 15%/17%/20%, miễn 3 năm DN mới.'},
-  // FX
-  {id:'ty-gia',         name:'Tỷ Giá',                  cat:'FX',              icon:'07_ty_gia.png',                       href:BASE+'ty-gia',          desc:'Converter A/B: chọn cặp tiền, xem chart, chênh lệch bank-mid và số nhận ròng.'},
-  {id:'fx-compare',     name:'So Sánh Tỷ Giá NH',       cat:'FX',              icon:'08_so_sanh_ty_gia_ngan_hang.png',     href:BASE+'fx-compare',      desc:'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ.'},
-  {id:'travel-budget',  name:'Budget Du Lịch',          cat:'FX',              icon:'11_du_lich.png',                      href:BASE+'travel-budget',   desc:'Lập ngân sách chuyến đi 10 điểm đến × 3 tier × N ngày, breakdown chi tiết.'},
-  // Financial Health
-  {id:'net-worth',      name:'Giá Trị Tài Sản Ròng',   cat:'Financial Health',icon:'09_gia_tri_tai_san_rong.png',          href:BASE+'net-worth',       desc:'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng.'},
-  {id:'dti',            name:'Tỷ Lệ Nợ/Thu Nhập',      cat:'Financial Health',icon:'14_quan-ly-chi-tieu.svg',              href:BASE+'dti',             desc:'Tính tỷ lệ thu nhập gộp hàng tháng đang dùng để thanh toán nợ.'},
-  {id:'debt-payoff',    name:'Kế Hoạch Trả Nợ',        cat:'Financial Health',icon:'06_vay_nhanh.png',                     href:BASE+'debt-payoff',     desc:'So sánh chiến lược Avalanche và Snowball khi trả nhiều khoản nợ cùng lúc.'},
-  {id:'quy-du-phong',   name:'Quỹ Dự Phòng',           cat:'Financial Health',icon:'10_quy_du_phong.png',                  href:BASE+'quy-du-phong',    desc:'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian và lạm phát dự kiến.'},
-  // Planning
-  {id:'tu-do-tai-chinh',name:'Tự Do Tài Chính',        cat:'Planning',        icon:'15_hoan-tien.svg',                    href:BASE+'tu-do-tai-chinh', desc:'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư và dòng tiền góp hàng tháng.'},
-  {id:'dam-cuoi',       name:'Kế Hoạch Đám Cưới',      cat:'Planning',        icon:'11_ke_hoach_dam_cuoi.png',            href:BASE+'dam-cuoi',        desc:'Lập ngân sách cưới: số khách, tiệc, chi phí cố định, tiền mừng và dự phòng.'},
-  {id:'hoc-phi',        name:'Học Phí Tương Lai',       cat:'Planning',        icon:'05_hoc-phi.svg',                      href:BASE+'hoc-phi',         desc:'Ước tính học phí thực tế theo lạm phát và số tiền cần chuẩn bị từ hôm nay.'},
-];
-const WIDGET_ICON_BY_ID = Object.fromEntries(WIDGETS.map(w => [w.id, w.icon]));
+  /* ── WIDGET REGISTRY — thêm widget mới vào đây ── */
+  const WIDGETS = [
+    // Credit
+    {id:'vay-nhanh',            name:'Vay Nhanh',              cat:'Credit',          icon:'financial-sharp.svg#loan',             href:'/utilities-tool#vay-nhanh',            desc:'Ước tính số tiền trả hàng tháng theo số tiền vay, lãi suất và kỳ hạn.'},
+    {id:'tra-gop',              name:'Trả Góp Ví Trả Sau',     cat:'Credit',          icon:'financial-sharp.svg#installment',      href:'/utilities-tool#tra-gop',              desc:'Ước tính khoản trả hằng kỳ khi chuyển đổi trả góp dư nợ qua Ví Trả Sau.'},
+    {id:'vay-mua-nha',          name:'Vay Mua Nhà',            cat:'Credit',          icon:'financial-sharp.svg#loan',             href:'/utilities-tool#vay-mua-nha',          desc:'Ước tính khoản vay mua nhà, số tiền trả hàng tháng, tổng lãi và áp lực DTI.'},
+    {id:'dieu-kien-vay-mua-nha',name:'Điều Kiện Vay Mua Nhà',  cat:'Credit',          icon:'financial-sharp.svg#dti',              href:'/utilities-tool#dieu-kien-vay-mua-nha',desc:'Pre-check khả năng vay mua nhà theo thu nhập, vốn tự có và hệ số DTI.'},
+    {id:'lai-the-tin-dung',     name:'Lãi Thẻ Tín Dụng',       cat:'Credit',          icon:'financial-sharp.svg#installment',      href:'/utilities-tool#lai-the-tin-dung',     desc:'Ước tính lãi thẻ tín dụng nếu chỉ trả tối thiểu và số tiền cần trả để dứt nợ nhanh.'},
+    {id:'cic-score',            name:'CIC Score',              cat:'Credit',          icon:'financial-sharp.svg#credit-score',     href:'/utilities-tool#cic-score',            desc:'Mô phỏng điểm tín dụng CIC theo thanh toán, sử dụng hạn mức và lịch sử.'},
+    {id:'cic-stimulator',       name:'CIC Stimulator',         cat:'Credit',          icon:'financial-sharp.svg#credit-simulator', href:'/utilities-tool#cic-stimulator',       desc:'Mô phỏng tác động của các hành động tài chính đến điểm CIC theo thời gian.'},
+    // Insurance
+    {id:'bao-hiem-o-to',        name:'Bảo Hiểm Ô Tô',          cat:'Insurance',       icon:'financial-sharp.svg#car-insurance',    href:'/utilities-tool#bao-hiem-o-to',        desc:'Mô phỏng phí bảo hiểm ô tô theo giá trị xe và tỷ lệ phí thị trường.'},
+    {id:'bhxh',                 name:'BHXH',                   cat:'Insurance',       icon:'financial-sharp.svg#social-insurance', href:'/utilities-tool#bhxh',                 desc:'Mô phỏng tổng đóng BHXH dựa trên mức lương và số tháng tham gia.'},
+    {id:'luong-huu',            name:'Lương Hưu',               cat:'Insurance',       icon:'financial-sharp.svg#pension',          href:'/utilities-tool#luong-huu',            desc:'Ước tính lương hưu hàng tháng theo số năm đóng BHXH và lương bình quân.'},
+    {id:'bhxh-1-lan',           name:'BHXH 1 Lần',             cat:'Insurance',       icon:'financial-sharp.svg#lump-sum',         href:'/utilities-tool#bhxh-1-lan',           desc:'Ước tính tiền nhận BHXH một lần theo Điều 70 Luật BHXH 2024.'},
+    {id:'tro-cap-that-nghiep',  name:'Trợ Cấp Thất Nghiệp',    cat:'Insurance',       icon:'financial-sharp.svg#social-insurance', href:'/utilities-tool#tro-cap-that-nghiep',  desc:'Ước tính mức hưởng và thời gian nhận trợ cấp thất nghiệp.'},
+    // Savings
+    {id:'tiet-kiem',            name:'Tiết Kiệm',               cat:'Savings',         icon:'financial-sharp.svg#savings',          href:'/utilities-tool#tiet-kiem',            desc:'Tính số tiền nhận được khi gửi tiết kiệm theo kỳ hạn và lãi suất.'},
+    {id:'nuoi-con',             name:'Kế Hoạch Nuôi Con',       cat:'Savings',         icon:'financial-sharp.svg#child-plan',       href:'/utilities-tool#nuoi-con',             desc:'Ước tính chi phí nuôi dạy con đến 18 tuổi và tích lũy quỹ đại học.'},
+    {id:'lai-suat',             name:'Lãi Suất Ngân Hàng',      cat:'Savings',         icon:'financial-sharp.svg#bank-rate',        href:'/utilities-tool#lai-suat',             desc:'So sánh lãi suất tiền gửi từ 6 ngân hàng lớn, tính lợi tức thực nhận.'},
+    // Investment
+    {id:'chung-chi-quy',        name:'Chứng Chỉ Quỹ',          cat:'Investment',      icon:'financial-sharp.svg#mutual-fund',      href:'/utilities-tool#chung-chi-quy',        desc:'Mô phỏng giá trị đầu tư định kỳ vào chứng chỉ quỹ theo lợi suất giả định.'},
+    {id:'gold',                 name:'Giá Vàng',                cat:'Investment',      icon:'financial-sharp.svg#gold',             href:'/utilities-tool#gold',                 desc:'So sánh giá mua bán vàng SJC/PNJ, tính sức mua và hòa vốn theo kịch bản.'},
+    {id:'stock',                name:'Chứng Khoán',             cat:'Investment',      icon:'financial-sharp.svg#stock',            href:'/utilities-tool#stock',                desc:'Mô phỏng đặt lệnh mua bán cổ phiếu HOSE bằng tiền ảo, theo dõi danh mục.'},
+    // Tax
+    {id:'luong-gross-net',      name:'Lương Gross → Net',        cat:'Tax',             icon:'financial-sharp.svg#tax',              href:'/utilities-tool#luong-gross-net',      desc:'Tính lương NET nhận về từ Gross sau BHXH/BHYT/BHTN và thuế TNCN. Biểu thuế 2026.'},
+    {id:'thue-tncn',            name:'Thuế TNCN',               cat:'Tax',             icon:'financial-sharp.svg#tax',              href:'/utilities-tool#thue-tncn',            desc:'Ước tính thuế TNCN theo biểu lũy tiến 5 bậc và giảm trừ gia cảnh.'},
+    {id:'quyet-toan-tncn',      name:'Quyết Toán TNCN',         cat:'Tax',             icon:'financial-sharp.svg#tax-filing',       href:'/utilities-tool#quyet-toan-tncn',      desc:'Quyết toán thuế TNCN cuối năm: phải nộp thêm hay được hoàn trước 30/04.'},
+    {id:'thue-tndn-sme',        name:'Thuế TNDN SME',           cat:'Tax',             icon:'financial-sharp.svg#business-tax',     href:'/utilities-tool#thue-tndn-sme',        desc:'Tính thuế TNDN cho SME theo Luật 67/2025: 15%/17%/20%, miễn 3 năm DN mới.'},
+    // FX
+    {id:'ty-gia',               name:'Tỷ Giá',                  cat:'FX',              icon:'financial-sharp.svg#exchange',         href:'/utilities-tool#ty-gia',               desc:'Converter A/B: chọn cặp tiền, xem chart, chênh lệch bank-mid và số nhận ròng.'},
+    {id:'fx-compare',           name:'So Sánh Tỷ Giá NH',       cat:'FX',              icon:'financial-sharp.svg#bank-compare',     href:'/utilities-tool#fx-compare',           desc:'So sánh tỷ giá 7 ngân hàng + 2 venue chợ tự do cho 6 ngoại tệ.'},
+    {id:'travel-budget',        name:'Budget Du Lịch',          cat:'FX',              icon:'financial-sharp.svg#travel-budget',    href:'/utilities-tool#travel-budget',        desc:'Lập ngân sách chuyến đi 10 điểm đến × 3 tier × N ngày, breakdown chi tiết.'},
+    // Phương tiện
+    {id:'phat-nguoi',           name:'Tra cứu Phạt Nguội',      cat:'Phương tiện',     icon:'financial-sharp.svg#traffic-fine',     href:'/utilities-tool#phat-nguoi',           desc:'Kiểm tra biển số có vi phạm đang chờ xử lý và hướng dẫn nộp phạt qua MoMo.'},
+    {id:'chi-phi-di-lai',       name:'Chi Phí Đi Lại',          cat:'Phương tiện',     icon:'financial-sharp.svg#km-cost',          href:'/utilities-tool#chi-phi-di-lai',       desc:'Ước tính chi phí đi lại theo quãng đường, số ngày và loại phương tiện.'},
+    {id:'chi-phi-xe-xang',      name:'Chi Phí Xe Xăng',         cat:'Phương tiện',     icon:'financial-sharp.svg#fuel-e10',         href:'/utilities-tool#chi-phi-xe-xang',      desc:'Ước tính chi phí nhiên liệu xăng mỗi tháng theo dung tích bình và quãng đường.'},
+    {id:'chi-phi-xe-dien',      name:'Chi Phí Xe Điện',         cat:'Phương tiện',     icon:'financial-sharp.svg#ev-compare',       href:'/utilities-tool#chi-phi-xe-dien',      desc:'Ước tính chi phí sạc điện mỗi tháng theo dung lượng pin và quãng đường.'},
+    {id:'gia-xang-e10',         name:'Giá Xăng E10',            cat:'Phương tiện',     icon:'financial-sharp.svg#fuel-e10',         href:'/utilities-tool#gia-xang-e10',         desc:'Tính nhanh chi phí đổ xăng E10 theo số lít hoặc quy đổi ngược từ số tiền dự chi.'},
+    // Financial Health
+    {id:'net-worth',            name:'Giá Trị Tài Sản Ròng',   cat:'Financial Health',icon:'financial-sharp.svg#net-worth',        href:'/utilities-tool#net-worth',            desc:'Tổng hợp tài sản và nghĩa vụ nợ để tính giá trị tài sản ròng.'},
+    {id:'dti',                  name:'Tỷ Lệ Nợ/Thu Nhập',      cat:'Financial Health',icon:'financial-sharp.svg#dti',              href:'/utilities-tool#dti',                  desc:'Tính tỷ lệ thu nhập gộp hàng tháng đang dùng để thanh toán nợ.'},
+    {id:'debt-payoff',          name:'Kế Hoạch Trả Nợ',        cat:'Financial Health',icon:'financial-sharp.svg#debt-payoff',      href:'/utilities-tool#debt-payoff',          desc:'So sánh chiến lược Avalanche và Snowball khi trả nhiều khoản nợ cùng lúc.'},
+    {id:'quy-du-phong',         name:'Quỹ Dự Phòng',           cat:'Financial Health',icon:'financial-sharp.svg#emergency-fund',   href:'/utilities-tool#quy-du-phong',         desc:'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian và lạm phát dự kiến.'},
+    // Planning
+    {id:'tu-do-tai-chinh',      name:'Tự Do Tài Chính',        cat:'Planning',        icon:'financial-sharp.svg#fire',             href:'/utilities-tool#tu-do-tai-chinh',      desc:'Lập kế hoạch FIRE với lạm phát, lợi suất đầu tư và dòng tiền góp hàng tháng.'},
+    {id:'dam-cuoi',             name:'Kế Hoạch Đám Cưới',      cat:'Planning',        icon:'financial-sharp.svg#wedding',          href:'/utilities-tool#dam-cuoi',             desc:'Lập ngân sách cưới: số khách, tiệc, chi phí cố định, tiền mừng và dự phòng.'},
+    {id:'hoc-phi',              name:'Học Phí Tương Lai',       cat:'Planning',        icon:'financial-sharp.svg#tuition',          href:'/utilities-tool#hoc-phi',              desc:'Ước tính học phí thực tế theo lạm phát và số tiền cần chuẩn bị từ hôm nay.'},
+  ];
 
-const SVG_EXTS = ['svg'];
-function isFile(s){ return s && !s.includes(' ') && (s.endsWith('.png')||s.endsWith('.svg')||s.endsWith('.jpg')); }
+  // Update header count dynamically from registry
+  document.getElementById('navCount').textContent = WIDGETS.length;
+  document.getElementById('heroKicker').textContent = WIDGETS.length + ' MoMo Utilities';
 
-function iconHtml(icon){
-  const key = Object.keys(WIDGET_ICON_BY_ID).find(k => WIDGET_ICON_BY_ID[k] === icon);
-  if (key && ICONS[key]) return `<div class="w-img-svg">${ICONS[key]}</div>`;
-  if(isFile(icon)) return `<img class="w-img" src="${ICON_BASE}${icon}" alt="" loading="lazy">`;
-  return `<div class="w-img-emoji">${icon}</div>`;
-}
+  let activeCat   = 'all';
+  let activeQuery = '';
 
-const ARROW_SVG = `<svg class="w-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`;
+  const pillsEl     = document.getElementById('mlcPills');
+  const gridEl      = document.getElementById('mlcGrid');
+  const searchInput = document.getElementById('mlcSearchInput');
+  const searchClear = document.getElementById('mlcSearchClear');
+  const searchMeta  = document.getElementById('mlcSearchMeta');
 
-let activeCat = 'all';
-let query = '';
+  function isSpriteIcon(s){ return /\.svg#[\w-]+$/i.test(s); }
+  function isFileIcon(s){ return /\.(png|svg|jpg|webp)$/i.test(s); }
+  function normalize(v){
+    return String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+  }
+  function iconHtml(icon){
+    if(isSpriteIcon(icon)) return `<svg class="mlc-icon" aria-hidden="true" focusable="false"><use href="${ICON_BASE}${icon}"></use></svg>`;
+    if(isFileIcon(icon))   return `<img class="mlc-icon" src="${ICON_BASE}${icon}" alt="" loading="lazy">`;
+    return `<div class="mlc-icon-emoji">${icon}</div>`;
+  }
+  function getList(){
+    const q = normalize(activeQuery);
+    return WIDGETS.filter(w => {
+      if(activeCat !== 'all' && w.cat !== activeCat) return false;
+      if(!q) return true;
+      return normalize([w.name, w.desc, w.cat].join(' ')).includes(q);
+    });
+  }
+  function updateMeta(list){
+    const parts = [`${list.length}/${WIDGETS.length} utility`];
+    if(activeCat !== 'all'){
+      const cat = CATS.find(c => c.id === activeCat);
+      if(cat) parts.push(cat.label);
+    }
+    if(activeQuery) parts.push(`khớp "${activeQuery}"`);
+    searchMeta.textContent = list.length
+      ? `Hiển thị ${parts.join(' · ')}.`
+      : `Không có utility khớp "${activeQuery}"${activeCat !== 'all' ? ' trong nhóm hiện tại' : ''}.`;
+    searchClear.hidden = !activeQuery;
+  }
+  function renderPills(){
+    pillsEl.innerHTML = CATS.map(c =>
+      `<button class="mlc-pill${c.id===activeCat?' active':''}" data-cat="${c.id}">
+        <svg class="mlc-pill-icon" aria-hidden="true" focusable="false"><use href="${ICON_BASE}financial-sharp.svg#${c.icon}"></use></svg>${c.label}
+      </button>`
+    ).join('');
+  }
+  function renderGrid(){
+    const list = getList();
+    updateMeta(list);
+    gridEl.innerHTML = list.length ? list.map(w =>
+      `<a class="mlc-card" href="${w.href}">
+        ${ARROW_SVG}
+        ${iconHtml(w.icon)}
+        <div class="mlc-name">${w.name}</div>
+        <div class="mlc-desc">${w.desc}</div>
+      </a>`
+    ).join('') : `
+      <div class="mlc-empty">
+        <strong>Chưa có utility phù hợp</strong>
+        <p>Thử đổi từ khóa hoặc chọn lại nhóm để mở rộng kết quả tìm kiếm.</p>
+      </div>`;
+  }
 
-function norm(s){ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase(); }
-
-function renderPills(){
-  document.getElementById('filterRow').innerHTML = CATS.map(c =>
-    `<button class="pill${activeCat===c.id?' on':''}" onclick="setCat('${c.id}')">${c.label}</button>`
-  ).join('');
-}
-
-function setCat(id){ activeCat=id; renderPills(); renderGrid(); }
-
-function renderGrid(){
-  const q = norm(query);
-  const list = WIDGETS.filter(w => {
-    if(activeCat !== 'all' && w.cat !== activeCat) return false;
-    if(q) return norm(w.name+' '+w.desc).includes(q);
-    return true;
+  pillsEl.addEventListener('click', e => {
+    const btn = e.target.closest('.mlc-pill');
+    if(!btn) return;
+    activeCat = btn.dataset.cat;
+    renderPills();
+    renderGrid();
+  });
+  searchInput.addEventListener('input', e => {
+    activeQuery = e.target.value.trim();
+    renderGrid();
+  });
+  searchClear.addEventListener('click', () => {
+    activeQuery = '';
+    searchInput.value = '';
+    searchInput.focus();
+    renderGrid();
   });
 
-  document.getElementById('statTotal').textContent = WIDGETS.length;
-  const catCount = new Set(WIDGETS.map(w=>w.cat)).size;
-  document.getElementById('statCats').textContent = catCount;
-  document.getElementById('countBadge').textContent = list.length + ' widget';
-
-  const grid = document.getElementById('grid');
-  const empty = document.getElementById('emptyMsg');
-  if(!list.length){ grid.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-
-  grid.innerHTML = list.map(w => `
-    <a class="w-card" href="${w.href}" target="_blank" rel="noopener">
-      ${ARROW_SVG}
-      ${iconHtml(w.icon)}
-      <div class="w-name">${w.name}</div>
-      <div class="w-desc">${w.desc}</div>
-    </a>
-  `).join('');
-}
-
-document.getElementById('searchQ').addEventListener('input', e => { query=e.target.value.trim(); renderGrid(); });
-
-renderPills();
-renderGrid();
+  renderPills();
+  renderGrid();
+})();
 </script>
 </body>
 </html>

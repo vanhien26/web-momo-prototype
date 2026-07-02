@@ -11,7 +11,7 @@ const PROTOTYPES = [
   },
   {
     id: 'financial',
-    name: 'Widget Store',
+    name: 'Utilities Tool',
     category: 'Widget',
     utilitiesPage: true,
     maturity: 'Interactive',
@@ -22,8 +22,8 @@ const PROTOTYPES = [
     hypothesis: 'Interactive utility tạo information gain tốt hơn content thuần và thu tín hiệu intent có giá trị cho funnel Web-to-App.',
     value: 'Mở rộng bề mặt acquisition và activation bằng các widget có thể tái sử dụng qua nhiều industry và entry point.',
     gate: 'Đo completion rate, CTA CTR, Web-to-App conversion và chất lượng traffic theo từng utility.',
-    src: '/widget-store',
-    address: 'web-momo-prototype.vercel.app/widget-store',
+    src: '/utilities-tool',
+    address: 'web-momo-prototype.vercel.app/utilities-tool',
     tools: [
       { id: 'vay-nhanh',       name: 'Vay Nhanh',          category: 'Credit',     description: 'Ước tính số tiền trả hằng tháng theo số tiền vay, lãi suất và kỳ hạn.',               jtbd: 'Biết trước gánh nặng tài chính trước khi vay' },
       { id: 'tra-gop',         name: 'Trả Góp Ví Trả Sau', category: 'Credit',     description: 'Ước tính số tiền thanh toán hằng kỳ khi chuyển đổi trả góp dư nợ hoặc giao dịch qua Ví Trả Sau MoMo.', jtbd: 'Biết số tiền gốc và phí trả mỗi tháng qua Ví Trả Sau để cân đối chi tiêu.' },
@@ -198,15 +198,15 @@ const PROTOTYPES = [
   },
   {
     id: 'widget-manager',
-    name: 'Widget Manager',
+    name: 'Widget & Utilities Manager',
     category: 'MoSpark',
     maturity: 'Interactive',
-    description: 'Màn vận hành riêng để cấu hình widget trong Widget Store: sửa CTA, disclaimer, field copy, title utility và tạo widget content như Number Card hoặc Content Card.',
+    description: 'Màn vận hành để cấu hình Utilities Tool và quản lý Widget (Number Card, Content Card, Score Card): sửa CTA, disclaimer, field copy, title utility và tạo widget content.',
     jtbd: 'Quản trị nội dung và cấu hình widget mà không phải chỉnh trực tiếp source utility',
     northStar: 'Widget config publish readiness',
     loop: 'Chọn widget → Cập nhật copy / CTA → Preview → Lưu draft',
     hypothesis: 'Tách widget operations khỏi ads campaign flow giúp team vận hành widget nhanh hơn và giảm nhầm lẫn giữa inventory ads với inventory widget.',
-    value: 'Tạo lớp CMS nhẹ cho Widget Store và các content widget để team PLG hoặc vận hành có thể cập nhật nhanh copy phân phối.',
+    value: 'Tạo lớp CMS nhẹ cho Utilities Tool và các Widget (Number/Content/Score Card) để team PLG hoặc vận hành có thể cập nhật nhanh copy phân phối.',
     gate: 'Đo số widget được cấu hình, thời gian cập nhật copy, tỷ lệ draft-to-publish và độ nhất quán CTA / disclaimer.',
     src: '/widget-manager',
     address: 'web-momo-prototype.vercel.app/widget-manager',
@@ -320,6 +320,21 @@ const PROTOTYPES = [
       { id: 'bill-lookup', name: 'Tra Cứu Hóa Đơn', category: 'Sub-page', description: 'Tra cứu hóa đơn điện, nước, internet theo mã khách hàng hoặc số điện thoại.', jtbd: 'Biết số tiền cần nộp trước khi thanh toán', src: 'demos/bill-lookup.html', address: 'web-momo-prototype.vercel.app/bill-lookup' },
       { id: 'metro-ticket', name: 'Mua Vé Metro HCM', category: 'Sub-page', description: 'Mua vé Metro TP.HCM: chọn tuyến, ga đi/đến, loại vé, số lượng và nhận QR.', jtbd: 'Mua vé metro nhanh không cần xếp hàng tại ga', src: 'demos/metro-ticket.html', address: 'web-momo-prototype.vercel.app/metro-ticket' },
     ],
+  },
+  {
+    id: 'financial-flow',
+    name: 'Kế hoạch dòng tiền',
+    category: 'Widget',
+    maturity: 'Flow Demo',
+    description: 'Flow 3 bước kết nối liền mạch: Thuế TNCN → Quỹ dự phòng → Tối ưu tiết kiệm. Input lan truyền giữa các bước, kết thúc bằng bức tranh tài chính cá nhân và CTA mở tiết kiệm MoMo.',
+    jtbd: 'Biết mình thực nhận bao nhiêu, cần tích lũy bao nhiêu và gửi ở đâu để sinh lời tốt nhất',
+    northStar: 'Flow completion rate + CTA click sau summary screen',
+    loop: 'Lương gross → Net → Savings capacity → Kỳ hạn tối ưu → Mở tiết kiệm',
+    hypothesis: 'Input lan truyền giữa các bước giảm friction và tăng completion rate so với 3 tool đơn lẻ tách biệt.',
+    value: 'Demo cơ chế Widget Flow — multi-step journey có shared state, context bar và summary screen với CTA W2A.',
+    gate: 'Đo: step completion per step, drop-off point, CTA click rate sau summary.',
+    src: 'demos/financial-flow.html',
+    address: 'web-momo-prototype.vercel.app/financial-flow',
   },
   {
     id: 'scam-check',
@@ -639,7 +654,7 @@ const CAT_COLOR = {
 const GROUP_LABEL = {
   MoSpark: 'MoSpark Platform',
   MiniWeb: 'Mini Web Overview',
-  Widget: 'Widget Store',
+  Widget: 'Utilities Tool',
   Platform: 'PLG Project',
   Other: 'Other',
 };
@@ -664,7 +679,7 @@ function getMoSparkCluster(protoId) {
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
-  Widget: ['financial', 'payments', 'scam-check'],
+  Widget: ['financial-flow', 'financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center'],
 };
@@ -683,10 +698,10 @@ const GROUP_SUMMARY = {
     examples: '113 MiniWeb thuộc 6 Division và 50 Use Case',
   },
   Widget: {
-    eyebrow: 'Widget Store',
-    title: 'Widget Store',
-    description: 'Nhóm tool và lookup ngắn để Dev implement nhanh, rõ input, output và trạng thái an toàn.',
-    examples: 'Financial (18 tools) · Billpay (Điện · Nước · Internet · Metro) · Scam check',
+    eyebrow: 'Utilities Tool',
+    title: 'Utilities Tool',
+    description: 'Nhóm interactive utility và lookup ngắn để Dev implement nhanh, rõ input, output và trạng thái an toàn.',
+    examples: 'Financial (37 tools) · Billpay (Điện · Nước · Internet · Metro) · Scam check',
   },
   Other: {
     eyebrow: 'Other',
