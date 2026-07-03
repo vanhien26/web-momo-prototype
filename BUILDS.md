@@ -156,3 +156,47 @@ User yêu cầu package lại logic chọn input UI và logic hiển thị resul
   - field UI metadata derivation và control inference tồn tại
   - tool catalog đi qua normalization layer
   - có explicit `ui` metadata mẫu cho money input, exploratory range input và comparison selector
+
+## Bảo hiểm xe Flow — 2026-07-02
+
+**ID:** `bao-hiem-xe-flow` | **Category:** Widget (cluster Flow) | **File:** `demos/bao-hiem-xe-flow.html`
+
+### Brief
+Flow demo thứ 2 của mô hình Widget Flow (sau financial-flow): Thông tin xe → BHTNDS bắt buộc + mức phạt → Gói tự nguyện (vật chất ô tô / trộm cắp xe máy) → Tổng chi phí + CTA W2A. Kèm theo: tách nhóm Utilities Tool trong sidebar lab.html thành 2 cluster Flow / Tools (pattern giống MoSpark cluster), item flow có tagline riêng qua field `navTagline`.
+
+### Decisions made
+- Branching xe máy / ô tô trên cùng 1 wizard: field hiển thị theo `S.vt`, section 3 có 2 khối UI riêng (`volCar` / `volMoto`) thay vì 2 file demo
+- Framing "phí TNDS = 1/X mức phạt" đặt ngay từ bước 1 (penalty strip live) thay vì đợi summary - đây là hypothesis chính của flow
+- Cluster Widget dùng lại markup `proto-owner-group` + `proto-owner-label` của MoSpark/Platform nên không cần CSS mới
+- Tagline per-item qua `navTagline` field trong PROTOTYPES, ưu tiên trước mọi fallback trong renderNav
+- Fix 2 lỗi kế thừa từ financial-flow ngay trong file mới: input xóa trắng vẫn validate khi confirm, CTA là thẻ `<a>` có href onelink placeholder
+
+### Issues gặp phải
+- financial-flow chưa có rewrite trong vercel.json → 404 production. Fix: thêm cả `/financial-flow` và `/bao-hiem-xe-flow` cùng lúc
+- `.devserver.js` đọc rewrites từ vercel.json chỉ lúc startup → route mới 404 cho tới khi restart server. Fix: preview_stop + preview_start
+
+### Lessons
+- Khi thêm rewrite mới, luôn restart node-devserver, curl check 200 trước khi test UI
+- Mô hình flow wizard (accordion 3 bước + result panel unlock dần) copy được nguyên CSS giữa các flow; nếu có flow thứ 3 nên tách thành template chung để tránh drift
+
+---
+
+## Thoát nợ thẻ & trả góp + Kế hoạch FIRE — 2026-07-03
+
+**ID:** `thoat-no-the`, `ke-hoach-fire` | **Category:** Widget (cluster Flow) | **Files:** `demos/thoat-no-the.html`, `demos/ke-hoach-fire.html`
+
+### Brief
+Mở rộng Utilities Flow hub với 2 flow tài chính/thanh toán: kế hoạch thoát nợ thẻ tín dụng (Payment/BNPL angle, cross-sell VTS) và kế hoạch FIRE (PFM query trong GEO North Star).
+
+### Decisions made
+- Port logic từ 4 tool có sẵn trong financial.js (lai-the-tin-dung, tra-gop, debt-payoff, tu-do-tai-chinh) thay vì viết mới - đảm bảo công thức nhất quán giữa tool đơn lẻ và flow
+- Trả góp VTS xử lý là nghĩa vụ cố định (gốc/kỳ + 3% phí), trừ khỏi ngân sách trước khi simulate nợ revolving - vì VTS không lãi kép, không thuộc bài toán avalanche/snowball
+- Bảng so sánh 3 phương án (chiến lược chọn / chiến lược kia / chỉ trả tối thiểu) để scare number "14 năm, 34tr lãi" tự thuyết phục user
+- FIRE flow: bước 3 là SWR (độ an toàn) thay vì gộp vào bước 1 - giữ mỗi bước một quyết định rõ ràng
+- FLOWS array trong utilities-flow.html: đổi ke-hoach-fire từ coming sang live, thêm thoat-no-the với icon 07_credittech
+
+### Issues gặp phải
+- Không có issue mới. Restart devserver sau khi thêm rewrite (đã biết từ build trước), curl 200 pass ngay
+
+### Lessons
+- CSS flow wizard đã copy lần thứ 4 (financial-flow → xe-may → xe-oto → 2 flow mới). Đến lúc cân nhắc tách `assets/flow-wizard.css` chung nếu build thêm flow

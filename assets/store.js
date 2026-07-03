@@ -322,9 +322,21 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'utilities-flow',
+    name: 'Utilities Flow',
+    category: 'Widget',
+    navTagline: 'Flow Hub',
+    maturity: 'Hub Page',
+    description: 'Trang chủ tập hợp các Utility Flow: Kế hoạch dòng tiền, Chi phí xe máy, Chi phí xe ô tô. Mỗi Flow là wizard 3 bước shared-state kết thúc bằng CTA W2A.',
+    jtbd: 'Xem toàn bộ Flow đang có, chọn và bắt đầu ngay',
+    src: 'demos/utilities-flow.html',
+    address: 'web-momo-prototype.vercel.app/utilities-flow',
+  },
+  {
     id: 'financial-flow',
     name: 'Kế hoạch dòng tiền',
     category: 'Widget',
+    navTagline: 'Financial Flow',
     maturity: 'Flow Demo',
     description: 'Flow 3 bước kết nối liền mạch: Thuế TNCN → Quỹ dự phòng → Tối ưu tiết kiệm. Input lan truyền giữa các bước, kết thúc bằng bức tranh tài chính cá nhân và CTA mở tiết kiệm MoMo.',
     jtbd: 'Biết mình thực nhận bao nhiêu, cần tích lũy bao nhiêu và gửi ở đâu để sinh lời tốt nhất',
@@ -335,6 +347,70 @@ const PROTOTYPES = [
     gate: 'Đo: step completion per step, drop-off point, CTA click rate sau summary.',
     src: 'demos/financial-flow.html',
     address: 'web-momo-prototype.vercel.app/financial-flow',
+  },
+  {
+    id: 'chi-phi-xe-may',
+    name: 'Chi phí xe máy',
+    category: 'Widget',
+    navTagline: 'Xe Máy Flow',
+    maturity: 'Flow Demo',
+    description: 'Flow 3 bước tính tổng chi phí sở hữu xe máy (TCO): Xe & vốn → Thói quen sử dụng → Bảo hiểm & bảo dưỡng. Right panel unlock dần với waterfall breakdown theo /tháng /năm /5 năm, insight chi phí/km và CTA mua bảo hiểm.',
+    jtbd: 'Biết chiếc xe máy đang tốn bao nhiêu thực sự mỗi tháng, tính đủ mọi khoản',
+    northStar: 'Flow completion rate + CTA click sau insight',
+    loop: 'Xe & vốn → Km/ngày + nhiên liệu → Bảo hiểm & bảo dưỡng → TCO breakdown → Mua BH trên MoMo',
+    hypothesis: 'Hiển thị TCO toàn bộ (không chỉ xăng) giúp user thấy giá trị thực của bảo hiểm chiếm % nhỏ, tăng conversion CTA mua bảo hiểm.',
+    value: 'Flow TCO xe máy phục vụ SEO/GEO angle "chi phí xe máy hàng tháng" - search volume cao, unique data (chi phí/km), cross-sell bảo hiểm + vay mua xe.',
+    gate: 'Đo: step completion per step, tab switch rate (/tháng vs /năm), CTA click rate.',
+    src: 'demos/chi-phi-xe-may.html',
+    address: 'web-momo-prototype.vercel.app/chi-phi-xe-may',
+  },
+  {
+    id: 'chi-phi-xe-oto',
+    name: 'Chi phí xe ô tô',
+    category: 'Widget',
+    navTagline: 'Ô Tô Flow',
+    maturity: 'Flow Demo',
+    description: 'Flow 3 bước tính TCO ô tô: Xe & vốn (loại xe, nhiên liệu, giá, năm, số chỗ, vay) → Thói quen sử dụng (km/ngày, tiêu thụ, đỗ xe) → Phí & bảo hiểm (đường bộ, đăng kiểm, TNDS, vật chất 4 nhà BH, bảo dưỡng). Waterfall /tháng /năm /5 năm.',
+    jtbd: 'Biết chiếc ô tô đang tốn bao nhiêu thực sự mỗi tháng, tính đủ mọi khoản',
+    northStar: 'Flow completion rate + CTA click',
+    loop: 'Xe & vốn → Km/ngày + nhiên liệu → Phí & BH → TCO → Mua BH trên MoMo',
+    hypothesis: 'TCO toàn diện (không chỉ xăng) giúp user thấy bảo hiểm vật chất chiếm % nhỏ nhưng rủi ro lớn, tăng conversion.',
+    value: 'Angle "chi phí ô tô hàng tháng" - search demand cao, cross-sell BH ô tô (SoV 0%, cơ hội lớn) + vay mua xe.',
+    gate: 'Đo: step completion, tab switch rate, insurer selection rate, CTA click.',
+    src: 'demos/chi-phi-xe-oto.html',
+    address: 'web-momo-prototype.vercel.app/chi-phi-xe-oto',
+  },
+  {
+    id: 'thoat-no-the',
+    name: 'Thoát nợ thẻ & trả góp',
+    category: 'Widget',
+    navTagline: 'Payment Flow',
+    maturity: 'Flow Demo',
+    description: 'Flow 3 bước lập kế hoạch thoát nợ: Dư nợ (thẻ tín dụng, trả góp VTS, vay tiêu dùng) → Ngân sách & chiến lược (Avalanche/Snowball) → Mục tiêu tất toán. So sánh với vòng xoáy trả tối thiểu, insight chuyển đổi trả góp VTS khi lãi thẻ cao.',
+    jtbd: 'Biết cần trả bao nhiêu mỗi tháng để dứt nợ đúng hạn và tiết kiệm bao nhiêu tiền lãi so với trả tối thiểu',
+    northStar: 'Flow completion rate + CTA click mở Ví Trả Sau',
+    loop: 'Dư nợ → Ngân sách + chiến lược → Mục tiêu tất toán → Kế hoạch + so sánh → Mở VTS',
+    hypothesis: 'Cho user thấy con số lãi khi chỉ trả tối thiểu (scare number) tăng động lực lập kế hoạch và conversion sang VTS trả góp phí cố định.',
+    value: 'Angle "cách thoát nợ thẻ tín dụng" - informational intent volume cao, cross-sell Ví Trả Sau (Market Leader 54% SoV) như công cụ chặn lãi kép.',
+    gate: 'Đo: step completion, strategy switch rate, CTA click rate.',
+    src: 'demos/thoat-no-the.html',
+    address: 'web-momo-prototype.vercel.app/thoat-no-the',
+  },
+  {
+    id: 'ke-hoach-fire',
+    name: 'Kế hoạch FIRE',
+    category: 'Widget',
+    navTagline: 'FIRE Flow',
+    maturity: 'Flow Demo',
+    description: 'Flow 3 bước lập kế hoạch tự do tài chính: Mục tiêu (chi tiêu, số năm, lạm phát) → Tích lũy & đầu tư (tài sản, dòng góp, lợi suất) → Độ an toàn (SWR). Dự phóng FIRE number, FI ratio, mốc thời gian và mức góp cần thiết.',
+    jtbd: 'Biết cần tích lũy bao nhiêu và góp bao nhiêu mỗi tháng để đạt tự do tài chính đúng hạn',
+    northStar: 'Flow completion rate + CTA click mở tích lũy',
+    loop: 'Chi tiêu + năm mục tiêu → Tài sản + dòng góp → SWR → FIRE number + gap → Mở tích lũy MoMo',
+    hypothesis: 'FIRE number cá nhân hóa theo lạm phát và SWR tạo unique data không scrape được, giữ user quay lại điều chỉnh kịch bản.',
+    value: 'Angle "tự do tài chính cần bao nhiêu tiền" - PFM query nằm trong GEO North Star, anti-LLM moat bằng simulator.',
+    gate: 'Đo: step completion, SWR/lợi suất adjustment rate, CTA click rate.',
+    src: 'demos/ke-hoach-fire.html',
+    address: 'web-momo-prototype.vercel.app/ke-hoach-fire',
   },
   {
     id: 'scam-check',
@@ -676,10 +752,20 @@ function getMoSparkCluster(protoId) {
   return MOSPARK_CLUSTER_ORDER.find(cluster => MOSPARK_CLUSTER_ITEMS[cluster].includes(protoId)) || 'Modules';
 }
 
+const WIDGET_CLUSTER_ORDER = ['Flow', 'Tools'];
+const WIDGET_CLUSTER_ITEMS = {
+  Flow:  ['utilities-flow', 'financial-flow', 'chi-phi-xe-may', 'chi-phi-xe-oto', 'thoat-no-the', 'ke-hoach-fire'],
+  Tools: ['financial', 'payments', 'scam-check'],
+};
+
+function getWidgetCluster(protoId) {
+  return WIDGET_CLUSTER_ORDER.find(cluster => WIDGET_CLUSTER_ITEMS[cluster].includes(protoId)) || 'Tools';
+}
+
 const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
-  Widget: ['financial-flow', 'financial', 'payments', 'scam-check'],
+  Widget: ['utilities-flow', 'financial-flow', 'chi-phi-xe-may', 'chi-phi-xe-oto', 'thoat-no-the', 'ke-hoach-fire', 'financial', 'payments', 'scam-check'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center'],
 };
@@ -700,8 +786,8 @@ const GROUP_SUMMARY = {
   Widget: {
     eyebrow: 'Utilities Tool',
     title: 'Utilities Tool',
-    description: 'Nhóm interactive utility và lookup ngắn để Dev implement nhanh, rõ input, output và trạng thái an toàn.',
-    examples: 'Financial (37 tools) · Billpay (Điện · Nước · Internet · Metro) · Scam check',
+    description: 'Chia thành 2 cụm: Flow (multi-step journey có shared state, kết thúc bằng CTA W2A) và Tools (interactive utility, lookup ngắn để Dev implement nhanh).',
+    examples: 'Flow: Kế hoạch dòng tiền · Bảo hiểm xe | Tools: Financial (37 tools) · Billpay · Scam check',
   },
   Other: {
     eyebrow: 'Other',
@@ -929,7 +1015,7 @@ function renderNav() {
           <span class="nav-index">${String(i + 1).padStart(2, '0')}</span>
           <span class="proto-nav-label">
             <strong>${p.name}</strong>
-            <small>${p.utilitiesPage ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category)))}</small>
+            <small>${p.navTagline || (p.utilitiesPage ? `${p.tools.length} utilities` : (groupName === 'MoSpark' ? getMoSparkCluster(p.id) : (p.ownerGroup || displayGroupName(p.category))))}</small>
           </span>
           ${p.tools ? `<span class="expand-caret${isExpanded ? ' open' : ''}">›</span>` : ''}
         </button>
@@ -951,6 +1037,15 @@ function renderNav() {
             const clusterItems = groupItems.filter(item => getMoSparkCluster(item.id) === cluster);
             if (!clusterItems.length) return '';
             return `<div class="proto-owner-group proto-mospark-cluster cluster-${cluster.toLowerCase()}">
+              <p class="proto-owner-label">${cluster}</p>
+              ${clusterItems.map((item, index) => renderNavItem(item, index)).join('')}
+            </div>`;
+          }).join('')
+      : groupName === 'Widget'
+        ? WIDGET_CLUSTER_ORDER.map(cluster => {
+            const clusterItems = groupItems.filter(item => getWidgetCluster(item.id) === cluster);
+            if (!clusterItems.length) return '';
+            return `<div class="proto-owner-group proto-widget-cluster cluster-${cluster.toLowerCase()}">
               <p class="proto-owner-label">${cluster}</p>
               ${clusterItems.map((item, index) => renderNavItem(item, index)).join('')}
             </div>`;

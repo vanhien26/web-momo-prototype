@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi phí xe máy — MoMo</title>
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --success:       #00B14F;
+      --success-light: #E6F9EE;
+      --warning:       #FF8C00;
+      --warning-light: #FFF4E5;
+      --error:         #E5233D;
+      --error-light:   #FDEDF0;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'MoMoTrustSans', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      min-height: 100%;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 80px;
+    }
+
+    .ff {
+      width: 100%; max-width: 1080px;
+      background: var(--white);
+      border: 1px solid var(--n300);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(28,23,26,.08);
+      display: grid;
+      grid-template-columns: 420px 1fr;
+    }
+
+    .ff-left {
+      border-right: 1px solid var(--n300);
+      display: flex; flex-direction: column;
+    }
+
+    .ff-comp-header {
+      padding: 28px 32px 20px;
+      border-bottom: 1px solid var(--n300);
+    }
+    .back-lab {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-decoration: none; margin-bottom: 10px;
+      transition: color .15s;
+    }
+    .back-lab:hover { color: var(--primary); }
+    .ff-comp-title {
+      font-size: 13px; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 6px;
+    }
+    .ff-comp-name {
+      font-size: 22px; font-weight: 900; color: var(--n900);
+      line-height: 1.2; letter-spacing: -.02em;
+    }
+    .ff-comp-sub {
+      font-size: 13px; color: var(--n700); margin-top: 4px; line-height: 1.5;
+    }
+
+    .jtbd-frame {
+      margin: 0 32px 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--n300);
+      border-radius: 16px;
+      background: linear-gradient(180deg, var(--white), var(--n50));
+    }
+    .jtbd-kicker {
+      display: inline-flex;
+      font-size: 10px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 6px;
+    }
+    .jtbd-frame p {
+      font-size: 12px; line-height: 1.6; color: var(--n700);
+    }
+
+    .utility-summary {
+      margin: 0 32px 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .utility-summary-card {
+      border: 1px solid var(--n300);
+      border-radius: 14px;
+      background: var(--white);
+      padding: 12px;
+      min-height: 74px;
+    }
+    .utility-summary-card strong {
+      display: block; font-size: 12px; line-height: 1.35;
+      color: var(--n900); margin-bottom: 4px;
+    }
+    .utility-summary-card span {
+      display: block; font-size: 11px; line-height: 1.45; color: var(--n500);
+    }
+
+    .ff-section { border-bottom: 1px solid var(--n300); }
+    .ff-section:last-of-type { border-bottom: none; }
+
+    .ff-sec-hdr {
+      width: 100%; text-align: left;
+      padding: 18px 32px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .ff-sec-hdr:hover:not(.locked) { background: var(--n50); }
+    .ff-sec-hdr.locked { cursor: default; opacity: .45; }
+
+    .ff-sec-num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800;
+      background: var(--n100); color: var(--n500);
+      border: 1.5px solid var(--n300);
+      transition: all .2s;
+    }
+    .ff-section.active .ff-sec-num {
+      background: var(--primary); color: var(--white); border-color: var(--primary);
+    }
+    .ff-section.done .ff-sec-num {
+      background: var(--success-light); color: var(--success);
+      border-color: var(--success); font-size: 13px;
+    }
+
+    .ff-sec-meta { flex: 1; }
+    .ff-sec-title {
+      font-size: 14px; font-weight: 700; color: var(--n900);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ff-sec-title.locked { color: var(--n500); }
+    .ff-sec-summary { font-size: 12px; color: var(--n700); margin-top: 2px; display: none; }
+    .ff-section.done .ff-sec-summary { display: block; }
+
+    .ff-sec-edit {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--primary-light); border: none;
+      border-radius: 9999px; padding: 4px 10px;
+      cursor: pointer; font-family: inherit;
+      display: none; flex-shrink: 0;
+      transition: opacity .15s;
+    }
+    .ff-sec-edit:hover { opacity: .8; }
+    .ff-section.done .ff-sec-edit { display: block; }
+
+    .ff-sec-chevron { font-size: 11px; color: var(--n500); flex-shrink: 0; transition: transform .2s; }
+    .ff-section.done .ff-sec-chevron,
+    .ff-section.locked .ff-sec-chevron { display: none; }
+
+    .ff-sec-body { padding: 0 32px 28px; display: none; }
+    .ff-section.active .ff-sec-body { display: block; }
+
+    .fields { display: flex; flex-direction: column; gap: 22px; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field-lbl {
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .field-hint { font-size: 11px; color: var(--n500); line-height: 1.5; }
+
+    .inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+    }
+    .inp-wrap:focus-within { border-color: var(--primary); border-width: 1.5px; }
+    .inp-wrap input {
+      flex: 1; border: none; outline: none;
+      padding: 11px 14px; font-size: 17px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum"; width: 100%;
+    }
+    .inp-unit {
+      padding: 0 12px; font-size: 12px; font-weight: 600;
+      color: var(--n500); border-left: 1px solid var(--n300);
+      white-space: nowrap; height: 44px; display: flex; align-items: center;
+    }
+
+    /* tooltip */
+    .tip-wrap { position: relative; display: inline-flex; align-items: center; }
+    .tip-icon {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--n300); color: var(--n700);
+      font-size: 10px; font-weight: 800; font-style: normal;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: default; margin-left: 5px; flex-shrink: 0; line-height: 1;
+      user-select: none;
+    }
+    .tip-box {
+      display: none; position: absolute; bottom: calc(100% + 6px); left: 0;
+      background: var(--n900); color: var(--white);
+      font-size: 11px; line-height: 1.55; font-weight: 400;
+      border-radius: 8px; padding: 9px 12px;
+      width: 230px; z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      pointer-events: none;
+    }
+    .tip-box::after {
+      content: ''; position: absolute; top: 100%; left: 14px;
+      border: 5px solid transparent; border-top-color: var(--n900);
+    }
+    .tip-wrap:hover .tip-box,
+    .tip-wrap:focus-within .tip-box { display: block; }
+
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 12px; border-radius: 9999px;
+      border: 1px solid var(--n300); background: var(--n50);
+      font-size: 12px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .chip:hover { border-color: var(--primary); color: var(--primary); }
+    .chip.on { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+    .stepper {
+      display: flex; align-items: center; width: fit-content;
+      border: 1px solid var(--n300); border-radius: 9999px; overflow: hidden;
+    }
+    .stp-btn {
+      width: 38px; height: 38px; border: none; background: none;
+      cursor: pointer; font-size: 16px; color: var(--n700);
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit; transition: all .15s;
+    }
+    .stp-btn:hover { background: var(--primary-light); color: var(--primary); }
+    .stp-val {
+      width: 52px; text-align: center; font-size: 16px; font-weight: 800;
+      color: var(--n900); border-left: 1px solid var(--n300);
+      border-right: 1px solid var(--n300); padding: 8px 0;
+    }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0;
+    }
+    .toggle-lbl { flex: 1; }
+    .toggle-lbl strong { display: block; font-size: 14px; font-weight: 700; color: var(--n900); }
+    .toggle-lbl span { font-size: 12px; color: var(--n500); }
+    .toggle {
+      position: relative; width: 44px; height: 26px;
+      border: none; background: none; cursor: pointer; padding: 0; flex-shrink: 0;
+    }
+    .toggle-track {
+      width: 100%; height: 100%; border-radius: 13px;
+      background: var(--n300); transition: background .2s;
+      display: flex; align-items: center;
+    }
+    .toggle.on .toggle-track { background: var(--primary); }
+    .toggle-thumb {
+      width: 20px; height: 20px; border-radius: 50%; background: var(--white);
+      margin: 0 3px; transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle.on .toggle-thumb { transform: translateX(18px); }
+
+    .next-btn {
+      width: 100%; padding: 14px;
+      background: var(--primary); color: var(--white);
+      border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 800;
+      cursor: pointer; font-family: inherit;
+      transition: background .15s;
+      margin-top: 8px;
+    }
+    .next-btn:hover { background: var(--primary-dark); }
+
+    /* loan fields */
+    .loan-fields {
+      display: none; flex-direction: column; gap: 16px;
+      padding: 16px; background: var(--n50);
+      border: 1px solid var(--n300); border-radius: 12px; margin-top: 4px;
+    }
+    .loan-fields.show { display: flex; }
+
+    /* ── RIGHT PANEL ─────────────────────────────────── */
+    .ff-right {
+      padding: 32px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .res-block { display: flex; flex-direction: column; gap: 4px; }
+    .res-eyebrow {
+      font-size: 10px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--n500);
+    }
+    .res-main {
+      font-size: 36px; font-weight: 900; color: var(--n900);
+      letter-spacing: -.02em; line-height: 1.1;
+    }
+    .res-main .unit { font-size: 14px; font-weight: 600; color: var(--n500); }
+    .res-meta { font-size: 12px; color: var(--n700); line-height: 1.5; }
+    .res-divider { height: 1px; background: var(--n300); }
+
+    /* tab toggle /tháng /năm */
+    .tab-row {
+      display: flex; gap: 4px;
+      background: var(--n100); border-radius: 10px; padding: 3px;
+      width: fit-content;
+    }
+    .tab-btn {
+      padding: 5px 14px; border-radius: 7px; border: none;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      font-family: inherit; background: none; color: var(--n500);
+      transition: all .15s;
+    }
+    .tab-btn.on { background: var(--white); color: var(--n900); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+    /* waterfall */
+    .wf-wrap {
+      background: var(--n50); border: 1px solid var(--n300);
+      border-radius: 12px; overflow: hidden;
+    }
+    .wf-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 10px 14px; gap: 8px; border-bottom: 1px solid var(--n300);
+    }
+    .wf-row:last-child { border-bottom: none; }
+    .wf-row.wf-result {
+      background: var(--white); border-top: 2px solid var(--n300);
+    }
+    .wf-lbl { display: flex; align-items: center; gap: 7px; flex: 1; }
+    .wf-lbl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .wf-lbl-text { font-size: 13px; color: var(--n700); }
+    .wf-lbl-text.gross { font-size: 13px; font-weight: 700; color: var(--n900); }
+    .wf-sign { font-size: 13px; font-weight: 700; color: var(--n500); flex-shrink: 0; min-width: 12px; text-align: center; }
+    .wf-amt { font-size: 13px; font-weight: 700; color: var(--n900); white-space: nowrap; }
+    .wf-amt.add { color: var(--n700); }
+    .wf-amt.result { color: var(--primary); font-size: 15px; }
+
+    /* metrics row */
+    .metrics-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .metric-cell {
+      background: var(--n50); border: 1px solid var(--n300);
+      border-radius: 12px; padding: 14px;
+    }
+    .metric-lbl { font-size: 11px; color: var(--n500); margin-bottom: 4px; }
+    .metric-val {
+      font-size: 18px; font-weight: 900; color: var(--n900); letter-spacing: -.01em;
+    }
+    .metric-val.locked { color: var(--n300); }
+    .metric-sub { font-size: 11px; color: var(--n500); margin-top: 2px; }
+
+    /* insight card */
+    .insight-card {
+      background: var(--primary-light);
+      border: 1px solid rgba(235,47,150,.2);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .insight-kicker {
+      font-size: 10px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 6px;
+    }
+    .insight-text { font-size: 12px; line-height: 1.6; color: var(--n900); }
+    .insight-text strong { color: var(--primary); }
+
+    /* locked */
+    .res-locked {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px; background: var(--n50);
+      border: 1px dashed var(--n300); border-radius: 12px;
+    }
+    .res-locked-ico { font-size: 20px; flex-shrink: 0; opacity: .5; }
+    .res-locked-txt { font-size: 12px; color: var(--n500); line-height: 1.6; }
+    .res-locked-txt strong { display: block; font-size: 13px; color: var(--n700); margin-bottom: 3px; }
+
+    /* CTA */
+    .res-cta { display: none; flex-direction: column; gap: 10px; }
+    .res-cta-msg { font-size: 12px; color: var(--n700); line-height: 1.6; }
+    .btn-cta {
+      display: block; width: 100%; padding: 14px;
+      background: var(--primary); color: var(--white);
+      border-radius: 12px; text-align: center;
+      font-size: 15px; font-weight: 800; text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-cta:hover { background: var(--primary-dark); }
+
+    .res-footnote {
+      font-size: 10px; color: var(--n500); line-height: 1.6;
+      border-top: 1px solid var(--n300); padding-top: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+<div class="ff">
+
+  <!-- ── LEFT ── -->
+  <div class="ff-left">
+
+    <div class="ff-comp-header">
+      <div class="ff-comp-title">Xe Máy Flow</div>
+      <div class="ff-comp-name">Chi phí xe máy</div>
+      <div class="ff-comp-sub">Tổng chi phí sở hữu hàng tháng — xăng, khấu hao, bảo dưỡng, bảo hiểm, đỗ xe.</div>
+    </div>
+
+
+    <!-- Step 1 -->
+    <div class="ff-section active" id="sec1">
+      <div class="ff-sec-hdr" onclick="toggleSection(1)">
+        <div class="ff-sec-num">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title">Xe của bạn</div>
+          <div class="ff-sec-summary" id="s1sum"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="event.stopPropagation();editSection(1)">Sửa</button>
+        <span class="ff-sec-chevron">▾</span>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+
+          <div class="field">
+            <div class="field-lbl">Loại xe</div>
+            <div class="chips" id="vtChips">
+              <button class="chip on" onclick="setVT('so')">Xe số</button>
+              <button class="chip" onclick="setVT('tayga')">Xe tay ga</button>
+              <button class="chip" onclick="setVT('dien')">Xe điện</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-lbl">Giá trị xe hiện tại</div>
+            <div class="inp-wrap">
+              <input type="number" id="inpVal" value="30" min="1" max="500"
+                oninput="S.val=+this.value*1e6;renderRight()">
+              <span class="inp-unit">triệu đồng</span>
+            </div>
+            <div class="chips" style="margin-top:6px">
+              <button class="chip" onclick="setVal(15)">15tr</button>
+              <button class="chip" onclick="setVal(25)">25tr</button>
+              <button class="chip" onclick="setVal(40)">40tr</button>
+              <button class="chip" onclick="setVal(70)">70tr</button>
+              <button class="chip" onclick="setVal(100)">100tr</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-lbl">Năm mua xe</div>
+            <select id="selYear" onchange="setYear(+this.value)"
+              style="height:44px;padding:0 12px;border:1px solid var(--n300);border-radius:8px;
+                     font-size:16px;font-weight:700;color:var(--n900);background:var(--white);
+                     font-family:inherit;cursor:pointer;appearance:none;
+                     background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238C8594' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E\");
+                     background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;">
+            </select>
+            <div class="field-hint" id="yearHint">Xe 3 năm tuổi</div>
+          </div>
+
+          <div class="field">
+            <div class="field-lbl">Mua bằng</div>
+            <div class="chips">
+              <button class="chip on" id="chipCash" onclick="setFinance(false)">Tiền mặt</button>
+              <button class="chip" id="chipLoan" onclick="setFinance(true)">Trả góp</button>
+            </div>
+            <div class="loan-fields" id="loanFields">
+              <div class="field">
+                <div class="field-lbl">Số tiền vay</div>
+                <div class="inp-wrap">
+                  <input type="number" id="inpLoanAmt" value="20" min="1" max="500"
+                    oninput="S.loanAmt=+this.value*1e6;renderRight()">
+                  <span class="inp-unit">triệu</span>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-lbl">
+                  <span class="tip-wrap">Lãi suất / năm
+                    <i class="tip-icon">i</i>
+                    <div class="tip-box">Lãi suất vay mua xe máy tại ngân hàng/công ty tài chính. Thường từ 8-15%/năm tùy tổ chức và hồ sơ tín dụng. Kiểm tra hợp đồng vay của bạn để nhập đúng.</div>
+                  </span>
+                </div>
+                <div class="inp-wrap">
+                  <input type="number" id="inpRate" value="9" min="1" max="30" step="0.5"
+                    oninput="S.loanRate=+this.value;renderRight()">
+                  <span class="inp-unit">%</span>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-lbl">Kỳ hạn</div>
+                <div class="chips" id="termChips">
+                  <button class="chip" onclick="setLoanTerm(12)">12 tháng</button>
+                  <button class="chip on" onclick="setLoanTerm(24)">24 tháng</button>
+                  <button class="chip" onclick="setLoanTerm(36)">36 tháng</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="next-btn" onclick="confirmStep(1)">Tiếp theo →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="ff-section" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="toggleSection(2)">
+        <div class="ff-sec-num">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked">Thói quen sử dụng</div>
+          <div class="ff-sec-summary" id="s2sum"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="event.stopPropagation();editSection(2)">Sửa</button>
+        <span class="ff-sec-chevron">▾</span>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+
+          <div class="field">
+            <div class="field-lbl">Km đi mỗi ngày</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="stepper">
+                <button class="stp-btn" onclick="stepKm(-5)">−</button>
+                <div class="stp-val" id="kmVal">20</div>
+                <button class="stp-btn" onclick="stepKm(5)">+</button>
+              </div>
+              <span style="font-size:12px;color:var(--n500)">km / ngày</span>
+            </div>
+            <div class="field-hint" id="kmHint">~440 km/tháng</div>
+          </div>
+
+          <div class="field" id="fuelSection">
+            <div class="field-lbl">Mức tiêu thụ xăng</div>
+            <div class="inp-wrap" style="max-width:160px">
+              <input type="number" id="inpFuel" value="2.0" min="1" max="6" step="0.1"
+                oninput="S.fuelPer100=+this.value;renderRight()">
+              <span class="inp-unit">lít/100km</span>
+            </div>
+            <div class="field-hint" id="fuelHint">Ước tính theo loại xe — điều chỉnh nếu bạn biết thông số thực</div>
+          </div>
+
+          <div class="field" id="elecSection" style="display:none">
+            <div class="field-lbl">Tiêu thụ điện</div>
+            <div class="inp-wrap" style="max-width:160px">
+              <input type="number" id="inpKwh" value="3.0" min="1" max="10" step="0.1"
+                oninput="S.kwhPer100=+this.value;renderRight()">
+              <span class="inp-unit">kWh/100km</span>
+            </div>
+            <div class="field-hint">Ước tính theo xe điện phổ biến — điều chỉnh nếu biết thông số thực</div>
+          </div>
+
+          <div class="field" id="fuelPriceSection">
+            <div class="field-lbl">
+              <span class="tip-wrap">Giá xăng RON95
+                <i class="tip-icon">i</i>
+                <div class="tip-box">Giá xăng RON95-E5 tại cây xăng. Mặc định theo giá phổ biến tháng 7/2026. Thay đổi nếu khu vực bạn đang ở có giá khác.</div>
+              </span>
+            </div>
+            <div class="inp-wrap" style="max-width:200px">
+              <input type="number" id="inpFuelPrice" value="21000" min="10000" max="40000" step="500"
+                oninput="S.fuelPrice=+this.value;renderRight()">
+              <span class="inp-unit">đ/lít</span>
+            </div>
+          </div>
+
+          <div class="field" id="elecPriceSection" style="display:none">
+            <div class="field-lbl">
+              <span class="tip-wrap">Giá điện sinh hoạt
+                <i class="tip-icon">i</i>
+                <div class="tip-box">Giá điện bậc thang EVN. Mặc định 2.800đ/kWh — mức trung bình bậc 3-4. Hộ dùng nhiều điện có thể cao hơn.</div>
+              </span>
+            </div>
+            <div class="inp-wrap" style="max-width:200px">
+              <input type="number" id="inpElecPrice" value="2800" min="1000" max="5000" step="100"
+                oninput="S.elecPrice=+this.value;renderRight()">
+              <span class="inp-unit">đ/kWh</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-lbl">Nơi để xe</div>
+            <div class="chips" id="parkChips">
+              <button class="chip on" onclick="setPark('own')">Nhà riêng / miễn phí</button>
+              <button class="chip" onclick="setPark('condo')">Chung cư</button>
+              <button class="chip" onclick="setPark('rent')">Thuê chỗ đỗ</button>
+            </div>
+            <div class="field" id="parkFeeField" style="display:none; margin-top:8px">
+              <div class="field-lbl" style="margin-bottom:6px">
+                <span class="tip-wrap">Phí giữ xe / tháng
+                  <i class="tip-icon">i</i>
+                  <div class="tip-box">Phí gửi xe máy tháng. Chung cư HN/HCM thường 150.000-350.000đ. Bãi giữ xe tự do khoảng 200.000-500.000đ. Kiểm tra thông báo ban quản lý tòa nhà.</div>
+                </span>
+              </div>
+              <div class="inp-wrap" style="max-width:200px">
+                <input type="number" id="inpParkFee" value="300" min="0" max="2000"
+                  oninput="S.parkFee=+this.value*1000;renderRight()">
+                <span class="inp-unit">nghìn/tháng</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="next-btn" onclick="confirmStep(2)">Tiếp theo →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="ff-section" id="sec3">
+      <div class="ff-sec-hdr locked" onclick="toggleSection(3)">
+        <div class="ff-sec-num">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked">Bảo hiểm &amp; bảo dưỡng</div>
+          <div class="ff-sec-summary" id="s3sum"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="event.stopPropagation();editSection(3)">Sửa</button>
+        <span class="ff-sec-chevron">▾</span>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+
+          <div class="field">
+            <div class="field-lbl">Kỳ hạn TNDS</div>
+            <div class="chips" id="tndsTChips">
+              <button class="chip on" onclick="setTnds(1)">1 năm</button>
+              <button class="chip" onclick="setTnds(2)">2 năm</button>
+              <button class="chip" onclick="setTnds(3)">3 năm</button>
+            </div>
+            <div class="field-hint" id="tndsFeeHint">66.000đ/năm · xe máy trên 50cc</div>
+          </div>
+
+          <div class="field">
+            <div class="toggle-row">
+              <div class="toggle-lbl">
+                <strong>BH tai nạn người ngồi</strong>
+                <span>Bồi thường nếu bạn hoặc người đi cùng bị thương. TNDS không trả khoản này.</span>
+              </div>
+              <button class="toggle" id="togPA" onclick="togglePA()">
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="toggle-row">
+              <div class="toggle-lbl">
+                <strong>BH trộm cắp / cháy nổ</strong>
+                <span id="thDesc">~1.5%/năm giá trị xe. Nên mua nếu để xe ngoài đường thường xuyên.</span>
+              </div>
+              <button class="toggle" id="togTH" onclick="toggleTH()">
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-lbl">Tần suất bảo dưỡng</div>
+            <div class="chips" id="maintChips">
+              <button class="chip" onclick="setMaint('low')">6 tháng/lần</button>
+              <button class="chip on" onclick="setMaint('mid')">3 tháng/lần</button>
+              <button class="chip" onclick="setMaint('high')">Hàng tháng</button>
+            </div>
+            <div class="field-hint" id="maintHint">~800.000đ/lần (thay dầu, lọc, kiểm tra)</div>
+          </div>
+
+          <button class="next-btn" onclick="confirmStep(3)">Xem tổng chi phí →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- ── RIGHT ── -->
+  <div class="ff-right" id="ffRight">
+
+    <!-- Tab toggle -->
+    <div id="tabRow" style="display:none">
+      <div class="tab-row">
+        <button class="tab-btn on" onclick="setTab('month')">/ tháng</button>
+        <button class="tab-btn" onclick="setTab('year')">/ năm</button>
+        <button class="tab-btn" onclick="setTab('5yr')">5 năm</button>
+      </div>
+    </div>
+
+    <!-- Main result -->
+    <div class="res-block">
+      <div class="res-eyebrow" id="rEyebrow">Tổng chi phí ước tính</div>
+      <div class="res-main" id="rMain">—</div>
+      <div class="res-meta" id="rMeta">Điền thông tin xe để tính chi phí thực tế</div>
+    </div>
+
+    <!-- Waterfall (step 2+) -->
+    <div id="wfWrap" style="display:none">
+      <div class="wf-wrap" id="wfContent"></div>
+    </div>
+
+    <div class="res-divider"></div>
+
+    <!-- Metrics (step 2+) -->
+    <div class="metrics-row">
+      <div class="metric-cell">
+        <div class="metric-lbl">Chi phí nhiên liệu</div>
+        <div class="metric-val locked" id="mFuel">—</div>
+        <div class="metric-sub" id="mFuelSub">Hoàn thành bước 2</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-lbl">Khấu hao xe</div>
+        <div class="metric-val locked" id="mDeprc">—</div>
+        <div class="metric-sub" id="mDeprcSub">Hoàn thành bước 1</div>
+      </div>
+    </div>
+
+    <!-- Insight card (step 3) -->
+    <div id="insightWrap" style="display:none">
+      <div class="insight-card">
+        <div class="insight-kicker">Góc nhìn</div>
+        <div class="insight-text" id="insightText"></div>
+      </div>
+    </div>
+
+    <!-- Locked -->
+    <div id="lock2" class="res-locked">
+      <div class="res-locked-ico">🔒</div>
+      <div class="res-locked-txt">
+        <strong>Breakdown chi phí đầy đủ</strong>
+        Hoàn thành 3 bước để xem phân tích từng khoản và tổng TCO theo tháng / năm / 5 năm.
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="res-cta" id="resCta">
+      <div class="res-cta-msg" id="ctaMsg"></div>
+      <a class="btn-cta" href="https://onelink.momo.vn/bao-hiem-xe" target="_blank" rel="noopener">📱 Mua bảo hiểm xe trên MoMo · 3 phút</a>
+    </div>
+
+    <div class="res-footnote">
+      Phí TNDS theo Thông tư 04/2021/TT-BTC · Khấu hao tính theo phương pháp đường thẳng (minh họa) · Số liệu bảo dưỡng và phí đỗ xe là ước tính trung bình, có thể khác theo thực tế · Prototype nghiên cứu - không phải tư vấn tài chính.
+    </div>
+
+  </div><!-- /ff-right -->
+
+</div><!-- /ff -->
+</div><!-- /page-wrap -->
+
+<script>
+// ─── STATE ──────────────────────────────────────────────────────
+const S = {
+  vt: 'so',             // 'so' | 'tayga' | 'dien'
+  val: 30_000_000,      // giá trị xe hiện tại
+  year: 2023,           // năm mua
+  financed: false,
+  loanAmt: 20_000_000,
+  loanRate: 9,          // %/năm
+  loanTerm: 24,         // tháng
+  kmDay: 20,
+  fuelPer100: 2.0,      // lít/100km
+  kwhPer100: 3.0,       // kWh/100km (điện)
+  fuelPrice: 21_000,
+  elecPrice: 2_800,
+  park: 'own',          // 'own' | 'condo' | 'rent'
+  parkFee: 0,           // đ/tháng
+  tndsTerm: 1,
+  pa: false,
+  th: false,
+  maint: 'mid',         // 'low' | 'mid' | 'high'
+  confirmed: 0,
+  tab: 'month',
+};
+
+// ─── DATA ───────────────────────────────────────────────────────
+const TNDS_MOTO = 66_000;   // xe >50cc /năm (gồm VAT)
+const PA_PER_PERSON = 100_000; // 2 người × 50k/năm
+const TH_RATE = 0.015;
+
+// Khấu hao xe máy: ước tính thẳng đơn giản
+// Năm 1: -18%, năm 2-3: -12%/năm, năm 4+: -7%/năm
+// Ta tính % còn lại hiện tại từ năm mua → giá trị ban đầu ngược lại
+const MAINT_COST = { low: 1_200_000, mid: 1_600_000, high: 2_400_000 }; // /năm
+const MAINT_LABEL = { low: '6 tháng/lần', mid: '3 tháng/lần', high: 'Hàng tháng' };
+
+const PARK_FEE_DEFAULT = { own: 0, condo: 200_000, rent: 350_000 }; // /tháng
+
+const VT_FUEL = { so: 2.0, tayga: 3.0, dien: 0 };
+const VT_LABEL = { so: 'Xe số', tayga: 'Xe tay ga', dien: 'Xe điện' };
+
+// ─── CALC ───────────────────────────────────────────────────────
+const THIS_YEAR = 2026;
+
+function calcDepreciation() {
+  // Tính giá trị ban đầu ngược từ giá hiện tại + tuổi
+  const age = THIS_YEAR - S.year;
+  // Rate mất giá mỗi năm tiếp theo ≈ 7-8%
+  // Dùng để tính "mất giá năm tới" = depreciation/năm hiện tại
+  let rateNext;
+  if (age <= 0) rateNext = 0.18;
+  else if (age <= 3) rateNext = 0.10;
+  else if (age <= 6) rateNext = 0.08;
+  else rateNext = 0.05;
+  return Math.round(S.val * rateNext / 12); // /tháng
+}
+
+function calcFuel() {
+  const kmMonth = S.kmDay * 22; // 22 ngày làm việc (ước tính)
+  if (S.vt === 'dien') {
+    return Math.round(kmMonth / 100 * S.kwhPer100 * S.elecPrice);
+  }
+  return Math.round(kmMonth / 100 * S.fuelPer100 * S.fuelPrice);
+}
+
+function calcLoan() {
+  if (!S.financed) return 0;
+  const r = S.loanRate / 100 / 12;
+  const n = S.loanTerm;
+  if (r === 0) return Math.round(S.loanAmt / n);
+  return Math.round(S.loanAmt * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1));
+}
+
+function calcInsurance() {
+  const tndsYear = TNDS_MOTO;
+  const paYear = S.pa ? PA_PER_PERSON * 2 : 0;
+  const thYear = S.th ? Math.round(S.val * TH_RATE / 1000) * 1000 : 0;
+  const totalYear = (tndsYear + paYear) * S.tndsTerm / S.tndsTerm + thYear;
+  return Math.round(totalYear / 12);
+}
+
+function calcMaint() {
+  return Math.round(MAINT_COST[S.maint] / 12);
+}
+
+function calcPark() {
+  return S.parkFee > 0 ? S.parkFee : PARK_FEE_DEFAULT[S.park];
+}
+
+function calc() {
+  const fuel = calcFuel();
+  const deprc = calcDepreciation();
+  const loan = calcLoan();
+  const ins = calcInsurance();
+  const maint = calcMaint();
+  const park = calcPark();
+  const total = fuel + deprc + loan + ins + maint + park;
+  return { fuel, deprc, loan, ins, maint, park, total };
+}
+
+// ─── FORMAT ─────────────────────────────────────────────────────
+const fm = v => {
+  if (!v && v !== 0) return '—';
+  if (v >= 1e9) return (v/1e9).toFixed(2).replace(/\.?0+$/,'') + '&nbsp;tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(2).replace(/\.?0+$/,'') + '&nbsp;triệu';
+  return Math.round(v).toLocaleString('vi-VN') + '&nbsp;đ';
+};
+const fmRaw = v => {
+  if (!v && v !== 0) return '—';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(2).replace(/\.?0+$/,'') + 'tr';
+  return Math.round(v).toLocaleString('vi-VN') + 'đ';
+};
+
+function multiplier() {
+  if (S.tab === 'month') return 1;
+  if (S.tab === 'year') return 12;
+  return 60; // 5 năm
+}
+function tabSuffix() {
+  if (S.tab === 'month') return '/ tháng';
+  if (S.tab === 'year') return '/ năm';
+  return '/ 5 năm';
+}
+
+// ─── RENDER RIGHT ────────────────────────────────────────────────
+function renderRight() {
+  const c = calc();
+  const m = multiplier();
+  const suf = tabSuffix();
+
+  // Depreciation metric (from step 1)
+  const mDeprc = document.getElementById('mDeprc');
+  const mDeprcSub = document.getElementById('mDeprcSub');
+  const age = THIS_YEAR - S.year;
+  mDeprc.className = 'metric-val';
+  mDeprc.innerHTML = fm(c.deprc * m);
+  mDeprcSub.textContent = age <= 0 ? 'Xe mới' : `Xe ${age} năm tuổi · ước tính`;
+
+  if (S.confirmed >= 2) {
+    // Fuel metric
+    const mFuel = document.getElementById('mFuel');
+    const mFuelSub = document.getElementById('mFuelSub');
+    mFuel.className = 'metric-val';
+    mFuel.innerHTML = fm(c.fuel * m);
+    const kmMonth = S.kmDay * 22;
+    mFuelSub.textContent = S.vt === 'dien'
+      ? `${kmMonth} km/tháng · điện`
+      : `${kmMonth} km/tháng · ${S.fuelPer100}L/100km`;
+  }
+
+  if (S.confirmed >= 2) {
+    // Waterfall
+    document.getElementById('tabRow').style.display = '';
+    document.getElementById('wfWrap').style.display = '';
+    document.getElementById('lock2').style.display = 'none';
+
+    const rows = [
+      { dot: '#4B9FFA', label: 'Nhiên liệu', val: c.fuel * m },
+      { dot: '#FF8C00', label: 'Khấu hao', val: c.deprc * m },
+      { dot: '#8B5CF6', label: 'Bảo dưỡng', val: c.maint * m },
+      { dot: '#EB2F96', label: 'Bảo hiểm', val: c.ins * m },
+    ];
+    if (c.park > 0) rows.push({ dot: '#00B14F', label: 'Phí đỗ xe', val: c.park * m });
+    if (c.loan > 0) rows.push({ dot: '#E5233D', label: 'Trả góp', val: c.loan * m });
+
+    const wf = document.getElementById('wfContent');
+    wf.innerHTML = rows.map(r =>
+      `<div class="wf-row">
+        <div class="wf-lbl">
+          <div class="wf-lbl-dot" style="background:${r.dot}"></div>
+          <div class="wf-lbl-text">${r.label}</div>
+        </div>
+        <div class="wf-sign">+</div>
+        <div class="wf-amt add">${fm(r.val)}</div>
+      </div>`
+    ).join('') + `<div class="wf-row wf-result">
+      <div class="wf-lbl">
+        <div class="wf-lbl-dot" style="background:var(--primary)"></div>
+        <div class="wf-lbl-text" style="font-weight:800;color:var(--n900)">Tổng chi phí</div>
+      </div>
+      <div class="wf-sign" style="color:var(--primary)">=</div>
+      <div class="wf-amt result">${fm(c.total * m)} <span style="font-size:11px;font-weight:600;color:var(--n500)">${suf}</span></div>
+    </div>`;
+
+    // Main result
+    document.getElementById('rEyebrow').textContent = `Tổng chi phí xe ${suf}`;
+    document.getElementById('rMain').innerHTML = fm(c.total * m) + ` <span class="unit">${suf}</span>`;
+    document.getElementById('rMeta').textContent = `${VT_LABEL[S.vt]} · ${S.kmDay} km/ngày · ${S.financed ? 'trả góp' : 'tiền mặt'}`;
+  }
+
+  if (S.confirmed >= 3) {
+    // Insight
+    document.getElementById('insightWrap').style.display = '';
+    const costPerKm = Math.round(c.total / (S.kmDay * 22));
+    const topCost = c.fuel >= c.deprc ? 'nhiên liệu' : 'khấu hao';
+    const insightEl = document.getElementById('insightText');
+    insightEl.innerHTML = `Mỗi km đi tốn khoảng <strong>${costPerKm.toLocaleString('vi-VN')}đ</strong> tính đủ mọi khoản.
+      Khoản lớn nhất là <strong>${topCost}</strong> chiếm ${Math.round(Math.max(c.fuel, c.deprc) / c.total * 100)}% tổng chi phí.
+      ${c.loan > 0 ? ` Còn ${S.loanTerm} tháng trả góp — hết góp chi phí giảm <strong>${fm(c.loan)}/tháng</strong>.` : ''}`;
+
+    // CTA
+    const resCta = document.getElementById('resCta');
+    resCta.style.display = 'flex';
+    document.getElementById('ctaMsg').textContent = `Bảo hiểm TNDS bắt buộc ${fmRaw(TNDS_MOTO)}/năm — ${Math.round(TNDS_MOTO/c.total/12*100)}% tổng chi phí tháng. Mua ngay trên MoMo trong 3 phút.`;
+  }
+}
+
+// ─── WIZARD LOGIC ────────────────────────────────────────────────
+function toggleSection(n) {
+  if (S.confirmed < n - 1) return;
+  const sec = document.getElementById('sec' + n);
+  const isActive = sec.classList.contains('active');
+  if (!sec.classList.contains('done') && !isActive) return;
+  if (isActive && !sec.classList.contains('done')) return;
+  editSection(n);
+}
+
+function confirmStep(n) {
+  const sec = document.getElementById('sec' + n);
+  sec.classList.remove('active');
+  sec.classList.add('done');
+  sec.querySelector('.ff-sec-num').textContent = '✓';
+  if (n > S.confirmed) S.confirmed = n;
+
+  // Update summary
+  updateSummary(n);
+
+  // Unlock next
+  if (n < 3) {
+    const next = document.getElementById('sec' + (n+1));
+    next.classList.add('active');
+    next.querySelector('.ff-sec-hdr').classList.remove('locked');
+    next.querySelector('.ff-sec-title').classList.remove('locked');
+  }
+  renderRight();
+}
+
+function editSection(n) {
+  document.querySelectorAll('.ff-section').forEach((s, i) => {
+    const idx = i + 1;
+    if (idx === n) {
+      s.classList.add('active');
+      s.classList.remove('done');
+      s.querySelector('.ff-sec-num').textContent = idx;
+    } else if (idx > n) {
+      s.classList.remove('active', 'done');
+      s.querySelector('.ff-sec-num').textContent = idx;
+      s.querySelector('.ff-sec-hdr').classList.add('locked');
+      s.querySelector('.ff-sec-title').classList.add('locked');
+    }
+  });
+  S.confirmed = Math.min(S.confirmed, n - 1);
+  document.getElementById('insightWrap').style.display = 'none';
+  document.getElementById('resCta').style.display = 'none';
+}
+
+function updateSummary(n) {
+  const age = THIS_YEAR - S.year;
+  if (n === 1) {
+    document.getElementById('s1sum').textContent =
+      `${VT_LABEL[S.vt]} · ${(S.val/1e6).toFixed(0)}tr · ${age <= 0 ? 'mới' : age + ' năm tuổi'}${S.financed ? ' · trả góp' : ''}`;
+  } else if (n === 2) {
+    document.getElementById('s2sum').textContent =
+      `${S.kmDay} km/ngày · ${S.vt === 'dien' ? S.kwhPer100 + ' kWh/100km' : S.fuelPer100 + 'L/100km'}`;
+  } else if (n === 3) {
+    document.getElementById('s3sum').textContent =
+      `TNDS ${S.tndsTerm} năm · ${MAINT_LABEL[S.maint]}${S.pa ? ' · BH TNLX' : ''}${S.th ? ' · BH trộm' : ''}`;
+  }
+}
+
+// ─── CONTROLS ───────────────────────────────────────────────────
+function setVT(v) {
+  S.vt = v;
+  S.fuelPer100 = VT_FUEL[v];
+  document.querySelectorAll('#vtChips .chip').forEach(c => c.classList.remove('on'));
+  event.target.classList.add('on');
+  // Show/hide fuel vs elec
+  const isElec = v === 'dien';
+  document.getElementById('fuelSection').style.display = isElec ? 'none' : '';
+  document.getElementById('fuelPriceSection').style.display = isElec ? 'none' : '';
+  document.getElementById('elecSection').style.display = isElec ? '' : 'none';
+  document.getElementById('elecPriceSection').style.display = isElec ? '' : 'none';
+  if (!isElec) document.getElementById('inpFuel').value = S.fuelPer100;
+  updateFuelHint();
+  renderRight();
+}
+
+function setVal(v) {
+  S.val = v * 1e6;
+  document.getElementById('inpVal').value = v;
+  renderRight();
+}
+
+function setYear(y) {
+  S.year = y;
+  const age = THIS_YEAR - y;
+  document.getElementById('yearHint').textContent =
+    age <= 0 ? 'Xe mới mua' : `Xe ${age} năm tuổi`;
+  renderRight();
+}
+
+function initYearSelect() {
+  const sel = document.getElementById('selYear');
+  for (let y = THIS_YEAR; y >= 2008; y--) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y + (y === THIS_YEAR ? ' (mới)' : '');
+    if (y === S.year) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function setFinance(v) {
+  S.financed = v;
+  document.getElementById('chipCash').classList.toggle('on', !v);
+  document.getElementById('chipLoan').classList.toggle('on', v);
+  document.getElementById('loanFields').classList.toggle('show', v);
+  renderRight();
+}
+
+function setLoanTerm(t) {
+  S.loanTerm = t;
+  document.querySelectorAll('#termChips .chip').forEach(c => c.classList.remove('on'));
+  event.target.classList.add('on');
+  renderRight();
+}
+
+function stepKm(d) {
+  S.kmDay = Math.max(5, Math.min(200, S.kmDay + d));
+  document.getElementById('kmVal').textContent = S.kmDay;
+  document.getElementById('kmHint').textContent = `~${S.kmDay * 22} km/tháng`;
+  renderRight();
+}
+
+function updateFuelHint() {
+  const hints = { so: 'Xe số thường 1.8-2.5 lít/100km', tayga: 'Xe tay ga thường 2.5-4 lít/100km', dien: '' };
+  const el = document.getElementById('fuelHint');
+  if (el) el.textContent = hints[S.vt] || '';
+}
+
+function setPark(v) {
+  S.park = v;
+  S.parkFee = 0;
+  document.querySelectorAll('#parkChips .chip').forEach(c => c.classList.remove('on'));
+  event.target.classList.add('on');
+  const showFeeField = v === 'rent' || v === 'condo';
+  document.getElementById('parkFeeField').style.display = showFeeField ? '' : 'none';
+  if (showFeeField) {
+    document.getElementById('inpParkFee').value = PARK_FEE_DEFAULT[v] / 1000;
+    S.parkFee = PARK_FEE_DEFAULT[v];
+  }
+  renderRight();
+}
+
+function setTnds(t) {
+  S.tndsTerm = t;
+  document.querySelectorAll('#tndsTChips .chip').forEach(c => c.classList.remove('on'));
+  event.target.classList.add('on');
+  const total = TNDS_MOTO * t;
+  document.getElementById('tndsFeeHint').textContent =
+    `${total.toLocaleString('vi-VN')}đ cho ${t} năm (${TNDS_MOTO.toLocaleString('vi-VN')}đ/năm)`;
+  renderRight();
+}
+
+function togglePA() {
+  S.pa = !S.pa;
+  document.getElementById('togPA').classList.toggle('on', S.pa);
+  renderRight();
+}
+
+function toggleTH() {
+  S.th = !S.th;
+  document.getElementById('togTH').classList.toggle('on', S.th);
+  renderRight();
+}
+
+function setMaint(v) {
+  S.maint = v;
+  document.querySelectorAll('#maintChips .chip').forEach(c => c.classList.remove('on'));
+  event.target.classList.add('on');
+  const freq = { low: '6 tháng', mid: '3 tháng', high: '1 tháng' };
+  document.getElementById('maintHint').textContent =
+    `~${(MAINT_COST[v]/1000).toFixed(0)}k/lần · mỗi ${freq[v]}`;
+  renderRight();
+}
+
+function setTab(t) {
+  S.tab = t;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  event.target.classList.add('on');
+  renderRight();
+}
+
+// init
+initYearSelect();
+renderRight();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>

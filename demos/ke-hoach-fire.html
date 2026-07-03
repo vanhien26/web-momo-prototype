@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kế hoạch FIRE — MoMo</title>
+  <meta name="proto-name" content="Kế hoạch FIRE">
+  <link rel="stylesheet" href="/assets/mobase-static.css">
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --success:       #00B14F;
+      --success-light: #E6F9EE;
+      --warning:       #FF8C00;
+      --warning-light: #FFF4E5;
+      --error:         #E5233D;
+      --error-light:   #FDEDF0;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n400: #A09AA6;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'MoMoTrustSans', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      min-height: 100%;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 80px;
+    }
+
+    .ff-card {
+      width: 100%; max-width: 920px;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 24px rgba(0,0,0,.07);
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    .ff-comp-header {
+      grid-column: 1 / -1;
+      padding: 24px 32px 20px;
+      border-bottom: 1px solid var(--n100);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .ff-eyebrow {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 5px;
+    }
+    .ff-title { font-size: 22px; font-weight: 900; color: var(--n900); letter-spacing: -.02em; }
+    .ff-sub { font-size: 12px; color: var(--n500); margin-top: 3px; }
+
+    .ff-left { border-right: 1px solid var(--n100); }
+
+    .ff-section { border-bottom: 1px solid var(--n100); }
+    .ff-section:last-child { border-bottom: none; }
+
+    .ff-sec-hdr {
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .ff-sec-hdr.locked { cursor: default; }
+
+    .ff-sec-num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      background: var(--primary); color: var(--white);
+      transition: background .2s;
+    }
+    .ff-section.locked .ff-sec-num { background: var(--n300); color: var(--n500); }
+    .ff-section.done .ff-sec-num { background: var(--success); color: var(--white); }
+
+    .ff-sec-meta { flex: 1; min-width: 0; }
+    .ff-sec-title { font-size: 14px; font-weight: 700; color: var(--n900); }
+    .ff-section.locked .ff-sec-title { color: var(--n400); }
+    .ff-sec-summary { font-size: 11px; color: var(--n500); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ff-sec-edit {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--primary-light); border: none; border-radius: 9999px;
+      padding: 3px 10px; cursor: pointer; font-family: inherit;
+      display: none;
+    }
+    .ff-section.done .ff-sec-edit { display: block; }
+
+    .ff-sec-body { display: none; padding: 0 24px 20px; }
+    .ff-section.active .ff-sec-body { display: block; }
+
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-lbl {
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+
+    .inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+    }
+    .inp-wrap:focus-within { border-color: var(--primary); border-width: 1.5px; }
+    .inp-wrap.error { border-color: var(--error); }
+    .inp-wrap input {
+      flex: 1; border: none; outline: none; min-width: 0;
+      padding: 11px 14px; font-size: 17px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum";
+    }
+    .inp-wrap input::placeholder { font-size: 14px; font-weight: 400; color: var(--n300); }
+    .inp-unit {
+      padding: 0 12px; font-size: 12px; font-weight: 600;
+      color: var(--n500); border-left: 1px solid var(--n300);
+      white-space: nowrap; height: 44px; display: flex; align-items: center;
+    }
+
+    .chips { display: flex; gap: 2px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 10px; border-radius: 6px;
+      border: none; background: none;
+      font-size: 13px; font-weight: 600; color: var(--n400);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .chip:hover { color: var(--n700); background: var(--n100); }
+    .chip.on { color: var(--primary); font-weight: 800; background: var(--primary-light); }
+
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+      padding: 6px 14px; border-radius: 9999px;
+      border: 1.5px solid var(--n300); background: var(--white);
+      font-size: 13px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .pill:hover { border-color: var(--primary); color: var(--primary); }
+    .pill.on { border-color: var(--primary); background: var(--primary); color: var(--white); }
+
+    .field-hint { font-size: 12px; color: var(--n500); line-height: 1.5; }
+
+    .sec-action { margin-top: 16px; }
+    .btn-confirm {
+      width: 100%; padding: 12px 20px;
+      border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-confirm:hover { background: var(--primary-dark); }
+
+    .ff-right {
+      background: var(--n50);
+      padding: 28px 32px 40px;
+      display: flex; flex-direction: column; gap: 24px;
+      min-height: 460px;
+    }
+
+    .res-hero-lbl {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--n500);
+    }
+    .res-hero-val {
+      font-size: 40px; font-weight: 900; color: var(--primary);
+      letter-spacing: -.03em; line-height: 1;
+      margin: 6px 0 4px;
+    }
+    .res-hero-val span { font-size: 20px; font-weight: 600; color: var(--n500); margin-left: 4px; }
+    .res-hero-sub { font-size: 12px; color: var(--n500); }
+
+    .goal-wrap { display: none; flex-direction: column; gap: 16px; }
+    .goal-wrap.show { display: flex; }
+
+    .goal-card {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .goal-card-hdr {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .goal-card-title { font-size: 13px; font-weight: 800; color: var(--n900); }
+    .goal-card-badge {
+      font-size: 11px; font-weight: 800; color: var(--success);
+      background: var(--success-light); padding: 2px 8px;
+      border-radius: 9999px; white-space: nowrap;
+    }
+    .goal-card-badge.warn { color: var(--warning); background: var(--warning-light); }
+
+    .goal-track {
+      height: 6px; background: var(--n100); border-radius: 9999px; overflow: hidden;
+    }
+    .goal-track-fill {
+      height: 100%; border-radius: 9999px;
+      background: var(--success); transition: width .4s;
+    }
+    .goal-card-sub { font-size: 11px; color: var(--n500); line-height: 1.6; }
+
+    .ms-tbl { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--n300); border-radius: 12px; overflow: hidden; }
+    .ms-tbl th { padding: 9px 14px; font-size: 10px; font-weight: 800; color: var(--n500); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--n300); text-align: left; background: var(--n50); }
+    .ms-tbl td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--n100); }
+    .ms-tbl tr:last-child td { border-bottom: none; }
+    .ms-tbl tr.hit td { background: var(--success-light); }
+    .ms-year { font-weight: 700; color: var(--n900); }
+    .ms-val { font-weight: 800; color: var(--n900); }
+    .ms-pct { font-size: 12px; font-weight: 700; color: var(--n500); }
+    .ms-tbl tr.hit .ms-pct { color: var(--success); }
+
+    .res-cta {
+      background: var(--primary-light); border: 1.5px solid var(--primary);
+      border-radius: 14px; padding: 18px 20px;
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .res-cta.show { display: flex; }
+    .res-cta-msg { font-size: 13px; color: var(--n700); line-height: 1.6; }
+    .res-cta-msg strong { display: block; font-size: 15px; color: var(--n900); margin-bottom: 3px; }
+    .res-cta-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 800; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .res-cta-btn:hover { background: var(--primary-dark); }
+
+    .res-locked {
+      background: var(--white); border: 1.5px dashed var(--n300);
+      border-radius: 14px; padding: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .res-locked-icon { font-size: 20px; flex-shrink: 0; }
+    .res-locked-txt { font-size: 12px; color: var(--n400); line-height: 1.6; }
+    .res-locked-txt strong { color: var(--n700); display: block; margin-bottom: 2px; }
+
+    @media (max-width: 700px) {
+      .ff-card { grid-template-columns: 1fr; }
+      .ff-comp-header { padding: 20px; }
+      .ff-right { padding: 24px 20px; }
+      .ff-sec-body { padding: 0 16px 18px; }
+      .ff-sec-hdr { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="ff-card">
+
+  <!-- Header -->
+  <div class="ff-comp-header">
+    <div>
+      <div class="ff-eyebrow">Financial Flow</div>
+      <div class="ff-title">Kế hoạch FIRE</div>
+      <div class="ff-sub">3 bước · tự động tính · không lưu dữ liệu</div>
+    </div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="ff-left">
+
+    <!-- Step 1: Mục tiêu -->
+    <div class="ff-section active" id="sec0">
+      <div class="ff-sec-hdr" onclick="toggleSec(0)">
+        <div class="ff-sec-num" id="sn0">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title" id="st0">Mục tiêu</div>
+          <div class="ff-sec-summary" id="ss0"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,0)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Chi tiêu hiện tại / tháng</div>
+            <div class="inp-wrap" id="spendWrap">
+              <input type="text" inputmode="decimal" id="spendInp"
+                placeholder="VD: 20.000.000"
+                oninput="onSpend(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="spendChips">
+              <button class="chip" onclick="setSpend(10)">10tr</button>
+              <button class="chip" onclick="setSpend(15)">15tr</button>
+              <button class="chip" onclick="setSpend(20)">20tr</button>
+              <button class="chip" onclick="setSpend(30)">30tr</button>
+              <button class="chip" onclick="setSpend(40)">40tr</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Muốn đạt FIRE sau</div>
+            <div class="pills" id="yearPills">
+              <button class="pill" onclick="setYears(5,this)">5 năm</button>
+              <button class="pill" onclick="setYears(10,this)">10 năm</button>
+              <button class="pill on" onclick="setYears(15,this)">15 năm</button>
+              <button class="pill" onclick="setYears(20,this)">20 năm</button>
+              <button class="pill" onclick="setYears(25,this)">25 năm</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Lạm phát chi tiêu / năm</div>
+            <div class="pills" id="inflPills">
+              <button class="pill" onclick="setInfl(3,this)">3%</button>
+              <button class="pill on" onclick="setInfl(4,this)">4%</button>
+              <button class="pill" onclick="setInfl(5,this)">5%</button>
+              <button class="pill" onclick="setInfl(6,this)">6%</button>
+            </div>
+            <div class="field-hint">Chi tiêu tương lai = chi tiêu hiện tại nhân lũy kế lạm phát đến năm FIRE.</div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(0)">Xác nhận mục tiêu →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Tích lũy -->
+    <div class="ff-section locked" id="sec1">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(1)">
+        <div class="ff-sec-num" id="sn1">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st1">Tích lũy &amp; đầu tư</div>
+          <div class="ff-sec-summary" id="ss1"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,1)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Tài sản đầu tư hiện có</div>
+            <div class="inp-wrap">
+              <input type="text" inputmode="decimal" id="assetInp"
+                placeholder="VD: 500.000.000"
+                oninput="onAsset(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="assetChips">
+              <button class="chip" onclick="setAsset(0)">0đ</button>
+              <button class="chip" onclick="setAsset(200)">200tr</button>
+              <button class="chip" onclick="setAsset(500)">500tr</button>
+              <button class="chip" onclick="setAsset(1000)">1tỷ</button>
+              <button class="chip" onclick="setAsset(2000)">2tỷ</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Đầu tư thêm / tháng</div>
+            <div class="inp-wrap" id="contribWrap">
+              <input type="text" inputmode="decimal" id="contribInp"
+                placeholder="VD: 10.000.000"
+                oninput="onContrib(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="contribChips">
+              <button class="chip" onclick="setContrib(3)">3tr</button>
+              <button class="chip" onclick="setContrib(5)">5tr</button>
+              <button class="chip" onclick="setContrib(10)">10tr</button>
+              <button class="chip" onclick="setContrib(20)">20tr</button>
+              <button class="chip" onclick="setContrib(30)">30tr</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Lợi suất đầu tư kỳ vọng / năm</div>
+            <div class="pills" id="returnPills">
+              <button class="pill" onclick="setReturn(6,this)">6%</button>
+              <button class="pill on" onclick="setReturn(8,this)">8%</button>
+              <button class="pill" onclick="setReturn(10,this)">10%</button>
+              <button class="pill" onclick="setReturn(12,this)">12%</button>
+            </div>
+            <div class="field-hint">Tham chiếu: tiết kiệm ~5-6%, trái phiếu ~8%, cổ phiếu dài hạn ~10-12%.</div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(1)">Xác nhận tích lũy →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Độ an toàn -->
+    <div class="ff-section locked" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(2)">
+        <div class="ff-sec-num" id="sn2">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st2">Độ an toàn kế hoạch</div>
+          <div class="ff-sec-summary" id="ss2"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,2)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Tỷ lệ rút vốn an toàn (SWR)</div>
+            <div class="pills" id="swrPills">
+              <button class="pill" onclick="setSwr(3,this)">3%</button>
+              <button class="pill on" onclick="setSwr(3.5,this)">3,5%</button>
+              <button class="pill" onclick="setSwr(4,this)">4%</button>
+              <button class="pill" onclick="setSwr(5,this)">5%</button>
+            </div>
+            <div class="field-hint" id="swrHint">Quy tắc 4% là mốc tham chiếu. Chọn 3-3,5% nếu muốn an toàn hơn hoặc nghỉ hưu dài hơn 30 năm.</div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(2)">Xem dự phóng FIRE →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- RIGHT -->
+  <div class="ff-right" id="ffRight">
+
+    <!-- Hero -->
+    <div id="heroWrap">
+      <div class="res-hero-lbl" id="heroLbl">SỐ TIỀN CẦN ĐỂ FIRE</div>
+      <div class="res-hero-val" id="heroVal">—</div>
+      <div class="res-hero-sub" id="heroSub">Nhập chi tiêu để bắt đầu</div>
+    </div>
+
+    <!-- Projection — shows after step 2 -->
+    <div class="goal-wrap" id="projWrap"></div>
+
+    <!-- Lock placeholder -->
+    <div class="res-locked" id="lockPlaceholder">
+      <div class="res-locked-icon">🔒</div>
+      <div class="res-locked-txt">
+        <strong>Dự phóng lộ trình đầy đủ</strong>
+        Hoàn thành bước 2 để xem danh mục dự kiến, khoảng cách mục tiêu và mốc thời gian.
+      </div>
+    </div>
+
+    <!-- Result — shows after step 3 -->
+    <div class="goal-wrap" id="goalWrap"></div>
+    <div class="res-cta" id="resCta">
+      <div class="res-cta-msg" id="ctaMsg"></div>
+      <button class="res-cta-btn" onclick="window.open('https://onelink.momo.vn/9FDkn9wV','_blank')">
+        Bắt đầu tích lũy trên MoMo →
+      </button>
+    </div>
+
+  </div><!-- /ff-right -->
+
+</div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const S = {
+  spend: 0,
+  years: 15,
+  infl: 4,
+  asset: 0, assetSet: false,
+  contrib: 0,
+  ret: 8,
+  swr: 3.5,
+  confirmed: 0,
+};
+
+// ─── AUTO-FORMAT INPUT ───────────────────────────────
+function maskedInput(el) {
+  const sel = el.selectionEnd;
+  const prevLen = el.value.length;
+  const raw = el.value.replace(/\D/g, '');
+  const num = +raw || 0;
+  const formatted = num > 0 ? num.toLocaleString('vi-VN') : '';
+  el.value = formatted;
+  const delta = formatted.length - prevLen;
+  const pos = Math.max(0, sel + delta);
+  el.setSelectionRange(pos, pos);
+  return num;
+}
+
+// ─── FORMAT ──────────────────────────────────────────
+const fm = v => {
+  if (!v && v !== 0) return '—';
+  if (v >= 1e9) return (Math.round(v/1e7)/100).toFixed(2).replace(/\.?0+$/,'') + '&nbsp;tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(1).replace('.0','') + '&nbsp;triệu';
+  return Math.round(v).toLocaleString('vi-VN') + '&nbsp;đ';
+};
+const fmRaw = v => {
+  if (!v) return '0đ';
+  if (v >= 1e9) return (Math.round(v/1e7)/100).toFixed(2).replace(/\.?0+$/,'') + 'tỷ';
+  if (v >= 1e6) return (Math.round(v/1e5)/10).toFixed(1).replace('.0','') + 'tr';
+  return Math.round(v).toLocaleString('vi-VN') + 'đ';
+};
+
+// ─── FIRE MATH (port từ tu-do-tai-chinh, financial.js) ─
+function futureMonthlySpend() {
+  return S.spend * Math.pow(1 + S.infl / 100, S.years);
+}
+function fireNumber() {
+  return futureMonthlySpend() * 12 / (S.swr / 100);
+}
+// Giá trị danh mục sau n năm: tài sản hiện có lũy kế + dòng góp hàng tháng lũy kế.
+function portfolioAt(years) {
+  const months = years * 12;
+  const r = S.ret / 100 / 12;
+  const growth = Math.pow(1 + r, months);
+  const fromAssets = S.asset * growth;
+  const fromContrib = r === 0 ? S.contrib * months : S.contrib * (growth - 1) / r;
+  return fromAssets + fromContrib;
+}
+function requiredMonthly() {
+  const months = S.years * 12;
+  const r = S.ret / 100 / 12;
+  const growth = Math.pow(1 + r, months);
+  const target = fireNumber() - S.asset * growth;
+  if (target <= 0) return 0;
+  return r === 0 ? target / months : target * r / (growth - 1);
+}
+
+// ─── RENDER RIGHT ────────────────────────────────────
+function renderRight() {
+  const conf = S.confirmed;
+  const hasGoal = S.spend > 0;
+  const fireNum = hasGoal ? fireNumber() : 0;
+
+  // Hero
+  document.getElementById('heroVal').innerHTML = hasGoal ? fm(fireNum) : '—';
+  document.getElementById('heroSub').textContent = hasGoal
+    ? `Chi tiêu ${fmRaw(futureMonthlySpend())}/tháng tại năm FIRE · SWR ${String(S.swr).replace('.',',')}%`
+    : 'Nhập chi tiêu để bắt đầu';
+
+  document.getElementById('lockPlaceholder').style.display = conf >= 2 ? 'none' : 'flex';
+
+  // Projection — after step 2
+  const pw = document.getElementById('projWrap');
+  if (conf >= 2 && hasGoal) {
+    pw.classList.add('show');
+    const proj = portfolioAt(S.years);
+    const ratio = fireNum ? Math.min(999, Math.round(proj / fireNum * 100)) : 0;
+    const hit = proj >= fireNum;
+    pw.innerHTML = `
+      <div class="goal-card">
+        <div class="goal-card-hdr">
+          <div class="goal-card-title">Danh mục sau ${S.years} năm · ${fmRaw(proj)}</div>
+          ${hit
+            ? `<div class="goal-card-badge">Đạt ${ratio}% mục tiêu</div>`
+            : `<div class="goal-card-badge warn">Mới đạt ${ratio}%</div>`}
+        </div>
+        <div class="goal-track"><div class="goal-track-fill" style="width:${Math.min(100, ratio)}%;${hit?'':'background:var(--warning)'}"></div></div>
+        <div class="goal-card-sub">
+          ${hit
+            ? `Vượt mục tiêu FIRE khoảng ${fmRaw(proj - fireNum)} với đà góp ${fmRaw(S.contrib)}/tháng, lợi suất ${S.ret}%/năm.`
+            : `Còn thiếu ${fmRaw(fireNum - proj)} tại năm mục tiêu. Xem bước 3 để biết cần điều chỉnh gì.`}
+        </div>
+      </div>
+    `;
+  } else {
+    pw.classList.remove('show');
+  }
+
+  // Result — after step 3
+  const gw = document.getElementById('goalWrap');
+  const cta = document.getElementById('resCta');
+
+  if (conf >= 3 && hasGoal) {
+    gw.classList.add('show');
+    cta.classList.add('show');
+
+    const proj = portfolioAt(S.years);
+    const hit = proj >= fireNum;
+    const reqM = requiredMonthly();
+    const extra = Math.max(0, reqM - S.contrib);
+    const passiveNow = S.asset * (S.swr / 100) / 12;
+
+    // Mốc thời gian: hiển thị tiến độ theo từng chặng đến năm FIRE.
+    const steps = [Math.round(S.years/3), Math.round(S.years*2/3), S.years].filter((v,i,a) => v > 0 && a.indexOf(v) === i);
+    const rows = steps.map(y => {
+      const p = portfolioAt(y);
+      const pc = Math.min(999, Math.round(p / fireNum * 100));
+      return `<tr class="${p >= fireNum ? 'hit' : ''}">
+        <td><span class="ms-year">Năm ${y}</span></td>
+        <td><span class="ms-val">${fmRaw(p)}</span></td>
+        <td><span class="ms-pct">${pc}% mục tiêu</span></td>
+      </tr>`;
+    }).join('');
+
+    gw.innerHTML = `
+      <div class="goal-card">
+        <div class="goal-card-hdr">
+          <div class="goal-card-title">${hit ? 'Kế hoạch khả thi' : 'Cần góp ' + fmRaw(reqM) + '/tháng để đúng hạn'}</div>
+          ${hit
+            ? `<div class="goal-card-badge">Đúng hạn ${S.years} năm</div>`
+            : `<div class="goal-card-badge warn">Thiếu ${fmRaw(extra)}/tháng</div>`}
+        </div>
+        <div class="goal-card-sub">
+          ${hit
+            ? `Duy trì góp ${fmRaw(S.contrib)}/tháng với lợi suất ${S.ret}%/năm là đủ đạt FIRE trong ${S.years} năm. Dòng tiền thụ động hiện tại: ${fmRaw(passiveNow)}/tháng.`
+            : `Ba cách rút ngắn khoảng cách: tăng góp thêm ${fmRaw(extra)}/tháng, giảm chi tiêu mục tiêu, hoặc kéo dài thời gian tích lũy. Dòng tiền thụ động hiện tại: ${fmRaw(passiveNow)}/tháng.`}
+        </div>
+      </div>
+      <table class="ms-tbl">
+        <thead><tr>
+          <th>Mốc</th>
+          <th>Danh mục dự kiến</th>
+          <th>Tiến độ</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+
+    document.getElementById('ctaMsg').innerHTML = hit
+      ? `<strong>Bắt đầu tự động hóa dòng góp ${fmRaw(S.contrib)}/tháng</strong>Thiết lập tích lũy định kỳ trên MoMo để kế hoạch chạy đều mà không cần nhớ.`
+      : `<strong>Bắt đầu từ mức góp hiện tại, tăng dần theo thu nhập</strong>Mở tích lũy trên MoMo ngay hôm nay — mỗi tháng trì hoãn làm mục tiêu FIRE lùi xa thêm.`;
+  } else {
+    gw.classList.remove('show');
+    cta.classList.remove('show');
+  }
+}
+
+// ─── INPUT HANDLERS ──────────────────────────────────
+function syncChips(sel, val) {
+  document.querySelectorAll(sel).forEach(c => {
+    const t = c.textContent;
+    const n = t.includes('tỷ') ? parseFloat(t)*1e9 : t.includes('tr') ? parseFloat(t)*1e6 : parseFloat(t) || 0;
+    c.classList.toggle('on', n === val);
+  });
+}
+function onSpend(el) {
+  document.getElementById('spendWrap').classList.remove('error');
+  S.spend = maskedInput(el);
+  syncChips('#spendChips .chip', S.spend);
+  renderRight();
+}
+function setSpend(m) {
+  S.spend = m * 1e6;
+  document.getElementById('spendInp').value = S.spend.toLocaleString('vi-VN');
+  document.getElementById('spendWrap').classList.remove('error');
+  syncChips('#spendChips .chip', S.spend);
+  renderRight();
+}
+function setYears(y, btn) {
+  S.years = y;
+  document.querySelectorAll('#yearPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function setInfl(v, btn) {
+  S.infl = v;
+  document.querySelectorAll('#inflPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function onAsset(el) { S.asset = maskedInput(el); S.assetSet = true; syncChips('#assetChips .chip', S.asset); renderRight(); }
+function setAsset(m) {
+  S.asset = m * 1e6;
+  S.assetSet = true;
+  document.getElementById('assetInp').value = S.asset > 0 ? S.asset.toLocaleString('vi-VN') : '0';
+  syncChips('#assetChips .chip', S.asset);
+  renderRight();
+}
+function onContrib(el) {
+  document.getElementById('contribWrap').classList.remove('error');
+  S.contrib = maskedInput(el);
+  syncChips('#contribChips .chip', S.contrib);
+  renderRight();
+}
+function setContrib(m) {
+  S.contrib = m * 1e6;
+  document.getElementById('contribInp').value = S.contrib.toLocaleString('vi-VN');
+  document.getElementById('contribWrap').classList.remove('error');
+  syncChips('#contribChips .chip', S.contrib);
+  renderRight();
+}
+function setReturn(r, btn) {
+  S.ret = r;
+  document.querySelectorAll('#returnPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function setSwr(v, btn) {
+  S.swr = v;
+  document.querySelectorAll('#swrPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+
+// ─── SECTION CONTROL ─────────────────────────────────
+function setSectionState(i, state) {
+  const sec = document.getElementById('sec'+i);
+  const hdr = sec.querySelector('.ff-sec-hdr');
+  const ttl = document.getElementById('st'+i);
+  sec.className = 'ff-section ' + state;
+  hdr.className = 'ff-sec-hdr' + (state === 'locked' ? ' locked' : '');
+  if (ttl) ttl.className = 'ff-sec-title' + (state === 'locked' ? ' locked' : '');
+}
+
+function toggleSec(i) {
+  const sec = document.getElementById('sec'+i);
+  if (sec.classList.contains('locked')) return;
+  if (sec.classList.contains('done')) return;
+}
+
+function editSec(e, i) {
+  e.stopPropagation();
+  setSectionState(i, 'active');
+  for (let j = i+1; j <= 2; j++) setSectionState(j, 'locked');
+  S.confirmed = i;
+  renderRight();
+}
+
+function confirmSec(i) {
+  if (i === 0 && S.spend <= 0) {
+    document.getElementById('spendWrap').classList.add('error');
+    document.getElementById('spendInp').focus();
+    return;
+  }
+  if (i === 1 && S.contrib <= 0 && S.asset <= 0) {
+    document.getElementById('contribWrap').classList.add('error');
+    document.getElementById('contribInp').focus();
+    return;
+  }
+
+  const summaries = [
+    `Chi tiêu ${fmRaw(S.spend)}/tháng · FIRE sau ${S.years} năm · lạm phát ${S.infl}%`,
+    `Có ${fmRaw(S.asset)} · góp ${fmRaw(S.contrib)}/tháng · lợi suất ${S.ret}%`,
+    `SWR ${String(S.swr).replace('.',',')}%`,
+  ];
+  document.getElementById('ss'+i).innerHTML = summaries[i];
+
+  setSectionState(i, 'done');
+  S.confirmed = Math.max(S.confirmed, i+1);
+
+  if (i < 2) setSectionState(i+1, 'active');
+
+  renderRight();
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderRight();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>

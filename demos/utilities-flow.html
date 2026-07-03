@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utilities Flow — MoMo</title>
+  <meta name="proto-name" content="Utilities Flow">
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'MoMoTrustSans', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header { margin-bottom: 40px; }
+
+    .page-eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .page-title {
+      font-size: 32px; font-weight: 900; color: var(--n900);
+      letter-spacing: -.02em; line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .page-desc {
+      font-size: 14px; color: var(--n700); line-height: 1.65;
+      max-width: 560px;
+    }
+
+    .page-meta {
+      display: flex; align-items: center; gap: 16px;
+      margin-top: 20px; padding-top: 20px;
+      border-top: 1px solid var(--n300);
+    }
+
+    .meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--n500); font-weight: 600;
+    }
+
+    .meta-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); flex-shrink: 0;
+    }
+
+    /* ── SECTION ── */
+    .section-label {
+      font-size: 10px; font-weight: 800; letter-spacing: .09em;
+      text-transform: uppercase; color: var(--n500);
+      margin-bottom: 14px;
+    }
+
+    /* ── FLOW GRID ── */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 640px) {
+      .flow-grid { grid-template-columns: 1fr; }
+    }
+
+    .flow-card {
+      background: var(--white);
+      border: 1px solid var(--n300);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex; flex-direction: column; gap: 14px;
+      text-decoration: none; color: inherit;
+      transition: border-color .18s, box-shadow .18s, transform .18s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .flow-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 16px rgba(235,47,150,.12);
+      transform: translateY(-2px);
+    }
+
+    .flow-card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--primary-light);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden;
+    }
+
+    .flow-card-icon img {
+      width: 28px; height: 28px; object-fit: contain;
+    }
+
+    .flow-card-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-size: 9px; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--primary);
+      background: var(--primary-light); border-radius: 9999px;
+      padding: 2px 8px;
+    }
+
+    .flow-card-name {
+      font-size: 15px; font-weight: 800; color: var(--n900);
+      line-height: 1.25; margin-bottom: 4px;
+    }
+
+    .flow-card-desc {
+      font-size: 12px; color: var(--n500); line-height: 1.6;
+      flex: 1;
+    }
+
+    .flow-card-steps {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+
+    .step-chip {
+      font-size: 10px; font-weight: 700; color: var(--n700);
+      background: var(--n100); border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    .flow-card-cta {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 12px; border-top: 1px solid var(--n100);
+    }
+
+    .flow-card-cta-label {
+      font-size: 12px; font-weight: 800; color: var(--primary);
+    }
+
+    .flow-card-cta-arrow {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--primary-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: var(--primary);
+      transition: background .15s, transform .15s;
+    }
+
+    .flow-card:hover .flow-card-cta-arrow {
+      background: var(--primary); color: var(--white);
+      transform: translateX(2px);
+    }
+
+    /* ── COMING SOON CARD ── */
+    .flow-card.coming {
+      background: var(--n50);
+      border-style: dashed;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .flow-card.coming:hover {
+      transform: none; box-shadow: none; border-color: var(--n300);
+    }
+
+    .flow-card.coming .flow-card-icon { background: var(--n100); }
+    .flow-card.coming .flow-card-name { color: var(--n500); }
+    .flow-card.coming .flow-card-badge {
+      background: var(--n100); color: var(--n500);
+    }
+
+    /* ── PATTERN SECTION ── */
+    .pattern-section {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 16px; padding: 24px;
+    }
+
+    .pattern-title {
+      font-size: 13px; font-weight: 800; color: var(--n900);
+      margin-bottom: 14px;
+    }
+
+    .pattern-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 640px) { .pattern-grid { grid-template-columns: 1fr; } }
+
+    .pattern-cell { display: flex; flex-direction: column; gap: 5px; }
+    .pattern-cell-label {
+      font-size: 10px; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--n500);
+    }
+    .pattern-cell-val {
+      font-size: 12px; color: var(--n700); line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-eyebrow">Prototype · Widget Flow</div>
+    <div class="page-title">Utilities Flow</div>
+    <div class="page-desc">Tập hợp các Flow đa bước cho phép người dùng khai thác dữ liệu tài chính và vận hành cá nhân. Mỗi Flow có shared state giữa các bước, tự động tính toán và kết thúc bằng CTA dẫn về app MoMo.</div>
+    <div class="page-meta">
+      <div class="meta-item"><div class="meta-dot"></div>3 bước / flow</div>
+      <div class="meta-item"><div class="meta-dot"></div>Shared state</div>
+      <div class="meta-item"><div class="meta-dot"></div>Live calc</div>
+      <div class="meta-item"><div class="meta-dot"></div>W2A CTA</div>
+    </div>
+  </div>
+
+  <!-- Flows -->
+  <div class="section-label" style="margin-bottom:14px">Flows hiện có — <span id="flowCount">3</span></div>
+  <div class="flow-grid" id="flowGrid"></div>
+
+
+</div>
+
+<script>
+const FLOWS = [
+  {
+    id: 'financial-flow',
+    href: '/financial-flow',
+    icon: '/assets/icons/momo/08_tiet_kiem.png',
+    iconBg: '#FFF0F9',
+    badge: 'Financial',
+    name: 'Kế hoạch dòng tiền',
+    desc: 'Từ lương gross → thuế TNCN → net → quỹ dự phòng → tiết kiệm → lãi suất tốt nhất.',
+    steps: ['Thu nhập & thuế', 'Chi phí & QDP', 'Tối ưu tiết kiệm'],
+    status: 'live',
+  },
+  {
+    id: 'chi-phi-xe-may',
+    href: '/chi-phi-xe-may',
+    icon: '/assets/icons/momo/09_dang-kiem.svg',
+    iconBg: '#F0F7FF',
+    badge: 'Xe Máy',
+    name: 'Chi phí xe máy',
+    desc: 'TCO xe máy hàng tháng: xăng/điện, khấu hao, vay trả góp, bảo hiểm, bảo dưỡng, đỗ xe.',
+    steps: ['Thông tin xe', 'Thói quen dùng', 'Bảo hiểm & bảo dưỡng'],
+    status: 'live',
+  },
+  {
+    id: 'chi-phi-xe-oto',
+    href: '/chi-phi-xe-oto',
+    icon: '/assets/icons/momo/07_bao_hiem.png',
+    iconBg: '#F0FFF7',
+    badge: 'Ô Tô',
+    name: 'Chi phí xe ô tô',
+    desc: 'TCO ô tô đầy đủ: nhiên liệu, khấu hao, vay, BH vật chất & TNDS, phí đường bộ, đăng kiểm.',
+    steps: ['Thông tin xe', 'Thói quen dùng', 'Phí & bảo hiểm'],
+    status: 'live',
+  },
+  {
+    id: 'thoat-no-the',
+    href: '/thoat-no-the',
+    icon: '/assets/icons/momo/07_credittech_tai_chinh_sieu_toc.png',
+    iconBg: '#FFF0F9',
+    badge: 'Payment',
+    name: 'Thoát nợ thẻ & trả góp',
+    desc: 'Kế hoạch dứt nợ thẻ tín dụng, trả góp VTS và vay tiêu dùng: chiến lược Avalanche/Snowball, so sánh với vòng xoáy trả tối thiểu.',
+    steps: ['Dư nợ hiện tại', 'Ngân sách & chiến lược', 'Mục tiêu tất toán'],
+    status: 'live',
+  },
+  {
+    id: 'ke-hoach-fire',
+    href: '/ke-hoach-fire',
+    icon: '/assets/icons/momo/09_dau_tu.png',
+    iconBg: '#FFF8F0',
+    badge: 'FIRE',
+    name: 'Kế hoạch FIRE',
+    desc: 'Tính mục tiêu tài chính tự do: FIRE number theo lạm phát, dự phóng danh mục, tỷ lệ rút vốn an toàn.',
+    steps: ['Mục tiêu', 'Tích lũy & đầu tư', 'Dự phóng FIRE'],
+    status: 'live',
+  },
+];
+
+function renderFlows() {
+  const live = FLOWS.filter(f => f.status === 'live').length;
+  document.getElementById('flowCount').textContent = live;
+
+  document.getElementById('flowGrid').innerHTML = FLOWS.map(f => `
+    <${f.href ? `a href="${f.href}"` : 'div'} class="flow-card${f.status === 'coming' ? ' coming' : ''}">
+      <div>
+        <div class="flow-card-icon" style="background:${f.iconBg||'var(--primary-light)'}">
+          <img src="${f.icon}" alt="${f.name}">
+        </div>
+        <div class="flow-card-badge">${f.status === 'coming' ? 'Sắp ra mắt' : f.badge}</div>
+      </div>
+      <div>
+        <div class="flow-card-name">${f.name}</div>
+        <div class="flow-card-desc">${f.desc}</div>
+      </div>
+      <div class="flow-card-steps">
+        ${f.steps.map((s, i) => `<span class="step-chip">${i + 1}. ${s}</span>`).join('')}
+      </div>
+      ${f.status !== 'coming' ? `
+      <div class="flow-card-cta">
+        <span class="flow-card-cta-label">Mở Flow</span>
+        <span class="flow-card-cta-arrow">→</span>
+      </div>` : `
+      <div class="flow-card-cta">
+        <span class="flow-card-cta-label" style="color:var(--n500)">Đang phát triển</span>
+      </div>`}
+    </${f.href ? 'a' : 'div'}>
+  `).join('');
+}
+
+renderFlows();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>

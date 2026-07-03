@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kế hoạch dòng tiền — MoMo</title>
+  <meta name="proto-name" content="Kế hoạch dòng tiền">
+  <link rel="stylesheet" href="/assets/mobase-static.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --success:       #00B14F;
+      --success-light: #E6F9EE;
+      --warning:       #FF8C00;
+      --warning-light: #FFF4E5;
+      --error:         #E5233D;
+      --error-light:   #FDEDF0;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n400: #A09AA6;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'MoMoTrustSans', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      min-height: 100%;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 80px;
+    }
+
+    /* ── CARD ── */
+    .ff-card {
+      width: 100%; max-width: 920px;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 24px rgba(0,0,0,.07);
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    /* ── HEADER ── */
+    .ff-comp-header {
+      grid-column: 1 / -1;
+      padding: 24px 32px 20px;
+      border-bottom: 1px solid var(--n100);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .ff-eyebrow {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 5px;
+    }
+    .ff-title { font-size: 22px; font-weight: 900; color: var(--n900); letter-spacing: -.02em; }
+    .ff-sub { font-size: 12px; color: var(--n500); margin-top: 3px; }
+
+    /* ── LEFT ── */
+    .ff-left { border-right: 1px solid var(--n100); }
+
+    .ff-section {
+      border-bottom: 1px solid var(--n100);
+    }
+    .ff-section:last-child { border-bottom: none; }
+
+    .ff-sec-hdr {
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .ff-sec-hdr.locked { cursor: default; }
+
+    .ff-sec-num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      background: var(--primary); color: var(--white);
+      transition: background .2s;
+    }
+    .ff-section.locked .ff-sec-num { background: var(--n300); color: var(--n500); }
+    .ff-section.done .ff-sec-num { background: var(--success); color: var(--white); }
+
+    .ff-sec-meta { flex: 1; min-width: 0; }
+    .ff-sec-title { font-size: 14px; font-weight: 700; color: var(--n900); }
+    .ff-section.locked .ff-sec-title { color: var(--n400); }
+    .ff-sec-summary { font-size: 11px; color: var(--n500); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ff-sec-edit {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--primary-light); border: none; border-radius: 9999px;
+      padding: 3px 10px; cursor: pointer; font-family: inherit;
+      display: none;
+    }
+    .ff-section.done .ff-sec-edit { display: block; }
+
+    .ff-sec-body { display: none; padding: 0 24px 20px; }
+    .ff-section.active .ff-sec-body { display: block; }
+
+    /* ── FORM FIELDS ── */
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-lbl {
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+
+    .inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+    }
+    .inp-wrap:focus-within { border-color: var(--primary); border-width: 1.5px; }
+    .inp-wrap.error { border-color: var(--error); }
+    .inp-wrap input {
+      flex: 1; border: none; outline: none;
+      padding: 11px 14px; font-size: 17px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum";
+    }
+    .inp-wrap input::placeholder { font-size: 14px; font-weight: 400; color: var(--n300); }
+    .inp-unit {
+      padding: 0 12px; font-size: 12px; font-weight: 600;
+      color: var(--n500); border-left: 1px solid var(--n300);
+      white-space: nowrap; height: 44px; display: flex; align-items: center;
+    }
+
+    /* chips — borderless style */
+    .chips { display: flex; gap: 2px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 10px; border-radius: 6px;
+      border: none; background: none;
+      font-size: 13px; font-weight: 600; color: var(--n400);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .chip:hover { color: var(--n700); background: var(--n100); }
+    .chip.on { color: var(--primary); font-weight: 800; background: var(--primary-light); }
+
+    /* expense rows */
+    .exp-list { display: flex; flex-direction: column; gap: 8px; }
+    .exp-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .exp-icon {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+      background: var(--n100); display: flex; align-items: center; justify-content: center;
+    }
+    .exp-icon svg { width: 15px; height: 15px; stroke: var(--n500); stroke-width: 2; }
+    .exp-lbl { flex: 1; font-size: 13px; font-weight: 600; color: var(--n700); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .exp-inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+      width: 160px; flex-shrink: 0;
+    }
+    .exp-inp-wrap:focus-within { border-color: var(--primary); }
+    .exp-inp-wrap input {
+      flex: 1; border: none; outline: none; min-width: 0;
+      padding: 7px 10px; font-size: 13px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum";
+    }
+    .exp-inp-wrap input::placeholder { font-weight: 400; color: var(--n300); }
+    .exp-unit {
+      padding: 0 8px; font-size: 11px; font-weight: 600; color: var(--n500);
+      border-left: 1px solid var(--n300); white-space: nowrap;
+      height: 34px; display: flex; align-items: center;
+    }
+
+    .exp-total-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0 4px;
+      border-top: 1px solid var(--n100);
+      margin-top: 4px;
+    }
+    .exp-total-lbl { font-size: 12px; font-weight: 700; color: var(--n500); text-transform: uppercase; letter-spacing: .05em; }
+    .exp-total-val { font-size: 15px; font-weight: 900; color: var(--n900); }
+
+    /* pills */
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+      padding: 6px 14px; border-radius: 9999px;
+      border: 1.5px solid var(--n300); background: var(--white);
+      font-size: 13px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .pill:hover { border-color: var(--primary); color: var(--primary); }
+    .pill.on { border-color: var(--primary); background: var(--primary); color: var(--white); }
+
+    .field-hint { font-size: 12px; color: var(--n500); line-height: 1.5; }
+
+    /* optional toggle */
+    .toggle-row {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; margin-top: 2px;
+    }
+    .toggle-row input[type=checkbox] { display: none; }
+    .toggle-box {
+      width: 32px; height: 18px; border-radius: 9999px;
+      background: var(--n300); position: relative; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle-box::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--white); transition: transform .2s;
+    }
+    .toggle-row.on .toggle-box { background: var(--primary); }
+    .toggle-row.on .toggle-box::after { transform: translateX(14px); }
+    .toggle-lbl { font-size: 12px; font-weight: 600; color: var(--n500); }
+
+    .extra-field { display: none; }
+    .extra-field.show { display: block; }
+
+    .sec-action { margin-top: 16px; }
+    .btn-confirm {
+      width: 100%; padding: 12px 20px;
+      border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-confirm:hover { background: var(--primary-dark); }
+
+    /* ── RIGHT PANEL ── */
+    .ff-right {
+      background: var(--n50);
+      padding: 28px 32px 40px;
+      display: flex; flex-direction: column; gap: 24px;
+      min-height: 460px;
+    }
+
+    /* Hero net */
+    .res-hero-lbl {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--n500);
+    }
+    .res-hero-val {
+      font-size: 40px; font-weight: 900; color: var(--primary);
+      letter-spacing: -.03em; line-height: 1;
+      margin: 6px 0 4px;
+    }
+    .res-hero-val span { font-size: 20px; font-weight: 600; color: var(--n500); margin-left: 4px; }
+    .res-hero-sub { font-size: 12px; color: var(--n500); }
+
+    /* Balance sheet */
+    .balance-wrap {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; overflow: hidden;
+      display: none;
+    }
+    .balance-wrap.show { display: block; }
+
+    .balance-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; border-bottom: 1px solid var(--n100);
+      gap: 8px;
+    }
+    .balance-row:last-child { border-bottom: none; }
+    .balance-row.surplus {
+      background: var(--primary-light);
+      border-top: 1.5px solid var(--primary);
+    }
+
+    .bal-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .bal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .bal-lbl { font-size: 13px; font-weight: 600; color: var(--n700); }
+    .bal-sub { font-size: 11px; color: var(--n400); margin-left: 16px; }
+
+    .bal-amt { font-size: 14px; font-weight: 800; color: var(--n900); white-space: nowrap; }
+    .balance-row.surplus .bal-lbl { color: var(--primary); font-weight: 800; font-size: 14px; }
+    .balance-row.surplus .bal-amt { color: var(--primary); font-size: 16px; }
+
+    /* Goal section */
+    .goal-wrap { display: none; flex-direction: column; gap: 16px; }
+    .goal-wrap.show { display: flex; }
+
+    .goal-card {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .goal-card-hdr {
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .goal-card-title { font-size: 13px; font-weight: 800; color: var(--n900); }
+    .goal-card-badge {
+      font-size: 11px; font-weight: 800; color: var(--success);
+      background: var(--success-light); padding: 2px 8px;
+      border-radius: 9999px;
+    }
+    .goal-card-badge.warn { color: var(--warning); background: var(--warning-light); }
+
+    .goal-track {
+      height: 6px; background: var(--n100); border-radius: 9999px; overflow: hidden;
+    }
+    .goal-track-fill {
+      height: 100%; border-radius: 9999px;
+      background: var(--success); transition: width .4s;
+    }
+    .goal-card-sub { font-size: 11px; color: var(--n500); line-height: 1.6; }
+
+    /* bank table */
+    .bank-wrap { display: none; flex-direction: column; gap: 10px; }
+    .bank-wrap.show { display: flex; }
+    .bank-section-lbl {
+      font-size: 10px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--n500);
+    }
+    .bank-tbl { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--n300); border-radius: 12px; overflow: hidden; }
+    .bank-tbl th { padding: 9px 14px; font-size: 10px; font-weight: 800; color: var(--n500); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--n300); text-align: left; background: var(--n50); }
+    .bank-tbl td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--n100); }
+    .bank-tbl tr:last-child td { border-bottom: none; }
+    .bank-name { font-weight: 700; color: var(--n900); display: flex; align-items: center; gap: 6px; }
+    .bank-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .bank-tag { font-size: 9px; font-weight: 800; background: var(--primary-light); color: var(--primary); border-radius: 9999px; padding: 1px 6px; text-transform: uppercase; }
+    .bank-rate { font-weight: 800; color: var(--n900); }
+    .bank-earn { font-size: 12px; color: var(--success); font-weight: 700; }
+
+    /* CTA */
+    .res-cta {
+      background: var(--primary-light); border: 1.5px solid var(--primary);
+      border-radius: 14px; padding: 18px 20px;
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .res-cta.show { display: flex; }
+    .res-cta-msg { font-size: 13px; color: var(--n700); line-height: 1.6; }
+    .res-cta-msg strong { display: block; font-size: 15px; color: var(--n900); margin-bottom: 3px; }
+    .res-cta-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 800; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .res-cta-btn:hover { background: var(--primary-dark); }
+
+    /* locked placeholder */
+    .res-locked {
+      background: var(--white); border: 1.5px dashed var(--n300);
+      border-radius: 14px; padding: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .res-locked-icon { font-size: 20px; flex-shrink: 0; }
+    .res-locked-txt { font-size: 12px; color: var(--n400); line-height: 1.6; }
+    .res-locked-txt strong { color: var(--n700); display: block; margin-bottom: 2px; }
+
+    /* divider */
+    .res-divider { height: 1px; background: var(--n100); }
+
+    @media (max-width: 700px) {
+      .ff-card { grid-template-columns: 1fr; }
+      .ff-comp-header { padding: 20px; }
+      .ff-right { padding: 24px 20px; }
+      .ff-sec-body { padding: 0 16px 18px; }
+      .ff-sec-hdr { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="ff-card">
+
+  <!-- Header -->
+  <div class="ff-comp-header">
+    <div>
+      <div class="ff-eyebrow">Financial Flow</div>
+      <div class="ff-title">Kế hoạch dòng tiền</div>
+      <div class="ff-sub">3 bước · tự động tính · không lưu dữ liệu</div>
+    </div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="ff-left">
+
+    <!-- Step 1: Thu nhập -->
+    <div class="ff-section active" id="sec0">
+      <div class="ff-sec-hdr" onclick="toggleSec(0)">
+        <div class="ff-sec-num" id="sn0">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title" id="st0">Thu nhập</div>
+          <div class="ff-sec-summary" id="ss0"></div>
+        </div>
+        <button class="ff-sec-edit mb-btn mb-btn--sm mb-btn--tonal" onclick="editSec(event,0)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Lương nhận vào tài khoản / tháng</div>
+            <div class="inp-wrap" id="netWrap">
+              <input type="text" inputmode="decimal" id="ni"
+                placeholder="VD: 15.000.000"
+                oninput="onNet(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="netChips">
+              <button class="chip" onclick="sn(8)">8tr</button>
+              <button class="chip" onclick="sn(10)">10tr</button>
+              <button class="chip" onclick="sn(12)">12tr</button>
+              <button class="chip" onclick="sn(15)">15tr</button>
+              <button class="chip" onclick="sn(20)">20tr</button>
+              <button class="chip" onclick="sn(25)">25tr</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="toggle-row" id="extraToggle" onclick="toggleExtra()">
+              <div class="toggle-box"></div>
+              <div class="toggle-lbl">Có thu nhập thêm (freelance, cho thuê...)</div>
+            </div>
+            <div class="extra-field" id="extraField">
+              <div class="inp-wrap" style="margin-top:8px">
+                <input type="text" inputmode="numeric" id="xi"
+                  placeholder="Thu nhập thêm / tháng" oninput="onExtra(this)">
+                <div class="inp-unit">đ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm mb-btn mb-btn--primary" onclick="confirmSec(0)">Xác nhận thu nhập →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Chi phí -->
+    <div class="ff-section locked" id="sec1">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(1)">
+        <div class="ff-sec-num" id="sn1">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st1">Chi phí hàng tháng</div>
+          <div class="ff-sec-summary" id="ss1"></div>
+        </div>
+        <button class="ff-sec-edit mb-btn mb-btn--sm mb-btn--tonal" onclick="editSec(event,1)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="exp-list" id="expList">
+          <!-- rendered by JS -->
+        </div>
+        <div class="exp-total-row">
+          <div class="exp-total-lbl">Tổng chi phí</div>
+          <div class="exp-total-val" id="expTotal">—</div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm mb-btn mb-btn--primary" onclick="confirmSec(1)">Xác nhận chi phí →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Mục tiêu -->
+    <div class="ff-section locked" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(2)">
+        <div class="ff-sec-num" id="sn2">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st2">Mục tiêu dự phòng</div>
+          <div class="ff-sec-summary" id="ss2"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,2)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Quỹ dự phòng muốn xây</div>
+            <div class="pills" id="goalPills">
+              <button class="pill on" onclick="setGoal(3,this)">3 tháng chi phí</button>
+              <button class="pill" onclick="setGoal(6,this)">6 tháng chi phí</button>
+            </div>
+            <div class="field-hint" id="goalHint"></div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Kỳ hạn gửi tiết kiệm</div>
+            <div class="pills" id="termPills">
+              <button class="pill" onclick="setTerm(1,this)">1 tháng</button>
+              <button class="pill" onclick="setTerm(3,this)">3 tháng</button>
+              <button class="pill" onclick="setTerm(6,this)">6 tháng</button>
+              <button class="pill on" onclick="setTerm(12,this)">12 tháng</button>
+              <button class="pill" onclick="setTerm(24,this)">24 tháng</button>
+            </div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm mb-btn mb-btn--primary" onclick="confirmSec(2)">Xem kết quả →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- RIGHT -->
+  <div class="ff-right" id="ffRight">
+
+    <!-- Hero -->
+    <div id="heroWrap">
+      <div class="res-hero-lbl" id="heroLbl">TỔNG THU NHẬP</div>
+      <div class="res-hero-val" id="heroVal">—<span>/ tháng</span></div>
+      <div class="res-hero-sub" id="heroSub">Nhập lương để bắt đầu</div>
+    </div>
+
+    <!-- Balance sheet — shows after step 2 -->
+    <div class="balance-wrap" id="balanceWrap"></div>
+
+    <!-- Lock placeholder -->
+    <div class="res-locked" id="lockPlaceholder">
+      <div class="res-locked-icon">🔒</div>
+      <div class="res-locked-txt">
+        <strong>Phân tích dòng tiền đầy đủ</strong>
+        Hoàn thành bước 2 để xem thu chi, số dư, và kế hoạch tiết kiệm.
+      </div>
+    </div>
+
+    <!-- Goal + bank — shows after step 3 -->
+    <div class="goal-wrap" id="goalWrap"></div>
+    <div class="bank-wrap" id="bankWrap"></div>
+    <div class="res-cta" id="resCta">
+      <div class="res-cta-msg" id="ctaMsg"></div>
+      <button class="res-cta-btn" onclick="window.open('https://onelink.momo.vn/9FDkn9wV','_blank')">
+        Gửi tiết kiệm qua MoMo →
+      </button>
+    </div>
+
+  </div><!-- /ff-right -->
+
+</div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const S = {
+  net: 0,
+  extra: 0,
+  exp: { house:0, food:0, transport:0, utilities:0, fun:0, other:0 },
+  goal: 3,
+  term: 12,
+  confirmed: 0,
+};
+
+const EXP_CATS = [
+  { key:'house',     icon:'home',         lbl:'Thuê nhà / phòng',  pct:.30 },
+  { key:'food',      icon:'utensils',     lbl:'Ăn uống',           pct:.18 },
+  { key:'transport', icon:'bike',         lbl:'Đi lại',            pct:.10 },
+  { key:'utilities', icon:'zap',          lbl:'Điện, nước, mạng',  pct:.06 },
+  { key:'fun',       icon:'shopping-bag', lbl:'Giải trí',          pct:.08 },
+  { key:'other',     icon:'box',          lbl:'Khác',              pct:.05 },
+];
+
+const BANKS = [
+  {id:'momo', name:'MoMo Tiết Kiệm', clr:'#EB2F96', r:{1:3.5,3:4.2,6:5.0,12:5.6,24:5.9}},
+  {id:'tpb',  name:'TPBank',         clr:'#7B2FBE', r:{1:3.8,3:4.5,6:5.2,12:5.8,24:6.1}},
+  {id:'mb',   name:'MBBank',         clr:'#1d4ed8', r:{1:3.4,3:4.1,6:4.9,12:5.4,24:5.7}},
+  {id:'tcb',  name:'Techcombank',    clr:'#dc2626', r:{1:3.2,3:3.9,6:4.7,12:5.2,24:5.5}},
+  {id:'vcb',  name:'Vietcombank',    clr:'#15803d', r:{1:2.8,3:3.4,6:4.0,12:4.8,24:5.1}},
+];
+
+// ─── AUTO-FORMAT INPUT ───────────────────────────────
+// Formats digits with thousand separators live while typing.
+// Returns the numeric value.
+function maskedInput(el) {
+  const sel = el.selectionEnd;
+  const prevLen = el.value.length;
+  const raw = el.value.replace(/\D/g, '');
+  const num = +raw || 0;
+  const formatted = num > 0 ? num.toLocaleString('vi-VN') : '';
+  el.value = formatted;
+  // restore cursor, accounting for added/removed separator chars
+  const delta = formatted.length - prevLen;
+  const pos = Math.max(0, sel + delta);
+  el.setSelectionRange(pos, pos);
+  return num;
+}
+
+// ─── FORMAT ──────────────────────────────────────────
+const fm = v => {
+  if (!v && v !== 0) return '—';
+  if (v >= 1e9) return (v/1e9).toFixed(1).replace('.0','') + '&nbsp;tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(1).replace('.0','') + '&nbsp;triệu';
+  return Math.round(v).toLocaleString('vi-VN') + '&nbsp;đ';
+};
+const fmRaw = v => {
+  if (!v) return '0đ';
+  if (v >= 1e9) return (v/1e9).toFixed(1).replace('.0','') + 'tỷ';
+  if (v >= 1e6) return (Math.round(v/1e5)/10).toFixed(1).replace('.0','') + 'tr';
+  return Math.round(v).toLocaleString('vi-VN') + 'đ';
+};
+
+function fv(pmt, annualRate, months) {
+  const r = annualRate / 100 / 12;
+  if (r === 0 || pmt === 0) return pmt * months;
+  return Math.round(pmt * (Math.pow(1+r, months) - 1) / r);
+}
+
+// ─── DERIVED ─────────────────────────────────────────
+function totalIncome() { return S.net + S.extra; }
+function totalExp() { return Object.values(S.exp).reduce((a,b)=>a+b,0); }
+function surplus() { return Math.max(0, totalIncome() - totalExp()); }
+function emergencyTarget() { return totalExp() * S.goal; }
+function monthsToGoal() {
+  const s = surplus();
+  if (s <= 0) return null;
+  return Math.ceil(emergencyTarget() / s);
+}
+function bestBank() {
+  return BANKS.slice().sort((a,b) => (b.r[S.term]||0) - (a.r[S.term]||0))[0];
+}
+
+// ─── RENDER RIGHT ────────────────────────────────────
+function renderRight() {
+  const inc = totalIncome();
+  const exp = totalExp();
+  const sur = surplus();
+  const conf = S.confirmed;
+
+  // Hero
+  document.getElementById('heroLbl').textContent = S.extra > 0 ? 'TỔNG THU NHẬP' : 'LƯƠNG NET';
+  document.getElementById('heroVal').innerHTML = (inc > 0 ? fm(inc) : '—') + '<span> / tháng</span>';
+  document.getElementById('heroSub').textContent = inc > 0
+    ? (S.extra > 0 ? `Lương ${fmRaw(S.net)} + thu nhập thêm ${fmRaw(S.extra)}` : 'Lương thực nhận vào tài khoản')
+    : 'Nhập lương để bắt đầu';
+
+  // Lock placeholder
+  document.getElementById('lockPlaceholder').style.display = conf >= 2 ? 'none' : 'flex';
+
+  // Balance sheet — after step 2
+  const bw = document.getElementById('balanceWrap');
+  if (conf >= 2 && exp > 0) {
+    bw.classList.add('show');
+
+    const expItems = EXP_CATS.filter(c => S.exp[c.key] > 0);
+    const savPct = inc > 0 ? Math.round(sur / inc * 100) : 0;
+
+    bw.innerHTML = `
+      <div class="balance-row">
+        <div class="bal-left"><div class="bal-dot" style="background:var(--success)"></div><div class="bal-lbl">Thu nhập</div></div>
+        <div class="bal-amt">${fm(inc)}</div>
+      </div>
+      ${expItems.map(c => `
+      <div class="balance-row">
+        <div class="bal-left">
+          <div class="bal-dot" style="background:var(--n300)"></div>
+          <div>
+            <div class="bal-lbl">${c.lbl}</div>
+          </div>
+        </div>
+        <div class="bal-amt" style="color:var(--n700)">- ${fm(S.exp[c.key])}</div>
+      </div>`).join('')}
+      <div class="balance-row surplus">
+        <div class="bal-left">
+          <div class="bal-dot" style="background:var(--primary)"></div>
+          <div class="bal-lbl">Còn lại / tháng</div>
+        </div>
+        <div class="bal-amt">${fm(sur)} <small style="font-size:11px;font-weight:600;opacity:.7">(${savPct}%)</small></div>
+      </div>
+    `;
+  } else {
+    bw.classList.remove('show');
+  }
+
+  // Goal + bank — after step 3
+  const gw = document.getElementById('goalWrap');
+  const bankW = document.getElementById('bankWrap');
+  const cta = document.getElementById('resCta');
+
+  if (conf >= 3) {
+    gw.classList.add('show');
+    bankW.classList.add('show');
+    cta.classList.add('show');
+
+    const target = emergencyTarget();
+    const months = monthsToGoal();
+    const best = bestBank();
+    const rate = best.r[S.term] || 0;
+    const earn = months ? Math.round(fv(sur, rate, months) - sur * months) : 0;
+
+    // Goal card
+    const fillPct = months ? Math.min(100, Math.round(100 / months)) : 0;
+    const isWarn = months && months > 9;
+
+    gw.innerHTML = `
+      <div class="goal-card">
+        <div class="goal-card-hdr">
+          <div class="goal-card-title">Quỹ dự phòng ${S.goal} tháng · ${fmRaw(target)}</div>
+          ${months
+            ? `<div class="goal-card-badge ${isWarn ? 'warn' : ''}">Đủ sau ${months} tháng</div>`
+            : `<div class="goal-card-badge warn">Chi vượt thu nhập</div>`}
+        </div>
+        <div class="goal-track"><div class="goal-track-fill" style="width:${fillPct}%;${isWarn?'background:var(--warning)':''}"></div></div>
+        <div class="goal-card-sub">
+          ${months
+            ? `Tiết kiệm ${fmRaw(sur)}/tháng × ${months} tháng → đủ quỹ dự phòng${earn > 0 ? ` · lãi thêm ~${fmRaw(earn)}` : ''}`
+            : `Chi phí ${fmRaw(exp)} vượt thu nhập ${fmRaw(inc)}. Cần giảm chi để bắt đầu tích lũy.`}
+        </div>
+      </div>
+    `;
+
+    // Bank table
+    const sorted = BANKS.slice().sort((a,b) => (b.r[S.term]||0) - (a.r[S.term]||0));
+    bankW.innerHTML = `
+      <div class="bank-section-lbl">Lãi suất kỳ hạn ${S.term} tháng</div>
+      <table class="bank-tbl">
+        <thead><tr>
+          <th>Ngân hàng</th>
+          <th>Lãi suất</th>
+          <th>Lãi nhận được</th>
+        </tr></thead>
+        <tbody>
+          ${sorted.map((b,i) => {
+            const bEarn = sur > 0 ? Math.round(fv(sur, b.r[S.term], S.term) - sur * S.term) : 0;
+            return `<tr>
+              <td><div class="bank-name"><div class="bank-dot" style="background:${b.clr}"></div>${b.name}${i===0?'<span class="bank-tag">Tốt nhất</span>':''}</div></td>
+              <td><span class="bank-rate">${b.r[S.term]}%/năm</span></td>
+              <td><span class="bank-earn">+${fmRaw(bEarn)}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+
+    // CTA
+    const ctaMsg = months
+      ? `<strong>Gửi ${fmRaw(sur)}/tháng, đủ quỹ sau ${months} tháng</strong>Lãi suất tốt nhất với ${best.name} ${rate}%/năm. Bắt đầu ngay trên MoMo.`
+      : `<strong>Cần cân đối lại chi phí trước</strong>Khi có tiền dư, gửi tiết kiệm qua MoMo để sinh lời.`;
+    document.getElementById('ctaMsg').innerHTML = ctaMsg;
+  } else {
+    gw.classList.remove('show');
+    bankW.classList.remove('show');
+    cta.classList.remove('show');
+  }
+}
+
+// ─── EXPENSE LIST RENDER ──────────────────────────────
+function renderExpList() {
+  const inc = totalIncome();
+  document.getElementById('expList').innerHTML = EXP_CATS.map(c => {
+    const suggest = inc > 0 ? Math.round(inc * c.pct / 100000) * 100000 : 0;
+    const val = S.exp[c.key];
+    return `
+      <div class="exp-row">
+        <div class="exp-icon"><i data-lucide="${c.icon}"></i></div>
+        <div class="exp-lbl">${c.lbl}</div>
+        <div class="exp-inp-wrap">
+          <input type="text" inputmode="decimal"
+            id="exp_${c.key}"
+            value="${val > 0 ? formatDisplay(val) : ''}"
+            placeholder="${suggest > 0 ? '~' + formatDisplay(suggest) : 'VD: 3tr'}"
+            oninput="onExp('${c.key}',this)">
+          <div class="exp-unit">đ</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  if (window.lucide) lucide.createIcons();
+  updateExpTotal();
+}
+
+function updateExpTotal() {
+  const t = totalExp();
+  document.getElementById('expTotal').innerHTML = t > 0 ? fm(t) : '—';
+}
+
+// ─── INPUT HANDLERS ──────────────────────────────────
+function onNet(el) {
+  document.getElementById('netWrap').classList.remove('error');
+  S.net = maskedInput(el);
+  document.querySelectorAll('#netChips .chip').forEach(c => {
+    c.classList.toggle('on', +c.textContent.replace('tr','')*1e6 === S.net);
+  });
+  renderRight();
+}
+
+function sn(m) {
+  S.net = m * 1e6;
+  const ni = document.getElementById('ni');
+  if (ni) ni.value = S.net.toLocaleString('vi-VN');
+  document.getElementById('netWrap').classList.remove('error');
+  document.querySelectorAll('#netChips .chip').forEach(c => {
+    c.classList.toggle('on', +c.textContent.replace('tr','')*1e6 === S.net);
+  });
+  renderRight();
+}
+
+function onExtra(el) {
+  const raw = el.value.replace(/\D/g,'');
+  S.extra = +raw || 0;
+  el.value = S.extra > 0 ? S.extra.toLocaleString('vi-VN') : '';
+  renderRight();
+}
+
+function toggleExtra() {
+  const row = document.getElementById('extraToggle');
+  const field = document.getElementById('extraField');
+  const on = row.classList.toggle('on');
+  field.classList.toggle('show', on);
+  if (!on) { S.extra = 0; renderRight(); }
+}
+
+function onExp(key, el) {
+  S.exp[key] = maskedInput(el);
+  updateExpTotal();
+  if (S.confirmed >= 2) renderRight();
+}
+
+function setGoal(g, btn) {
+  S.goal = g;
+  document.querySelectorAll('#goalPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  const exp = totalExp();
+  document.getElementById('goalHint').textContent = exp > 0
+    ? `Mục tiêu: ${fmRaw(exp * g)} (${g} tháng × ${fmRaw(exp)} chi phí/tháng)`
+    : '';
+}
+
+function setTerm(t, btn) {
+  S.term = t;
+  document.querySelectorAll('#termPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ─── SECTION CONTROL ─────────────────────────────────
+function setSectionState(i, state) {
+  const sec = document.getElementById('sec'+i);
+  const hdr = sec.querySelector('.ff-sec-hdr');
+  const ttl = document.getElementById('st'+i);
+  sec.className = 'ff-section ' + state;
+  hdr.className = 'ff-sec-hdr' + (state === 'locked' ? ' locked' : '');
+  if (ttl) ttl.className = 'ff-sec-title' + (state === 'locked' ? ' locked' : '');
+}
+
+function toggleSec(i) {
+  const sec = document.getElementById('sec'+i);
+  if (sec.classList.contains('locked')) return;
+  if (sec.classList.contains('done')) return;
+}
+
+function editSec(e, i) {
+  e.stopPropagation();
+  setSectionState(i, 'active');
+  // reset downstream
+  for (let j = i+1; j <= 2; j++) setSectionState(j, 'locked');
+  S.confirmed = i;
+  renderRight();
+}
+
+function confirmSec(i) {
+  if (i === 0 && S.net <= 0) {
+    document.getElementById('netWrap').classList.add('error');
+    document.getElementById('ni').focus();
+    return;
+  }
+  if (i === 1 && totalExp() <= 0) {
+    document.getElementById('exp_house').focus();
+    return;
+  }
+
+  const inc = totalIncome();
+  const exp = totalExp();
+  const sur = surplus();
+  const summaries = [
+    `Lương net ${fmRaw(S.net)}${S.extra > 0 ? ' + thêm ' + fmRaw(S.extra) : ''} → Tổng ${fmRaw(inc)}`,
+    `Chi phí ${fmRaw(exp)}/tháng · Dư ${fmRaw(sur)}/tháng`,
+    `Quỹ ${S.goal} tháng · Kỳ hạn ${S.term} tháng`,
+  ];
+  document.getElementById('ss'+i).innerHTML = summaries[i];
+
+  setSectionState(i, 'done');
+  S.confirmed = Math.max(S.confirmed, i+1);
+
+  if (i < 2) {
+    setSectionState(i+1, 'active');
+    if (i === 1) {
+      // seed goal hint
+      const exp2 = totalExp();
+      if (exp2 > 0) {
+        document.getElementById('goalHint').textContent =
+          `Mục tiêu: ${fmRaw(exp2 * S.goal)} (${S.goal} tháng × ${fmRaw(exp2)} chi phí/tháng)`;
+      }
+    }
+  }
+
+  renderRight();
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderExpList();
+renderRight();
+if (window.lucide) lucide.createIcons();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>

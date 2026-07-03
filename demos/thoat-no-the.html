@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thoát nợ thẻ &amp; trả góp — MoMo</title>
+  <meta name="proto-name" content="Thoát nợ thẻ & trả góp">
+  <link rel="stylesheet" href="/assets/mobase-static.css">
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --success:       #00B14F;
+      --success-light: #E6F9EE;
+      --warning:       #FF8C00;
+      --warning-light: #FFF4E5;
+      --error:         #E5233D;
+      --error-light:   #FDEDF0;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n400: #A09AA6;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'MoMoTrustSans', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      min-height: 100%;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 80px;
+    }
+
+    .ff-card {
+      width: 100%; max-width: 920px;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 24px rgba(0,0,0,.07);
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    .ff-comp-header {
+      grid-column: 1 / -1;
+      padding: 24px 32px 20px;
+      border-bottom: 1px solid var(--n100);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .ff-eyebrow {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 5px;
+    }
+    .ff-title { font-size: 22px; font-weight: 900; color: var(--n900); letter-spacing: -.02em; }
+    .ff-sub { font-size: 12px; color: var(--n500); margin-top: 3px; }
+
+    .ff-left { border-right: 1px solid var(--n100); }
+
+    .ff-section { border-bottom: 1px solid var(--n100); }
+    .ff-section:last-child { border-bottom: none; }
+
+    .ff-sec-hdr {
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .ff-sec-hdr.locked { cursor: default; }
+
+    .ff-sec-num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      background: var(--primary); color: var(--white);
+      transition: background .2s;
+    }
+    .ff-section.locked .ff-sec-num { background: var(--n300); color: var(--n500); }
+    .ff-section.done .ff-sec-num { background: var(--success); color: var(--white); }
+
+    .ff-sec-meta { flex: 1; min-width: 0; }
+    .ff-sec-title { font-size: 14px; font-weight: 700; color: var(--n900); }
+    .ff-section.locked .ff-sec-title { color: var(--n400); }
+    .ff-sec-summary { font-size: 11px; color: var(--n500); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ff-sec-edit {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--primary-light); border: none; border-radius: 9999px;
+      padding: 3px 10px; cursor: pointer; font-family: inherit;
+      display: none;
+    }
+    .ff-section.done .ff-sec-edit { display: block; }
+
+    .ff-sec-body { display: none; padding: 0 24px 20px; }
+    .ff-section.active .ff-sec-body { display: block; }
+
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-lbl {
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+
+    .inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+    }
+    .inp-wrap:focus-within { border-color: var(--primary); border-width: 1.5px; }
+    .inp-wrap.error { border-color: var(--error); }
+    .inp-wrap input {
+      flex: 1; border: none; outline: none; min-width: 0;
+      padding: 11px 14px; font-size: 17px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum";
+    }
+    .inp-wrap input::placeholder { font-size: 14px; font-weight: 400; color: var(--n300); }
+    .inp-unit {
+      padding: 0 12px; font-size: 12px; font-weight: 600;
+      color: var(--n500); border-left: 1px solid var(--n300);
+      white-space: nowrap; height: 44px; display: flex; align-items: center;
+    }
+
+    .chips { display: flex; gap: 2px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 10px; border-radius: 6px;
+      border: none; background: none;
+      font-size: 13px; font-weight: 600; color: var(--n400);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .chip:hover { color: var(--n700); background: var(--n100); }
+    .chip.on { color: var(--primary); font-weight: 800; background: var(--primary-light); }
+
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+      padding: 6px 14px; border-radius: 9999px;
+      border: 1.5px solid var(--n300); background: var(--white);
+      font-size: 13px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .pill:hover { border-color: var(--primary); color: var(--primary); }
+    .pill.on { border-color: var(--primary); background: var(--primary); color: var(--white); }
+
+    .field-hint { font-size: 12px; color: var(--n500); line-height: 1.5; }
+
+    .toggle-row {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; margin-top: 2px;
+    }
+    .toggle-row input[type=checkbox] { display: none; }
+    .toggle-box {
+      width: 32px; height: 18px; border-radius: 9999px;
+      background: var(--n300); position: relative; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle-box::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--white); transition: transform .2s;
+    }
+    .toggle-row.on .toggle-box { background: var(--primary); }
+    .toggle-row.on .toggle-box::after { transform: translateX(14px); }
+    .toggle-lbl { font-size: 12px; font-weight: 600; color: var(--n500); }
+
+    .extra-field { display: none; }
+    .extra-field.show { display: block; }
+
+    .sec-action { margin-top: 16px; }
+    .btn-confirm {
+      width: 100%; padding: 12px 20px;
+      border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-confirm:hover { background: var(--primary-dark); }
+
+    .ff-right {
+      background: var(--n50);
+      padding: 28px 32px 40px;
+      display: flex; flex-direction: column; gap: 24px;
+      min-height: 460px;
+    }
+
+    .res-hero-lbl {
+      font-size: 10px; font-weight: 800; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--n500);
+    }
+    .res-hero-val {
+      font-size: 40px; font-weight: 900; color: var(--primary);
+      letter-spacing: -.03em; line-height: 1;
+      margin: 6px 0 4px;
+    }
+    .res-hero-val span { font-size: 20px; font-weight: 600; color: var(--n500); margin-left: 4px; }
+    .res-hero-sub { font-size: 12px; color: var(--n500); }
+
+    .balance-wrap {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; overflow: hidden;
+      display: none;
+    }
+    .balance-wrap.show { display: block; }
+
+    .balance-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; border-bottom: 1px solid var(--n100);
+      gap: 8px;
+    }
+    .balance-row:last-child { border-bottom: none; }
+    .balance-row.surplus {
+      background: var(--primary-light);
+      border-top: 1.5px solid var(--primary);
+    }
+
+    .bal-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .bal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .bal-lbl { font-size: 13px; font-weight: 600; color: var(--n700); }
+    .bal-sub { font-size: 11px; color: var(--n400); }
+
+    .bal-amt { font-size: 14px; font-weight: 800; color: var(--n900); white-space: nowrap; }
+    .balance-row.surplus .bal-lbl { color: var(--primary); font-weight: 800; font-size: 14px; }
+    .balance-row.surplus .bal-amt { color: var(--primary); font-size: 16px; }
+
+    .goal-wrap { display: none; flex-direction: column; gap: 16px; }
+    .goal-wrap.show { display: flex; }
+
+    .goal-card {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .goal-card-hdr {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .goal-card-title { font-size: 13px; font-weight: 800; color: var(--n900); }
+    .goal-card-badge {
+      font-size: 11px; font-weight: 800; color: var(--success);
+      background: var(--success-light); padding: 2px 8px;
+      border-radius: 9999px; white-space: nowrap;
+    }
+    .goal-card-badge.warn { color: var(--warning); background: var(--warning-light); }
+    .goal-card-badge.bad { color: var(--error); background: var(--error-light); }
+
+    .goal-track {
+      height: 6px; background: var(--n100); border-radius: 9999px; overflow: hidden;
+    }
+    .goal-track-fill {
+      height: 100%; border-radius: 9999px;
+      background: var(--success); transition: width .4s;
+    }
+    .goal-card-sub { font-size: 11px; color: var(--n500); line-height: 1.6; }
+
+    .cmp-tbl { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--n300); border-radius: 12px; overflow: hidden; }
+    .cmp-tbl th { padding: 9px 14px; font-size: 10px; font-weight: 800; color: var(--n500); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--n300); text-align: left; background: var(--n50); }
+    .cmp-tbl td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--n100); }
+    .cmp-tbl tr:last-child td { border-bottom: none; }
+    .cmp-name { font-weight: 700; color: var(--n900); display: flex; align-items: center; gap: 6px; }
+    .cmp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .cmp-tag { font-size: 9px; font-weight: 800; background: var(--primary-light); color: var(--primary); border-radius: 9999px; padding: 1px 6px; text-transform: uppercase; }
+    .cmp-val { font-weight: 800; color: var(--n900); }
+    .cmp-good { font-size: 12px; color: var(--success); font-weight: 700; }
+
+    .res-cta {
+      background: var(--primary-light); border: 1.5px solid var(--primary);
+      border-radius: 14px; padding: 18px 20px;
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .res-cta.show { display: flex; }
+    .res-cta-msg { font-size: 13px; color: var(--n700); line-height: 1.6; }
+    .res-cta-msg strong { display: block; font-size: 15px; color: var(--n900); margin-bottom: 3px; }
+    .res-cta-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 800; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .res-cta-btn:hover { background: var(--primary-dark); }
+
+    .res-locked {
+      background: var(--white); border: 1.5px dashed var(--n300);
+      border-radius: 14px; padding: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .res-locked-icon { font-size: 20px; flex-shrink: 0; }
+    .res-locked-txt { font-size: 12px; color: var(--n400); line-height: 1.6; }
+    .res-locked-txt strong { color: var(--n700); display: block; margin-bottom: 2px; }
+
+    @media (max-width: 700px) {
+      .ff-card { grid-template-columns: 1fr; }
+      .ff-comp-header { padding: 20px; }
+      .ff-right { padding: 24px 20px; }
+      .ff-sec-body { padding: 0 16px 18px; }
+      .ff-sec-hdr { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="ff-card">
+
+  <!-- Header -->
+  <div class="ff-comp-header">
+    <div>
+      <div class="ff-eyebrow">Payment Flow</div>
+      <div class="ff-title">Thoát nợ thẻ &amp; trả góp</div>
+      <div class="ff-sub">3 bước · tự động tính · không lưu dữ liệu</div>
+    </div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="ff-left">
+
+    <!-- Step 1: Dư nợ hiện tại -->
+    <div class="ff-section active" id="sec0">
+      <div class="ff-sec-hdr" onclick="toggleSec(0)">
+        <div class="ff-sec-num" id="sn0">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title" id="st0">Dư nợ hiện tại</div>
+          <div class="ff-sec-summary" id="ss0"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,0)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Dư nợ thẻ tín dụng</div>
+            <div class="inp-wrap" id="cardWrap">
+              <input type="text" inputmode="decimal" id="cardInp"
+                placeholder="VD: 35.000.000"
+                oninput="onCard(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="cardChips">
+              <button class="chip" onclick="setCard(10)">10tr</button>
+              <button class="chip" onclick="setCard(20)">20tr</button>
+              <button class="chip" onclick="setCard(35)">35tr</button>
+              <button class="chip" onclick="setCard(50)">50tr</button>
+              <button class="chip" onclick="setCard(70)">70tr</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Lãi suất thẻ / năm</div>
+            <div class="pills" id="ratePills">
+              <button class="pill" onclick="setRate(24,this)">24%</button>
+              <button class="pill on" onclick="setRate(30,this)">30%</button>
+              <button class="pill" onclick="setRate(36,this)">36%</button>
+              <button class="pill" onclick="setRate(42,this)">42%</button>
+            </div>
+            <div class="field-hint">Lãi suất phổ biến của thẻ tín dụng tại Việt Nam là 25-40%/năm.</div>
+          </div>
+          <div class="field">
+            <div class="toggle-row" id="vtsToggle" onclick="toggleVts()">
+              <div class="toggle-box"></div>
+              <div class="toggle-lbl">Có dư nợ trả góp Ví Trả Sau</div>
+            </div>
+            <div class="extra-field" id="vtsField">
+              <div class="inp-wrap" style="margin-top:8px">
+                <input type="text" inputmode="numeric" id="vtsInp"
+                  placeholder="Dư nợ trả góp VTS" oninput="onVts(this)">
+                <div class="inp-unit">đ</div>
+              </div>
+              <div class="pills" style="margin-top:8px" id="vtsTermPills">
+                <button class="pill" onclick="setVtsTerm(3,this)">3 tháng</button>
+                <button class="pill on" onclick="setVtsTerm(6,this)">6 tháng</button>
+                <button class="pill" onclick="setVtsTerm(9,this)">9 tháng</button>
+                <button class="pill" onclick="setVtsTerm(12,this)">12 tháng</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="toggle-row" id="otherToggle" onclick="toggleOther()">
+              <div class="toggle-box"></div>
+              <div class="toggle-lbl">Có khoản vay tiêu dùng khác</div>
+            </div>
+            <div class="extra-field" id="otherField">
+              <div class="inp-wrap" style="margin-top:8px">
+                <input type="text" inputmode="numeric" id="otherInp"
+                  placeholder="Dư nợ vay tiêu dùng" oninput="onOther(this)">
+                <div class="inp-unit">đ</div>
+              </div>
+              <div class="pills" style="margin-top:8px" id="otherRatePills">
+                <button class="pill" onclick="setOtherRate(12,this)">12%/năm</button>
+                <button class="pill on" onclick="setOtherRate(18,this)">18%/năm</button>
+                <button class="pill" onclick="setOtherRate(24,this)">24%/năm</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(0)">Xác nhận dư nợ →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Ngân sách trả nợ -->
+    <div class="ff-section locked" id="sec1">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(1)">
+        <div class="ff-sec-num" id="sn1">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st1">Ngân sách trả nợ</div>
+          <div class="ff-sec-summary" id="ss1"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,1)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Tổng số tiền trả nợ được / tháng</div>
+            <div class="inp-wrap" id="budgetWrap">
+              <input type="text" inputmode="decimal" id="budgetInp"
+                placeholder="VD: 5.000.000"
+                oninput="onBudget(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="budgetChips">
+              <button class="chip" onclick="setBudget(3)">3tr</button>
+              <button class="chip" onclick="setBudget(5)">5tr</button>
+              <button class="chip" onclick="setBudget(8)">8tr</button>
+              <button class="chip" onclick="setBudget(10)">10tr</button>
+              <button class="chip" onclick="setBudget(15)">15tr</button>
+            </div>
+            <div class="field-hint" id="budgetHint"></div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Chiến lược ưu tiên</div>
+            <div class="pills" id="stratPills">
+              <button class="pill on" onclick="setStrat('avalanche',this)">Giảm tổng lãi</button>
+              <button class="pill" onclick="setStrat('snowball',this)">Xóa khoản nhỏ trước</button>
+            </div>
+            <div class="field-hint" id="stratHint">Avalanche: dồn tiền thừa vào khoản lãi cao nhất, trả ít lãi nhất.</div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(1)">Xác nhận ngân sách →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Mục tiêu tất toán -->
+    <div class="ff-section locked" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(2)">
+        <div class="ff-sec-num" id="sn2">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st2">Mục tiêu tất toán</div>
+          <div class="ff-sec-summary" id="ss2"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,2)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Muốn dứt nợ sau</div>
+            <div class="pills" id="targetPills">
+              <button class="pill" onclick="setTarget(6,this)">6 tháng</button>
+              <button class="pill on" onclick="setTarget(12,this)">12 tháng</button>
+              <button class="pill" onclick="setTarget(18,this)">18 tháng</button>
+              <button class="pill" onclick="setTarget(24,this)">24 tháng</button>
+            </div>
+            <div class="field-hint" id="targetHint"></div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(2)">Xem kế hoạch thoát nợ →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- RIGHT -->
+  <div class="ff-right" id="ffRight">
+
+    <!-- Hero -->
+    <div id="heroWrap">
+      <div class="res-hero-lbl" id="heroLbl">TỔNG DƯ NỢ</div>
+      <div class="res-hero-val" id="heroVal">—</div>
+      <div class="res-hero-sub" id="heroSub">Nhập dư nợ thẻ để bắt đầu</div>
+    </div>
+
+    <!-- Debt breakdown — shows after step 2 -->
+    <div class="balance-wrap" id="balanceWrap"></div>
+
+    <!-- Lock placeholder -->
+    <div class="res-locked" id="lockPlaceholder">
+      <div class="res-locked-icon">🔒</div>
+      <div class="res-locked-txt">
+        <strong>Kế hoạch thoát nợ đầy đủ</strong>
+        Hoàn thành bước 2 để xem thời gian trả hết nợ, tổng lãi và so sánh chiến lược.
+      </div>
+    </div>
+
+    <!-- Plan — shows after step 3 -->
+    <div class="goal-wrap" id="goalWrap"></div>
+    <div class="res-cta" id="resCta">
+      <div class="res-cta-msg" id="ctaMsg"></div>
+      <button class="res-cta-btn" onclick="window.open('https://onelink.momo.vn/vi-tra-sau','_blank')">
+        Mở Ví Trả Sau trên MoMo →
+      </button>
+    </div>
+
+  </div><!-- /ff-right -->
+
+</div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const S = {
+  card: 0, cardRate: 30, cardMinRate: 5,
+  vtsOn: false, vts: 0, vtsTerm: 6,
+  otherOn: false, other: 0, otherRate: 18,
+  budget: 0,
+  strategy: 'avalanche',
+  target: 12,
+  confirmed: 0,
+};
+
+// ─── AUTO-FORMAT INPUT ───────────────────────────────
+function maskedInput(el) {
+  const sel = el.selectionEnd;
+  const prevLen = el.value.length;
+  const raw = el.value.replace(/\D/g, '');
+  const num = +raw || 0;
+  const formatted = num > 0 ? num.toLocaleString('vi-VN') : '';
+  el.value = formatted;
+  const delta = formatted.length - prevLen;
+  const pos = Math.max(0, sel + delta);
+  el.setSelectionRange(pos, pos);
+  return num;
+}
+
+// ─── FORMAT ──────────────────────────────────────────
+const fm = v => {
+  if (!v && v !== 0) return '—';
+  if (v >= 1e9) return (v/1e9).toFixed(1).replace('.0','') + '&nbsp;tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(1).replace('.0','') + '&nbsp;triệu';
+  return Math.round(v).toLocaleString('vi-VN') + '&nbsp;đ';
+};
+const fmRaw = v => {
+  if (!v) return '0đ';
+  if (v >= 1e9) return (v/1e9).toFixed(1).replace('.0','') + 'tỷ';
+  if (v >= 1e6) return (Math.round(v/1e5)/10).toFixed(1).replace('.0','') + 'tr';
+  return Math.round(v).toLocaleString('vi-VN') + 'đ';
+};
+const fmDur = m => m >= 12 ? `${Math.floor(m/12)} năm ${m%12 ? (m%12) + ' tháng' : ''}`.trim() : `${m} tháng`;
+
+// ─── DERIVED ─────────────────────────────────────────
+// Trả góp VTS là lịch cố định: gốc/kỳ + phí 3%/tháng trên dư nợ gốc.
+function vtsMonthly() {
+  if (!S.vtsOn || S.vts <= 0) return 0;
+  return S.vts / S.vtsTerm + S.vts * 0.03;
+}
+function vtsTotalFee() {
+  if (!S.vtsOn || S.vts <= 0) return 0;
+  return S.vts * 0.03 * S.vtsTerm;
+}
+// Các khoản nợ lãi kép (revolving) đưa vào simulate.
+function revolvingDebts() {
+  const debts = [];
+  if (S.card > 0) debts.push({ name: 'Thẻ tín dụng', balance: S.card, rate: S.cardRate, minimum: Math.max(S.card * S.cardMinRate / 100, 50000), clr: '#EB2F96' });
+  if (S.otherOn && S.other > 0) debts.push({ name: 'Vay tiêu dùng', balance: S.other, rate: S.otherRate, minimum: S.other * 0.03, clr: '#7B2FBE' });
+  return debts;
+}
+function totalDebt() {
+  return S.card + (S.vtsOn ? S.vts : 0) + (S.otherOn ? S.other : 0);
+}
+// Ngân sách còn lại cho nợ revolving sau khi trừ nghĩa vụ VTS cố định.
+function revolvingBudget() {
+  return Math.max(0, S.budget - vtsMonthly());
+}
+
+// Mô phỏng trả nợ theo chiến lược (port từ debt-payoff, financial.js).
+function simulate(strategy, budget) {
+  const debts = revolvingDebts().map(d => ({ ...d }));
+  if (!debts.length) return { months: 0, totalInterest: 0, paidOff: true };
+  let months = 0, totalInterest = 0;
+  while (debts.some(d => d.balance > 0.5) && months < 1200) {
+    months += 1;
+    debts.forEach(d => {
+      if (d.balance <= 0.5) return;
+      const interest = d.balance * d.rate / 100 / 12;
+      d.balance += interest;
+      totalInterest += interest;
+    });
+    let remaining = budget;
+    debts.forEach(d => {
+      if (d.balance <= 0.5 || remaining <= 0) return;
+      const payment = Math.min(d.minimum, d.balance, remaining);
+      d.balance -= payment;
+      remaining -= payment;
+    });
+    while (remaining > 0.5) {
+      const active = debts.filter(d => d.balance > 0.5);
+      if (!active.length) break;
+      active.sort((a, b) => strategy === 'avalanche' ? b.rate - a.rate || a.balance - b.balance : a.balance - b.balance || b.rate - a.rate);
+      const payment = Math.min(active[0].balance, remaining);
+      active[0].balance -= payment;
+      remaining -= payment;
+    }
+  }
+  return { months, totalInterest, paidOff: !debts.some(d => d.balance > 0.5) };
+}
+
+// Trả tối thiểu thẻ: mô phỏng vòng xoáy finance charge (port từ lai-the-tin-dung).
+function minOnlyCard() {
+  let balance = S.card, months = 0, interest = 0;
+  const mRate = S.cardRate / 100 / 12;
+  while (balance > 0 && months < 600) {
+    const i = balance * mRate;
+    const payment = Math.min(balance + i, Math.max(balance * S.cardMinRate / 100, 50000));
+    interest += i;
+    balance = Math.max(0, balance + i - payment);
+    months += 1;
+    if (payment <= i + 1000) break;
+  }
+  return { months, interest };
+}
+
+// PMT: trả đều bao nhiêu/tháng để dứt nợ revolving trong n tháng.
+function requiredPayment(n) {
+  const debts = revolvingDebts();
+  return debts.reduce((sum, d) => {
+    const r = d.rate / 100 / 12;
+    if (r === 0) return sum + d.balance / n;
+    return sum + d.balance * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }, 0);
+}
+
+// ─── RENDER RIGHT ────────────────────────────────────
+function renderRight() {
+  const total = totalDebt();
+  const conf = S.confirmed;
+
+  // Hero
+  document.getElementById('heroVal').innerHTML = total > 0 ? fm(total) : '—';
+  const parts = [];
+  if (S.card > 0) parts.push(`Thẻ ${fmRaw(S.card)}`);
+  if (S.vtsOn && S.vts > 0) parts.push(`VTS ${fmRaw(S.vts)}`);
+  if (S.otherOn && S.other > 0) parts.push(`Vay khác ${fmRaw(S.other)}`);
+  document.getElementById('heroSub').textContent = parts.length ? parts.join(' + ') : 'Nhập dư nợ thẻ để bắt đầu';
+
+  document.getElementById('lockPlaceholder').style.display = conf >= 2 ? 'none' : 'flex';
+
+  // Debt breakdown — after step 2
+  const bw = document.getElementById('balanceWrap');
+  if (conf >= 2 && total > 0 && S.budget > 0) {
+    bw.classList.add('show');
+    const sim = simulate(S.strategy, revolvingBudget());
+    const vtsM = vtsMonthly();
+    const rows = revolvingDebts().map(d => `
+      <div class="balance-row">
+        <div class="bal-left">
+          <div class="bal-dot" style="background:${d.clr}"></div>
+          <div>
+            <div class="bal-lbl">${d.name}</div>
+            <div class="bal-sub">${d.rate}%/năm · tối thiểu ${fmRaw(d.minimum)}/tháng</div>
+          </div>
+        </div>
+        <div class="bal-amt" style="color:var(--n700)">${fm(d.balance)}</div>
+      </div>`).join('');
+    const vtsRow = vtsM > 0 ? `
+      <div class="balance-row">
+        <div class="bal-left">
+          <div class="bal-dot" style="background:#16b2ea"></div>
+          <div>
+            <div class="bal-lbl">Trả góp Ví Trả Sau</div>
+            <div class="bal-sub">Cố định ${fmRaw(vtsM)}/tháng × ${S.vtsTerm} kỳ · phí 3%/tháng</div>
+          </div>
+        </div>
+        <div class="bal-amt" style="color:var(--n700)">${fm(S.vts)}</div>
+      </div>` : '';
+    bw.innerHTML = `
+      ${rows}${vtsRow}
+      <div class="balance-row surplus">
+        <div class="bal-left">
+          <div class="bal-dot" style="background:var(--primary)"></div>
+          <div class="bal-lbl">${sim.paidOff ? 'Trả hết sau ' + fmDur(sim.months) : 'Ngân sách chưa đủ trả nợ'}</div>
+        </div>
+        <div class="bal-amt">${sim.paidOff ? 'Lãi ' + fmRaw(sim.totalInterest) : '—'}</div>
+      </div>
+    `;
+  } else {
+    bw.classList.remove('show');
+  }
+
+  // Plan — after step 3
+  const gw = document.getElementById('goalWrap');
+  const cta = document.getElementById('resCta');
+
+  if (conf >= 3 && total > 0 && S.budget > 0) {
+    gw.classList.add('show');
+    cta.classList.add('show');
+
+    const req = requiredPayment(S.target) + vtsMonthly();
+    const gap = req - S.budget;
+    const enough = gap <= 0;
+    const minSim = minOnlyCard();
+    const planSim = simulate(S.strategy, revolvingBudget());
+    const altSim = simulate(S.strategy === 'avalanche' ? 'snowball' : 'avalanche', revolvingBudget());
+    const saved = Math.max(0, minSim.interest - planSim.totalInterest);
+    const stratLbl = S.strategy === 'avalanche' ? 'Giảm tổng lãi' : 'Xóa khoản nhỏ';
+    const altLbl = S.strategy === 'avalanche' ? 'Xóa khoản nhỏ' : 'Giảm tổng lãi';
+    const pct = enough ? 100 : Math.min(100, Math.round(S.budget / req * 100));
+
+    // Insight chuyển đổi trả góp: phí VTS 3%/tháng ~ 36%/năm phí phẳng,
+    // nhưng không lãi kép — đáng cân nhắc khi lãi thẻ cao và kỳ hạn ngắn.
+    const vtsHint = S.card > 0 && S.cardRate >= 34
+      ? `Lãi thẻ ${S.cardRate}%/năm đang ở mức cao. Chuyển một phần dư nợ sang trả góp Ví Trả Sau (phí cố định 3%/tháng, không lãi kép) giúp chặn finance charge cuộn tuyết.`
+      : '';
+
+    gw.innerHTML = `
+      <div class="goal-card">
+        <div class="goal-card-hdr">
+          <div class="goal-card-title">Dứt nợ trong ${S.target} tháng · cần ${fmRaw(req)}/tháng</div>
+          ${enough
+            ? `<div class="goal-card-badge">Ngân sách đủ</div>`
+            : `<div class="goal-card-badge bad">Thiếu ${fmRaw(gap)}/tháng</div>`}
+        </div>
+        <div class="goal-track"><div class="goal-track-fill" style="width:${pct}%;${enough?'':'background:var(--error)'}"></div></div>
+        <div class="goal-card-sub">
+          ${enough
+            ? `Ngân sách ${fmRaw(S.budget)}/tháng đủ để tất toán đúng hạn. Với đà hiện tại bạn trả hết sau ${fmDur(planSim.months)}.`
+            : `Với ${fmRaw(S.budget)}/tháng bạn cần ${planSim.paidOff ? fmDur(planSim.months) : 'trên 100 năm'} để trả hết. Tăng thêm ${fmRaw(gap)}/tháng để về đích trong ${S.target} tháng.`}
+        </div>
+      </div>
+      <table class="cmp-tbl">
+        <thead><tr>
+          <th>Phương án</th>
+          <th>Thời gian</th>
+          <th>Tổng lãi</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="cmp-name"><div class="cmp-dot" style="background:var(--primary)"></div>${stratLbl}<span class="cmp-tag">Đang chọn</span></div></td>
+            <td><span class="cmp-val">${planSim.paidOff ? fmDur(planSim.months) : '>100 năm'}</span></td>
+            <td><span class="cmp-good">${fmRaw(planSim.totalInterest)}</span></td>
+          </tr>
+          <tr>
+            <td><div class="cmp-name"><div class="cmp-dot" style="background:var(--n300)"></div>${altLbl}</div></td>
+            <td><span class="cmp-val">${altSim.paidOff ? fmDur(altSim.months) : '>100 năm'}</span></td>
+            <td>${fmRaw(altSim.totalInterest)}</td>
+          </tr>
+          <tr>
+            <td><div class="cmp-name"><div class="cmp-dot" style="background:var(--error)"></div>Chỉ trả tối thiểu thẻ</div></td>
+            <td><span class="cmp-val" style="color:var(--error)">${fmDur(minSim.months)}</span></td>
+            <td style="color:var(--error);font-weight:700">${fmRaw(minSim.interest)}</td>
+          </tr>
+        </tbody>
+      </table>
+      ${saved > 0 ? `
+      <div class="goal-card" style="border-color:var(--success)">
+        <div class="goal-card-hdr">
+          <div class="goal-card-title">Tiết kiệm được ${fmRaw(saved)} tiền lãi</div>
+          <div class="goal-card-badge">So với trả tối thiểu</div>
+        </div>
+        <div class="goal-card-sub">Theo kế hoạch ${stratLbl.toLowerCase()}, bạn thoát nợ sớm hơn ${fmDur(Math.max(0, minSim.months - planSim.months))} và giữ lại ${fmRaw(saved)} thay vì trả lãi cho ngân hàng.${vtsHint ? '<br><br>' + vtsHint : ''}</div>
+      </div>` : ''}
+    `;
+
+    document.getElementById('ctaMsg').innerHTML = enough
+      ? `<strong>Kế hoạch khả thi — bắt đầu ngay tháng này</strong>Theo dõi dư nợ và thanh toán đúng hạn trên MoMo. Ví Trả Sau miễn phí 5 giao dịch đầu sau khi mở.`
+      : `<strong>Chia nhỏ áp lực với Ví Trả Sau</strong>Chuyển đổi trả góp phí cố định 3%/tháng, không lãi kép — dễ kiểm soát hơn dư nợ thẻ đang cuộn lãi ${S.cardRate}%/năm.`;
+  } else {
+    gw.classList.remove('show');
+    cta.classList.remove('show');
+  }
+}
+
+// ─── INPUT HANDLERS ──────────────────────────────────
+function syncCardChips() {
+  document.querySelectorAll('#cardChips .chip').forEach(c => {
+    c.classList.toggle('on', +c.textContent.replace('tr','')*1e6 === S.card);
+  });
+}
+function onCard(el) {
+  document.getElementById('cardWrap').classList.remove('error');
+  S.card = maskedInput(el);
+  syncCardChips();
+  renderRight();
+}
+function setCard(m) {
+  S.card = m * 1e6;
+  document.getElementById('cardInp').value = S.card.toLocaleString('vi-VN');
+  document.getElementById('cardWrap').classList.remove('error');
+  syncCardChips();
+  renderRight();
+}
+function setRate(r, btn) {
+  S.cardRate = r;
+  document.querySelectorAll('#ratePills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function toggleVts() {
+  const on = document.getElementById('vtsToggle').classList.toggle('on');
+  document.getElementById('vtsField').classList.toggle('show', on);
+  S.vtsOn = on;
+  if (!on) S.vts = 0;
+  renderRight();
+}
+function onVts(el) { S.vts = maskedInput(el); renderRight(); }
+function setVtsTerm(t, btn) {
+  S.vtsTerm = t;
+  document.querySelectorAll('#vtsTermPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function toggleOther() {
+  const on = document.getElementById('otherToggle').classList.toggle('on');
+  document.getElementById('otherField').classList.toggle('show', on);
+  S.otherOn = on;
+  if (!on) S.other = 0;
+  renderRight();
+}
+function onOther(el) { S.other = maskedInput(el); renderRight(); }
+function setOtherRate(r, btn) {
+  S.otherRate = r;
+  document.querySelectorAll('#otherRatePills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function syncBudgetChips() {
+  document.querySelectorAll('#budgetChips .chip').forEach(c => {
+    c.classList.toggle('on', +c.textContent.replace('tr','')*1e6 === S.budget);
+  });
+}
+function onBudget(el) {
+  document.getElementById('budgetWrap').classList.remove('error');
+  S.budget = maskedInput(el);
+  syncBudgetChips();
+  updateBudgetHint();
+  if (S.confirmed >= 2) renderRight();
+}
+function setBudget(m) {
+  S.budget = m * 1e6;
+  document.getElementById('budgetInp').value = S.budget.toLocaleString('vi-VN');
+  document.getElementById('budgetWrap').classList.remove('error');
+  syncBudgetChips();
+  updateBudgetHint();
+  if (S.confirmed >= 2) renderRight();
+}
+function updateBudgetHint() {
+  const mins = revolvingDebts().reduce((s,d) => s + d.minimum, 0) + vtsMonthly();
+  document.getElementById('budgetHint').textContent =
+    mins > 0 ? `Nghĩa vụ tối thiểu mỗi tháng của bạn: ${fmRaw(mins)}. Ngân sách nên cao hơn mức này.` : '';
+}
+function setStrat(s, btn) {
+  S.strategy = s;
+  document.querySelectorAll('#stratPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('stratHint').textContent = s === 'avalanche'
+    ? 'Avalanche: dồn tiền thừa vào khoản lãi cao nhất, trả ít lãi nhất.'
+    : 'Snowball: xóa khoản dư nợ nhỏ nhất trước để thấy tiến độ sớm, giữ động lực.';
+  if (S.confirmed >= 2) renderRight();
+}
+function setTarget(t, btn) {
+  S.target = t;
+  document.querySelectorAll('#targetPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  updateTargetHint();
+  if (S.confirmed >= 3) renderRight();
+}
+function updateTargetHint() {
+  if (totalDebt() <= 0) return;
+  const req = requiredPayment(S.target) + vtsMonthly();
+  document.getElementById('targetHint').textContent =
+    `Cần trả đều ${fmRaw(req)}/tháng để dứt toàn bộ nợ trong ${S.target} tháng.`;
+}
+
+// ─── SECTION CONTROL ─────────────────────────────────
+function setSectionState(i, state) {
+  const sec = document.getElementById('sec'+i);
+  const hdr = sec.querySelector('.ff-sec-hdr');
+  const ttl = document.getElementById('st'+i);
+  sec.className = 'ff-section ' + state;
+  hdr.className = 'ff-sec-hdr' + (state === 'locked' ? ' locked' : '');
+  if (ttl) ttl.className = 'ff-sec-title' + (state === 'locked' ? ' locked' : '');
+}
+
+function toggleSec(i) {
+  const sec = document.getElementById('sec'+i);
+  if (sec.classList.contains('locked')) return;
+  if (sec.classList.contains('done')) return;
+}
+
+function editSec(e, i) {
+  e.stopPropagation();
+  setSectionState(i, 'active');
+  for (let j = i+1; j <= 2; j++) setSectionState(j, 'locked');
+  S.confirmed = i;
+  renderRight();
+}
+
+function confirmSec(i) {
+  if (i === 0 && totalDebt() <= 0) {
+    document.getElementById('cardWrap').classList.add('error');
+    document.getElementById('cardInp').focus();
+    return;
+  }
+  if (i === 1 && S.budget <= 0) {
+    document.getElementById('budgetWrap').classList.add('error');
+    document.getElementById('budgetInp').focus();
+    return;
+  }
+
+  const summaries = [
+    `Tổng dư nợ ${fmRaw(totalDebt())} · lãi thẻ ${S.cardRate}%/năm`,
+    `Trả ${fmRaw(S.budget)}/tháng · ${S.strategy === 'avalanche' ? 'Giảm tổng lãi' : 'Xóa khoản nhỏ'}`,
+    `Mục tiêu dứt nợ ${S.target} tháng`,
+  ];
+  document.getElementById('ss'+i).innerHTML = summaries[i];
+
+  setSectionState(i, 'done');
+  S.confirmed = Math.max(S.confirmed, i+1);
+
+  if (i < 2) {
+    setSectionState(i+1, 'active');
+    if (i === 0) updateBudgetHint();
+    if (i === 1) updateTargetHint();
+  }
+
+  renderRight();
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderRight();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>

@@ -2041,6 +2041,105 @@ const TOOLS = [
     },
   },
   {
+    id: 'epass', name: 'Phí ETC / ePass', category: 'Phương tiện', abbr: 'ETC',
+    intent: 'Transactional intent', panel: 'generic', ui: 'calculator-product',
+    description: 'Tính tổng phí cầu đường ETC theo tuyến cao tốc và loại xe, xem danh sách trạm và số dư ePass cần nạp trước chuyến đi.',
+    jtbd: 'Tôi sắp đi cao tốc và muốn biết <b>tổng phí ETC phải trả qua các trạm</b>, để nạp đúng số tiền vào thẻ ePass trước khi xuất phát — tránh hụt số dư giữa đường.',
+    formula: 'Tổng phí = <b>∑ Phí từng trạm × Hệ số loại xe</b><br>Nếu khứ hồi: <b>× 2</b>',
+    resultLabel: 'TỔNG PHÍ ETC',
+    ctaText: 'Nạp tiền ePass / VETC qua MoMo ngay',
+    ctaUrl: 'https://onelink.momo.vn/nap-tien',
+    disclaimer: 'Phí tham chiếu theo biểu phí ETC/VETC tháng 6/2026 — chỉ áp dụng cho xe đi qua tất cả trạm trên tuyến. Một số đoạn chưa có cao tốc hoặc chưa thu ETC sẽ không tính. Cần cập nhật khi Bộ GTVT điều chỉnh biểu phí.',
+    fields: [
+      { id: 'epassVehicleType', label: 'Loại xe', type: 'pills', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', optionCount: 3 }, options: [
+        { value: 'L1', label: 'Xe con (Loại 1)' },
+        { value: 'L2', label: 'Xe 12-30 chỗ / tải 2-4T (Loại 2)' },
+        { value: 'L3', label: 'Xe tải lớn / đầu kéo (Loại 3+)' },
+      ], value: 'L1', tooltip: 'Loại 1 = xe con < 12 chỗ và xe tải < 2T. Loại 2 = xe 12-30 chỗ và xe tải 2-4T. Loại 3+ = xe tải trên 4T và xe đầu kéo. Phí tăng theo hệ số ×1 / ×1,5 / ×2.' },
+      { id: 'epassRoute', label: 'Tuyến đường', type: 'select-items', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', compareOptions: true, optionCount: 7 }, options: [
+        { value: 'hcm-vung-tau',    label: 'HCM → Vũng Tàu',        note: '~85 km · 3 trạm' },
+        { value: 'hcm-phan-thiet',  label: 'HCM → Phan Thiết',      note: '~200 km · 5 trạm' },
+        { value: 'hcm-can-tho',     label: 'HCM → Cần Thơ',         note: '~180 km · 3 trạm' },
+        { value: 'hn-hai-phong',    label: 'Hà Nội → Hải Phòng',    note: '~120 km · 4 trạm' },
+        { value: 'hn-ninh-binh',    label: 'Hà Nội → Ninh Bình',    note: '~90 km · 4 trạm' },
+        { value: 'hn-quang-ninh',   label: 'Hà Nội → Quảng Ninh',   note: '~160 km · 6 trạm' },
+        { value: 'hn-lao-cai',      label: 'Hà Nội → Lào Cai',      note: '~245 km · 5 trạm' },
+      ], value: 'hcm-vung-tau', tooltip: 'Chọn tuyến cao tốc bạn dự định di chuyển. Danh sách trạm và phí theo từng tuyến sẽ được hiển thị ở kết quả.' },
+      { id: 'epassTrip', label: 'Loại chuyến đi', type: 'pills', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', optionCount: 2 }, options: [
+        { value: 'one-way',    label: 'Một chiều' },
+        { value: 'round-trip', label: 'Khứ hồi' },
+      ], value: 'round-trip' },
+    ],
+    compute(v) {
+      const ROUTES = {
+        'hcm-vung-tau': { name: 'HCM → Vũng Tàu', distance: 85, stations: [
+          { name: 'Trạm T1 Long Phước', fee1: 55000 },
+          { name: 'Trạm T2 Long Thành', fee1: 55000 },
+          { name: 'Trạm T3 Phước Hòa',  fee1: 38000 },
+        ]},
+        'hcm-phan-thiet': { name: 'HCM → Phan Thiết', distance: 200, stations: [
+          { name: 'Trạm T1 Long Phước',    fee1: 55000 },
+          { name: 'Trạm T2 Long Thành',    fee1: 55000 },
+          { name: 'Trạm T3 Dầu Giây',      fee1: 26000 },
+          { name: 'Trạm T4 Phan Thiết 1',  fee1: 86000 },
+          { name: 'Trạm T5 Phan Thiết 2',  fee1: 86000 },
+        ]},
+        'hcm-can-tho': { name: 'HCM → Cần Thơ', distance: 180, stations: [
+          { name: 'Trạm T1 Trung Lương',   fee1: 50000 },
+          { name: 'Trạm T2 Mỹ Thuận',      fee1: 62000 },
+          { name: 'Trạm T3 Mỹ Thuận 2',    fee1: 62000 },
+        ]},
+        'hn-hai-phong': { name: 'Hà Nội → Hải Phòng', distance: 120, stations: [
+          { name: 'Trạm T1 Sài Đồng',      fee1: 52000 },
+          { name: 'Trạm T2 Kênh Giang',    fee1: 52000 },
+          { name: 'Trạm T3 An Dương',       fee1: 45000 },
+          { name: 'Trạm T4 Tân Cảng',      fee1: 38000 },
+        ]},
+        'hn-ninh-binh': { name: 'Hà Nội → Ninh Bình', distance: 90, stations: [
+          { name: 'Trạm T1 Pháp Vân',      fee1: 45000 },
+          { name: 'Trạm T2 Cầu Giẽ',       fee1: 35000 },
+          { name: 'Trạm T3 Đồng Văn',      fee1: 26000 },
+          { name: 'Trạm T4 Đại Xuyên',     fee1: 26000 },
+        ]},
+        'hn-quang-ninh': { name: 'Hà Nội → Quảng Ninh', distance: 160, stations: [
+          { name: 'Trạm T1 Sài Đồng',      fee1: 52000 },
+          { name: 'Trạm T2 Kênh Giang',    fee1: 52000 },
+          { name: 'Trạm T3 An Dương',       fee1: 45000 },
+          { name: 'Trạm T4 Tân Cảng',      fee1: 38000 },
+          { name: 'Trạm T5 Hạ Long 1',     fee1: 55000 },
+          { name: 'Trạm T6 Hạ Long 2',     fee1: 55000 },
+        ]},
+        'hn-lao-cai': { name: 'Hà Nội → Lào Cai', distance: 245, stations: [
+          { name: 'Trạm T1 Nội Bài',       fee1: 45000 },
+          { name: 'Trạm T2 Phú Thọ',       fee1: 45000 },
+          { name: 'Trạm T3 Yên Bái',       fee1: 45000 },
+          { name: 'Trạm T4 Lào Cai 1',     fee1: 45000 },
+          { name: 'Trạm T5 Lào Cai 2',     fee1: 38000 },
+        ]},
+      };
+      const TYPE_MULT  = { L1: 1.0, L2: 1.5, L3: 2.0 };
+      const TYPE_LABEL = { L1: 'xe con (loại 1)', L2: 'loại 2', L3: 'loại 3+' };
+      const route = ROUTES[v.epassRoute] || ROUTES['hcm-vung-tau'];
+      const mult = TYPE_MULT[v.epassVehicleType] || 1.0;
+      const isRT = v.epassTrip === 'round-trip';
+      const oneWay = route.stations.reduce((s, st) => s + Math.round(st.fee1 * mult), 0);
+      const total = isRT ? oneWay * 2 : oneWay;
+      const recBalance = Math.ceil(total * 1.1 / 10000) * 10000;
+      const details = [
+        ...route.stations.map(st => ({ label: st.name, value: Math.round(st.fee1 * mult).toLocaleString('vi-VN') + ' đ' })),
+        { label: `Tổng 1 chiều (${route.stations.length} trạm)`, value: oneWay.toLocaleString('vi-VN') + ' đ' },
+        ...(isRT ? [{ label: 'Tổng khứ hồi', value: total.toLocaleString('vi-VN') + ' đ' }] : []),
+        { label: 'Số dư ePass nên nạp', value: recBalance.toLocaleString('vi-VN') + ' đ' },
+      ];
+      return {
+        result: total.toLocaleString('vi-VN') + ' đ',
+        badge: isRT ? 'Khứ hồi' : 'Một chiều',
+        details,
+        insight: `Tuyến <b>${route.name}</b> (${route.distance} km) qua <b>${route.stations.length} trạm ETC</b>, tổng phí ${isRT ? 'khứ hồi' : 'một chiều'} ${TYPE_LABEL[v.epassVehicleType]} là <b>${total.toLocaleString('vi-VN')} đ</b>. Nên nạp tối thiểu <b>${recBalance.toLocaleString('vi-VN')} đ</b> vào ePass để qua tất cả trạm không bị dừng.`,
+      };
+    },
+  },
+  {
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Financial Health', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic', ui: 'goal-planner',
     description: 'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian hoàn thành và lạm phát dự kiến.',
