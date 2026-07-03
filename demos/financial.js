@@ -3662,29 +3662,63 @@ const BASE_STOCKS = [
   { symbol: 'VIC', name: 'Vingroup',          price: 38900,  change: 0 },
 ];
 
-let stocks     = BASE_STOCKS.map(s => ({ ...s, prevPrice: s.price }));
+let stocks     = BASE_STOCKS.map(s => ({ ...s, prevPrice: s.price, volume: Math.floor(Math.random() * 900 + 100) }));
 let session    = 1;
 let cash       = 100000000;
 let holdings   = {}; // { symbol: { qty, avgCost } }
 let history    = [];
 let selectedSym = 'FPT';
 let orderSide  = 'buy';
+let mostBoughtSym = 'FPT';
+
+const TARGET_PROFIT  = 2000000;
+const VNINDEX_BASE    = 1862.08;
 
 function fmtPrice(p) { return new Intl.NumberFormat('vi-VN').format(Math.round(p)) + ' đ'; }
 function fmtChange(c) { return (c >= 0 ? '+' : '') + c.toFixed(2) + '%'; }
 
+function selectStockSymbol(sym) {
+  selectedSym = sym;
+  document.querySelectorAll('.stock-row').forEach(r => r.classList.toggle('selected', r.dataset.symbol === sym));
+  updateSelectedStock();
+}
+
+function setOrderSide(side) {
+  orderSide = side;
+  document.querySelectorAll('#orderSide button').forEach(b => b.classList.toggle('active', b.dataset.side === side));
+  const tb = document.getElementById('placeOrder');
+  tb.textContent = side === 'buy' ? 'Xác nhận mua thử' : 'Xác nhận bán thử';
+  tb.classList.toggle('sell-mode', side === 'sell');
+  updateOrderEstimate();
+}
+
+function scrollToOrderTicket() {
+  document.querySelector('.order-ticket').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('orderQuantity').focus();
+}
+
+function renderMarketOpportunity() {
+  const avgChange = stocks.reduce((sum, s) => sum + s.change, 0) / stocks.length;
+  const indexValue = VNINDEX_BASE * (1 + avgChange / 100);
+  document.getElementById('vnIndexValue').textContent = indexValue.toLocaleString('vi-VN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const idxChangeEl = document.getElementById('vnIndexChange');
+  idxChangeEl.textContent = (avgChange >= 0 ? '▲ ' : '▼ ') + Math.abs(avgChange).toFixed(2) + '%';
+  idxChangeEl.className = 'mo-index-change ' + (avgChange >= 0 ? 'up' : 'down');
+
+  const top = stocks.reduce((a, b) => (b.volume > a.volume ? b : a), stocks[0]);
+  mostBoughtSym = top.symbol;
+  document.getElementById('mostBoughtSymbol').textContent = top.symbol;
+  document.getElementById('mostBoughtName').textContent = top.name;
+  document.getElementById('mostBoughtPrice').textContent = fmtPrice(top.price);
+  const mbChangeEl = document.getElementById('mostBoughtChange');
+  mbChangeEl.textContent = fmtChange(top.change);
+  mbChangeEl.className = 'mo-stock-change ' + (top.change >= 0 ? 'up' : 'down');
+}
+
 function initStockPanel() {
   // Order side toggle
   document.querySelectorAll('#orderSide button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#orderSide button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      orderSide = btn.dataset.side;
-      const tb = document.getElementById('placeOrder');
-      tb.textContent = orderSide === 'buy' ? 'Xác nhận mua thử' : 'Xác nhận bán thử';
-      tb.classList.toggle('sell-mode', orderSide === 'sell');
-      updateOrderEstimate();
-    });
+    btn.addEventListener('click', () => setOrderSide(btn.dataset.side));
   });
 
   // Quantity control
@@ -3703,8 +3737,15 @@ function initStockPanel() {
   document.getElementById('placeOrder').addEventListener('click', placeOrder);
   document.getElementById('nextSession').addEventListener('click', nextSession);
   document.getElementById('resetPortfolio').addEventListener('click', resetPortfolio);
+  document.getElementById('challengeCta').addEventListener('click', scrollToOrderTicket);
+  document.getElementById('mostBoughtBuy').addEventListener('click', () => {
+    selectStockSymbol(mostBoughtSym);
+    setOrderSide('buy');
+    scrollToOrderTicket();
+  });
 
   renderStockTable();
+  renderMarketOpportunity();
   updatePortfolio();
 }
 
@@ -3716,17 +3757,12 @@ function renderStockTable() {
       <span class="stock-name">${s.name}</span>
       <span class="stock-price">${fmtPrice(s.price)}</span>
       <span class="stock-change ${s.change >= 0 ? 'up' : 'down'}">${fmtChange(s.change)}</span>
-      <span class="stock-volume">${Math.floor(Math.random() * 900 + 100)}K</span>
+      <span class="stock-volume">${s.volume}K</span>
     </div>
   `).join('');
 
   document.querySelectorAll('.stock-row').forEach(row => {
-    row.addEventListener('click', () => {
-      selectedSym = row.dataset.symbol;
-      document.querySelectorAll('.stock-row').forEach(r => r.classList.remove('selected'));
-      row.classList.add('selected');
-      updateSelectedStock();
-    });
+    row.addEventListener('click', () => selectStockSymbol(row.dataset.symbol));
   });
 
   updateSelectedStock();
@@ -3810,14 +3846,21 @@ function updatePortfolio() {
   const pnl   = stockVal - totalCost;
   const pnlPct = totalCost > 0 ? (pnl / totalCost * 100) : 0;
 
-  document.getElementById('totalAssets').textContent  = fmt(total);
   document.getElementById('cashBalance').textContent  = fmt(cash);
   document.getElementById('stockValue').textContent   = fmt(stockVal);
-  document.getElementById('portfolioPnl').textContent = (pnl >= 0 ? '+' : '') + fmtM(pnl);
-  document.getElementById('portfolioPnlPercent').textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
-  document.getElementById('portfolioPnl').style.color = pnl >= 0 ? '#12b76a' : '#f04438';
-  document.getElementById('assetChange').textContent  = 'Phiên ' + session + ' — ' + Object.keys(holdings).length + ' mã đang giữ';
   document.getElementById('portfolioCount').textContent = Object.keys(holdings).length + ' mã trong danh mục';
+
+  document.getElementById('heroNetWorth').textContent = fmt(total);
+  const heroPnlEl = document.getElementById('heroPnl');
+  heroPnlEl.textContent = 'Lãi/lỗ tạm tính: ' + (pnl >= 0 ? '+' : '') + fmt(pnl) + ' (' + (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%)';
+  heroPnlEl.style.color = pnl >= 0 ? '#12b76a' : '#f04438';
+
+  const progress = Math.max(0, Math.min(100, pnl / TARGET_PROFIT * 100));
+  document.getElementById('challengeFill').style.width = progress + '%';
+  const marker = document.getElementById('challengeMarker');
+  marker.style.left = progress + '%';
+  marker.textContent = fmt(Math.max(0, pnl));
+  document.getElementById('challengeCta').textContent = progress >= 100 ? '🎉 Đã hoàn thành thử thách' : '⚔️ Đặt lệnh ngay';
 
   const holdList = document.getElementById('holdingList');
   const holdSummary = document.getElementById('holdingSummary');
@@ -3859,17 +3902,19 @@ function nextSession() {
   stocks = stocks.map(s => {
     const changePct = (Math.random() - 0.48) * 9; // slightly positive bias
     const newPrice  = Math.max(1000, Math.round(s.price * (1 + changePct / 100) / 100) * 100);
-    return { ...s, prevPrice: s.price, price: newPrice, change: (newPrice - s.price) / s.price * 100 };
+    return { ...s, prevPrice: s.price, price: newPrice, change: (newPrice - s.price) / s.price * 100, volume: Math.floor(Math.random() * 900 + 100) };
   });
   renderStockTable();
+  renderMarketOpportunity();
   updatePortfolio();
   showToast('Phiên ' + session + ' kết thúc. Cập nhật giá mô phỏng.');
 }
 
 function resetPortfolio() {
   cash = 100000000; holdings = {}; history = []; session = 1;
-  stocks = BASE_STOCKS.map(s => ({ ...s, prevPrice: s.price, change: 0 }));
+  stocks = BASE_STOCKS.map(s => ({ ...s, prevPrice: s.price, change: 0, volume: Math.floor(Math.random() * 900 + 100) }));
   renderStockTable();
+  renderMarketOpportunity();
   updatePortfolio();
   showToast('Tài khoản đã được đặt lại về 100 triệu đ.');
 }
