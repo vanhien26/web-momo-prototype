@@ -5288,7 +5288,7 @@ function pnSearch() {
               <span class="pn-fine-label">Mức phạt tham chiếu</span>
               <span class="pn-fine-amt ${v.status === 'Đã xử lý' ? 'resolved' : ''}">${fmt(v.fine)}</span>
             </div>
-            ${v.status === 'Chưa xử lý' ? `<button class="pn-pay-btn" onclick="pnShowPay('${v.ref}')">Nộp phạt qua MoMo →</button>` : ''}
+            ${v.status === 'Chưa xử lý' ? `<button class="pn-pay-btn" onclick="pnShowPay('${v.ref}')">Nộp qua MoMo →</button>` : ''}
           </div>`).join('')}
         </div>
         <p class="pn-disclaimer">Kết quả mô phỏng. Tra cứu chính thức tại <a href="https://www.csgt.vn" target="_blank" rel="noopener">csgt.vn</a> hoặc trên ứng dụng MoMo.</p>`;
