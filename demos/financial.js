@@ -2140,6 +2140,105 @@ const TOOLS = [
     },
   },
   {
+    id: 'camera-phat-nguoi', name: 'Camera Phạt Nguội', category: 'Phương tiện', abbr: 'CAM',
+    intent: 'Informational intent', panel: 'camera-lookup', ui: 'calculator-product',
+    description: 'Tra cứu các tuyến đường có camera phạt nguội theo khu vực, loại lỗi thường gặp và mức độ rủi ro — tổng hợp từ dữ liệu vi phạm thực tế.',
+    jtbd: 'Tôi muốn biết <b>đường nào trong khu vực tôi hay đi có gắn camera phạt nguội</b>, lỗi nào camera đang theo dõi, để chủ động phòng tránh và không bị phạt oan.',
+    formula: 'Dữ liệu tổng hợp từ <b>kết quả tra cứu phạt nguội</b> — tuyến đường và lỗi vi phạm được aggregate theo khu vực.',
+    resultLabel: 'ĐIỂM CAMERA GHI NHẬN',
+    ctaText: 'Tra cứu biển số của bạn ngay trên MoMo',
+    ctaUrl: 'https://onelink.momo.vn/phat-nguoi',
+    disclaimer: 'Dữ liệu mang tính tham chiếu, tổng hợp từ kết quả tra cứu vi phạm — không phải vị trí camera chính thức từ Cục CSGT. Camera có thể di chuyển hoặc bổ sung theo kế hoạch tuần tra.',
+    fields: [
+      { id: 'camCity', label: 'Thành phố', type: 'select-items', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', compareOptions: true, optionCount: 3 }, options: [
+        { value: 'hcm', label: 'TP. Hồ Chí Minh', note: '94 điểm ghi nhận' },
+        { value: 'hn',  label: 'Hà Nội',            note: '78 điểm ghi nhận' },
+        { value: 'dn',  label: 'Đà Nẵng',            note: '31 điểm ghi nhận' },
+      ], value: 'hcm' },
+      { id: 'camType', label: 'Lọc theo loại vi phạm', type: 'pills', ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare', optionCount: 4 }, options: [
+        { value: 'all',       label: 'Tất cả' },
+        { value: 'speed',     label: 'Quá tốc độ' },
+        { value: 'red-light', label: 'Vượt đèn đỏ' },
+        { value: 'lane',      label: 'Sai làn / đè vạch' },
+      ], value: 'all' },
+    ],
+    compute(v) {
+      const DB = {
+        hcm: { city: 'TP.HCM', cameras: [
+          { road: 'Đinh Bộ Lĩnh',          district: 'Q.Bình Thạnh', types: ['speed','red-light'], records: 512, risk: 'Cao' },
+          { road: 'Xô Viết Nghệ Tĩnh',     district: 'Q.Bình Thạnh', types: ['speed'],             records: 287, risk: 'Cao' },
+          { road: 'Ung Văn Khiêm',          district: 'Q.Bình Thạnh', types: ['lane'],              records: 134, risk: 'Trung bình' },
+          { road: 'Nguyễn Thị Minh Khai',  district: 'Q.3',           types: ['red-light'],         records: 398, risk: 'Cao' },
+          { road: 'Cách Mạng Tháng 8',     district: 'Q.3',           types: ['red-light','lane'],  records: 341, risk: 'Cao' },
+          { road: 'Đinh Tiên Hoàng',        district: 'Q.1',           types: ['red-light'],         records: 276, risk: 'Cao' },
+          { road: 'Lê Duẩn',               district: 'Q.1',           types: ['speed'],             records: 189, risk: 'Trung bình' },
+          { road: 'Cộng Hòa',              district: 'Q.Tân Bình',    types: ['speed','red-light'], records: 423, risk: 'Cao' },
+          { road: 'Hoàng Văn Thụ',         district: 'Q.Tân Bình',    types: ['red-light'],         records: 198, risk: 'Trung bình' },
+          { road: 'Lý Thường Kiệt',        district: 'Q.Tân Bình',    types: ['lane'],              records: 112, risk: 'Trung bình' },
+          { road: 'Nguyễn Oanh',           district: 'Q.Gò Vấp',      types: ['speed'],             records: 267, risk: 'Cao' },
+          { road: 'Quang Trung',           district: 'Q.Gò Vấp',      types: ['speed','lane'],      records: 184, risk: 'Trung bình' },
+          { road: 'Trường Chinh',          district: 'Q.12',           types: ['speed'],             records: 356, risk: 'Cao' },
+          { road: 'Tô Ký',                 district: 'Q.12',           types: ['red-light'],         records: 143, risk: 'Trung bình' },
+          { road: 'Nguyễn Văn Linh',       district: 'Q.7',            types: ['speed'],             records: 301, risk: 'Cao' },
+          { road: 'Huỳnh Tấn Phát',        district: 'Q.7',            types: ['lane'],              records: 97,  risk: 'Thấp' },
+          { road: 'Võ Văn Kiệt',           district: 'Q.8',            types: ['speed'],             records: 412, risk: 'Cao' },
+          { road: 'QL1A (Bình Chánh)',     district: 'Bình Chánh',     types: ['speed'],             records: 478, risk: 'Cao' },
+          { road: 'Nguyễn Văn Bứa',        district: 'Hóc Môn',        types: ['speed'],             records: 89,  risk: 'Thấp' },
+          { road: 'QL13 (giáp Bình Dương)',district: 'Thủ Đức',        types: ['speed'],             records: 367, risk: 'Cao' },
+        ]},
+        hn: { city: 'Hà Nội', cameras: [
+          { road: 'Nguyễn Trãi',           district: 'Đống Đa',       types: ['speed','red-light'], records: 489, risk: 'Cao' },
+          { road: 'Tây Sơn',               district: 'Đống Đa',       types: ['speed'],             records: 213, risk: 'Trung bình' },
+          { road: 'Đường Láng',            district: 'Đống Đa',       types: ['lane','speed'],      records: 178, risk: 'Trung bình' },
+          { road: 'Tố Hữu',               district: 'Hà Đông',        types: ['speed'],             records: 437, risk: 'Cao' },
+          { road: 'Lê Văn Lương',          district: 'Hà Đông',        types: ['speed','lane'],      records: 312, risk: 'Cao' },
+          { road: 'Quang Trung',           district: 'Hà Đông',        types: ['red-light'],         records: 156, risk: 'Trung bình' },
+          { road: 'Xuân Thủy',            district: 'Cầu Giấy',       types: ['red-light'],         records: 267, risk: 'Cao' },
+          { road: 'Cầu Giấy',             district: 'Cầu Giấy',       types: ['lane'],              records: 198, risk: 'Trung bình' },
+          { road: 'Phạm Hùng',            district: 'Cầu Giấy',       types: ['speed'],             records: 321, risk: 'Cao' },
+          { road: 'Đinh Tiên Hoàng',       district: 'Hoàn Kiếm',      types: ['red-light'],         records: 234, risk: 'Cao' },
+          { road: 'Tràng Tiền',            district: 'Hoàn Kiếm',      types: ['red-light','lane'],  records: 167, risk: 'Trung bình' },
+          { road: 'Giải Phóng',            district: 'Thanh Xuân',     types: ['speed'],             records: 398, risk: 'Cao' },
+          { road: 'Nguyễn Xiển',           district: 'Thanh Xuân',     types: ['speed'],             records: 145, risk: 'Trung bình' },
+          { road: 'Nguyễn Văn Cừ',         district: 'Long Biên',      types: ['speed','red-light'], records: 187, risk: 'Trung bình' },
+          { road: 'QL1A (Hà Đông)',        district: 'Hà Đông',        types: ['speed'],             records: 456, risk: 'Cao' },
+        ]},
+        dn: { city: 'Đà Nẵng', cameras: [
+          { road: 'Trần Phú',              district: 'Hải Châu',       types: ['speed','red-light'], records: 312, risk: 'Cao' },
+          { road: 'Lê Duẩn',              district: 'Hải Châu',       types: ['red-light'],         records: 245, risk: 'Cao' },
+          { road: 'Nguyễn Văn Linh',       district: 'Hải Châu',       types: ['lane'],              records: 134, risk: 'Trung bình' },
+          { road: 'Điện Biên Phủ',         district: 'Thanh Khê',      types: ['speed'],             records: 278, risk: 'Cao' },
+          { road: 'Nguyễn Tất Thành',      district: 'Thanh Khê',      types: ['speed','lane'],      records: 198, risk: 'Trung bình' },
+          { road: 'Nguyễn Văn Thoại',      district: 'Ngũ Hành Sơn',  types: ['speed'],             records: 167, risk: 'Trung bình' },
+          { road: 'Lạc Long Quân',         district: 'Ngũ Hành Sơn',  types: ['red-light'],         records: 89,  risk: 'Thấp' },
+        ]},
+      };
+      const RISK_ORDER = { 'Cao': 0, 'Trung bình': 1, 'Thấp': 2 };
+      const TYPE_LABEL = { speed: 'Quá tốc độ', 'red-light': 'Vượt đèn đỏ', lane: 'Sai làn / đè vạch' };
+
+      const data = DB[v.camCity] || DB['hcm'];
+      const filtered = data.cameras
+        .filter(c => v.camType === 'all' || c.types.includes(v.camType))
+        .sort((a, b) => (RISK_ORDER[a.risk] - RISK_ORDER[b.risk]) || (b.records - a.records));
+
+      const highCount  = filtered.filter(c => c.risk === 'Cao').length;
+      const totalRecords = filtered.reduce((s, c) => s + c.records, 0);
+
+      const details = filtered.map(c => ({
+        label: `${c.road} · ${c.district}`,
+        value: `${c.types.map(t => TYPE_LABEL[t]).join(' / ')} · ${c.risk === 'Cao' ? '⚠ Cao' : c.risk === 'Trung bình' ? '◆ TB' : '· Thấp'}`,
+      }));
+
+      const typeText = v.camType === 'all' ? 'tất cả lỗi' : TYPE_LABEL[v.camType].toLowerCase();
+      return {
+        result: filtered.length + ' điểm',
+        badge: data.city,
+        details,
+        insight: `<b>${data.city}</b> có <b>${filtered.length} điểm camera</b> ghi nhận lỗi ${typeText}, trong đó <b>${highCount} điểm rủi ro Cao</b>. Tổng <b>${totalRecords.toLocaleString('vi-VN')} lượt vi phạm</b> được ghi nhận — dữ liệu tổng hợp từ tra cứu phạt nguội thực tế.`,
+      };
+    },
+  },
+  {
     id: 'quy-du-phong', name: 'Quỹ Dự Phòng', category: 'Financial Health', abbr: 'QDP',
     intent: 'Informational intent', panel: 'generic', ui: 'goal-planner',
     description: 'Lập mục tiêu quỹ khẩn cấp theo chi tiêu, thời gian hoàn thành và lạm phát dự kiến.',
@@ -2456,19 +2555,21 @@ function selectTool(id, options = {}) {
   document.getElementById('khPanel').hidden            = tool.panel !== 'kieu-hoi';
   document.getElementById('firePanel').hidden          = tool.panel !== 'fire';
   document.getElementById('ciCarePanel').hidden        = tool.panel !== 'ci-care';
-  document.getElementById('phatNguoiPanel').hidden     = tool.panel !== 'phat-nguoi';
-  if (tool.panel === 'generic')   renderGenericPanel(tool);
-  if (tool.panel === 'gold')      initGoldPanel();
-  if (tool.panel === 'stock')     renderStockTable();
-  if (tool.panel === 'cic')       renderCicPanel();
-  if (tool.panel === 'bank-rate') computeBankRate();
-  if (tool.panel === 'fx')        computeFx();
-  if (tool.panel === 'fx-compare') initFxComparePanel();
+  document.getElementById('phatNguoiPanel').hidden      = tool.panel !== 'phat-nguoi';
+  document.getElementById('cameraLookupPanel').hidden   = tool.panel !== 'camera-lookup';
+  if (tool.panel === 'generic')       renderGenericPanel(tool);
+  if (tool.panel === 'gold')          initGoldPanel();
+  if (tool.panel === 'stock')         renderStockTable();
+  if (tool.panel === 'cic')           renderCicPanel();
+  if (tool.panel === 'bank-rate')     computeBankRate();
+  if (tool.panel === 'fx')            computeFx();
+  if (tool.panel === 'fx-compare')    initFxComparePanel();
   if (tool.panel === 'travel-budget') initTravelBudgetPanel();
-  if (tool.panel === 'kieu-hoi')     initKhPanel();
-  if (tool.panel === 'fire')      initFirePanel();
-  if (tool.panel === 'ci-care')   initCiCarePanel();
-  if (tool.panel === 'phat-nguoi') initPhatNguoiPanel();
+  if (tool.panel === 'kieu-hoi')      initKhPanel();
+  if (tool.panel === 'fire')          initFirePanel();
+  if (tool.panel === 'ci-care')       initCiCarePanel();
+  if (tool.panel === 'phat-nguoi')    initPhatNguoiPanel();
+  if (tool.panel === 'camera-lookup') initCameraLookupPanel();
   renderToolPicker();
   if (focusPanel) {
     const activePanel = document.querySelector('.tool-panel:not([hidden])');
@@ -5447,4 +5548,142 @@ function renderKh() {
 
     <button class="fire-cta" type="button" style="margin-top:16px" onclick="momo_track('cta_click',{cta:'kieu_hoi',location:'kh_panel'})">Chuyển tiền quốc tế qua MoMo</button>
   `;
+}
+
+// ── Camera Phạt Nguội Panel ────────────────────────────────────────────────
+
+const CAM_DB = {
+  hcm: { city: 'TP.HCM', cameras: [
+    { road: 'Đinh Bộ Lĩnh',           district: 'Q.Bình Thạnh',  types: ['speed','red-light'], records: 512, risk: 'Cao' },
+    { road: 'Võ Văn Kiệt',            district: 'Q.8',            types: ['speed'],             records: 412, risk: 'Cao' },
+    { road: 'Cộng Hòa',               district: 'Q.Tân Bình',     types: ['speed','red-light'], records: 423, risk: 'Cao' },
+    { road: 'QL1A (Bình Chánh)',       district: 'Bình Chánh',     types: ['speed'],             records: 478, risk: 'Cao' },
+    { road: 'QL13 (giáp Bình Dương)', district: 'Thủ Đức',        types: ['speed'],             records: 367, risk: 'Cao' },
+    { road: 'Nguyễn Thị Minh Khai',   district: 'Q.3',            types: ['red-light'],         records: 398, risk: 'Cao' },
+    { road: 'Cách Mạng Tháng 8',      district: 'Q.3',            types: ['red-light','lane'],  records: 341, risk: 'Cao' },
+    { road: 'Trường Chinh',           district: 'Q.12',            types: ['speed'],             records: 356, risk: 'Cao' },
+    { road: 'Nguyễn Văn Linh',        district: 'Q.7',             types: ['speed'],             records: 301, risk: 'Cao' },
+    { road: 'Đinh Tiên Hoàng',         district: 'Q.1',            types: ['red-light'],         records: 276, risk: 'Cao' },
+    { road: 'Nguyễn Oanh',            district: 'Q.Gò Vấp',       types: ['speed'],             records: 267, risk: 'Cao' },
+    { road: 'Xô Viết Nghệ Tĩnh',      district: 'Q.Bình Thạnh',   types: ['speed'],             records: 287, risk: 'Cao' },
+    { road: 'Lê Duẩn',                district: 'Q.1',             types: ['speed'],             records: 189, risk: 'Trung bình' },
+    { road: 'Hoàng Văn Thụ',          district: 'Q.Tân Bình',      types: ['red-light'],         records: 198, risk: 'Trung bình' },
+    { road: 'Lý Thường Kiệt',         district: 'Q.Tân Bình',      types: ['lane'],              records: 112, risk: 'Trung bình' },
+    { road: 'Quang Trung',            district: 'Q.Gò Vấp',        types: ['speed','lane'],      records: 184, risk: 'Trung bình' },
+    { road: 'Tô Ký',                  district: 'Q.12',             types: ['red-light'],         records: 143, risk: 'Trung bình' },
+    { road: 'Ung Văn Khiêm',          district: 'Q.Bình Thạnh',    types: ['lane'],              records: 134, risk: 'Trung bình' },
+    { road: 'Huỳnh Tấn Phát',         district: 'Q.7',              types: ['lane'],              records: 97,  risk: 'Thấp' },
+    { road: 'Nguyễn Văn Bứa',         district: 'Hóc Môn',         types: ['speed'],             records: 89,  risk: 'Thấp' },
+  ]},
+  hn: { city: 'Hà Nội', cameras: [
+    { road: 'Nguyễn Trãi',            district: 'Đống Đa',         types: ['speed','red-light'], records: 489, risk: 'Cao' },
+    { road: 'Tố Hữu',                 district: 'Hà Đông',         types: ['speed'],             records: 437, risk: 'Cao' },
+    { road: 'QL1A (Hà Đông)',         district: 'Hà Đông',         types: ['speed'],             records: 456, risk: 'Cao' },
+    { road: 'Giải Phóng',             district: 'Thanh Xuân',      types: ['speed'],             records: 398, risk: 'Cao' },
+    { road: 'Lê Văn Lương',           district: 'Hà Đông',         types: ['speed','lane'],      records: 312, risk: 'Cao' },
+    { road: 'Phạm Hùng',              district: 'Cầu Giấy',        types: ['speed'],             records: 321, risk: 'Cao' },
+    { road: 'Xuân Thủy',             district: 'Cầu Giấy',        types: ['red-light'],         records: 267, risk: 'Cao' },
+    { road: 'Đinh Tiên Hoàng',        district: 'Hoàn Kiếm',       types: ['red-light'],         records: 234, risk: 'Cao' },
+    { road: 'Tây Sơn',               district: 'Đống Đa',          types: ['speed'],             records: 213, risk: 'Trung bình' },
+    { road: 'Đường Láng',             district: 'Đống Đa',          types: ['lane','speed'],      records: 178, risk: 'Trung bình' },
+    { road: 'Quang Trung',            district: 'Hà Đông',          types: ['red-light'],         records: 156, risk: 'Trung bình' },
+    { road: 'Nguyễn Xiển',            district: 'Thanh Xuân',       types: ['speed'],             records: 145, risk: 'Trung bình' },
+    { road: 'Cầu Giấy',              district: 'Cầu Giấy',         types: ['lane'],              records: 198, risk: 'Trung bình' },
+    { road: 'Tràng Tiền',             district: 'Hoàn Kiếm',        types: ['red-light','lane'],  records: 167, risk: 'Trung bình' },
+    { road: 'Nguyễn Văn Cừ',          district: 'Long Biên',        types: ['speed','red-light'], records: 187, risk: 'Trung bình' },
+  ]},
+  dn: { city: 'Đà Nẵng', cameras: [
+    { road: 'Trần Phú',               district: 'Hải Châu',        types: ['speed','red-light'], records: 312, risk: 'Cao' },
+    { road: 'Lê Duẩn',               district: 'Hải Châu',         types: ['red-light'],         records: 245, risk: 'Cao' },
+    { road: 'Điện Biên Phủ',          district: 'Thanh Khê',       types: ['speed'],             records: 278, risk: 'Cao' },
+    { road: 'Nguyễn Văn Linh',        district: 'Hải Châu',        types: ['lane'],              records: 134, risk: 'Trung bình' },
+    { road: 'Nguyễn Tất Thành',       district: 'Thanh Khê',       types: ['speed','lane'],      records: 198, risk: 'Trung bình' },
+    { road: 'Nguyễn Văn Thoại',       district: 'Ngũ Hành Sơn',   types: ['speed'],             records: 167, risk: 'Trung bình' },
+    { road: 'Lạc Long Quân',          district: 'Ngũ Hành Sơn',   types: ['red-light'],         records: 89,  risk: 'Thấp' },
+  ]},
+};
+
+const CAM_TYPE_LABELS = { speed: 'Quá tốc độ', 'red-light': 'Vượt đèn đỏ', lane: 'Sai làn / đè vạch' };
+const CAM_RISK_ORDER  = { 'Cao': 0, 'Trung bình': 1, 'Thấp': 2 };
+
+let camState = { city: 'hcm', type: 'all' };
+
+function initCameraLookupPanel() {
+  camState = { city: 'hcm', type: 'all' };
+  renderCamPanel();
+}
+
+function camSetCity(city) {
+  camState.city = city;
+  renderCamPanel();
+}
+
+function camSetType(type) {
+  camState.type = type;
+  renderCamPanel();
+}
+
+function renderCamPanel() {
+  const data     = CAM_DB[camState.city] || CAM_DB.hcm;
+  const filtered = data.cameras
+    .filter(c => camState.type === 'all' || c.types.includes(camState.type))
+    .sort((a, b) => (CAM_RISK_ORDER[a.risk] - CAM_RISK_ORDER[b.risk]) || (b.records - a.records));
+
+  const highCount    = filtered.filter(c => c.risk === 'Cao').length;
+  const midCount     = filtered.filter(c => c.risk === 'Trung bình').length;
+  const totalRecords = filtered.reduce((s, c) => s + c.records, 0);
+
+  const cities = [
+    { value: 'hcm', label: 'TP. Hồ Chí Minh', count: CAM_DB.hcm.cameras.length },
+    { value: 'hn',  label: 'Hà Nội',           count: CAM_DB.hn.cameras.length },
+    { value: 'dn',  label: 'Đà Nẵng',          count: CAM_DB.dn.cameras.length },
+  ];
+  const tabs = document.getElementById('camCityTabs');
+  if (tabs) tabs.innerHTML = cities.map(c => `
+    <button class="cam-city-tab${c.value === camState.city ? ' active' : ''}" onclick="camSetCity('${c.value}')">
+      ${c.label}<span class="cam-count-badge">${c.count}</span>
+    </button>
+  `).join('');
+
+  const types = [
+    { value: 'all',       label: 'Tất cả' },
+    { value: 'speed',     label: 'Quá tốc độ' },
+    { value: 'red-light', label: 'Vượt đèn đỏ' },
+    { value: 'lane',      label: 'Sai làn' },
+  ];
+  const pills = document.getElementById('camTypePills');
+  if (pills) pills.innerHTML = types.map(t => `
+    <button class="cam-type-pill${t.value === camState.type ? ' active' : ''}" onclick="camSetType('${t.value}')">
+      ${t.label}
+    </button>
+  `).join('');
+
+  const summary = document.getElementById('camSummary');
+  if (summary) summary.innerHTML = `
+    <span class="cam-stat-total">${filtered.length} điểm camera</span>
+    <span class="cam-stat-sep">·</span>
+    <span class="cam-stat-high">${highCount} Cao</span>
+    <span class="cam-stat-sep">·</span>
+    <span class="cam-stat-mid">${midCount} Trung bình</span>
+    <span class="cam-stat-sep">·</span>
+    <span class="cam-stat-rec">${totalRecords.toLocaleString('vi-VN')} lượt ghi nhận</span>
+  `;
+
+  const tbody = document.getElementById('camTableBody');
+  if (tbody) tbody.innerHTML = filtered.length === 0
+    ? '<tr><td colspan="4" class="cam-empty">Không có điểm camera nào cho bộ lọc này.</td></tr>'
+    : filtered.map(c => {
+        const typeText  = c.types.map(t => CAM_TYPE_LABELS[t]).join(' / ');
+        const riskClass = c.risk === 'Cao' ? 'cam-risk-high' : c.risk === 'Trung bình' ? 'cam-risk-mid' : 'cam-risk-low';
+        const riskIcon  = c.risk === 'Cao' ? '⚠' : c.risk === 'Trung bình' ? '◆' : '·';
+        return `<tr>
+          <td class="cam-td-road">
+            <span class="cam-road-name">${c.road}</span>
+            <span class="cam-records-sub">${c.records.toLocaleString('vi-VN')} lượt</span>
+          </td>
+          <td class="cam-td-district">${c.district}</td>
+          <td class="cam-td-type">${typeText}</td>
+          <td class="cam-td-risk"><span class="cam-risk-badge ${riskClass}">${riskIcon} ${c.risk}</span></td>
+        </tr>`;
+      }).join('');
 }
