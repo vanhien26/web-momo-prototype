@@ -985,10 +985,10 @@ function renderNav() {
       const proto = PROTOTYPES.find(p => p.id === id);
       if (proto && proto.tools) {
         if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
-        if (proto.navigationOnly) {
-          renderNav();
-          return;
-        }
+        renderNav();
+        if (proto.navigationOnly) return;
+        // On mobile, keep sidebar open so user can pick a sub-tool
+        if (window.innerWidth <= 720) return;
       }
       selectProto(id);
     });
