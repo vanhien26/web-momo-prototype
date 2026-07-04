@@ -1525,6 +1525,13 @@ function buildProtoView(proto) {
     </div>
   </div>
 
+  <div class="ws-mobile-cta">
+    <div class="ws-mobile-cta-label">Live Demo</div>
+    <div class="ws-mobile-cta-title">${proto.name}</div>
+    <div class="ws-mobile-cta-desc">Mở prototype trên tab mới để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
+    <a href="${proto.src}" target="_blank" rel="noopener" class="ws-mobile-cta-btn">Mở Demo ↗</a>
+  </div>
+
   <div class="ws-preview expanded">
     <div class="preview-stage">
       <div class="browser-frame" id="browserFrame">
@@ -1568,6 +1575,13 @@ function buildToolView(proto, tool, toolPath = [tool]) {
       <div><dt>JTBD</dt><dd>${tool.jtbd}</dd></div>
       <div><dt>Category</dt><dd>${tool.category}</dd></div>
     </dl>
+  </div>
+
+  <div class="ws-mobile-cta">
+    <div class="ws-mobile-cta-label">Live Demo</div>
+    <div class="ws-mobile-cta-title">${tool.name}</div>
+    <div class="ws-mobile-cta-desc">Mở prototype trên tab mới để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
+    <a href="${src}" target="_blank" rel="noopener" class="ws-mobile-cta-btn">Mở Demo ↗</a>
   </div>
 
   <div class="ws-preview expanded">
