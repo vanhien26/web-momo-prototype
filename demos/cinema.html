@@ -118,7 +118,7 @@ body {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
   color: rgba(255,255,255,.9); background: rgba(255,255,255,.18);
-  border: 1px solid rgba(255,255,255,.25); border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.25); border-radius: var(--r-xl);
   padding: 4px 12px; margin-bottom: 16px;
 }
 .badge-dot { width: 6px; height: 6px; background: #FFD700; border-radius: 50%; }
@@ -201,7 +201,7 @@ body {
 .ftab {
   flex-shrink: 0; font-family: 'MoMoTrustSans', inherit; font-size: 13px; font-weight: 600;
   color: var(--gray-500); background: var(--white);
-  border: 1.5px solid var(--gray-200); border-radius: 20px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--r-xl);
   padding: 7px 16px; cursor: pointer; transition: all .15s; white-space: nowrap;
 }
 .ftab:hover { border-color: var(--pink-200); color: var(--pink-500); }
@@ -404,7 +404,7 @@ body {
 .presale-rank.r2 { color:var(--gray-400); }
 .presale-rank.r3 { color:#CD7F32; }
 .presale-name { font-size:12px; font-weight:700; color:var(--gray-900); white-space:nowrap; }
-.presale-badge { font-size:10px; font-weight:800; color:var(--pink-500); background:var(--pink-50); border:1px solid var(--pink-100); border-radius:20px; padding:2px 8px; white-space:nowrap; }
+.presale-badge { font-size:10px; font-weight:800; color:var(--pink-500); background:var(--pink-50); border:1px solid var(--pink-100); border-radius:var(--r-xl); padding:2px 8px; white-space:nowrap; }
 .presale-sep { color:var(--gray-200); font-size:14px; }
 
 /* ── SOCIAL CTA ──────────────────────────── */
@@ -469,6 +469,49 @@ body {
 .trailer-iframe-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
 .trailer-hint { padding: 10px 18px; font-size: 11px; color: var(--gray-400); text-align: center; }
 
+/* ── DAILY MISSIONS ──────────────────────── */
+.missions-card {
+  background: linear-gradient(135deg, var(--amber-50) 0%, var(--pink-50) 100%);
+  border: 1.5px solid var(--amber-500); border-radius: var(--r-lg);
+  padding: 18px 20px; margin-bottom: 24px;
+}
+.missions-hd { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.missions-title { display: flex; align-items: center; gap: 10px; }
+.missions-emoji { font-size: 26px; }
+.missions-name { font-size: 15px; font-weight: 800; color: var(--gray-900); }
+.missions-streak { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-top: 2px; }
+.missions-streak strong { color: var(--amber-500); }
+.missions-reward { display: flex; align-items: center; gap: 10px; }
+.missions-xu { font-size: 13px; font-weight: 700; color: var(--gray-700); }
+.missions-xu strong { color: var(--pink-500); font-size: 16px; }
+.missions-claim {
+  font-family: 'MoMoTrustSans', inherit; font-size: 13px; font-weight: 700;
+  background: var(--pink-500); color: #fff; border: none;
+  border-radius: var(--r-sm); padding: 9px 18px; cursor: pointer; transition: all .15s;
+}
+.missions-claim:disabled { background: var(--gray-300); cursor: not-allowed; }
+.missions-claim:not(:disabled):hover { background: var(--pink-600); }
+.missions-progress-track { height: 6px; background: rgba(255,255,255,.6); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+.missions-progress-fill { height: 100%; background: linear-gradient(90deg, var(--amber-500), var(--pink-500)); border-radius: 999px; transition: width .3s; }
+.missions-list { display: flex; gap: 8px; flex-wrap: wrap; }
+.mission-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'MoMoTrustSans', inherit; font-size: 12px; font-weight: 600; color: var(--gray-700);
+  background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--r-xl);
+  padding: 7px 12px 7px 7px; cursor: pointer; transition: all .15s;
+}
+.mission-chip:hover { border-color: var(--pink-200); }
+.mission-chip.done { background: var(--green-50); border-color: var(--green-500); color: var(--gray-700); cursor: default; }
+.mission-chip .mc-icon {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--gray-100);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-500);
+}
+.mission-chip.done .mc-icon { background: var(--green-500); color: #fff; }
+.mission-chip .mc-xu { color: var(--pink-500); font-weight: 800; margin-left: 2px; }
+.mission-chip.rate-open { cursor: default; gap: 4px; }
+.rate-star { background: none; border: none; cursor: pointer; color: var(--amber-500); padding: 0 1px; display: inline-flex; align-items: center; }
+@media(max-width:600px){ .missions-reward { width: 100%; justify-content: space-between; } }
+
 /* ── TOAST ───────────────────────────────── */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -528,6 +571,24 @@ body {
 <div class="presale-strip" id="presaleStrip"></div>
 
 <div class="page-wrap">
+  <div class="missions-card" id="missionsCard">
+    <div class="missions-hd">
+      <div class="missions-title">
+        <span class="missions-emoji">🎯</span>
+        <div>
+          <div class="missions-name">Nhiệm vụ hôm nay</div>
+          <div class="missions-streak">🔥 Chuỗi <strong id="streakCount">3</strong> ngày liên tiếp</div>
+        </div>
+      </div>
+      <div class="missions-reward">
+        <span class="missions-xu">+<strong id="xuCount">0</strong> xu</span>
+        <button class="missions-claim" id="claimBtn" disabled onclick="claimReward()">Nhận thưởng</button>
+      </div>
+    </div>
+    <div class="missions-progress-track"><div class="missions-progress-fill" id="missionsProgressFill" style="width:0%"></div></div>
+    <div class="missions-list" id="missionsList"></div>
+  </div>
+
   <div class="section-tabs">
     <button class="section-tab on" onclick="switchTab('now',this)">Đang Chiếu</button>
     <button class="section-tab" onclick="switchTab('soon',this)">Sắp Chiếu</button>
@@ -755,9 +816,75 @@ function inviteGroup(title) {
   const link = `momo.vn/cinema/invite/${Math.random().toString(36).substr(2,8)}`;
   navigator.clipboard?.writeText(link).catch(()=>{});
   toast(`👥 Đã sao chép link mời xem "${title}" — Gửi cho bạn bè để chọn ghế cùng!`);
+  if (!missionState.invite) setTimeout(()=>completeMission('invite'), 2500);
 }
 
-function openTrailer(videoId,title) { document.getElementById('trailerTitle').textContent=title; document.getElementById('trailerFrame').src=`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`; document.getElementById('trailerOverlay').classList.add('show'); }
+// ── DAILY MISSIONS ──────────────────────────
+const MISSIONS = [
+  { id:'checkin', label:'Điểm danh hôm nay',  xu:10, icon:'check' },
+  { id:'trailer', label:'Xem 1 trailer',      xu:15, icon:'play' },
+  { id:'invite',  label:'Mời bạn xem cùng',   xu:20, icon:'users' },
+  { id:'rate',    label:'Đánh giá 1 phim',    xu:15, icon:'star' },
+];
+let missionState = { checkin:false, trailer:false, invite:false, rate:false };
+let missionsClaimed = false;
+let ratingOpen = false;
+
+function renderMissions() {
+  const el = document.getElementById('missionsList');
+  el.innerHTML = MISSIONS.map(m => {
+    const done = missionState[m.id];
+    if (m.id === 'rate' && ratingOpen && !done) {
+      return `<span class="mission-chip rate-open">${icon('star',11)} Chọn số sao:${[1,2,3,4,5].map(n=>`<button class="rate-star" onclick="event.stopPropagation();rateFilm(${n})">${icon('star',13)}</button>`).join('')}</span>`;
+    }
+    return `<button class="mission-chip${done?' done':''}" ${done?'disabled':''} onclick="doMission('${m.id}')">
+      <span class="mc-icon">${icon(done?'check':m.icon,11)}</span>
+      ${m.label}<span class="mc-xu">+${m.xu}xu</span>
+    </button>`;
+  }).join('');
+  updateMissionProgress();
+}
+
+function doMission(id) {
+  if (missionState[id]) return;
+  if (id === 'trailer') { toast('Hãy bấm nút ▶ trên 1 phim để xem trailer trước!'); document.getElementById('filmGrid')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if (id === 'invite')  { toast('Hãy bấm "Mời bạn" trên 1 phim bạn thích!'); document.getElementById('filmGrid')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if (id === 'rate')    { ratingOpen = true; renderMissions(); return; }
+  completeMission(id);
+}
+
+function rateFilm(stars) {
+  ratingOpen = false;
+  completeMission('rate');
+  toast(`⭐ Cảm ơn bạn đã đánh giá ${stars} sao!`);
+}
+
+function completeMission(id) {
+  if (missionState[id]) return;
+  missionState[id] = true;
+  const m = MISSIONS.find(x=>x.id===id);
+  renderMissions();
+  toast(`✅ ${m.label} — +${m.xu} xu!`);
+}
+
+function updateMissionProgress() {
+  const doneCount = Object.values(missionState).filter(Boolean).length;
+  const totalXu = MISSIONS.filter(m=>missionState[m.id]).reduce((s,m)=>s+m.xu,0);
+  document.getElementById('xuCount').textContent = totalXu;
+  document.getElementById('missionsProgressFill').style.width = (doneCount/MISSIONS.length*100)+'%';
+  const claimBtn = document.getElementById('claimBtn');
+  claimBtn.disabled = doneCount < MISSIONS.length || missionsClaimed;
+  claimBtn.textContent = missionsClaimed ? 'Đã nhận thưởng' : 'Nhận thưởng';
+}
+
+function claimReward() {
+  if (missionsClaimed) return;
+  missionsClaimed = true;
+  updateMissionProgress();
+  toast('🎉 Bạn đã hoàn thành nhiệm vụ hôm nay! Nhận mã giảm 20.000đ cho vé tiếp theo.');
+}
+
+function openTrailer(videoId,title) { document.getElementById('trailerTitle').textContent=title; document.getElementById('trailerFrame').src=`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`; document.getElementById('trailerOverlay').classList.add('show'); if (!missionState.trailer) completeMission('trailer'); }
 function closeTrailer() { document.getElementById('trailerOverlay').classList.remove('show'); document.getElementById('trailerFrame').src='about:blank'; }
 function handleOverlayClick(e) { if(e.target===e.currentTarget) closeTrailer(); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeTrailer(); });
@@ -770,7 +897,7 @@ function pickCity(name,btn) { document.querySelectorAll('.city-opt').forEach(b=>
 let toastTimer;
 function toast(msg) { const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
 
-renderHeroPosters(); renderBoxOffice(); renderPresale(); renderGenreTabs(); renderFilmGrid(); renderComingSoon(); renderCinemas();
+renderHeroPosters(); renderBoxOffice(); renderPresale(); renderGenreTabs(); renderFilmGrid(); renderComingSoon(); renderCinemas(); renderMissions();
 lucide.createIcons();
 </script>
 </body>
