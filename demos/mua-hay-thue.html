@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mua hay Thuê nhà — MoMo</title>
+  <meta name="proto-name" content="Mua hay Thuê nhà">
+  <link rel="stylesheet" href="/assets/mobase-static.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --success:       #00B14F;
+      --success-light: #E6F9EE;
+      --warning:       #FF8C00;
+      --warning-light: #FFF4E5;
+      --error:         #E5233D;
+      --error-light:   #FDEDF0;
+      --blue:          #1d4ed8;
+      --blue-light:    #EFF6FF;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n400: #A09AA6;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'MoMoTrustSans', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      min-height: 100%;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 80px;
+    }
+
+    .ff-card {
+      width: 100%; max-width: 960px;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 24px rgba(0,0,0,.07);
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    /* HEADER */
+    .ff-comp-header {
+      grid-column: 1 / -1;
+      padding: 24px 32px 20px;
+      border-bottom: 1px solid var(--n100);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .ff-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--primary); margin-bottom: 5px; }
+    .ff-title { font-size: 22px; font-weight: 900; color: var(--n900); letter-spacing: -.02em; }
+    .ff-sub { font-size: 12px; color: var(--n500); margin-top: 3px; }
+
+    /* LEFT */
+    .ff-left { border-right: 1px solid var(--n100); }
+
+    .ff-section { border-bottom: 1px solid var(--n100); }
+    .ff-section:last-child { border-bottom: none; }
+
+    .ff-sec-hdr {
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; user-select: none;
+    }
+    .ff-sec-hdr.locked { cursor: default; }
+
+    .ff-sec-num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      background: var(--primary); color: var(--white);
+      transition: background .2s;
+    }
+    .ff-section.locked .ff-sec-num { background: var(--n300); color: var(--n500); }
+    .ff-section.done .ff-sec-num { background: var(--success); color: var(--white); }
+
+    .ff-sec-meta { flex: 1; min-width: 0; }
+    .ff-sec-title { font-size: 14px; font-weight: 700; color: var(--n900); }
+    .ff-section.locked .ff-sec-title { color: var(--n400); }
+    .ff-sec-summary { font-size: 11px; color: var(--n500); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ff-sec-edit {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--primary-light); border: none; border-radius: 9999px;
+      padding: 3px 10px; cursor: pointer; font-family: inherit;
+      display: none;
+    }
+    .ff-section.done .ff-sec-edit { display: block; }
+
+    .ff-sec-body { display: none; padding: 0 24px 20px; }
+    .ff-section.active .ff-sec-body { display: block; }
+
+    /* FORM */
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-lbl { font-size: 11px; font-weight: 700; color: var(--n500); text-transform: uppercase; letter-spacing: .06em; }
+    .field-hint { font-size: 12px; color: var(--n500); line-height: 1.5; margin-top: 2px; }
+
+    .inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+    }
+    .inp-wrap:focus-within { border-color: var(--primary); border-width: 1.5px; }
+    .inp-wrap.error { border-color: var(--error); }
+    .inp-wrap input {
+      flex: 1; border: none; outline: none;
+      padding: 11px 14px; font-size: 17px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum";
+    }
+    .inp-wrap input::placeholder { font-size: 14px; font-weight: 400; color: var(--n300); }
+    .inp-unit {
+      padding: 0 12px; font-size: 12px; font-weight: 600;
+      color: var(--n500); border-left: 1px solid var(--n300);
+      white-space: nowrap; height: 44px; display: flex; align-items: center;
+    }
+
+    .chips { display: flex; gap: 2px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 10px; border-radius: 6px; border: none; background: none;
+      font-size: 13px; font-weight: 600; color: var(--n400);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .chip:hover { color: var(--n700); background: var(--n100); }
+    .chip.on { color: var(--primary); font-weight: 800; background: var(--primary-light); }
+
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+      padding: 6px 14px; border-radius: 9999px;
+      border: 1.5px solid var(--n300); background: var(--white);
+      font-size: 13px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .pill:hover { border-color: var(--primary); color: var(--primary); }
+    .pill.on { border-color: var(--primary); background: var(--primary); color: var(--white); }
+
+    .region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .region-btn {
+      padding: 10px 12px; border-radius: 10px;
+      border: 1.5px solid var(--n300); background: var(--white);
+      font-size: 13px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; text-align: left;
+      transition: all .15s;
+    }
+    .region-btn small { display: block; font-size: 11px; font-weight: 400; color: var(--n400); margin-top: 2px; }
+    .region-btn:hover { border-color: var(--primary); }
+    .region-btn.on { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .region-btn.on small { color: var(--primary); opacity: .8; }
+
+    .loan-slider-wrap { display: flex; align-items: center; gap: 10px; }
+    .loan-slider-wrap input[type=range] {
+      flex: 1; -webkit-appearance: none; height: 4px;
+      background: var(--n200, #E8E4EA); border-radius: 9999px; outline: none;
+    }
+    .loan-slider-wrap input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--primary); cursor: pointer; border: 2px solid var(--white);
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .slider-val {
+      font-size: 16px; font-weight: 800; color: var(--primary);
+      min-width: 40px; text-align: right;
+    }
+
+    .sec-action { margin-top: 16px; }
+    .btn-confirm {
+      width: 100%; padding: 12px 20px; border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-confirm:hover { background: var(--primary-dark); }
+
+    /* RIGHT */
+    .ff-right {
+      background: var(--n50);
+      padding: 28px 32px 40px;
+      display: flex; flex-direction: column; gap: 20px;
+      min-height: 460px;
+    }
+
+    .res-hero-lbl { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--n500); }
+    .res-hero-val { font-size: 40px; font-weight: 900; letter-spacing: -.03em; line-height: 1; margin: 6px 0 4px; }
+    .res-hero-val.good { color: var(--success); }
+    .res-hero-val.warn { color: var(--warning); }
+    .res-hero-val.bad  { color: var(--error); }
+    .res-hero-val span { font-size: 20px; font-weight: 600; color: var(--n500); margin-left: 4px; }
+    .res-hero-sub { font-size: 12px; color: var(--n500); }
+
+    /* Compare panel */
+    .compare-wrap {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; overflow: hidden;
+      display: none;
+    }
+    .compare-wrap.show { display: block; }
+
+    .compare-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; border-bottom: 1px solid var(--n100);
+      gap: 8px;
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-row.header { background: var(--n50); padding: 9px 16px; }
+
+    .cmp-lbl { font-size: 12px; font-weight: 700; color: var(--n700); }
+    .cmp-cols { display: flex; gap: 0; }
+    .cmp-col { width: 110px; text-align: right; font-size: 13px; font-weight: 800; color: var(--n900); }
+    .cmp-col.buy { color: var(--primary); }
+    .cmp-col.rent { color: var(--blue); }
+    .cmp-col-hdr { width: 110px; text-align: right; font-size: 10px; font-weight: 800; color: var(--n400); text-transform: uppercase; letter-spacing: .05em; }
+    .cmp-col-hdr.buy { color: var(--primary); }
+    .cmp-col-hdr.rent { color: var(--blue); }
+
+    .winner-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 9999px;
+      font-size: 11px; font-weight: 800;
+    }
+    .winner-badge.buy { background: var(--primary-light); color: var(--primary); }
+    .winner-badge.rent { background: var(--blue-light); color: var(--blue); }
+
+    /* Break-even bar */
+    .breakeven-wrap {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; padding: 16px;
+      display: none;
+    }
+    .breakeven-wrap.show { display: block; }
+    .be-title { font-size: 12px; font-weight: 800; color: var(--n900); margin-bottom: 10px; }
+    .be-track { position: relative; height: 8px; background: var(--blue-light); border-radius: 9999px; overflow: hidden; margin-bottom: 8px; }
+    .be-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--primary); border-radius: 9999px; transition: width .5s; }
+    .be-labels { display: flex; justify-content: space-between; }
+    .be-lbl { font-size: 11px; color: var(--n500); font-weight: 600; }
+
+    /* Affordability */
+    .afford-wrap {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 14px; padding: 14px 16px;
+      display: none; gap: 6px; flex-direction: column;
+    }
+    .afford-wrap.show { display: flex; }
+    .afford-row { display: flex; align-items: center; justify-content: space-between; }
+    .afford-lbl { font-size: 12px; font-weight: 600; color: var(--n700); display: flex; align-items: center; gap: 6px; }
+    .afford-lbl i { width: 14px; height: 14px; }
+    .afford-val { font-size: 13px; font-weight: 800; }
+    .afford-val.ok { color: var(--success); }
+    .afford-val.warn { color: var(--warning); }
+    .afford-val.bad { color: var(--error); }
+
+    /* Lock placeholder */
+    .res-locked {
+      background: var(--white); border: 1.5px dashed var(--n300);
+      border-radius: 14px; padding: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .res-locked-icon { font-size: 20px; flex-shrink: 0; }
+    .res-locked-txt { font-size: 12px; color: var(--n400); line-height: 1.6; }
+    .res-locked-txt strong { color: var(--n700); display: block; margin-bottom: 2px; }
+
+    /* CTA */
+    .res-cta {
+      background: var(--primary-light); border: 1.5px solid var(--primary);
+      border-radius: 14px; padding: 18px 20px;
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .res-cta.show { display: flex; }
+    .res-cta-msg { font-size: 13px; color: var(--n700); line-height: 1.6; }
+    .res-cta-msg strong { display: block; font-size: 15px; color: var(--n900); margin-bottom: 3px; }
+    .res-cta-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 800; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .res-cta-btn:hover { background: var(--primary-dark); }
+
+    @media (max-width: 720px) {
+      .ff-card { grid-template-columns: 1fr; }
+      .ff-comp-header { padding: 20px; }
+      .ff-right { padding: 24px 20px; }
+      .ff-sec-body { padding: 0 16px 18px; }
+      .ff-sec-hdr { padding: 14px 16px; }
+      .region-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+<div class="ff-card">
+
+  <!-- Header -->
+  <div class="ff-comp-header">
+    <div>
+      <div class="ff-eyebrow">Utilities Flow</div>
+      <div class="ff-title">Mua hay Thuê nhà?</div>
+      <div class="ff-sub">3 bước · so sánh chi phí thực · tính điểm hoà vốn</div>
+    </div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="ff-left">
+
+    <!-- Step 1: Thu nhập & tiết kiệm -->
+    <div class="ff-section active" id="sec0">
+      <div class="ff-sec-hdr" onclick="toggleSec(0)">
+        <div class="ff-sec-num" id="sn0">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title" id="st0">Thu nhập & tiết kiệm</div>
+          <div class="ff-sec-summary" id="ss0"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,0)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Tổng thu nhập hàng tháng</div>
+            <div class="inp-wrap" id="incWrap">
+              <input type="text" inputmode="decimal" id="incInp"
+                placeholder="VD: 20.000.000" oninput="onInc(this)">
+              <div class="inp-unit">đ/tháng</div>
+            </div>
+            <div class="chips" id="incChips">
+              <button class="chip" onclick="setInc(12)">12tr</button>
+              <button class="chip" onclick="setInc(15)">15tr</button>
+              <button class="chip" onclick="setInc(20)">20tr</button>
+              <button class="chip" onclick="setInc(25)">25tr</button>
+              <button class="chip" onclick="setInc(35)">35tr</button>
+              <button class="chip" onclick="setInc(50)">50tr</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Tiết kiệm hiện có (dùng trả trước)</div>
+            <div class="inp-wrap" id="savWrap">
+              <input type="text" inputmode="decimal" id="savInp"
+                placeholder="VD: 300.000.000" oninput="onSav(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="savChips">
+              <button class="chip" onclick="setSav(100)">100tr</button>
+              <button class="chip" onclick="setSav(200)">200tr</button>
+              <button class="chip" onclick="setSav(300)">300tr</button>
+              <button class="chip" onclick="setSav(500)">500tr</button>
+              <button class="chip" onclick="setSav(1000)">1 tỷ</button>
+            </div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(0)">Xác nhận →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Nhà & giá thuê -->
+    <div class="ff-section locked" id="sec1">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(1)">
+        <div class="ff-sec-num" id="sn1">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st1">Nhà muốn mua & thuê</div>
+          <div class="ff-sec-summary" id="ss1"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,1)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Khu vực</div>
+            <div class="region-grid" id="regionGrid">
+              <button class="region-btn on" data-region="hcm" onclick="setRegion('hcm',this)">TP. Hồ Chí Minh<small>Giá TB 45-80tr/m²</small></button>
+              <button class="region-btn" data-region="hn" onclick="setRegion('hn',this)">Hà Nội<small>Giá TB 35-65tr/m²</small></button>
+              <button class="region-btn" data-region="dn" onclick="setRegion('dn',this)">Đà Nẵng<small>Giá TB 25-45tr/m²</small></button>
+              <button class="region-btn" data-region="other" onclick="setRegion('other',this)">Tỉnh thành khác<small>Giá TB 15-30tr/m²</small></button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Giá căn nhà / chung cư muốn mua</div>
+            <div class="inp-wrap" id="priceWrap">
+              <input type="text" inputmode="decimal" id="priceInp"
+                placeholder="VD: 2.500.000.000" oninput="onPrice(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="priceChips">
+              <button class="chip" onclick="setPrice(1500)">1.5 tỷ</button>
+              <button class="chip" onclick="setPrice(2000)">2 tỷ</button>
+              <button class="chip" onclick="setPrice(2500)">2.5 tỷ</button>
+              <button class="chip" onclick="setPrice(3000)">3 tỷ</button>
+              <button class="chip" onclick="setPrice(4000)">4 tỷ</button>
+              <button class="chip" onclick="setPrice(5000)">5 tỷ</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Tiền thuê nhà tương đương / tháng</div>
+            <div class="inp-wrap" id="rentWrap">
+              <input type="text" inputmode="decimal" id="rentInp"
+                placeholder="VD: 8.000.000" oninput="onRent(this)">
+              <div class="inp-unit">đ/tháng</div>
+            </div>
+            <div class="field-hint" id="rentHint">Nhập giá mua để xem gợi ý giá thuê</div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(1)">Xác nhận →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Điều kiện vay -->
+    <div class="ff-section locked" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(2)">
+        <div class="ff-sec-num" id="sn2">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st2">Điều kiện vay</div>
+          <div class="ff-sec-summary" id="ss2"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,2)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Tỷ lệ trả trước</div>
+            <div class="loan-slider-wrap">
+              <input type="range" min="10" max="70" step="5" value="30" id="downSlider"
+                oninput="onDownSlider(this)">
+              <div class="slider-val" id="downVal">30%</div>
+            </div>
+            <div class="field-hint" id="downHint"></div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Kỳ hạn vay</div>
+            <div class="pills" id="termPills">
+              <button class="pill" onclick="setTerm(10,this)">10 năm</button>
+              <button class="pill" onclick="setTerm(15,this)">15 năm</button>
+              <button class="pill on" onclick="setTerm(20,this)">20 năm</button>
+              <button class="pill" onclick="setTerm(25,this)">25 năm</button>
+              <button class="pill" onclick="setTerm(30,this)">30 năm</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-lbl">Lãi suất ưu đãi (2 năm đầu)</div>
+            <div class="pills" id="ratePills">
+              <button class="pill on" onclick="setRate(7.5,this)">7.5%</button>
+              <button class="pill" onclick="setRate(8,this)">8%</button>
+              <button class="pill" onclick="setRate(8.5,this)">8.5%</button>
+              <button class="pill" onclick="setRate(9,this)">9%</button>
+            </div>
+            <div class="field-hint">Sau ưu đãi, lãi thả nổi thường +2-3%. Tính toán dùng lãi suất thả nổi ~11%/năm.</div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(2)">Xem so sánh →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- RIGHT -->
+  <div class="ff-right" id="ffRight">
+
+    <div id="heroWrap">
+      <div class="res-hero-lbl" id="heroLbl">ĐIỂM HOÀ VỐN</div>
+      <div class="res-hero-val" id="heroVal">—</div>
+      <div class="res-hero-sub" id="heroSub">Hoàn thành 3 bước để xem khi nào mua có lợi hơn thuê</div>
+    </div>
+
+    <div class="res-locked" id="lockPlaceholder">
+      <div class="res-locked-icon">🏠</div>
+      <div class="res-locked-txt">
+        <strong>So sánh chi phí mua vs thuê</strong>
+        Nhập đủ 3 bước để xem breakdown chi phí hàng tháng, điểm hoà vốn và khuyến nghị.
+      </div>
+    </div>
+
+    <div class="compare-wrap" id="compareWrap"></div>
+    <div class="breakeven-wrap" id="breakevenWrap"></div>
+    <div class="afford-wrap" id="affordWrap"></div>
+
+    <div class="res-cta" id="resCta">
+      <div class="res-cta-msg" id="ctaMsg"></div>
+      <button class="res-cta-btn" id="ctaBtn">Vay mua nhà qua MoMo →</button>
+    </div>
+
+  </div><!-- /ff-right -->
+
+</div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const S = {
+  income: 0,
+  savings: 0,
+  region: 'hcm',
+  price: 0,
+  rent: 0,
+  downPct: 30,
+  termYears: 20,
+  promoRate: 7.5,
+  confirmed: 0,
+};
+
+// Lãi suất thả nổi sau ưu đãi
+const FLOAT_RATE = 11;
+// Tỷ lệ thuê / giá mua theo khu vực (gross yield)
+const RENT_YIELD = { hcm: 0.004, hn: 0.0038, dn: 0.0042, other: 0.005 };
+// Tăng giá BĐS hàng năm theo khu vực
+const APPRE_RATE = { hcm: 0.07, hn: 0.065, dn: 0.06, other: 0.05 };
+// Tăng giá thuê hàng năm
+const RENT_RISE = 0.06;
+// Chi phí vận hành nhà (bảo trì, quản lý, phí chung cư) / năm
+const OPS_RATE = 0.008;
+
+// ─── FORMAT ──────────────────────────────────────────
+function fmt(v) {
+  if (!v && v !== 0) return '—';
+  if (v >= 1e9) return (v/1e9).toFixed(1).replace('.0','') + '&nbsp;tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(1).replace('.0','') + '&nbsp;triệu';
+  return Math.round(v).toLocaleString('vi-VN') + '&nbsp;đ';
+}
+function fmtS(v) {
+  if (!v) return '0đ';
+  if (v >= 1e9) return (v/1e9).toFixed(2).replace(/\.?0+$/,'') + 'tỷ';
+  if (v >= 1e6) return (Math.round(v/1e5)/10).toFixed(1).replace('.0','') + 'tr';
+  return Math.round(v).toLocaleString('vi-VN') + 'đ';
+}
+function formatDisplay(v) { return v > 0 ? v.toLocaleString('vi-VN') : ''; }
+
+function maskedInput(el) {
+  const sel = el.selectionEnd;
+  const prevLen = el.value.length;
+  const raw = el.value.replace(/\D/g, '');
+  const num = +raw || 0;
+  const formatted = num > 0 ? num.toLocaleString('vi-VN') : '';
+  el.value = formatted;
+  const delta = formatted.length - prevLen;
+  el.setSelectionRange(Math.max(0, sel + delta), Math.max(0, sel + delta));
+  return num;
+}
+
+// ─── MORTGAGE PMT ────────────────────────────────────
+function pmt(principal, annualRate, months) {
+  if (principal <= 0) return 0;
+  const r = annualRate / 100 / 12;
+  if (r === 0) return principal / months;
+  return Math.round(principal * r * Math.pow(1+r, months) / (Math.pow(1+r, months) - 1));
+}
+
+// ─── CALCULATIONS ────────────────────────────────────
+function calcBuy() {
+  const dp = S.price * S.downPct / 100;
+  const loan = S.price - dp;
+  const months = S.termYears * 12;
+  const monthlyPmt = pmt(loan, FLOAT_RATE, months);
+  const ops = Math.round(S.price * OPS_RATE / 12);
+  return { dp, loan, monthlyPmt, ops, total: monthlyPmt + ops };
+}
+
+function calcBreakeven() {
+  if (!S.price || !S.rent || !S.income) return null;
+  const buy = calcBuy();
+  let cumBuy = buy.dp; // opportunity cost of down payment
+  let cumRent = 0;
+  let currentRent = S.rent;
+  let homeValue = S.price;
+
+  for (let yr = 1; yr <= 30; yr++) {
+    const monthlyBuy = buy.total;
+    const monthlyRent = currentRent;
+    cumBuy += monthlyBuy * 12;
+    cumRent += monthlyRent * 12;
+    // Add opportunity cost of down payment (could have invested at 6%/year)
+    cumBuy += buy.dp * 0.06;
+    // Subtract home appreciation (equity built)
+    homeValue *= (1 + APPRE_RATE[S.region]);
+    const equity = homeValue - buy.loan * (1 - yr / S.termYears); // rough equity
+    const netBuy = cumBuy - (homeValue - S.price); // net cost after appreciation gain
+    currentRent *= (1 + RENT_RISE);
+    if (netBuy <= cumRent && yr >= 3) {
+      return yr;
+    }
+  }
+  return null; // > 30 years
+}
+
+// ─── RENDER ──────────────────────────────────────────
+function renderRight() {
+  const conf = S.confirmed;
+  const buy = S.price > 0 ? calcBuy() : null;
+  const beYear = conf >= 3 ? calcBreakeven() : null;
+
+  // Hero
+  const heroVal = document.getElementById('heroVal');
+  const heroSub = document.getElementById('heroSub');
+  const heroLbl = document.getElementById('heroLbl');
+
+  if (conf >= 3 && buy) {
+    heroLbl.textContent = 'ĐIỂM HOÀ VỐN';
+    if (beYear) {
+      heroVal.innerHTML = `Năm thứ <strong>${beYear}</strong>`;
+      heroVal.className = 'res-hero-val' + (beYear <= 10 ? ' good' : beYear <= 20 ? ' warn' : ' bad');
+      heroSub.textContent = `Sau ${beYear} năm, mua nhà trở nên có lợi hơn thuê tích lũy`;
+    } else {
+      heroVal.innerHTML = `> 30 năm`;
+      heroVal.className = 'res-hero-val bad';
+      heroSub.textContent = 'Với điều kiện hiện tại, thuê tích lũy có thể tốt hơn trong dài hạn';
+    }
+  } else if (conf >= 1 && S.income > 0) {
+    heroLbl.textContent = 'THU NHẬP';
+    heroVal.innerHTML = fmt(S.income) + '<span>/ tháng</span>';
+    heroVal.className = 'res-hero-val';
+    heroSub.textContent = `Tiết kiệm hiện có: ${fmtS(S.savings)}`;
+  } else {
+    heroLbl.textContent = 'ĐIỂM HOÀ VỐN';
+    heroVal.innerHTML = '—';
+    heroVal.className = 'res-hero-val';
+    heroSub.textContent = 'Hoàn thành 3 bước để xem khi nào mua có lợi hơn thuê';
+  }
+
+  // Lock placeholder
+  document.getElementById('lockPlaceholder').style.display = conf >= 3 ? 'none' : 'flex';
+
+  // Compare panel
+  const cw = document.getElementById('compareWrap');
+  if (conf >= 3 && buy && S.rent > 0) {
+    cw.classList.add('show');
+    const rentRatio = Math.round(buy.total / S.income * 100);
+    const buyWins10 = isBuyBetterAtYear(10);
+    cw.innerHTML = `
+      <div class="compare-row header">
+        <div class="cmp-lbl"></div>
+        <div class="cmp-cols">
+          <div class="cmp-col-hdr buy">MUA</div>
+          <div class="cmp-col-hdr rent">THUÊ</div>
+        </div>
+      </div>
+      <div class="compare-row">
+        <div class="cmp-lbl">Trả hàng tháng</div>
+        <div class="cmp-cols">
+          <div class="cmp-col buy">${fmtS(buy.total)}</div>
+          <div class="cmp-col rent">${fmtS(S.rent)}</div>
+        </div>
+      </div>
+      <div class="compare-row">
+        <div class="cmp-lbl">Trả nợ ngân hàng</div>
+        <div class="cmp-cols">
+          <div class="cmp-col buy">${fmtS(buy.monthlyPmt)}</div>
+          <div class="cmp-col rent" style="color:var(--n400)">—</div>
+        </div>
+      </div>
+      <div class="compare-row">
+        <div class="cmp-lbl">Phí vận hành</div>
+        <div class="cmp-cols">
+          <div class="cmp-col buy">${fmtS(buy.ops)}</div>
+          <div class="cmp-col rent" style="color:var(--n400)">—</div>
+        </div>
+      </div>
+      <div class="compare-row">
+        <div class="cmp-lbl">Lợi thế 10 năm</div>
+        <div class="cmp-cols">
+          <div class="cmp-col">
+            ${buyWins10
+              ? '<span class="winner-badge buy">Tốt hơn</span>'
+              : '<span style="color:var(--n400);font-size:12px">—</span>'}
+          </div>
+          <div class="cmp-col">
+            ${!buyWins10
+              ? '<span class="winner-badge rent">Tốt hơn</span>'
+              : '<span style="color:var(--n400);font-size:12px">—</span>'}
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    cw.classList.remove('show');
+  }
+
+  // Break-even bar
+  const bew = document.getElementById('breakevenWrap');
+  if (conf >= 3 && beYear) {
+    bew.classList.add('show');
+    const pct = Math.min(100, Math.round(beYear / 30 * 100));
+    bew.innerHTML = `
+      <div class="be-title">Tiến trình hoà vốn (dự tính ${beYear} năm)</div>
+      <div class="be-track">
+        <div class="be-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="be-labels">
+        <span class="be-lbl">Mua nhà</span>
+        <span class="be-lbl">Hoà vốn năm ${beYear}</span>
+        <span class="be-lbl">30 năm</span>
+      </div>
+    `;
+  } else {
+    bew.classList.remove('show');
+  }
+
+  // Affordability
+  const aw = document.getElementById('affordWrap');
+  if (conf >= 3 && buy && S.income > 0) {
+    aw.classList.add('show');
+    const ratio = buy.total / S.income;
+    const pctStr = Math.round(ratio * 100) + '%';
+    const dpRatio = buy.dp / S.savings;
+    const dpOk = S.savings >= buy.dp;
+    const rClass = ratio <= 0.35 ? 'ok' : ratio <= 0.5 ? 'warn' : 'bad';
+    const rMsg = ratio <= 0.35 ? 'Tốt - an toàn' : ratio <= 0.5 ? 'Căng - cần giảm chi' : 'Quá cao - rủi ro';
+
+    aw.innerHTML = `
+      <div class="afford-row">
+        <div class="afford-lbl"><i data-lucide="percent"></i>Tỷ lệ trả nợ / thu nhập</div>
+        <div class="afford-val ${rClass}">${pctStr} — ${rMsg}</div>
+      </div>
+      <div class="afford-row">
+        <div class="afford-lbl"><i data-lucide="piggy-bank"></i>Tiết kiệm đủ trả trước</div>
+        <div class="afford-val ${dpOk ? 'ok' : 'bad'}">${dpOk ? 'Đủ ✓' : 'Thiếu ' + fmtS(buy.dp - S.savings)}</div>
+      </div>
+      <div class="afford-row">
+        <div class="afford-lbl"><i data-lucide="landmark"></i>Cần vay ngân hàng</div>
+        <div class="afford-val">${fmtS(buy.loan)}</div>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  } else {
+    aw.classList.remove('show');
+  }
+
+  // CTA
+  const cta = document.getElementById('resCta');
+  if (conf >= 3) {
+    cta.classList.add('show');
+    const buy2 = calcBuy();
+    const canAfford = buy2.total / S.income <= 0.5 && S.savings >= buy2.dp;
+    const msg = canAfford
+      ? `<strong>Điều kiện tài chính phù hợp để vay mua nhà</strong>Tỷ lệ trả nợ an toàn. MoMo kết nối với các ngân hàng có lãi suất ưu đãi cho vay mua nhà.`
+      : `<strong>Cần chuẩn bị thêm trước khi vay</strong>Tích lũy thêm tiết kiệm và cân đối thu nhập. MoMo giúp bạn gửi tiết kiệm sinh lời trong khi chuẩn bị.`;
+    document.getElementById('ctaMsg').innerHTML = msg;
+    document.getElementById('ctaBtn').textContent = canAfford
+      ? 'Xem gói vay mua nhà →'
+      : 'Gửi tiết kiệm tích lũy →';
+  } else {
+    cta.classList.remove('show');
+  }
+}
+
+function isBuyBetterAtYear(yr) {
+  if (!S.price || !S.rent) return false;
+  const buy = calcBuy();
+  let cumBuy = buy.dp;
+  let cumRent = 0;
+  let currentRent = S.rent;
+  let homeValue = S.price;
+  for (let y = 1; y <= yr; y++) {
+    cumBuy += buy.total * 12;
+    cumRent += currentRent * 12;
+    homeValue *= (1 + APPRE_RATE[S.region]);
+    currentRent *= (1 + RENT_RISE);
+  }
+  const netBuyCost = cumBuy - (homeValue - S.price);
+  return netBuyCost <= cumRent;
+}
+
+// ─── INPUT HANDLERS ──────────────────────────────────
+function onInc(el) {
+  S.income = maskedInput(el);
+  document.getElementById('incWrap').classList.remove('error');
+  document.querySelectorAll('#incChips .chip').forEach(c => {
+    c.classList.toggle('on', +c.textContent.replace('tr','') * 1e6 === S.income);
+  });
+  renderRight();
+}
+function setInc(m) {
+  S.income = m * 1e6;
+  document.getElementById('incInp').value = S.income.toLocaleString('vi-VN');
+  document.getElementById('incWrap').classList.remove('error');
+  document.querySelectorAll('#incChips .chip').forEach(c => {
+    c.classList.toggle('on', +c.textContent.replace('tr','') * 1e6 === S.income);
+  });
+  renderRight();
+}
+function onSav(el) {
+  S.savings = maskedInput(el);
+  document.querySelectorAll('#savChips .chip').forEach(c => c.classList.remove('on'));
+  renderRight();
+}
+function setSav(tr) {
+  S.savings = tr >= 1000 ? tr * 1e6 : tr * 1e6;
+  document.getElementById('savInp').value = S.savings.toLocaleString('vi-VN');
+  const label = tr >= 1000 ? (tr/1000) + ' tỷ' : tr + 'tr';
+  document.querySelectorAll('#savChips .chip').forEach(c => c.classList.toggle('on', c.textContent === label));
+  renderRight();
+}
+
+function setRegion(r, btn) {
+  S.region = r;
+  document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (S.price > 0) suggestRent();
+  renderRight();
+}
+
+function onPrice(el) {
+  S.price = maskedInput(el);
+  document.getElementById('priceWrap').classList.remove('error');
+  document.querySelectorAll('#priceChips .chip').forEach(c => c.classList.remove('on'));
+  if (S.price > 0) suggestRent();
+  updateDownHint();
+  renderRight();
+}
+function setPrice(bn) {
+  S.price = bn * 1e6;
+  document.getElementById('priceInp').value = S.price.toLocaleString('vi-VN');
+  document.getElementById('priceWrap').classList.remove('error');
+  document.querySelectorAll('#priceChips .chip').forEach(c => {
+    const v = c.textContent;
+    const match = v.includes('tỷ') ? parseFloat(v) * 1e9 : parseFloat(v) * 1e6;
+    c.classList.toggle('on', match === S.price);
+  });
+  suggestRent();
+  updateDownHint();
+  renderRight();
+}
+function suggestRent() {
+  const suggested = Math.round(S.price * RENT_YIELD[S.region] / 500000) * 500000;
+  document.getElementById('rentHint').textContent = `Gợi ý: ~${fmtS(suggested)}/tháng (yield ${(RENT_YIELD[S.region]*100).toFixed(1)}% theo khu vực)`;
+  if (!S.rent) {
+    S.rent = suggested;
+    document.getElementById('rentInp').value = formatDisplay(suggested);
+  }
+}
+function onRent(el) {
+  S.rent = maskedInput(el);
+  document.getElementById('rentWrap').classList.remove('error');
+  renderRight();
+}
+
+function onDownSlider(el) {
+  S.downPct = +el.value;
+  document.getElementById('downVal').textContent = S.downPct + '%';
+  updateDownHint();
+  renderRight();
+}
+function updateDownHint() {
+  if (!S.price) return;
+  const dp = S.price * S.downPct / 100;
+  const loan = S.price - dp;
+  document.getElementById('downHint').textContent =
+    `Trả trước ${fmtS(dp)} · Vay ${fmtS(loan)} · Tiết kiệm ${S.savings > 0 ? (S.savings >= dp ? 'đủ ✓' : 'thiếu ' + fmtS(dp - S.savings)) : '(chưa nhập)'}`;
+}
+function setTerm(y, btn) {
+  S.termYears = y;
+  document.querySelectorAll('#termPills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  if (S.confirmed >= 3) renderRight();
+}
+function setRate(r, btn) {
+  S.promoRate = r;
+  document.querySelectorAll('#ratePills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ─── SECTION CONTROL ─────────────────────────────────
+function setSectionState(i, state) {
+  const sec = document.getElementById('sec'+i);
+  const hdr = sec.querySelector('.ff-sec-hdr');
+  const ttl = document.getElementById('st'+i);
+  sec.className = 'ff-section ' + state;
+  hdr.className = 'ff-sec-hdr' + (state === 'locked' ? ' locked' : '');
+  if (ttl) ttl.className = 'ff-sec-title' + (state === 'locked' ? ' locked' : '');
+}
+
+function toggleSec(i) {
+  const sec = document.getElementById('sec'+i);
+  if (sec.classList.contains('locked')) return;
+}
+
+function editSec(e, i) {
+  e.stopPropagation();
+  setSectionState(i, 'active');
+  for (let j = i+1; j <= 2; j++) setSectionState(j, 'locked');
+  S.confirmed = i;
+  renderRight();
+}
+
+function confirmSec(i) {
+  if (i === 0) {
+    if (S.income <= 0) { document.getElementById('incWrap').classList.add('error'); return; }
+    document.getElementById('ss0').textContent = `Thu nhập ${fmtS(S.income)}/tháng · Tiết kiệm ${fmtS(S.savings)}`;
+  }
+  if (i === 1) {
+    if (S.price <= 0) { document.getElementById('priceWrap').classList.add('error'); return; }
+    if (S.rent <= 0)  { document.getElementById('rentWrap').classList.add('error'); return; }
+    document.getElementById('ss1').textContent = `Giá ${fmtS(S.price)} · Thuê ${fmtS(S.rent)}/tháng`;
+  }
+  if (i === 2) {
+    const buy = calcBuy();
+    document.getElementById('ss2').textContent = `Trả trước ${S.downPct}% · Vay ${S.termYears} năm · ${fmtS(buy.total)}/tháng`;
+  }
+
+  setSectionState(i, 'done');
+  S.confirmed = Math.max(S.confirmed, i + 1);
+
+  if (i < 2) {
+    setSectionState(i + 1, 'active');
+    if (i === 1) updateDownHint();
+  }
+
+  renderRight();
+  if (window.lucide) lucide.createIcons();
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderRight();
+if (window.lucide) lucide.createIcons();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>

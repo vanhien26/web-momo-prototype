@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảo hiểm xe — MoMo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #EB2F96;
+      --primary-dark:  #C4177A;
+      --primary-light: #FFF0F9;
+      --success:       #00B14F;
+      --success-light: #E6F9EE;
+      --warning:       #FF8C00;
+      --warning-light: #FFF4E5;
+      --error:         #E5233D;
+      --error-light:   #FDEDF0;
+      --n900: #1C171A;
+      --n700: #4B4550;
+      --n500: #8C8594;
+      --n300: #D1CDD3;
+      --n100: #F5F4F6;
+      --n50:  #FAFAFA;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+      background: var(--n100);
+      color: var(--n900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      min-height: 100%;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 80px;
+    }
+
+    .ff {
+      width: 100%; max-width: 1080px;
+      background: var(--white);
+      border: 1px solid var(--n300);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(28,23,26,.08);
+      display: grid;
+      grid-template-columns: 420px 1fr;
+    }
+
+    .ff-left {
+      border-right: 1px solid var(--n300);
+      display: flex; flex-direction: column;
+    }
+
+    .ff-comp-header {
+      padding: 28px 32px 20px;
+      border-bottom: 1px solid var(--n300);
+    }
+    .back-lab {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-decoration: none; margin-bottom: 10px;
+      transition: color .15s;
+    }
+    .back-lab:hover { color: var(--primary); }
+    .ff-comp-title {
+      font-size: 13px; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: 6px;
+    }
+    .ff-comp-name {
+      font-size: 22px; font-weight: 900; color: var(--n900);
+      line-height: 1.2; letter-spacing: -.02em;
+    }
+    .ff-comp-sub {
+      font-size: 13px; color: var(--n700); margin-top: 4px; line-height: 1.5;
+    }
+
+    .jtbd-frame {
+      margin: 0 32px 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--n300);
+      border-radius: 16px;
+      background: linear-gradient(180deg, var(--white), var(--n50));
+    }
+    .jtbd-kicker {
+      display: inline-flex;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .jtbd-frame p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--n700);
+    }
+
+    .utility-summary {
+      margin: 0 32px 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .utility-summary-card {
+      border: 1px solid var(--n300);
+      border-radius: 14px;
+      background: var(--white);
+      padding: 12px;
+      min-height: 74px;
+    }
+    .utility-summary-card strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--n900);
+      margin-bottom: 4px;
+    }
+    .utility-summary-card span {
+      display: block;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--n500);
+    }
+
+    .ff-section { border-bottom: 1px solid var(--n300); }
+    .ff-section:last-of-type { border-bottom: none; }
+
+    .ff-sec-hdr {
+      width: 100%; text-align: left;
+      padding: 18px 32px;
+      display: flex; align-items: center; gap: 12px;
+      background: none; border: none; cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .ff-sec-hdr:hover:not(.locked) { background: var(--n50); }
+    .ff-sec-hdr.locked { cursor: default; opacity: .45; }
+
+    .ff-sec-num {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800;
+      background: var(--n100); color: var(--n500);
+      border: 1.5px solid var(--n300);
+      transition: all .2s;
+    }
+    .ff-section.active .ff-sec-num {
+      background: var(--primary); color: var(--white);
+      border-color: var(--primary);
+    }
+    .ff-section.done .ff-sec-num {
+      background: var(--success-light); color: var(--success);
+      border-color: var(--success); font-size: 13px;
+    }
+
+    .ff-sec-meta { flex: 1; }
+    .ff-sec-title {
+      font-size: 14px; font-weight: 700; color: var(--n900);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ff-sec-title.locked { color: var(--n500); }
+    .ff-sec-summary {
+      font-size: 12px; color: var(--n700); margin-top: 2px;
+      display: none;
+    }
+    .ff-section.done .ff-sec-summary { display: block; }
+
+    .ff-sec-edit {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: var(--primary-light); border: none;
+      border-radius: 9999px; padding: 4px 10px;
+      cursor: pointer; font-family: inherit;
+      display: none; flex-shrink: 0;
+      transition: opacity .15s;
+    }
+    .ff-sec-edit:hover { opacity: .8; }
+    .ff-section.done .ff-sec-edit { display: block; }
+
+    .ff-sec-chevron {
+      font-size: 11px; color: var(--n500); flex-shrink: 0;
+      transition: transform .2s;
+    }
+    .ff-section.done .ff-sec-chevron,
+    .ff-section.locked .ff-sec-chevron { display: none; }
+
+    .ff-sec-body {
+      padding: 0 32px 28px;
+      display: none;
+    }
+    .ff-section.active .ff-sec-body { display: block; }
+
+    .fields { display: flex; flex-direction: column; gap: 22px; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field-lbl {
+      font-size: 11px; font-weight: 700; color: var(--n500);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .inp-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--n300); border-radius: 8px;
+      background: var(--white); transition: border-color .18s;
+    }
+    .inp-wrap:focus-within { border-color: var(--primary); border-width: 1.5px; }
+    .inp-wrap input {
+      flex: 1; border: none; outline: none;
+      padding: 11px 14px; font-size: 17px; font-weight: 700;
+      color: var(--n900); background: none; font-family: inherit;
+      font-feature-settings: "tnum"; width: 100%;
+    }
+    .inp-unit {
+      padding: 0 12px; font-size: 12px; font-weight: 600;
+      color: var(--n500); border-left: 1px solid var(--n300);
+      white-space: nowrap; height: 44px; display: flex; align-items: center;
+    }
+
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 12px; border-radius: 9999px;
+      border: 1px solid var(--n300); background: var(--n50);
+      font-size: 12px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .chip:hover { border-color: var(--primary); color: var(--primary); }
+    .chip.on { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+    .stepper {
+      display: flex; align-items: center; width: fit-content;
+      border: 1px solid var(--n300); border-radius: 9999px; overflow: hidden;
+    }
+    .stp-btn {
+      width: 38px; height: 38px; border: none; background: none;
+      cursor: pointer; font-size: 16px; color: var(--n700);
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit; transition: all .15s;
+    }
+    .stp-btn:hover { background: var(--primary-light); color: var(--primary); }
+    .stp-val {
+      width: 36px; text-align: center; font-size: 16px; font-weight: 800;
+      color: var(--n900); border-left: 1px solid var(--n300);
+      border-right: 1px solid var(--n300); padding: 8px 0;
+      font-feature-settings: "tnum";
+    }
+
+    .pills { display: flex; gap: 7px; flex-wrap: wrap; }
+    .pill {
+      padding: 7px 16px; border-radius: 9999px;
+      border: 1px solid var(--n300); background: var(--n50);
+      font-size: 13px; font-weight: 600; color: var(--n700);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .pill:hover { border-color: var(--primary); }
+    .pill.on { border-color: var(--primary); background: var(--primary); color: var(--white); }
+
+    .field-hint { font-size: 12px; color: var(--n500); line-height: 1.5; }
+
+    /* Checkbox row */
+    .check-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px; border: 1px solid var(--n300);
+      border-radius: 10px; background: var(--white);
+      cursor: pointer; transition: border-color .15s;
+    }
+    .check-row:hover { border-color: var(--primary); }
+    .check-row.on { border-color: var(--primary); background: var(--primary-light); }
+    .check-row input { margin-top: 2px; accent-color: var(--primary); width: 16px; height: 16px; flex-shrink: 0; }
+    .check-lbl { font-size: 13px; font-weight: 700; color: var(--n900); }
+    .check-sub { font-size: 12px; color: var(--n700); margin-top: 1px; line-height: 1.45; }
+
+    .sec-action { margin-top: 24px; }
+    .btn-confirm {
+      width: 100%; padding: 12px 20px;
+      border: none; border-radius: 9999px;
+      background: var(--primary); color: var(--white);
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-confirm:hover { background: var(--primary-dark); }
+
+    /* RIGHT — RESULT PANEL */
+    .ff-right {
+      background: var(--n50);
+      padding: 32px 36px 40px;
+      display: flex; flex-direction: column; gap: 28px;
+      min-height: 500px;
+    }
+
+    .res-block { display: flex; flex-direction: column; gap: 4px; }
+    .res-eyebrow {
+      font-size: 10px; font-weight: 700; color: var(--n500);
+      text-transform: uppercase; letter-spacing: .07em;
+    }
+    .res-main {
+      font-size: 42px; font-weight: 900; line-height: 1;
+      letter-spacing: -.02em; color: var(--primary);
+      font-feature-settings: "tnum";
+    }
+    .res-main .unit { font-size: 16px; font-weight: 500; color: var(--n500); letter-spacing: 0; }
+    .res-meta { font-size: 12px; color: var(--n500); margin-top: 2px; }
+
+    /* Penalty compare strip */
+    .pen-strip {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--warning-light); border: 1px solid #F8E0B8;
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .pen-ico { font-size: 20px; flex-shrink: 0; }
+    .pen-txt { font-size: 12px; color: var(--n700); line-height: 1.5; }
+    .pen-txt strong { color: var(--warning); font-size: 13px; }
+
+    .alloc-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .alloc-bar {
+      display: flex; height: 10px; border-radius: 9999px;
+      overflow: hidden; gap: 2px;
+    }
+    .alloc-seg { border-radius: 9999px; transition: width .4s ease; }
+    .alloc-legend { display: flex; flex-direction: column; gap: 8px; }
+    .alloc-row { display: flex; justify-content: space-between; align-items: center; }
+    .alloc-lbl { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--n700); }
+    .alloc-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .alloc-val { font-size: 12px; font-weight: 700; color: var(--n900); font-feature-settings: "tnum"; }
+
+    .res-divider { height: 1px; background: var(--n300); }
+
+    .metrics-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .metric-cell {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .metric-lbl { font-size: 10px; font-weight: 700; color: var(--n500); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .metric-val { font-size: 18px; font-weight: 900; color: var(--n900); font-feature-settings: "tnum"; }
+    .metric-val.locked { color: var(--n300); font-size: 14px; font-weight: 600; }
+    .metric-val.good { color: var(--success); }
+    .metric-val.bad  { color: var(--error); }
+    .metric-sub { font-size: 11px; color: var(--n500); margin-top: 2px; }
+
+    /* Insurer table */
+    .ins-tbl-wrap {
+      background: var(--white); border: 1px solid var(--n300);
+      border-radius: 12px; overflow: hidden;
+    }
+    .ins-tbl { width: 100%; border-collapse: collapse; }
+    .ins-tbl th {
+      text-align: left; font-size: 10px; font-weight: 700;
+      color: var(--n500); text-transform: uppercase; letter-spacing: .04em;
+      padding: 10px 14px 8px; border-bottom: 1px solid var(--n300);
+    }
+    .ins-tbl th:not(:first-child) { text-align: right; }
+    .ins-tbl td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid var(--n300); }
+    .ins-tbl tr:last-child td { border-bottom: none; }
+    .ins-tbl td:not(:first-child) { text-align: right; }
+    .ins-tbl tr.best { background: var(--primary-light); }
+    .ins-name { font-weight: 700; color: var(--n900); display: flex; align-items: center; gap: 6px; }
+    .best-badge {
+      font-size: 8px; font-weight: 800; background: var(--primary); color: var(--white);
+      border-radius: 9999px; padding: 1px 6px; text-transform: uppercase;
+    }
+    .ins-rate { font-weight: 800; }
+    .ins-rate.top { color: var(--primary); }
+    .ins-fee { font-weight: 700; font-feature-settings: "tnum"; }
+    .ins-fee.top { color: var(--primary); font-size: 14px; }
+
+    .res-locked {
+      background: var(--white); border: 1px dashed var(--n300);
+      border-radius: 12px; padding: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .res-locked-ico {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--n100); display: flex; align-items: center;
+      justify-content: center; font-size: 14px; flex-shrink: 0;
+    }
+    .res-locked-txt { font-size: 12px; color: var(--n500); line-height: 1.5; }
+    .res-locked-txt strong { color: var(--n700); display: block; margin-bottom: 1px; }
+
+    .res-cta {
+      background: linear-gradient(135deg, #EB2F96, #C4177A);
+      border-radius: 14px; padding: 20px;
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .res-cta.show { display: flex; }
+    .res-cta-msg { font-size: 13px; font-weight: 600; color: var(--white); line-height: 1.5; }
+    .res-cta-msg strong { display: block; font-size: 15px; margin-bottom: 3px; }
+    .btn-cta {
+      display: block; text-align: center; text-decoration: none;
+      width: 100%; padding: 12px; border: none; border-radius: 9999px;
+      background: var(--white); color: var(--primary);
+      font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit;
+      transition: opacity .15s;
+    }
+    .btn-cta:hover { opacity: .92; }
+
+    .res-footnote { font-size: 10px; color: var(--n500); line-height: 1.6; }
+
+    .recommend-card {
+      background: var(--white);
+      border: 1px solid var(--n300);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .recommend-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .recommend-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--n500);
+      margin-bottom: 2px;
+    }
+    .recommend-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--n900);
+      line-height: 1.35;
+    }
+    .recommend-chip {
+      flex-shrink: 0;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .recommend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .recommend-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--n700);
+    }
+    .recommend-item i {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-style: normal;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .recommend-item strong { color: var(--n900); }
+
+    @media (max-width: 767px) {
+      .page-wrap { padding: 0; }
+      .ff { grid-template-columns: 1fr; border-radius: 0; border: none; }
+      .ff-right { min-height: auto; padding: 24px 20px 40px; }
+      .ff-sec-body { padding: 0 20px 24px; }
+      .ff-sec-hdr { padding: 16px 20px; }
+      .ff-comp-header { padding: 20px 20px 16px; }
+      .jtbd-frame,
+      .utility-summary { margin-left: 20px; margin-right: 20px; }
+      .utility-summary { grid-template-columns: 1fr; }
+      .res-main { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="ff" id="ff">
+
+  <!-- ── LEFT ───────────────────────────────────────────── -->
+  <div class="ff-left">
+
+    <div class="ff-comp-header">
+      <a href="/lab.html" target="_top" class="back-lab">← Lab</a>
+      <div class="ff-comp-title">Utilities Flow</div>
+      <div class="ff-comp-name">Bảo hiểm xe</div>
+      <div class="ff-comp-sub">Tối ưu cho JTBD: biết phí tối thiểu, chọn đúng lớp bảo vệ, và đi tiếp nhanh sang bước mua.</div>
+    </div>
+
+    <aside class="jtbd-frame">
+      <span class="jtbd-kicker">Jobs to be Done</span>
+      <p>Tôi cần biết ngay xe của mình phải mua tối thiểu gì để hợp lệ, rồi thêm đúng lớp bảo vệ nếu đáng tiền, để hoàn tất nhanh mà không phải đọc quá nhiều điều khoản.</p>
+    </aside>
+
+    <div class="utility-summary">
+      <div class="utility-summary-card">
+        <strong>1. Xác định nhu cầu</strong>
+        <span>Chọn xe, mục đích sử dụng, giá trị hiện tại.</span>
+      </div>
+      <div class="utility-summary-card">
+        <strong>2. Tính phí tối thiểu</strong>
+        <span>Hiển thị TNDS và các khoản bắt buộc ngay.</span>
+      </div>
+      <div class="utility-summary-card">
+        <strong>3. Chọn lớp bổ sung</strong>
+        <span>Chỉ mở rộng nếu có giá trị thực cho xe của bạn.</span>
+      </div>
+    </div>
+
+    <!-- Section 1 : Thông tin xe -->
+    <div class="ff-section active" id="sec0">
+      <div class="ff-sec-hdr" onclick="void 0">
+        <div class="ff-sec-num" id="sn0">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title" id="st0">Xác định nhu cầu</div>
+          <div class="ff-sec-summary" id="ss0"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,0)">Sửa</button>
+        <span class="ff-sec-chevron">▾</span>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Loại xe</div>
+            <div class="pills">
+              <button class="pill on" id="vtMoto" onclick="setVt('moto')">🛵 Xe máy</button>
+              <button class="pill" id="vtCar" onclick="setVt('car')">🚗 Ô tô</button>
+            </div>
+          </div>
+
+          <!-- Moto fields -->
+          <div class="field" id="fMotoCc">
+            <div class="field-lbl">Phân khối</div>
+            <div class="pills">
+              <button class="pill" id="cc50m" onclick="setCc('50-')">Dưới 50cc</button>
+              <button class="pill on" id="cc50p" onclick="setCc('50+')">Trên 50cc</button>
+            </div>
+          </div>
+
+          <!-- Car fields -->
+          <div class="field" id="fCarSeats" style="display:none">
+            <div class="field-lbl">Số chỗ ngồi</div>
+            <div class="pills" id="seatPills">
+              <button class="pill on" onclick="setSeats('4-5')">4-5 chỗ</button>
+              <button class="pill" onclick="setSeats('6-8')">6-8 chỗ</button>
+              <button class="pill" onclick="setSeats('9-11')">9-11 chỗ</button>
+            </div>
+          </div>
+          <div class="field" id="fCarBiz" style="display:none">
+            <div class="field-lbl">Mục đích sử dụng</div>
+            <div class="pills">
+              <button class="pill on" id="bizNo" onclick="setBiz(false)">Gia đình</button>
+              <button class="pill" id="bizYes" onclick="setBiz(true)">Kinh doanh</button>
+            </div>
+          </div>
+          <div class="field" id="fCarValue" style="display:none">
+            <div class="field-lbl">Giá trị xe hiện tại</div>
+            <div class="inp-wrap">
+              <input type="text" inputmode="numeric" id="cv" value="600.000.000" oninput="onV(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="valChips">
+              <button class="chip" onclick="sv(400)">400tr</button>
+              <button class="chip on" onclick="sv(600)">600tr</button>
+              <button class="chip" onclick="sv(800)">800tr</button>
+              <button class="chip" onclick="sv(1200)">1,2tỷ</button>
+              <button class="chip" onclick="sv(2000)">2tỷ</button>
+            </div>
+            <div class="field-hint">Dùng để tính phí bảo hiểm vật chất ở bước 3</div>
+          </div>
+          <div class="field" id="fCarAge" style="display:none">
+            <div class="field-lbl">Tuổi xe</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="stepper">
+                <button class="stp-btn" onclick="sa(-1)">−</button>
+                <div class="stp-val" id="ageVal">0</div>
+                <button class="stp-btn" onclick="sa(1)">+</button>
+              </div>
+              <span class="field-hint" id="ageHint">Xe mới · hệ số phí <strong>x1.0</strong></span>
+            </div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(0)">Xác nhận thông tin xe →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 : TNDS bắt buộc -->
+    <div class="ff-section locked" id="sec1">
+      <div class="ff-sec-hdr locked" onclick="void 0">
+        <div class="ff-sec-num" id="sn1">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st1">Bảo hiểm bắt buộc TNDS</div>
+          <div class="ff-sec-summary" id="ss1"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,1)">Sửa</button>
+        <span class="ff-sec-chevron">▾</span>
+      </div>
+      <div class="ff-sec-body">
+        <div class="fields">
+          <div class="field">
+            <div class="field-lbl">Thời hạn hợp đồng</div>
+            <div class="pills" id="termPills"></div>
+            <div class="field-hint" id="termHint"></div>
+          </div>
+          <div class="field">
+            <label class="check-row" id="paRow" onclick="togglePa(event)">
+              <input type="checkbox" id="paCheck">
+              <span>
+                <span class="check-lbl">Thêm BH tai nạn người ngồi trên xe</span>
+                <span class="check-sub" id="paSub">Bồi thường đến 10 triệu/người/vụ · phí 20.000đ/chỗ/năm</span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(1)">Xác nhận TNDS →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3 : Gói tự nguyện -->
+    <div class="ff-section locked" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="void 0">
+        <div class="ff-sec-num" id="sn2">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st2">Chọn lớp bổ sung</div>
+          <div class="ff-sec-summary" id="ss2"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,2)">Sửa</button>
+        <span class="ff-sec-chevron">▾</span>
+      </div>
+      <div class="ff-sec-body">
+        <!-- Car: chọn nhà BH vật chất -->
+        <div class="fields" id="volCar" style="display:none">
+          <div class="field">
+            <label class="check-row on" id="vcRow" onclick="toggleVc(event)">
+              <input type="checkbox" id="vcCheck" checked>
+              <span>
+                <span class="check-lbl">Bảo hiểm vật chất ô tô</span>
+                <span class="check-sub">Đền bù va chạm, thủy kích, cháy nổ, mất cắp toàn bộ theo giá trị xe</span>
+              </span>
+            </label>
+          </div>
+          <div class="field" id="fInsurer">
+            <div class="field-lbl">Chọn nhà bảo hiểm</div>
+            <div class="pills" id="insPills"></div>
+            <div class="field-hint">So sánh phí chi tiết ở bảng bên phải</div>
+          </div>
+        </div>
+        <!-- Moto: mức tai nạn + trộm cắp -->
+        <div class="fields" id="volMoto">
+          <div class="field">
+            <label class="check-row" id="thRow" onclick="toggleTh(event)">
+              <input type="checkbox" id="thCheck">
+              <span>
+                <span class="check-lbl">Bảo hiểm trộm cắp, cháy nổ xe máy</span>
+                <span class="check-sub">Đền bù khi mất cắp toàn bộ hoặc cháy nổ · phí 1,5% giá trị xe/năm</span>
+              </span>
+            </label>
+          </div>
+          <div class="field" id="fMotoValue" style="display:none">
+            <div class="field-lbl">Giá trị xe hiện tại</div>
+            <div class="inp-wrap">
+              <input type="text" inputmode="numeric" id="mv" value="30.000.000" oninput="onMv(this)">
+              <div class="inp-unit">đ</div>
+            </div>
+            <div class="chips" id="mvChips">
+              <button class="chip" onclick="smv(15)">15tr</button>
+              <button class="chip on" onclick="smv(30)">30tr</button>
+              <button class="chip" onclick="smv(50)">50tr</button>
+              <button class="chip" onclick="smv(80)">80tr</button>
+            </div>
+          </div>
+        </div>
+        <div class="sec-action">
+          <button class="btn-confirm" onclick="confirmSec(2)">Xem tổng chi phí →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- ── RIGHT ──────────────────────────────────────────── -->
+  <div class="ff-right" id="ffRight">
+
+    <!-- TNDS fee -->
+    <div class="res-block">
+      <div class="res-eyebrow" id="rFeeEyebrow">Chi phí tối thiểu / năm</div>
+      <div class="res-main" id="rFee">—</div>
+      <div class="res-meta" id="rFeeMeta">Chọn loại xe để xem mức phí bắt buộc phù hợp</div>
+    </div>
+
+    <!-- Penalty strip -->
+    <div class="pen-strip" id="penStrip">
+      <div class="pen-ico">🚨</div>
+      <div class="pen-txt" id="penTxt"></div>
+    </div>
+
+    <div class="res-divider"></div>
+
+    <!-- Metrics (step 2+) -->
+    <div class="metrics-row">
+      <div class="metric-cell">
+        <div class="metric-lbl">Tổng phí theo kỳ hạn</div>
+        <div class="metric-val locked" id="mTnds">—</div>
+        <div class="metric-sub" id="mTndsSub">Hoàn thành bước 2</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-lbl">Phí so với mức phạt</div>
+        <div class="metric-val locked" id="mRatio">—</div>
+        <div class="metric-sub" id="mRatioSub">Hoàn thành bước 2</div>
+      </div>
+    </div>
+
+    <div class="recommend-card" id="recommendCard">
+      <div class="recommend-head">
+        <div>
+          <div class="recommend-kicker">Gợi ý theo nhu cầu</div>
+          <div class="recommend-title" id="recommendTitle">Hoàn thành 2 bước đầu để nhận gợi ý đúng nhu cầu</div>
+        </div>
+        <div class="recommend-chip" id="recommendChip">Theo nhu cầu</div>
+      </div>
+      <div class="recommend-list" id="recommendList"></div>
+    </div>
+
+    <!-- Alloc bar (step 3) -->
+    <div class="alloc-wrap" id="allocWrap" style="display:none">
+      <div class="res-eyebrow">Cơ cấu chi phí bảo vệ / năm</div>
+      <div class="alloc-bar" id="allocBar"></div>
+      <div class="alloc-legend" id="allocLegend"></div>
+    </div>
+
+    <!-- Insurer table (step 3, car only) -->
+    <div id="insWrap" style="display:none">
+      <div class="res-divider"></div>
+      <div class="res-block">
+        <div class="res-eyebrow">Phí vật chất tốt nhất / năm</div>
+        <div class="res-main" id="rBest">—</div>
+        <div class="res-meta" id="rBestMeta"></div>
+      </div>
+      <div class="ins-tbl-wrap">
+        <table class="ins-tbl">
+          <thead><tr><th>Nhà bảo hiểm</th><th>Tỷ lệ phí</th><th>Phí / năm</th></tr></thead>
+          <tbody id="insBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Total (step 3) -->
+    <div id="totalWrap" style="display:none">
+      <div class="res-divider"></div>
+      <div class="res-block">
+        <div class="res-eyebrow">Tổng chi phí bảo vệ xe / năm đầu</div>
+        <div class="res-main" id="rTotal">—</div>
+        <div class="res-meta" id="rTotalMeta"></div>
+      </div>
+    </div>
+
+    <!-- Locked placeholder -->
+    <div id="lock2" class="res-locked">
+      <div class="res-locked-ico">🔒</div>
+      <div class="res-locked-txt">
+        <strong>Tổng chi phí bảo vệ</strong>
+        Hoàn thành 3 bước để xem cơ cấu chi phí và chọn gói phù hợp với nhu cầu thực tế của xe.
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="res-cta" id="resCta">
+      <div class="res-cta-msg" id="ctaMsg"></div>
+      <a class="btn-cta" href="https://onelink.momo.vn/bao-hiem-xe" target="_blank" rel="noopener">📱 Tiếp tục sang bước mua</a>
+    </div>
+
+    <div class="res-footnote">
+      Biểu phí TNDS theo Thông tư 04/2021/TT-BTC (đã gồm VAT) · Mức phạt theo Nghị định 168/2024/NĐ-CP · Phí vật chất và gói tự nguyện là số liệu minh họa cho prototype, cần verify với đối tác bảo hiểm trước khi công bố.
+    </div>
+
+  </div><!-- /ff-right -->
+
+</div><!-- /ff -->
+</div><!-- /page-wrap -->
+
+<script>
+// ─── STATE ─────────────────────────────────────────────────
+const S = {
+  vt: 'moto',        // 'moto' | 'car'
+  cc: '50+',         // moto: '50-' | '50+'
+  seats: '4-5',      // car: '4-5' | '6-8' | '9-11'
+  biz: false,        // car: kinh doanh
+  carVal: 600_000_000,
+  motoVal: 30_000_000,
+  age: 0,            // tuổi xe (car)
+  term: 1,           // năm hợp đồng TNDS
+  pa: false,         // BH tai nạn người ngồi
+  vc: true,          // car: BH vật chất
+  th: false,         // moto: trộm cắp cháy nổ
+  insurer: 'mic',
+  confirmed: 0,
+};
+
+// ─── DATA (đã gồm VAT, [cần verify]) ────────────────────────
+const TNDS = {
+  moto: { '50-': 60_500, '50+': 66_000 },
+  car: {
+    family: { '4-5': 480_700, '6-8': 873_400, '9-11': 1_397_000 },
+    biz:    { '4-5': 831_600, '6-8': 1_243_000, '9-11': 1_804_000 },
+  },
+};
+const PENALTY = {
+  moto: { lo: 200_000, hi: 300_000, label: '200.000 - 300.000đ' },
+  car:  { lo: 800_000, hi: 1_000_000, label: '800.000 - 1.000.000đ' },
+};
+const SEAT_COUNT = { '4-5': 5, '6-8': 8, '9-11': 11 };
+const PA_FEE_PER_SEAT = 20_000; // 10tr/người/vụ
+const INSURERS = [
+  { id: 'mic', name: 'MIC',      clr: '#1d4ed8', rate: 1.30 },
+  { id: 'vbi', name: 'VBI',      clr: '#15803d', rate: 1.35 },
+  { id: 'pvi', name: 'PVI',      clr: '#0e7490', rate: 1.40 },
+  { id: 'bv',  name: 'Bảo Việt', clr: '#b45309', rate: 1.50 },
+];
+const AGE_FACTOR = a => a <= 3 ? 1.0 : a <= 6 ? 1.1 : a <= 10 ? 1.25 : 1.4;
+const AGE_LABEL  = a => a === 0 ? 'Xe mới' : a <= 3 ? 'Xe 1-3 năm' : a <= 6 ? 'Xe 4-6 năm' : a <= 10 ? 'Xe 7-10 năm' : 'Xe trên 10 năm';
+const TH_RATE = 0.015; // trộm cắp cháy nổ xe máy 1,5%/năm
+
+// ─── DERIVED ────────────────────────────────────────────────
+function calc() {
+  const tndsYear = S.vt === 'moto'
+    ? TNDS.moto[S.cc]
+    : TNDS.car[S.biz ? 'biz' : 'family'][S.seats];
+  const seats = S.vt === 'moto' ? 2 : SEAT_COUNT[S.seats];
+  const paYear = S.pa ? seats * PA_FEE_PER_SEAT : 0;
+  const tndsTotal = (tndsYear + paYear) * S.term;
+
+  const factor = AGE_FACTOR(S.age);
+  const insurers = INSURERS
+    .map(x => ({ ...x, fee: Math.round(S.carVal * x.rate / 100 * factor / 1000) * 1000 }))
+    .sort((a, b) => a.fee - b.fee);
+
+  const volYear = S.vt === 'car'
+    ? (S.vc ? (insurers.find(x => x.id === S.insurer)?.fee || 0) : 0)
+    : (S.th ? Math.round(S.motoVal * TH_RATE / 1000) * 1000 : 0);
+
+  const pen = PENALTY[S.vt];
+  return { tndsYear, paYear, tndsTotal, insurers, volYear, pen, factor,
+           totalYear: tndsYear + paYear + volYear };
+}
+
+// ─── FORMAT ─────────────────────────────────────────────────
+const fm = v => {
+  if (v === null || v === undefined) return '—';
+  if (v >= 1e9) return (v/1e9).toFixed(2).replace(/\.?0+$/,'') + '&nbsp;tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(2).replace(/\.?0+$/,'') + '&nbsp;triệu';
+  return Math.round(v).toLocaleString('vi-VN') + '&nbsp;đ';
+};
+const fmRaw = v => {
+  if (v === null || v === undefined) return '—';
+  if (v >= 1e9) return (v/1e9).toFixed(2).replace(/\.?0+$/,'') + 'tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(2).replace(/\.?0+$/,'') + 'tr';
+  return Math.round(v).toLocaleString('vi-VN') + 'đ';
+};
+const VT_LABEL = { moto: 'Xe máy', car: 'Ô tô' };
+
+// ─── RENDER RIGHT ───────────────────────────────────────────
+function renderRight() {
+  const c = calc();
+
+  // TNDS fee (live from step 1)
+  document.getElementById('rFee').innerHTML = fm(c.tndsYear) + ' <span class="unit">/ năm</span>';
+  document.getElementById('rFeeMeta').textContent =
+    S.vt === 'moto'
+      ? `Xe máy ${S.cc === '50-' ? 'dưới' : 'trên'} 50cc · phí bắt buộc, mọi hãng như nhau`
+      : `Ô tô ${S.seats} chỗ · ${S.biz ? 'kinh doanh' : 'gia đình'} · phí bắt buộc, mọi hãng như nhau`;
+
+  // Penalty strip
+  const ratio = Math.round(c.pen.hi / c.tndsYear * 10) / 10;
+  document.getElementById('penTxt').innerHTML =
+    `Thiếu TNDS có thể bị phạt <strong>${c.pen.label}</strong> - khoảng <strong>~${ratio} lần</strong> phí cả năm. Chưa kể tự chi trả toàn bộ nếu gây tai nạn.`;
+
+  // Metrics (step 2+)
+  const mTnds = document.getElementById('mTnds'), mTndsSub = document.getElementById('mTndsSub');
+  const mRatio = document.getElementById('mRatio'), mRatioSub = document.getElementById('mRatioSub');
+  const recommendTitle = document.getElementById('recommendTitle');
+  const recommendList = document.getElementById('recommendList');
+  const recommendChip = document.getElementById('recommendChip');
+  if (S.confirmed >= 2) {
+    mTnds.className = 'metric-val';
+    mTnds.innerHTML = fm(c.tndsTotal);
+    mTndsSub.textContent = `${S.term} năm` + (S.pa ? ' · gồm BH tai nạn người ngồi' : '');
+    mRatio.className = 'metric-val good';
+    mRatio.textContent = `1/${ratio}`;
+    mRatioSub.textContent = 'phí chỉ bằng 1 phần mức phạt';
+
+    const recItems = [];
+    recItems.push(`<div class="recommend-item"><i>1</i><span><strong>Bắt buộc:</strong> TNDS ${fmRaw(c.tndsYear)}/năm để xe hợp lệ và đi đúng luật.</span></div>`);
+    if (S.pa) {
+      recItems.push(`<div class="recommend-item"><i>2</i><span><strong>Thêm:</strong> Tai nạn người ngồi trên xe để tăng bảo vệ cho người đi cùng.</span></div>`);
+    }
+    if (S.vt === 'car' && S.vc) {
+      recItems.push(`<div class="recommend-item"><i>3</i><span><strong>Nên cân nhắc:</strong> Vật chất ô tô nếu xe còn giá trị và bạn muốn giảm rủi ro chi phí lớn.</span></div>`);
+      recommendTitle.textContent = 'Mua đúng lớp bảo vệ cho ô tô';
+    } else if (S.vt === 'moto' && S.th) {
+      recItems.push(`<div class="recommend-item"><i>3</i><span><strong>Nên cân nhắc:</strong> Trộm cắp, cháy nổ xe máy khi cần bảo vệ tài sản cơ bản.</span></div>`);
+      recommendTitle.textContent = 'Gói gọn cho xe máy';
+    } else {
+      recItems.push(`<div class="recommend-item"><i>3</i><span><strong>Đi tiếp:</strong> Chốt TNDS trước, rồi chỉ thêm lớp khác nếu thật sự cần.</span></div>`);
+      recommendTitle.textContent = 'Đủ dùng cho nhu cầu tối thiểu';
+    }
+    recommendList.innerHTML = recItems.join('');
+    recommendChip.textContent = S.vt === 'car' ? 'Ô tô' : 'Xe máy';
+  } else {
+    mTnds.className = 'metric-val locked'; mTnds.innerHTML = '—'; mTndsSub.textContent = 'Hoàn thành bước 2';
+    mRatio.className = 'metric-val locked'; mRatio.textContent = '—'; mRatioSub.textContent = 'Hoàn thành bước 2';
+    recommendTitle.textContent = 'Hoàn thành 2 bước đầu để nhận gợi ý đúng nhu cầu';
+    recommendChip.textContent = S.vt === 'car' ? 'Ô tô' : 'Xe máy';
+    recommendList.innerHTML = `
+      <div class="recommend-item"><i>1</i><span>Chọn đúng loại xe để định tuyến vào phí bắt buộc phù hợp.</span></div>
+      <div class="recommend-item"><i>2</i><span>Xác nhận TNDS để mở phần gói bổ sung và tổng chi phí.</span></div>`;
+  }
+
+  // Step 3 blocks
+  const allocWrap = document.getElementById('allocWrap');
+  const insWrap = document.getElementById('insWrap');
+  const totalWrap = document.getElementById('totalWrap');
+  const lock2 = document.getElementById('lock2');
+  const resCta = document.getElementById('resCta');
+
+  if (S.confirmed >= 3) {
+    lock2.style.display = 'none';
+
+    // Insurer compare (car + vật chất)
+    if (S.vt === 'car' && S.vc) {
+      insWrap.style.display = '';
+      const best = c.insurers[0];
+      document.getElementById('rBest').innerHTML = fm(best.fee) + ' <span class="unit">/ năm</span>';
+      document.getElementById('rBestMeta').textContent =
+        `${best.name} · ${best.rate}% giá trị xe · hệ số tuổi xe x${c.factor}`;
+      document.getElementById('insBody').innerHTML = c.insurers.map((x, i) => `
+        <tr${i === 0 ? ' class="best"' : ''}>
+          <td><div class="ins-name"><div style="width:8px;height:8px;border-radius:50%;background:${x.clr};flex-shrink:0"></div>${x.name}${i === 0 ? '<span class="best-badge">Best</span>' : ''}${x.id === S.insurer ? ' <span style="font-size:10px;color:var(--n500)">(đang chọn)</span>' : ''}</div></td>
+          <td><span class="ins-rate${i === 0 ? ' top' : ''}">${x.rate}%</span></td>
+          <td><span class="ins-fee${i === 0 ? ' top' : ''}">${fm(x.fee)}</span></td>
+        </tr>`).join('');
+    } else {
+      insWrap.style.display = 'none';
+    }
+
+    // Alloc bar
+    if (c.volYear > 0 || c.paYear > 0) {
+      allocWrap.style.display = '';
+      const segs = [
+        { clr: '#EB2F96', lbl: 'TNDS bắt buộc', amt: c.tndsYear },
+        { clr: '#FF8C00', lbl: 'Tai nạn người ngồi', amt: c.paYear },
+        { clr: '#1d4ed8', lbl: S.vt === 'car' ? 'Vật chất ô tô' : 'Trộm cắp cháy nổ', amt: c.volYear },
+      ].filter(s => s.amt > 0);
+      const total = segs.reduce((t, s) => t + s.amt, 0);
+      document.getElementById('allocBar').innerHTML =
+        segs.map(s => `<div class="alloc-seg" style="width:${s.amt/total*100}%;background:${s.clr}"></div>`).join('');
+      document.getElementById('allocLegend').innerHTML = segs.map(s => `
+        <div class="alloc-row">
+          <div class="alloc-lbl"><div class="alloc-dot" style="background:${s.clr}"></div>${s.lbl}</div>
+          <div class="alloc-val">${fm(s.amt)}</div>
+        </div>`).join('');
+    } else {
+      allocWrap.style.display = 'none';
+    }
+
+    // Total
+    totalWrap.style.display = '';
+    document.getElementById('rTotal').innerHTML = fm(c.totalYear) + ' <span class="unit">/ năm</span>';
+    document.getElementById('rTotalMeta').textContent =
+      c.volYear > 0
+        ? `Bảo vệ ${c.volYear > 0 && S.vt === 'car' ? 'trách nhiệm + thân vỏ' : 'trách nhiệm + tài sản'} · ${fmRaw(Math.round(c.totalYear / 12))}/tháng`
+        : 'Mới có lớp bắt buộc - xe chưa được bảo vệ tài sản';
+
+    // CTA adaptive
+    resCta.classList.add('show');
+    const cta = document.getElementById('ctaMsg');
+    if (c.volYear === 0) {
+      cta.innerHTML = `<strong>Hoàn thành lớp bắt buộc với ${fmRaw(c.tndsYear + c.paYear)}/năm</strong>Mua TNDS điện tử trên MoMo trong 2 phút, có hiệu lực ngay và lưu trong ví.`;
+    } else if (S.vt === 'car') {
+      const best = c.insurers[0];
+      const chosen = c.insurers.find(x => x.id === S.insurer);
+      const saving = chosen && chosen.id !== best.id ? chosen.fee - best.fee : 0;
+      cta.innerHTML = saving > 0
+        ? `<strong>Chuyển sang ${best.name} tiết kiệm ${fmRaw(saving)}/năm</strong>MoMo so sánh và mua trực tiếp từ đối tác, giao hợp đồng điện tử ngay.`
+        : `<strong>Bảo vệ trọn vẹn với ${fmRaw(c.totalYear)}/năm</strong>Chỉ ${fmRaw(Math.round(c.totalYear/365))}/ngày để yên tâm trên mọi hành trình.`;
+    } else {
+      cta.innerHTML = `<strong>Bảo vệ trọn vẹn với ${fmRaw(c.totalYear)}/năm</strong>Mua cả 2 lớp trên MoMo một lần, quản lý hợp đồng ngay trong ví.`;
+    }
+  } else {
+    allocWrap.style.display = 'none';
+    insWrap.style.display = 'none';
+    totalWrap.style.display = 'none';
+    lock2.style.display = 'flex';
+    resCta.classList.remove('show');
+  }
+}
+
+// ─── SECTION CONTROL ───────────────────────────────────────
+function setSectionState(i, state) {
+  const sec = document.getElementById(`sec${i}`);
+  const hdr = sec.querySelector('.ff-sec-hdr');
+  sec.className = `ff-section ${state}`;
+  hdr.className = `ff-sec-hdr${state === 'locked' ? ' locked' : ''}`;
+  document.getElementById(`st${i}`).className = `ff-sec-title${state === 'locked' ? ' locked' : ''}`;
+}
+
+function confirmSec(i) {
+  // Validate giá trị xe
+  if (i === 0 && S.vt === 'car' && S.carVal <= 0) {
+    const el = document.getElementById('cv');
+    el.parentElement.style.borderColor = 'var(--error)';
+    el.focus(); return;
+  }
+  if (i === 2 && S.vt === 'moto' && S.th && S.motoVal <= 0) {
+    const el = document.getElementById('mv');
+    el.parentElement.style.borderColor = 'var(--error)';
+    el.focus(); return;
+  }
+
+  const c = calc();
+  const summaries = [
+    S.vt === 'moto'
+      ? `Xe máy ${S.cc === '50-' ? 'dưới' : 'trên'} 50cc`
+      : `Ô tô ${S.seats} chỗ · ${S.biz ? 'kinh doanh' : 'gia đình'} · ${fmRaw(S.carVal)} · ${AGE_LABEL(S.age)}`,
+    `TNDS ${S.term} năm · ${fmRaw(c.tndsTotal)}${S.pa ? ' · kèm tai nạn người ngồi' : ''}`,
+    S.vt === 'car'
+      ? (S.vc ? `Vật chất ${INSURERS.find(x => x.id === S.insurer)?.name} · ${fmRaw(c.volYear)}/năm` : 'Không mua thêm gói tự nguyện')
+      : (S.th ? `Trộm cắp cháy nổ · ${fmRaw(c.volYear)}/năm` : 'Không mua thêm gói tự nguyện'),
+  ];
+  document.getElementById(`ss${i}`).innerHTML = summaries[i];
+
+  setSectionState(i, 'done');
+  S.confirmed = Math.max(S.confirmed, i + 1);
+
+  if (i < 2) {
+    setSectionState(i + 1, 'active');
+    if (i === 0) renderSec2();
+    if (i === 1) renderSec3();
+    document.getElementById(`sec${i+1}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  renderRight();
+}
+
+function editSec(e, i) {
+  e.stopPropagation();
+  for (let j = 0; j < 3; j++) {
+    if (j === i) setSectionState(j, 'active');
+    else if (S.confirmed > j) setSectionState(j, 'done');
+    else setSectionState(j, 'locked');
+  }
+  // Sửa bước trước → reset downstream
+  if (i < S.confirmed - 1 || (i < S.confirmed && i < 2)) {
+    S.confirmed = i;
+    for (let j = i + 1; j < 3; j++) setSectionState(j, 'locked');
+  }
+  renderRight();
+}
+
+// ─── SECTION 1 HANDLERS ────────────────────────────────────
+function setVt(vt) {
+  S.vt = vt;
+  document.getElementById('vtMoto').className = 'pill' + (vt === 'moto' ? ' on' : '');
+  document.getElementById('vtCar').className = 'pill' + (vt === 'car' ? ' on' : '');
+  document.getElementById('fMotoCc').style.display = vt === 'moto' ? '' : 'none';
+  ['fCarSeats', 'fCarBiz', 'fCarValue', 'fCarAge'].forEach(id =>
+    document.getElementById(id).style.display = vt === 'car' ? '' : 'none');
+  renderRight();
+}
+function setCc(cc) {
+  S.cc = cc;
+  document.getElementById('cc50m').className = 'pill' + (cc === '50-' ? ' on' : '');
+  document.getElementById('cc50p').className = 'pill' + (cc === '50+' ? ' on' : '');
+  renderRight();
+}
+function setSeats(s) {
+  S.seats = s;
+  document.querySelectorAll('#seatPills .pill').forEach(p =>
+    p.classList.toggle('on', p.textContent.startsWith(s)));
+  renderRight();
+}
+function setBiz(b) {
+  S.biz = b;
+  document.getElementById('bizNo').className = 'pill' + (!b ? ' on' : '');
+  document.getElementById('bizYes').className = 'pill' + (b ? ' on' : '');
+  renderRight();
+}
+function onV(el) {
+  const raw = el.value.replace(/[^\d]/g, '');
+  S.carVal = +raw || 0;
+  el.parentElement.style.borderColor = '';
+  const cur = el.selectionStart, prev = el.value.length;
+  el.value = S.carVal > 0 ? S.carVal.toLocaleString('vi-VN') : '';
+  const diff = el.value.length - prev;
+  try { el.setSelectionRange(cur + diff, cur + diff); } catch (e) {}
+  syncValChips();
+  renderRight();
+}
+function sv(m) {
+  S.carVal = m * 1e6;
+  document.getElementById('cv').value = S.carVal.toLocaleString('vi-VN');
+  syncValChips();
+  renderRight();
+}
+function syncValChips() {
+  document.querySelectorAll('#valChips .chip').forEach(ch => {
+    const m = parseFloat(ch.textContent.replace(',', '.')) * (ch.textContent.includes('tỷ') ? 1e9 : 1e6);
+    ch.classList.toggle('on', Math.round(m) === S.carVal);
+  });
+}
+function sa(d) {
+  S.age = Math.max(0, Math.min(15, S.age + d));
+  document.getElementById('ageVal').textContent = S.age;
+  document.getElementById('ageHint').innerHTML =
+    `${AGE_LABEL(S.age)} · hệ số phí <strong>x${AGE_FACTOR(S.age)}</strong>`;
+  renderRight();
+}
+
+// ─── SECTION 2 HANDLERS ────────────────────────────────────
+function renderSec2() {
+  const terms = S.vt === 'moto' ? [1, 2, 3] : [1];
+  if (!terms.includes(S.term)) S.term = 1;
+  document.getElementById('termPills').innerHTML = terms.map(t =>
+    `<button class="pill${S.term === t ? ' on' : ''}" onclick="setTerm(${t})">${t} năm</button>`).join('');
+  document.getElementById('termHint').textContent =
+    S.vt === 'moto'
+      ? 'Xe máy được mua TNDS tối đa 3 năm - mua dài đỡ quên gia hạn'
+      : 'Ô tô mua theo năm, gắn với chu kỳ đăng kiểm';
+  const seats = S.vt === 'moto' ? 2 : SEAT_COUNT[S.seats];
+  document.getElementById('paSub').textContent =
+    `Bồi thường đến 10 triệu/người/vụ · ${(seats * PA_FEE_PER_SEAT).toLocaleString('vi-VN')}đ/năm cho ${seats} chỗ`;
+}
+function setTerm(t) {
+  S.term = t;
+  document.querySelectorAll('#termPills .pill').forEach(p =>
+    p.classList.toggle('on', p.textContent === `${t} năm`));
+  if (S.confirmed >= 2) renderRight();
+}
+function togglePa(e) {
+  if (e.target.tagName !== 'INPUT') { e.preventDefault(); document.getElementById('paCheck').checked = !S.pa; }
+  S.pa = document.getElementById('paCheck').checked;
+  document.getElementById('paRow').classList.toggle('on', S.pa);
+  if (S.confirmed >= 2) renderRight();
+}
+
+// ─── SECTION 3 HANDLERS ────────────────────────────────────
+function renderSec3() {
+  document.getElementById('volCar').style.display = S.vt === 'car' ? '' : 'none';
+  document.getElementById('volMoto').style.display = S.vt === 'moto' ? '' : 'none';
+  if (S.vt === 'car') renderInsPills();
+}
+function renderInsPills() {
+  const factor = AGE_FACTOR(S.age);
+  document.getElementById('insPills').innerHTML = INSURERS
+    .map(x => ({ ...x, fee: Math.round(S.carVal * x.rate / 100 * factor / 1000) * 1000 }))
+    .sort((a, b) => a.fee - b.fee)
+    .map(x => `<button class="pill${S.insurer === x.id ? ' on' : ''}" onclick="setIns('${x.id}')">${x.name}</button>`)
+    .join('');
+  document.getElementById('fInsurer').style.display = S.vc ? '' : 'none';
+}
+function setIns(id) {
+  S.insurer = id;
+  renderInsPills();
+  if (S.confirmed >= 3) renderRight();
+}
+function toggleVc(e) {
+  if (e.target.tagName !== 'INPUT') { e.preventDefault(); document.getElementById('vcCheck').checked = !S.vc; }
+  S.vc = document.getElementById('vcCheck').checked;
+  document.getElementById('vcRow').classList.toggle('on', S.vc);
+  document.getElementById('fInsurer').style.display = S.vc ? '' : 'none';
+  if (S.confirmed >= 3) renderRight();
+}
+function toggleTh(e) {
+  if (e.target.tagName !== 'INPUT') { e.preventDefault(); document.getElementById('thCheck').checked = !S.th; }
+  S.th = document.getElementById('thCheck').checked;
+  document.getElementById('thRow').classList.toggle('on', S.th);
+  document.getElementById('fMotoValue').style.display = S.th ? '' : 'none';
+  if (S.confirmed >= 3) renderRight();
+}
+function onMv(el) {
+  const raw = el.value.replace(/[^\d]/g, '');
+  S.motoVal = +raw || 0;
+  el.parentElement.style.borderColor = '';
+  const cur = el.selectionStart, prev = el.value.length;
+  el.value = S.motoVal > 0 ? S.motoVal.toLocaleString('vi-VN') : '';
+  const diff = el.value.length - prev;
+  try { el.setSelectionRange(cur + diff, cur + diff); } catch (e) {}
+  document.querySelectorAll('#mvChips .chip').forEach(ch =>
+    ch.classList.toggle('on', parseFloat(ch.textContent) * 1e6 === S.motoVal));
+  if (S.confirmed >= 3) renderRight();
+}
+function smv(m) {
+  S.motoVal = m * 1e6;
+  document.getElementById('mv').value = S.motoVal.toLocaleString('vi-VN');
+  document.querySelectorAll('#mvChips .chip').forEach(ch =>
+    ch.classList.toggle('on', parseFloat(ch.textContent) * 1e6 === S.motoVal));
+  if (S.confirmed >= 3) renderRight();
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+renderSec2();
+renderRight();
+</script>
+</body>
+</html>

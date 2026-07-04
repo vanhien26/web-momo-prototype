@@ -3,600 +3,925 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Thanh toán & Nạp tiền — MoMo</title>
-  <meta name="description" content="Hub thanh toán đa dịch vụ: Điện thoại, Điện lực, Nước, Internet, Vé Metro HCM.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Thanh toán hóa đơn — MoMo | Điện, Nước, Internet, Học phí, Viện phí, Bảo hiểm</title>
+  <meta name="description" content="Tra cứu và thanh toán hóa đơn điện, nước, internet, học phí, viện phí, bảo hiểm, trả góp và mua vé Metro HCM. Kết nối 200+ nhà cung cấp, 0 phí, nhắc hạn tự động.">
+  <link rel="preconnect" href="https://homepage.momocdn.net">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    @font-face{font-family:MoMoTrustSans;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:MoMoTrustSans;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:600 900;font-display:swap}
+    @font-face{font-family:MoMoTrustDisplay;src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400;font-display:swap}
     :root{
-      --pk:#a50064;--pk2:#c8007a;--pk-bg:#fff0f7;
-      --ink:#111827;--sub:#6b7280;--muted:#9ca3af;
-      --line:#e5e7eb;--bg:#f3f4f6;--white:#fff;
-      --green:#059669;--green-bg:#ecfdf5;
-      --amber:#d97706;--amber-bg:#fffbeb;
-      --red:#dc2626;--red-bg:#fef2f2;
+      --momo:#a50064;--momo2:#c8007a;--pink:#fff0f7;
+      --ink:#17131a;--sub:#716978;--muted:#9ca3af;
+      --line:#e9e4e8;--soft:#f7f5f7;--white:#fff;
+      --green:#0c8c55;--green-bg:#eaf9f1;
+      --amber:#a75b00;--amber-bg:#fffbeb;
+      --red:#c0392b;--red-bg:#fef2f2;
+      --blue:#1d4ed8;--blue-bg:#eff6ff;
+      --shadow:0 24px 70px rgba(37,19,32,.12);
     }
-    body{
-      font-family:'Be Vietnam Pro',system-ui,sans-serif;
-      background:var(--bg);color:var(--ink);
-      min-height:100vh;-webkit-font-smoothing:antialiased;
-    }
-    button,select,input{font-family:inherit;cursor:pointer}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:#fff;color:var(--ink);font-family:MoMoTrustSans,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    button,input,select{font:inherit;cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    h1,h2,h3{font-family:MoMoTrustDisplay,MoMoTrustSans,sans-serif;margin:0}
 
-    /* ─── TOPBAR ─────────────────────────────────────── */
-    .topbar{
-      background:var(--pk);padding:0 16px;height:52px;
-      display:flex;align-items:center;justify-content:space-between;
-      position:sticky;top:0;z-index:20;
-    }
-    .tb-left{display:flex;align-items:center;gap:10px}
-    .tb-logo{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.15);display:grid;place-items:center;overflow:hidden}
-    .tb-logo img{width:80%;height:80%;object-fit:contain;display:block}
-    .tb-title{color:#fff;font-size:15px;font-weight:800}
-    .tb-back{color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none}
-    .tb-back:hover{color:#fff}
+    .shell{width:min(1180px,calc(100% - 40px));margin:auto}
 
-    /* ─── CATEGORY NAV ───────────────────────────────── */
-    .cat-nav-wrap{
-      background:var(--white);border-bottom:1px solid var(--line);
-      position:sticky;top:52px;z-index:15;
-      box-shadow:0 1px 4px rgba(0,0,0,.06);
-    }
-    .cat-nav{display:flex;overflow-x:auto;padding:0 8px;scrollbar-width:none}
-    .cat-nav::-webkit-scrollbar{display:none}
-    .cat-tab{
-      flex-shrink:0;display:flex;flex-direction:column;align-items:center;
-      gap:5px;padding:10px 14px;
-      border:none;background:transparent;
-      border-bottom:2.5px solid transparent;
-      transition:.15s;min-width:76px;
-    }
-    .cat-tab:hover{background:var(--pk-bg)}
-    .cat-tab.active{border-bottom-color:var(--pk)}
-    .cat-ico{font-size:22px;line-height:1}
-    .cat-lbl{font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap}
-    .cat-tab.active .cat-lbl{color:var(--pk)}
+    /* ── TOPBAR ──────────────────────────────────── */
+    .topbar{height:68px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.94);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50}
+    .topbar-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:13px}
+    .brand img{width:42px;height:42px;border-radius:13px}
+    .brand-copy strong{display:block;font-size:16px}
+    .brand-copy small{color:var(--sub);font-size:12px}
+    .top-actions{display:flex;align-items:center;gap:10px}
+    .back-link{color:var(--sub);font-size:13px;font-weight:700}
+    .btn{border:0;border-radius:999px;padding:11px 18px;font-weight:800;display:inline-flex;align-items:center;gap:8px;transition:.18s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--momo);color:#fff;box-shadow:0 8px 24px rgba(165,0,100,.22)}
+    .btn-outline{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+    .btn-full{width:100%;justify-content:center}
 
-    /* ─── PAGE ───────────────────────────────────────── */
-    .page{max-width:460px;margin:0 auto;padding:16px 14px 60px}
+    /* ── HERO ────────────────────────────────────── */
+    .hero{position:relative;min-height:420px;overflow:hidden;background:linear-gradient(135deg,#1a0a12 0%,#2d0f20 42%,#1f0b1a 70%,#140814 100%);color:#fff}
+    .hero-glow{position:absolute;inset:0;background:radial-gradient(circle at 68% 48%,rgba(165,0,100,.2) 0%,transparent 58%),linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45) 100%)}
+    .hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px}
+    .hero-content{position:relative;z-index:2;min-height:420px;display:flex;align-items:center}
+    .hero-copy{width:min(640px,75%);padding:64px 0}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.09);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:800;margin-bottom:20px}
+    .eyebrow i{width:7px;height:7px;border-radius:50%;background:#ff5bb8;box-shadow:0 0 0 5px rgba(255,91,184,.13)}
+    h1{font-size:clamp(36px,5.5vw,64px);line-height:.98;letter-spacing:-2px;margin-bottom:16px}
+    .hero-sub{font-size:16px;line-height:1.65;color:rgba(255,255,255,.74);max-width:540px}
+    .trust-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+    .trust-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17);border-radius:13px;padding:9px 12px;font-size:12px;font-weight:700}
 
-    /* ─── PANEL ──────────────────────────────────────── */
-    .panel{display:none;animation:panelIn .2s ease}
-    .panel.active{display:block}
-    @keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .panel-title{font-size:14px;font-weight:800;color:var(--ink);margin:0 0 12px}
-    .panel-title span{color:var(--pk)}
+    /* ── TOOL WRAPPER ────────────────────────────── */
+    .tool-wrap{position:relative;z-index:10;margin-top:-48px;padding-bottom:64px}
+    .tool-card{background:#fff;border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.65fr)}
+    .tool-main{padding:28px 28px 32px}
+    .tool-aside{background:linear-gradient(180deg,var(--soft),#fff);border-left:1px solid var(--line);padding:28px;display:flex;flex-direction:column;gap:0}
+    .kicker{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--momo);font-weight:900}
+    .tool-main h2{font-size:26px;line-height:1.1;margin:8px 0 5px}
+    .tool-sub{color:var(--sub);font-size:13px;line-height:1.55;margin-bottom:22px}
 
-    /* ─── SUB-TABS (Trả trước / Trả sau) ────────────── */
-    .subtab-row{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:14px}
-    .subtab{flex:1;height:34px;border:none;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--sub);background:transparent;transition:.15s}
-    .subtab.active{background:var(--white);color:var(--pk);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+    /* ── SERVICE GRID ────────────────────────────── */
+    .svc-groups{display:flex;flex-direction:column;gap:18px;margin-bottom:0}
+    .svc-group-label{font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px}
+    .svc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+    .svc-card{border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:11px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;transition:.15s;text-align:center}
+    .svc-card:hover{border-color:var(--momo);background:var(--pink)}
+    .svc-card.active{border-color:var(--momo);background:var(--pink);box-shadow:0 0 0 3px rgba(165,0,100,.08)}
+    .svc-ico{font-size:22px;line-height:1}
+    .svc-lbl{font-size:10.5px;font-weight:800;color:var(--ink);line-height:1.3}
+    .svc-card.active .svc-lbl{color:var(--momo)}
+    .svc-card.external{border-style:dashed}
+    .svc-card.external .svc-lbl{color:var(--blue)}
 
-    /* ─── FORM CARD ──────────────────────────────────── */
-    .form-card{background:var(--white);border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;margin-bottom:12px}
-    .form-row{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
-    .form-row:last-child{border-bottom:none}
-    .form-lbl{font-size:11px;font-weight:700;color:var(--muted);width:90px;flex-shrink:0}
-    .form-row select,.form-row input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);background:transparent}
+    /* ── FORM AREA ───────────────────────────────── */
+    .form-area{display:none;margin-top:18px;border-top:1.5px solid var(--line);padding-top:18px;animation:fadeIn .2s ease}
+    .form-area.show{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .form-service-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .form-service-ico{width:38px;height:38px;border-radius:11px;background:var(--pink);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+    .form-service-name{font-size:15px;font-weight:900;color:var(--ink)}
+    .form-service-sub{font-size:11px;color:var(--sub);margin-top:1px}
+
+    .form-card{background:var(--soft);border-radius:16px;overflow:hidden;margin-bottom:14px}
+    .form-row{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;background:#fff}
+    .form-row:last-child{border-bottom:0}
+    .form-lbl{font-size:11px;font-weight:800;color:var(--muted);width:110px;flex-shrink:0}
+    .form-row select,.form-row input{flex:1;border:0;outline:0;font-family:inherit;font-size:14px;font-weight:700;color:var(--ink);background:transparent}
     .form-row input::placeholder{color:var(--muted);font-weight:500}
 
-    /* ─── AMOUNT CHIPS ───────────────────────────────── */
-    .chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
-    .chip{height:38px;border:1.5px solid var(--line);border-radius:10px;background:var(--white);font-size:12px;font-weight:700;color:var(--sub);transition:.15s}
-    .chip:hover{border-color:var(--pk);color:var(--pk)}
-    .chip.selected{border-color:var(--pk);background:var(--pk-bg);color:var(--pk)}
+    /* Topup chips */
+    .chips-label{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:9px;display:block}
+    .chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
+    .chip{height:40px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-size:12px;font-weight:800;color:var(--sub);transition:.15s}
+    .chip:hover{border-color:var(--momo);color:var(--momo)}
+    .chip.selected{border-color:var(--momo);background:var(--pink);color:var(--momo)}
 
-    /* ─── TICKET TYPE CHIPS ──────────────────────────── */
-    .ticket-chips{display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;scrollbar-width:none}
-    .ticket-chips::-webkit-scrollbar{display:none}
-    .t-chip{
-      flex-shrink:0;border:1.5px solid var(--line);border-radius:10px;
-      background:var(--white);padding:9px 13px;
-      display:flex;flex-direction:column;align-items:center;
-      transition:.15s;min-width:74px;
-    }
-    .t-chip:hover{border-color:var(--pk)}
-    .t-chip.selected{border-color:var(--pk);background:var(--pk-bg)}
-    .t-name{font-size:11px;font-weight:800;color:var(--ink)}
-    .t-price{font-size:10px;font-weight:600;color:var(--sub);margin-top:2px}
-    .t-chip.selected .t-name{color:var(--pk)}
-    .t-chip.selected .t-price{color:var(--pk2)}
+    /* Ticket chips */
+    .ticket-scroll{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none;padding-bottom:2px}
+    .ticket-scroll::-webkit-scrollbar{display:none}
+    .t-chip{flex-shrink:0;border:1.5px solid var(--line);border-radius:13px;background:#fff;padding:10px 13px;display:flex;flex-direction:column;align-items:center;transition:.15s;min-width:78px}
+    .t-chip.selected{border-color:var(--momo);background:var(--pink)}
+    .t-name{font-size:11.5px;font-weight:900;color:var(--ink)}
+    .t-price{font-size:10px;font-weight:700;color:var(--sub);margin-top:3px}
+    .t-chip.selected .t-name{color:var(--momo)}
+    .t-chip.selected .t-price{color:var(--momo2)}
 
-    /* ─── FARE DISPLAY ───────────────────────────────── */
-    .fare-display{
-      background:var(--white);border-radius:14px;
-      box-shadow:0 1px 6px rgba(0,0,0,.07);
-      padding:14px 16px;margin-bottom:12px;
-      display:flex;align-items:center;justify-content:space-between;
-    }
-    .fare-lbl{font-size:11px;font-weight:700;color:var(--sub)}
-    .fare-note{font-size:10px;color:var(--muted);margin-top:2px}
-    .fare-val{font-size:26px;font-weight:900;color:var(--pk);letter-spacing:-.02em}
+    .fare-row{display:flex;align-items:center;justify-content:space-between;background:var(--soft);border-radius:13px;padding:13px 15px;margin-bottom:14px}
+    .fare-lbl{font-size:12px;font-weight:800;color:var(--sub)}
+    .fare-note{font-size:10.5px;color:var(--muted);margin-top:2px}
+    .fare-val{font-size:24px;font-weight:900;color:var(--momo);letter-spacing:-.02em}
 
-    /* ─── CTA BUTTON ─────────────────────────────────── */
-    .btn-main{
-      width:100%;height:50px;border:none;border-radius:14px;
-      background:var(--pk);color:#fff;
-      font-size:15px;font-weight:800;letter-spacing:.02em;
-      transition:.15s;margin-bottom:12px;
-    }
-    .btn-main:hover{background:var(--pk2)}
-    .btn-main:active{transform:scale(.98)}
+    /* CTA */
+    .btn-cta{width:100%;height:50px;border:0;border-radius:14px;background:var(--momo);color:#fff;font-size:15px;font-weight:900;transition:.15s;margin-bottom:14px}
+    .btn-cta:hover{background:var(--momo2)}
+    .btn-ext{width:100%;height:50px;border:1.5px solid var(--blue);border-radius:14px;background:var(--blue-bg);color:var(--blue);font-size:14px;font-weight:800;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;margin-bottom:14px}
+    .btn-ext:hover{background:#dbeafe}
 
-    /* ─── RESULT CARD ────────────────────────────────── */
-    .result-card{background:var(--white);border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.07);overflow:hidden;display:none;animation:slideUp .25s ease}
-    .result-card.show{display:block}
-    @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-    .rc-header{background:var(--pk);padding:14px 15px;display:flex;align-items:center;gap:11px}
-    .rc-h-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:20px;flex-shrink:0}
-    .rc-h-name{color:#fff;font-size:14px;font-weight:800}
-    .rc-h-code{color:rgba(255,255,255,.65);font-size:11px;margin-top:1px}
-
-    .rc-customer{padding:12px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-    .rc-cust-name{font-size:14px;font-weight:700}
-    .rc-cust-sub{font-size:11px;color:var(--sub);margin-top:1px}
-    .rc-pill{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+    /* Result card */
+    .result-wrap{display:none;animation:fadeIn .25s ease}
+    .result-wrap.show{display:block}
+    .rc{background:var(--soft);border-radius:16px;overflow:hidden}
+    .rc-head{background:var(--momo);padding:13px 15px;display:flex;align-items:center;gap:11px}
+    .rc-head-ico{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+    .rc-head-name{color:#fff;font-size:14px;font-weight:900}
+    .rc-head-code{color:rgba(255,255,255,.65);font-size:11px;margin-top:1px}
+    .rc-customer{padding:12px 15px;border-bottom:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .rc-cust-name{font-size:14px;font-weight:800}
+    .rc-cust-sub{font-size:11px;color:var(--sub);margin-top:2px}
+    .rc-pill{font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
     .rc-pill.due{background:var(--amber-bg);color:var(--amber)}
     .rc-pill.late{background:var(--red-bg);color:var(--red)}
     .rc-pill.ok{background:var(--green-bg);color:var(--green)}
-
-    .rc-amount-block{padding:20px 16px 16px;text-align:center;border-bottom:1px solid var(--line)}
-    .rc-amt-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+    .rc-amount{padding:18px 15px;text-align:center;border-bottom:1px solid var(--line);background:#fff}
+    .rc-amt-lbl{font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
     .rc-amt{font-size:36px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
-    .rc-due{margin-top:6px;font-size:12px;color:var(--sub)}
-    .rc-due b{color:var(--ink);font-weight:700}
-
-    .rc-meta{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
-    .rc-meta-item{padding:11px 15px}
+    .rc-due{margin-top:5px;font-size:12px;color:var(--sub)}
+    .rc-due b{color:var(--ink)}
+    .rc-meta{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);background:#fff}
+    .rc-meta-item{padding:10px 15px}
     .rc-meta-item:first-child{border-right:1px solid var(--line)}
-    .rc-meta-lbl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
-    .rc-meta-val{font-size:13px;font-weight:700;color:var(--ink)}
+    .rc-meta-lbl{font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+    .rc-meta-val{font-size:13px;font-weight:800;color:var(--ink)}
+    .rc-actions{padding:12px 15px;display:flex;flex-direction:column;gap:7px;background:#fff}
+    .btn-pay{width:100%;height:48px;border:0;border-radius:13px;background:var(--momo);color:#fff;font-size:14px;font-weight:900;transition:.15s}
+    .btn-pay:hover{background:var(--momo2)}
+    .btn-remind{width:100%;height:42px;border:1.5px solid var(--line);border-radius:13px;background:transparent;color:var(--sub);font-size:12.5px;font-weight:800;transition:.15s}
+    .btn-remind:hover{border-color:var(--momo);color:var(--momo)}
 
-    .rc-actions{padding:13px 15px;display:flex;flex-direction:column;gap:8px}
-    .btn-pay{width:100%;height:50px;border:none;border-radius:14px;background:var(--pk);color:#fff;font-size:15px;font-weight:800;transition:.15s}
-    .btn-pay:hover{background:var(--pk2)}
-    .btn-remind{width:100%;height:42px;border:1.5px solid var(--line);border-radius:14px;background:transparent;color:var(--sub);font-size:13px;font-weight:700;transition:.15s}
-    .btn-remind:hover{border-color:var(--pk);color:var(--pk)}
-
-    /* ─── QR SUCCESS ─────────────────────────────────── */
-    .qr-success{background:var(--white);border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.07);overflow:hidden;display:none;animation:slideUp .25s ease}
-    .qr-success.show{display:block}
-
-    .qr-s-head{background:var(--pk);padding:14px 15px;display:flex;align-items:center;gap:10px}
-    .qr-s-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:22px;flex-shrink:0}
-    .qr-s-name{color:#fff;font-size:14px;font-weight:800}
-    .qr-s-sub{color:rgba(255,255,255,.7);font-size:11px;margin-top:1px}
-
-    .qr-body{padding:18px 16px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px}
-    .qr-blocks{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:76px;height:76px;flex-shrink:0}
-    .qr-bl{background:#111827;border-radius:2px;animation:qrFade .4s ease both}
+    /* QR */
+    .qr-wrap{display:none;animation:fadeIn .25s ease}
+    .qr-wrap.show{display:block}
+    .qr-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+    .qr-head{background:var(--momo);padding:13px 15px;display:flex;align-items:center;gap:10px}
+    .qr-head-ico{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+    .qr-head-name{color:#fff;font-size:14px;font-weight:900}
+    .qr-head-sub{color:rgba(255,255,255,.7);font-size:11px;margin-top:1px}
+    .qr-body{padding:16px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px}
+    .qr-blocks{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:74px;height:74px;flex-shrink:0}
+    .qr-bl{background:#17131a;border-radius:2px;animation:qrFade .4s ease both}
     @keyframes qrFade{from{opacity:0}to{opacity:1}}
-    .qr-meta{flex:1}
-    .qr-id{font-size:13px;font-weight:800;color:var(--ink);letter-spacing:.04em;font-family:ui-monospace,monospace}
-    .qr-sub{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.45}
-    .qr-ok{display:inline-flex;align-items:center;gap:5px;margin-top:9px;background:var(--green-bg);color:var(--green);font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px}
-
+    .qr-meta .qr-id{font-size:13px;font-weight:900;color:var(--ink);letter-spacing:.04em;font-family:ui-monospace,monospace}
+    .qr-meta .qr-sub{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.4}
+    .qr-ok{display:inline-flex;align-items:center;gap:4px;margin-top:7px;background:var(--green-bg);color:var(--green);font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px}
     .qr-info{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
-    .qi{padding:10px 15px}
+    .qi{padding:9px 15px}
     .qi:nth-child(odd){border-right:1px solid var(--line)}
     .qi:nth-child(3),.qi:nth-child(4){border-top:1px solid var(--line)}
-    .qi-l{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
-    .qi-v{font-size:12px;font-weight:700;color:var(--ink)}
+    .qi-l{font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+    .qi-v{font-size:12px;font-weight:800;color:var(--ink)}
+    .qr-actions{padding:12px 15px;display:flex;flex-direction:column;gap:7px}
 
-    .qr-actions{padding:13px 15px;display:flex;flex-direction:column;gap:8px}
-    .btn-qr-main{width:100%;height:50px;border:none;border-radius:14px;background:var(--pk);color:#fff;font-size:14px;font-weight:800;transition:.15s}
-    .btn-qr-main:hover{background:var(--pk2)}
-    .btn-qr-sec{width:100%;height:42px;border:1.5px solid var(--line);border-radius:14px;background:transparent;color:var(--sub);font-size:13px;font-weight:700;transition:.15s}
-    .btn-qr-sec:hover{border-color:var(--pk);color:var(--pk)}
+    /* ASIDE */
+    .aside-title{font-size:21px;line-height:1.1;margin:8px 0 16px}
+    .aside-trust{display:flex;flex-direction:column;gap:10px}
+    .trust-item{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--sub);line-height:1.5}
+    .trust-item b{color:var(--green);font-size:15px;flex-shrink:0;margin-top:-1px}
+    .aside-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+    .stat-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}
+    .stat-num{font-size:22px;font-weight:900;color:var(--momo);letter-spacing:-.02em}
+    .stat-lbl{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.4}
 
-    /* ─── MISC ───────────────────────────────────────── */
-    .disclaimer{margin-top:20px;font-size:11px;color:var(--muted);text-align:center;line-height:1.6}
-    @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    /* ── SECTIONS ────────────────────────────────── */
+    .section{padding:76px 0}
+    .section.soft{background:var(--soft)}
+    .section-head{text-align:center;max-width:700px;margin:0 auto 38px}
+    .section-head h2{font-size:clamp(30px,4.5vw,48px);line-height:1.02}
+    .section-head p{color:var(--sub);line-height:1.65;margin:13px 0 0;font-size:14.5px}
 
-    @media(prefers-reduced-motion:reduce){.panel,.result-card,.qr-success{animation:none}.qr-bl{animation:none;opacity:1}}
+    /* Provider catalog */
+    .prov-catalog{display:flex;flex-direction:column;gap:28px}
+    .prov-group{}
+    .prov-group-label{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .prov-group-label:before{content:'';flex:1;height:1px;background:var(--line)}
+    .prov-group-label:after{content:'';flex:1;height:1px;background:var(--line)}
+    .prov-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    .prov-card{border:1px solid var(--line);border-radius:16px;padding:16px 10px;background:#fff;text-align:center;transition:.16s}
+    .prov-card:hover{border-color:var(--momo);box-shadow:0 3px 16px rgba(165,0,100,.1)}
+    .prov-ico{font-size:26px;margin-bottom:8px}
+    .prov-name{font-size:11.5px;font-weight:900;color:var(--ink)}
+    .prov-type{font-size:10px;color:var(--muted);margin-top:2px;font-weight:700}
+
+    /* Steps */
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .step{border:1px solid var(--line);border-radius:22px;padding:24px;background:#fff}
+    .step-num{font-size:11px;color:var(--momo);font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .step-icon{width:50px;height:50px;border-radius:15px;background:var(--pink);display:grid;place-items:center;font-size:24px;margin:16px 0}
+    .step h3{font-size:19px}
+    .step p{color:var(--sub);font-size:13px;line-height:1.6;margin:8px 0 0}
+
+    /* Value */
+    .value-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .value-visual{min-height:400px;border-radius:24px;overflow:hidden;position:relative;background:linear-gradient(145deg,#1a0a12,#2d0f20)}
+    .value-glow{position:absolute;inset:0;background:radial-gradient(circle at 30% 60%,rgba(165,0,100,.35) 0%,transparent 60%)}
+    .value-phones{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;gap:14px;align-items:flex-end;padding:0 20px}
+    .phone-mock{width:120px;background:#1f0d1a;border-radius:18px;overflow:hidden;border:1.5px solid rgba(255,255,255,.1)}
+    .phone-mock.tall{width:104px}
+    .phone-screen{background:linear-gradient(180deg,#2a1020,#17090f);padding:11px 9px}
+    .p-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.1);margin-bottom:5px}
+    .p-bar.acc{background:rgba(165,0,100,.55);width:58%}
+    .p-bar.sm{width:38%}
+    .p-amount{color:#fff;font-size:16px;font-weight:900;margin:9px 0 3px}
+    .p-label{font-size:9px;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase}
+    .p-btn{background:var(--momo);color:#fff;text-align:center;font-size:9.5px;font-weight:900;padding:6px;margin-top:7px;border-radius:7px}
+    .value-copy{position:absolute;z-index:2;left:24px;right:24px;bottom:24px;color:#fff}
+    .value-copy h3{font-size:26px}
+    .value-copy p{color:rgba(255,255,255,.68);font-size:13px;line-height:1.5;margin-top:5px}
+    .value-cards{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-content:start}
+    .value-card{border:1px solid var(--line);border-radius:20px;padding:21px;background:#fff}
+    .value-card span{font-size:26px}
+    .value-card h3{font-size:16px;margin-top:13px}
+    .value-card p{font-size:12.5px;line-height:1.6;color:var(--sub);margin:6px 0 0}
+
+    /* FAQ */
+    .faq{max-width:800px;margin:auto;display:flex;flex-direction:column;gap:9px}
+    .faq details{border:1px solid var(--line);border-radius:16px;background:#fff;padding:0 18px}
+    .faq summary{cursor:pointer;font-weight:900;padding:17px 36px 17px 0;position:relative;list-style:none;font-size:14.5px}
+    .faq summary:after{content:"+";position:absolute;right:2px;top:13px;font-size:22px;color:var(--momo)}
+    .faq details[open] summary:after{content:"−"}
+    .faq p{color:var(--sub);line-height:1.7;font-size:13px;margin:0;padding:0 0 17px}
+
+    /* Footer */
+    .footer-note{background:#17131a;color:#fff;padding:26px 0}
+    .footer-inner{display:flex;justify-content:space-between;gap:24px;align-items:center}
+    .footer-inner p{margin:0;color:rgba(255,255,255,.5);font-size:11.5px;line-height:1.6;max-width:820px}
+    .footer-inner strong{color:#fff}
+
+    /* Toast */
+    .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);opacity:0;background:#17131a;color:#fff;border-radius:999px;padding:11px 20px;font-size:12.5px;font-weight:800;z-index:200;transition:.25s;white-space:nowrap}
+    .toast.show{transform:translate(-50%,0);opacity:1}
+
+    /* ── RESPONSIVE ────────────────────────────── */
+    @media(max-width:1000px){
+      .tool-card{grid-template-columns:1fr}
+      .tool-aside{border-left:0;border-top:1px solid var(--line)}
+      .aside-stats{grid-template-columns:repeat(4,1fr)}
+      .prov-grid{grid-template-columns:repeat(4,1fr)}
+      .value-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:720px){
+      .svc-grid{grid-template-columns:repeat(4,1fr)}
+      .steps{grid-template-columns:1fr}
+      .value-cards{grid-template-columns:1fr}
+      .prov-grid{grid-template-columns:repeat(3,1fr)}
+      .aside-stats{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:640px){
+      .shell{width:min(100% - 28px,1180px)}
+      .topbar{height:58px}
+      .brand img{width:36px;height:36px}
+      .brand-copy small,.back-link{display:none}
+      .top-actions .btn{padding:10px 13px;font-size:12px}
+      h1{font-size:36px}
+      .hero-copy{width:100%;padding:50px 0}
+      .hero-sub{font-size:14px}
+      .tool-wrap{margin-top:0}
+      .tool-card{border-radius:0;border-left:0;border-right:0;box-shadow:none}
+      .tool-main,.tool-aside{padding:22px 16px}
+      .tool-main h2{font-size:22px}
+      .svc-grid{grid-template-columns:repeat(3,1fr)}
+      .chip-grid{grid-template-columns:repeat(4,1fr)}
+      .section{padding:54px 0}
+      .section-head{text-align:left}
+      .footer-inner{flex-direction:column;align-items:flex-start}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .form-area,.result-wrap,.qr-wrap{animation:none}
+      .qr-bl{animation:none;opacity:1}
+    }
   </style>
 </head>
 <body>
 
-<!-- ── Topbar ──────────────────────────────────────────── -->
-<div class="topbar">
-  <div class="tb-left">
-    <div class="tb-logo">
+<!-- ── TOPBAR ───────────────────────────────────────── -->
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="../lab.html">
       <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+      <span class="brand-copy"><strong>Thanh toán hóa đơn</strong><small>PLG Project Prototype</small></span>
+    </a>
+    <div class="top-actions">
+      <a class="back-link" href="../lab.html">← Prototype Lab</a>
+      <a class="btn btn-primary" href="#tool">Tra cứu ngay</a>
     </div>
-    <span class="tb-title">Thanh toán & Nạp tiền</span>
   </div>
-  <a href="/lab.html" target="_top" class="tb-back">← Lab</a>
-</div>
+</header>
 
-<!-- ── Category Nav ────────────────────────────────────── -->
-<div class="cat-nav-wrap">
-  <nav class="cat-nav" role="tablist">
-    <button class="cat-tab active" data-panel="phone" onclick="switchCat(this)" role="tab">
-      <span class="cat-ico">📱</span>
-      <span class="cat-lbl">Điện thoại</span>
-    </button>
-    <button class="cat-tab" data-panel="dien" onclick="switchCat(this)" role="tab">
-      <span class="cat-ico">⚡</span>
-      <span class="cat-lbl">Điện lực</span>
-    </button>
-    <button class="cat-tab" data-panel="nuoc" onclick="switchCat(this)" role="tab">
-      <span class="cat-ico">💧</span>
-      <span class="cat-lbl">Nước</span>
-    </button>
-    <button class="cat-tab" data-panel="internet" onclick="switchCat(this)" role="tab">
-      <span class="cat-ico">🌐</span>
-      <span class="cat-lbl">Internet</span>
-    </button>
-    <button class="cat-tab" data-panel="metro" onclick="switchCat(this)" role="tab">
-      <span class="cat-ico">🚇</span>
-      <span class="cat-lbl">Metro HCM</span>
-    </button>
-  </nav>
-</div>
+<main>
 
-<div class="page">
-
-  <!-- ════════════════════════════════════════════════════
-       PHONE PANEL
-  ════════════════════════════════════════════════════ -->
-  <div class="panel active" id="panel-phone">
-    <p class="panel-title">Nạp tiền & trả cước <span>di động</span></p>
-
-    <div class="subtab-row">
-      <button class="subtab active" onclick="switchPhoneType('prepaid',this)">Trả trước</button>
-      <button class="subtab" onclick="switchPhoneType('postpaid',this)">Trả sau</button>
-    </div>
-
-    <!-- Prepaid -->
-    <div id="prepaid-content">
-      <div class="form-card">
-        <div class="form-row">
-          <span class="form-lbl">Số điện thoại</span>
-          <input id="phoneNum" type="tel" placeholder="09xx xxx xxx">
-        </div>
-        <div class="form-row">
-          <span class="form-lbl">Nhà mạng</span>
-          <select id="phoneOp">
-            <option>Viettel</option><option>MobiFone</option>
-            <option>Vinaphone</option><option>Vietnamobile</option><option>Gmobile</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <span class="form-lbl">Mệnh giá</span>
-          <span id="selectedAmt" style="font-size:14px;font-weight:700;color:var(--pk)">Chưa chọn</span>
+  <!-- ── HERO ─────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-dots"></div>
+    <div class="shell hero-content">
+      <div class="hero-copy">
+        <div class="eyebrow"><i></i> Không xếp hàng · Không nhớ hạn · Không mất phí</div>
+        <h1>Hóa đơn nào<br>cũng tra được</h1>
+        <p class="hero-sub">Điện, nước, internet, học phí, viện phí, trả góp, bảo hiểm, Metro HCM và hơn 200 dịch vụ khác. Nhập mã khách hàng — kết quả hiện ngay.</p>
+        <div class="trust-row">
+          <span class="trust-pill">200+ nhà cung cấp</span>
+          <span class="trust-pill">Thanh toán 0 phí</span>
+          <span class="trust-pill">Nhắc hạn tự động</span>
+          <span class="trust-pill">Vé Metro QR</span>
+          <span class="trust-pill">Thanh toán hộ gia đình</span>
         </div>
       </div>
-      <div class="chip-grid" id="amtChips"></div>
-      <button class="btn-main" onclick="doRecharge()">Nạp ngay →</button>
     </div>
+  </section>
 
-    <!-- Postpaid -->
-    <div id="postpaid-content" style="display:none">
-      <div class="form-card">
-        <div class="form-row">
-          <span class="form-lbl">Số điện thoại</span>
-          <input id="postpaidNum" type="tel" placeholder="09xx xxx xxx">
-        </div>
-        <div class="form-row">
-          <span class="form-lbl">Nhà mạng</span>
-          <select id="postpaidOp">
-            <option value="mobifone">MobiFone</option><option value="viettel">Viettel</option>
-            <option value="vinaphone">Vinaphone</option><option value="vnmobile">Vietnamobile</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn-main" onclick="lookupPostpaid()">Tra cước →</button>
-      <div class="result-card" id="postpaidResult">
-        <div class="rc-header">
-          <div class="rc-h-icon">📱</div>
-          <div>
-            <div class="rc-h-name" id="ppName">MobiFone</div>
-            <div class="rc-h-code" id="ppCode">MBF-0903-5512</div>
+  <!-- ── TOOL ──────────────────────────────────────── -->
+  <div class="tool-wrap" id="tool">
+    <div class="shell">
+      <div class="tool-card">
+
+        <!-- LEFT: Service selector + form -->
+        <div class="tool-main">
+          <div class="kicker">Tra cứu & thanh toán</div>
+          <h2>Chọn dịch vụ</h2>
+          <p class="tool-sub">Chọn loại hóa đơn bạn muốn tra cứu, nhập mã khách hàng — kết quả và CTA thanh toán hiện ngay.</p>
+
+          <div class="svc-groups" id="svcGroups"><!-- rendered by JS --></div>
+
+          <div class="form-area" id="formArea">
+            <div class="form-service-header">
+              <div class="form-service-ico" id="frmIco">⚡</div>
+              <div>
+                <div class="form-service-name" id="frmName">Điện lực</div>
+                <div class="form-service-sub" id="frmSub">EVN và các nhà cung cấp điện toàn quốc</div>
+              </div>
+            </div>
+            <div id="frmContent"><!-- rendered per service --></div>
           </div>
         </div>
-        <div class="rc-customer">
-          <div>
-            <div class="rc-cust-name">Phạm Thị D</div>
-            <div class="rc-cust-sub">Trả sau · Tháng 6/2026</div>
+
+        <!-- RIGHT: Trust sidebar -->
+        <aside class="tool-aside">
+          <div class="kicker">Tại sao dùng MoMo</div>
+          <h3 class="aside-title">Một nơi,<br>trăm dịch vụ</h3>
+          <div class="aside-trust">
+            <div class="trust-item"><b>✓</b><span>Kết nối trực tiếp nhà cung cấp — số liệu hóa đơn chính xác theo thời gian thực.</span></div>
+            <div class="trust-item"><b>✓</b><span>Nhắc hạn tự động qua thông báo — không bao giờ bị phạt quá hạn nữa.</span></div>
+            <div class="trust-item"><b>✓</b><span>Hóa đơn điện, nước, internet thanh toán <strong>miễn phí hoàn toàn</strong>.</span></div>
+            <div class="trust-item"><b>✓</b><span>Lịch sử và biên lai tập trung — tra lại giao dịch cũ trong vài giây.</span></div>
+            <div class="trust-item"><b>✓</b><span>Có thể thanh toán hộ gia đình từ xa chỉ cần biết mã khách hàng.</span></div>
+            <div class="trust-item"><b>✓</b><span>Học phí, viện phí, trả góp, bảo hiểm đều trong một ứng dụng.</span></div>
           </div>
-          <span class="rc-pill late">Đến hạn hôm nay</span>
-        </div>
-        <div class="rc-amount-block">
-          <div class="rc-amt-label">Cước phải trả</div>
-          <div class="rc-amt">179.000 đ</div>
-          <div class="rc-due">Hạn thanh toán: <b>17/06/2026</b></div>
-        </div>
-        <div class="rc-actions">
-          <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
-          <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
-        </div>
+          <div class="aside-stats">
+            <div class="stat-card">
+              <div class="stat-num">200+</div>
+              <div class="stat-lbl">Nhà cung cấp kết nối</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">0đ</div>
+              <div class="stat-lbl">Phí điện, nước, internet</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">17</div>
+              <div class="stat-lbl">Loại dịch vụ</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">24/7</div>
+              <div class="stat-lbl">Hỗ trợ khách hàng</div>
+            </div>
+          </div>
+        </aside>
+
       </div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════
-       ELECTRICITY PANEL
-  ════════════════════════════════════════════════════ -->
-  <div class="panel" id="panel-dien">
-    <p class="panel-title">Tra cứu & thanh toán <span>hóa đơn điện</span></p>
-    <div class="form-card">
-      <div class="form-row">
-        <span class="form-lbl">Nhà cung cấp</span>
-        <select id="dienSel">
-          <option value="evn-hcm">EVN HCM</option>
-          <option value="evn-hn">EVN Hà Nội</option>
-          <option value="evn-mt">EVN Miền Trung</option>
-          <option value="evn-mn">EVN Miền Nam</option>
-        </select>
+  <!-- ── PROVIDER CATALOG ──────────────────────────── -->
+  <section class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div class="kicker">Đối tác kết nối</div>
+        <h2>200+ nhà cung cấp trên toàn quốc</h2>
+        <p>MoMo tích hợp trực tiếp với hệ thống của từng nhà cung cấp — không qua trung gian, số liệu chính xác.</p>
       </div>
-      <div class="form-row">
-        <span class="form-lbl">Mã khách hàng</span>
-        <input id="dienCode" type="text" placeholder="Nhập mã khách hàng EVN">
+      <div class="prov-catalog">
+
+        <div class="prov-group">
+          <div class="prov-group-label">Sinh hoạt</div>
+          <div class="prov-grid">
+            <div class="prov-card"><div class="prov-ico">⚡</div><div class="prov-name">EVN HCM</div><div class="prov-type">Điện lực</div></div>
+            <div class="prov-card"><div class="prov-ico">⚡</div><div class="prov-name">EVN Hà Nội</div><div class="prov-type">Điện lực</div></div>
+            <div class="prov-card"><div class="prov-ico">⚡</div><div class="prov-name">EVN Miền Nam</div><div class="prov-type">Điện lực</div></div>
+            <div class="prov-card"><div class="prov-ico">⚡</div><div class="prov-name">EVN Miền Trung</div><div class="prov-type">Điện lực</div></div>
+            <div class="prov-card"><div class="prov-ico">💧</div><div class="prov-name">SAWACO</div><div class="prov-type">Nước HCM</div></div>
+            <div class="prov-card"><div class="prov-ico">💧</div><div class="prov-name">HAWACO</div><div class="prov-type">Nước Hà Nội</div></div>
+            <div class="prov-card"><div class="prov-ico">💧</div><div class="prov-name">Đà Nẵng Water</div><div class="prov-type">Nước</div></div>
+            <div class="prov-card"><div class="prov-ico">🔥</div><div class="prov-name">PV Gas South</div><div class="prov-type">Gas</div></div>
+            <div class="prov-card"><div class="prov-ico">🔥</div><div class="prov-name">Saigon Gas</div><div class="prov-type">Gas</div></div>
+            <div class="prov-card"><div class="prov-ico">🌐</div><div class="prov-name">VNPT</div><div class="prov-type">Internet & TV</div></div>
+            <div class="prov-card"><div class="prov-ico">🌐</div><div class="prov-name">FPT Telecom</div><div class="prov-type">Internet & TV</div></div>
+            <div class="prov-card"><div class="prov-ico">📺</div><div class="prov-name">VTVCab</div><div class="prov-type">Cáp TV</div></div>
+          </div>
+        </div>
+
+        <div class="prov-group">
+          <div class="prov-group-label">Di động</div>
+          <div class="prov-grid">
+            <div class="prov-card"><div class="prov-ico">📡</div><div class="prov-name">Viettel</div><div class="prov-type">Di động & Internet</div></div>
+            <div class="prov-card"><div class="prov-ico">📱</div><div class="prov-name">MobiFone</div><div class="prov-type">Di động</div></div>
+            <div class="prov-card"><div class="prov-ico">📱</div><div class="prov-name">Vinaphone</div><div class="prov-type">Di động</div></div>
+            <div class="prov-card"><div class="prov-ico">📱</div><div class="prov-name">Vietnamobile</div><div class="prov-type">Di động</div></div>
+            <div class="prov-card"><div class="prov-ico">📱</div><div class="prov-name">Gmobile</div><div class="prov-type">Di động</div></div>
+            <div class="prov-card"><div class="prov-ico">📱</div><div class="prov-name">Reddi</div><div class="prov-type">Di động</div></div>
+          </div>
+        </div>
+
+        <div class="prov-group">
+          <div class="prov-group-label">Giáo dục & Y tế</div>
+          <div class="prov-grid">
+            <div class="prov-card"><div class="prov-ico">🎓</div><div class="prov-name">ĐH Kinh tế HCM</div><div class="prov-type">Học phí</div></div>
+            <div class="prov-card"><div class="prov-ico">🎓</div><div class="prov-name">ĐH Bách Khoa</div><div class="prov-type">Học phí</div></div>
+            <div class="prov-card"><div class="prov-ico">🎓</div><div class="prov-name">FPT University</div><div class="prov-type">Học phí</div></div>
+            <div class="prov-card"><div class="prov-ico">🎓</div><div class="prov-name">RMIT Vietnam</div><div class="prov-type">Học phí</div></div>
+            <div class="prov-card"><div class="prov-ico">🏥</div><div class="prov-name">Vinmec</div><div class="prov-type">Viện phí</div></div>
+            <div class="prov-card"><div class="prov-ico">🏥</div><div class="prov-name">BV FV</div><div class="prov-type">Viện phí</div></div>
+          </div>
+        </div>
+
+        <div class="prov-group">
+          <div class="prov-group-label">Tài chính & Bảo hiểm</div>
+          <div class="prov-grid">
+            <div class="prov-card"><div class="prov-ico">💳</div><div class="prov-name">FE Credit</div><div class="prov-type">Trả góp</div></div>
+            <div class="prov-card"><div class="prov-ico">💳</div><div class="prov-name">Home Credit</div><div class="prov-type">Trả góp</div></div>
+            <div class="prov-card"><div class="prov-ico">💳</div><div class="prov-name">HD Saison</div><div class="prov-type">Trả góp</div></div>
+            <div class="prov-card"><div class="prov-ico">🛡️</div><div class="prov-name">BHXH Việt Nam</div><div class="prov-type">Bảo hiểm XH</div></div>
+            <div class="prov-card"><div class="prov-ico">🛡️</div><div class="prov-name">Bảo Việt</div><div class="prov-type">Bảo hiểm</div></div>
+            <div class="prov-card"><div class="prov-ico">🛡️</div><div class="prov-name">Manulife</div><div class="prov-type">Bảo hiểm nhân thọ</div></div>
+          </div>
+        </div>
+
+        <div class="prov-group">
+          <div class="prov-group-label">Giao thông & Hành chính</div>
+          <div class="prov-grid">
+            <div class="prov-card"><div class="prov-ico">🚇</div><div class="prov-name">Metro HCM</div><div class="prov-type">Vé Line 1</div></div>
+            <div class="prov-card"><div class="prov-ico">🛣️</div><div class="prov-name">VETC</div><div class="prov-type">Phí cầu đường</div></div>
+            <div class="prov-card"><div class="prov-ico">🛣️</div><div class="prov-name">EPASS</div><div class="prov-type">Phí cầu đường</div></div>
+            <div class="prov-card"><div class="prov-ico">🔩</div><div class="prov-name">Cục Đăng kiểm VN</div><div class="prov-type">Đăng kiểm xe</div></div>
+            <div class="prov-card"><div class="prov-ico">📋</div><div class="prov-name">Tổng cục Thuế</div><div class="prov-type">Thuế TNCN</div></div>
+            <div class="prov-card"><div class="prov-ico">🏢</div><div class="prov-name">Vinhomes</div><div class="prov-type">Phí chung cư</div></div>
+          </div>
+        </div>
+
       </div>
     </div>
-    <button class="btn-main" onclick="lookupBill('dien')">Tra cứu hóa đơn →</button>
-    <div class="result-card" id="dienResult">
-      <div class="rc-header">
-        <div class="rc-h-icon">⚡</div>
-        <div>
-          <div class="rc-h-name">EVN HCM</div>
-          <div class="rc-h-code">EVN-2406-0182</div>
-        </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ──────────────────────────────── -->
+  <section class="section soft">
+    <div class="shell">
+      <div class="section-head">
+        <div class="kicker">Quy trình</div>
+        <h2>Thanh toán trong 3 bước</h2>
+        <p>Từ lúc nhập mã đến khi nhận biên lai xác nhận — chưa đến 30 giây.</p>
       </div>
-      <div class="rc-customer">
-        <div>
-          <div class="rc-cust-name">Nguyễn Văn A</div>
-          <div class="rc-cust-sub">Quận 7, TP.HCM · Tháng 6/2026</div>
-        </div>
-        <span class="rc-pill due">Sắp đến hạn</span>
-      </div>
-      <div class="rc-amount-block">
-        <div class="rc-amt-label">Số tiền cần trả</div>
-        <div class="rc-amt">1.284.000 đ</div>
-        <div class="rc-due">Hạn thanh toán: <b>18/06/2026</b></div>
-      </div>
-      <div class="rc-meta">
-        <div class="rc-meta-item">
-          <div class="rc-meta-lbl">Loại dịch vụ</div>
-          <div class="rc-meta-val">Điện sinh hoạt</div>
-        </div>
-        <div class="rc-meta-item">
-          <div class="rc-meta-lbl">Còn lại</div>
-          <div class="rc-meta-val">4 ngày</div>
-        </div>
-      </div>
-      <div class="rc-actions">
-        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
-        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+      <div class="steps">
+        <article class="step">
+          <div class="step-num">BƯỚC 01</div>
+          <div class="step-icon">🔍</div>
+          <h3>Chọn dịch vụ & nhập mã</h3>
+          <p>Chọn loại dịch vụ bạn cần thanh toán, nhập mã khách hàng hoặc số điện thoại. Mã có sẵn trên hóa đơn giấy hoặc email từ nhà cung cấp.</p>
+        </article>
+        <article class="step">
+          <div class="step-num">BƯỚC 02</div>
+          <div class="step-icon">📋</div>
+          <h3>Xem chi tiết hóa đơn</h3>
+          <p>Kết quả hiện ngay: tên khách hàng, số tiền cần trả, hạn thanh toán và số ngày còn lại. Kiểm tra kỹ trước khi xác nhận.</p>
+        </article>
+        <article class="step">
+          <div class="step-num">BƯỚC 03</div>
+          <div class="step-icon">✅</div>
+          <h3>Thanh toán & nhận biên lai</h3>
+          <p>Xác nhận bằng nguồn tiền trong MoMo. Biên lai điện tử lưu vào lịch sử tự động — xuất lại bất kỳ lúc nào.</p>
+        </article>
       </div>
     </div>
+  </section>
+
+  <!-- ── VALUE PROPS ───────────────────────────────── -->
+  <section class="section">
+    <div class="shell value-grid">
+      <div class="value-visual">
+        <div class="value-glow"></div>
+        <div class="value-phones">
+          <div class="phone-mock tall" style="margin-bottom:0">
+            <div class="phone-screen">
+              <div class="p-bar acc"></div>
+              <div class="p-bar" style="width:80%"></div>
+              <div class="p-bar sm"></div>
+              <div class="p-amount">1.284.000đ</div>
+              <div class="p-label">Điện EVN HCM</div>
+              <div class="p-btn">Thanh toán</div>
+            </div>
+          </div>
+          <div class="phone-mock" style="margin-bottom:44px">
+            <div class="phone-screen">
+              <div class="p-bar acc"></div>
+              <div class="p-bar" style="width:70%"></div>
+              <div class="p-amount" style="font-size:13px">🔔 Nhắc hạn</div>
+              <div class="p-label">Nước SAWACO đến hạn 3 ngày</div>
+              <div class="p-btn">Thanh toán</div>
+            </div>
+          </div>
+        </div>
+        <div class="value-copy">
+          <h3>Không bao giờ quá hạn</h3>
+          <p>Bật nhắc một lần — MoMo tự thông báo trước hạn, thanh toán ngay từ notification.</p>
+        </div>
+      </div>
+      <div class="value-cards">
+        <article class="value-card"><span>💸</span><h3>Miễn phí hoàn toàn</h3><p>Hóa đơn điện, nước, internet thanh toán 0 đồng phí. Tiết kiệm so với thanh toán tại quầy giao dịch.</p></article>
+        <article class="value-card"><span>🔔</span><h3>Nhắc hạn thông minh</h3><p>Bật một lần, nhắc cả năm. MoMo tự thông báo trước hạn 3 ngày và 1 ngày cho mọi dịch vụ.</p></article>
+        <article class="value-card"><span>📁</span><h3>Biên lai tập trung</h3><p>Điện, nước, học phí, viện phí, bảo hiểm — tất cả lưu một chỗ. Tìm lại giao dịch trong vài giây.</p></article>
+        <article class="value-card"><span>👨‍👩‍👧</span><h3>Thanh toán hộ gia đình</h3><p>Biết mã khách hàng là thanh toán được từ xa cho cha mẹ, người thân ở bất kỳ đâu.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ───────────────────────────────────────── -->
+  <section class="section soft">
+    <div class="shell">
+      <div class="section-head">
+        <div class="kicker">Câu hỏi thường gặp</div>
+        <h2>Cần biết trước khi thanh toán</h2>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>Thanh toán hóa đơn điện, nước, internet có mất phí không?</summary>
+          <p>Không. MoMo miễn phí hoàn toàn với hóa đơn điện (EVN), nước (SAWACO, HAWACO) và internet (VNPT, FPT, Viettel). Một số dịch vụ như nạp điện thoại trả trước, trả góp, bảo hiểm có thể có phí theo từng nhà cung cấp — xem rõ trước khi bấm xác nhận.</p>
+        </details>
+        <details>
+          <summary>Mã khách hàng là gì và tìm ở đâu?</summary>
+          <p>Mã khách hàng là dãy số định danh tài khoản tại nhà cung cấp. Thường in góc trên của hóa đơn giấy hoặc trong email xác nhận hợp đồng. Với điện thoại trả sau, dùng số điện thoại. Với học phí và viện phí, dùng mã sinh viên hoặc mã bệnh nhân.</p>
+        </details>
+        <details>
+          <summary>Tiền ghi có vào tài khoản nhà cung cấp sau bao lâu?</summary>
+          <p>Hầu hết nhà cung cấp lớn (EVN, SAWACO, VNPT, Viettel) ghi có trong 5 đến 15 phút sau khi MoMo xác nhận thành công. Cuối tuần hoặc ngày lễ có thể chậm hơn, tối đa 24 giờ. Khuyến nghị không thanh toán vào đúng ngày cuối hạn.</p>
+        </details>
+        <details>
+          <summary>Học phí và viện phí có thanh toán được không?</summary>
+          <p>Được. MoMo hỗ trợ học phí cho nhiều trường đại học và trung học lớn, viện phí cho một số bệnh viện và phòng khám đã ký kết. Chọn nhà cung cấp trong danh sách, nhập mã sinh viên hoặc mã bệnh nhân là tra cứu ngay được số tiền cần nộp.</p>
+        </details>
+        <details>
+          <summary>Thanh toán trả góp và bảo hiểm có khác gì không?</summary>
+          <p>Trả góp (FE Credit, Home Credit...) nhập mã hợp đồng vay để xem kỳ đến hạn và số tiền. Bảo hiểm nhân thọ (Manulife, AIA, Bảo Việt) nhập mã hợp đồng bảo hiểm để nộp phí định kỳ. Cả hai đều cần nhập đúng mã để kết quả khớp với hợp đồng thực tế.</p>
+        </details>
+        <details>
+          <summary>Phí cầu đường ETC nạp tiền vào tài khoản như thế nào?</summary>
+          <p>Nhập mã tài khoản VETC hoặc EPASS, hệ thống hiển thị số dư hiện tại và trạng thái tài khoản. Thanh toán để nạp thêm tiền vào thẻ — tài khoản được cộng tiền ngay sau khi giao dịch thành công.</p>
+        </details>
+        <details>
+          <summary>Đăng kiểm xe thanh toán qua MoMo được không?</summary>
+          <p>Được — với các phí đăng kiểm đã được Cục Đăng kiểm VN kết nối với MoMo. Nhập biển số xe để tra cứu lịch và phí đăng kiểm sắp đến hạn. Lưu ý một số tỉnh/thành phố chưa kết nối đầy đủ.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer-note">
+  <div class="shell footer-inner">
+    <p><strong>Data contract cho Dev:</strong> service_id, provider_id, customer_code, bill_period, amount_due, due_date, days_remaining, status (due/late/ok), service_type, customer_name, address. Metro: station_list, ticket_types, fare_matrix. Topup: operator_id, denomination_list. Dữ liệu trong prototype là mock — cần thay bằng billing API feed production từ từng nhà cung cấp và payment gateway.</p>
+    <a class="btn btn-outline" href="https://www.momo.vn/thanh-toan-hoa-don" target="_blank" rel="noreferrer" style="white-space:nowrap;flex-shrink:0">Xem nguồn MoMo</a>
   </div>
+</footer>
 
-  <!-- ════════════════════════════════════════════════════
-       WATER PANEL
-  ════════════════════════════════════════════════════ -->
-  <div class="panel" id="panel-nuoc">
-    <p class="panel-title">Tra cứu & thanh toán <span>hóa đơn nước</span></p>
-    <div class="form-card">
-      <div class="form-row">
-        <span class="form-lbl">Nhà cung cấp</span>
-        <select id="nuocSel">
-          <option>SAWACO (TP.HCM)</option>
-          <option>HAWACO (Hà Nội)</option>
-          <option>Đà Nẵng Water</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <span class="form-lbl">Mã khách hàng</span>
-        <input id="nuocCode" type="text" placeholder="Nhập mã khách hàng">
-      </div>
-    </div>
-    <button class="btn-main" onclick="lookupBill('nuoc')">Tra cứu hóa đơn →</button>
-    <div class="result-card" id="nuocResult">
-      <div class="rc-header">
-        <div class="rc-h-icon">💧</div>
-        <div>
-          <div class="rc-h-name">SAWACO</div>
-          <div class="rc-h-code">SAWACO-2206-8831</div>
-        </div>
-      </div>
-      <div class="rc-customer">
-        <div>
-          <div class="rc-cust-name">Trần Thị B</div>
-          <div class="rc-cust-sub">Quận 1, TP.HCM · Tháng 6/2026</div>
-        </div>
-        <span class="rc-pill ok">Chưa đến hạn</span>
-      </div>
-      <div class="rc-amount-block">
-        <div class="rc-amt-label">Số tiền cần trả</div>
-        <div class="rc-amt">224.000 đ</div>
-        <div class="rc-due">Hạn thanh toán: <b>22/06/2026</b></div>
-      </div>
-      <div class="rc-meta">
-        <div class="rc-meta-item">
-          <div class="rc-meta-lbl">Loại dịch vụ</div>
-          <div class="rc-meta-val">Nước sinh hoạt</div>
-        </div>
-        <div class="rc-meta-item">
-          <div class="rc-meta-lbl">Còn lại</div>
-          <div class="rc-meta-val">8 ngày</div>
-        </div>
-      </div>
-      <div class="rc-actions">
-        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
-        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════════════════
-       INTERNET PANEL
-  ════════════════════════════════════════════════════ -->
-  <div class="panel" id="panel-internet">
-    <p class="panel-title">Tra cứu & thanh toán <span>Internet / Cáp TV</span></p>
-    <div class="form-card">
-      <div class="form-row">
-        <span class="form-lbl">Nhà cung cấp</span>
-        <select id="netSel">
-          <option>VNPT</option><option>FPT Telecom</option>
-          <option>Viettel</option><option>SPT</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <span class="form-lbl">Mã hợp đồng</span>
-        <input id="netCode" type="text" placeholder="Nhập mã hợp đồng">
-      </div>
-    </div>
-    <button class="btn-main" onclick="lookupBill('net')">Tra cứu hóa đơn →</button>
-    <div class="result-card" id="netResult">
-      <div class="rc-header">
-        <div class="rc-h-icon">🌐</div>
-        <div>
-          <div class="rc-h-name">VNPT</div>
-          <div class="rc-h-code">VNPT-2026-06</div>
-        </div>
-      </div>
-      <div class="rc-customer">
-        <div>
-          <div class="rc-cust-name">Lê Văn C</div>
-          <div class="rc-cust-sub">Bình Thạnh, TP.HCM · Tháng 6/2026</div>
-        </div>
-        <span class="rc-pill due">Cần thanh toán</span>
-      </div>
-      <div class="rc-amount-block">
-        <div class="rc-amt-label">Số tiền cần trả</div>
-        <div class="rc-amt">265.000 đ</div>
-        <div class="rc-due">Hạn thanh toán: <b>20/06/2026</b></div>
-      </div>
-      <div class="rc-meta">
-        <div class="rc-meta-item">
-          <div class="rc-meta-lbl">Gói dịch vụ</div>
-          <div class="rc-meta-val">Internet Home Fiber</div>
-        </div>
-        <div class="rc-meta-item">
-          <div class="rc-meta-lbl">Còn lại</div>
-          <div class="rc-meta-val">6 ngày</div>
-        </div>
-      </div>
-      <div class="rc-actions">
-        <button class="btn-pay" onclick="toast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
-        <button class="btn-remind" onclick="toast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════════════════
-       METRO PANEL
-  ════════════════════════════════════════════════════ -->
-  <div class="panel" id="panel-metro">
-    <p class="panel-title">Mua vé <span>Metro HCM Line 1</span></p>
-
-    <div id="metro-form">
-      <div class="form-card">
-        <div class="form-row">
-          <span class="form-lbl">Ga đi</span>
-          <select id="metroFrom"></select>
-        </div>
-        <div class="form-row">
-          <span class="form-lbl">Ga đến</span>
-          <select id="metroTo"></select>
-        </div>
-      </div>
-
-      <div class="ticket-chips" id="ticketChips"></div>
-
-      <div class="fare-display">
-        <div>
-          <div class="fare-lbl">Giá vé ước tính</div>
-          <div class="fare-note" id="fareNote">1 lượt · Trong ngày</div>
-        </div>
-        <div class="fare-val" id="fareVal">12.000 đ</div>
-      </div>
-
-      <button class="btn-main" onclick="buyTicket()">Mua vé metro →</button>
-    </div>
-
-    <!-- QR Success -->
-    <div class="qr-success" id="qrSuccess">
-      <div class="qr-s-head">
-        <div class="qr-s-icon">🎫</div>
-        <div>
-          <div class="qr-s-name">Vé Metro đã sẵn sàng</div>
-          <div class="qr-s-sub" id="qrSubLine">Line 1 · Bến Thành - Suối Tiên</div>
-        </div>
-      </div>
-      <div class="qr-body">
-        <div class="qr-blocks" id="qrBlocks"></div>
-        <div class="qr-meta">
-          <div class="qr-id" id="qrId">MOO-240001</div>
-          <div class="qr-sub" id="qrSub">1 lượt · Bến Thành → Thủ Đức</div>
-          <div class="qr-ok">✓ Đã thanh toán</div>
-        </div>
-      </div>
-      <div class="qr-info">
-        <div class="qi"><div class="qi-l">Loại vé</div><div class="qi-v" id="qi-type">1 lượt</div></div>
-        <div class="qi"><div class="qi-l">Giá</div><div class="qi-v" id="qi-price">12.000 đ</div></div>
-        <div class="qi"><div class="qi-l">Hạn dùng</div><div class="qi-v" id="qi-valid">Trong ngày</div></div>
-        <div class="qi"><div class="qi-l">Trạng thái</div><div class="qi-v" style="color:var(--green)">Kích hoạt</div></div>
-      </div>
-      <div class="qr-actions">
-        <button class="btn-qr-main" onclick="toast('Đã lưu vé vào Ví vé MoMo ✓')">Lưu vào Ví vé</button>
-        <button class="btn-qr-sec" onclick="resetMetro()">Mua thêm vé</button>
-      </div>
-    </div>
-  </div>
-
-  <p class="disclaimer">Prototype mô phỏng — dữ liệu không kết nối API thực.</p>
-</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-  // ─── Helpers ──────────────────────────────────────────
+  /* ── Data ─────────────────────────────────────── */
+  const GROUPS = [
+    {
+      label: 'Sinh hoạt',
+      services: [
+        { id:'dien',     ico:'⚡', label:'Điện lực',    sub:'EVN HCM · Hà Nội · Miền Nam · Miền Trung',
+          providers:['EVN HCM','EVN Hà Nội','EVN Miền Trung','EVN Miền Nam'],
+          inputLabel:'Mã khách hàng', ph:'Trên hóa đơn giấy hoặc app EVN',
+          mock:{name:'Nguyễn Văn A',sub:'Điện sinh hoạt · Quận 7, TP.HCM',code:'EVN-2407-0182',amt:'1.284.000 đ',due:'10/07/2026',days:6,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Điện sinh hoạt',meta2:'6 ngày'} },
+        { id:'nuoc',     ico:'💧', label:'Nước',         sub:'SAWACO, HAWACO và các công ty nước địa phương',
+          providers:['SAWACO (TP.HCM)','HAWACO (Hà Nội)','Đà Nẵng Water','Cần Thơ Water','Bình Dương Water'],
+          inputLabel:'Mã khách hàng', ph:'Trên hóa đơn nước',
+          mock:{name:'Trần Thị B',sub:'Nước sinh hoạt · Quận 1, TP.HCM',code:'SAW-2207-8831',amt:'224.000 đ',due:'22/07/2026',days:18,pill:'ok',pillLabel:'Chưa đến hạn',meta1:'Nước sinh hoạt',meta2:'18 ngày'} },
+        { id:'gas',      ico:'🔥', label:'Gas',           sub:'PV Gas, Saigon Gas, Gas Petrolimex',
+          providers:['PV Gas South','Saigon Gas','Gas Petrolimex','Thủ Đức Gas','Bình Minh Gas'],
+          inputLabel:'Mã hợp đồng', ph:'Trên phiếu giao gas hoặc hợp đồng',
+          mock:{name:'Lê Thị C',sub:'Gas sinh hoạt · Bình Thạnh, TP.HCM',code:'GAS-2407-5512',amt:'180.000 đ',due:'15/07/2026',days:11,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Gas bình dân dụng',meta2:'11 ngày'} },
+        { id:'internet', ico:'🌐', label:'Internet & TV', sub:'VNPT, FPT, Viettel, CMC, VTVCab, SCTV',
+          providers:['VNPT','FPT Telecom','Viettel','CMC Telecom','VTVCab','SCTV','SPT'],
+          inputLabel:'Mã hợp đồng', ph:'Trên hóa đơn Internet hoặc cáp TV',
+          mock:{name:'Phạm Văn D',sub:'Internet Home Fiber 200Mbps · Bình Thạnh',code:'VNPT-2026-07',amt:'265.000 đ',due:'12/07/2026',days:8,pill:'due',pillLabel:'Cần thanh toán',meta1:'Internet & TV Cáp',meta2:'8 ngày'} },
+        { id:'chungcu',  ico:'🏢', label:'Chung cư',     sub:'Vinhomes, Masteri, Sunwah Pearl và 100+ tòa nhà',
+          providers:['Vinhomes','Sunwah Pearl','The Manor','Masteri Thảo Điền','Him Lam','Gateway Thảo Điền','Saigon Pearl'],
+          inputLabel:'Mã căn hộ', ph:'Mã căn hộ / Mã cư dân',
+          mock:{name:'Nguyễn Minh E',sub:'Phí quản lý + Dịch vụ · Vinhomes Central Park',code:'VHM-T07-12A',amt:'2.450.000 đ',due:'10/07/2026',days:6,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Phí quản lý + DV',meta2:'6 ngày'} },
+      ]
+    },
+    {
+      label: 'Di động',
+      services: [
+        { id:'nap-truoc', ico:'📱', label:'Nạp trả trước', sub:'Viettel, MobiFone, Vinaphone, Vietnamobile, Gmobile',
+          type:'topup',
+          providers:['Viettel','MobiFone','Vinaphone','Vietnamobile','Gmobile','Reddi'] },
+        { id:'cuoc-sau',  ico:'📞', label:'Cước trả sau',  sub:'MobiFone, Viettel, Vinaphone tra cước tháng',
+          providers:['MobiFone','Viettel','Vinaphone','Vietnamobile'],
+          inputLabel:'Số điện thoại', ph:'09xx xxx xxx',
+          mock:{name:'Phạm Thị F',sub:'Trả sau · MobiFone · Tháng 7/2026',code:'MBF-0903-5512',amt:'179.000 đ',due:'04/07/2026',days:0,pill:'late',pillLabel:'Đến hạn hôm nay',meta1:'Cước trả sau',meta2:'Hôm nay!'} },
+      ]
+    },
+    {
+      label: 'Hành chính & Thuế',
+      services: [
+        { id:'phat-nguoi', ico:'🚔', label:'Phạt nguội',    sub:'Tra phạt nguội ô tô, xe máy toàn quốc',
+          type:'external', href:'/phat-nguoi', cta:'Mở trang Phạt nguội →' },
+        { id:'dang-kiem',  ico:'🔩', label:'Đăng kiểm xe',  sub:'Phí đăng kiểm xe máy và ô tô qua Cục Đăng kiểm',
+          providers:['Cục Đăng kiểm VN'],
+          inputLabel:'Biển số xe', ph:'51G-12345 hoặc 29A-12345',
+          mock:{name:'Xe Honda SH 150i',sub:'Xe máy · Biển 51G-12345',code:'DK-51G12345',amt:'135.000 đ',due:'20/08/2026',days:47,pill:'ok',pillLabel:'Còn hạn',meta1:'Đăng kiểm xe máy',meta2:'47 ngày'} },
+        { id:'thue-tncn',  ico:'📋', label:'Thuế TNCN',     sub:'Nộp thuế thu nhập cá nhân qua Tổng cục Thuế',
+          providers:['Tổng cục Thuế (GDT)'],
+          inputLabel:'Mã số thuế', ph:'MST cá nhân 10 số',
+          mock:{name:'Nguyễn Văn A',sub:'Thuế TNCN · Quyết toán 2025',code:'GDT-MST-0123456789',amt:'3.200.000 đ',due:'31/07/2026',days:27,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Thuế thu nhập CÁ',meta2:'27 ngày'} },
+        { id:'dvc',        ico:'🏛️', label:'Dịch vụ công',  sub:'Hộ chiếu, CCCD, khai sinh, kết hôn, đăng ký xe',
+          type:'external', href:'/dich-vu-cong', cta:'Mở trang Dịch vụ công →' },
+      ]
+    },
+    {
+      label: 'Giáo dục & Y tế',
+      services: [
+        { id:'hoc-phi', ico:'🎓', label:'Học phí',  sub:'ĐH Kinh tế HCM, Bách Khoa, FPT, RMIT và 50+ trường',
+          providers:['ĐH Kinh tế HCM','ĐH Bách Khoa HCM','ĐH Quốc gia HN','FPT University','RMIT Vietnam','ĐH Tôn Đức Thắng'],
+          inputLabel:'Mã sinh viên / học sinh', ph:'Mã SV trên thẻ sinh viên',
+          mock:{name:'Trần Minh G',sub:'Học kỳ 1 2026-2027 · ĐH Kinh tế HCM',code:'UEH-SV-2022001234',amt:'8.500.000 đ',due:'31/07/2026',days:27,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Học phí đại học',meta2:'27 ngày'} },
+        { id:'vien-phi', ico:'🏥', label:'Viện phí', sub:'Vinmec, BV FV, Medlatec và bệnh viện đã liên kết',
+          providers:['Vinmec','BV FV (Far East Medical)','BV Chợ Rẫy','BV Bạch Mai','Medlatec','Thu Cúc Clinic'],
+          inputLabel:'Mã hồ sơ bệnh nhân', ph:'Mã BN trên thẻ viện phí hoặc hóa đơn',
+          mock:{name:'Lê Thị H',sub:'Nội trú · BV FV · 03/07 - 07/07/2026',code:'FV-BN-20260703',amt:'14.200.000 đ',due:'10/07/2026',days:6,pill:'due',pillLabel:'Cần thanh toán',meta1:'Chi phí nội trú',meta2:'6 ngày'} },
+      ]
+    },
+    {
+      label: 'Tài chính',
+      services: [
+        { id:'tra-gop', ico:'💳', label:'Trả góp & Vay', sub:'FE Credit, Home Credit, HD Saison, Mirae Asset',
+          providers:['FE Credit','Home Credit','HD Saison','Mirae Asset','MCredit','Shinhan Finance'],
+          inputLabel:'Mã hợp đồng', ph:'Mã HĐ trên giấy tờ vay tiêu dùng',
+          mock:{name:'Phạm Văn I',sub:'Vay tiêu dùng · FE Credit · Kỳ 7/12',code:'FEC-2024-HĐ-001234',amt:'2.800.000 đ',due:'08/07/2026',days:4,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Vay tiêu dùng kỳ 7',meta2:'4 ngày'} },
+        { id:'bao-hiem', ico:'🛡️', label:'Bảo hiểm',    sub:'BHXH, Bảo Việt, Manulife, AIA, Prudential',
+          providers:['BHXH Việt Nam','Bảo Việt','Manulife','AIA Vietnam','Prudential','Dai-ichi Life'],
+          inputLabel:'Mã hợp đồng bảo hiểm', ph:'Mã HĐ trên thẻ hoặc hợp đồng bảo hiểm',
+          mock:{name:'Nguyễn Văn A',sub:'Bảo hiểm nhân thọ · Manulife · Kỳ Q3/2026',code:'MNL-VN-HĐ-567890',amt:'4.500.000 đ',due:'15/07/2026',days:11,pill:'due',pillLabel:'Sắp đến hạn',meta1:'Phí nhân thọ định kỳ',meta2:'11 ngày'} },
+      ]
+    },
+    {
+      label: 'Giao thông',
+      services: [
+        { id:'metro', ico:'🚇', label:'Metro HCM', sub:'Mua vé Line 1 Bến Thành - Suối Tiên', type:'metro' },
+        { id:'etc',   ico:'🛣️', label:'Phí cầu đường', sub:'Nạp tiền tài khoản ETC qua VETC và EPASS',
+          providers:['VETC','EPASS'],
+          inputLabel:'Mã tài khoản ETC', ph:'Biển số xe hoặc mã tài khoản VETC/EPASS',
+          mock:{name:'Xe 51G-12345',sub:'Tài khoản VETC · Số dư sắp hết',code:'VETC-51G12345',amt:'200.000 đ',due:'Nạp tiền',days:0,pill:'late',pillLabel:'Cần nạp thêm',meta1:'ETC nạp tiền',meta2:'Dưới ngưỡng tối thiểu'} },
+      ]
+    },
+  ];
+
+  /* ── Metro data ───────────────────────────────── */
+  const STATIONS = ['Bến Thành','Nhà hát Thành phố','Ba Son','Văn Thánh','Tân Cảng','Thảo Điền','An Phú','Rạch Chiếc','Phước Long','Bình Thái','Thủ Đức','Khu CNC','ĐH Quốc gia','Suối Tiên'];
+  const TICKETS  = [
+    {id:'single',name:'1 lượt',base:12000,validity:'Trong ngày',surcharge:true},
+    {id:'round', name:'Khứ hồi',base:22000,validity:'Trong ngày',surcharge:true},
+    {id:'day',   name:'1 ngày',base:35000,validity:'24 giờ',surcharge:false},
+    {id:'3day',  name:'3 ngày',base:70000,validity:'72 giờ',surcharge:false},
+    {id:'month', name:'30 ngày',base:280000,validity:'30 ngày',surcharge:false},
+  ];
+  let selTicket = TICKETS[0];
+
+  /* ── Helpers ──────────────────────────────────── */
   const fmt = n => new Intl.NumberFormat('vi-VN').format(n) + ' đ';
 
-  function toast(msg) {
-    const t = document.createElement('div');
+  function showToast(msg) {
+    const t = document.getElementById('toast');
     t.textContent = msg;
-    Object.assign(t.style, {
-      position:'fixed', bottom:'24px', left:'50%',
-      transform:'translateX(-50%)',
-      background:'#111827', color:'#fff',
-      padding:'11px 20px', borderRadius:'12px',
-      fontSize:'13px', fontWeight:'700',
-      fontFamily:'inherit',
-      boxShadow:'0 4px 20px rgba(0,0,0,.18)',
-      zIndex:'999', whiteSpace:'nowrap',
-      animation:'fadeUp .2s ease',
-    });
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2200);
+    t.classList.add('show');
+    clearTimeout(t._tid);
+    t._tid = setTimeout(() => t.classList.remove('show'), 2400);
   }
 
-  function showResult(id) {
-    const card = document.getElementById(id);
-    card.classList.remove('show');
-    void card.offsetWidth;
-    card.classList.add('show');
-    setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+  /* ── Build service grid ───────────────────────── */
+  let selectedSvc = null;
+  let toAmt = null;
+
+  function buildGrid() {
+    const wrap = document.getElementById('svcGroups');
+    wrap.innerHTML = GROUPS.map(g => `
+      <div class="svc-group">
+        <div class="svc-group-label">${g.label}</div>
+        <div class="svc-grid">
+          ${g.services.map(s => `
+            <button class="svc-card${s.type==='external'?' external':''}" data-id="${s.id}" onclick="selectSvc('${s.id}')">
+              <span class="svc-ico">${s.ico}</span>
+              <span class="svc-lbl">${s.label}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
   }
 
-  // ─── Category switching ────────────────────────────────
-  function switchCat(btn) {
-    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  function findSvc(id) {
+    for (const g of GROUPS) {
+      const s = g.services.find(x => x.id === id);
+      if (s) return s;
+    }
+    return null;
   }
 
-  // ─── Phone ────────────────────────────────────────────
-  const AMOUNTS = [10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000];
-  let selectedAmt = null;
+  function selectSvc(id) {
+    const svc = findSvc(id);
+    if (!svc) return;
 
-  (function initChips() {
-    const grid = document.getElementById('amtChips');
+    // Update card highlight
+    document.querySelectorAll('.svc-card').forEach(c => c.classList.remove('active'));
+    const card = document.querySelector(`.svc-card[data-id="${id}"]`);
+    if (card) card.classList.add('active');
+
+    // Update form header
+    document.getElementById('frmIco').textContent  = svc.ico;
+    document.getElementById('frmName').textContent = svc.label;
+    document.getElementById('frmSub').textContent  = svc.sub;
+
+    // Render form content
+    document.getElementById('frmContent').innerHTML = renderForm(svc);
+    document.getElementById('formArea').classList.add('show');
+
+    // Scroll form into view
+    setTimeout(() => {
+      document.getElementById('formArea').scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 60);
+
+    // Wire up metro if needed
+    if (svc.type === 'metro') initMetroInline();
+    if (svc.type === 'topup') initTopupInline(svc);
+
+    selectedSvc = svc;
+    toAmt = null;
+  }
+
+  function renderForm(svc) {
+    if (svc.type === 'external') {
+      return `<a class="btn-ext" href="${svc.href}" target="_top">${svc.cta}</a>
+        <p style="font-size:12px;color:var(--sub);line-height:1.6">Dịch vụ này có trang riêng với đầy đủ thông tin, tra cứu và hướng dẫn.</p>`;
+    }
+
+    if (svc.type === 'topup') {
+      return `
+        <div class="form-card">
+          <div class="form-row">
+            <span class="form-lbl">Số điện thoại</span>
+            <input id="topupNum" type="tel" placeholder="09xx xxx xxx">
+          </div>
+          <div class="form-row">
+            <span class="form-lbl">Nhà mạng</span>
+            <select id="topupOp">${svc.providers.map(p=>`<option>${p}</option>`).join('')}</select>
+          </div>
+          <div class="form-row">
+            <span class="form-lbl">Mệnh giá</span>
+            <span id="topupAmtDisplay" style="font-size:14px;font-weight:800;color:var(--momo)">Chưa chọn</span>
+          </div>
+        </div>
+        <span class="chips-label">Chọn mệnh giá</span>
+        <div class="chip-grid" id="topupChips"></div>
+        <button class="btn-cta" onclick="doTopup()">Nạp ngay →</button>`;
+    }
+
+    if (svc.type === 'metro') {
+      return `
+        <div id="metroFormInline">
+          <div class="form-card">
+            <div class="form-row">
+              <span class="form-lbl">Ga đi</span>
+              <select id="metroFrom">${STATIONS.map(s=>`<option>${s}</option>`).join('')}</select>
+            </div>
+            <div class="form-row">
+              <span class="form-lbl">Ga đến</span>
+              <select id="metroTo">${STATIONS.map(s=>`<option>${s}</option>`).join('')}</select>
+            </div>
+          </div>
+          <div class="ticket-scroll" id="metroTickets"></div>
+          <div class="fare-row">
+            <div><div class="fare-lbl">Giá vé ước tính</div><div class="fare-note" id="fareNote">1 lượt · Trong ngày</div></div>
+            <div class="fare-val" id="fareVal">12.000 đ</div>
+          </div>
+          <button class="btn-cta" onclick="buyTicketInline()">Mua vé Metro →</button>
+        </div>
+        <div class="qr-wrap" id="qrResult">
+          <div class="qr-card">
+            <div class="qr-head">
+              <div class="qr-head-ico">🎫</div>
+              <div>
+                <div class="qr-head-name">Vé Metro đã sẵn sàng</div>
+                <div class="qr-head-sub" id="qrSubLine">Line 1</div>
+              </div>
+            </div>
+            <div class="qr-body">
+              <div class="qr-blocks" id="qrBlocks"></div>
+              <div class="qr-meta">
+                <div class="qr-id" id="qrId">MOO-000000</div>
+                <div class="qr-sub" id="qrSub">1 lượt</div>
+                <div class="qr-ok">✓ Đã thanh toán</div>
+              </div>
+            </div>
+            <div class="qr-info">
+              <div class="qi"><div class="qi-l">Loại vé</div><div class="qi-v" id="qiType">1 lượt</div></div>
+              <div class="qi"><div class="qi-l">Giá</div><div class="qi-v" id="qiPrice">12.000 đ</div></div>
+              <div class="qi"><div class="qi-l">Hạn dùng</div><div class="qi-v" id="qiValid">Trong ngày</div></div>
+              <div class="qi"><div class="qi-l">Trạng thái</div><div class="qi-v" style="color:var(--green)">Kích hoạt</div></div>
+            </div>
+            <div class="qr-actions">
+              <button class="btn-pay" onclick="showToast('Đã lưu vé vào Ví vé MoMo ✓')">Lưu vào Ví vé</button>
+              <button class="btn-remind" onclick="resetMetroInline()">Mua thêm vé</button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Generic bill lookup
+    const m = svc.mock;
+    return `
+      <div class="form-card">
+        <div class="form-row">
+          <span class="form-lbl">Nhà cung cấp</span>
+          <select>${svc.providers.map(p=>`<option>${p}</option>`).join('')}</select>
+        </div>
+        <div class="form-row">
+          <span class="form-lbl">${svc.inputLabel}</span>
+          <input type="text" placeholder="${svc.ph}">
+        </div>
+      </div>
+      <button class="btn-cta" onclick="showMockResult('${svc.id}')">Tra cứu hóa đơn →</button>
+      <div class="result-wrap" id="result-${svc.id}">
+        <div class="rc">
+          <div class="rc-head">
+            <div class="rc-head-ico">${svc.ico}</div>
+            <div>
+              <div class="rc-head-name">${svc.providers[0]}</div>
+              <div class="rc-head-code">${m.code}</div>
+            </div>
+          </div>
+          <div class="rc-customer">
+            <div>
+              <div class="rc-cust-name">${m.name}</div>
+              <div class="rc-cust-sub">${m.sub}</div>
+            </div>
+            <span class="rc-pill ${m.pill}">${m.pillLabel}</span>
+          </div>
+          <div class="rc-amount">
+            <div class="rc-amt-lbl">Số tiền cần trả</div>
+            <div class="rc-amt">${m.amt}</div>
+            <div class="rc-due">Hạn thanh toán: <b>${m.due}</b></div>
+          </div>
+          <div class="rc-meta">
+            <div class="rc-meta-item">
+              <div class="rc-meta-lbl">Loại dịch vụ</div>
+              <div class="rc-meta-val">${m.meta1}</div>
+            </div>
+            <div class="rc-meta-item">
+              <div class="rc-meta-lbl">Còn lại</div>
+              <div class="rc-meta-val">${m.meta2}</div>
+            </div>
+          </div>
+          <div class="rc-actions">
+            <button class="btn-pay" onclick="showToast('Đang chuyển sang thanh toán...')">Thanh toán ngay</button>
+            <button class="btn-remind" onclick="showToast('Đã bật nhắc hạn thanh toán ✓')">🔔 Nhắc tôi trước hạn</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function showMockResult(id) {
+    const el = document.getElementById('result-' + id);
+    if (!el) return;
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'nearest'}), 60);
+  }
+
+  /* ── Topup ────────────────────────────────────── */
+  const AMOUNTS = [10000,20000,30000,50000,100000,200000,300000,500000];
+
+  function initTopupInline(svc) {
+    toAmt = null;
+    const grid = document.getElementById('topupChips');
+    if (!grid) return;
+    grid.innerHTML = '';
     AMOUNTS.forEach(a => {
       const btn = document.createElement('button');
       btn.className = 'chip';
@@ -604,74 +929,37 @@
       btn.onclick = () => {
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
         btn.classList.add('selected');
-        selectedAmt = a;
-        document.getElementById('selectedAmt').textContent = fmt(a);
+        toAmt = a;
+        const el = document.getElementById('topupAmtDisplay');
+        if (el) el.textContent = fmt(a);
       };
       grid.appendChild(btn);
     });
-  })();
-
-  function switchPhoneType(type, btn) {
-    document.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('prepaid-content').style.display = type === 'prepaid' ? '' : 'none';
-    document.getElementById('postpaid-content').style.display = type === 'postpaid' ? '' : 'none';
-    document.getElementById('postpaidResult').classList.remove('show');
   }
 
-  function doRecharge() {
-    const num = document.getElementById('phoneNum').value.trim();
-    if (!num) { toast('Nhập số điện thoại'); return; }
-    if (!selectedAmt) { toast('Chọn mệnh giá'); return; }
-    const op = document.getElementById('phoneOp').value;
-    toast('Đã nạp ' + fmt(selectedAmt) + ' cho ' + num + ' (' + op + ') ✓');
+  function doTopup() {
+    const num = (document.getElementById('topupNum') || {}).value?.trim();
+    if (!num) { showToast('Nhập số điện thoại trước'); return; }
+    if (!toAmt) { showToast('Chọn mệnh giá'); return; }
+    const op = (document.getElementById('topupOp') || {}).value || '';
+    showToast('Đã nạp ' + fmt(toAmt) + ' cho ' + num + ' (' + op + ') ✓');
   }
 
-  function lookupPostpaid() {
-    const op = document.getElementById('postpaidOp').value;
-    document.getElementById('ppName').textContent = op;
-    document.getElementById('ppCode').textContent = op.substring(0,3).toUpperCase() + '-0909-1234';
-    showResult('postpaidResult');
-  }
+  /* ── Metro inline ─────────────────────────────── */
+  function initMetroInline() {
+    const toSel = document.getElementById('metroTo');
+    if (toSel) toSel.value = 'Thủ Đức';
 
-  // ─── Bill lookup (Điện / Nước / Internet) ─────────────
-  function lookupBill(type) {
-    const map = { dien:'dienResult', nuoc:'nuocResult', net:'netResult' };
-    showResult(map[type]);
-  }
-
-  // ─── Metro ─────────────────────────────────────────────
-  const STATIONS = [
-    'Bến Thành','Nhà hát Thành phố','Ba Son','Văn Thánh',
-    'Tân Cảng','Thảo Điền','An Phú','Rạch Chiếc',
-    'Phước Long','Bình Thái','Thủ Đức','Khu CNC',
-    'ĐH Quốc gia','Suối Tiên',
-  ];
-
-  const TICKETS = [
-    { id:'single',    name:'1 lượt',  base:12000,  validity:'Trong ngày', surcharge:true  },
-    { id:'roundtrip', name:'Khứ hồi', base:22000,  validity:'Trong ngày', surcharge:true  },
-    { id:'day',       name:'1 ngày',  base:35000,  validity:'24 giờ',     surcharge:false },
-    { id:'3day',      name:'3 ngày',  base:70000,  validity:'72 giờ',     surcharge:false },
-    { id:'month',     name:'30 ngày', base:280000, validity:'30 ngày',    surcharge:false },
-  ];
-
-  let selTicket = TICKETS[0];
-
-  (function initMetro() {
     const fromSel = document.getElementById('metroFrom');
-    const toSel   = document.getElementById('metroTo');
-    STATIONS.forEach(s => {
-      fromSel.add(new Option(s, s));
-      toSel.add(new Option(s, s));
-    });
-    toSel.value = 'Thủ Đức';
-    fromSel.onchange = toSel.onchange = updateFare;
+    if (fromSel) fromSel.onchange = updateFare;
+    if (toSel)   toSel.onchange   = updateFare;
 
-    const chips = document.getElementById('ticketChips');
-    TICKETS.forEach((t, i) => {
+    const chips = document.getElementById('metroTickets');
+    if (!chips) return;
+    chips.innerHTML = '';
+    TICKETS.forEach((t,i) => {
       const btn = document.createElement('button');
-      btn.className = 't-chip' + (i === 0 ? ' selected' : '');
+      btn.className = 't-chip' + (i===0?' selected':'');
       btn.innerHTML = `<span class="t-name">${t.name}</span><span class="t-price">${fmt(t.base)}</span>`;
       btn.onclick = () => {
         document.querySelectorAll('.t-chip').forEach(c => c.classList.remove('selected'));
@@ -681,60 +969,66 @@
       };
       chips.appendChild(btn);
     });
-
+    selTicket = TICKETS[0];
     updateFare();
-  })();
+  }
 
   function calcFare() {
-    const from = document.getElementById('metroFrom').value;
-    const to   = document.getElementById('metroTo').value;
+    const from = (document.getElementById('metroFrom') || {}).value || STATIONS[0];
+    const to   = (document.getElementById('metroTo')   || {}).value || STATIONS[10];
     const segs = Math.max(1, Math.abs(STATIONS.indexOf(from) - STATIONS.indexOf(to)));
     const extra = selTicket.surcharge ? Math.max(0, segs - 4) * 1500 : 0;
     return selTicket.base + extra;
   }
 
   function updateFare() {
-    document.getElementById('fareVal').textContent  = fmt(calcFare());
-    document.getElementById('fareNote').textContent = selTicket.name + ' · ' + selTicket.validity;
+    const fv = document.getElementById('fareVal');
+    const fn = document.getElementById('fareNote');
+    if (fv) fv.textContent = fmt(calcFare());
+    if (fn) fn.textContent = selTicket.name + ' · ' + selTicket.validity;
   }
 
-  function buyTicket() {
-    const from = document.getElementById('metroFrom').value;
-    const to   = document.getElementById('metroTo').value;
-    if (from === to) { toast('Ga đi và ga đến phải khác nhau'); return; }
-
-    const price = calcFare();
+  function buyTicketInline() {
+    const from = (document.getElementById('metroFrom') || {}).value || '';
+    const to   = (document.getElementById('metroTo')   || {}).value || '';
+    if (from === to) { showToast('Ga đi và ga đến phải khác nhau'); return; }
+    const price    = calcFare();
     const ticketId = 'MOO-' + Date.now().toString().slice(-6);
 
-    // QR grid: 16 blocks with random pattern
     const wrap = document.getElementById('qrBlocks');
-    wrap.innerHTML = '';
-    for (let i = 0; i < 16; i++) {
-      const bl = document.createElement('div');
-      bl.className = 'qr-bl';
-      bl.style.cssText = `animation-delay:${i*0.03}s;opacity:${Math.random() > 0.35 ? 1 : 0.12}`;
-      wrap.appendChild(bl);
+    if (wrap) {
+      wrap.innerHTML = '';
+      for (let i=0; i<16; i++) {
+        const bl = document.createElement('div');
+        bl.className = 'qr-bl';
+        bl.style.cssText = `animation-delay:${i*0.03}s;opacity:${Math.random()>.35?1:.12}`;
+        wrap.appendChild(bl);
+      }
     }
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText('qrId', ticketId);
+    setText('qrSub', selTicket.name + ' · ' + from + ' → ' + to);
+    setText('qrSubLine', 'Line 1 · ' + from + ' - ' + to);
+    setText('qiType', selTicket.name);
+    setText('qiPrice', fmt(price));
+    setText('qiValid', selTicket.validity);
 
-    document.getElementById('qrId').textContent   = ticketId;
-    document.getElementById('qrSub').textContent   = selTicket.name + ' · ' + from + ' → ' + to;
-    document.getElementById('qrSubLine').textContent = 'Line 1 · ' + from + ' - ' + to;
-    document.getElementById('qi-type').textContent  = selTicket.name;
-    document.getElementById('qi-price').textContent = fmt(price);
-    document.getElementById('qi-valid').textContent = selTicket.validity;
-
-    document.getElementById('metro-form').style.display = 'none';
-    const qr = document.getElementById('qrSuccess');
-    qr.classList.remove('show');
-    void qr.offsetWidth;
-    qr.classList.add('show');
-    setTimeout(() => qr.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+    const formEl = document.getElementById('metroFormInline');
+    const qrEl   = document.getElementById('qrResult');
+    if (formEl) formEl.style.display = 'none';
+    if (qrEl)   { qrEl.classList.remove('show'); void qrEl.offsetWidth; qrEl.classList.add('show'); }
+    setTimeout(() => qrEl?.scrollIntoView({behavior:'smooth', block:'nearest'}), 60);
   }
 
-  function resetMetro() {
-    document.getElementById('metro-form').style.display = '';
-    document.getElementById('qrSuccess').classList.remove('show');
+  function resetMetroInline() {
+    const formEl = document.getElementById('metroFormInline');
+    const qrEl   = document.getElementById('qrResult');
+    if (formEl) formEl.style.display = '';
+    if (qrEl)   qrEl.classList.remove('show');
   }
+
+  /* ── Init ─────────────────────────────────────── */
+  buildGrid();
 </script>
 </body>
 </html>

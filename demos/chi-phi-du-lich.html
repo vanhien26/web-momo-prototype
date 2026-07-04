@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi phí du lịch — MoMo</title>
+  <meta name="proto-name" content="Chi phí du lịch">
+  <link rel="stylesheet" href="/assets/mobase-static.css">
+  <style>
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+    @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+    @font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #EB2F96; --primary-dark: #C4177A; --primary-light: #FFF0F9;
+      --success: #00B14F; --success-light: #E6F9EE;
+      --warning: #FF8C00; --warning-light: #FFF4E5;
+      --blue: #1d4ed8; --blue-light: #EFF6FF;
+      --teal: #0891b2; --teal-light: #ECFEFF;
+      --n900: #1C171A; --n700: #4B4550; --n500: #8C8594;
+      --n400: #A09AA6; --n300: #D1CDD3; --n100: #F5F4F6; --n50: #FAFAFA; --white: #FFFFFF;
+    }
+    html,body { height:100%; font-family:'MoMoTrustSans',system-ui,sans-serif; background:var(--n100); color:var(--n900); -webkit-font-smoothing:antialiased; }
+
+    .page-wrap { min-height:100%; display:flex; align-items:flex-start; justify-content:center; padding:32px 20px 80px; }
+
+    .ff-card {
+      width:100%; max-width:980px;
+      background:var(--white); border-radius:20px; overflow:hidden;
+      box-shadow:0 2px 24px rgba(0,0,0,.07);
+      display:grid; grid-template-columns:420px 1fr; grid-template-rows:auto 1fr;
+    }
+
+    /* HEADER */
+    .ff-comp-header { grid-column:1/-1; padding:24px 32px 20px; border-bottom:1px solid var(--n100); }
+    .ff-eyebrow { font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--primary); margin-bottom:5px; }
+    .ff-title { font-size:22px; font-weight:900; color:var(--n900); letter-spacing:-.02em; }
+    .ff-sub { font-size:12px; color:var(--n500); margin-top:3px; }
+
+    /* LEFT */
+    .ff-left { border-right:1px solid var(--n100); }
+    .ff-section { border-bottom:1px solid var(--n100); }
+    .ff-section:last-child { border-bottom:none; }
+
+    .ff-sec-hdr { padding:16px 24px; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
+    .ff-sec-hdr.locked { cursor:default; }
+    .ff-sec-num {
+      width:26px; height:26px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:800; background:var(--primary); color:var(--white); transition:background .2s;
+    }
+    .ff-section.locked .ff-sec-num { background:var(--n300); color:var(--n500); }
+    .ff-section.done .ff-sec-num { background:var(--success); color:var(--white); }
+    .ff-sec-meta { flex:1; min-width:0; }
+    .ff-sec-title { font-size:14px; font-weight:700; color:var(--n900); }
+    .ff-section.locked .ff-sec-title { color:var(--n400); }
+    .ff-sec-summary { font-size:11px; color:var(--n500); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ff-sec-edit {
+      font-size:11px; font-weight:700; color:var(--primary); background:var(--primary-light);
+      border:none; border-radius:9999px; padding:3px 10px; cursor:pointer; font-family:inherit; display:none;
+    }
+    .ff-section.done .ff-sec-edit { display:block; }
+    .ff-sec-body { display:none; padding:0 24px 24px; }
+    .ff-section.active .ff-sec-body { display:block; }
+
+    /* FIELD */
+    .field { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+    .field:last-child { margin-bottom:0; }
+    .field-lbl { font-size:11px; font-weight:700; color:var(--n500); text-transform:uppercase; letter-spacing:.06em; }
+    .field-hint { font-size:12px; color:var(--n500); line-height:1.5; }
+
+    /* TYPE TOGGLE — big 2-card */
+    .type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .type-card {
+      padding:14px 16px; border-radius:12px; border:2px solid var(--n300);
+      background:var(--white); cursor:pointer; text-align:left; font-family:inherit;
+      transition:all .15s;
+    }
+    .type-card:hover { border-color:var(--primary); }
+    .type-card.on { border-color:var(--primary); background:var(--primary-light); }
+    .type-card-emoji { font-size:22px; margin-bottom:6px; display:block; }
+    .type-card-name { font-size:14px; font-weight:800; color:var(--n900); }
+    .type-card.on .type-card-name { color:var(--primary); }
+    .type-card-sub { font-size:11px; color:var(--n500); margin-top:2px; }
+
+    /* DESTINATION CHIPS — scrollable */
+    .dest-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .dest-chip {
+      padding:6px 12px; border-radius:9999px; border:1.5px solid var(--n300);
+      background:var(--white); font-size:13px; font-weight:600; color:var(--n700);
+      cursor:pointer; font-family:inherit; transition:all .15s; white-space:nowrap;
+    }
+    .dest-chip:hover { border-color:var(--primary); color:var(--primary); }
+    .dest-chip.on { border-color:var(--primary); background:var(--primary); color:var(--white); }
+
+    /* STEPPER */
+    .stepper { display:flex; align-items:center; gap:12px; }
+    .stepper-btn {
+      width:36px; height:36px; border-radius:9999px; border:1.5px solid var(--n300);
+      background:var(--white); font-size:20px; font-weight:300; color:var(--n900);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      font-family:inherit; transition:all .15s; line-height:1;
+    }
+    .stepper-btn:hover:not(:disabled) { border-color:var(--primary); color:var(--primary); }
+    .stepper-btn:disabled { opacity:.3; cursor:default; }
+    .stepper-val { font-size:20px; font-weight:900; color:var(--n900); min-width:32px; text-align:center; }
+    .stepper-unit { font-size:13px; color:var(--n500); font-weight:600; }
+
+    /* DAYS PILLS */
+    .pills { display:flex; gap:6px; flex-wrap:wrap; }
+    .pill {
+      padding:6px 14px; border-radius:9999px; border:1.5px solid var(--n300);
+      background:var(--white); font-size:13px; font-weight:600; color:var(--n700);
+      cursor:pointer; font-family:inherit; transition:all .15s;
+    }
+    .pill:hover { border-color:var(--primary); color:var(--primary); }
+    .pill.on { border-color:var(--primary); background:var(--primary); color:var(--white); }
+
+    /* TIER CARDS */
+    .tier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .tier-card {
+      padding:12px; border-radius:10px; border:2px solid var(--n300);
+      background:var(--white); cursor:pointer; text-align:left; font-family:inherit;
+      transition:all .15s; position:relative;
+    }
+    .tier-card:hover { border-color:var(--primary); }
+    .tier-card.on { border-color:var(--primary); background:var(--primary-light); }
+    .tier-card-label { font-size:11px; font-weight:800; color:var(--n500); text-transform:uppercase; letter-spacing:.05em; }
+    .tier-card.on .tier-card-label { color:var(--primary); }
+    .tier-card-name { font-size:13px; font-weight:800; color:var(--n900); margin:4px 0 2px; }
+    .tier-card-price { font-size:11px; color:var(--n500); font-weight:600; }
+    .tier-card.on .tier-card-price { color:var(--primary); opacity:.8; }
+
+    /* MULTI CHIPS */
+    .activity-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .act-chip {
+      padding:6px 12px; border-radius:8px; border:1.5px solid var(--n300);
+      background:var(--white); font-size:12px; font-weight:600; color:var(--n700);
+      cursor:pointer; font-family:inherit; transition:all .15s;
+    }
+    .act-chip:hover { border-color:var(--primary); }
+    .act-chip.on { border-color:var(--primary); background:var(--primary-light); color:var(--primary); font-weight:700; }
+
+    /* VISA BADGE */
+    .visa-note {
+      display:flex; align-items:center; gap:8px; padding:10px 12px;
+      background:var(--warning-light); border:1px solid #FCD34D; border-radius:8px;
+      font-size:12px; color:var(--n700); font-weight:600;
+    }
+
+    .btn-confirm {
+      width:100%; padding:12px 20px; border:none; border-radius:9999px;
+      background:var(--primary); color:var(--white);
+      font-size:14px; font-weight:700; font-family:inherit;
+      cursor:pointer; transition:background .15s; margin-top:20px;
+    }
+    .btn-confirm:hover { background:var(--primary-dark); }
+
+    /* RIGHT */
+    .ff-right { background:var(--n50); padding:28px 32px 40px; display:flex; flex-direction:column; gap:18px; min-height:500px; }
+
+    .res-hero-lbl { font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--n500); }
+    .res-hero-val { font-size:42px; font-weight:900; letter-spacing:-.03em; line-height:1; margin:6px 0 2px; color:var(--n900); }
+    .res-hero-val span { font-size:18px; font-weight:600; color:var(--n500); margin-left:4px; }
+    .res-hero-sub { font-size:12px; color:var(--n500); }
+    .res-hero-badge {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:3px 10px; border-radius:9999px; font-size:11px; font-weight:800;
+      margin-top:8px;
+    }
+    .badge-budget { background:var(--success-light); color:var(--success); }
+    .badge-mid    { background:var(--warning-light); color:var(--warning); }
+    .badge-luxury { background:var(--primary-light); color:var(--primary); }
+
+    /* Breakdown bars */
+    .breakdown-wrap {
+      background:var(--white); border:1px solid var(--n300); border-radius:14px;
+      overflow:hidden; display:none;
+    }
+    .breakdown-wrap.show { display:block; }
+    .breakdown-row {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 16px; border-bottom:1px solid var(--n100);
+    }
+    .breakdown-row:last-child { border-bottom:none; }
+    .bd-label { font-size:12px; font-weight:700; color:var(--n700); min-width:110px; }
+    .bd-bar-wrap { flex:1; height:6px; background:var(--n100); border-radius:9999px; overflow:hidden; }
+    .bd-bar { height:100%; border-radius:9999px; transition:width .4s; }
+    .bd-val { font-size:12px; font-weight:800; color:var(--n900); min-width:60px; text-align:right; white-space:nowrap; }
+
+    /* Per person */
+    .perperson-wrap {
+      background:var(--white); border:1px solid var(--n300); border-radius:14px;
+      padding:14px 16px; display:none;
+      flex-direction:column; gap:6px;
+    }
+    .perperson-wrap.show { display:flex; }
+    .pp-row { display:flex; justify-content:space-between; align-items:center; }
+    .pp-lbl { font-size:12px; font-weight:600; color:var(--n700); }
+    .pp-val { font-size:13px; font-weight:800; color:var(--n900); }
+    .pp-val.accent { color:var(--primary); }
+
+    /* CTA */
+    .res-cta { background:var(--primary-light); border:1.5px solid var(--primary); border-radius:14px; padding:18px 20px; display:none; flex-direction:column; gap:10px; }
+    .res-cta.show { display:flex; }
+    .cta-msg { font-size:13px; color:var(--n700); line-height:1.6; }
+    .cta-msg strong { display:block; font-size:15px; color:var(--n900); margin-bottom:4px; }
+    .cta-btns { display:flex; flex-direction:column; gap:8px; }
+    .cta-btn {
+      width:100%; padding:11px; border:none; border-radius:9999px;
+      font-size:13px; font-weight:800; font-family:inherit; cursor:pointer; transition:background .15s;
+    }
+    .cta-btn-primary { background:var(--primary); color:var(--white); }
+    .cta-btn-primary:hover { background:var(--primary-dark); }
+    .cta-btn-secondary { background:var(--white); color:var(--primary); border:1.5px solid var(--primary); }
+    .cta-btn-secondary:hover { background:var(--primary-light); }
+
+    /* Lock */
+    .res-locked { background:var(--white); border:1.5px dashed var(--n300); border-radius:14px; padding:20px; display:flex; align-items:center; gap:12px; }
+    .res-locked-icon { font-size:20px; flex-shrink:0; }
+    .res-locked-txt { font-size:12px; color:var(--n400); line-height:1.6; }
+    .res-locked-txt strong { color:var(--n700); display:block; margin-bottom:2px; }
+
+    @media (max-width:740px) {
+      .ff-card { grid-template-columns:1fr; }
+      .ff-comp-header { padding:20px; }
+      .ff-right { padding:24px 20px; }
+      .ff-sec-body { padding:0 16px 20px; }
+      .ff-sec-hdr { padding:14px 16px; }
+      .tier-grid { grid-template-columns:1fr 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+<div class="ff-card">
+
+  <div class="ff-comp-header">
+    <div>
+      <div class="ff-eyebrow">Utilities Flow</div>
+      <div class="ff-title">Chi phí du lịch</div>
+      <div class="ff-sub">3 bước · nội địa & quốc tế · breakdown đầy đủ</div>
+    </div>
+  </div>
+
+  <div class="ff-left">
+
+    <!-- Step 1: Chuyến đi -->
+    <div class="ff-section active" id="sec0">
+      <div class="ff-sec-hdr" onclick="toggleSec(0)">
+        <div class="ff-sec-num" id="sn0">1</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title" id="st0">Chuyến đi</div>
+          <div class="ff-sec-summary" id="ss0"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,0)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+
+        <div class="field">
+          <div class="field-lbl">Loại chuyến</div>
+          <div class="type-toggle">
+            <button class="type-card on" id="typeNoi" onclick="setType('domestic',this)">
+              <span class="type-card-emoji">🇻🇳</span>
+              <div class="type-card-name">Nội địa</div>
+              <div class="type-card-sub">Trong nước · không visa</div>
+            </button>
+            <button class="type-card" id="typeNgoai" onclick="setType('intl',this)">
+              <span class="type-card-emoji">✈️</span>
+              <div class="type-card-name">Quốc tế</div>
+              <div class="type-card-sub">Nước ngoài · có thể cần visa</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Điểm đến</div>
+          <div class="dest-chips" id="destChips"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Số người</div>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="stepPeople(-1)" id="btnPeopleDown">−</button>
+            <div class="stepper-val" id="peopleVal">2</div>
+            <button class="stepper-btn" onclick="stepPeople(1)" id="btnPeopleUp">+</button>
+            <div class="stepper-unit">người</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Số ngày</div>
+          <div class="pills" id="daysPills">
+            <button class="pill" onclick="setDays(3,this)">3 ngày</button>
+            <button class="pill on" onclick="setDays(5,this)">5 ngày</button>
+            <button class="pill" onclick="setDays(7,this)">1 tuần</button>
+            <button class="pill" onclick="setDays(10,this)">10 ngày</button>
+            <button class="pill" onclick="setDays(14,this)">2 tuần</button>
+          </div>
+        </div>
+
+        <button class="btn-confirm" onclick="confirmSec(0)">Tiếp theo →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Di chuyển & lưu trú -->
+    <div class="ff-section locked" id="sec1">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(1)">
+        <div class="ff-sec-num" id="sn1">2</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st1">Di chuyển & lưu trú</div>
+          <div class="ff-sec-summary" id="ss1"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,1)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+
+        <div class="field" id="visaField" style="display:none">
+          <div class="visa-note" id="visaNote">📋 <span id="visaText"></span></div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Vé máy bay (khứ hồi / người)</div>
+          <div class="tier-grid" id="flightTiers"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Lưu trú (mỗi đêm / phòng)</div>
+          <div class="tier-grid" id="hotelTiers"></div>
+        </div>
+
+        <button class="btn-confirm" onclick="confirmSec(1)">Tiếp theo →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Chi tiêu tại chỗ -->
+    <div class="ff-section locked" id="sec2">
+      <div class="ff-sec-hdr locked" onclick="toggleSec(2)">
+        <div class="ff-sec-num" id="sn2">3</div>
+        <div class="ff-sec-meta">
+          <div class="ff-sec-title locked" id="st2">Chi tiêu tại chỗ</div>
+          <div class="ff-sec-summary" id="ss2"></div>
+        </div>
+        <button class="ff-sec-edit" onclick="editSec(event,2)">Sửa</button>
+      </div>
+      <div class="ff-sec-body">
+
+        <div class="field">
+          <div class="field-lbl">Ăn uống</div>
+          <div class="tier-grid" id="foodTiers"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Đi lại địa phương</div>
+          <div class="pills" id="localTransPills"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Tham quan & vui chơi</div>
+          <div class="activity-chips" id="activityChips"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-lbl">Mua sắm & quà tặng</div>
+          <div class="pills" id="shopPills">
+            <button class="pill on" onclick="setShop(0,this)">Không mua</button>
+            <button class="pill" onclick="setShop(500,this)">Nhẹ ~500K</button>
+            <button class="pill" onclick="setShop(1500,this)">Bình thường ~1.5tr</button>
+            <button class="pill" onclick="setShop(4000,this)">Shopping ~4tr</button>
+          </div>
+        </div>
+
+        <button class="btn-confirm" onclick="confirmSec(2)">Xem tổng chi phí →</button>
+      </div>
+    </div>
+
+  </div><!-- /ff-left -->
+
+  <!-- RIGHT -->
+  <div class="ff-right" id="ffRight">
+
+    <div id="heroWrap">
+      <div class="res-hero-lbl" id="heroLbl">TỔNG CHI PHÍ DỰ KIẾN</div>
+      <div class="res-hero-val" id="heroVal">—</div>
+      <div class="res-hero-sub" id="heroSub">Chọn điểm đến để bắt đầu ước tính</div>
+      <div id="heroBadge"></div>
+    </div>
+
+    <div class="res-locked" id="lockPlaceholder">
+      <div class="res-locked-icon">✈️</div>
+      <div class="res-locked-txt">
+        <strong>Breakdown chi phí chuyến đi</strong>
+        Hoàn thành 3 bước để xem chi tiết vé máy bay, khách sạn, ăn uống và tổng ngân sách.
+      </div>
+    </div>
+
+    <div class="breakdown-wrap" id="breakdownWrap"></div>
+    <div class="perperson-wrap" id="perpersonWrap"></div>
+    <div class="res-cta" id="resCta"></div>
+
+  </div>
+
+</div>
+</div>
+
+<script>
+// ─── DESTINATION DATA ──────────────────────────────
+const DESTINATIONS = {
+  domestic: [
+    { id:'danang',   name:'Đà Nẵng',    flag:'🏖️', visa:null,  flight:[600,900,1400],   hotel:[350,700,1800], food:[150,250,450], trans:[80,150,200] },
+    { id:'phuquoc',  name:'Phú Quốc',   flag:'🌴', visa:null,  flight:[800,1200,2000],  hotel:[500,900,2500], food:[150,300,600], trans:[80,150,220] },
+    { id:'hoian',    name:'Hội An',      flag:'🏮', visa:null,  flight:[600,900,1400],   hotel:[300,600,1500], food:[100,200,400], trans:[60,120,180] },
+    { id:'hanoi',    name:'Hà Nội',      flag:'🏙️', visa:null,  flight:[400,700,1200],   hotel:[300,600,1500], food:[80,180,350],  trans:[60,100,150] },
+    { id:'sapa',     name:'Sapa',        flag:'🏔️', visa:null,  flight:[700,1000,1600],  hotel:[250,500,1200], food:[100,180,350], trans:[100,180,250] },
+    { id:'nhatrang', name:'Nha Trang',   flag:'🐚', visa:null,  flight:[600,900,1400],   hotel:[350,700,1800], food:[120,220,420], trans:[80,140,200] },
+    { id:'dalat',    name:'Đà Lạt',      flag:'🌺', visa:null,  flight:[600,850,1400],   hotel:[250,500,1300], food:[100,200,380], trans:[80,150,200] },
+    { id:'halong',   name:'Hạ Long',     flag:'⛵', visa:null,  flight:[400,700,1200],   hotel:[350,700,1800], food:[120,220,420], trans:[80,150,200] },
+  ],
+  intl: [
+    { id:'thailand',    name:'Thái Lan',    flag:'🇹🇭', visa:{type:'miễn visa',fee:0},          flight:[2500,4000,8000],   hotel:[600,1200,3500], food:[200,400,900],  trans:[100,200,350] },
+    { id:'singapore',   name:'Singapore',   flag:'🇸🇬', visa:{type:'miễn visa',fee:0},          flight:[3000,5000,10000],  hotel:[1200,2200,5000], food:[400,700,1500], trans:[150,250,400] },
+    { id:'japan',       name:'Nhật Bản',    flag:'🇯🇵', visa:{type:'visa bắt buộc',fee:90},     flight:[6000,10000,20000], hotel:[800,1600,4000],  food:[350,600,1500], trans:[200,400,600] },
+    { id:'korea',       name:'Hàn Quốc',    flag:'🇰🇷', visa:{type:'miễn visa',fee:0},          flight:[5000,8000,16000],  hotel:[700,1400,3500],  food:[300,550,1200], trans:[150,300,450] },
+    { id:'bali',        name:'Bali',         flag:'🇮🇩', visa:{type:'visa on arrival $10',fee:240}, flight:[3000,5000,9000], hotel:[500,1000,3000],  food:[200,400,900],  trans:[100,200,350] },
+    { id:'malaysia',    name:'Malaysia',     flag:'🇲🇾', visa:{type:'miễn visa',fee:0},          flight:[2500,4000,8000],   hotel:[500,1000,2800],  food:[200,380,800],  trans:[100,200,350] },
+    { id:'europe',      name:'Châu Âu',      flag:'🇪🇺', visa:{type:'Schengen visa',fee:1800},   flight:[15000,25000,45000],hotel:[1500,2800,6000],  food:[700,1200,2500], trans:[400,700,1200] },
+    { id:'usa',         name:'Mỹ',           flag:'🇺🇸', visa:{type:'visa bắt buộc',fee:3500},   flight:[18000,30000,55000],hotel:[1500,2800,6000],  food:[700,1200,2500], trans:[400,700,1200] },
+  ],
+};
+
+const FLIGHT_LABELS  = ['Budget / Vietjet', 'Phổ thông / VNA', 'Cao cấp / Business'];
+const HOTEL_LABELS   = ['Hostel / 2★', 'Khách sạn 3★', 'Resort / 5★'];
+const FOOD_LABELS    = ['Vỉa hè / local', 'Nhà hàng bình dân', 'Fine dining'];
+const TRANS_LABELS   = ['Xe ôm / GrabBike', 'GrabCar / taxi', 'Thuê xe máy', 'Tour trọn gói'];
+const TRANS_COSTS_D  = [50, 120, 100, 200];  // domestic per person per day (K VND)
+const TRANS_COSTS_I  = [80, 200, 150, 350];  // intl per person per day (K VND, in thousands)
+
+const ACTIVITIES_D = [
+  { id:'beach',   label:'Biển / hồ bơi', cost:100 },
+  { id:'tour',    label:'City tour',      cost:250 },
+  { id:'food',    label:'Food tour',      cost:200 },
+  { id:'cable',   label:'Cáp treo',       cost:350 },
+  { id:'show',    label:'Show / event',   cost:300 },
+  { id:'museum',  label:'Bảo tàng',       cost:80  },
+  { id:'spa',     label:'Spa / massage',  cost:300 },
+  { id:'night',   label:'Bar / nightlife',cost:400 },
+];
+const ACTIVITIES_I = [
+  { id:'theme',   label:'Công viên giải trí', cost:800 },
+  { id:'tour',    label:'Tour ngày',           cost:600 },
+  { id:'food',    label:'Food tour',           cost:400 },
+  { id:'temple',  label:'Đền / di tích',       cost:150 },
+  { id:'show',    label:'Show / concert',      cost:700 },
+  { id:'museum',  label:'Bảo tàng',            cost:300 },
+  { id:'spa',     label:'Spa cao cấp',         cost:600 },
+  { id:'cruise',  label:'Cruise / boat',       cost:900 },
+];
+
+// ─── STATE ──────────────────────────────────────────
+const S = {
+  type: 'domestic',
+  destId: null,
+  people: 2,
+  days: 5,
+  flightTier: 1,    // 0/1/2
+  hotelTier: 1,
+  foodTier: 1,
+  transTier: 1,
+  activities: new Set(),
+  shopBudget: 0,    // K VND per person total
+  confirmed: 0,
+};
+
+// ─── FORMAT ─────────────────────────────────────────
+function fmt(kVND) {
+  const v = kVND * 1000;
+  if (v >= 1e9) return (v/1e9).toFixed(1).replace('.0','') + ' tỷ';
+  if (v >= 1e6) return (Math.round(v/1e4)/100).toFixed(1).replace('.0','') + ' triệu';
+  return (kVND).toLocaleString('vi-VN') + 'K';
+}
+function fmtShort(kVND) {
+  if (kVND >= 1000000) return (kVND/1000000).toFixed(1).replace('.0','') + 'tỷ';
+  if (kVND >= 1000) return (kVND/1000).toFixed(1).replace('.0','') + 'tr';
+  return kVND + 'K';
+}
+
+// ─── CURRENT DESTINATION ────────────────────────────
+function dest() {
+  const list = DESTINATIONS[S.type];
+  return list.find(d => d.id === S.destId) || null;
+}
+
+// ─── COST CALC ──────────────────────────────────────
+function calcCosts() {
+  const d = dest();
+  if (!d) return null;
+  const nights = S.days - 1;
+  const rooms = Math.ceil(S.people / 2);
+
+  const flight  = d.flight[S.flightTier] * S.people;          // K VND total
+  const hotel   = d.hotel[S.hotelTier] * nights * rooms;       // K VND total
+  const food    = d.food[S.foodTier] * S.days * S.people;      // K VND total
+  const transCosts = S.type === 'domestic' ? TRANS_COSTS_D : TRANS_COSTS_I;
+  const trans   = transCosts[S.transTier] * S.days * S.people; // K VND total
+
+  let actCost = 0;
+  const acts = S.type === 'domestic' ? ACTIVITIES_D : ACTIVITIES_I;
+  S.activities.forEach(id => {
+    const a = acts.find(x => x.id === id);
+    if (a) actCost += a.cost * S.people;
+  });
+
+  const shop = S.shopBudget * S.people;
+  const visa = (d.visa && d.visa.fee > 0) ? d.visa.fee * S.people : 0;
+
+  const total = flight + hotel + food + trans + actCost + shop + visa;
+  return { flight, hotel, food, trans, actCost, shop, visa, total, nights, rooms };
+}
+
+// ─── RENDER RIGHT ────────────────────────────────────
+function renderRight() {
+  const c = calcCosts();
+  const conf = S.confirmed;
+
+  // Hero
+  if (c && conf >= 1) {
+    document.getElementById('heroLbl').textContent = 'TỔNG CHI PHÍ DỰ KIẾN';
+    document.getElementById('heroVal').innerHTML = fmt(c.total);
+    const d = dest();
+    document.getElementById('heroSub').textContent = `${d.flag} ${d.name} · ${S.days} ngày · ${S.people} người`;
+
+    let budgetClass, budgetLabel;
+    const perPerson = c.total / S.people;
+    if (perPerson < 3000)       { budgetClass='badge-budget'; budgetLabel='💚 Tiết kiệm'; }
+    else if (perPerson < 10000) { budgetClass='badge-mid';    budgetLabel='🟡 Tầm trung'; }
+    else                        { budgetClass='badge-luxury'; budgetLabel='💎 Cao cấp'; }
+    document.getElementById('heroBadge').innerHTML =
+      `<span class="res-hero-badge ${budgetClass}">${budgetLabel}</span>`;
+  } else {
+    document.getElementById('heroVal').innerHTML = '—';
+    document.getElementById('heroSub').textContent = 'Chọn điểm đến để bắt đầu ước tính';
+    document.getElementById('heroBadge').innerHTML = '';
+  }
+
+  // Lock
+  document.getElementById('lockPlaceholder').style.display = conf >= 3 ? 'none' : 'flex';
+
+  // Breakdown
+  const bw = document.getElementById('breakdownWrap');
+  if (conf >= 3 && c) {
+    bw.classList.add('show');
+    const d = dest();
+    const rows = [
+      { label:'✈️ Vé máy bay',   val:c.flight,  color:'#EB2F96' },
+      { label:'🏨 Lưu trú',      val:c.hotel,   color:'#1d4ed8' },
+      { label:'🍜 Ăn uống',      val:c.food,    color:'#00B14F' },
+      { label:'🚗 Đi lại',       val:c.trans,   color:'#FF8C00' },
+      { label:'🎡 Tham quan',    val:c.actCost, color:'#7c3aed' },
+      { label:'🛍️ Mua sắm',     val:c.shop,    color:'#0891b2' },
+    ];
+    if (c.visa > 0) rows.push({ label:'📋 Visa', val:c.visa, color:'#dc2626' });
+    const maxVal = Math.max(...rows.map(r => r.val));
+    bw.innerHTML = rows
+      .filter(r => r.val > 0)
+      .map(r => `
+        <div class="breakdown-row">
+          <div class="bd-label">${r.label}</div>
+          <div class="bd-bar-wrap"><div class="bd-bar" style="width:${Math.round(r.val/maxVal*100)}%;background:${r.color}"></div></div>
+          <div class="bd-val">${fmtShort(r.val)}</div>
+        </div>
+      `).join('');
+  } else { bw.classList.remove('show'); }
+
+  // Per person
+  const pw = document.getElementById('perpersonWrap');
+  if (conf >= 3 && c) {
+    pw.classList.add('show');
+    const perDay = Math.round(c.total / S.days);
+    const perPerson = Math.round(c.total / S.people);
+    const savePerMonth = Math.round(c.total / 3); // need to save in 3 months
+    pw.innerHTML = `
+      <div class="pp-row"><span class="pp-lbl">Chi phí / người</span><span class="pp-val accent">${fmtShort(perPerson)}</span></div>
+      <div class="pp-row"><span class="pp-lbl">Chi phí / ngày (cả đoàn)</span><span class="pp-val">${fmtShort(perDay)}</span></div>
+      <div class="pp-row" style="margin-top:4px;padding-top:10px;border-top:1px solid var(--n100)">
+        <span class="pp-lbl">Để đi sau 3 tháng, cần tiết kiệm</span>
+        <span class="pp-val accent">${fmtShort(savePerMonth)}/tháng</span>
+      </div>
+    `;
+  } else { pw.classList.remove('show'); }
+
+  // CTA
+  const cta = document.getElementById('resCta');
+  if (conf >= 3 && c) {
+    cta.classList.add('show');
+    const d = dest();
+    const needEsim = S.type === 'intl';
+    cta.innerHTML = `
+      <div class="cta-msg">
+        <strong>Chuẩn bị cho chuyến đi ${d.name}</strong>
+        ${needEsim ? 'Mua eSIM du lịch trước khi đi — phủ sóng tại ' + d.name + ', kích hoạt ngay trên MoMo.' : 'Đặt vé, lưu trú và thanh toán mọi dịch vụ qua MoMo.'}
+      </div>
+      <div class="cta-btns">
+        ${needEsim ? `<button class="cta-btn cta-btn-primary" onclick="window.open('https://onelink.momo.vn/9FDkn9wV','_blank')">Mua eSIM du lịch →</button>` : ''}
+        <button class="cta-btn ${needEsim ? 'cta-btn-secondary' : 'cta-btn-primary'}" onclick="window.open('https://onelink.momo.vn/9FDkn9wV','_blank')">Thanh toán qua MoMo →</button>
+      </div>
+    `;
+  } else { cta.classList.remove('show'); }
+}
+
+// ─── STEP 1 RENDERERS ────────────────────────────────
+function renderDestChips() {
+  const list = DESTINATIONS[S.type];
+  document.getElementById('destChips').innerHTML = list.map(d => `
+    <button class="dest-chip${S.destId === d.id ? ' on' : ''}" onclick="setDest('${d.id}',this)">
+      ${d.flag} ${d.name}
+    </button>
+  `).join('');
+}
+
+// ─── STEP 2 RENDERERS ────────────────────────────────
+function renderStep2() {
+  const d = dest();
+  if (!d) return;
+
+  // Visa
+  const vf = document.getElementById('visaField');
+  if (d.visa) {
+    vf.style.display = 'block';
+    document.getElementById('visaText').textContent =
+      d.visa.fee > 0
+        ? `${d.visa.type} — ${fmtShort(d.visa.fee)}/người (đã tính vào tổng chi phí)`
+        : `${d.visa.type} cho hộ chiếu Việt Nam ✓`;
+  } else { vf.style.display = 'none'; }
+
+  // Flight tiers
+  document.getElementById('flightTiers').innerHTML = FLIGHT_LABELS.map((lbl, i) => `
+    <button class="tier-card${S.flightTier === i ? ' on' : ''}" onclick="setFlightTier(${i},this)">
+      <div class="tier-card-label">${['Budget','Phổ thông','Cao cấp'][i]}</div>
+      <div class="tier-card-name">${lbl.split(' / ')[1]}</div>
+      <div class="tier-card-price">~${fmtShort(d.flight[i])}/ng</div>
+    </button>
+  `).join('');
+
+  // Hotel tiers
+  const HOTEL_NAMES = ['Hostel', 'Khách sạn 3★', 'Resort 5★'];
+  document.getElementById('hotelTiers').innerHTML = HOTEL_NAMES.map((name, i) => `
+    <button class="tier-card${S.hotelTier === i ? ' on' : ''}" onclick="setHotelTier(${i},this)">
+      <div class="tier-card-label">${['Budget','Standard','Luxury'][i]}</div>
+      <div class="tier-card-name">${name}</div>
+      <div class="tier-card-price">~${fmtShort(d.hotel[i])}/đêm/phòng</div>
+    </button>
+  `).join('');
+}
+
+// ─── STEP 3 RENDERERS ────────────────────────────────
+function renderStep3() {
+  const d = dest();
+  if (!d) return;
+
+  // Food
+  document.getElementById('foodTiers').innerHTML = FOOD_LABELS.map((lbl, i) => `
+    <button class="tier-card${S.foodTier === i ? ' on' : ''}" onclick="setFoodTier(${i},this)">
+      <div class="tier-card-label">${['Bình dân','Tầm trung','Cao cấp'][i]}</div>
+      <div class="tier-card-name">${lbl.split(' / ')[1] || lbl}</div>
+      <div class="tier-card-price">~${fmtShort(d.food[i])}/ng/ngày</div>
+    </button>
+  `).join('');
+
+  // Local transport
+  const transLabels = S.type === 'domestic' ? TRANS_LABELS : ['Grab/taxi','MRT/subway','Thuê xe/scooter','Tour trọn gói'];
+  const transCosts  = S.type === 'domestic' ? TRANS_COSTS_D : TRANS_COSTS_I;
+  document.getElementById('localTransPills').innerHTML = transLabels.map((lbl, i) => `
+    <button class="pill${S.transTier === i ? ' on' : ''}" onclick="setTrans(${i},this)">
+      ${lbl} (~${fmtShort(transCosts[i])}K/ng/ngày)
+    </button>
+  `).join('');
+
+  // Activities
+  const acts = S.type === 'domestic' ? ACTIVITIES_D : ACTIVITIES_I;
+  document.getElementById('activityChips').innerHTML = acts.map(a => `
+    <button class="act-chip${S.activities.has(a.id) ? ' on' : ''}" onclick="toggleAct('${a.id}',this)">
+      ${a.label} <span style="opacity:.7;font-weight:600">~${fmtShort(a.cost)}K/ng</span>
+    </button>
+  `).join('');
+}
+
+// ─── HANDLERS ────────────────────────────────────────
+function setType(type, btn) {
+  S.type = type;
+  S.destId = null;
+  document.querySelectorAll('.type-card').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderDestChips();
+  renderRight();
+}
+
+function setDest(id, btn) {
+  S.destId = id;
+  document.querySelectorAll('.dest-chip').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+
+function stepPeople(delta) {
+  S.people = Math.max(1, Math.min(8, S.people + delta));
+  document.getElementById('peopleVal').textContent = S.people;
+  document.getElementById('btnPeopleDown').disabled = S.people <= 1;
+  document.getElementById('btnPeopleUp').disabled = S.people >= 8;
+  renderRight();
+}
+
+function setDays(d, btn) {
+  S.days = d;
+  document.querySelectorAll('#daysPills .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+
+function setFlightTier(i, btn) {
+  S.flightTier = i;
+  document.querySelectorAll('#flightTiers .tier-card').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function setHotelTier(i, btn) {
+  S.hotelTier = i;
+  document.querySelectorAll('#hotelTiers .tier-card').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function setFoodTier(i, btn) {
+  S.foodTier = i;
+  document.querySelectorAll('#foodTiers .tier-card').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function setTrans(i, btn) {
+  S.transTier = i;
+  document.querySelectorAll('#localTransPills .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+function toggleAct(id, btn) {
+  if (S.activities.has(id)) S.activities.delete(id);
+  else S.activities.add(id);
+  btn.classList.toggle('on', S.activities.has(id));
+  renderRight();
+}
+function setShop(v, btn) {
+  S.shopBudget = v;
+  document.querySelectorAll('#shopPills .pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRight();
+}
+
+// ─── SECTION CONTROL ────────────────────────────────
+function setSectionState(i, state) {
+  const sec = document.getElementById('sec'+i);
+  const hdr = sec.querySelector('.ff-sec-hdr');
+  const ttl = document.getElementById('st'+i);
+  sec.className = 'ff-section ' + state;
+  hdr.className = 'ff-sec-hdr' + (state === 'locked' ? ' locked' : '');
+  if (ttl) ttl.className = 'ff-sec-title' + (state === 'locked' ? ' locked' : '');
+}
+function toggleSec(i) {
+  if (document.getElementById('sec'+i).classList.contains('locked')) return;
+}
+function editSec(e, i) {
+  e.stopPropagation();
+  setSectionState(i, 'active');
+  for (let j = i+1; j <= 2; j++) setSectionState(j, 'locked');
+  S.confirmed = i;
+  renderRight();
+}
+
+function confirmSec(i) {
+  if (i === 0 && !S.destId) {
+    document.getElementById('destChips').style.outline = '2px solid #EB2F96';
+    setTimeout(() => document.getElementById('destChips').style.outline = '', 1500);
+    return;
+  }
+
+  const d = dest();
+  const summaries = [
+    `${d.flag} ${d.name} · ${S.days} ngày · ${S.people} người`,
+    `${FLIGHT_LABELS[S.flightTier].split(' / ')[0]} · ${HOTEL_LABELS[S.hotelTier].split(' / ')[0]}`,
+    `Ăn: ${['bình dân','tầm trung','cao cấp'][S.foodTier]} · ${S.activities.size} hoạt động`,
+  ];
+  document.getElementById('ss'+i).textContent = summaries[i];
+  setSectionState(i, 'done');
+  S.confirmed = Math.max(S.confirmed, i + 1);
+
+  if (i < 2) {
+    setSectionState(i + 1, 'active');
+    if (i === 0) renderStep2();
+    if (i === 1) renderStep3();
+  }
+  renderRight();
+}
+
+// ─── INIT ────────────────────────────────────────────
+renderDestChips();
+renderRight();
+</script>
+<script src="/assets/proto-nav.js"></script>
+</body>
+</html>
