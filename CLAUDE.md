@@ -189,6 +189,7 @@ Mọi demo HTML đều theo cấu trúc:
 | Vercel 404 khi navigate giữa demo | Dùng relative URL | Đổi sang absolute `/path` |
 | Dev server 404 | Server đang chạy từ worktree CWD | Kill & restart với `preview_start` |
 | `updateMerchant()` không re-render đầy đủ | Nó chỉ gọi `renderInfoCard()`, không gọi `render()` | Dùng inline DOM update `document.getElementById(id).innerHTML = ...` |
+| Sửa CSS class trong `store.css` không thấy đổi gì trên preview | `store.css` (2000+ dòng) có class chết (`.hl-card`, `.hl-owner-section`, `.mh-cap-card`, `.mh-hero` và hàm `buildMoSparkHomeIntro()` trong `store.js`) từ thế hệ code cũ, không còn được render. Class thật đang chạy cho lưới card trang chủ lab.html là `.proto-card` / `.lab-card-grid` / `.lab-section` | Trước khi sửa, verify bằng `document.querySelector('.class-name')` trong preview để chắc class đó thực sự có trong DOM, đừng tin tên class "nghe có vẻ đúng" |
 
 ---
 

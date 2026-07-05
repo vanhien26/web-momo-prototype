@@ -250,3 +250,106 @@ Mở rộng Utilities Flow hub với 2 flow tài chính/thanh toán: kế hoạc
 
 ### Lessons
 - CSS flow wizard đã copy lần thứ 4 (financial-flow → xe-may → xe-oto → 2 flow mới). Đến lúc cân nhắc tách `assets/flow-wizard.css` chung nếu build thêm flow
+
+---
+
+## Lab.html Card/Elevation + Hero Redesign (Astryx-inspired) — 2026-07-05
+
+**File:** `assets/store.css`, `lab.html` (version bump)
+
+### Brief
+User muốn "improve UI" của lab.html bằng cách mượn design pattern/token từ Astryx (Meta's open source design system: React+StyleX) nhưng viết lại thuần vanilla CSS - không cài React/npm, giữ nguyên kiến trúc zero-build của repo. Scope: card & elevation system + redesign hero từ neon black-pink sang flat/neutral.
+
+### Decisions made
+- Lấy token thực từ Astryx source code (không đoán): radius scale base×1/2/3/7 (inner=4/element=8/container=12/page=28), shadow 2-lớp mềm (low/med/high) thay vì shadow 3-lớp có viền cứng hiện tại
+- Token mới (`--lab-shadow-*`, `--radius-element/container/page`) scope trong `.lab-page` only, không đụng global `--shadow-small/medium/large` vì các demo khác đang dùng chung
+- Hero: bỏ nền đen + glow neon text-shadow, chuyển sang nền trắng flat + 1 blob radial pink rất nhạt (6% opacity) làm cue thương hiệu duy nhất, giữ đúng nguyên tắc "spend boldness ở 1 chỗ"
+- Card hover: đổi từ "luôn hover ra viền pink" (xung đột màu khi card nằm trong section nền xanh/tím) sang viền neutral grey-300, giữ màu category chỉ ở badge
+
+### Issues gặp phải
+- **CSS chết (dead code) trong store.css**: `.hl-card`, `.hl-owner-section`, `.mh-cap-card`/`.mh-hero` tồn tại trong CSS và có vẻ là card component chính (tên gọi khớp semantic), nhưng khi verify bằng `document.querySelector` thì `.hl-card` và `.hl-owner-section` **không hề được render** — không có chỗ nào trong `store.js` tạo ra các class này. `.mh-cap-card` có được render bởi hàm `buildMoSparkHomeIntro()` trong store.js nhưng **hàm này cũng không được gọi ở đâu cả** → toàn bộ nhánh code đó chết.
+- Class thật sự đang chạy cho lưới card ở trang "All Prototypes" là `.proto-card` / `.lab-card-grid` / `.lab-section` (định nghĩa ở cuối file, sau dòng 1600). Sửa nhầm `.hl-card` trước, không thấy đổi gì trên preview → mới phát hiện ra bằng DOM query.
+
+### Lessons
+- **Trước khi sửa CSS cho 1 trang cụ thể trong `store.css` (file rất dài, 2000+ dòng, nhiều thế hệ code chồng lấn), luôn verify bằng `document.querySelector('.class-name')` trong preview trước khi tin vào tên class "nhìn có vẻ đúng".** File này có ít nhất 2 lớp CSS cũ (`hl-*`, `mh-*`) không còn được `store.js` sử dụng nhưng chưa bị xóa - dễ đánh lừa khi chỉ đọc CSS mà không đối chiếu DOM thực tế.
+- Nên cân nhắc dọn dẹp `.hl-card`, `.hl-owner-section`, `buildMoSparkHomeIntro()` và class liên quan trong lần sau nếu xác nhận chắc chắn không còn dùng, tránh nhầm lẫn tiếp.
+
+**Update 2026-07-05 (cùng ngày):** Đã dọn dẹp theo đúng lesson trên, ngay trong session kế tiếp.
+- Audit toàn bộ `.hl-*`, `.mh-*`, `.home-*`, `.mw-*` bằng subagent (grep literal từng class trong `store.js`/`lab.html`, không đoán)
+- Xóa: toàn bộ `.hl-*` (trừ `.hl-total-count` - vẫn live), toàn bộ `.mh-*`, toàn bộ `.home-*`, 2 modifier mồ côi `.mw-chip-note`/`.mw-empty` — gồm cả phần rải rác trong media query và block "HYBRID theme override" ở cuối file
+- Xóa JS: hàm `buildMoSparkHomeIntro()`, data array `MOSPARK_HOME_CAPABILITIES`, `MOSPARK_PRODUCTION_STEPS`, const `MOSPARK_LOGO_URL` (chỉ dùng trong hàm vừa xóa)
+- **Không đụng** `MOSPARK_SOURCE_URL`, `MOSPARK_PAIN_POINTS`, `MOSPARK_STACK`, `MOSPARK_GROWTH_STEPS` dù cũng có vẻ không được gọi — đây là data cluster khác, cần audit riêng để confirm chắc chắn trước khi xóa, tránh phá vỡ `GROUP_SUMMARY.MoSpark` nếu nó đang dùng
+- Kết quả: `store.css` 1908 → 1226 dòng, `store.js` 1927 → 1806 dòng. Verify: syntax check `node --check`, brace-balance check CSS, screenshot + console log trên preview, click qua Mini Web Overview để confirm `.mw-*` (live) không bị ảnh hưởng
+
+---
+
+## Roadmap 2026 (Phase 1 · H1/2026) — 2026-07-05
+
+**File:** `assets/store.js` (data `ROADMAP_PHASES` + hàm `buildRoadmapSection()`), `assets/store.css` (`.rm-*`), `lab.html` (version bump v22/v69)
+
+### Brief
+Thêm section Roadmap 2026 lên đầu `lab.html`, trước cả hero "Prototype Lab.". Nội dung Phase 1 (H1/2026 - Foundation & Core Builders) do user cung cấp trực tiếp: 10 module đã hoàn thành (GenAI Content Engine, PLG Project Management, Merchant Page O2O Database, Microsite Builder, SEO Inventory Foundation, Blog Editor, Landing Page Builder, Chatbot & KB, Ads Manager, Utilities Tool).
+
+### Decisions made
+- Data-driven: `ROADMAP_PHASES` là array, mỗi phase 1 object — thêm Phase 2 (H2/2026) sau này chỉ cần push thêm object, không phải sửa hàm render
+- Format: timeline ngang (dot done/future) + grid 10 module-card, click-to-expand tại chỗ (không dùng modal) để giữ layout đơn giản và không cần thêm state phức tạp
+- Preview text rút gọn còn 1 câu cho mỗi module, giữ nguyên full text gốc của user khi expand — tránh wall-of-text khi chưa click
+- Status "Đã hoàn thành" hiển thị dạng text + dot màu (giống pattern `.sidebar-footer-block` có sẵn), không dùng pill/badge nổi bật kiểu SaaS announcement (theo memory đã lưu trước đó)
+- CSS dùng lại token `--lab-shadow-low`, `--radius-container` đã có sẵn trong `.lab-page` (từ lần cleanup trước), không tạo token mới trùng lặp
+
+### Issues gặp phải
+- Không có issue. Chèn thẳng `buildRoadmapSection()` vào đầu return string của `buildLabDirectory()`, wiring click-to-expand thêm vào `wireHome()` theo đúng pattern các handler khác (querySelectorAll + addEventListener, không dùng inline onclick)
+
+### Lessons
+- Pattern "card click-to-expand tại chỗ" (toggle class `.expanded`, ẩn/hiện `.rm-module-preview`/`.rm-module-full`) dùng lại được cho các danh sách nội dung dài khác trong tương lai (VD: khi thêm Phase 2, hoặc các list mô tả tính năng dài tương tự) thay vì luôn phải mở modal/drawer
+
+**Update 2026-07-05 (cùng ngày):** User feedback ngay sau khi thấy bản đầu: bỏ code M1/M2/M5 (jargon nội bộ không cần thiết cho roadmap), và "UI không tạo cảm giác đây là Roadmap".
+- **Root cause của feedback thứ 2**: bản đầu chỉ có 1 mini horizontal timeline (2 chấm decoration) tách rời hoàn toàn khỏi phase content/module grid bên dưới — không có liên kết thị giác giữa "timeline" và "nội dung", nên không đọc được như 1 roadmap thật.
+- **Fix**: đổi sang vertical timeline pattern kinh điển — spine dọc bên trái chạy xuyên suốt, node tròn (đặc = done, rỗng = future) nằm trên spine, nội dung phase nằm bên phải node cùng hàng. Phase 2/H2 chưa có nội dung vẫn render như 1 "trạm" trên spine với placeholder text, giữ cảm giác hành trình liên tục thay vì cắt cụt sau Phase 1.
+- **Lesson cho lần sau**: khi user brief "vẽ roadmap", đừng mặc định hiểu là "thêm timeline decoration + card grid" — roadmap thật cần timeline LÀ cấu trúc tổ chức chính (spine xuyên suốt nối các mốc), không phải một dải trang trí tách biệt phía trên nội dung. Nên hỏi rõ hoặc mock trước 1 hướng "timeline-as-structure" thay vì "timeline-as-header" ngay từ Phase 2 (Plan) của build-prototype skill.
+- Xóa field `code` khỏi toàn bộ 10 module trong `ROADMAP_PHASES` data (không chỉ ẩn ở UI mà xóa hẳn khỏi data, tránh dead field).
+
+---
+
+## Product Roadmap tách file riêng + đăng ký vào Lab sidebar — 2026-07-05
+
+**File mới:** `demos/product-roadmap.html` | **ID:** `product-roadmap` | **Category:** MoSpark (cụm Modules, cạnh `mospark-activity-log`)
+
+### Brief
+User yêu cầu: tách Roadmap 2026 (đã build trực tiếp trong `lab.html` ở lần trước) ra file riêng, trả lab.html về nguyên trạng (không còn roadmap trong hero), thêm 1 button trên trang Index mở trang Product Roadmap. Sau đó user clarify thêm: cũng muốn Product Roadmap xuất hiện trong Lab sidebar (ban đầu tưởng user muốn loại hẳn khỏi Lab, hỏi lại `AskUserQuestion` mới rõ ý).
+
+### Decisions made
+- File chuẩn theo pattern repo: `demos/product-roadmap.html` self-contained, `<link>` tới `../assets/mobase-tokens.css` thay vì tự định nghĩa lại toàn bộ token (nhẹ hơn, nhất quán màu/spacing với các demo khác cũng dùng pattern này như `news.html`)
+- Giữ nguyên UI vertical timeline đã fix ở lần trước (spine dọc, node done/future), chỉ đổi elevation token cục bộ (`--rm-shadow-low`) vì `--lab-shadow-low` chỉ tồn tại scope trong `.lab-page` của `store.css`, không có ở đây
+- Đăng ký vào `PROTOTYPES` + `GROUP_ITEM_ORDER.MoSpark` + `MOSPARK_CLUSTER_ITEMS.Modules`, đặt cạnh `mospark-activity-log` vì cùng là nội dung "Ops/meta" về chính Web Platform (không phải prototype sản phẩm customer-facing)
+- Rewrite `/product-roadmap` → `/demos/product-roadmap.html` thêm vào `vercel.json`, cần restart devserver để load rewrite mới (theo lesson đã biết trong CLAUDE.md)
+- Button trên Index đặt ở nav bar cạnh "Enter Lab", style outline (secondary) để không cạnh tranh với CTA chính
+
+### Issues gặp phải
+- Logo `logo-mospark-dark.svg` thiết kế cho nền đen (phần "Mo" gần như vô hình trên nền trắng của topbar mới) — phải bọc lại trong pill nền đen `#050505` giống pattern `hl-mospark-logo`/`mh-brand-row` đã dùng ở nơi khác trong repo, không đặt logo dark trực tiếp lên nền sáng.
+- User feedback ban đầu ("bỏ Roadmap trong đây đi" kèm screenshot sidebar Lab) bị hiểu nhầm là "xóa khỏi Lab" trong khi thực ra Lab sidebar lúc đó không hề có entry Roadmap nào — hỏi lại mới rõ ý thật là "thêm vào Sidebar".
+
+### Lessons
+- Khi feedback của user kèm screenshot nhưng nội dung screenshot không khớp với state hiện tại của code (đã verify bằng grep + DOM query), đừng đoán ý — hỏi lại ngay bằng `AskUserQuestion` thay vì suy diễn theo hướng có vẻ hợp lý nhất. Lần này đoán sai hướng (remove) trong khi ý thật là ngược lại (add).
+
+---
+
+## Pin Product Roadmap 2026 lên đầu sidebar + home grid — 2026-07-05
+
+**File:** `assets/store.js` (field `pinned: true`, `renderNav()`, `buildLabDirectory()`)
+
+### Brief
+User muốn "Product Roadmap 2026" nằm trên cùng sidebar, trên cả group "Mini Web Overview" (group đầu tiên theo `GROUP_ORDER`).
+
+### Decisions made
+- Thêm field `pinned: true` vào entry `product-roadmap` trong `PROTOTYPES`, giữ nguyên `category: 'MoSpark'` (không đổi) để không ảnh hưởng breadcrumb "MoSpark Platform / Product Roadmap 2026" khi mở workspace và không đổi số đếm badge "MoSpark Platform 12"
+- Gỡ `product-roadmap` khỏi `GROUP_ITEM_ORDER.MoSpark` và `MOSPARK_CLUSTER_ITEMS.Modules` (không còn cần thứ tự trong group vì sẽ render pinned riêng)
+- `renderNav()`: thêm `pinnedItems = PROTOTYPES.filter(p => p.pinned)`, render thành 1 section riêng (`.proto-nav-pinned`) chèn trước toàn bộ `GROUP_ORDER.map(...)`, đồng thời filter `!p.pinned` khỏi vòng lặp group chính để tránh render trùng 2 lần
+- `buildLabDirectory()`: áp dụng pattern tương tự cho lưới card ở trang chủ Lab (section "Pinned" chèn trước các section theo `GROUP_ORDER`) - để nhất quán, tránh tình trạng item vừa pinned trên sidebar vừa nằm lẫn trong card grid MoSpark bên dưới
+- Index badge sidebar dùng ký tự `★` thay vì số thứ tự `01/02` (vì đây là item pinned đứng riêng, không thuộc thứ tự trong group nào)
+
+### Issues gặp phải
+- Không có issue. Filter `!p.pinned` đơn giản, tái dùng đúng `buildProtoCard()`/`.proto-nav-btn` hiện có nên click-through, active state, breadcrumb đều hoạt động ngay không cần sửa thêm.
+
+### Lessons
+- Pattern `pinned: true` + filter `!p.pinned` trong các vòng lặp group là cách nhẹ nhàng để "ghim" 1 prototype lên đầu mà không phải tạo category mới hay đổi `GROUP_ORDER` (tránh side-effect lan sang toàn bộ hệ thống category/màu sắc/filter chip). Dùng lại pattern này nếu sau cần pin thêm item khác.

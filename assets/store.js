@@ -574,6 +574,23 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/mospark-activity-log',
   },
   {
+    id: 'product-roadmap',
+    name: 'Product Roadmap 2026',
+    category: 'MoSpark',
+    pinned: true,
+    navTagline: 'Roadmap',
+    maturity: 'Static',
+    description: 'Roadmap các dự án Web Platform theo từng giai đoạn trong năm 2026 (H1, H2...), bắt đầu từ Phase 1 - Foundation & Core Builders đã hoàn thành trong H1/2026.',
+    jtbd: 'Nắm nhanh module nào đã hoàn thành trong từng giai đoạn để báo cáo stakeholder hoặc lên kế hoạch phase tiếp theo.',
+    northStar: 'Phase completion clarity',
+    loop: 'Xem timeline → Chọn phase → Xem module → Expand chi tiết',
+    hypothesis: 'Một timeline tập trung giúp team và stakeholder nắm tiến độ platform nhanh hơn so với đọc rời rạc từng báo cáo.',
+    value: 'Single source of truth cho roadmap Web Platform, dùng chung cho báo cáo nội bộ và cập nhật stakeholder.',
+    gate: 'Đo module expand rate và thời gian đọc hết 1 phase.',
+    src: 'demos/product-roadmap.html',
+    address: 'web-momo-prototype.vercel.app/product-roadmap',
+  },
+  {
     id: 'agentic-hub',
     name: 'Agentic Hub',
     category: 'MoSpark',
@@ -935,7 +952,6 @@ MINI_WEB_SEARCH_MARKETS.forEach(item => {
 const MINI_WEB_VOLUME_FORMATTER = new Intl.NumberFormat('en-US');
 
 const MOSPARK_SOURCE_URL = 'https://mospark-intro.vercel.app/';
-const MOSPARK_LOGO_URL = 'https://static.momocdn.net/app/img/web-platform/logo-mospark-dark.svg';
 
 const MOSPARK_PAIN_POINTS = [
   {
@@ -1088,10 +1104,27 @@ function renderNav() {
   const nav = document.getElementById('protoNav');
   if (!nav) return;
 
-  nav.innerHTML = GROUP_ORDER.map(groupName => {
+  const pinnedItems = PROTOTYPES.filter(p => p.pinned);
+  const pinnedHtml = pinnedItems.length ? `
+    <section class="proto-nav-section proto-nav-pinned" data-group="pinned">
+      ${pinnedItems.map(p => {
+        const isActive = activeProtoId === p.id && !activeToolId;
+        return `<div class="proto-nav-group">
+          <button class="proto-nav-btn${isActive ? ' active' : ''}" data-id="${p.id}">
+            <span class="nav-index">★</span>
+            <span class="proto-nav-label">
+              <strong>${p.name}</strong>
+              <small>${p.navTagline || displayGroupName(p.category)}</small>
+            </span>
+          </button>
+        </div>`;
+      }).join('')}
+    </section>` : '';
+
+  nav.innerHTML = pinnedHtml + GROUP_ORDER.map(groupName => {
     const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
     const groupItems = PROTOTYPES
-      .filter(p => p.category === groupName)
+      .filter(p => p.category === groupName && !p.pinned)
       .slice()
       .sort((a, b) => {
         const ia = desiredOrder.indexOf(a.id);
@@ -1202,126 +1235,6 @@ const GROUP_PRIMARY = {
   Other: 'worldcup',
 };
 
-const MOSPARK_HOME_CAPABILITIES = [
-  {
-    title: 'GenAI Image',
-    text: 'Sinh key visual theo Page Type và template contract, khóa logo, copy, pattern, safe zone và chỉ mở vùng ảnh cho AI.',
-    proto: 'genai-image',
-  },
-  {
-    title: 'Content Editor',
-    text: 'Child page back-end của Blog project: soạn thảo article, FAQ và product embed từ Content Plan đã duyệt rồi preview sang Blog Article front-end.',
-    proto: 'blog-category',
-    tool: 'blog-editor',
-  },
-  {
-    title: 'Ads & Widget',
-    text: 'Quản lý Native Widget, Balloon, Inline Banner và product component theo đúng ngữ cảnh trang.',
-    proto: 'ads-manager',
-  },
-  {
-    title: 'Landing Page Builder',
-    text: 'BU/PM mở Merchant record từ Content Plan, sync Merchant ID rồi hoàn thiện Logo, GenAI Content, Banner và Internal Links.',
-    proto: 'merchant-page-builder',
-  },
-  {
-    title: 'PLG Project',
-    text: 'Quản lý Use Case, Cluster, Keyword Registry, Business Context và performance trên Google Search lẫn AI Search.',
-    proto: 'seo-geo-project',
-  },
-  {
-    title: 'Chatbot',
-    text: 'Nhúng trợ lý theo project, trả lời từ RAG và chuyển Typebot cho flow có trạng thái.',
-    proto: 'chatbot',
-  },
-];
-
-const MOSPARK_PRODUCTION_STEPS = [
-  { icon: '💡', name: 'Ideation', oldTime: '1 week', oldText: 'Brief thủ công', newTime: '2 days', newText: 'AI concept từ market gap' },
-  { icon: '🔎', name: 'Research', oldTime: '2 weeks', oldText: 'Keyword rời rạc', newTime: '1 week', newText: 'Inventory và registry' },
-  { icon: '✍️', name: 'Production', oldTime: '7 weeks', oldText: 'Viết tay, sửa nhiều vòng', newTime: '2 weeks', newText: 'Outline, draft, FAQ, embed' },
-  { icon: '🛡️', name: 'Gate', oldTime: '1 week', oldText: 'Review không nhất quán', newTime: '2 days', newText: 'PLG score và PM approve' },
-  { icon: '🧩', name: 'Widget Sync', oldTime: '2 weeks', oldText: 'Nhờ Dev nhúng CTA', newTime: '3 days', newText: 'Component sẵn để embed' },
-  { icon: '📊', name: 'Measure', oldTime: '3 weeks', oldText: 'Pageview rời rạc', newTime: '1 week', newText: 'Web-to-App và transaction' },
-];
-
-function buildMoSparkHomeIntro() {
-  return `
-    <section class="mh-hero">
-      <div class="mh-copy">
-        <div class="mh-brand-row">
-          <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="mh-logo" decoding="async">
-          <span>Web Growth Platform</span>
-        </div>
-        <h1>Product Led Growth trên Web MoMo</h1>
-        <p>MoSpark giúp BU/PM tự tạo landing, sản xuất nội dung bằng GenAI, nhúng Widget, chạy Ads, bật Chatbot và đo full-funnel từ Web đến giao dịch trong App.</p>
-        <div class="mh-actions">
-          <button type="button" class="mh-primary" data-open-proto="blog-category" data-open-tool="blog">Mở demo Phạt Nguội</button>
-          <button type="button" class="mh-secondary" data-open-proto="seo-geo-project">Xem PLG Project</button>
-        </div>
-      </div>
-      <div class="mh-stack">
-        <div><strong>6</strong><span>capabilities</span></div>
-        <div><strong>&lt;1 ngày</strong><span>landing page self-serve</span></div>
-        <div><strong>0 ticket</strong><span>cho thay đổi content thường ngày</span></div>
-      </div>
-    </section>
-
-    <section class="mh-section">
-      <div class="mh-section-head">
-        <span>Capabilities</span>
-        <h2>MoSpark build bằng Widget và Component</h2>
-        <p>Homepage vẫn là nơi navigate prototype, nhưng cần cho Dev/PO hiểu platform đang gom những module nào.</p>
-      </div>
-      <div class="mh-cap-grid">
-        ${MOSPARK_HOME_CAPABILITIES.map(cap => `
-          <article class="mh-cap-card" data-open-proto="${cap.proto}"${cap.tool ? ` data-open-tool="${cap.tool}"` : ''}>
-            <h3>${cap.title}</h3>
-            <p>${cap.text}</p>
-            <button type="button">Open prototype ↗</button>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-
-    <section class="mh-section">
-      <div class="mh-section-head">
-        <span>GenAI Content Production · Phạt Nguội</span>
-        <h2>Trước và sau khi có MoSpark</h2>
-        <p>Minh họa workflow từ keyword “phạt nguội” đến bài viết có product embed, audio, feedback cuối bài và CTA Web-to-App.</p>
-      </div>
-      <div class="mh-timeline">
-        <div class="mh-timeline-head">
-          <b>Without MoSpark</b>
-          <strong>Total time: 16 weeks → 5 weeks · 69% faster</strong>
-        </div>
-        <div class="mh-lane mh-lane-old">
-          <div class="mh-lane-label">Cách cũ</div>
-          ${MOSPARK_PRODUCTION_STEPS.map(step => `
-            <div class="mh-step">
-              <i>${step.icon}</i>
-              <b>${step.name}</b>
-              <strong>${step.oldTime}</strong>
-              <span>${step.oldText}</span>
-            </div>
-          `).join('')}
-        </div>
-        <div class="mh-lane mh-lane-new">
-          <div class="mh-lane-label">Với MoSpark</div>
-          ${MOSPARK_PRODUCTION_STEPS.map(step => `
-            <div class="mh-step">
-              <i>${step.icon}</i>
-              <b>${step.name}</b>
-              <strong>${step.newTime}</strong>
-              <span>${step.newText}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </section>
-  `;
-}
-
 // ─── Lab Directory (home view) ────────────────────────────────────────────────
 
 function buildProtoCard(proto, chipCls) {
@@ -1368,10 +1281,20 @@ function buildLabSectionRows(groupName, groupItems) {
 }
 
 function buildLabDirectory() {
+  const pinnedItems = PROTOTYPES.filter(p => p.pinned);
+  const pinnedSection = pinnedItems.length ? `
+    <div class="lab-section lab-section-pinned" data-group="pinned">
+      <div class="lab-section-intro">
+        <p class="lab-section-eyebrow">Pinned <span class="lab-section-cnt">${pinnedItems.length}</span></p>
+        <h2 class="lab-section-title">Ghim đầu trang</h2>
+      </div>
+      <div class="lab-card-grid">${pinnedItems.map(p => buildProtoCard(p, 'pill-pink')).join('')}</div>
+    </div>` : '';
+
   const sections = GROUP_ORDER.map(groupName => {
     const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
     const groupItems = PROTOTYPES
-      .filter(p => p.category === groupName)
+      .filter(p => p.category === groupName && !p.pinned)
       .slice()
       .sort((a, b) => {
         const ia = desiredOrder.indexOf(a.id), ib = desiredOrder.indexOf(b.id);
@@ -1421,7 +1344,7 @@ function buildLabDirectory() {
         <div class="lab-chips" id="labFilterChips">${filterChips}</div>
       </div>
 
-      <div class="lab-body" id="labBody">${sections}</div>
+      <div class="lab-body" id="labBody">${pinnedSection}${sections}</div>
       <p class="lab-empty" id="labEmpty" style="display:none">Không tìm thấy prototype nào.</p>
       ${buildLabActivityDashboard()}
     </div>`;
