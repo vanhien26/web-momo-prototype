@@ -946,9 +946,8 @@ function renderCinemas(){
   const list=state.activeChain==='all'?CINEMAS:CINEMAS.filter(c=>c.chain===state.activeChain);
   document.getElementById('cinemaGroups').innerHTML=list.map(c=>{
     const open=state.openCinemas[c.id];
-    const filmStrip=`<div class="cg-film-strip"><div class="cg-film-poster"><img src="${CURRENT_FILM.img}" alt="${CURRENT_FILM.title}"></div><div class="cg-film-info"><div class="cg-film-title">${CURRENT_FILM.title}</div><div class="cg-film-sub">${CURRENT_FILM.age} · ${CURRENT_FILM.dur}</div></div></div>`;
     const fmtHTML=c.formats.map(f=>`<div class="format-section"><div class="format-label"><span class="fmt-tag fmt-${f.tag}">${f.fmt}</span><span class="format-price">${f.price.toLocaleString('vi')}đ/ghế</span></div><div class="show-times-row">${f.times.map(t=>`<button class="show-time-btn${t.sold?' sold':t.few?' few':''}" onclick="${t.sold?`toast('Suất này đã hết vé')`:''}_pick('${c.id}','${c.name.replace(/'/g,"\\'")}','${t.t}','${f.fmt}')">${t.t}${t.few&&!t.sold?`<br><span style="font-size:9px;font-weight:600;color:var(--amber-500)">Còn ${t.avail}</span>`:''}</button>`).join('')}</div></div>`).join('');
-    return `<div class="cinema-group"><div class="cg-header${open?' open':''}" onclick="toggleCinema('${c.id}')">${cinemaLogoHtml(c.chain,c.label)}<div class="cg-meta"><div class="cg-name">${c.name}</div><div class="cg-info">${c.addr} · Từ ${c.minPrice.toLocaleString('vi')}đ</div></div><div class="cg-dist">${c.dist}</div><div class="cg-chevron">▼</div></div>${open?`<div class="cg-body">${filmStrip}${fmtHTML}</div>`:''}</div>`;
+    return `<div class="cinema-group"><div class="cg-header${open?' open':''}" onclick="toggleCinema('${c.id}')">${cinemaLogoHtml(c.chain,c.label)}<div class="cg-meta"><div class="cg-name">${c.name}</div><div class="cg-info">${c.addr} · Từ ${c.minPrice.toLocaleString('vi')}đ</div></div><div class="cg-dist">${c.dist}</div><div class="cg-chevron">▼</div></div>${open?`<div class="cg-body">${fmtHTML}</div>`:''}</div>`;
   }).join('');
 }
 function toggleCinema(id){ state.openCinemas[id]=!state.openCinemas[id]; renderCinemas(); }
