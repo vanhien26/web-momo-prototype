@@ -762,6 +762,9 @@ function displayGroupName(groupName) {
 }
 
 const GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other'];
+const GROUP_DOT_COLORS = {
+  MiniWeb: '#60a5fa', MoSpark: '#f472b6', Widget: '#34d399', Platform: '#fb923c', Other: '#9ca3af',
+};
 const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
@@ -1228,93 +1231,113 @@ function buildMoSparkHomeIntro() {
   `;
 }
 
-function buildHomeCard(proto) {
+// ─── Lab Directory (home view) ────────────────────────────────────────────────
+
+function buildLabRow(proto, groupName) {
   const matCol = MAT_COLOR[proto.maturity] || { bg: '#f1f5f9', text: '#475569' };
-  return `<article class="hl-card" data-open-proto="${proto.id}">
-    <span class="hl-mat-badge" style="background:${matCol.bg};color:${matCol.text}">${proto.maturity}</span>
-    <h3 class="hl-card-name">${proto.name}</h3>
-    <button class="hl-open-btn" type="button">${proto.utilitiesPage ? `Xem ${proto.tools.length} utilities ↓` : 'Preview ↗'}</button>
-  </article>`;
-}
+  const children = proto.tools || [];
 
-function buildHomeGroupCards(groupName, groupItems) {
-  if (groupName === 'MoSpark') {
-    return `<div class="hl-owner-layout hl-mospark-layout">${MOSPARK_CLUSTER_ORDER.map(cluster => {
-      const clusterItems = groupItems.filter(item => getMoSparkCluster(item.id) === cluster);
-      if (!clusterItems.length) return '';
-      return `<section class="hl-owner-section hl-mospark-cluster cluster-${cluster.toLowerCase()}">
-        <div class="hl-owner-heading"><span>${cluster}</span><strong>${clusterItems.length} ${cluster === 'GenAI' ? 'products' : 'modules'}</strong></div>
-        <div class="hl-cards">${clusterItems.map(buildHomeCard).join('')}</div>
-      </section>`;
-    }).join('')}</div>`;
+  let childrenHtml = '';
+  if (children.length) {
+    childrenHtml = `<div class="lab-children">
+      ${children.map(t => `<button class="lab-child-chip" data-open-proto="${proto.id}" data-open-tool="${t.id}">${t.name}</button>`).join('')}
+    </div>`;
   }
-  if (groupName !== 'Platform') {
-    return `<div class="hl-cards">${groupItems.map(buildHomeCard).join('')}</div>`;
-  }
-  return `<div class="hl-owner-layout">${PLG_OWNER_ORDER.map(owner => {
-    const ownerItems = groupItems.filter(item => item.ownerGroup === owner);
-    if (!ownerItems.length) return '';
-    return `<section class="hl-owner-section">
-      <div class="hl-owner-heading"><span>${owner}</span><strong>${ownerItems.length} projects</strong></div>
-      <div class="hl-cards">${ownerItems.map(buildHomeCard).join('')}</div>
-    </section>`;
-  }).join('')}</div>`;
-}
 
-function buildHomeHero() {
+  const searchText = [proto.name, ...children.map(t => t.name)].join(' ').toLowerCase();
+
   return `
-    <div class="hl-page-wrap">
-      <div class="hl-page-header">
-        <div class="hl-page-header-left">
-          <div class="hl-brand-line">
-            <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="hl-mospark-logo" decoding="async">
-            <span class="hl-page-kicker">Internal · Web Platform</span>
-          </div>
-          <h1 class="hl-page-title">Prototype Lab</h1>
-          <p class="hl-page-sub">${getTotalSurfaceCount()} surfaces · ${GROUP_ORDER.length} groups · MoMo Out-App &amp; Growth Platform</p>
+    <div class="lab-row" data-open-proto="${proto.id}" data-group="${groupName}" data-search="${searchText}">
+      <button class="lab-row-action" data-open-proto="${proto.id}" tabindex="-1">↗</button>
+      <div class="lab-row-body">
+        <span class="lab-row-name">${proto.name}</span>
+        ${childrenHtml}
+      </div>
+    </div>`;
+}
+
+function buildLabSectionRows(groupName, groupItems) {
+  const dot = GROUP_DOT_COLORS[groupName] || '#9ca3af';
+  // hex → rgba helper for tinted cluster head bg
+  const hexAlpha = (hex, a) => {
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+  };
+  const clusterStyle = `style="background:${hexAlpha(dot,.08)};color:${dot}"`;
+
+  if (groupName === 'MoSpark') {
+    return MOSPARK_CLUSTER_ORDER.map(cluster => {
+      const items = groupItems.filter(p => getMoSparkCluster(p.id) === cluster);
+      if (!items.length) return '';
+      return `<div class="lab-cluster-head" ${clusterStyle}>${cluster}</div>${items.map(p => buildLabRow(p, groupName)).join('')}`;
+    }).join('');
+  }
+  if (groupName === 'Platform') {
+    return PLG_OWNER_ORDER.map(owner => {
+      const items = groupItems.filter(p => p.ownerGroup === owner);
+      if (!items.length) return '';
+      return `<div class="lab-cluster-head" ${clusterStyle}>${owner}</div>${items.map(p => buildLabRow(p, groupName)).join('')}`;
+    }).join('');
+  }
+  return groupItems.map(p => buildLabRow(p, groupName)).join('');
+}
+
+function buildLabDirectory() {
+  const sections = GROUP_ORDER.map(groupName => {
+    const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
+    const groupItems = PROTOTYPES
+      .filter(p => p.category === groupName)
+      .slice()
+      .sort((a, b) => {
+        const ia = desiredOrder.indexOf(a.id), ib = desiredOrder.indexOf(b.id);
+        if (ia === -1 && ib === -1) return 0;
+        return ia === -1 ? 1 : ib === -1 ? -1 : ia - ib;
+      });
+    if (!groupItems.length) return '';
+    const count = getGroupCount(groupName);
+    const dot = GROUP_DOT_COLORS[groupName] || '#9ca3af';
+    const col = CAT_COLOR[groupName] || { bg: '#f1f5f9', text: '#475569' };
+    return `
+      <div class="lab-section" data-group="${groupName}" style="border-left-color:${dot}">
+        <div class="lab-section-head">
+          <span class="lab-section-dot" style="background:${dot}"></span>
+          <span class="lab-section-label" style="color:${col.text}">${displayGroupName(groupName)}</span>
+          <span class="lab-section-count">${count} ${groupName === 'MiniWeb' ? 'pages' : 'project' + (count !== 1 ? 's' : '')}</span>
         </div>
-        <div class="hl-page-header-stats">
-          ${GROUP_ORDER.map(g => {
-            const count = getGroupCount(g);
-            const col = CAT_COLOR[g] || { bg: '#f1f5f9', text: '#475569' };
-            return `<div class="hl-stat-chip" style="background:${col.bg};color:${col.text}">
-              <strong>${count}</strong>${displayGroupName(g)}
-            </div>`;
-          }).join('')}
+        <div class="lab-list">${buildLabSectionRows(groupName, groupItems)}</div>
+      </div>`;
+  }).join('');
+
+  const filterChips = [
+    `<button class="lab-chip active" data-filter="">All <b>${getTotalSurfaceCount()}</b></button>`,
+    ...GROUP_ORDER.map(g => {
+      const col = CAT_COLOR[g] || { bg: '#f1f5f9', text: '#475569' };
+      return `<button class="lab-chip" data-filter="${g}" style="--chip-bg:${col.bg};--chip-col:${col.text}">${displayGroupName(g)} <b>${getGroupCount(g)}</b></button>`;
+    }),
+  ].join('');
+
+  return `
+    <div class="lab-page">
+      <div class="lab-page-header">
+        <div class="lab-page-brand">
+          <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="hl-mospark-logo" decoding="async">
+          <span class="lab-page-kicker">Internal · Web Platform</span>
         </div>
+        <h1 class="lab-page-title">Prototype Lab</h1>
       </div>
 
-      ${GROUP_ORDER.map(groupName => {
-        const info = GROUP_SUMMARY[groupName];
-        const col = CAT_COLOR[groupName] || { bg: '#f1f5f9', text: '#475569' };
-        const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
-        const groupItems = PROTOTYPES
-          .filter(p => p.category === groupName)
-          .slice()
-          .sort((a, b) => {
-            const ia = desiredOrder.indexOf(a.id);
-            const ib = desiredOrder.indexOf(b.id);
-            if (ia === -1 && ib === -1) return 0;
-            if (ia === -1) return 1;
-            if (ib === -1) return -1;
-            return ia - ib;
-          });
-        const count = getGroupCount(groupName);
+      <div class="lab-toolbar">
+        <div class="lab-search-wrap">
+          <svg class="lab-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input class="lab-search-input" id="labSearchInput" type="search" placeholder="Tìm prototype, child page..." autocomplete="off" spellcheck="false">
+          <kbd class="lab-search-kbd">⌘K</kbd>
+        </div>
+        <div class="lab-chips" id="labFilterChips">${filterChips}</div>
+      </div>
 
-        return `
-          <section class="hl-section">
-            <div class="hl-sec-head">
-              <span class="hl-sec-badge" style="background:${col.bg};color:${col.text}">${displayGroupName(groupName)}</span>
-              <h2 class="hl-sec-title">${info.title}</h2>
-              <span class="hl-sec-count">${groupName === 'MiniWeb' ? `${count} MiniWeb` : `${count} project${count !== 1 ? 's' : ''}`}</span>
-              <p class="hl-sec-desc">${info.description}</p>
-            </div>
-            ${buildHomeGroupCards(groupName, groupItems)}
-          </section>
-        `;
-      }).join('')}
-    </div>
-  `;
+      <div class="lab-body" id="labBody">${sections}</div>
+      <p class="lab-empty" id="labEmpty" style="display:none">Không tìm thấy prototype nào.</p>
+    </div>`;
 }
 
 function buildHomeView() {
@@ -1330,9 +1353,7 @@ function buildHomeView() {
         <span class="hl-total-count">${getTotalSurfaceCount()} surfaces</span>
       </div>
     </div>
-
-    ${buildHomeHero()}
-  `;
+    ${buildLabDirectory()}`;
 }
 
 // ─── Selection ────────────────────────────────────────────────────────────────
@@ -1713,6 +1734,73 @@ function wireHome(ws) {
 
   const mt = ws.querySelector('#menuToggle');
   if (mt) mt.addEventListener('click', openSidebar);
+
+  // ── Search + filter ──────────────────────────────────────
+  const searchInput = ws.querySelector('#labSearchInput');
+  const filterChips = ws.querySelectorAll('.lab-chip');
+  const sections    = ws.querySelectorAll('.lab-section');
+  const empty       = ws.querySelector('#labEmpty');
+  if (!searchInput) return;
+
+  let activeFilter = '';
+
+  function applyLabFilter() {
+    const q = searchInput.value.trim().toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd');
+    let anyVisible = false;
+
+    sections.forEach(sec => {
+      const group = sec.dataset.group;
+      const matchGroup = !activeFilter || group === activeFilter;
+      if (!matchGroup) { sec.style.display = 'none'; return; }
+
+      const rows = sec.querySelectorAll('.lab-row');
+      let secVisible = false;
+      rows.forEach(row => {
+        const name = (row.dataset.search || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd');
+        const show = !q || name.includes(q);
+        row.style.display = show ? '' : 'none';
+        if (show) secVisible = true;
+      });
+
+      const clusterHeads = sec.querySelectorAll('.lab-cluster-head');
+      clusterHeads.forEach(ch => {
+        const next = ch.nextElementSibling;
+        let hasVisible = false;
+        let sib = next;
+        while (sib && !sib.classList.contains('lab-cluster-head')) {
+          if (sib.style.display !== 'none') hasVisible = true;
+          sib = sib.nextElementSibling;
+        }
+        ch.style.display = hasVisible ? '' : 'none';
+      });
+
+      sec.style.display = secVisible ? '' : 'none';
+      if (secVisible) anyVisible = true;
+    });
+
+    if (empty) empty.style.display = anyVisible ? 'none' : '';
+  }
+
+  searchInput.addEventListener('input', applyLabFilter);
+
+  filterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      filterChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilter = chip.dataset.filter;
+      applyLabFilter();
+    });
+  });
+
+  // ⌘K focus shortcut
+  document.addEventListener('keydown', function onKey(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+  });
 }
 
 // ─── Mobile sidebar ───────────────────────────────────────────────────────────
