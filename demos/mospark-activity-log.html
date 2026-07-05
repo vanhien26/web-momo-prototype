@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MoSpark Activity Log - MoMo Prototype</title>
+  <meta name="description" content="Dashboard audit trail cho MoSpark ghi lại create, update, remove trên Blog, PLG Project, News, Microsite và project của Cell Team.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --momo: #a50064;
+      --momo-strong: #7f004c;
+      --bg: #f5f2f7;
+      --panel: rgba(255,255,255,.9);
+      --panel-strong: #fff;
+      --ink: #172033;
+      --muted: #667085;
+      --line: rgba(23,32,51,.10);
+      --soft: #eef0f7;
+      --green: #027a48;
+      --green-bg: #e8f8ef;
+      --amber: #b54708;
+      --amber-bg: #fff3d7;
+      --red: #b42318;
+      --red-bg: #fee4e2;
+      --blue: #175cd3;
+      --blue-bg: #eaf1ff;
+      --violet: #6d28d9;
+      --violet-bg: #f4f0ff;
+      --shadow: 0 20px 60px rgba(20, 24, 40, .08);
+      --radius: 22px;
+      --radius-sm: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Be Vietnam Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(165,0,100,.10), transparent 24%),
+        radial-gradient(circle at 88% 8%, rgba(109,40,217,.10), transparent 18%),
+        radial-gradient(circle at 82% 82%, rgba(2,122,72,.08), transparent 20%),
+        linear-gradient(180deg, #faf8fc 0%, #f3eef7 100%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 72px minmax(0, 1fr);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 22px;
+      background: rgba(16, 18, 28, .84);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--momo) 0%, #df3b95 100%);
+      box-shadow: 0 14px 28px rgba(165,0,100,.28);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      line-height: 1;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -.01em;
+    }
+
+    .brand-text span {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      color: rgba(255,255,255,.58);
+    }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+      font-size: 11px;
+      color: rgba(255,255,255,.82);
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #31d0aa;
+      box-shadow: 0 0 0 5px rgba(49,208,170,.15);
+    }
+
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.82);
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+
+    .ghost-btn:hover {
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+    }
+
+    .ghost-btn:active {
+      transform: translateY(1px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .sidebar {
+      border-right: 1px solid rgba(23,32,51,.08);
+      background: rgba(255,255,255,.70);
+      backdrop-filter: blur(14px);
+      overflow: auto;
+      padding: 18px 0;
+    }
+
+    .sidebar-section {
+      padding: 0 18px;
+      margin-top: 16px;
+    }
+
+    .sidebar-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #8b8fa1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      color: #475467;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s ease, color .15s ease, transform .15s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(165,0,100,.06);
+      color: var(--ink);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(165,0,100,.12), rgba(223,59,149,.08));
+      color: var(--momo);
+      box-shadow: inset 0 0 0 1px rgba(165,0,100,.08);
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .sidebar-card {
+      margin: 18px;
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(165,0,100,.10), rgba(255,255,255,.92));
+      border: 1px solid rgba(165,0,100,.08);
+      box-shadow: 0 12px 30px rgba(165,0,100,.06);
+    }
+
+    .sidebar-card strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .content {
+      min-width: 0;
+      overflow: auto;
+      padding: 22px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .panel,
+    .metric {
+      background: var(--panel);
+      border: 1px solid rgba(23,32,51,.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-main {
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(165,0,100,.08);
+      color: var(--momo);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .hero-main h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -.04em;
+    }
+
+    .hero-main p {
+      margin: 0;
+      max-width: 62ch;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .hero-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(23,32,51,.08);
+      font-size: 11px;
+      font-weight: 700;
+      color: #344054;
+    }
+
+    .hero-side {
+      border-radius: var(--radius);
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .hero-side-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .hero-side-head strong {
+      font-size: 14px;
+    }
+
+    .hero-side-head span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(23,32,51,.06);
+    }
+
+    .list-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .list-row strong {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .list-row p {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      border-radius: 18px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .metric-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .metric-chip {
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+
+    .metric-chip.green { background: var(--green-bg); color: var(--green); }
+    .metric-chip.blue { background: var(--blue-bg); color: var(--blue); }
+    .metric-chip.amber { background: var(--amber-bg); color: var(--amber); }
+    .metric-chip.red { background: var(--red-bg); color: var(--red); }
+    .metric-chip.violet { background: var(--violet-bg); color: var(--violet); }
+
+    .metric-value {
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -.04em;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .metric-bar {
+      margin-top: 14px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(23,32,51,.06);
+      overflow: hidden;
+    }
+
+    .metric-bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--momo), #e04999);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      height: 48px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(23,32,51,.08);
+      box-shadow: 0 10px 24px rgba(20, 24, 40, .05);
+    }
+
+    .search-icon {
+      width: 18px;
+      height: 18px;
+      color: #98a2b3;
+      flex-shrink: 0;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .search-wrap input::placeholder {
+      color: #98a2b3;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(23,32,51,.08);
+      background: rgba(255,255,255,.85);
+      color: #344054;
+      cursor: pointer;
+      transition: transform .14s ease, background .14s ease, border-color .14s ease, color .14s ease;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip:hover { border-color: rgba(165,0,100,.18); color: var(--momo); }
+    .chip:active { transform: translateY(1px); }
+    .chip.active {
+      background: linear-gradient(135deg, rgba(165,0,100,.14), rgba(223,59,149,.10));
+      border-color: rgba(165,0,100,.18);
+      color: var(--momo);
+    }
+
+    .chip small {
+      font-size: 10px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      background: rgba(23,32,51,.06);
+      color: #475467;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(300px, .75fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(23,32,51,.08);
+      background: rgba(255,255,255,.60);
+    }
+
+    .panel-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: #8b8fa1;
+    }
+
+    .panel-kicker .bar {
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--momo);
+    }
+
+    .panel-title {
+      margin: 10px 0 6px;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -.03em;
+    }
+
+    .panel-desc {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 730px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(247,248,252,.96);
+      border-bottom: 1px solid rgba(23,32,51,.08);
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #667085;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(23,32,51,.06);
+      vertical-align: top;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    tbody tr:hover {
+      background: rgba(165,0,100,.03);
+    }
+
+    .time {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .actor {
+      display: grid;
+      gap: 2px;
+    }
+
+    .actor strong {
+      font-size: 12px;
+    }
+
+    .actor span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .create { background: var(--green-bg); color: var(--green); }
+    .update { background: var(--blue-bg); color: var(--blue); }
+    .remove { background: var(--red-bg); color: var(--red); }
+    .review { background: var(--amber-bg); color: var(--amber); }
+
+    .surface {
+      font-weight: 800;
+      color: #344054;
+      white-space: nowrap;
+    }
+
+    .subject {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .detail {
+      color: var(--muted);
+    }
+
+    .aside {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(23,32,51,.08);
+      box-shadow: 0 10px 26px rgba(20,24,40,.05);
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .mini-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(247,248,252,.9);
+      border: 1px solid rgba(23,32,51,.06);
+    }
+
+    .mini-item b {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .mini-item span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .mini-item em {
+      font-style: normal;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--momo);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .empty {
+      display: none;
+      padding: 28px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-note {
+      margin: 16px 0 0;
+      font-size: 11px;
+      color: #8b8fa1;
+    }
+
+    @media (max-width: 1180px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero,
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 16px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      .panel-title { font-size: 16px; }
+      thead th:nth-child(4),
+      tbody td:nth-child(4),
+      thead th:nth-child(8),
+      tbody td:nth-child(8) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="../lab.html">
+        <div class="brand-mark">MS</div>
+        <div class="brand-text">
+          <strong>MoSpark Activity Log</strong>
+          <span>Audit trail cho content ops, release review và rollback trace</span>
+        </div>
+      </a>
+      <div class="topbar-meta">
+        <div class="pill-live"><span class="dot"></span> Live capture · refresh mỗi 5 phút</div>
+        <button class="ghost-btn" type="button" id="exportBtn">
+          <span aria-hidden="true">↧</span>
+          Export CSV
+        </button>
+        <a class="ghost-btn" href="../lab.html" style="display:inline-flex;align-items:center;">
+          <span aria-hidden="true">←</span>
+          Back to Lab
+        </a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="MoSpark navigation">
+        <div class="sidebar-section">
+          <span class="sidebar-label">Overview</span>
+          <div class="nav-item active"><span class="nav-icon">◉</span> Activity Log</div>
+          <div class="nav-item"><span class="nav-icon">▣</span> Change Review</div>
+          <div class="nav-item"><span class="nav-icon">▤</span> Release Queue</div>
+        </div>
+
+        <div class="sidebar-section">
+          <span class="sidebar-label">Content</span>
+          <div class="nav-item"><span class="nav-icon">◈</span> Blog</div>
+          <div class="nav-item"><span class="nav-icon">◈</span> News</div>
+          <div class="nav-item"><span class="nav-icon">◈</span> PLG Project</div>
+          <div class="nav-item"><span class="nav-icon">◈</span> Microsite</div>
+        </div>
+
+        <div class="sidebar-section">
+          <span class="sidebar-label">Teams</span>
+          <div class="nav-item"><span class="nav-icon">◫</span> Web Platform</div>
+          <div class="nav-item"><span class="nav-icon">◫</span> Cell Team</div>
+          <div class="nav-item"><span class="nav-icon">◫</span> Ops / Review</div>
+        </div>
+
+        <div class="sidebar-card">
+          <strong>Ghi nhận đúng bản chất change</strong>
+          <p>Mục tiêu là nhìn nhanh ai tạo mới, ai cập nhật, ai xoá và nội dung nào cần review ngay.</p>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="hero">
+          <div class="hero-main">
+            <div class="eyebrow">MoSpark Ops Dashboard</div>
+            <h1>Ghi log mọi thay đổi nội dung trên MoSpark.</h1>
+            <p>Dashboard này tập trung vào audit trail cho Blog, PLG Project, News, Microsite và các project của Cell Team. Mỗi sự kiện ghi rõ user, thời điểm, loại action, đối tượng bị tác động và trạng thái review để team có thể truy vết nhanh khi có thay đổi phát sinh.</p>
+            <div class="hero-tags" aria-label="Dashboard scope">
+              <span class="tag">Create</span>
+              <span class="tag">Update</span>
+              <span class="tag">Remove</span>
+              <span class="tag">Blog</span>
+              <span class="tag">PLG Project</span>
+              <span class="tag">News</span>
+              <span class="tag">Microsite</span>
+              <span class="tag">Cell Team</span>
+            </div>
+          </div>
+          <div class="hero-side">
+            <div class="hero-side-head">
+              <strong>What this helps with</strong>
+              <span id="lastSync">Updated 07:40</span>
+            </div>
+            <div class="list">
+              <div class="list-row">
+                <span class="list-dot" style="background:var(--green)"></span>
+                <div>
+                  <strong>Trace ownership</strong>
+                  <p>Biết ngay ai là người đã tạo hoặc sửa nội dung để review đúng người.</p>
+                </div>
+              </div>
+              <div class="list-row">
+                <span class="list-dot" style="background:var(--blue)"></span>
+                <div>
+                  <strong>Spot risky removals</strong>
+                  <p>Removal event được làm nổi bật để giảm rủi ro xoá nhầm hoặc thiếu approval.</p>
+                </div>
+              </div>
+              <div class="list-row">
+                <span class="list-dot" style="background:var(--amber)"></span>
+                <div>
+                  <strong>Cross-team visibility</strong>
+                  <p>Web Platform và Cell Team cùng nhìn chung một audit trail, không phải ghép log thủ công.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="metrics" id="metrics"></section>
+
+        <section class="toolbar" aria-label="Filters">
+          <label class="search-wrap" aria-label="Search activity">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <input id="searchInput" type="search" placeholder="Search user, project, detail hoặc slug nội dung" autocomplete="off" spellcheck="false">
+          </label>
+          <div class="chip-row" id="summaryChips"></div>
+        </section>
+
+        <section class="grid">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-kicker"><span class="bar"></span> Activity feed</div>
+              <h2 class="panel-title">Recent events</h2>
+              <p class="panel-desc">Bảng này sắp theo thời gian gần nhất. Mỗi dòng là một event thật hoặc mô phỏng từ MoSpark content ops, dùng để review release, audit content và đối soát change request.</p>
+            </div>
+            <div class="table-wrap">
+              <table aria-label="MoSpark activity log">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Project</th>
+                    <th>Surface</th>
+                    <th>Subject</th>
+                    <th>Detail</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="activityBody"></tbody>
+              </table>
+              <div class="empty" id="emptyState">Không tìm thấy event nào với bộ lọc hiện tại.</div>
+            </div>
+          </div>
+
+          <div class="aside">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-kicker"><span class="bar"></span> Hotspots</div>
+                <h2 class="panel-title">Where changes cluster</h2>
+                <p class="panel-desc">Nhóm nội dung nào đang có nhiều update hoặc remove để ưu tiên review.</p>
+              </div>
+              <div class="stack" id="hotspotList" style="padding:16px"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-kicker"><span class="bar"></span> Review queue</div>
+                <h2 class="panel-title">Needs attention</h2>
+                <p class="panel-desc">Những event cần kiểm tra ngay vì là remove, update lớn hoặc chạm vào project nhạy cảm.</p>
+              </div>
+              <div class="stack" id="reviewList" style="padding:16px"></div>
+            </div>
+          </div>
+        </section>
+
+        <p class="footer-note">MoSpark Activity Log is designed as a traceability surface, not a content editor. Use it để nhìn thay đổi, sau đó mở đúng project để sửa ở nơi phù hợp.</p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const activities = [
+      {
+        time: '09:42',
+        user: 'Mai Phạm',
+        role: 'Content Lead',
+        team: 'Web Platform',
+        action: 'update',
+        project: 'Blog',
+        surface: 'Article',
+        subject: 'Gói bảo hiểm xe - article',
+        detail: 'Chỉnh intro, CTA cuối bài và gắn link sang flow bảo hiểm mới.',
+        status: 'Reviewed'
+      },
+      {
+        time: '09:28',
+        user: 'Khánh Trần',
+        role: 'PM',
+        team: 'Web Platform',
+        action: 'create',
+        project: 'News',
+        surface: 'News Detail',
+        subject: 'MoMo launches Q3 campaign note',
+        detail: 'Tạo bản tin mới cho release note và campaign summary.',
+        status: 'Live'
+      },
+      {
+        time: '09:17',
+        user: 'Lâm Anh',
+        role: 'SEO',
+        team: 'Web Platform',
+        action: 'remove',
+        project: 'Microsite',
+        surface: 'Landing',
+        subject: 'Promo microsite / summer-2025',
+        detail: 'Xoá microsite cũ sau khi hết hạn chiến dịch, chuyển redirect về hub.',
+        status: 'Archived'
+      },
+      {
+        time: '09:05',
+        user: 'Đức Huy',
+        role: 'Editor',
+        team: 'Cell Team',
+        action: 'update',
+        project: 'Cinema',
+        surface: 'Film Detail',
+        subject: 'Supergirl 24851',
+        detail: 'Cập nhật showtime copy và badge suất chiếu ưu tiên.',
+        status: 'Needs QA'
+      },
+      {
+        time: '08:53',
+        user: 'Hà Linh',
+        role: 'Ops',
+        team: 'Cell Team',
+        action: 'create',
+        project: 'Microsite',
+        surface: 'Campaign Page',
+        subject: 'Go-live checklist microsite',
+        detail: 'Khởi tạo microsite mới cho campaign voucher và set owner review.',
+        status: 'Draft'
+      },
+      {
+        time: '08:41',
+        user: 'Quang Minh',
+        role: 'PLG Analyst',
+        team: 'Web Platform',
+        action: 'update',
+        project: 'PLG Project',
+        surface: 'Keyword Registry',
+        subject: 'Cluster: travel insurance',
+        detail: 'Đổi mapping keyword, thêm business context và chống cannibalization.',
+        status: 'Reviewed'
+      },
+      {
+        time: '08:31',
+        user: 'Thùy Dung',
+        role: 'Content Strategist',
+        team: 'Web Platform',
+        action: 'create',
+        project: 'Blog',
+        surface: 'Category',
+        subject: 'Finance planning pillar',
+        detail: 'Tạo category mới cho evergreen article và add internal links.',
+        status: 'Live'
+      },
+      {
+        time: '08:19',
+        user: 'Phúc Long',
+        role: 'PM',
+        team: 'Cell Team',
+        action: 'remove',
+        project: 'Phạt Nguội',
+        surface: 'Guide',
+        subject: 'Old province guide',
+        detail: 'Remove địa phương lỗi thời sau khi gộp nội dung vào template chung.',
+        status: 'Approved'
+      },
+      {
+        time: '08:03',
+        user: 'Nhi Vũ',
+        role: 'Editor',
+        team: 'Web Platform',
+        action: 'update',
+        project: 'News',
+        surface: 'Topic',
+        subject: 'Product launch topic',
+        detail: 'Sửa filter topic để ưu tiên thông cáo và update sản phẩm.',
+        status: 'Reviewed'
+      },
+      {
+        time: '07:52',
+        user: 'Bảo Ngọc',
+        role: 'CMS Admin',
+        team: 'Web Platform',
+        action: 'create',
+        project: 'PLG Project',
+        surface: 'Microsite',
+        subject: 'Launch microsite builder',
+        detail: 'Tạo landing hỗ trợ launch plan cho web platform product release.',
+        status: 'Live'
+      },
+      {
+        time: '07:44',
+        user: 'Trọng Hải',
+        role: 'Cell Team Lead',
+        team: 'Cell Team',
+        action: 'update',
+        project: 'Merchant',
+        surface: 'Store Detail',
+        subject: 'Merchant page content',
+        detail: 'Cập nhật mô tả, banner AI và CTA chuyển đổi.',
+        status: 'Needs QA'
+      },
+      {
+        time: '07:36',
+        user: 'Yến Nhi',
+        role: 'Ops',
+        team: 'Ops / Review',
+        action: 'remove',
+        project: 'Blog',
+        surface: 'Draft',
+        subject: 'Obsolete draft / how-to',
+        detail: 'Xoá draft trùng lặp sau khi merge nội dung với bài evergreen.',
+        status: 'Closed'
+      }
+    ];
+
+    const actionConfig = {
+      create: { label: 'Create', cls: 'create' },
+      update: { label: 'Update', cls: 'update' },
+      remove: { label: 'Remove', cls: 'remove' },
+      review: { label: 'Review', cls: 'review' }
+    };
+
+    const projectOrder = ['Blog', 'PLG Project', 'News', 'Microsite', 'Cinema', 'Phạt Nguội', 'Merchant'];
+    const filters = {
+      action: 'all',
+      project: 'all',
+      team: 'all',
+      query: ''
+    };
+
+    const searchInput = document.getElementById('searchInput');
+    const activityBody = document.getElementById('activityBody');
+    const metricsEl = document.getElementById('metrics');
+    const summaryChips = document.getElementById('summaryChips');
+    const hotspotList = document.getElementById('hotspotList');
+    const reviewList = document.getElementById('reviewList');
+    const emptyState = document.getElementById('emptyState');
+    const lastSync = document.getElementById('lastSync');
+    const exportBtn = document.getElementById('exportBtn');
+
+    function matchesQuery(activity, query) {
+      if (!query) return true;
+      const haystack = [
+        activity.time,
+        activity.user,
+        activity.role,
+        activity.team,
+        activity.action,
+        activity.project,
+        activity.surface,
+        activity.subject,
+        activity.detail,
+        activity.status
+      ].join(' ').toLowerCase();
+      return haystack.includes(query.toLowerCase());
+    }
+
+    function getFilteredActivities() {
+      return activities.filter(activity => {
+        const actionMatch = filters.action === 'all' || activity.action === filters.action;
+        const projectMatch = filters.project === 'all' || activity.project === filters.project;
+        const teamMatch = filters.team === 'all' || activity.team === filters.team;
+        const queryMatch = matchesQuery(activity, filters.query);
+        return actionMatch && projectMatch && teamMatch && queryMatch;
+      });
+    }
+
+    function countBy(items, key) {
+      return items.reduce((acc, item) => {
+        acc[item[key]] = (acc[item[key]] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function chipSvg(label) {
+      const map = {
+        all: '◌',
+        create: '＋',
+        update: '↺',
+        remove: '−',
+        Blog: 'B',
+        'PLG Project': 'P',
+        News: 'N',
+        Microsite: 'M',
+        'Cell Team': 'C',
+        'Web Platform': 'W',
+        'Ops / Review': 'O'
+      };
+      return map[label] || '•';
+    }
+
+    function renderFilterGroup(items, activeKey, onClick) {
+      return items.map(item => {
+        const active = activeKey === item.value ? 'active' : '';
+        return `
+          <button class="chip ${active}" type="button" data-value="${item.value}" data-group="${item.group}">
+            ${chipSvg(item.label)}
+            ${item.label}
+            <small>${item.count}</small>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function applyFilterCounts() {
+      const filtered = getFilteredActivities();
+      const actionCounts = countBy(activities, 'action');
+      const projectCounts = countBy(activities, 'project');
+      const teamCounts = countBy(activities, 'team');
+
+      const chipData = [
+        { group: 'action', value: 'all', label: 'All Actions', count: activities.length },
+        { group: 'action', value: 'create', label: 'Create', count: actionCounts.create || 0 },
+        { group: 'action', value: 'update', label: 'Update', count: actionCounts.update || 0 },
+        { group: 'action', value: 'remove', label: 'Remove', count: actionCounts.remove || 0 },
+        { group: 'project', value: 'all', label: 'All Projects', count: activities.length },
+        ...projectOrder.map(project => ({ group: 'project', value: project, label: project, count: projectCounts[project] || 0 })),
+        { group: 'team', value: 'all', label: 'All Teams', count: activities.length },
+        { group: 'team', value: 'Web Platform', label: 'Web Platform', count: teamCounts['Web Platform'] || 0 },
+        { group: 'team', value: 'Cell Team', label: 'Cell Team', count: teamCounts['Cell Team'] || 0 },
+        { group: 'team', value: 'Ops / Review', label: 'Ops / Review', count: teamCounts['Ops / Review'] || 0 }
+      ];
+
+      summaryChips.innerHTML = chipData.map(item => `
+        <button class="chip ${filters[item.group] === item.value ? 'active' : ''}" type="button" data-group="${item.group}" data-value="${item.value}">
+          ${item.label}
+          <small>${item.count}</small>
+        </button>
+      `).join('');
+
+      const total = activities.length;
+      const createCount = actionCounts.create || 0;
+      const updateCount = actionCounts.update || 0;
+      const removeCount = actionCounts.remove || 0;
+      const activeUsers = new Set(filtered.map(item => item.user)).size;
+      const topProject = Object.entries(projectCounts).sort((a, b) => b[1] - a[1])[0] || ['Blog', 0];
+
+      metricsEl.innerHTML = [
+        {
+          label: 'Today events',
+          value: total,
+          chip: 'blue',
+          sub: 'Event stream trong dashboard này',
+          bar: 92
+        },
+        {
+          label: 'Create',
+          value: createCount,
+          chip: 'green',
+          sub: 'Mức tạo mới đang diễn ra',
+          bar: Math.round((createCount / total) * 100)
+        },
+        {
+          label: 'Update',
+          value: updateCount,
+          chip: 'blue',
+          sub: 'Nội dung đã được chỉnh sửa',
+          bar: Math.round((updateCount / total) * 100)
+        },
+        {
+          label: 'Remove',
+          value: removeCount,
+          chip: 'red',
+          sub: 'Số removal cần kiểm tra',
+          bar: Math.round((removeCount / total) * 100)
+        },
+        {
+          label: 'Active users',
+          value: activeUsers,
+          chip: 'violet',
+          sub: `Hotspot lớn nhất: ${topProject[0]}`,
+          bar: Math.min(100, activeUsers * 17)
+        }
+      ].map(metric => `
+        <article class="metric">
+          <div class="metric-head">
+            <div class="metric-label">${metric.label}</div>
+            <div class="metric-chip ${metric.chip}">${metric.chip === 'red' ? 'Risk' : metric.chip === 'green' ? 'Growth' : metric.chip === 'violet' ? 'Reach' : 'Trace'}</div>
+          </div>
+          <div class="metric-value">${metric.value}</div>
+          <div class="metric-sub">${metric.sub}</div>
+          <div class="metric-bar"><span style="width:${metric.bar}%"></span></div>
+        </article>
+      `).join('');
+
+      renderRows(filtered);
+      renderHotspots(filtered);
+      renderReviewQueue(filtered);
+      lastSync.textContent = `Updated ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+      emptyState.style.display = filtered.length ? 'none' : 'block';
+    }
+
+    function renderRows(rows) {
+      activityBody.innerHTML = rows.map(activity => `
+        <tr>
+          <td class="time">${activity.time}</td>
+          <td>
+            <div class="actor">
+              <strong>${activity.user}</strong>
+              <span>${activity.role} · ${activity.team}</span>
+            </div>
+          </td>
+          <td>
+            <span class="badge ${activity.action}">${actionConfig[activity.action].label}</span>
+          </td>
+          <td class="surface">${activity.project}</td>
+          <td>${activity.surface}</td>
+          <td>
+            <div class="subject">${activity.subject}</div>
+          </td>
+          <td class="detail">${activity.detail}</td>
+          <td>
+            <span class="badge ${activity.status === 'Live' ? 'create' : activity.status === 'Needs QA' ? 'review' : activity.status === 'Archived' ? 'remove' : 'update'}">${activity.status}</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderHotspots(rows) {
+      const counts = countBy(rows, 'project');
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      hotspotList.innerHTML = sorted.map(([project, count], index) => `
+        <div class="mini-item">
+          <div>
+            <b>${index + 1}. ${project}</b>
+            <span>${count} change${count > 1 ? 's' : ''} in selected window</span>
+          </div>
+          <em>${count}</em>
+        </div>
+      `).join('');
+    }
+
+    function renderReviewQueue(rows) {
+      const queue = rows.filter(item => item.action === 'remove' || item.status === 'Needs QA').slice(0, 4);
+      reviewList.innerHTML = queue.map(item => `
+        <div class="mini-item">
+          <div>
+            <b>${item.project} · ${item.subject}</b>
+            <span>${item.user} · ${item.time} · ${item.status}</span>
+          </div>
+          <em>${actionConfig[item.action].label}</em>
+        </div>
+      `).join('') || `
+        <div class="mini-item">
+          <div>
+            <b>No pending review</b>
+            <span>All visible events are currently resolved</span>
+          </div>
+          <em>OK</em>
+        </div>
+      `;
+    }
+
+    document.addEventListener('click', event => {
+      const button = event.target.closest('[data-group][data-value]');
+      if (!button) return;
+      const group = button.dataset.group;
+      const value = button.dataset.value;
+      filters[group] = value;
+      applyFilterCounts();
+    });
+
+    searchInput.addEventListener('input', event => {
+      filters.query = event.target.value.trim();
+      applyFilterCounts();
+    });
+
+    exportBtn.addEventListener('click', () => {
+      const rows = getFilteredActivities();
+      const headers = ['time', 'user', 'role', 'team', 'action', 'project', 'surface', 'subject', 'detail', 'status'];
+      const csv = [
+        headers.join(','),
+        ...rows.map(row => headers.map(key => JSON.stringify(row[key] ?? '')).join(','))
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'mospark-activity-log.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    applyFilterCounts();
+  </script>
+</body>
+</html>

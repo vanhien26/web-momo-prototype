@@ -558,6 +558,22 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/seo-geo-dashboard',
   },
   {
+    id: 'mospark-activity-log',
+    name: 'MoSpark Activity Log',
+    category: 'MoSpark',
+    navTagline: 'Ops Log',
+    maturity: 'Interactive',
+    description: 'Dashboard audit trail cho MoSpark: ghi lại create, update, remove trên Blog, PLG Project, News, Microsite và các project của Cell Team để team nhìn rõ ai đổi gì, ở đâu, khi nào.',
+    jtbd: 'Theo dõi nhanh mọi thay đổi nội dung và truy vết đúng người phụ trách khi cần review hoặc rollback.',
+    northStar: 'Time-to-trace change',
+    loop: 'Capture event → Filter by surface → Inspect diff → Act',
+    hypothesis: 'Một activity log tập trung giúp PM, content và ops phát hiện thay đổi bất thường nhanh hơn so với đọc từng hệ thống riêng lẻ.',
+    value: 'Single audit surface cho toàn bộ MoSpark content ops, giảm thời gian tìm log và tăng độ tin cậy khi review release.',
+    gate: 'Đo filter usage, trace completion, export rate và action-to-review time.',
+    src: 'demos/mospark-activity-log.html',
+    address: 'web-momo-prototype.vercel.app/mospark-activity-log',
+  },
+  {
     id: 'agentic-hub',
     name: 'Agentic Hub',
     category: 'MoSpark',
@@ -772,12 +788,80 @@ const GROUP_META = {
   MiniWeb:  { eyebrow: 'Mini Web Overview', title: 'SEO Inventory',         desc: '113 MiniWeb pages - inventory theo Division, Use Case, URL và traffic volume.',      chipCls: 'pill-blue'  },
   Other:    { eyebrow: 'Other',             title: 'Miscellaneous',         desc: 'Prototype thử nghiệm và concept khác.',                                              chipCls: 'pill-gray'  },
 };
+
+const LAB_ACTIVITY_EVENTS = [
+  { time: '09:42', user: 'Mai Phạm', team: 'Web Platform', action: 'update', project: 'Blog', surface: 'Article', subject: 'Gói bảo hiểm xe', detail: 'Chỉnh intro, CTA cuối bài và gắn link sang flow bảo hiểm.' },
+  { time: '09:28', user: 'Khánh Trần', team: 'Web Platform', action: 'create', project: 'News', surface: 'News Detail', subject: 'Q3 campaign note', detail: 'Tạo bản tin mới cho release note và campaign summary.' },
+  { time: '09:05', user: 'Đức Huy', team: 'Cell Team', action: 'update', project: 'Cinema', surface: 'Film Detail', subject: 'Supergirl 24851', detail: 'Cập nhật showtime copy và badge suất chiếu ưu tiên.' },
+  { time: '08:53', user: 'Hà Linh', team: 'Cell Team', action: 'create', project: 'Microsite', surface: 'Campaign Page', subject: 'Go-live checklist', detail: 'Khởi tạo microsite mới cho campaign voucher.' },
+  { time: '08:41', user: 'Quang Minh', team: 'Web Platform', action: 'update', project: 'PLG Project', surface: 'Keyword Registry', subject: 'Travel insurance', detail: 'Đổi mapping keyword và thêm business context.' },
+  { time: '08:19', user: 'Phúc Long', team: 'Cell Team', action: 'remove', project: 'Phạt Nguội', surface: 'Guide', subject: 'Old province guide', detail: 'Remove địa phương lỗi thời sau khi gộp nội dung.' },
+];
+
+function buildLabActivityDashboard() {
+  const totals = LAB_ACTIVITY_EVENTS.reduce((acc, event) => {
+    acc[event.action] = (acc[event.action] || 0) + 1;
+    acc.projects[event.project] = (acc.projects[event.project] || 0) + 1;
+    return acc;
+  }, { create: 0, update: 0, remove: 0, projects: {} });
+  const hotProject = Object.entries(totals.projects).sort((a, b) => b[1] - a[1])[0];
+
+  return `
+    <section class="lab-dashboard" aria-label="MoSpark activity dashboard">
+      <div class="lab-dashboard-top">
+        <div>
+          <p class="lab-dashboard-eyebrow">MoSpark Activity Dashboard</p>
+          <h2 class="lab-dashboard-title">Dashboard log cho Blog, News, PLG Project và Microsite.</h2>
+          <p class="lab-dashboard-desc">Bề mặt này giúp bạn nhìn nhanh create, update, remove trong MoSpark và các project của Cell Team, rồi mở log chi tiết nếu cần audit sâu hơn.</p>
+        </div>
+        <div class="lab-dashboard-actions">
+          <a class="lab-dashboard-link" href="demos/mospark-activity-log.html">Open full log ↗</a>
+        </div>
+      </div>
+
+      <div class="lab-dashboard-grid">
+        <article class="lab-dash-card">
+          <span class="lab-dash-label">Create</span>
+          <strong>${totals.create}</strong>
+          <small>nội dung mới được tạo trong batch gần nhất</small>
+        </article>
+        <article class="lab-dash-card">
+          <span class="lab-dash-label">Update</span>
+          <strong>${totals.update}</strong>
+          <small>thay đổi đang chờ review hoặc đã được approve</small>
+        </article>
+        <article class="lab-dash-card">
+          <span class="lab-dash-label">Remove</span>
+          <strong>${totals.remove}</strong>
+          <small>event rủi ro cần nhìn kỹ trước khi release</small>
+        </article>
+        <article class="lab-dash-card lab-dash-card-wide">
+          <span class="lab-dash-label">Hot project</span>
+          <strong>${hotProject?.[0] || 'Blog'}</strong>
+          <small>${hotProject?.[1] || 0} change${(hotProject?.[1] || 0) > 1 ? 's' : ''} trong tập log này</small>
+        </article>
+      </div>
+
+      <div class="lab-dashboard-feed">
+        ${LAB_ACTIVITY_EVENTS.map(event => `
+          <div class="lab-feed-item">
+            <span class="lab-feed-time">${event.time}</span>
+            <span class="lab-feed-action lab-feed-${event.action}">${event.action}</span>
+            <div class="lab-feed-meta">
+              <strong class="lab-feed-user">${event.user}</strong>
+              <span class="lab-feed-project">${event.project}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </section>`;
+}
 const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
   Database: ['merchant-page-builder'],
-  Modules:  ['ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot'],
+  Modules:  ['ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'seo-geo-score', 'chatbot'],
 };
 
 function getMoSparkCluster(protoId) {
@@ -795,7 +879,7 @@ function getWidgetCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'seo-geo-score', 'chatbot'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
   Platform: ['phat-nguoi', 'esim-du-lich', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
@@ -1339,6 +1423,7 @@ function buildLabDirectory() {
 
       <div class="lab-body" id="labBody">${sections}</div>
       <p class="lab-empty" id="labEmpty" style="display:none">Không tìm thấy prototype nào.</p>
+      ${buildLabActivityDashboard()}
     </div>`;
 }
 
