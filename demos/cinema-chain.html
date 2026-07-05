@@ -205,6 +205,23 @@ summary::after{content:"+";position:absolute;right:0;top:15px;font-size:20px;col
 details[open] summary::after{content:"−"}
 details p{font-size:13px;color:var(--gray-600);line-height:1.7;padding:0 0 18px}
 
+/* ── THEATER SEARCH BAR ─── */
+.theater-search-bar{margin-bottom:16px}
+.tsb-wrap{display:flex;gap:10px;align-items:center}
+.tsb-input-wrap{flex:1;display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-md);padding:0 14px;height:44px;transition:.15s;min-width:0}
+.tsb-input-wrap:focus-within{border-color:var(--chain-primary);box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.theater-search-input{flex:1;background:none;border:none;outline:none;font-family:'MoMoTrustSans',inherit;font-size:14px;color:var(--gray-900);min-width:0}
+.theater-search-input::placeholder{color:var(--gray-400)}
+.tsb-clear{background:none;border:none;color:var(--gray-400);cursor:pointer;display:flex;align-items:center;padding:0;font-size:15px;line-height:1;flex-shrink:0}
+.tsb-clear:hover{color:var(--gray-700)}
+.locate-btn{display:flex;align-items:center;gap:7px;font-family:'MoMoTrustSans',inherit;font-size:13px;font-weight:700;background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-md);padding:0 16px;height:44px;cursor:pointer;color:var(--gray-700);white-space:nowrap;transition:.15s;flex-shrink:0}
+.locate-btn:hover{border-color:var(--chain-primary);color:var(--chain-primary)}
+.locate-btn.located{border-color:var(--green-500);color:var(--green-500);background:var(--green-50)}
+.locate-btn.locating{border-color:var(--gray-300);color:var(--gray-500);cursor:not-allowed}
+.tsb-no-result{text-align:center;padding:48px 20px;color:var(--gray-400);font-size:14px}
+.tsb-no-result strong{display:block;font-size:18px;margin-bottom:6px;color:var(--gray-700)}
+.nearby-banner{display:flex;align-items:center;gap:10px;background:var(--green-50);border:1px solid rgba(22,163,74,.2);border-radius:var(--r-md);padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--green-500);font-weight:700}
+
 /* ── FOOTER ──────────────── */
 .site-footer{background:#09090F;color:#fff;padding:28px 0}
 .footer-inner{max-width:var(--content);margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
@@ -289,6 +306,23 @@ details p{font-size:13px;color:var(--gray-600);line-height:1.7;padding:0 0 18px}
       <div>
         <div class="sec-title" id="theaterTitle">Rạp CGV trên toàn quốc</div>
       </div>
+    </div>
+    <div class="theater-search-bar">
+      <div class="tsb-wrap">
+        <div class="tsb-input-wrap">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--gray-400);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="theater-search-input" id="theaterSearchInput" type="search" placeholder="Tìm rạp theo tên, địa chỉ..." oninput="onTheaterSearch(this.value)" autocomplete="off">
+          <button class="tsb-clear" id="tsbClear" onclick="clearTheaterSearch()" style="display:none" title="Xóa">✕</button>
+        </div>
+        <button class="locate-btn" id="locateBtn" onclick="detectLocation()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Gần tôi nhất
+        </button>
+      </div>
+    </div>
+    <div id="nearbyBanner" style="display:none" class="nearby-banner">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Đang hiển thị rạp gần bạn nhất
     </div>
     <div class="date-strip" id="dateStrip"></div>
     <div class="city-tabs" id="cityTabs"></div>
@@ -491,41 +525,41 @@ const CHAINS = {
 /* ─── THEATER DATA ───────────────────────────────── */
 const THEATERS = [
   /* CGV TP.HCM */
-  {id:'cgv-vincom-dong-khoi',slug:'cgv-vincom-dong-khoi',chain:'cgv',city:'hcm',name:'CGV Vincom Đồng Khởi',addr:'72 Lê Thánh Tôn, Bến Nghé, Quận 1, TP.HCM',screens:8,seats:1200,formats:['imax','3d','2d'],dist:'0.8 km',open:'09:00 - 00:00'},
-  {id:'cgv-crescent-mall',slug:'cgv-crescent-mall',chain:'cgv',city:'hcm',name:'CGV Crescent Mall',addr:'101 Tôn Dật Tiên, Phú Mỹ Hưng, Quận 7, TP.HCM',screens:13,seats:2200,formats:['imax','4dx','gold','3d','2d'],dist:'5.2 km',open:'09:00 - 00:30'},
-  {id:'cgv-vivo-city',slug:'cgv-vivo-city',chain:'cgv',city:'hcm',name:'CGV Vivo City',addr:'1058 Nguyễn Văn Linh, Phú Mỹ Hưng, Quận 7, TP.HCM',screens:14,seats:2400,formats:['imax','4dx','screenX','gold','3d','2d'],dist:'6.0 km',open:'09:00 - 00:30'},
-  {id:'cgv-giga-mall',slug:'cgv-giga-mall',chain:'cgv',city:'hcm',name:'CGV Giga Mall Thủ Đức',addr:'240-242 Hòa Bình, Phường Hiệp Tân, TP. Thủ Đức',screens:12,seats:1900,formats:['imax','4dx','3d','2d'],dist:'8.4 km',open:'09:00 - 00:00'},
-  {id:'cgv-aeon-binh-tan',slug:'cgv-aeon-binh-tan',chain:'cgv',city:'hcm',name:'CGV Aeon Mall Bình Tân',addr:'1 đường số 17A, KDC Tên Lửa, Phường Bình Trị Đông B, Bình Tân',screens:10,seats:1650,formats:['4dx','3d','2d'],dist:'10.1 km',open:'09:00 - 23:30'},
-  {id:'cgv-aeon-tan-phu',slug:'cgv-aeon-tan-phu',chain:'cgv',city:'hcm',name:'CGV Aeon Mall Tân Phú',addr:'30 Bờ Bao Tân Thắng, Phường Sơn Kỳ, Tân Phú',screens:8,seats:1280,formats:['3d','2d'],dist:'11.3 km',open:'09:00 - 23:30'},
-  {id:'cgv-vincom-thu-duc',slug:'cgv-vincom-thu-duc',chain:'cgv',city:'hcm',name:'CGV Vincom Thủ Đức',addr:'216 Võ Văn Ngân, Bình Thọ, TP. Thủ Đức',screens:9,seats:1400,formats:['3d','2d'],dist:'12.0 km',open:'09:00 - 23:30'},
-  {id:'cgv-lotte-go-vap',slug:'cgv-lotte-go-vap',chain:'cgv',city:'hcm',name:'CGV Lotte Mart Gò Vấp',addr:'242 Nguyễn Văn Lượng, Phường 17, Gò Vấp',screens:8,seats:1200,formats:['3d','2d'],dist:'7.8 km',open:'09:00 - 23:30'},
+  {id:'cgv-vincom-dong-khoi',slug:'cgv-vincom-dong-khoi',chain:'cgv',city:'hcm',name:'CGV Vincom Đồng Khởi',addr:'72 Lê Thánh Tôn, Bến Nghé, Quận 1, TP.HCM',screens:8,seats:1200,formats:['imax','3d','2d'],dist:'0.8 km',open:'09:00 - 00:00',lat:10.7740,lng:106.7021},
+  {id:'cgv-crescent-mall',slug:'cgv-crescent-mall',chain:'cgv',city:'hcm',name:'CGV Crescent Mall',addr:'101 Tôn Dật Tiên, Phú Mỹ Hưng, Quận 7, TP.HCM',screens:13,seats:2200,formats:['imax','4dx','gold','3d','2d'],dist:'5.2 km',open:'09:00 - 00:30',lat:10.7327,lng:106.7148},
+  {id:'cgv-vivo-city',slug:'cgv-vivo-city',chain:'cgv',city:'hcm',name:'CGV Vivo City',addr:'1058 Nguyễn Văn Linh, Phú Mỹ Hưng, Quận 7, TP.HCM',screens:14,seats:2400,formats:['imax','4dx','screenX','gold','3d','2d'],dist:'6.0 km',open:'09:00 - 00:30',lat:10.7303,lng:106.7147},
+  {id:'cgv-giga-mall',slug:'cgv-giga-mall',chain:'cgv',city:'hcm',name:'CGV Giga Mall Thủ Đức',addr:'240-242 Hòa Bình, Phường Hiệp Tân, TP. Thủ Đức',screens:12,seats:1900,formats:['imax','4dx','3d','2d'],dist:'8.4 km',open:'09:00 - 00:00',lat:10.8175,lng:106.6274},
+  {id:'cgv-aeon-binh-tan',slug:'cgv-aeon-binh-tan',chain:'cgv',city:'hcm',name:'CGV Aeon Mall Bình Tân',addr:'1 đường số 17A, KDC Tên Lửa, Phường Bình Trị Đông B, Bình Tân',screens:10,seats:1650,formats:['4dx','3d','2d'],dist:'10.1 km',open:'09:00 - 23:30',lat:10.7548,lng:106.6039},
+  {id:'cgv-aeon-tan-phu',slug:'cgv-aeon-tan-phu',chain:'cgv',city:'hcm',name:'CGV Aeon Mall Tân Phú',addr:'30 Bờ Bao Tân Thắng, Phường Sơn Kỳ, Tân Phú',screens:8,seats:1280,formats:['3d','2d'],dist:'11.3 km',open:'09:00 - 23:30',lat:10.7863,lng:106.6321},
+  {id:'cgv-vincom-thu-duc',slug:'cgv-vincom-thu-duc',chain:'cgv',city:'hcm',name:'CGV Vincom Thủ Đức',addr:'216 Võ Văn Ngân, Bình Thọ, TP. Thủ Đức',screens:9,seats:1400,formats:['3d','2d'],dist:'12.0 km',open:'09:00 - 23:30',lat:10.8453,lng:106.7553},
+  {id:'cgv-lotte-go-vap',slug:'cgv-lotte-go-vap',chain:'cgv',city:'hcm',name:'CGV Lotte Mart Gò Vấp',addr:'242 Nguyễn Văn Lượng, Phường 17, Gò Vấp',screens:8,seats:1200,formats:['3d','2d'],dist:'7.8 km',open:'09:00 - 23:30',lat:10.8317,lng:106.6672},
   /* CGV Hà Nội */
-  {id:'cgv-vincom-ba-trieu',slug:'cgv-vincom-ba-trieu',chain:'cgv',city:'hn',name:'CGV Vincom Bà Triệu',addr:'191 Bà Triệu, Hai Bà Trưng, Hà Nội',screens:13,seats:2100,formats:['imax','4dx','gold','3d','2d'],dist:'—',open:'09:00 - 00:00'},
-  {id:'cgv-vincom-times-city',slug:'cgv-vincom-times-city',chain:'cgv',city:'hn',name:'CGV Vincom Times City',addr:'458 Minh Khai, Vĩnh Tuy, Hai Bà Trưng, Hà Nội',screens:12,seats:1900,formats:['imax','4dx','3d','2d'],dist:'—',open:'09:00 - 00:00'},
-  {id:'cgv-royal-city',slug:'cgv-royal-city',chain:'cgv',city:'hn',name:'CGV Royal City',addr:'72A Nguyễn Trãi, Thanh Xuân, Hà Nội',screens:10,seats:1700,formats:['imax','3d','2d'],dist:'—',open:'09:00 - 00:00'},
-  {id:'cgv-aeon-long-bien',slug:'cgv-aeon-long-bien',chain:'cgv',city:'hn',name:'CGV Aeon Mall Long Biên',addr:'27 Cổ Linh, Long Biên, Hà Nội',screens:8,seats:1280,formats:['4dx','3d','2d'],dist:'—',open:'09:00 - 23:30'},
+  {id:'cgv-vincom-ba-trieu',slug:'cgv-vincom-ba-trieu',chain:'cgv',city:'hn',name:'CGV Vincom Bà Triệu',addr:'191 Bà Triệu, Hai Bà Trưng, Hà Nội',screens:13,seats:2100,formats:['imax','4dx','gold','3d','2d'],dist:'—',open:'09:00 - 00:00',lat:21.0109,lng:105.8508},
+  {id:'cgv-vincom-times-city',slug:'cgv-vincom-times-city',chain:'cgv',city:'hn',name:'CGV Vincom Times City',addr:'458 Minh Khai, Vĩnh Tuy, Hai Bà Trưng, Hà Nội',screens:12,seats:1900,formats:['imax','4dx','3d','2d'],dist:'—',open:'09:00 - 00:00',lat:20.9952,lng:105.8703},
+  {id:'cgv-royal-city',slug:'cgv-royal-city',chain:'cgv',city:'hn',name:'CGV Royal City',addr:'72A Nguyễn Trãi, Thanh Xuân, Hà Nội',screens:10,seats:1700,formats:['imax','3d','2d'],dist:'—',open:'09:00 - 00:00',lat:20.9943,lng:105.8323},
+  {id:'cgv-aeon-long-bien',slug:'cgv-aeon-long-bien',chain:'cgv',city:'hn',name:'CGV Aeon Mall Long Biên',addr:'27 Cổ Linh, Long Biên, Hà Nội',screens:8,seats:1280,formats:['4dx','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:21.0443,lng:105.8871},
   /* CGV Đà Nẵng */
-  {id:'cgv-vincom-da-nang',slug:'cgv-vincom-da-nang',chain:'cgv',city:'dn',name:'CGV Vincom Đà Nẵng',addr:'910A Ngô Quyền, An Hải Bắc, Sơn Trà, Đà Nẵng',screens:8,seats:1200,formats:['imax','3d','2d'],dist:'—',open:'09:00 - 23:30'},
-  {id:'cgv-lotte-da-nang',slug:'cgv-lotte-da-nang',chain:'cgv',city:'dn',name:'CGV Lotte Mart Đà Nẵng',addr:'6 Nại Nam, Hòa Cường Bắc, Hải Châu, Đà Nẵng',screens:6,seats:900,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00'},
+  {id:'cgv-vincom-da-nang',slug:'cgv-vincom-da-nang',chain:'cgv',city:'dn',name:'CGV Vincom Đà Nẵng',addr:'910A Ngô Quyền, An Hải Bắc, Sơn Trà, Đà Nẵng',screens:8,seats:1200,formats:['imax','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:16.0808,lng:108.2284},
+  {id:'cgv-lotte-da-nang',slug:'cgv-lotte-da-nang',chain:'cgv',city:'dn',name:'CGV Lotte Mart Đà Nẵng',addr:'6 Nại Nam, Hòa Cường Bắc, Hải Châu, Đà Nẵng',screens:6,seats:900,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00',lat:16.0567,lng:108.2192},
   /* CGV Khác */
-  {id:'cgv-vincom-can-tho',slug:'cgv-vincom-can-tho',chain:'cgv',city:'other',name:'CGV Vincom Cần Thơ',addr:'209 Trần Văn Hoài, Xuân Khánh, Ninh Kiều, Cần Thơ',screens:8,seats:1200,formats:['3d','2d'],dist:'—',open:'09:00 - 23:30'},
-  {id:'cgv-lotte-hai-phong',slug:'cgv-lotte-hai-phong',chain:'cgv',city:'other',name:'CGV Lotte Mart Hải Phòng',addr:'Lê Hồng Phong, Đông Khê, Ngô Quyền, Hải Phòng',screens:7,seats:1100,formats:['3d','2d'],dist:'—',open:'09:00 - 23:30'},
+  {id:'cgv-vincom-can-tho',slug:'cgv-vincom-can-tho',chain:'cgv',city:'other',name:'CGV Vincom Cần Thơ',addr:'209 Trần Văn Hoài, Xuân Khánh, Ninh Kiều, Cần Thơ',screens:8,seats:1200,formats:['3d','2d'],dist:'—',open:'09:00 - 23:30',lat:10.0341,lng:105.7795},
+  {id:'cgv-lotte-hai-phong',slug:'cgv-lotte-hai-phong',chain:'cgv',city:'other',name:'CGV Lotte Mart Hải Phòng',addr:'Lê Hồng Phong, Đông Khê, Ngô Quyền, Hải Phòng',screens:7,seats:1100,formats:['3d','2d'],dist:'—',open:'09:00 - 23:30',lat:20.8545,lng:106.6800},
 
   /* Lotte */
-  {id:'lotte-nowzone',slug:'lotte-nowzone',chain:'lotte',city:'hcm',name:'Lotte Cinema Nowzone',addr:'235 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM',screens:10,seats:1600,formats:['4dx','3d','2d'],dist:'—',open:'09:00 - 23:30'},
-  {id:'lotte-phu-tho',slug:'lotte-phu-tho',chain:'lotte',city:'hcm',name:'Lotte Cinema Phú Thọ',addr:'Số 80 đường Cộng Hòa, Phường 4, Tân Bình',screens:9,seats:1400,formats:['screenX','3d','2d'],dist:'—',open:'09:00 - 23:30'},
-  {id:'lotte-hanoi',slug:'lotte-hanoi',chain:'lotte',city:'hn',name:'Lotte Cinema Hà Nội',addr:'54 Liễu Giai, Ba Đình, Hà Nội',screens:10,seats:1700,formats:['4dx','3d','2d'],dist:'—',open:'09:00 - 00:00'},
-  {id:'lotte-hanoi-daewoo',slug:'lotte-hanoi-daewoo',chain:'lotte',city:'hn',name:'Lotte Cinema Daewoo Hà Nội',addr:'360 Kim Mã, Ba Đình, Hà Nội',screens:8,seats:1300,formats:['3d','2d'],dist:'—',open:'09:00 - 23:30'},
+  {id:'lotte-nowzone',slug:'lotte-nowzone',chain:'lotte',city:'hcm',name:'Lotte Cinema Nowzone',addr:'235 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM',screens:10,seats:1600,formats:['4dx','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:10.7514,lng:106.6824},
+  {id:'lotte-phu-tho',slug:'lotte-phu-tho',chain:'lotte',city:'hcm',name:'Lotte Cinema Phú Thọ',addr:'Số 80 đường Cộng Hòa, Phường 4, Tân Bình',screens:9,seats:1400,formats:['screenX','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:10.7981,lng:106.6618},
+  {id:'lotte-hanoi',slug:'lotte-hanoi',chain:'lotte',city:'hn',name:'Lotte Cinema Hà Nội',addr:'54 Liễu Giai, Ba Đình, Hà Nội',screens:10,seats:1700,formats:['4dx','3d','2d'],dist:'—',open:'09:00 - 00:00',lat:21.0322,lng:105.8382},
+  {id:'lotte-hanoi-daewoo',slug:'lotte-hanoi-daewoo',chain:'lotte',city:'hn',name:'Lotte Cinema Daewoo Hà Nội',addr:'360 Kim Mã, Ba Đình, Hà Nội',screens:8,seats:1300,formats:['3d','2d'],dist:'—',open:'09:00 - 23:30',lat:21.0308,lng:105.8289},
 
   /* BHD */
-  {id:'bhd-bitexco',slug:'bhd-bitexco',chain:'bhd',city:'hcm',name:'BHD Star Bitexco',addr:'2 Hải Triều, Bến Nghé, Quận 1, TP.HCM',screens:8,seats:1200,formats:['sweet','3d','2d'],dist:'—',open:'09:00 - 23:30'},
-  {id:'bhd-xa-lo',slug:'bhd-xa-lo',chain:'bhd',city:'hcm',name:'BHD Star Xa Lộ Hà Nội',addr:'1319 Xa Lộ Hà Nội, Long Bình, TP. Thủ Đức',screens:9,seats:1450,formats:['sweet','3d','2d'],dist:'—',open:'09:00 - 23:30'},
-  {id:'bhd-vincom-metropolis',slug:'bhd-vincom-metropolis',chain:'bhd',city:'hn',name:'BHD Star Vincom Metropolis',addr:'29 Liễu Giai, Ba Đình, Hà Nội',screens:10,seats:1600,formats:['sweet','3d','2d'],dist:'—',open:'09:00 - 23:30'},
+  {id:'bhd-bitexco',slug:'bhd-bitexco',chain:'bhd',city:'hcm',name:'BHD Star Bitexco',addr:'2 Hải Triều, Bến Nghé, Quận 1, TP.HCM',screens:8,seats:1200,formats:['sweet','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:10.7718,lng:106.7039},
+  {id:'bhd-xa-lo',slug:'bhd-xa-lo',chain:'bhd',city:'hcm',name:'BHD Star Xa Lộ Hà Nội',addr:'1319 Xa Lộ Hà Nội, Long Bình, TP. Thủ Đức',screens:9,seats:1450,formats:['sweet','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:10.8419,lng:106.7762},
+  {id:'bhd-vincom-metropolis',slug:'bhd-vincom-metropolis',chain:'bhd',city:'hn',name:'BHD Star Vincom Metropolis',addr:'29 Liễu Giai, Ba Đình, Hà Nội',screens:10,seats:1600,formats:['sweet','3d','2d'],dist:'—',open:'09:00 - 23:30',lat:21.0299,lng:105.8289},
 
   /* Galaxy */
-  {id:'galaxy-nguyen-du',slug:'galaxy-nguyen-du',chain:'galaxy',city:'hcm',name:'Galaxy Nguyễn Du',addr:'116 Nguyễn Du, Quận 1, TP.HCM',screens:7,seats:1100,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00'},
-  {id:'galaxy-kinh-duong-vuong',slug:'galaxy-kinh-duong-vuong',chain:'galaxy',city:'hcm',name:'Galaxy Kinh Dương Vương',addr:'320 Kinh Dương Vương, Phường 12, Quận 6',screens:6,seats:950,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00'},
-  {id:'galaxy-ha-dong',slug:'galaxy-ha-dong',chain:'galaxy',city:'hn',name:'Galaxy Hà Đông',addr:'7 Trần Phú, Hà Đông, Hà Nội',screens:8,seats:1200,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00'},
+  {id:'galaxy-nguyen-du',slug:'galaxy-nguyen-du',chain:'galaxy',city:'hcm',name:'Galaxy Nguyễn Du',addr:'116 Nguyễn Du, Quận 1, TP.HCM',screens:7,seats:1100,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00',lat:10.7727,lng:106.6966},
+  {id:'galaxy-kinh-duong-vuong',slug:'galaxy-kinh-duong-vuong',chain:'galaxy',city:'hcm',name:'Galaxy Kinh Dương Vương',addr:'320 Kinh Dương Vương, Phường 12, Quận 6',screens:6,seats:950,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00',lat:10.7504,lng:106.6412},
+  {id:'galaxy-ha-dong',slug:'galaxy-ha-dong',chain:'galaxy',city:'hn',name:'Galaxy Hà Đông',addr:'7 Trần Phú, Hà Đông, Hà Nội',screens:8,seats:1200,formats:['3d','2d'],dist:'—',open:'09:00 - 23:00',lat:20.9794,lng:105.7804},
 ];
 
 /* ─── FILMS (shared with cinema.html) ───────────── */
@@ -588,6 +622,60 @@ const FORMAT_AVAIL_LABELS = {
 
 /* ─── PAGE STATE ─────────────────────────────────── */
 let chain, slug, activeDateIdx=0, activeCity='all';
+let theaterSearchQ='', nearbyMode=false, userLat=null, userLng=null;
+
+/* ─── GEO UTILS ─────────────────────────────────── */
+function haversine(lat1,lng1,lat2,lng2){
+  const R=6371,toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1),dLng=toRad(lng2-lng1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return R*2*Math.asin(Math.sqrt(a));
+}
+
+function onTheaterSearch(q){
+  theaterSearchQ=q.toLowerCase().trim();
+  nearbyMode=false;
+  const lb=document.getElementById('locateBtn');
+  lb.classList.remove('located','locating');
+  lb.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Gần tôi nhất`;
+  document.getElementById('tsbClear').style.display=q?'flex':'none';
+  document.getElementById('nearbyBanner').style.display='none';
+  renderCityTabs();
+  renderTheaters();
+}
+
+function clearTheaterSearch(){
+  theaterSearchQ='';
+  document.getElementById('theaterSearchInput').value='';
+  document.getElementById('tsbClear').style.display='none';
+  renderTheaters();
+}
+
+function detectLocation(){
+  const btn=document.getElementById('locateBtn');
+  if(!navigator.geolocation){toast('Trình duyệt không hỗ trợ định vị vị trí');return;}
+  btn.classList.add('locating');
+  btn.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Đang định vị...`;
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+      nearbyMode=true; activeCity='all'; theaterSearchQ='';
+      document.getElementById('theaterSearchInput').value='';
+      document.getElementById('tsbClear').style.display='none';
+      btn.classList.remove('locating'); btn.classList.add('located');
+      btn.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Gần tôi nhất ✓`;
+      document.getElementById('nearbyBanner').style.display='flex';
+      renderCityTabs();
+      renderTheaters();
+    },
+    _err=>{
+      btn.classList.remove('locating');
+      btn.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Gần tôi nhất`;
+      toast('Không thể lấy vị trí — vui lòng cho phép định vị trong trình duyệt');
+    },
+    {timeout:10000}
+  );
+}
 
 function init(){
   const parts = location.pathname.split('/').filter(Boolean);
@@ -755,23 +843,47 @@ function toggleTheater(id){
 
 const CITY_LABELS={all:'Tất cả',hcm:'TP. Hồ Chí Minh',hn:'Hà Nội',dn:'Đà Nẵng',other:'Tỉnh thành khác'};
 function renderCityTabs(){
+  const cityTabsEl=document.getElementById('cityTabs');
+  // In nearby mode, city tabs are irrelevant — show all sorted by distance
+  if(nearbyMode){cityTabsEl.style.display='none';return;}
+  cityTabsEl.style.display='';
   const chainTheaters=THEATERS.filter(t=>t.chain===slug);
   const cities=['all',...new Set(chainTheaters.map(t=>t.city))];
-  document.getElementById('cityTabs').innerHTML=cities.map(c=>{
+  cityTabsEl.innerHTML=cities.map(c=>{
     const cnt=c==='all'?chainTheaters.length:chainTheaters.filter(t=>t.city===c).length;
     return `<button class="city-tab${activeCity===c?' on':''}" onclick="setCity('${c}')">${CITY_LABELS[c]||c}<span class="theater-count">${cnt}</span></button>`;
   }).join('');
   document.getElementById('theaterTitle').textContent=`Rạp ${chain.name} trên toàn quốc`;
 }
-function setCity(c){activeCity=c;renderCityTabs();renderTheaters();}
+function setCity(c){activeCity=c;nearbyMode=false;const lb=document.getElementById('locateBtn');lb.classList.remove('located');lb.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Gần tôi nhất`;document.getElementById('nearbyBanner').style.display='none';renderCityTabs();renderTheaters();}
 
 function renderTheaters(){
-  const list=THEATERS.filter(t=>t.chain===slug&&(activeCity==='all'||t.city===activeCity));
+  let list=THEATERS.filter(t=>t.chain===slug&&(activeCity==='all'||t.city===activeCity));
+
+  // Search filter
+  if(theaterSearchQ){
+    list=list.filter(t=>t.name.toLowerCase().includes(theaterSearchQ)||t.addr.toLowerCase().includes(theaterSearchQ));
+  }
+
+  // Nearby sort — recalculate and attach _calcDist, sort ascending
+  if(nearbyMode&&userLat!==null){
+    list=list.map(t=>({...t,_calcDist:t.lat?haversine(userLat,userLng,t.lat,t.lng):9999}))
+             .sort((a,b)=>a._calcDist-b._calcDist);
+  }
+
+  if(!list.length){
+    document.getElementById('theaterList').innerHTML=`<div class="tsb-no-result"><strong>Không tìm thấy rạp nào</strong>Thử từ khóa khác hoặc chọn thành phố khác</div>`;
+    return;
+  }
+
   // Open first theater by default on first render
   if(Object.keys(openTheaters).length===0 && list.length>0){
     openTheaters[list[0].id]=true;
   }
   document.getElementById('theaterList').innerHTML=list.map(t=>{
+    const distDisplay=nearbyMode&&t._calcDist!=null&&t._calcDist<9000
+      ?`${t._calcDist<1?Math.round(t._calcDist*1000)+'m':t._calcDist.toFixed(1)+' km'}`
+      :(t.dist&&t.dist!=='—'?t.dist:null);
     const shows=THEATER_SHOWS[t.id]||defaultShows(slug);
     const isOpen=!!openTheaters[t.id];
     const filmRows=shows.map(s=>{
@@ -810,7 +922,7 @@ function renderTheaters(){
           <div class="theater-formats">${t.formats.map(f=>{const fi=FORMAT_INFO[f];return fi?`<span class="fmt-pill ${fi.cls}">${fi.label}</span>`:''}).join('')}</div>
         </div>
         <div class="theater-hd-right">
-          ${t.dist&&t.dist!=='—'?`<span class="theater-dist">${t.dist}</span>`:''}
+          ${distDisplay?`<span class="theater-dist">${distDisplay}</span>`:''}
           <span class="theater-chevron">▼</span>
         </div>
       </div>
