@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title id="pageTitle">Diễn viên - MoMo Cinema</title>
+<meta name="description" id="pageDesc" content="Xem phim của diễn viên trên MoMo Cinema">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink-500:#EB2F96;--pink-50:#fdf2f8;--pink-100:#fce7f3;--pink-300:#f9a8d4;
+  --gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;
+  --gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;
+  --gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;
+  --amber-500:#f59e0b;--amber-50:#fffbeb;
+  --purple-500:#8b5cf6;--purple-50:#f5f3ff;--purple-100:#ede9fe;
+  --blue-500:#3b82f6;--blue-50:#eff6ff;
+  --red-500:#ef4444;--red-50:#fef2f2;
+  --green-500:#22c55e;--green-50:#f0fdf4;
+  --shadow-s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-m:0 4px 12px rgba(0,0,0,.1);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-2xl:24px;
+}
+body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--gray-50);color:var(--gray-900);min-height:100vh}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:24px}
+.nav-logo{display:flex;align-items:center;cursor:pointer;text-decoration:none}
+.nav-logo img{height:28px}
+.nav-links{display:flex;gap:4px}
+.nav-link{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-600);background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:var(--r-sm);transition:.15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{color:var(--pink-500)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-search{font-size:13px;color:var(--gray-400);background:var(--gray-100);border-radius:var(--r-xl);padding:7px 14px;cursor:pointer;white-space:nowrap}
+.nav-city{font-family:inherit;font-size:12px;font-weight:600;color:var(--gray-600);background:none;border:none;cursor:pointer}
+.nav-login{font-family:inherit;font-size:13px;font-weight:800;color:#fff;background:var(--pink-500);border:none;border-radius:var(--r-xl);padding:7px 18px;cursor:pointer}
+@media(max-width:768px){.nav-links,.nav-search{display:none}}
+
+/* BREADCRUMB */
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-100);padding:0 20px}
+.breadcrumb-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:6px;height:37px;font-size:12px}
+.bc-item{color:var(--gray-500);text-decoration:none;cursor:pointer}
+.bc-item:hover{color:var(--pink-500)}
+.bc-sep{color:var(--gray-300)}
+.bc-current{color:var(--gray-900);font-weight:700}
+
+/* HERO */
+.hero{background:#fff;padding:32px 20px 0;border-bottom:1px solid var(--gray-200)}
+.hero-inner{max-width:1100px;margin:0 auto;display:flex;gap:28px;align-items:flex-start}
+.person-avatar{width:120px;height:120px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff;background:var(--person-color,#5b21b6);box-shadow:var(--shadow-m)}
+.person-info{flex:1}
+.person-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--purple-500);background:var(--purple-50);border:1px solid var(--purple-100);border-radius:20px;padding:3px 10px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.person-name{font-size:28px;font-weight:900;color:var(--gray-900);line-height:1.15;margin-bottom:4px}
+.person-known-as{font-size:14px;color:var(--gray-500);font-style:italic;margin-bottom:8px}
+.person-meta{font-size:13px;color:var(--gray-500);margin-bottom:12px;display:flex;flex-wrap:wrap;gap:12px}
+.person-meta span{display:flex;align-items:center;gap:4px}
+.person-bio{font-size:14px;color:var(--gray-600);line-height:1.65;max-width:640px;margin-bottom:18px}
+.person-stats{display:flex;gap:24px;flex-wrap:wrap}
+.pstat{text-align:center}
+.pstat-num{font-size:22px;font-weight:900;color:var(--gray-900);display:block}
+.pstat-lbl{font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+/* KNOWN FOR */
+.known-for{background:#fff;border-top:1px solid var(--gray-100);padding:20px}
+.kf-inner{max-width:1100px;margin:0 auto}
+.kf-label{font-size:12px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.kf-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.kf-scroll::-webkit-scrollbar{display:none}
+.kf-item{flex-shrink:0;width:90px;cursor:pointer}
+.kf-poster{width:90px;height:132px;border-radius:var(--r-md);overflow:hidden;background:var(--gray-200);margin-bottom:6px;box-shadow:var(--shadow-s);transition:.2s}
+.kf-poster:hover{transform:translateY(-2px);box-shadow:var(--shadow-m)}
+.kf-poster img{width:100%;height:100%;object-fit:cover}
+.kf-title{font-size:11px;font-weight:700;color:var(--gray-700);text-align:center;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* TABS */
+.hero-tabs{display:flex;gap:0;margin-top:20px;border-top:1px solid var(--gray-100)}
+.hero-tab{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-400);background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;padding:13px 20px;transition:.15s;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
+.hero-tab.on{color:var(--pink-500);border-bottom-color:var(--pink-500)}
+.hero-tab:hover:not(.on){color:var(--gray-700)}
+.tab-count{font-size:10px;background:var(--gray-100);color:var(--gray-500);border-radius:10px;padding:1px 6px;font-weight:700}
+.hero-tab.on .tab-count{background:var(--pink-50);color:var(--pink-500)}
+
+/* CONTENT */
+.content{max-width:1100px;margin:0 auto;padding:28px 20px}
+
+/* AWARDS */
+.awards-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.award-tag{font-size:12px;font-weight:700;color:var(--amber-500);background:var(--amber-50);border:1px solid #fde68a;border-radius:var(--r-sm);padding:5px 12px;display:flex;align-items:center;gap:5px}
+
+/* FILM GRID */
+.film-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+@media(min-width:600px){.film-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
+.film-card{background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-s);cursor:pointer;transition:.2s}
+.film-card:hover{box-shadow:var(--shadow-m);transform:translateY(-3px)}
+.film-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--gray-200)}
+.film-poster img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.film-card:hover .film-poster img{transform:scale(1.04)}
+.film-age{position:absolute;top:8px;left:8px;font-size:10px;font-weight:900;padding:3px 7px;border-radius:5px;color:#fff}
+.film-age.p{background:#16a34a}.film-age.t13{background:#ca8a04}.film-age.t16{background:#ea580c}.film-age.c18{background:#dc2626}
+.film-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;background:var(--pink-500);color:#fff}
+.film-body{padding:12px}
+.film-title{font-size:13px;font-weight:800;color:var(--gray-900);margin-bottom:6px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.film-char-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+.char-type{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;display:inline-block}
+.char-type.main{color:#be185d;background:#fdf2f8}
+.char-type.support{color:var(--gray-500);background:var(--gray-100)}
+.char-type.villain{color:#dc2626;background:var(--red-50)}
+.char-type.voice{color:#1d4ed8;background:var(--blue-50)}
+.film-role{font-size:11px;font-weight:700;color:var(--purple-500);background:var(--purple-50);border-radius:4px;padding:2px 7px;display:inline-block}
+.film-score-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.film-score-star{font-size:11px}
+.film-score-val{font-size:11px;font-weight:800;color:var(--amber-500)}
+.film-sub{font-size:11px;color:var(--gray-400);margin-bottom:8px}
+.film-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.film-tag{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);padding:2px 7px;border-radius:4px}
+.film-tag.imax{background:#0f172a;color:#e2e8f0}
+.film-tag.fourDx{background:#7c2d12;color:#fed7aa}
+.film-cta{width:100%;font-family:inherit;font-size:12px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-sm);padding:7px;cursor:pointer;transition:.15s}
+.film-cta:hover{background:var(--pink-100)}
+.film-cta.soon{color:var(--gray-500);background:var(--gray-100);border-color:var(--gray-200)}
+.film-cta.past{color:var(--gray-400);background:var(--gray-50);border-color:var(--gray-200);cursor:default}
+
+/* EMPTY STATE */
+.empty-state{padding:48px 0;text-align:center;color:var(--gray-400);font-size:14px}
+.empty-icon{font-size:36px;margin-bottom:12px}
+
+/* REVIEWS */
+.rating-overview{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:20px;margin-bottom:20px;display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+.rating-big{text-align:center;flex-shrink:0;min-width:90px}
+.rating-big-num{font-size:48px;font-weight:900;color:var(--gray-900);line-height:1}
+.rating-big-stars{font-size:18px;margin:4px 0}
+.rating-big-count{font-size:12px;color:var(--gray-400)}
+.rating-bars{flex:1;min-width:160px}
+.rating-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rbar-label{font-size:11px;font-weight:700;color:var(--gray-500);width:12px;text-align:right;flex-shrink:0}
+.rbar-track{flex:1;height:6px;background:var(--gray-100);border-radius:4px;overflow:hidden}
+.rbar-fill{height:100%;background:var(--amber-500);border-radius:4px;transition:.4s}
+.rbar-pct{font-size:11px;color:var(--gray-400);width:30px;flex-shrink:0}
+.write-review-cta{width:100%;font-family:inherit;font-size:14px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-md);padding:12px;cursor:pointer;margin-bottom:20px;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.write-review-cta:hover{background:var(--pink-100)}
+.review-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:16px;margin-bottom:12px}
+.review-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.review-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+.review-meta{flex:1}
+.review-user{font-size:13px;font-weight:800;color:var(--gray-900)}
+.review-sub{font-size:11px;color:var(--gray-400);display:flex;align-items:center;gap:6px;margin-top:2px}
+.review-film-ref{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--purple-500);background:var(--purple-50);border-radius:4px;padding:2px 8px;margin-bottom:8px}
+.review-text{font-size:13px;color:var(--gray-700);line-height:1.6;margin-bottom:10px}
+.review-foot{display:flex;align-items:center;gap:12px}
+.review-like{font-size:12px;color:var(--gray-400);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;font-family:inherit}
+.review-like:hover{color:var(--pink-500)}
+.reviews-section-title{font-size:15px;font-weight:800;color:var(--gray-900);margin-bottom:14px}
+
+.footer{background:var(--gray-900);color:var(--gray-400);font-size:12px;padding:20px;text-align:center;margin-top:48px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:var(--r-xl);opacity:0;pointer-events:none;transition:.25s;white-space:nowrap;z-index:9999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a class="nav-logo" href="/cinema">
+      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="MoMo" height="28" style="display:block">
+    </a>
+    <div class="nav-links">
+      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="toast('Tính năng đang cập nhật')">Ưu đãi</button>
+      <button class="nav-link" onclick="toast('Vé của tôi')">Vé của tôi</button>
+    </div>
+    <div class="nav-right">
+      <div class="nav-search" style="display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 14px;flex:1;max-width:260px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..." style="background:none;border:none;outline:none;color:var(--gray-900);font-size:13px;width:100%"></div>
+      <button class="nav-city" onclick="toast('Chọn thành phố')">📍 Hồ Chí Minh</button>
+      <button class="nav-login">Đăng nhập</button>
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    <a class="bc-item" href="/cinema">Phim</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-item">Diễn viên</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-current" id="bcName">—</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="person-avatar" id="personAvatar">—</div>
+    <div class="person-info">
+      <div class="person-type-badge">🌟 Diễn viên</div>
+      <h1 class="person-name" id="personName">—</h1>
+      <div class="person-known-as" id="personKnownAs"></div>
+      <div class="person-meta" id="personMeta"></div>
+      <p class="person-bio" id="personBio"></p>
+      <div class="person-stats" id="personStats"></div>
+    </div>
+  </div>
+
+  <div class="known-for" id="knownForSection" style="display:none">
+    <div class="kf-inner">
+      <div class="kf-label">Nổi tiếng với</div>
+      <div class="kf-scroll" id="knownForScroll"></div>
+    </div>
+  </div>
+
+  <div class="hero-tabs" style="max-width:1100px;margin:0 auto;display:flex;overflow-x:auto">
+    <button class="hero-tab on" onclick="showTab('now',this)">Đang chiếu <span class="tab-count" id="countNow"></span></button>
+    <button class="hero-tab" onclick="showTab('soon',this)">Sắp chiếu <span class="tab-count" id="countSoon"></span></button>
+    <button class="hero-tab" onclick="showTab('past',this)">Đã chiếu <span class="tab-count" id="countPast"></span></button>
+    <button class="hero-tab" onclick="showTab('reviews',this)">Đánh giá <span class="tab-count" id="countReviews"></span></button>
+  </div>
+</div>
+
+<div class="content">
+  <div id="awardsRow" class="awards-row"></div>
+  <div id="filmPanel"></div>
+</div>
+
+<div class="footer">MoMo Cinema — Dữ liệu lịch chiếu là prototype demo.</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+const ACTORS = {
+  'tran-thanh': {
+    name: 'Trấn Thành', knownAs: 'Nghệ danh: Trấn Thành', initials: 'TT', color: '#b45309',
+    nationality: '🇻🇳 Việt Nam', born: '29/10/1987', years: '2005 - nay',
+    bio: 'Trấn Thành là diễn viên, MC, đạo diễn và nhà sản xuất người Việt Nam. Anh là một trong những nghệ sĩ có sức ảnh hưởng lớn nhất trong làng giải trí Việt, nổi tiếng qua các chương trình Rap Việt, Ký ức vui vẻ và loạt phim như Nhà Bà Nữ, Bố Già đạt kỷ lục phòng vé Việt Nam.',
+    stats: [{num:'18',lbl:'Phim'},{num:'1B+',lbl:'USD doanh thu'},{num:'8',lbl:'Giải HTV Awards'}],
+    awards: ['🏆 Nam MC xuất sắc VTV Awards 2022','🌟 Phim VN doanh thu cao nhất 2023','🌟 HTV Awards Diễn viên xuất sắc'],
+    score: 4.8, reviewCount: 3247,
+    ratingBreakdown: [75, 17, 5, 2, 1],
+    reviews: [
+      {user:'Minh Khoa', initials:'MK', color:'#1d4ed8', rating:5, date:'2 ngày trước', film:'Lầu Chú Hỏa', text:'Trấn Thành diễn xuất cực kỳ tự nhiên trong vai Phước Lầu. Cảnh cuối phim khiến cả rạp im lặng hoàn toàn rồi vỡ òa — khó tin đây là người vừa quay phim vừa đạo diễn.', likes:284},
+      {user:'Thu Hà', initials:'TH', color:'#be185d', rating:5, date:'3 ngày trước', film:'Nhà Bà Nữ', text:'Xem lần thứ 3 rồi mà vẫn khóc y như lần đầu. Đây là diễn viên kiêm đạo diễn hiếm hoi của điện ảnh Việt thực sự chạm được vào cảm xúc người xem.', likes:156},
+      {user:'Bảo Long', initials:'BL', color:'#059669', rating:4, date:'1 tuần trước', film:'Bố Già', text:'Vai Ba Sang chân thực đến mức tôi nghĩ đó là cuộc đời thật của anh ấy. Phim gia đình Việt Nam hiếm khi được làm tốt đến vậy.', likes:89},
+    ],
+    knownFor: [
+      {title:'Nhà Bà Nữ',img:'https://image.tmdb.org/t/p/w300/jlbCaCevS4YHASzW5wVnevbrSy8.jpg'},
+      {title:'Bố Già',img:'https://image.tmdb.org/t/p/w300/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg'},
+      {title:'Chàng Trai Năm Ấy',img:'https://image.tmdb.org/t/p/w300/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg'},
+    ],
+    now: [
+      {id:'lau-chu-hoa',title:'Lầu Chú Hỏa',role:'Vai: Phước "Lầu"',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.1',age:'T16',dur:'105 phút',genre:'Kinh dị - Tâm lý',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',tags:['2D','3D']},
+    ],
+    soon: [
+      {id:'nghi-he-so-nghi-huu',title:'Nghỉ Hè Sợ Nghỉ Hưu',role:'Vai: Thầy Hải',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.8',age:'P',dur:'115 phút',genre:'Hài - Gia đình',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',tags:['2D']},
+    ],
+    past: [
+      {id:'nha-ba-nu',title:'Nhà Bà Nữ',role:'Vai: Đạo diễn kiêm diễn viên',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'9.1',age:'T13',dur:'129 phút',genre:'Hài - Gia đình',img:'https://image.tmdb.org/t/p/w500/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',tags:['2D']},
+      {id:'bo-gia',title:'Bố Già',role:'Vai: Ba Sang',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.8',age:'P',dur:'120 phút',genre:'Gia đình',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',tags:['2D']},
+    ],
+  },
+  'kaity-nguyen': {
+    name: 'Kaity Nguyễn', knownAs: 'Tên thật: Nguyễn Cao Kỳ Duyên', initials: 'KN', color: '#be185d',
+    nationality: '🇻🇳 Việt Nam', born: '24/10/1999', years: '2016 - nay',
+    bio: 'Kaity Nguyễn là diễn viên trẻ người Việt Nam, được biết đến qua vai diễn trong Em Chưa 18 đoạt giải Nữ diễn viên xuất sắc tại Liên hoan phim Việt Nam. Cô là một trong những gương mặt trẻ nổi bật nhất của điện ảnh Việt thế hệ mới.',
+    stats: [{num:'12',lbl:'Phim'},{num:'3',lbl:'Giải thưởng'},{num:'2M+',lbl:'Followers'}],
+    awards: ['🏆 Nữ diễn viên xuất sắc - LHP VN 2017','🌟 Ngôi sao Xanh 2019','🌟 HTV Awards 2020'],
+    score: 4.6, reviewCount: 1842,
+    ratingBreakdown: [65, 22, 9, 3, 1],
+    reviews: [
+      {user:'Lan Anh', initials:'LA', color:'#be185d', rating:5, date:'1 ngày trước', film:'Mesdames Thanh Sắc', text:'Kaity diễn quá đỉnh trong vai Thanh Sắc — vừa mạnh mẽ vừa dễ vỡ. Cô ấy đã thật sự lột xác so với Em Chưa 18 ngày nào.', likes:198},
+      {user:'Quốc Dũng', initials:'QD', color:'#1d4ed8', rating:5, date:'4 ngày trước', film:'Em Chưa 18', text:'Em Chưa 18 mãi là bộ phim đặc biệt với tôi và Kaity Nguyễn là linh hồn của nó. Không ai có thể thay thế cô ấy trong vai Linh.', likes:124},
+      {user:'Hồng Nhung', initials:'HN', color:'#7c3aed', rating:4, date:'2 tuần trước', film:'Người Cần Quên Phải Nhớ', text:'Diễn xuất ổn, nhưng phim hơi dàn trải. Kaity vẫn là điểm sáng trong một kịch bản chưa thực sự thuyết phục.', likes:67},
+    ],
+    knownFor: [
+      {title:'Em Chưa 18',img:'https://image.tmdb.org/t/p/w300/cFOnIqPNyVqmU1ZtXSsaztCebul.jpg'},
+      {title:'Người Cần Quên Phải Nhớ',img:'https://image.tmdb.org/t/p/w300/pxkavJJuM5zArEGtzvmOLoiICVh.jpg'},
+      {title:'Chàng Trai Năm Ấy',img:'https://image.tmdb.org/t/p/w300/wcahBISlczoYqcakatu2uyX8kGQ.jpg'},
+    ],
+    now: [
+      {id:'mesdames',title:'Mesdames Thanh Sắc',role:'Vai: Thanh Sắc',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.4',age:'C18',dur:'110 phút',genre:'Tình cảm',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',tags:['2D']},
+    ],
+    soon: [
+      {id:'nguoi-duoc-chon',title:'Người Được Chọn',role:'Vai: An Nhiên',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.9',age:'T13',dur:'110 phút',genre:'Tình cảm - Tâm lý',img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',tags:['2D']},
+    ],
+    past: [
+      {id:'em-chua-18',title:'Em Chưa 18',role:'Vai: Linh',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.7',age:'T13',dur:'108 phút',genre:'Tình cảm - Hài',img:'https://image.tmdb.org/t/p/w500/cFOnIqPNyVqmU1ZtXSsaztCebul.jpg',tags:['2D']},
+      {id:'nguoi-can-quen',title:'Người Cần Quên Phải Nhớ',role:'Vai: Khanh',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.2',age:'T13',dur:'95 phút',genre:'Tình cảm',img:'https://image.tmdb.org/t/p/w500/pxkavJJuM5zArEGtzvmOLoiICVh.jpg',tags:['2D']},
+    ],
+  },
+  'scarlett-johansson': {
+    name: 'Scarlett Johansson', knownAs: 'Biệt danh: ScarJo', initials: 'SJ', color: '#1d4ed8',
+    nationality: '🇺🇸 Hoa Kỳ', born: '22/11/1984', years: '1994 - nay',
+    bio: 'Scarlett Johansson là diễn viên người Mỹ, một trong những nghệ sĩ có cát-xê cao nhất thế giới. Cô nổi tiếng toàn cầu qua vai Natasha Romanoff (Black Widow) trong Vũ trụ Marvel và nhiều tác phẩm điện ảnh đoạt giải thưởng quốc tế.',
+    stats: [{num:'50+',lbl:'Phim'},{num:'14.5 tỷ',lbl:'USD doanh thu'},{num:'2',lbl:'Đề cử Oscar'}],
+    awards: ['🌟 BAFTA Nữ diễn viên phụ 2020','🌟 Golden Globe Nữ chính 2020','🏆 Tony Award 2022'],
+    score: 4.7, reviewCount: 5432,
+    ratingBreakdown: [70, 19, 7, 3, 1],
+    reviews: [
+      {user:'Tuấn Anh', initials:'TA', color:'#1d4ed8', rating:5, date:'5 giờ trước', film:'Supergirl: Woman of Tomorrow', text:'Giọng lồng tiếng của ScarJo trong Supergirl mang chiều sâu mà ít diễn viên nào làm được — vừa lạnh lùng vừa đau đớn, hoàn toàn khác Black Widow.', likes:412},
+      {user:'Mai Linh', initials:'ML', color:'#be185d', rating:5, date:'2 ngày trước', film:'Black Widow', text:'Mãi mãi là Black Widow trong lòng tôi. Hành trình của Natasha Romanoff từ Avengers đến Black Widow riêng là một trong những arc hay nhất MCU.', likes:289},
+      {user:'Văn Đức', initials:'VĐ', color:'#059669', rating:4, date:'1 tuần trước', film:'Marriage Story', text:'Performance trong Marriage Story xứng đáng được Oscar hơn nhiều. Scarlett đã hoàn toàn biến mất vào nhân vật — không còn là ScarJo nữa.', likes:178},
+    ],
+    knownFor: [
+      {title:'Black Widow',img:'https://image.tmdb.org/t/p/w300/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg'},
+      {title:'Avengers: Endgame',img:'https://image.tmdb.org/t/p/w300/or06FN3Dka5tukK1e9sl16pB3iy.jpg'},
+      {title:'Marriage Story',img:'https://image.tmdb.org/t/p/w300/pZekG6xabPd9b6Uxp4m0B11yKnm.jpg'},
+    ],
+    now: [
+      {id:'supergirl',title:'Supergirl: Woman of Tomorrow',role:'Vai: Kara Zor-El (lồng tiếng)',charType:'voice',charTypeLabel:'Lồng tiếng',momoScore:'8.2',age:'T13',dur:'130 phút',genre:'Hành động',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',tags:['IMAX','2D']},
+    ],
+    soon: [
+      {id:'giai-cuu',title:'Giải Cứu',role:'Vai: Agent Carter',charType:'support',charTypeLabel:'Nhân vật phụ',momoScore:'7.6',age:'T13',dur:'120 phút',genre:'Hành động',img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',tags:['IMAX','4DX']},
+    ],
+    past: [
+      {id:'black-widow',title:'Black Widow',role:'Vai: Natasha Romanoff',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.6',age:'T13',dur:'134 phút',genre:'Hành động',img:'https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg',tags:['IMAX']},
+      {id:'endgame',title:'Avengers: Endgame',role:'Vai: Black Widow',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'9.4',age:'T13',dur:'181 phút',genre:'Hành động',img:'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',tags:['IMAX']},
+    ],
+  },
+  'tom-hanks': {
+    name: 'Tom Hanks', knownAs: '', initials: 'TH', color: '#065f46',
+    nationality: '🇺🇸 Hoa Kỳ', born: '09/07/1956', years: '1980 - nay',
+    bio: 'Tom Hanks là diễn viên, nhà sản xuất và đạo diễn người Mỹ nổi tiếng với nhiều tác phẩm kinh điển. Ông đã giành 2 Oscar Diễn viên chính liên tiếp và được mệnh danh là "Jimmy Stewart của thế hệ này". Vai diễn lồng tiếng Woody trong Toy Story kéo dài suốt 3 thập kỷ.',
+    stats: [{num:'80+',lbl:'Phim'},{num:'2',lbl:'Oscar'},{num:'30',lbl:'Năm lồng tiếng Woody'}],
+    awards: ['🏆 Oscar Nam chính 1994 - Forrest Gump','🏆 Oscar Nam chính 1993 - Philadelphia','🌟 SAG Lifetime Achievement'],
+    score: 4.9, reviewCount: 8127,
+    ratingBreakdown: [82, 13, 3, 1, 1],
+    reviews: [
+      {user:'Phương Linh', initials:'PL', color:'#7c3aed', rating:5, date:'1 ngày trước', film:'Toy Story 5', text:'Giọng Woody của Tom Hanks là một phần tuổi thơ của cả thế hệ. 30 năm vẫn là ông ấy — không ai khác có thể làm điều đó.', likes:634},
+      {user:'Minh Tùng', initials:'MT', color:'#1d4ed8', rating:5, date:'1 tuần trước', film:'Forrest Gump', text:'"Life is like a box of chocolates" — câu thoại đơn giản nhưng Tom Hanks khiến nó trở thành một trong những khoảnh khắc điện ảnh bất tử nhất lịch sử.', likes:445},
+      {user:'Ngọc Hà', initials:'NH', color:'#be185d', rating:5, date:'3 tuần trước', film:'Toy Story 4', text:'Tom Hanks khóc ngoài đời thật khi thu âm cảnh cuối Toy Story 4 và bạn cũng sẽ khóc khi xem. Đó là mức độ cống hiến của ông ấy.', likes:312},
+    ],
+    knownFor: [
+      {title:'Toy Story',img:'https://image.tmdb.org/t/p/w300/uXDfjJbdP4ijW5hWSBrPu9LAt2.jpg'},
+      {title:'Forrest Gump',img:'https://image.tmdb.org/t/p/w300/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg'},
+      {title:'Cast Away',img:'https://image.tmdb.org/t/p/w300/5KCVkau1HEl7ZzSPeg2KCLD5yz9.jpg'},
+    ],
+    now: [
+      {id:'toy-story-5',title:'Toy Story 5',role:'Vai: Woody (lồng tiếng)',charType:'voice',charTypeLabel:'Lồng tiếng',momoScore:'8.9',age:'P',dur:'100 phút',genre:'Hoạt hình - Gia đình',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',tags:['2D','3D']},
+    ],
+    soon: [],
+    past: [
+      {id:'toy-story-4',title:'Toy Story 4',role:'Vai: Woody (lồng tiếng)',charType:'voice',charTypeLabel:'Lồng tiếng',momoScore:'8.5',age:'P',dur:'100 phút',genre:'Hoạt hình',img:'https://image.tmdb.org/t/p/w500/w9kR8qbmQ01HwnvK4alvnQ2ca0L.jpg',tags:['2D']},
+      {id:'forrest-gump',title:'Forrest Gump',role:'Vai: Forrest Gump',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'9.7',age:'T13',dur:'142 phút',genre:'Chính kịch - Hài',img:'https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg',tags:['2D']},
+    ],
+  },
+  'ryan-reynolds': {
+    name: 'Ryan Reynolds', knownAs: 'Biệt danh: Deadpool guy', initials: 'RR', color: '#991b1b',
+    nationality: '🇨🇦 Canada', born: '23/10/1976', years: '1991 - nay',
+    bio: 'Ryan Reynolds là diễn viên, nhà sản xuất và doanh nhân người Canada. Nổi tiếng với vai Deadpool trong Vũ trụ Marvel và phong cách hài hước đặc trưng. Anh còn là đồng sở hữu thương hiệu rượu Aviation Gin và CLB bóng đá Wrexham AFC.',
+    stats: [{num:'40+',lbl:'Phim'},{num:'5.9 tỷ',lbl:'USD doanh thu'},{num:'2',lbl:'Hãng sản xuất'}],
+    awards: ['🌟 Saturn Award Nam chính 2017','🌟 MTV Movie Award 2017','🌟 Critics Choice 2024'],
+    score: 4.6, reviewCount: 6234,
+    ratingBreakdown: [67, 21, 8, 3, 1],
+    reviews: [
+      {user:'Đăng Khoa', initials:'ĐK', color:'#991b1b', rating:5, date:'3 ngày trước', film:'Colony', text:'Tưởng Ryan Reynolds chỉ hợp hài hước, nhưng Colony chứng minh anh ấy có thể diễn serious hoàn toàn. Vai Commander Blake thật sự bất ngờ và thuyết phục.', likes:356},
+      {user:'Thảo Vân', initials:'TV', color:'#be185d', rating:5, date:'5 ngày trước', film:'Deadpool & Wolverine', text:'Deadpool & Wolverine là đỉnh cao sự nghiệp của Ryan Reynolds. Không ai trên đời có thể là Deadpool ngoài anh ấy — đó là sự thật không thể phủ nhận.', likes:289},
+      {user:'Hùng Anh', initials:'HA', color:'#1d4ed8', rating:4, date:'2 tuần trước', film:'Free Guy', text:'Free Guy là bộ phim thú vị nhưng Ryan Reynolds cần đa dạng hóa thêm. Mong xem anh ấy thử thêm nhiều genre khác như thriller hay drama.', likes:134},
+    ],
+    knownFor: [
+      {title:'Deadpool',img:'https://image.tmdb.org/t/p/w300/en971MEXui9diirXlogOrPKmsEn.jpg'},
+      {title:'Free Guy',img:'https://image.tmdb.org/t/p/w300/xmbU4JTUm89LcHGe9dYVDLWGnEu.jpg'},
+      {title:'The Proposal',img:'https://image.tmdb.org/t/p/w300/oAojGGsOwQa6rMO7LWjz8swYKj0.jpg'},
+    ],
+    now: [
+      {id:'colony',title:'Colony',role:'Vai: Commander Blake',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.8',age:'T16',dur:'118 phút',genre:'Khoa học viễn tưởng',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',tags:['IMAX','2D']},
+    ],
+    soon: [
+      {id:'tung-hoanh-tu-hai',title:'Deadpool & Wolverine 2',role:'Vai: Wade Wilson / Deadpool',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.5',age:'C18',dur:'128 phút',genre:'Hành động - Hài',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',tags:['IMAX','2D']},
+    ],
+    past: [
+      {id:'deadpool',title:'Deadpool & Wolverine',role:'Vai: Deadpool',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'9.0',age:'C18',dur:'128 phút',genre:'Hành động - Hài',img:'https://image.tmdb.org/t/p/w500/en971MEXui9diirXlogOrPKmsEn.jpg',tags:['IMAX']},
+      {id:'free-guy',title:'Free Guy',role:'Vai: Guy',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.1',age:'T13',dur:'115 phút',genre:'Hành động - Hài',img:'https://image.tmdb.org/t/p/w500/xmbU4JTUm89LcHGe9dYVDLWGnEu.jpg',tags:['2D']},
+    ],
+  },
+};
+
+const slug = location.pathname.replace(/\/$/, '').split('/').pop();
+const person = ACTORS[slug] || ACTORS['tran-thanh'];
+let activeTab = 'now';
+
+function init(){
+  document.getElementById('pageTitle').textContent = `${person.name} - Diễn viên - MoMo Cinema`;
+  document.getElementById('bcName').textContent = person.name;
+  document.getElementById('personName').textContent = person.name;
+  document.getElementById('personBio').textContent = person.bio;
+
+  const kaEl = document.getElementById('personKnownAs');
+  if(person.knownAs){ kaEl.textContent = person.knownAs; } else { kaEl.style.display='none'; }
+
+  const av = document.getElementById('personAvatar');
+  av.textContent = person.initials;
+  av.style.setProperty('--person-color', person.color);
+
+  document.getElementById('personMeta').innerHTML = [
+    `<span>🌍 ${person.nationality}</span>`,
+    `<span>🎂 Sinh ${person.born}</span>`,
+    `<span>🎬 Hoạt động: ${person.years}</span>`,
+  ].join('');
+
+  document.getElementById('personStats').innerHTML = person.stats.map(s=>`
+    <div class="pstat">
+      <span class="pstat-num">${s.num}</span>
+      <span class="pstat-lbl">${s.lbl}</span>
+    </div>`).join('');
+
+  document.getElementById('awardsRow').innerHTML = person.awards.map(a=>`<span class="award-tag">${a}</span>`).join('');
+
+  if(person.knownFor && person.knownFor.length){
+    document.getElementById('knownForSection').style.display = '';
+    document.getElementById('knownForScroll').innerHTML = person.knownFor.map(f=>`
+      <div class="kf-item">
+        <div class="kf-poster"><img src="${f.img}" alt="${f.title}" onerror="this.style.display='none'"></div>
+        <div class="kf-title">${f.title}</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('countNow').textContent = (person.now||[]).length;
+  document.getElementById('countSoon').textContent = (person.soon||[]).length;
+  document.getElementById('countPast').textContent = (person.past||[]).length;
+  document.getElementById('countReviews').textContent = person.reviewCount ? (person.reviewCount >= 1000 ? (person.reviewCount/1000).toFixed(1)+'k' : person.reviewCount) : '';
+
+  renderFilms();
+}
+
+function showTab(tab, el){
+  activeTab = tab;
+  document.querySelectorAll('.hero-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const awardRow = document.getElementById('awardsRow');
+  awardRow.style.display = tab === 'reviews' ? 'none' : '';
+  tab === 'reviews' ? renderReviews() : renderFilms();
+}
+
+function renderFilms(){
+  const films = person[activeTab] || [];
+  const panel = document.getElementById('filmPanel');
+  if(!films.length){
+    panel.innerHTML = `<div class="empty-state"><div class="empty-icon">🎬</div>Chưa có phim trong mục này</div>`;
+    return;
+  }
+  const isSoon = activeTab === 'soon';
+  const isPast = activeTab === 'past';
+  panel.innerHTML = `<div class="film-grid">${films.map(f=>{
+    const ageCls = f.age.toLowerCase().replace(' ','');
+    const tags = (f.tags||[]).map(t=>`<span class="film-tag ${t==='IMAX'?'imax':t==='4DX'?'fourDx':''}">${t}</span>`).join('');
+    const ctaClass = isSoon?'soon':isPast?'past':'';
+    const ctaText = isSoon?'Đặt vé trước →':isPast?'Xem lại':'Đặt vé →';
+    const charBadge = f.charType ? `<span class="char-type ${f.charType}">${f.charTypeLabel}</span>` : '';
+    const scoreBadge = f.momoScore ? `<div class="film-score-row"><span class="film-score-star">⭐</span><span class="film-score-val">${f.momoScore}</span></div>` : '';
+    return `<div class="film-card" onclick="${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">
+      <div class="film-poster">
+        <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'">
+        <span class="film-age ${ageCls}">${f.age}</span>
+        ${!isPast&&!isSoon?'<span class="film-badge">Đang chiếu</span>':''}
+        ${isSoon?'<span class="film-badge" style="background:#6366f1">Sắp chiếu</span>':''}
+      </div>
+      <div class="film-body">
+        <div class="film-title">${f.title}</div>
+        <div class="film-char-row">${charBadge}${f.role?`<span class="film-role">${f.role}</span>`:''}</div>
+        ${scoreBadge}
+        <div class="film-sub">${f.genre} · ${f.dur}</div>
+        <div class="film-tags">${tags}</div>
+        <button class="film-cta ${ctaClass}" onclick="event.stopPropagation();${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">${ctaText}</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderReviews(){
+  const panel = document.getElementById('filmPanel');
+  const score = person.score || 0;
+  const count = person.reviewCount || 0;
+  const breakdown = person.ratingBreakdown || [0,0,0,0,0];
+  const reviews = person.reviews || [];
+
+  const starsHtml = arr => {
+    const n = Math.round(arr);
+    return '★'.repeat(n) + '☆'.repeat(5-n);
+  };
+
+  const barsHtml = breakdown.map((pct,i)=>`
+    <div class="rating-bar-row">
+      <span class="rbar-label">${5-i}</span>
+      <div class="rbar-track"><div class="rbar-fill" style="width:${pct}%"></div></div>
+      <span class="rbar-pct">${pct}%</span>
+    </div>`).join('');
+
+  const reviewsHtml = reviews.map(r=>`
+    <div class="review-card">
+      <div class="review-head">
+        <div class="review-av" style="background:${r.color}">${r.initials}</div>
+        <div class="review-meta">
+          <div class="review-user">${r.user}</div>
+          <div class="review-sub">
+            <span style="color:var(--amber-500);font-size:12px">${starsHtml(r.rating)}</span>
+            <span>${r.date}</span>
+          </div>
+        </div>
+      </div>
+      ${r.film?`<div class="review-film-ref">🎬 ${r.film}</div>`:''}
+      <div class="review-text">${r.text}</div>
+      <div class="review-foot">
+        <button class="review-like" onclick="this.innerHTML='❤️ '+parseInt(this.textContent.replace(/\D/g,''))+1">👍 ${r.likes}</button>
+        <button class="review-like" onclick="toast('Đã báo cáo đánh giá')">⚑ Báo cáo</button>
+      </div>
+    </div>`).join('');
+
+  panel.innerHTML = `
+    <div class="rating-overview">
+      <div class="rating-big">
+        <div class="rating-big-num">${score.toFixed(1)}</div>
+        <div class="rating-big-stars" style="color:var(--amber-500)">${starsHtml(score)}</div>
+        <div class="rating-big-count">${count.toLocaleString()} đánh giá</div>
+      </div>
+      <div class="rating-bars">${barsHtml}</div>
+    </div>
+    <button class="write-review-cta" onclick="toast('Tính năng viết đánh giá sẽ ra mắt sớm!')">✏️ Viết đánh giá về ${person.name}</button>
+    <div class="reviews-section-title">Đánh giá từ khán giả</div>
+    ${reviewsHtml}`;
+}
+
+let toastTimer;
+function toast(msg){ const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+
+init();
+</script>
+</body>
+</html>

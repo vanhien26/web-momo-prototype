@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Thể loại phim - MoMo Cinema</title>
+<meta name="description" content="Khám phá tất cả thể loại phim đang chiếu trên MoMo Cinema - Hành động, Kinh dị, Hoạt hình, Tình cảm và nhiều hơn nữa.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink-500:#EB2F96;--pink-50:#fdf2f8;--pink-100:#fce7f3;
+  --gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;
+  --gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;
+  --gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;
+  --shadow-s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-m:0 4px 14px rgba(0,0,0,.12);
+  --shadow-l:0 8px 32px rgba(0,0,0,.18);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-2xl:24px;
+}
+body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--gray-50);color:var(--gray-900);min-height:100vh}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:20px}
+.nav-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0}
+.nav-links{display:flex;gap:4px}
+.nav-link{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-600);background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:var(--r-sm);transition:.15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{color:var(--pink-500)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 14px;max-width:240px}
+.nav-search input{background:none;border:none;outline:none;color:var(--gray-900);font-size:13px;width:100%;font-family:inherit}
+.nav-city{font-family:inherit;font-size:12px;font-weight:600;color:var(--gray-600);background:none;border:none;cursor:pointer}
+.nav-login{font-family:inherit;font-size:13px;font-weight:800;color:#fff;background:var(--pink-500);border:none;border-radius:var(--r-xl);padding:7px 18px;cursor:pointer}
+@media(max-width:768px){.nav-links,.nav-search{display:none}}
+
+/* BREADCRUMB */
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-100);padding:0 20px}
+.breadcrumb-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:6px;height:37px;font-size:12px}
+.bc-item{color:var(--gray-500);text-decoration:none;cursor:pointer;transition:.15s}
+.bc-item:hover{color:var(--pink-500)}
+.bc-sep{color:var(--gray-300)}
+.bc-current{color:var(--gray-900);font-weight:700}
+
+/* PAGE HEADER */
+.page-header{background:#fff;border-bottom:1px solid var(--gray-200);padding:28px 20px 24px}
+.page-header-inner{max-width:1100px;margin:0 auto}
+.page-title{font-size:28px;font-weight:900;color:var(--gray-900);margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--gray-500);margin-bottom:20px}
+.stats-pills{display:flex;flex-wrap:wrap;gap:10px}
+.stat-pill{display:flex;align-items:center;gap:6px;background:var(--gray-100);border-radius:var(--r-xl);padding:7px 14px;font-size:13px;font-weight:700;color:var(--gray-700)}
+.stat-pill .sp-val{color:var(--gray-900);font-size:15px;font-weight:900}
+.stat-pill.hot .sp-val{color:var(--pink-500)}
+
+/* CONTROLS */
+.controls{max-width:1100px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ctrl-label{font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em}
+.sort-pills{display:flex;gap:6px}
+.spill{font-family:inherit;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:.15s}
+.spill.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.spill:hover:not(.on){background:var(--gray-100)}
+.ctrl-count{margin-left:auto;font-size:12px;color:var(--gray-400);font-weight:600}
+
+/* GENRE GRID */
+.genre-section{max-width:1100px;margin:0 auto;padding:20px}
+.genre-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1000px){.genre-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:680px){.genre-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* GENRE CARD */
+.genre-card{border-radius:var(--r-2xl);overflow:hidden;cursor:pointer;transition:.25s;position:relative;background:#fff;box-shadow:var(--shadow-s)}
+.genre-card:hover{box-shadow:var(--shadow-l);transform:translateY(-4px)}
+.gc-poster-strip{position:relative;height:148px;overflow:hidden;background:var(--gc-dark,#111)}
+.gc-posters{display:flex;height:100%;gap:2px}
+.gc-p{flex:1;overflow:hidden;background:var(--gray-200)}
+.gc-p img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.genre-card:hover .gc-p img{transform:scale(1.06)}
+.gc-fade{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,var(--gc-dark,#111) 100%)}
+.gc-hot-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:800;background:var(--pink-500);color:#fff;padding:2px 9px;border-radius:20px;z-index:2}
+.gc-body{padding:14px 16px 16px;background:#fff}
+.gc-emoji-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.gc-emoji{font-size:22px;line-height:1}
+.gc-name{font-size:17px;font-weight:900;color:var(--gray-900);line-height:1.2}
+.gc-counts{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.gc-count-now{font-size:12px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1px solid var(--pink-100);border-radius:6px;padding:2px 8px}
+.gc-count-soon{font-size:12px;font-weight:700;color:#6366f1;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:2px 8px}
+.gc-count-past{font-size:12px;font-weight:700;color:var(--gray-400);background:var(--gray-100);border-radius:6px;padding:2px 8px}
+.gc-desc{font-size:12px;color:var(--gray-500);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gc-subgenres{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
+.gc-sg{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);border-radius:4px;padding:2px 7px}
+.gc-cta{width:100%;font-family:inherit;font-size:13px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-md);padding:8px;cursor:pointer;transition:.15s}
+.gc-cta:hover{background:var(--pink-100)}
+
+/* FEATURED ROW */
+.featured-section{max-width:1100px;margin:0 auto;padding:28px 20px 4px}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-hd-title{font-size:18px;font-weight:900;color:var(--gray-900)}
+.sec-hd-sub{font-size:12px;color:var(--gray-400)}
+.featured-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:680px){.featured-row{grid-template-columns:1fr 1fr}}
+
+.feat-card{border-radius:var(--r-2xl);overflow:hidden;position:relative;cursor:pointer;transition:.25s;min-height:180px;box-shadow:var(--shadow-m)}
+.feat-card:hover{box-shadow:var(--shadow-l);transform:translateY(-3px)}
+.feat-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .4s}
+.feat-card:hover .feat-bg{transform:scale(1.04)}
+.feat-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.75) 100%)}
+.feat-color-tint{position:absolute;inset:0;opacity:.35}
+.feat-body{position:relative;z-index:2;padding:18px;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.feat-emoji{font-size:28px;margin-bottom:8px}
+.feat-name{font-size:18px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1.2}
+.feat-count{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:10px}
+.feat-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.feat-tag{font-size:10px;font-weight:700;color:rgba(255,255,255,.9);background:rgba(255,255,255,.18);border-radius:20px;padding:2px 9px;backdrop-filter:blur(4px)}
+.feat-cta{font-family:inherit;font-size:12px;font-weight:800;color:#fff;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);border-radius:var(--r-xl);padding:6px 16px;cursor:pointer;backdrop-filter:blur(4px);transition:.15s}
+.feat-cta:hover{background:rgba(255,255,255,.35)}
+
+/* ALL GENRES heading */
+.all-genres-hd{max-width:1100px;margin:0 auto;padding:24px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.all-genres-hd h2{font-size:18px;font-weight:900;color:var(--gray-900)}
+
+/* FOOTER */
+.footer{background:var(--gray-900);color:var(--gray-400);font-size:12px;padding:20px;text-align:center;margin-top:48px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:var(--r-xl);opacity:0;pointer-events:none;transition:.25s;white-space:nowrap;z-index:9999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a class="nav-logo" href="/cinema">
+      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="MoMo" height="28" style="display:block">
+    </a>
+    <div class="nav-links">
+      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="toast('Tính năng đang cập nhật')">Ưu đãi</button>
+      <button class="nav-link" onclick="toast('Vé của tôi')">Vé của tôi</button>
+    </div>
+    <div class="nav-right">
+      <div class="nav-search"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..."></div>
+      <button class="nav-city" onclick="toast('Chọn thành phố')">📍 Hồ Chí Minh</button>
+      <button class="nav-login">Đăng nhập</button>
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    <a class="bc-item" href="/cinema">Phim</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-current">Thể loại</span>
+  </div>
+</div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">Khám phá theo thể loại</h1>
+    <p class="page-sub">Tìm phim bạn yêu thích theo thể loại — từ hành động mãn nhãn đến kinh dị rùng mình</p>
+    <div class="stats-pills" id="statsPills"></div>
+  </div>
+</div>
+
+<div class="featured-section">
+  <div class="sec-hd">
+    <div class="sec-hd-title">🔥 Thể loại đang hot</div>
+    <div class="sec-hd-sub">Nhiều phim đang chiếu nhất</div>
+  </div>
+  <div class="featured-row" id="featuredRow"></div>
+</div>
+
+<div class="all-genres-hd">
+  <h2>Tất cả thể loại</h2>
+</div>
+<div class="controls">
+  <span class="ctrl-label">Sắp xếp</span>
+  <div class="sort-pills">
+    <button class="spill on" onclick="setSort('hot',this)">🔥 Phổ biến nhất</button>
+    <button class="spill" onclick="setSort('az',this)">A - Z</button>
+    <button class="spill" onclick="setSort('count',this)">Nhiều phim nhất</button>
+  </div>
+  <span class="ctrl-count" id="ctrlCount"></span>
+</div>
+<div class="genre-section">
+  <div class="genre-grid" id="genreGrid"></div>
+</div>
+
+<div class="footer">MoMo Cinema — Dữ liệu lịch chiếu là prototype demo.</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+const GENRES = [
+  {
+    slug:'kinh-di', name:'Kinh dị', emoji:'👻',
+    dark:'#0d0510', tint:'#7f1d1d', hot:true,
+    desc:'Những bộ phim hù dọa, ma quái và tâm lý căng thẳng đến nghẹt thở',
+    subGenres:['Ma quái','Tâm lý','J-Horror','Kinh dị Việt','Siêu nhiên'],
+    nowCount:6, soonCount:1, pastCount:1,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',
+    ],
+  },
+  {
+    slug:'hanh-dong', name:'Hành động', emoji:'⚔️',
+    dark:'#050e1a', tint:'#1e3a5f', hot:true,
+    desc:'Cảnh chiến đấu mãn nhãn, rượt đuổi hồi hộp và anh hùng dũng cảm',
+    subGenres:['Siêu anh hùng','Giang hồ','Gián điệp','Quân sự','Sci-fi Action'],
+    nowCount:3, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',
+    ],
+  },
+  {
+    slug:'hoat-hinh', name:'Hoạt hình', emoji:'🎨',
+    dark:'#0a0520', tint:'#4338ca', hot:true,
+    desc:'Phim hoạt hình dành cho mọi lứa tuổi, từ Pixar đến anime Nhật Bản',
+    subGenres:['Pixar','Disney','Anime','CGI Châu Á','Gia đình'],
+    nowCount:3, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',
+    ],
+  },
+  {
+    slug:'tinh-cam', name:'Tình cảm - Lãng mạn', emoji:'💕',
+    dark:'#150510', tint:'#9d174d',
+    desc:'Những câu chuyện tình yêu đong đầy cảm xúc, từ học đường đến trưởng thành',
+    subGenres:['Học đường','Tình cảm Việt','Cổ trang','K-Drama','Lãng mạn'],
+    nowCount:2, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',
+    ],
+  },
+  {
+    slug:'hai', name:'Hài - Hài hước', emoji:'😂',
+    dark:'#0f0b00', tint:'#92400e',
+    desc:'Tiếng cười sảng khoái sau giờ làm mệt mỏi — hài Việt và hài quốc tế',
+    subGenres:['Hài Việt','Hài gia đình','Hài hành động','Stand-up','Romcom'],
+    nowCount:1, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',
+      'https://image.tmdb.org/t/p/w500/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',
+    ],
+  },
+  {
+    slug:'vien-tuong', name:'Khoa học viễn tưởng', emoji:'🚀',
+    dark:'#050514', tint:'#1e1b4b',
+    desc:'Khám phá tương lai, vũ trụ và công nghệ chưa từng tồn tại',
+    subGenres:['Space Opera','Siêu anh hùng','Dystopia','AI & Robot','Cyberpunk'],
+    nowCount:2, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',
+      'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIe.jpg',
+    ],
+  },
+  {
+    slug:'tam-ly', name:'Tâm lý - Bí ẩn', emoji:'🧠',
+    dark:'#030a04', tint:'#14532d',
+    desc:'Twist bất ngờ, câu đố khó đoán và chiều sâu nội tâm nhân vật',
+    subGenres:['Trinh thám','Crime Drama','Psychological','Bí ẩn','Thriller'],
+    nowCount:2, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',
+      'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+    ],
+  },
+  {
+    slug:'gia-dinh', name:'Gia đình', emoji:'👨‍👩‍👧‍👦',
+    dark:'#0a0500', tint:'#78350f',
+    desc:'Câu chuyện ấm áp về tình thân, phù hợp để xem cùng cả gia đình',
+    subGenres:['Gia đình Việt','Hoạt hình gia đình','Bố mẹ & con','Cuối tuần','Hài gia đình'],
+    nowCount:2, soonCount:1, pastCount:2,
+    posters:[
+      'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',
+      'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',
+    ],
+  },
+];
+
+let sortMode = 'hot';
+
+function sortedGenres(){
+  if(sortMode === 'az') return [...GENRES].sort((a,b)=>a.name.localeCompare(b.name,'vi'));
+  if(sortMode === 'count') return [...GENRES].sort((a,b)=>(b.nowCount+b.soonCount)-(a.nowCount+a.soonCount));
+  // hot: hot first, then by nowCount
+  return [...GENRES].sort((a,b)=>{
+    if(a.hot && !b.hot) return -1;
+    if(!a.hot && b.hot) return 1;
+    return b.nowCount - a.nowCount;
+  });
+}
+
+function setSort(mode, el){
+  sortMode = mode;
+  document.querySelectorAll('.spill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  renderGrid();
+}
+
+function init(){
+  const totalNow = GENRES.reduce((s,g)=>s+g.nowCount,0);
+  const totalSoon = GENRES.reduce((s,g)=>s+g.soonCount,0);
+  document.getElementById('statsPills').innerHTML = `
+    <div class="stat-pill"><span class="sp-val">${GENRES.length}</span> thể loại</div>
+    <div class="stat-pill hot"><span class="sp-val">${totalNow}</span> phim đang chiếu</div>
+    <div class="stat-pill"><span class="sp-val">${totalSoon}</span> phim sắp chiếu</div>
+    <div class="stat-pill"><span class="sp-val">7</span> ngày / tuần có phim mới</div>
+  `;
+
+  renderFeatured();
+  renderGrid();
+}
+
+function renderFeatured(){
+  const hot = GENRES.filter(g=>g.hot).slice(0,3);
+  document.getElementById('featuredRow').innerHTML = hot.map(g=>`
+    <div class="feat-card" onclick="window.location.href='/cinema/genre/${g.slug}'">
+      <div class="feat-bg" style="background-image:url('${g.posters[0]}')"></div>
+      <div class="feat-color-tint" style="background:${g.tint}"></div>
+      <div class="feat-overlay"></div>
+      <div class="feat-body">
+        <div class="feat-emoji">${g.emoji}</div>
+        <div class="feat-name">${g.name}</div>
+        <div class="feat-count">${g.nowCount} đang chiếu · ${g.soonCount} sắp chiếu</div>
+        <div class="feat-tags">${g.subGenres.slice(0,3).map(s=>`<span class="feat-tag">${s}</span>`).join('')}</div>
+        <button class="feat-cta" onclick="event.stopPropagation();window.location.href='/cinema/genre/${g.slug}'">Khám phá →</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderGrid(){
+  const genres = sortedGenres();
+  document.getElementById('ctrlCount').textContent = `${genres.length} thể loại`;
+  document.getElementById('genreGrid').innerHTML = genres.map(g=>{
+    const totalFilms = g.nowCount + g.soonCount + g.pastCount;
+    return `<div class="genre-card" onclick="window.location.href='/cinema/genre/${g.slug}'" style="--gc-dark:${g.dark}">
+      <div class="gc-poster-strip">
+        <div class="gc-posters">
+          ${g.posters.map(p=>`<div class="gc-p"><img src="${p}" loading="lazy" onerror="this.parentElement.style.background='${g.tint}';this.style.display='none'"></div>`).join('')}
+        </div>
+        <div class="gc-fade"></div>
+        ${g.hot?`<span class="gc-hot-badge">🔥 Đang hot</span>`:''}
+      </div>
+      <div class="gc-body">
+        <div class="gc-emoji-row">
+          <span class="gc-emoji">${g.emoji}</span>
+          <span class="gc-name">${g.name}</span>
+        </div>
+        <div class="gc-counts">
+          ${g.nowCount?`<span class="gc-count-now">${g.nowCount} đang chiếu</span>`:''}
+          ${g.soonCount?`<span class="gc-count-soon">${g.soonCount} sắp chiếu</span>`:''}
+          ${g.pastCount?`<span class="gc-count-past">${g.pastCount} đã chiếu</span>`:''}
+        </div>
+        <div class="gc-desc">${g.desc}</div>
+        <div class="gc-subgenres">${g.subGenres.slice(0,4).map(s=>`<span class="gc-sg">${s}</span>`).join('')}</div>
+        <button class="gc-cta" onclick="event.stopPropagation();window.location.href='/cinema/genre/${g.slug}'">Khám phá ${g.name} →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let toastTimer;
+function toast(msg){ const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+
+init();
+</script>
+</body>
+</html>

@@ -4,6 +4,56 @@
 
 ---
 
+## Cinema Genres Index + store.js Fix — 2026-07-04
+
+**ID:** `cinema-genres` | **Category:** Platform (sub-tool của `cinema`) | **File:** `demos/cinema-genres.html`
+
+### Brief
+Trang index liệt kê toàn bộ thể loại phim (`/cinema/genres`) với featured section (hot genres), sort controls (Phổ biến nhất / A-Z / Nhiều phim nhất), genre grid 4-col với poster strip + count badges + sub-genre chips. Mục tiêu: SEO entry point cho toàn bộ genre cluster, tăng depth browsing.
+
+### Decisions made
+- **Poster strip design cho genre card**: 3 thumbnail nhỏ xếp ngang tạo collage thay vì single hero poster. Nhìn rõ "thể loại" hơn vì không bị dominated bởi 1 film cụ thể.
+- **Featured section chỉ show 3 hot genres**: Chọn `hot: true` trong data - không phải tất cả genres. Giữ section focused, không clutter.
+- **Sort stateless (no server)**: `sortedGenres()` function sort pure JS trên `GENRES` array - không cần API, fully offline.
+- **Genre card CTA link sang `/cinema/genre/:slug`**: Connect trực tiếp sang genre detail page đã có.
+- **Sub-tool trong cinema `tools` array**: Không cần GROUP_ITEM_ORDER entry mới, sidebar không thay đổi.
+
+### Issues gặp phải
+- **store.js Edit anchor collision**: Edit để thêm `cinema-genres` entry dùng `src: 'demos/cinema-director.html'` làm anchor nhưng cũng khớp với line trong cinema-director entry. Kết quả: cinema-genres fields bị inject vào cuối cinema-director object thay vì tạo entry riêng, đồng thời tạo duplicate cinema-director entry.
+- **Fix**: Read store.js, xác định toàn bộ broken block (lines 214-245), dùng unique old_string bao toàn bộ 2 entries để replace bằng 1 cinema-genres entry đúng + 1 cinema-director entry đúng.
+
+### Lessons
+- Khi thêm entry mới vào `tools` array, dùng old_string bao toàn bộ object trước đó làm anchor (không chỉ dùng `src`/`address` lines riêng lẻ) - tránh partial match collision.
+- Verify bằng `Read` trước khi Edit, confirm unique context đủ dài để anchor không khớp sai chỗ.
+
+---
+
+## Cinema Director / Actor / Genre Pages — 2026-07-04
+
+**IDs:** `cinema-director`, `cinema-actor`, `cinema-genre` | **Category:** Platform (sub-tools của `cinema`) | **Files:** `demos/cinema-director.html`, `demos/cinema-actor.html`, `demos/cinema-genre.html`
+
+### Brief
+3 trang content taxonomy mới cho Cinema: profile page đạo diễn/diễn viên và filtered listing page theo thể loại. Mục tiêu SEO target branded query ("phim Trấn Thành", "phim kinh dị đang chiếu") và increase depth của cinema funnel.
+
+### Decisions made
+- **Sub-tools, không phải standalone entries**: 3 trang này là con của `cinema` entry trong store.js (`tools` array), không cần thêm vào `GROUP_ITEM_ORDER` - giữ sidebar gọn.
+- **Shared UI template cho director + actor**: 90% giống nhau, chỉ khác role badge và "Known For" strip ở actor. Tách ra 2 file riêng (không shared template) để giảm complexity và dễ diverge độc lập sau này.
+- **Genre page dùng filter-first UX**: Format pills + Sort toggle + Tab trạng thái - không chỉ đơn thuần là film grid. Giúp differentiate với homepage genre chip.
+- **Avatar dùng initials + gradient**: Không cần external portrait photo URL. Reliable, offline-safe, đồng nhất design.
+- **Related genres section**: Cuối genre page có 6 genre chips khác để cross-browse - tăng depth session.
+- **Vercel rewrites order**: 3 rules mới phải đặt TRƯỚC `/cinema/:path*` catch-all. Devserver cần restart sau khi sửa vercel.json (vì đọc config 1 lần lúc startup).
+
+### Issues gặp phải
+- **Devserver không pick up vercel.json mới**: Server đọc vercel.json 1 lần lúc `require()` startup. Sau khi sửa vercel.json, phải stop → start server mới. `preview_start` với server đang chạy trả về "reused" mà không restart.
+- **Preview redirect về film-detail thay vì director**: Do catch-all rule `/cinema/:path*` được cache từ session trước. Fix: stop server bằng preview_stop, rồi preview_start lại.
+
+### Lessons
+- `preview_start` reuses running server nếu port còn alive. Nếu cần force-restart do config change, dùng `preview_stop` trước rồi `preview_start`.
+- Devserver (`.devserver.js`) parse `vercel.json` một lần tại startup bằng `fs.readFileSync` - không watch file changes. Luôn nhớ restart sau khi sửa vercel.json.
+- 3 new cinema pages là sub-tools của cinema entry → không cần thêm vào `GROUP_ITEM_ORDER`; sidebar không thay đổi, không cần bump logic group.
+
+---
+
 ## Cinema UI Overhaul (Fandango/Maoyan style) — 2026-06-28
 
 **ID:** `cinema` + `cinema-film-detail` | **Category:** Platform | **Files:** `demos/cinema.html`, `demos/cinema-film-detail.html`

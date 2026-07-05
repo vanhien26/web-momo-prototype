@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title id="pageTitle">Đạo diễn - MoMo Cinema</title>
+<meta name="description" id="pageDesc" content="Xem phim của đạo diễn trên MoMo Cinema">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink-500:#EB2F96;--pink-50:#fdf2f8;--pink-100:#fce7f3;--pink-300:#f9a8d4;
+  --gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;
+  --gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;
+  --gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;
+  --amber-500:#f59e0b;--amber-50:#fffbeb;
+  --green-500:#22c55e;--green-50:#f0fdf4;
+  --shadow-s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-m:0 4px 12px rgba(0,0,0,.1);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-2xl:24px;
+}
+body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--gray-50);color:var(--gray-900);min-height:100vh}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:24px}
+.nav-logo{display:flex;align-items:center;cursor:pointer;text-decoration:none}
+.nav-logo img{height:28px}
+.nav-links{display:flex;gap:4px}
+.nav-link{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-600);background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:var(--r-sm);transition:.15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{color:var(--pink-500)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-search{font-size:13px;color:var(--gray-400);background:var(--gray-100);border-radius:var(--r-xl);padding:7px 14px;cursor:pointer;white-space:nowrap}
+.nav-city{font-family:inherit;font-size:12px;font-weight:600;color:var(--gray-600);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px}
+.nav-login{font-family:inherit;font-size:13px;font-weight:800;color:#fff;background:var(--pink-500);border:none;border-radius:var(--r-xl);padding:7px 18px;cursor:pointer}
+@media(max-width:768px){.nav-links,.nav-search{display:none}}
+
+/* BREADCRUMB */
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-100);padding:0 20px}
+.breadcrumb-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:6px;height:37px;font-size:12px}
+.bc-item{color:var(--gray-500);text-decoration:none;cursor:pointer}
+.bc-item:hover{color:var(--pink-500)}
+.bc-sep{color:var(--gray-300)}
+.bc-current{color:var(--gray-900);font-weight:700}
+
+/* HERO */
+.hero{background:#fff;padding:32px 20px 0;border-bottom:1px solid var(--gray-200)}
+.hero-inner{max-width:1100px;margin:0 auto;display:flex;gap:28px;align-items:flex-start}
+.person-avatar{width:120px;height:120px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff;background:var(--person-color,#1e3a5f);box-shadow:var(--shadow-m)}
+.person-info{flex:1}
+.person-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1px solid var(--pink-100);border-radius:20px;padding:3px 10px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.person-name{font-size:28px;font-weight:900;color:var(--gray-900);line-height:1.15;margin-bottom:6px}
+.person-meta{font-size:13px;color:var(--gray-500);margin-bottom:12px;display:flex;flex-wrap:wrap;gap:12px}
+.person-meta span{display:flex;align-items:center;gap:4px}
+.person-bio{font-size:14px;color:var(--gray-600);line-height:1.65;max-width:640px;margin-bottom:18px}
+.person-stats{display:flex;gap:24px;flex-wrap:wrap}
+.pstat{text-align:center}
+.pstat-num{font-size:22px;font-weight:900;color:var(--gray-900);display:block}
+.pstat-lbl{font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.hero-tabs{display:flex;gap:0;margin-top:24px;border-top:1px solid var(--gray-100)}
+.hero-tab{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-400);background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;padding:13px 20px;transition:.15s;margin-bottom:-1px}
+.hero-tab.on{color:var(--pink-500);border-bottom-color:var(--pink-500)}
+.hero-tab:hover:not(.on){color:var(--gray-700)}
+
+/* CONTENT */
+.content{max-width:1100px;margin:0 auto;padding:28px 20px}
+
+/* AWARDS */
+.awards-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.award-tag{font-size:12px;font-weight:700;color:var(--amber-500);background:var(--amber-50);border:1px solid #fde68a;border-radius:var(--r-sm);padding:5px 12px;display:flex;align-items:center;gap:5px}
+
+/* FILM GRID */
+.film-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+@media(min-width:600px){.film-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
+.film-card{background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-s);cursor:pointer;transition:.2s}
+.film-card:hover{box-shadow:var(--shadow-m);transform:translateY(-3px)}
+.film-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--gray-200)}
+.film-poster img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.film-card:hover .film-poster img{transform:scale(1.04)}
+.film-age{position:absolute;top:8px;left:8px;font-size:10px;font-weight:900;padding:3px 7px;border-radius:5px;color:#fff}
+.film-age.p{background:#16a34a}.film-age.t13{background:#ca8a04}.film-age.t16{background:#ea580c}.film-age.c18{background:#dc2626}
+.film-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;background:var(--pink-500);color:#fff}
+.film-body{padding:12px}
+.film-title{font-size:13px;font-weight:800;color:var(--gray-900);margin-bottom:5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.film-sub{font-size:11px;color:var(--gray-400);margin-bottom:8px}
+.film-role{font-size:11px;font-weight:700;color:var(--pink-500);background:var(--pink-50);border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:6px}
+.film-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.film-tag{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);padding:2px 7px;border-radius:4px}
+.film-tag.imax{background:#0f172a;color:#e2e8f0}
+.film-tag.fourDx{background:#7c2d12;color:#fed7aa}
+.film-cta{width:100%;font-family:inherit;font-size:12px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-sm);padding:7px;cursor:pointer;transition:.15s}
+.film-cta:hover{background:var(--pink-100)}
+.film-cta.soon{color:var(--gray-500);background:var(--gray-100);border-color:var(--gray-200)}
+.film-cta.past{color:var(--gray-400);background:var(--gray-50);border-color:var(--gray-200);cursor:default}
+
+/* EMPTY */
+.empty-state{padding:48px 0;text-align:center;color:var(--gray-400);font-size:14px}
+.empty-icon{font-size:36px;margin-bottom:12px}
+
+/* SECTION TITLE */
+.sec-title{font-size:18px;font-weight:900;color:var(--gray-900);margin-bottom:6px}
+.sec-sub{font-size:13px;color:var(--gray-400);margin-bottom:20px}
+
+/* FOOTER */
+.footer{background:var(--gray-900);color:var(--gray-400);font-size:12px;padding:20px;text-align:center;margin-top:48px}
+
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:var(--r-xl);opacity:0;pointer-events:none;transition:.25s;white-space:nowrap;z-index:9999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a class="nav-logo" href="/cinema">
+      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="MoMo" height="28" style="display:block">
+    </a>
+    <div class="nav-links">
+      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="toast('Tính năng đang cập nhật')">Ưu đãi</button>
+      <button class="nav-link" onclick="toast('Vé của tôi')">Vé của tôi</button>
+    </div>
+    <div class="nav-right">
+      <div class="nav-search" style="display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 14px;flex:1;max-width:260px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..." style="background:none;border:none;outline:none;color:var(--gray-900);font-size:13px;width:100%"></div>
+      <button class="nav-city" onclick="toast('Chọn thành phố')">📍 Hồ Chí Minh</button>
+      <button class="nav-login">Đăng nhập</button>
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    <a class="bc-item" href="/cinema">Phim</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-item">Đạo diễn</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-current" id="bcName">—</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="person-avatar" id="personAvatar">—</div>
+    <div class="person-info">
+      <div class="person-type-badge">🎬 Đạo diễn</div>
+      <h1 class="person-name" id="personName">—</h1>
+      <div class="person-meta" id="personMeta"></div>
+      <p class="person-bio" id="personBio"></p>
+      <div class="person-stats" id="personStats"></div>
+    </div>
+  </div>
+  <div class="hero-tabs">
+    <button class="hero-tab on" onclick="showTab('now',this)">Đang chiếu</button>
+    <button class="hero-tab" onclick="showTab('soon',this)">Sắp chiếu</button>
+    <button class="hero-tab" onclick="showTab('past',this)">Đã chiếu</button>
+  </div>
+</div>
+
+<div class="content">
+  <div id="awardsRow" class="awards-row"></div>
+  <div id="filmPanel"></div>
+</div>
+
+<div class="footer">MoMo Cinema — Dữ liệu lịch chiếu là prototype demo.</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+const DIRECTORS = {
+  'christopher-nolan': {
+    name: 'Christopher Nolan', initials: 'CN', color: '#1e3a5f',
+    nationality: '🇬🇧 Anh - Mỹ', born: '30/07/1970', years: '1998 - nay',
+    bio: 'Christopher Nolan là đạo diễn, nhà sản xuất và biên kịch người Anh-Mỹ. Nổi tiếng với phong cách kể chuyện phi tuyến tính, hình ảnh hoành tráng và hiệu ứng thực tế không CGI. Ông đã giành Oscar Đạo diễn xuất sắc nhất 2024 với bom tấn Oppenheimer.',
+    stats: [{num:'13',lbl:'Phim'},{num:'12',lbl:'Tỷ USD doanh thu'},{num:'5',lbl:'Đề cử Oscar'}],
+    awards: ['🏆 Oscar Đạo diễn xuất sắc 2024','🏆 BAFTA Đạo diễn 2024','🌟 Golden Globe 2024'],
+    now: [
+      {id:'supergirl',title:'Supergirl: Woman of Tomorrow',age:'T13',dur:'130 phút',genre:'Hành động',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',tags:['IMAX','2D']},
+    ],
+    soon: [
+      {id:'giai-cuu',title:'Giải Cứu',age:'T13',dur:'120 phút',genre:'Hành động',img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',tags:['IMAX','4DX']},
+    ],
+    past: [
+      {id:'oppenheimer',title:'Oppenheimer',age:'C18',dur:'180 phút',genre:'Lịch sử - Tiểu sử',img:'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',tags:['IMAX']},
+      {id:'tenet',title:'Tenet',age:'T16',dur:'150 phút',genre:'Hành động - Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/k68nPLbIST6NP96JmTxmZijyua7.jpg',tags:['IMAX']},
+      {id:'dunkirk',title:'Dunkirk',age:'T13',dur:'106 phút',genre:'Chiến tranh',img:'https://image.tmdb.org/t/p/w500/ebSnODDg9WrxdB9SnhNkoKzl6FZ.jpg',tags:['IMAX']},
+    ],
+  },
+  'bong-joon-ho': {
+    name: 'Bong Joon-ho', initials: 'BJ', color: '#1a1000',
+    nationality: '🇰🇷 Hàn Quốc', born: '14/09/1969', years: '1993 - nay',
+    bio: 'Bong Joon-ho là đạo diễn, biên kịch và nhà sản xuất người Hàn Quốc. Ông được biết đến rộng rãi qua tác phẩm Parasite - bộ phim nói tiếng nước ngoài đầu tiên giành Oscar Phim xuất sắc nhất. Phong cách của ông kết hợp nhuần nhuyễn thể loại xã hội và thể loại thương mại.',
+    stats: [{num:'9',lbl:'Phim'},{num:'4',lbl:'Oscar'},{num:'1',lbl:'Palme d\'Or'}],
+    awards: ['🏆 Oscar Phim hay nhất 2020','🏆 Palme d\'Or Cannes 2019','🌟 BAFTA Đạo diễn 2020'],
+    now: [
+      {id:'lau-chu-hoa',title:'Lầu Chú Hỏa',age:'T16',dur:'105 phút',genre:'Kinh dị - Tâm lý',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',tags:['2D','3D']},
+    ],
+    soon: [
+      {id:'mien-dat-hen',title:'Miền Đất Hứa',age:'T16',dur:'135 phút',genre:'Xã hội - Tâm lý',img:'https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg',tags:['2D']},
+    ],
+    past: [
+      {id:'parasite',title:'Parasite',age:'T16',dur:'132 phút',genre:'Hài - Kinh dị',img:'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',tags:['2D']},
+      {id:'snowpiercer',title:'Snowpiercer',age:'T16',dur:'126 phút',genre:'Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/aGST5RBtvCDmFqwEXdnWsU7SRAX.jpg',tags:['2D']},
+    ],
+  },
+  'tran-thanh-huy': {
+    name: 'Trần Thanh Huy', initials: 'TH', color: '#7f1d1d',
+    nationality: '🇻🇳 Việt Nam', born: '1988', years: '2016 - nay',
+    bio: 'Trần Thanh Huy là đạo diễn trẻ tài năng của điện ảnh Việt Nam. Anh gây chú ý lớn với phim ngắn 16:30 và đột phá với tác phẩm Ròm - phim đầu tay giành giải Phim châu Á xuất sắc tại Busan International Film Festival 2019, sau đó trở thành phim Việt Nam dự Oscar 2021.',
+    stats: [{num:'4',lbl:'Phim'},{num:'2',lbl:'Giải Busan'},{num:'1',lbl:'Đề cử Oscar'}],
+    awards: ['🏆 Phim châu Á xuất sắc - Busan 2019','🌟 Phim VN đại diện dự Oscar 2021'],
+    now: [
+      {id:'dong-dao-ma-quai',title:'Đồng Dao Ma Quái',age:'C18',dur:'108 phút',genre:'Kinh dị',img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',tags:['2D','3D']},
+    ],
+    soon: [
+      {id:'nghi-he-so-nghi-huu',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',genre:'Hài - Gia đình',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',tags:['2D']},
+    ],
+    past: [
+      {id:'rom',title:'Ròm',age:'C18',dur:'93 phút',genre:'Xã hội',img:'https://image.tmdb.org/t/p/w500/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',tags:['2D']},
+    ],
+  },
+  'victor-vu': {
+    name: 'Victor Vũ', initials: 'VV', color: '#134e4a',
+    nationality: '🇻🇳 Việt Nam - Mỹ', born: '1979', years: '2003 - nay',
+    bio: 'Victor Vũ là đạo diễn người Mỹ gốc Việt, nổi tiếng với các bộ phim có doanh thu cao tại phòng vé Việt Nam. Anh chuyên khai thác thể loại kinh dị tâm lý và tình cảm, với thương hiệu cá nhân rõ ràng qua các tác phẩm Tôi Thấy Hoa Vàng Trên Cỏ Xanh, Thiên Thần Hộ Mệnh, Thiên Mệnh Anh Hùng.',
+    stats: [{num:'15',lbl:'Phim'},{num:'250+',lbl:'Tỷ đồng doanh thu'},{num:'6',lbl:'Phim trăm tỷ'}],
+    awards: ['🌟 Phim Việt doanh thu cao nhất 2015','🌟 Bông Sen Vàng 2015'],
+    now: [
+      {id:'ma-lu',title:'Ma Lu',age:'T16',dur:'95 phút',genre:'Kinh dị',img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',tags:['2D']},
+    ],
+    soon: [
+      {id:'nguoi-duoc-chon',title:'Người Được Chọn',age:'T13',dur:'110 phút',genre:'Tình cảm - Tâm lý',img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',tags:['2D']},
+    ],
+    past: [
+      {id:'toi-thay-hoa-vang',title:'Tôi Thấy Hoa Vàng Trên Cỏ Xanh',age:'P',dur:'120 phút',genre:'Gia đình',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',tags:['2D']},
+      {id:'nguoi-bat-tu',title:'Người Bất Tử',age:'T16',dur:'115 phút',genre:'Hành động - Viễn tưởng',img:'https://image.tmdb.org/t/p/w500/pxkavJJuM5zArEGtzvmOLoiICVh.jpg',tags:['2D']},
+    ],
+  },
+  'nguyen-quang-dung': {
+    name: 'Nguyễn Quang Dũng', initials: 'QD', color: '#4338ca',
+    nationality: '🇻🇳 Việt Nam', born: '1979', years: '2005 - nay',
+    bio: 'Nguyễn Quang Dũng là đạo diễn, diễn viên và nhà sản xuất nổi tiếng của điện ảnh Việt Nam. Anh được khán giả yêu thích qua các tác phẩm hài - tình cảm nhẹ nhàng và các phim có yếu tố văn hóa Việt đậm nét như Mắt Biếc, Chị Chị Em Em, Gái Già Lắm Chiêu.',
+    stats: [{num:'12',lbl:'Phim'},{num:'4',lbl:'Phim trăm tỷ'},{num:'2',lbl:'Giải Cánh Diều'}],
+    awards: ['🌟 Cánh Diều Vàng 2019','🌟 Giải thưởng Hội Điện ảnh VN 2020'],
+    now: [
+      {id:'mesdames',title:'Mesdames Thanh Sắc',age:'C18',dur:'110 phút',genre:'Tình cảm',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',tags:['2D']},
+    ],
+    soon: [
+      {id:'tham-tu-kien-2',title:'Thám Tử Kiên 2',age:'T16',dur:'125 phút',genre:'Hành động - Bí ẩn',img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',tags:['2D']},
+    ],
+    past: [
+      {id:'mat-biec',title:'Mắt Biếc',age:'P',dur:'115 phút',genre:'Tình cảm',img:'https://image.tmdb.org/t/p/w500/wcahBISlczoYqcakatu2uyX8kGQ.jpg',tags:['2D']},
+      {id:'chi-chi-em-em',title:'Chị Chị Em Em',age:'T16',dur:'105 phút',genre:'Hành động - Tình cảm',img:'https://image.tmdb.org/t/p/w500/cFOnIqPNyVqmU1ZtXSsaztCebul.jpg',tags:['2D']},
+    ],
+  },
+};
+
+const slug = location.pathname.replace(/\/$/, '').split('/').pop();
+const person = DIRECTORS[slug] || DIRECTORS['christopher-nolan'];
+let activeTab = 'now';
+
+function init(){
+  document.getElementById('pageTitle').textContent = `${person.name} - Đạo diễn - MoMo Cinema`;
+  document.getElementById('pageDesc').setAttribute('content', `Xem danh sách phim của đạo diễn ${person.name} trên MoMo Cinema.`);
+  document.getElementById('bcName').textContent = person.name;
+  document.getElementById('personName').textContent = person.name;
+  document.getElementById('personBio').textContent = person.bio;
+
+  const av = document.getElementById('personAvatar');
+  av.textContent = person.initials;
+  av.style.setProperty('--person-color', person.color);
+
+  document.getElementById('personMeta').innerHTML = [
+    `<span>🌍 ${person.nationality}</span>`,
+    `<span>🎂 Sinh ${person.born}</span>`,
+    `<span>🎬 Hoạt động: ${person.years}</span>`,
+  ].join('');
+
+  document.getElementById('personStats').innerHTML = person.stats.map(s=>`
+    <div class="pstat">
+      <span class="pstat-num">${s.num}</span>
+      <span class="pstat-lbl">${s.lbl}</span>
+    </div>`).join('');
+
+  document.getElementById('awardsRow').innerHTML = person.awards.map(a=>`<span class="award-tag">${a}</span>`).join('');
+
+  renderFilms();
+}
+
+function showTab(tab, el){
+  activeTab = tab;
+  document.querySelectorAll('.hero-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderFilms();
+}
+
+function renderFilms(){
+  const films = person[activeTab] || [];
+  const panel = document.getElementById('filmPanel');
+  if(!films.length){
+    panel.innerHTML = `<div class="empty-state"><div class="empty-icon">🎬</div>Chưa có phim trong mục này</div>`;
+    return;
+  }
+  const isSoon = activeTab === 'soon';
+  const isPast = activeTab === 'past';
+  panel.innerHTML = `<div class="film-grid">${films.map(f=>{
+    const ageCls = f.age.toLowerCase().replace(' ','');
+    const tags = (f.tags||[]).map(t=>`<span class="film-tag ${t==='IMAX'?'imax':t==='4DX'?'fourDx':''}">${t}</span>`).join('');
+    const ctaClass = isSoon?'soon':isPast?'past':'';
+    const ctaText = isSoon?'Đặt vé trước →':isPast?'Xem lại':' Đặt vé →';
+    return `<div class="film-card" onclick="${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">
+      <div class="film-poster">
+        <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'">
+        <span class="film-age ${ageCls}">${f.age}</span>
+        ${!isPast&&!isSoon?'<span class="film-badge">Đang chiếu</span>':''}
+        ${isSoon?'<span class="film-badge" style="background:#6366f1">Sắp chiếu</span>':''}
+      </div>
+      <div class="film-body">
+        <div class="film-title">${f.title}</div>
+        <div class="film-sub">${f.genre} · ${f.dur}</div>
+        <div class="film-tags">${tags}</div>
+        <button class="film-cta ${ctaClass}" onclick="event.stopPropagation();${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">${ctaText}</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+let toastTimer;
+function toast(msg){ const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+
+init();
+</script>
+</body>
+</html>
