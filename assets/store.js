@@ -1324,14 +1324,16 @@ function buildLabDirectory() {
         <p class="lab-kicker">Internal · Web Platform · ${getTotalSurfaceCount()} surfaces</p>
         <h1 class="lab-title">Prototype<br><span class="lab-title-accent">Lab.</span></h1>
         <p class="lab-sub">All prototypes, demos và tools được build bởi Web Platform.</p>
+        <div class="lab-hero-search">
+          <div class="lab-search-wrap">
+            <svg class="lab-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input class="lab-search-input" id="labSearchInput" type="search" placeholder="Tìm prototype, tool, child page..." autocomplete="off" spellcheck="false">
+            <kbd class="lab-search-kbd">⌘K</kbd>
+          </div>
+        </div>
       </div>
 
       <div class="lab-filterbar">
-        <div class="lab-search-wrap">
-          <svg class="lab-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input class="lab-search-input" id="labSearchInput" type="search" placeholder="Tìm prototype, child page..." autocomplete="off" spellcheck="false">
-          <kbd class="lab-search-kbd">⌘K</kbd>
-        </div>
         <div class="lab-chips" id="labFilterChips">${filterChips}</div>
       </div>
 
