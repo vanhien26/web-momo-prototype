@@ -76,43 +76,79 @@ a { color: inherit; }
 .rm-phase-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .rm-phase-tag { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--momo); }
 .rm-phase-tag-future { color: var(--muted); }
-.rm-phase-status { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #15803d; }
+.rm-phase-status { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; }
 .rm-phase-status::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: #12b76a; box-shadow: 0 0 0 3px #d1fadf; display: inline-block;
+  content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block;
 }
+.rm-phase-status-done { color: #15803d; }
+.rm-phase-status-done::before { background: #12b76a; box-shadow: 0 0 0 3px #d1fadf; }
+.rm-phase-status-in-progress { color: #b54708; }
+.rm-phase-status-in-progress::before { background: #f79009; box-shadow: 0 0 0 3px #fef0c7; }
 .rm-phase-title { margin: 0 0 6px; font-size: 20px; font-weight: 800; letter-spacing: -.3px; color: var(--ink); }
 .rm-phase-summary { margin: 0 0 18px; max-width: 76ch; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
 
-/* Module grid */
-.rm-module-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-.rm-module-card {
-  background: var(--white);
+/* Milestones — each project is a node on its own vertical bar, detail unfolds to the right */
+.rm-milestones { display: flex; align-items: flex-start; gap: 28px; }
+.rm-milestone-rail {
+  flex: 0 0 220px;
+  display: flex; flex-direction: column;
+}
+.rm-milestone {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 4px 20px 4px;
+  border: 0; background: transparent;
+  text-align: left; cursor: pointer;
+}
+.rm-milestone::before {
+  content: '';
+  position: absolute; left: 8px; top: 22px; bottom: -4px;
+  width: 2px; background: var(--line);
+}
+.rm-milestone:last-child { padding-bottom: 8px; }
+.rm-milestone:last-child::before { display: none; }
+.rm-milestone-node {
+  flex: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--grey-300);
+  transition: background .15s, border-color .15s;
+}
+.rm-milestone-label {
+  font: 700 12.5px 'MoMoTrustSans', sans-serif; color: var(--ink);
+  transition: color .15s;
+}
+.rm-milestone:hover .rm-milestone-node { border-color: var(--momo); }
+.rm-milestone.active .rm-milestone-node { background: var(--momo); border-color: var(--momo); }
+.rm-milestone.active .rm-milestone-label { color: var(--momo); }
+
+/* Detail panel — fills the right side when a milestone is clicked */
+.rm-milestone-detail {
+  flex: 1; min-width: 0;
+  padding: 20px 22px;
   border: 1px solid var(--line);
   border-radius: var(--rm-radius-container);
+  background: var(--white);
   box-shadow: var(--rm-shadow-low);
-  padding: 14px;
-  display: flex; flex-direction: column; gap: 6px;
 }
-.rm-module-name { margin: 0; font-size: 13px; font-weight: 800; line-height: 1.3; color: var(--ink); }
-.rm-module-preview { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); flex: 1; }
-.rm-module-full { display: none; margin: 0; font-size: 11.5px; line-height: 1.6; color: var(--muted); }
-.rm-module-card.expanded .rm-module-preview { display: none; }
-.rm-module-card.expanded .rm-module-full { display: block; }
-.rm-module-toggle {
-  align-self: flex-start; margin-top: 4px;
-  border: 0; background: transparent; padding: 0;
-  font-size: 10.5px; font-weight: 800; color: var(--momo);
-  display: flex; align-items: center; gap: 4px; cursor: pointer;
-}
-.rm-module-toggle-icon { font-size: 10px; }
+.rm-milestone-empty { margin: 0; font-size: 12.5px; color: var(--muted); font-style: italic; }
+.rm-milestone-detail-name { margin: 0 0 12px; font-size: 15px; font-weight: 800; color: var(--ink); }
+.rm-milestone-detail .rm-module-points { column-count: 2; column-gap: 28px; }
 
-@media (max-width: 1000px) {
-  .rm-module-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rm-module-points {
+  margin: 0; padding-left: 16px;
+  font-size: 12px; line-height: 1.6; color: var(--muted);
+}
+.rm-module-points li { padding-left: 2px; margin-bottom: 8px; break-inside: avoid; }
+.rm-module-points li:last-child { margin-bottom: 0; }
+.rm-module-points strong { color: var(--ink); }
+
+@media (max-width: 780px) {
+  .rm-milestones { flex-direction: column; gap: 16px; }
+  .rm-milestone-rail { flex: none; width: 100%; }
+  .rm-milestone-detail .rm-module-points { column-count: 1; }
 }
 @media (max-width: 640px) {
   .rm-roadmap { padding: 24px 16px 48px; }
-  .rm-module-grid { grid-template-columns: 1fr 1fr; }
   .rm-stop { padding-left: 32px; }
   .rm-stop-node { width: 13px; height: 13px; }
 }
@@ -149,59 +185,242 @@ const ROADMAP_PHASES = [
     summary: 'Giai đoạn này tập trung vào việc xây dựng hạ tầng cơ bản, các công cụ khởi tạo Landing Page, Blog Editor, quản lý Keyword và đồng bộ dữ liệu Merchant.',
     modules: [
       {
-        name: 'GenAI Content Engine',
-        preview: 'Viết bài bằng API Claude, tự đo Token và chi phí tạo bài.',
-        desc: 'Tích hợp API Claude viết bài (Outline & Detail Blog); tự động đo lường và hiển thị lượng Input/Output Tokens cũng như chi phí tạo bài viết.',
+        name: 'GenAI Content',
+        preview: 'Sinh bài viết 2 tầng bằng Claude, đo Token và chi phí minh bạch theo thời gian thực.',
+        points: [
+          { title: 'Tích hợp API Claude', desc: 'Vận hành luồng sinh bài viết tự động 2 tầng (Outline và chi tiết bài Blog/Long Content).' },
+          { title: 'Metrics & Cost Tracking', desc: 'Thu thập và hiển thị chính xác số lượng Input/Output Tokens sử dụng của từng bài viết.' },
+          { title: 'Minh bạch chi phí', desc: 'Hiển thị trực quan chi phí tài chính (USD/VND) tiêu tốn cho API tại mỗi giai đoạn sinh bài viết trên giao diện.' },
+        ],
       },
       {
-        name: 'PLG Project Management',
-        preview: 'Quản lý campaign tăng trưởng, tự động chia cụm Keyword từ CSV.',
-        desc: 'Nơi quản lý các chiến dịch tăng trưởng (Phạt nguội làm pilot). Hỗ trợ upload tệp CSV Keyword Research để tự động chia cụm Theme/Cluster kèm Volume Search và trạng thái bài viết (Chưa viết, Đã duyệt outline, Đã xuất bản). Sync trực tiếp với Blog Editor của Microsite.',
+        name: 'PLG Project',
+        preview: 'Quản lý campaign Growth, ingest CSV Keyword, ràng buộc 1-1 với Blog Editor.',
+        points: [
+          { title: 'Quản trị Dự án Growth (Phạt Nguội làm Pilot)', desc: 'Khu vực quản lý tập trung các chiến dịch Product-Led Growth.' },
+          { title: 'Keywords Ingestion', desc: 'Hoàn thành tính năng upload trực tiếp tệp CSV Keyword Research để tự động tạo và phân loại các cụm Theme/Cluster.' },
+          { title: 'Cluster Sizing', desc: 'Quản lý dung lượng tìm kiếm (Volume Search) và kiểm soát số lượng Cluster bài viết cần GenAI sản xuất.' },
+          { title: 'Visual Status Board', desc: 'Hiển thị và theo dõi trạng thái thời gian thực của từng Cluster (Chưa viết, Đã viết Outline, Đã xuất bản).' },
+          { title: 'Mối quan hệ mật thiết 1-1', desc: 'Thiết lập liên kết logic 1-1 chặt chẽ giữa mỗi Cluster Keyword trong PLG Project và bài viết tương ứng trên Blog Editor.' },
+          { title: 'Quy tắc xóa bài viết từ gốc', desc: 'Ngăn chặn việc xóa bài viết trực tiếp từ Blog Editor. Bài viết bắt buộc phải được xóa từ gốc (Source-deleting) tại màn hình quản lý của PLG Project.' },
+          { title: 'Microsite Blog Editor Sync', desc: 'Luồng đồng bộ một chạm giúp PM dễ dàng đi thẳng tới Blog Editor nằm trong Microsite Phạt Nguội.' },
+        ],
       },
       {
-        name: 'Merchant Page O2O Database',
-        preview: 'Đồng bộ 200K+ Merchant, GenAI tự cào dữ liệu và viết bài.',
-        desc: 'Đồng bộ 200K+ Merchant MoMo (Ví Trả Sau). Đã hoàn thiện luồng: Khởi tạo Merchant -> Map M4B ID -> Check OA (MoMo Review, Ảnh) -> GenAI tự cào dữ liệu Google Maps, viết bài, gen ảnh theo template -> Merchant Editor (sẵn sàng xuất bản).',
+        name: 'Merchant Page',
+        preview: 'Đồng bộ 200K+ Merchant Ví Trả Sau, GenAI tự cào dữ liệu và viết bài theo template ngành hàng.',
+        points: [
+          { title: 'Đồng bộ đối tác Ví Trả Sau', desc: 'Nạp và lưu trữ dữ liệu của hơn 200K+ Merchant MoMo có chấp nhận thanh toán qua Ví Trả Sau.' },
+          { title: 'Dữ liệu thực thể chi tiết', desc: 'Khai thác và đồng bộ các trường dữ liệu quan trọng gồm: Tên cửa hàng, Địa chỉ hành chính kèm tọa độ (Vĩ độ Lat / Kinh độ Long), Số điện thoại liên hệ, Tên chủ quán và Danh mục ngành hàng (Category).' },
+          { title: 'Đa dạng hóa Template theo Category', desc: 'Thiết lập sẵn hệ thống template đa dạng tối ưu hiển thị cho từng ngành hàng dịch vụ khác nhau (F&B, Beauty, Retail...).' },
+          { title: 'Thiết lập Umami Tracking', desc: 'Tích hợp mã theo dõi Umami tracking riêng cho từng merchant page để đo lường traffic và CTR.' },
+          { title: 'Luồng khởi tạo Merchant tự động', desc: 'Map mã M4B ID (MoMo for Business) → Kiểm tra tài khoản chính thức (OA), cào dữ liệu MoMo Review và hình ảnh cửa hàng → Tự động cào dữ liệu Google Maps API để làm giàu context → GenAI tự động viết nội dung bài giới thiệu merchant và tạo hình ảnh theo template thương hiệu → Bàn giao sang Merchant Editor để sẵn sàng duyệt xuất bản.' },
+        ],
       },
       {
-        name: 'Microsite Builder',
-        preview: 'Quản lý cấu trúc trang bằng Puck Editor, SEO, robots.txt, Umami.',
-        desc: 'Quản lý cấu trúc trang, chỉnh sửa chi tiết từng trang bằng Puck Editor, tối ưu SEO, hỗ trợ robots.txt, llms.txt, blog của dự án, và tích hợp Umami Tracking trực tiếp trên Dashboard.',
+        name: 'Microsite',
+        preview: 'Khởi tạo cấu trúc site, chỉnh sửa Puck Editor, SEO metadata và Umami tracking.',
+        points: [
+          { title: 'Microsite Engine', desc: 'Bước khởi tạo đầu tiên khi xây dựng dự án PLG Project trên Web.' },
+          { title: 'Giao diện quản lý cấu trúc', desc: 'Cấu hình sơ đồ cây liên kết trang (site structure) và chỉnh sửa inline chi tiết từng trang bằng Puck Editor.' },
+          { title: 'Quản trị SEO & AI Search Policy', desc: 'Quản lý SEO metadata của trang, thiết lập robots.txt và bước đầu tạo file llms.txt của dự án.' },
+          { title: 'Performance Metrics', desc: 'Tích hợp trực tiếp mã theo dõi Umami tracking để hiển thị hiệu năng (Traffic, Views, Clicks) ngay trên dashboard của Microsite.' },
+        ],
       },
       {
-        name: 'SEO Inventory Foundation',
-        preview: 'Dashboard Market Cap theo Division/Use Case, ràng buộc link PLG Project.',
-        desc: 'Dashboard tổng quan Market Cap của từng Division theo từng Use Case (Service). Ràng buộc chặt chẽ: khi tạo PLG Project bắt buộc phải link với Microsite và SEO Inventory tương ứng.',
+        name: 'SEO Inventory',
+        preview: 'Market Cap theo Division/Use Case, ràng buộc bắt buộc link Microsite + PLG Project.',
+        points: [
+          { title: 'Bản đồ thị trường (Market Cap)', desc: 'Hiển thị tổng quan quy mô tìm kiếm của từng Division theo từng Use Case dịch vụ cụ thể.' },
+          { title: 'Ràng buộc logic khởi tạo (Integrity Guard)', desc: 'Ràng buộc nghiệp vụ cứng trên CMS: khi tạo một PLG Project mới, bắt buộc phải chọn liên kết với một Microsite và một SEO Inventory tương ứng để tránh phân mảnh dữ liệu.' },
+        ],
       },
       {
-        name: 'Blog Editor (Tiptap CRUD)',
-        preview: 'Quản trị bài viết Tiptap, tự sync Keyword/Metadata từ PLG Project.',
-        desc: 'Trang quản trị bài viết sử dụng Tiptap. Tự động đồng bộ Primary/Secondary Keywords và Metadata từ PLG Project. Upload Thumbnail & Social Share theo template riêng. Tích hợp AI Performance Dashboard đo chi phí và thời gian tạo bài viết.',
+        name: 'Blog Editor',
+        preview: 'CMS Tiptap cho GenAI content, khóa keyword gốc, đo chi phí và thời gian AI.',
+        points: [
+          { title: 'Blog CMS quản trị GenAI Content', desc: 'Quản lý và xuất bản các bài viết được tạo ra từ GenAI.' },
+          { title: 'Tiptap Editor Integration', desc: 'Bộ soạn thảo WYSIWYG Tiptap cho phép Editor chỉnh sửa format, chèn ảnh, viết thêm nội dung linh hoạt.' },
+          { title: 'Keyword & Metadata Auto-Sync', desc: 'Tự động đồng bộ các từ khóa chính (Primary), từ khóa phụ (Secondary) và dữ liệu meta từ PLG Project sang Editor khi kích hoạt gen bài bằng AI.' },
+          { title: 'Khóa chỉnh sửa từ khóa trên Editor', desc: 'Vô hiệu hóa hoàn toàn quyền chỉnh sửa các từ khóa chính (Primary Keyword) và từ khóa phụ (Secondary Keyword) trực tiếp tại giao diện Blog Editor để tránh sai lệch dữ liệu gốc.' },
+          { title: 'Thumbnail & Social Templates', desc: 'Tính năng upload ảnh chia sẻ mạng xã hội và ảnh đại diện bài viết (Thumbnail) sử dụng khung mẫu (template) thiết kế riêng.' },
+          { title: 'AI Performance Tracker', desc: 'Dashboard đo lường hiệu suất sinh bài của AI bao gồm chi phí API và thời gian hoàn thành.' },
+        ],
       },
       {
         name: 'Landing Page Builder',
-        preview: 'Tạo LP bằng Prompt Gemini, kéo thả Puck Editor theo Mobase.',
-        desc: 'Tạo LP bằng Prompt (Gemini), chọn template hoặc tạo từ blank. Tích hợp Puck Editor để kéo thả trực quan các block theo Mobase Design System, chia sẻ cho các Cell Teams sử dụng độc lập và đo lường bằng Umami.',
+        preview: '3 luồng tạo LP (Prompt/Template/Blank), kéo thả Puck theo Mobase, self-service cho Cell Team.',
+        points: [
+          { title: 'LP Creation Flow', desc: 'Hỗ trợ 3 luồng tạo Landing Page gồm: Tạo bằng Prompt AI (Sử dụng Gemini để sinh layout tự động), tạo từ Template mẫu, hoặc tạo từ trang trắng (Blank slate).' },
+          { title: 'Mobase Drag-and-drop Builder', desc: 'Tích hợp Puck Editor để chỉnh sửa kéo thả trực tiếp các khối giao diện (Blocks) được thiết kế theo đúng chuẩn hệ thống Mobase Design System.' },
+          { title: 'Cell Teams Self-service Sharing', desc: 'Tính năng chia sẻ quyền truy cập cho PM/PO các Cell Teams tự vào kéo thả và chỉnh sửa độc lập.' },
+          { title: 'Umami Performance Check', desc: 'Tích hợp sẵn tracking Umami để đo lường hiệu suất chuyển đổi của Landing Page.' },
+        ],
       },
       {
         name: 'Chatbot & Knowledge Base',
-        preview: 'RAG từ bài viết PLG Project, kịch bản chatbot qua Typebot.',
-        desc: 'UI/UX Chatbot tùy biến giao diện. Quản lý KB bằng cách cào bài viết dự án PLG đổi sang vector và chạy RAG. Tích hợp Typebot để tạo kịch bản chatbot.',
+        preview: 'Chatbot tùy biến theme, RAG từ bài viết PLG, kịch bản qua Typebot.',
+        points: [
+          { title: 'Chatbot Customizer', desc: 'Hoàn thiện giao diện UI/UX Chatbot động (cho phép đổi màu sắc, theme theo nhận diện thương hiệu).' },
+          { title: 'RAG Knowledge Base Pipeline', desc: 'Tự động cào dữ liệu các bài viết của dự án PLG, thực hiện chuyển đổi (vectorization) và nạp vào Vector Database để chạy cơ chế RAG tư vấn tự động khi user chat.' },
+          { title: 'Typebot Integration', desc: 'Tích hợp Typebot để PM tự xây dựng kịch bản hội thoại và các bước điều hướng khách hàng.' },
+        ],
       },
       {
         name: 'Ads Manager',
-        preview: 'Tạo Ads (Float/Balloon/Popup), quản lý Campaign kèm Umami tracking.',
-        desc: 'Quản trị và tạo Ads (Float, Balloon, Popup). Quản lý Ads Campaign, Campaign Group và Ad Items kèm Umami tracking.',
+        preview: 'Quản lý Campaign, 3 định dạng Ads (Float/Balloon/Popup), đo click qua Umami.',
+        points: [
+          { title: 'Quản trị chiến dịch hiển thị', desc: 'Xây dựng luồng tạo và cấu hình Ads Campaign, Campaign Group và Ad Items.' },
+          { title: 'Đa định dạng Ads', desc: 'Hỗ trợ cấu hình 3 định dạng hiển thị quảng cáo W2A chính trên Web: Float (Banner nổi), Balloon (Bóng bay ở góc), và Popup.' },
+          { title: 'Umami Ads Attribution', desc: 'Tích hợp Umami tracking để đo lường click và CTR của từng Ad Item.' },
+        ],
       },
       {
         name: 'Utilities Tool',
-        preview: 'Calculator/Checker code tay chuẩn Mobase, nhúng qua Shortcode.',
-        desc: 'Quản lý các tiện ích (Calculator, Checker...) được tạo bằng Code tay (Hard code) chuẩn Mobase, hỗ trợ cấu hình CTA đơn giản và nhúng qua Shortcode vào Blog/Mini Web.',
+        preview: 'Đăng ký Calculator/Checker code tay, cấu hình CTA, nhúng qua Shortcode.',
+        points: [
+          { title: 'Coded Utilities Registry', desc: 'Quản lý danh sách các công cụ tiện ích (Calculator/Checker) được phát triển bằng phương thức viết mã nguồn (Write Code) chuẩn Mobase.' },
+          { title: 'CTA Configurator', desc: 'Cho phép cấu hình đơn giản các thông số cơ bản như nội dung nút bấm và đường link Onelink.' },
+          { title: 'Shortcode Embed', desc: 'Khả năng nhúng (embed) các công cụ này vào bất kỳ Mini Web hoặc bài viết Blog nào thông qua cú pháp Shortcode tiện lợi.' },
+        ],
+      },
+      {
+        name: 'Umami Tracking & User Identity',
+        preview: 'Tracking nền tảng cho Microsite/LP/Ads, stitch hành vi Anonymous → Logged-in → KYC/giao dịch trong App.',
+        points: [
+          { title: 'Umami Base Tracking', desc: 'Tích hợp mã theo dõi cơ bản các lượt xem trang (PageView) và tương tác nút bấm (Clicks) cho các module Microsite, Landing Page, và Ads.' },
+          { title: 'User Identity Back-end', desc: 'Hoàn thành phát triển logic phân tích định danh và luồng dữ liệu stitch hành vi người dùng (Anonymous → Logged-in → chèn tham số ?wui= vào link deep-link Onelink → đối khớp chuyển đổi KYC/giao dịch trong App MoMo).' },
+        ],
       },
     ],
   },
-  // Phase 2 (H2/2026) sẽ thêm vào đây khi có nội dung
+  {
+    period: 'H2/2026',
+    phase: 'Phase 2',
+    status: 'in-progress',
+    title: 'Scale, Data Depth & Quality Gates',
+    summary: 'Giai đoạn này tập trung vào mở rộng chiều sâu dữ liệu (GSC/GA4/BigQuery), siết chất lượng nội dung bằng SEO/GEO Scoring Gate, mở rộng bề mặt SEO cho Merchant Page, và đưa hạ tầng tracking/định danh vào vận hành thực tế trên production.',
+    modules: [
+      {
+        name: 'GenAI Content',
+        preview: 'Multi-model gateway (Gemini/Claude/GPT), billing chargeback theo Cell Team, tạo ảnh/video, tự viết lại bài decay.',
+        points: [
+          { title: 'Enterprise Multi-Model Hub', desc: 'Tích hợp cổng API gateway tập trung của công ty hỗ trợ đa dạng model (Gemini, Claude, GPT) tùy theo nhu cầu và tính chất của từng dự án Cell Team.' },
+          { title: 'GenAI Billing & Chargeback System', desc: 'Tự động tổng hợp chi phí tạo bài viết từ GenAI (dựa trên token tiêu thụ thực tế) để xuất "hóa đơn ảo" khấu trừ trực tiếp vào ngân sách (Budgets) của từng Cell Team.' },
+          { title: 'Creative GenAI Suite (Image & Video)', desc: 'Tự động tạo hình ảnh minh họa (theo template chuẩn Mobase) và video ngắn từ prompt trực tiếp trong luồng sản xuất content.' },
+          { title: 'Tự động hóa luồng viết lại (Rewrite Loop)', desc: 'Nhận tín hiệu cảnh báo từ Content Decay để tự động tạo draft nâng cấp bài viết.' },
+        ],
+      },
+      {
+        name: 'PLG Project',
+        preview: 'Sync GSC/GA4 qua BigQuery, Keyword Planner API, quality score theo Cluster, tính điểm ưu tiên SEO-ICE.',
+        points: [
+          { title: 'BigQuery Search Console Sync', desc: 'Đồng bộ dữ liệu GSC và GA4 từ BigQuery về MoSpark để hiển thị thứ hạng (Position) trung bình của từng từ khóa đối với mỗi Cluster.' },
+          { title: 'Google Ads Keyword Planner API', desc: 'Tự động kết nối API lấy dung lượng tìm kiếm (Volume Search) thực tế khi PM làm kế hoạch từ khóa (Keyword research/Content Plan).' },
+          { title: 'Cluster-level Quality Scoring Dashboard', desc: 'Hiển thị điểm SEO/GEO trung bình của toàn bộ Cluster để PM có cái nhìn tổng quan thay vì chỉ hiển thị ở mức bài viết đơn lẻ.' },
+          { title: 'Priority Scoring Engine', desc: 'Tính năng tự động tính toán điểm ưu tiên SEO-ICE trực tiếp trong danh sách keywords.' },
+        ],
+      },
+      {
+        name: 'Merchant Page',
+        preview: 'Listing/Hub page theo khu vực, tự tách sitemap, tự sinh schema LocalBusiness, crawl menu Grabfood/Shopeefood.',
+        points: [
+          { title: 'Merchant Listing & Category Hub Pages', desc: 'Phát triển các trang danh sách (Listing Pages) và trang Hub cho phép tìm kiếm, lọc các địa điểm chấp nhận thanh toán Ví Trả Sau theo Khu vực địa lý (Tỉnh/Thành, Quận/Huyện), Category ngành hàng (F&B, Mua sắm, Làm đẹp...) và các Điều kiện ngữ cảnh đặc biệt (gần trường học, gần trung tâm thương mại/mall, mở cửa 24/7...).' },
+          { title: 'Automated Sitemap Splitting Engine', desc: 'Tự động phân tách và quản lý sitemap động cho hàng trăm nghìn trang merchant để tối ưu hóa crawl budget của Google.' },
+          { title: 'Local SEO Schema Auto-Generator', desc: 'Tự động sinh cấu trúc schema LocalBusiness (NAP data) chuẩn xác cho từng merchant page để đẩy mạnh tốc độ index của Google.' },
+          { title: 'Dynamic O2O Deep-linking Generator', desc: 'Tự động sinh Onelink deep-link gắn mã cửa hàng động phục vụ cho kịch bản quét QR Code/Soundbox tại quầy của merchant.' },
+          { title: 'Grabfood/Shopeefood Menu Crawling Engine', desc: 'Tích hợp tính năng tự động cào (crawl) danh sách thực đơn (Menu) và hình ảnh các món ăn của cửa hàng từ Grabfood/Shopeefood để hiển thị trực tiếp danh mục Món ăn (Dishes/Items) của Merchant trên trang.' },
+        ],
+      },
+      {
+        name: 'Microsite',
+        preview: 'Tự xuất llms.txt/llms-full.txt, nâng cấp RBAC đa Cell Team trên cùng hạ tầng.',
+        points: [
+          { title: 'Dynamic llms.txt Auto-Exporter', desc: 'Tự động xuất và quản lý file llms.txt (Master Index) và llms-full.txt (per-product) đồng bộ cho từng microsite phục vụ AI crawlers.' },
+          { title: 'Multi-tenant Access & RBAC (Phân quyền đa BU)', desc: 'Nâng cấp hệ thống phân quyền để hỗ trợ nhiều Cell Teams của các Division quản trị Microsite độc lập trên cùng một hạ tầng.' },
+        ],
+      },
+      {
+        name: 'SEO Inventory',
+        preview: 'Kết nối GSC real-time tính SoV thực tế, gợi ý keyword near-miss (vị trí 4-15).',
+        points: [
+          { title: 'GSC Real-time Connector', desc: 'Kết nối API GSC để tự động tính toán và cập nhật thị phần tìm kiếm thực tế của MoMo (SoV = Impression GSC / Total Search Volume) trực tiếp trên hệ thống.' },
+          { title: 'Near Miss Keyword Recommender', desc: 'Thuật toán tự động phát hiện và gợi ý các từ khóa ở vị trí 4-15 có volume lớn để tối ưu hóa thứ hạng.' },
+        ],
+      },
+      {
+        name: 'Blog Editor',
+        preview: 'Scoring Gate chặn publish dưới 60 điểm, EEAT compliance, FAQ schema, TOC, feedback widget, internal linking tự động.',
+        points: [
+          { title: 'Tích hợp SEO/GEO Scoring Gate (Cải tiến H2)', desc: 'Tích hợp bộ kiểm duyệt và chấm điểm chất lượng trực tiếp vào Editor.' },
+          { title: 'Hard Block Gate', desc: 'Chặn nút Publish nếu điểm SEO/GEO < 60 hoặc vi phạm 1 trong 9 lỗi chặn cứng (Robots=noindex, thiếu canonical, LCP > 2.5s, CLS > 0.1, thiếu CTA...).' },
+          { title: 'YMYL Compliance', desc: 'Tự động quét và chấm điểm E-E-A-T (Author Box hiển thị, link social thật của tác giả và Disclaimer).' },
+          { title: 'CTA Manager (Max 2 CTAs)', desc: 'Giới hạn tối đa 2 CTA trên một bài blog. Hỗ trợ quản lý vị trí, thiết kế nút bấm và tự sinh deep-link Onelink chuẩn hóa.' },
+          { title: 'Dynamic FAQ Accordion with Schema Markup', desc: 'Tự động sinh Schema FAQ structured data giúp hiển thị rich snippets nổi bật trên Google Search.' },
+          { title: 'Interactive Table of Contents (TOC)', desc: 'Sơ đồ điều hướng nhanh theo heading của bài viết, tự động tính toán tiến trình đọc (Reading Progress) của user.' },
+          { title: 'Contextual Feedback Widget (EEAT trust builder)', desc: 'Thu thập phản hồi nhanh của user (Like/Dislike hoặc đánh giá độ hữu ích) để gửi tín hiệu tương tác cho thuật toán tìm kiếm và AI Scoring.' },
+          { title: 'Semantic Internal Linking Engine', desc: 'Tính năng tự động phân tích ngữ nghĩa (vector embeddings) và gợi ý chèn liên kết nội bộ giữa các bài viết cùng chủ đề để tối ưu link equity.' },
+        ],
+      },
+      {
+        name: 'Landing Page Builder',
+        preview: 'A/B test variant ngay trên Puck Editor, đo conversion W2A theo từng block.',
+        points: [
+          { title: 'A/B Test Variant Customizer', desc: 'Tích hợp giao diện thiết lập các biến thể giao diện (Component swap hoặc URL routing) trực tiếp trên Puck Editor.' },
+          { title: 'Block-level W2A Conversion Tracker', desc: 'Đo lường và hiển thị hiệu năng chuyển đổi Web-to-App trực tiếp trên từng block kéo thả của Landing Page (giúp PM đánh giá block nào convert tốt nhất).' },
+        ],
+      },
+      {
+        name: 'Chatbot & Knowledge Base',
+        preview: 'Nạp Meeting Notes vào RAG, nâng cấp kịch bản Typebot v2 theo hành vi.',
+        points: [
+          { title: 'Qualitative Data Ingestion Pipeline', desc: 'Khả năng nạp, phân tích và vector hóa dữ liệu Meeting Notes (Markdown) từ dự án khảo sát khách hàng (2H Customer) để làm phong phú context của RAG, giúp chatbot trả lời sát với insight thực tế.' },
+          { title: 'Scenario Mapping Engine (Typebot v2)', desc: 'Nâng cấp kịch bản chatbot tự động điều hướng chuyên sâu theo hành vi người dùng đối với các dịch vụ tài chính phức tạp.' },
+        ],
+      },
+      {
+        name: 'Ads Manager',
+        preview: 'Điều phối vị trí Ads tự động (enforce guardrails), retargeting ẩn danh on-site.',
+        points: [
+          { title: 'Ads Placement Registry & Conflict Resolution', desc: 'Bộ điều phối hiển thị quảng cáo tự động dựa trên ngữ cảnh Use Case của bài viết và enforce UX guardrails (Max 1 Popup, Max 2 Balloon).' },
+          { title: 'On-site Anonymous Retargeting Engine', desc: 'Tự động hóa việc ghi vết hành vi ẩn danh của người dùng (qua Local Storage) để phân phối ads cá nhân hóa khi họ truy cập các trang dùng chung mà không cần đăng nhập.' },
+        ],
+      },
+      {
+        name: 'Utilities Tool (PLG Tool Builder)',
+        preview: 'Kéo thả cấu hình tool low-code, tự thu thập dữ liệu tương tác làm GEO Moat.',
+        points: [
+          { title: 'Low-code Drag-and-drop Tool Configurator', desc: 'Nâng cấp từ cấu hình bằng code sang trình kéo thả trực quan để PM tự cấu hình input fields, logic tính toán (Calculator) hoặc tra cứu API (Checker).' },
+          { title: 'Tool Data Pipeline (GEO Moat Generator)', desc: 'Hệ thống tự động thu thập và tổng hợp dữ liệu tương tác ẩn danh của các công cụ tiện ích để làm nguồn viết bài báo cáo insight tự động, tạo hàng rào GEO Moat độc quyền.' },
+        ],
+      },
+      {
+        name: 'MoSpark Request',
+        preview: 'SSO Google cho Cell Team, deploy UAT preview tức thời, hàng đợi ticket cho Dev.',
+        points: [
+          { title: 'OAuth/SSO Google Integration', desc: 'Cho phép các Cell Teams đăng nhập bảo mật bằng tài khoản Gmail công ty vào hệ thống MoSpark.' },
+          { title: 'Instant UAT Sandbox Deployer', desc: 'Năng lực tự động tạo một URL chạy trực tiếp trên môi trường UAT để xem trực tiếp (Live Preview) các file HTML Prototype + Brief nghiệp vụ do Cell Teams upload (được tạo nhanh từ Claude) mà không cần tải về local.' },
+          { title: 'Dev Ticket Queue System', desc: 'Lưu trữ và quản lý các yêu cầu dưới dạng Ticket trong hàng đợi (Queue) để Dev tiến hành triển khai (hỗ trợ đính kèm brief công thức đối với các Utilities Tool tự gen bằng AI).' },
+        ],
+      },
+      {
+        name: 'Umami Tracking & User Identity',
+        preview: 'Deploy Edge Cookie/SSO thực tế, dashboard tích hợp GSC/GA4/BigQuery, đo full-funnel Click→MAU.',
+        points: [
+          { title: 'Hợp tác & Kiểm thử Hạ tầng (SSO / Edge Cookie Deployment)', desc: 'Do phần back-end bên dưới đã hoàn thiện trong H1, H2 sẽ tập trung vào việc căn chỉnh hạ tầng (aim lại), cấu hình các Edge Middleware để deploy HttpOnly Cookie an toàn và chạy tích hợp định danh thực tế trên production.' },
+          { title: 'GSC/GA4/BigQuery Integrated Dashboard', desc: 'Tích hợp dữ liệu từ Google Search Console, Google Analytics 4, BigQuery và Umami để hiển thị bức tranh toàn cảnh về traffic sources, engagement.' },
+          { title: 'End-to-End W2A Funnel Stitching', desc: 'Đo lường chi tiết hành trình người dùng từ Click Web -> Click to App -> Open App -> Login -> MAU thực tế trên ứng dụng MoMo.' },
+        ],
+      },
+    ],
+  },
 ];
+
+const PHASE_STATUS_LABELS = {
+  done: 'Đã hoàn thành',
+  'in-progress': 'Đang triển khai',
+  planned: 'Sắp triển khai',
+};
 
 function buildRoadmap() {
   const stops = ROADMAP_PHASES.map(p => `
@@ -210,38 +429,54 @@ function buildRoadmap() {
       <div class="rm-stop-content">
         <div class="rm-phase-head">
           <span class="rm-phase-tag">${p.phase} · ${p.period}</span>
-          <span class="rm-phase-status rm-phase-status-${p.status}">${p.status === 'done' ? 'Đã hoàn thành' : p.status}</span>
+          <span class="rm-phase-status rm-phase-status-${p.status}">${PHASE_STATUS_LABELS[p.status] || p.status}</span>
         </div>
         <h2 class="rm-phase-title">${p.title}</h2>
         <p class="rm-phase-summary">${p.summary}</p>
-        <div class="rm-module-grid">
-          ${p.modules.map((m, i) => `
-            <article class="rm-module-card" data-rm-module="${p.period}-${i}">
-              <h3 class="rm-module-name">${m.name}</h3>
-              <p class="rm-module-preview">${m.preview}</p>
-              <p class="rm-module-full">${m.desc}</p>
-              <button type="button" class="rm-module-toggle">Xem chi tiết <span class="rm-module-toggle-icon">↓</span></button>
-            </article>`).join('')}
+        <div class="rm-milestones">
+          <div class="rm-milestone-rail" data-phase="${p.period}">
+            ${p.modules.map((m, i) => `
+              <button type="button" class="rm-milestone" data-idx="${i}">
+                <span class="rm-milestone-node"></span>
+                <span class="rm-milestone-label">${m.name}</span>
+              </button>`).join('')}
+          </div>
+          <div class="rm-milestone-detail" data-phase="${p.period}">
+            <p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>
+          </div>
         </div>
       </div>
-    </div>`).join('') + `
-    <div class="rm-stop rm-stop-future">
-      <span class="rm-stop-node"></span>
-      <div class="rm-stop-content">
-        <span class="rm-phase-tag rm-phase-tag-future">Phase 2 · H2/2026</span>
-        <p class="rm-stop-placeholder">Nội dung đang được lên kế hoạch.</p>
-      </div>
-    </div>`;
+    </div>`).join('');
 
   document.getElementById('rmTrack').innerHTML = stops;
 
-  document.querySelectorAll('.rm-module-card').forEach(card => {
-    const toggle = () => {
-      const open = card.classList.toggle('expanded');
-      const btn = card.querySelector('.rm-module-toggle');
-      if (btn) btn.innerHTML = open ? 'Thu gọn <span class="rm-module-toggle-icon">↑</span>' : 'Xem chi tiết <span class="rm-module-toggle-icon">↓</span>';
-    };
-    card.querySelector('.rm-module-toggle')?.addEventListener('click', toggle);
+  document.querySelectorAll('.rm-milestone-rail').forEach(rail => {
+    const period = rail.dataset.phase;
+    const phase = ROADMAP_PHASES.find(p => p.period === period);
+    const detail = document.querySelector(`.rm-milestone-detail[data-phase="${period}"]`);
+    const milestones = rail.querySelectorAll('.rm-milestone');
+    const emptyHtml = '<p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>';
+
+    milestones.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.idx);
+        const wasActive = btn.classList.contains('active');
+        milestones.forEach(b => b.classList.remove('active'));
+
+        if (wasActive) {
+          detail.innerHTML = emptyHtml;
+          return;
+        }
+
+        btn.classList.add('active');
+        const m = phase.modules[idx];
+        detail.innerHTML = `
+          <h3 class="rm-milestone-detail-name">${m.name}</h3>
+          <ul class="rm-module-points">
+            ${m.points.map(pt => `<li><strong>${pt.title}:</strong> ${pt.desc}</li>`).join('')}
+          </ul>`;
+      });
+    });
   });
 }
 

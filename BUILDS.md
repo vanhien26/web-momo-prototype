@@ -353,3 +353,109 @@ User muốn "Product Roadmap 2026" nằm trên cùng sidebar, trên cả group "
 
 ### Lessons
 - Pattern `pinned: true` + filter `!p.pinned` trong các vòng lặp group là cách nhẹ nhàng để "ghim" 1 prototype lên đầu mà không phải tạo category mới hay đổi `GROUP_ORDER` (tránh side-effect lan sang toàn bộ hệ thống category/màu sắc/filter chip). Dùng lại pattern này nếu sau cần pin thêm item khác.
+
+---
+
+## Roadmap H1/2026 — nội dung chi tiết 11 module — 2026-07-05
+
+**File:** `demos/product-roadmap.html` (data `ROADMAP_PHASES`, CSS `.rm-module-points`)
+
+### Brief
+User cung cấp nội dung Phase 1 (H1/2026) đầy đủ và chi tiết hơn nhiều: 11 module (thêm mới "Umami Tracking & User Identity" so với bản 10 module trước), mỗi module có 2-7 điểm chi tiết dạng "Tiêu đề: mô tả" thay vì 1 đoạn văn ngắn.
+
+### Decisions made
+- Đổi schema module từ `desc: string` sang `points: [{title, desc}]` — render thành `<ul class="rm-module-points">`, mỗi `<li>` có `<strong>title:</strong> desc`
+- Nút toggle hiện số lượng điểm ngay trên label ("Xem chi tiết (7)") để user biết trước card nào dài trước khi click — dùng `data-count` trên button để giữ số khi toggle qua lại collapsed/expanded
+- Merchant Page có 1 điểm dạng luồng 5 bước lồng nhau ("Luồng khởi tạo Merchant tự động") — không tạo thêm 1 cấp list con, thay vào đó nối các bước bằng "→" trong 1 câu `desc`, nhất quán với style "loop" đã dùng ở field `loop` của registry (VD: "Xem timeline → Chọn phase → ...")
+- Đổi grid từ `repeat(5, minmax(0,1fr))` cố định sang `repeat(auto-fill, minmax(230px,1fr))` vì 11 module không chia hết cho 5 (sẽ để lại 1 card mồ côi ở hàng cuối) và nội dung mỗi card giờ dài hơn nhiều, cần rộng hơn 1/5 màn hình. Auto-fill cũng tự responsive, bỏ được media query ép cột cứng cho tablet.
+
+### Issues gặp phải
+- **Bug CSS specificity**: sau khi đổi `.rm-module-full` từ `<p>` sang `<ul class="rm-module-full rm-module-points">`, quy tắc `.rm-module-points { display: flex }` (khai báo SAU `.rm-module-full { display: none }` trong cùng file, cùng specificity 1 class) đã ghi đè, khiến toàn bộ nội dung chi tiết hiện ra ngay cả khi card chưa expand. Phát hiện qua screenshot verify (thấy preview + full list cùng hiện). Fix bằng cách gộp `display:flex` vào selector kết hợp `.rm-module-card.expanded .rm-module-full.rm-module-points` (specificity cao hơn), bỏ hẳn `display` ra khỏi `.rm-module-points` base rule.
+
+### Lessons
+- Khi 1 element mang nhiều class (`class="a b"`) và cả `.a` lẫn `.b` cùng khai báo `display`, thứ tự SOURCE ORDER trong CSS quyết định (không phải thứ tự class trong HTML) nếu specificity bằng nhau. Luôn kiểm tra bằng screenshot thực tế sau khi đổi tag/class của phần tử có logic show/hide qua class toggle — đừng chỉ tin logic JS đúng là đủ, CSS specificity có thể âm thầm phá vỡ nó.
+
+---
+
+## Roadmap card expand-to-full-width cho tool có mô tả dày — 2026-07-05
+
+**File:** `demos/product-roadmap.html`
+
+### Brief
+User nhận xét card hẹp (230px) không đủ chỗ cho tool có 5-7 điểm chi tiết, hỏi ý kiến có nên "làm hàng ngang" không. Mình đề xuất: card expand thì span full width của grid (đẩy card khác xuống dòng), bên trong list chia 2 cột thay vì 1 cột dọc hẹp — user đồng ý ("ok").
+
+### Decisions made
+- `.rm-module-card.expanded { grid-column: 1 / -1; }` — card đang mở chiếm trọn hàng ngang của `.rm-module-grid`
+- List điểm khi expand chuyển từ flex-column sang CSS `column-count: 2; column-gap: 28px;` (multi-column layout, không dùng CSS grid) vì các điểm có độ dài không đều nhau — multi-column tự flow top-down theo cột, không ép hàng bằng nhau như grid 2 cột thật sẽ làm
+- `break-inside: avoid` trên mỗi `<li>` để tránh 1 điểm bị cắt ngang giữa 2 cột
+- Mobile (`max-width:640px`): fallback về `column-count: 1` vì màn hẹp chia 2 cột sẽ quá chật
+
+### Issues gặp phải
+- Không có issue, verify ngay bằng screenshot: expand PLG Project (7 điểm) và Blog Editor (6 điểm) cùng lúc, layout không vỡ, card khác bị đẩy xuống đúng như dự tính. Mobile fallback 1 cột hoạt động đúng.
+
+### Lessons
+- CSS `column-count` (multi-column text layout) phù hợp hơn CSS Grid 2 cột khi các item trong list có độ dài không đều — tránh được khoảng trắng thừa mà grid 2 cột cân bằng hàng sẽ tạo ra. Cân nhắc dùng lại pattern này cho bất kỳ danh sách bullet dài, độ dài không đều nào cần hiển thị rộng.
+
+---
+
+## Đổi module grid → point row + single detail panel — 2026-07-05
+
+**File:** `demos/product-roadmap.html`
+
+### Brief
+User feedback: "trình bày gì thấy ghê vậy" — 11 card cùng hiện tên + preview mặc định (dù đã expand-to-full-width) vẫn quá dày. Yêu cầu cụ thể: mỗi dự án trong Phase 1 chỉ nên là **một điểm** (point/tag nhỏ gọn), bấm vào mới xổ ngang chi tiết ra.
+
+### Decisions made
+- Bỏ hẳn `.rm-module-grid` (grid card luôn hiện tên+preview) → thay bằng `.rm-point-row`: hàng pill nhỏ gọn (chỉ tên, có dot marker), flex-wrap tự động
+- Bỏ pattern "mỗi card tự expand tại chỗ" → chuyển thành **1 detail panel dùng chung** cho cả phase (`.rm-point-detail`, `hidden` mặc định). Bấm point nào thì panel hiện nội dung point đó, chỉ 1 point active tại 1 thời điểm (bấm point khác thì swap nội dung, bấm lại point đang active thì đóng panel) — tránh tình trạng nhiều panel dài cùng mở gây rối mắt
+- Giữ nguyên layout 2-cột (`column-count:2`) bên trong panel detail vì vẫn đúng nhu cầu "mô tả dày cần đọc rộng" đã quyết định ở bước trước, chỉ đổi chỗ chứa (giờ là panel dùng chung thay vì từng card)
+- JS: query `phase.modules[idx]` từ `ROADMAP_PHASES` theo `data-idx` lưu trên mỗi point, không cần đổi cấu trúc data (`points: [{title, desc}]` giữ nguyên)
+
+### Issues gặp phải
+- Không có issue mới. Verify bằng screenshot: bấm point A → panel hiện đúng nội dung A; bấm point B → panel swap sang B, point A tắt active; bấm lại B → panel đóng. Mobile: point tự wrap nhiều dòng, panel về 1 cột.
+
+### Lessons
+- Khi 1 trang có nhiều item cùng loại và mỗi item đều có nội dung dài, đừng mặc định "mỗi item = 1 card luôn hiện preview + tự expand độc lập" — dễ gây quá tải thị giác khi số lượng item lớn (ở đây là 11). Cân nhắc pattern "list điểm chọn + 1 vùng chi tiết dùng chung" (giống tabs/selector) để mặc định nhẹ, chỉ tốn không gian khi user chủ động chọn xem.
+
+---
+
+## Milestone rail dọc thay cho point-row ngang — 2026-07-05
+
+**File:** `demos/product-roadmap.html`
+
+### Brief
+User gửi screenshot cận cảnh thanh spine dọc (đoạn nối giữa node Phase 1 và Phase 2) kèm giải thích: ý họ là 11 dự án nên nằm làm milestone TRÊN chính cái bar dọc đó (thứ tự bất kỳ), bấm vào mới mở nội dung chi tiết. Bản ngay trước (`.rm-point-row` hàng ngang các pill + 1 detail panel dùng chung bên dưới) chưa đúng ý — đó là hàng ngang, không phải bar dọc.
+
+### Decisions made
+- Đổi từ `.rm-point-row` (flex-wrap hàng ngang) sang `.rm-milestone-rail`: list dọc, mỗi milestone có node tròn + nhãn, nối nhau bằng đường dọc `::before` — dùng lại đúng pattern `.rm-stop`/`.rm-stop-node` của timeline Phase chính (spine + node), chỉ thu nhỏ lại làm sub-level
+- Layout 2 cột ngang hàng: rail dọc bên trái (`flex: 0 0 220px`) + `.rm-milestone-detail` bên phải (`flex:1`) — bấm milestone nào thì panel bên phải "xổ ngang" hiện nội dung ngay, đúng nghĩa đen thay vì chỉ full-width bên dưới như bản trước
+- Panel detail có state rỗng mặc định (`Chọn một dự án bên trái để xem chi tiết.`) thay vì ẩn hẳn — layout không bị nhảy cột khi chưa chọn gì
+- Responsive: dưới 780px, `.rm-milestones` chuyển `flex-direction: column` (rail lên trên, panel xuống dưới, full width), điểm list bên trong panel cũng về 1 cột
+
+### Issues gặp phải
+- Không có issue mới, tái sử dụng gần như nguyên vẹn JS logic single-active-detail từ bản point-row trước (chỉ đổi tên class/selector), test lại toggle/swap/click vẫn đúng.
+
+### Lessons
+- Khi user mô tả UI kèm ảnh chụp, ưu tiên đọc đúng thành phần trong ảnh (ở đây là cái spine dọc) thay vì suy diễn ý tưởng tương tự nghe hợp lý (hàng ngang pill). Lần build trước đã đoán sai hướng (ngang thay vì dọc) dù cùng chung tinh thần "point + click mở chi tiết" — 2 lần liền cùng 1 tính năng bị hiểu sai theo 2 kiểu khác nhau, nên hỏi lại sớm hơn nếu còn mơ hồ về hướng bố cục (ngang/dọc) thay vì chọn đại 1 hướng rồi để user tự sửa.
+
+---
+
+## Thêm Phase 2 (H2/2026) — 12 module — 2026-07-05
+
+**File:** `demos/product-roadmap.html`
+
+### Brief
+User cung cấp nội dung đầy đủ Phase 2 (H2/2026): 12 module (11 module trùng tên với H1 nhưng nội dung khác hẳn - đây là công việc MỚI trong H2 chứ không phải lặp lại, cộng thêm 1 module hoàn toàn mới "MoSpark Request"). Blog Editor có cấu trúc lồng phức tạp nhất: 1 feature cha "Tích hợp SEO/GEO Scoring Gate" (4 sub-bullet) + 1 nhóm "đề xuất tích hợp" riêng (4 bullet nữa) = 8 điểm tổng.
+
+### Decisions made
+- Thay comment placeholder `// Phase 2 sẽ thêm vào đây` bằng object phase thật, xóa luôn đoạn `.rm-stop-future` hard-code cuối `buildRoadmap()` (không cần placeholder nữa vì đã có nội dung thật) — `:last-child` CSS tự động xử lý việc ẩn đường nối sau Phase 2 vì giờ nó thực sự là stop cuối cùng
+- Status Phase 2 = `'in-progress'` (không phải `'done'`) vì ngày hiện tại 2026-07-05 là mốc bắt đầu H2 - Phase 1 (H1) đã xong, Phase 2 vừa bắt đầu, chưa hoàn thành
+- Thêm `PHASE_STATUS_LABELS` map (`done`/`in-progress`/`planned`) thay vì ternary cứng chỉ biết mỗi `'done'` - cho phép mở rộng thêm trạng thái khác sau này (VD Phase 3 `'planned'`)
+- Thêm màu riêng cho status "Đang triển khai" (cam `#f79009`/`#fef0c7`) khác với "Đã hoàn thành" (xanh lá) để phân biệt nhanh bằng mắt ngay trên phase header, không cần đọc chữ
+- Blog Editor (H2): gộp dòng "Tính năng: ..." vào làm desc của point cha "Tích hợp SEO/GEO Scoring Gate (Cải tiến H2)" thay vì tách thành 1 point riêng tên "Tính năng" (quá chung chung, không có ý nghĩa khi đứng một mình trong danh sách 8 điểm) — flatten toàn bộ cấu trúc lồng 2 cấp (feature cha + nhóm đề xuất) thành 1 list phẳng 8 điểm, nhất quán với toàn bộ module khác
+
+### Issues gặp phải
+- Không có issue. Verify: đếm số `name: '...'` trong file = 23 (11 H1 + 12 H2, khớp), JS syntax hợp lệ, click milestone "Blog Editor" ở H2 (8 điểm, dài nhất) hiển thị đúng 2 cột không vỡ, cả 2 phase hiện đúng badge trạng thái khác màu, spine nối liên tục không còn khúc "future" cụt ở cuối, mobile/desktop đều ổn.
+
+### Lessons
+- Khi 1 module cùng tên xuất hiện ở nhiều phase (VD "GenAI Content" ở cả H1 và H2) nhưng nội dung hoàn toàn khác, đừng nhầm là "cập nhật/merge" nội dung cũ — đây là 2 entry độc lập theo 2 giai đoạn thời gian khác nhau, giữ nguyên cả hai, không ghi đè.
