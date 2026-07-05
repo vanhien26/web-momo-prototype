@@ -765,6 +765,13 @@ const GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other'];
 const GROUP_DOT_COLORS = {
   MiniWeb: '#60a5fa', MoSpark: '#f472b6', Widget: '#34d399', Platform: '#fb923c', Other: '#9ca3af',
 };
+const GROUP_META = {
+  MoSpark:  { eyebrow: 'MoSpark Platform',  title: 'AI & Content Tools',    desc: 'GenAI orchestration, landing page builder, SEO/GEO scoring và content management.', chipCls: 'pill-pink'  },
+  Widget:   { eyebrow: 'Utilities Tool',    title: 'Financial Calculators', desc: 'PLG tools, calculators và checker phục vụ organic SEO và user engagement.',         chipCls: 'pill-green' },
+  Platform: { eyebrow: 'Platform',          title: 'Product Screens',       desc: 'Full-flow prototypes: Phạt Nguội, Cinema, eSIM, Dịch vụ công và Onboarding.',       chipCls: 'pill-amber' },
+  MiniWeb:  { eyebrow: 'Mini Web Overview', title: 'SEO Inventory',         desc: '113 MiniWeb pages - inventory theo Division, Use Case, URL và traffic volume.',      chipCls: 'pill-blue'  },
+  Other:    { eyebrow: 'Other',             title: 'Miscellaneous',         desc: 'Prototype thử nghiệm và concept khác.',                                              chipCls: 'pill-gray'  },
+};
 const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
@@ -1233,53 +1240,47 @@ function buildMoSparkHomeIntro() {
 
 // ─── Lab Directory (home view) ────────────────────────────────────────────────
 
-function buildLabRow(proto, groupName) {
-  const matCol = MAT_COLOR[proto.maturity] || { bg: '#f1f5f9', text: '#475569' };
+function buildProtoCard(proto, chipCls) {
   const children = proto.tools || [];
-
-  let childrenHtml = '';
-  if (children.length) {
-    childrenHtml = `<div class="lab-children">
-      ${children.map(t => `<button class="lab-child-chip" data-open-proto="${proto.id}" data-open-tool="${t.id}">${t.name}</button>`).join('')}
-    </div>`;
-  }
-
   const searchText = [proto.name, ...children.map(t => t.name)].join(' ').toLowerCase();
-
+  const MAX_SHOW = 8;
+  const shown = children.slice(0, MAX_SHOW);
+  const rest = children.length - shown.length;
+  const chipsHtml = children.length ? `<div class="proto-chips">${
+    shown.map(t => `<button class="child-pill ${chipCls}" data-open-proto="${proto.id}" data-open-tool="${t.id}">${t.name}</button>`).join('')
+  }${rest > 0 ? `<span class="child-pill-more">+${rest} nữa</span>` : ''}</div>` : '';
   return `
-    <div class="lab-row" data-open-proto="${proto.id}" data-group="${groupName}" data-search="${searchText}">
-      <button class="lab-row-action" data-open-proto="${proto.id}" tabindex="-1">↗</button>
-      <div class="lab-row-body">
-        <span class="lab-row-name">${proto.name}</span>
-        ${childrenHtml}
+    <div class="proto-card" data-open-proto="${proto.id}" data-search="${searchText}">
+      <div class="proto-card-head">
+        <span class="proto-card-name">${proto.name}</span>
+        <button class="proto-card-arrow" data-open-proto="${proto.id}" tabindex="-1">↗</button>
       </div>
+      ${chipsHtml}
     </div>`;
 }
 
 function buildLabSectionRows(groupName, groupItems) {
+  const meta = GROUP_META[groupName] || {};
+  const chipCls = meta.chipCls || 'pill-gray';
   const dot = GROUP_DOT_COLORS[groupName] || '#9ca3af';
-  // hex → rgba helper for tinted cluster head bg
-  const hexAlpha = (hex, a) => {
-    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-    return `rgba(${r},${g},${b},${a})`;
-  };
-  const clusterStyle = `style="background:${hexAlpha(dot,.08)};color:${dot}"`;
 
   if (groupName === 'MoSpark') {
-    return MOSPARK_CLUSTER_ORDER.map(cluster => {
+    const inner = MOSPARK_CLUSTER_ORDER.map(cluster => {
       const items = groupItems.filter(p => getMoSparkCluster(p.id) === cluster);
       if (!items.length) return '';
-      return `<div class="lab-cluster-head" ${clusterStyle}>${cluster}</div>${items.map(p => buildLabRow(p, groupName)).join('')}`;
+      return `<div class="lab-cluster-sep" style="color:${dot}">${cluster}</div>${items.map(p => buildProtoCard(p, chipCls)).join('')}`;
     }).join('');
+    return `<div class="lab-card-grid">${inner}</div>`;
   }
   if (groupName === 'Platform') {
-    return PLG_OWNER_ORDER.map(owner => {
+    const inner = PLG_OWNER_ORDER.map(owner => {
       const items = groupItems.filter(p => p.ownerGroup === owner);
       if (!items.length) return '';
-      return `<div class="lab-cluster-head" ${clusterStyle}>${owner}</div>${items.map(p => buildLabRow(p, groupName)).join('')}`;
+      return items.map(p => buildProtoCard(p, chipCls)).join('');
     }).join('');
+    return `<div class="lab-card-grid">${inner}</div>`;
   }
-  return groupItems.map(p => buildLabRow(p, groupName)).join('');
+  return `<div class="lab-card-grid">${groupItems.map(p => buildProtoCard(p, chipCls)).join('')}</div>`;
 }
 
 function buildLabDirectory() {
@@ -1294,39 +1295,38 @@ function buildLabDirectory() {
         return ia === -1 ? 1 : ib === -1 ? -1 : ia - ib;
       });
     if (!groupItems.length) return '';
+    const meta = GROUP_META[groupName] || {};
     const count = getGroupCount(groupName);
-    const dot = GROUP_DOT_COLORS[groupName] || '#9ca3af';
-    const col = CAT_COLOR[groupName] || { bg: '#f1f5f9', text: '#475569' };
+    const grpLow = groupName.toLowerCase();
     return `
-      <div class="lab-section" data-group="${groupName}" style="border-left-color:${dot}">
-        <div class="lab-section-head">
-          <span class="lab-section-dot" style="background:${dot}"></span>
-          <span class="lab-section-label" style="color:${col.text}">${displayGroupName(groupName)}</span>
-          <span class="lab-section-count">${count} ${groupName === 'MiniWeb' ? 'pages' : 'project' + (count !== 1 ? 's' : '')}</span>
+      <div class="lab-section lab-section-${grpLow}" data-group="${groupName}">
+        <div class="lab-section-intro">
+          <p class="lab-section-eyebrow">${meta.eyebrow || groupName} <span class="lab-section-cnt">${count}</span></p>
+          <h2 class="lab-section-title">${meta.title || displayGroupName(groupName)}</h2>
+          <p class="lab-section-desc">${meta.desc || ''}</p>
         </div>
-        <div class="lab-list">${buildLabSectionRows(groupName, groupItems)}</div>
+        ${buildLabSectionRows(groupName, groupItems)}
       </div>`;
   }).join('');
 
   const filterChips = [
     `<button class="lab-chip active" data-filter="">All <b>${getTotalSurfaceCount()}</b></button>`,
     ...GROUP_ORDER.map(g => {
+      const meta = GROUP_META[g] || {};
       const col = CAT_COLOR[g] || { bg: '#f1f5f9', text: '#475569' };
-      return `<button class="lab-chip" data-filter="${g}" style="--chip-bg:${col.bg};--chip-col:${col.text}">${displayGroupName(g)} <b>${getGroupCount(g)}</b></button>`;
+      return `<button class="lab-chip" data-filter="${g}" style="--chip-bg:${col.bg};--chip-col:${col.text}">${meta.eyebrow || displayGroupName(g)} <b>${getGroupCount(g)}</b></button>`;
     }),
   ].join('');
 
   return `
     <div class="lab-page">
-      <div class="lab-page-header">
-        <div class="lab-page-brand">
-          <img src="${MOSPARK_LOGO_URL}" alt="MoSpark" class="hl-mospark-logo" decoding="async">
-          <span class="lab-page-kicker">Internal · Web Platform</span>
-        </div>
-        <h1 class="lab-page-title">Prototype Lab</h1>
+      <div class="lab-hero">
+        <p class="lab-kicker">Internal · Web Platform · ${getTotalSurfaceCount()} surfaces</p>
+        <h1 class="lab-title">Prototype<br><span class="lab-title-accent">Lab.</span></h1>
+        <p class="lab-sub">All prototypes, demos và tools được build bởi Web Platform.</p>
       </div>
 
-      <div class="lab-toolbar">
+      <div class="lab-filterbar">
         <div class="lab-search-wrap">
           <svg class="lab-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input class="lab-search-input" id="labSearchInput" type="search" placeholder="Tìm prototype, child page..." autocomplete="off" spellcheck="false">
@@ -1754,7 +1754,7 @@ function wireHome(ws) {
       const matchGroup = !activeFilter || group === activeFilter;
       if (!matchGroup) { sec.style.display = 'none'; return; }
 
-      const rows = sec.querySelectorAll('.lab-row');
+      const rows = sec.querySelectorAll('.proto-card');
       let secVisible = false;
       rows.forEach(row => {
         const name = (row.dataset.search || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd');
@@ -1763,12 +1763,11 @@ function wireHome(ws) {
         if (show) secVisible = true;
       });
 
-      const clusterHeads = sec.querySelectorAll('.lab-cluster-head');
+      const clusterHeads = sec.querySelectorAll('.lab-cluster-sep');
       clusterHeads.forEach(ch => {
-        const next = ch.nextElementSibling;
         let hasVisible = false;
-        let sib = next;
-        while (sib && !sib.classList.contains('lab-cluster-head')) {
+        let sib = ch.nextElementSibling;
+        while (sib && !sib.classList.contains('lab-cluster-sep')) {
           if (sib.style.display !== 'none') hasVisible = true;
           sib = sib.nextElementSibling;
         }
