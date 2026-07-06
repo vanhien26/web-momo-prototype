@@ -145,6 +145,14 @@ a { color: inherit; }
   border-radius: var(--rm-radius-container);
   background: var(--white);
   box-shadow: var(--rm-shadow-low);
+  min-height: 320px;
+}
+.rm-milestone-detail-inner {
+  animation: rm-fade-in 0.18s ease;
+}
+@keyframes rm-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .rm-milestone-empty { margin: 0; font-size: 12.5px; color: var(--muted); font-style: italic; }
 .rm-milestone-detail-name { margin: 0 0 12px; font-size: 15px; font-weight: 800; color: var(--ink); }
@@ -495,17 +503,20 @@ function buildRoadmap() {
         btn.classList.add('active');
         const m = phase.modules[idx];
         detail.innerHTML = `
-          <h3 class="rm-milestone-detail-name">${m.name}</h3>
-          <ul class="rm-module-points">
-            ${m.points.map(pt => `<li><strong>${pt.title}:</strong> ${pt.desc}</li>`).join('')}
-          </ul>
-          ${m.image ? `<img src="${m.image}" alt="${m.name}" class="rm-module-image">` : ''}`;
+          <div class="rm-milestone-detail-inner">
+            <h3 class="rm-milestone-detail-name">${m.name}</h3>
+            <ul class="rm-module-points">
+              ${m.points.map(pt => `<li><strong>${pt.title}:</strong> ${pt.desc}</li>`).join('')}
+            </ul>
+            ${m.image ? `<img src="${m.image}" alt="${m.name}" class="rm-module-image">` : ''}
+          </div>`;
       });
     });
   });
 }
 
 buildRoadmap();
+document.querySelector('.rm-milestone')?.click();
 </script>
 </body>
 </html>
