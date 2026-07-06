@@ -459,3 +459,48 @@ User cung cấp nội dung đầy đủ Phase 2 (H2/2026): 12 module (11 module 
 
 ### Lessons
 - Khi 1 module cùng tên xuất hiện ở nhiều phase (VD "GenAI Content" ở cả H1 và H2) nhưng nội dung hoàn toàn khác, đừng nhầm là "cập nhật/merge" nội dung cũ — đây là 2 entry độc lập theo 2 giai đoạn thời gian khác nhau, giữ nguyên cả hai, không ghi đè.
+
+---
+
+## Checkmark cho milestone đã hoàn thành (Phase status = done) — 2026-07-06
+
+**File:** `demos/product-roadmap.html`
+
+### Brief
+User feedback (kèm screenshot milestone rail toàn vòng tròn rỗng): UI bullet point cần "ấn tượng hơn", nhấn mạnh đây là "Goal đã đạt được" (Phase 1 status = done).
+
+### Decisions made
+- Thêm `data-status="${p.status}"` vào `.rm-milestone-rail` để CSS phân biệt được milestone thuộc phase nào đã "done" vs "in-progress"
+- Phase `done`: node đổi từ vòng tròn rỗng xám sang nền hồng nhạt (`--pink-50`/`--pink-200`) + dấu `✓` bên trong (qua `::after`), đường spine nối cũng đổi sang hồng nhạt (`--pink-100`) thay vì xám trung tính — tạo cảm giác "cả chuỗi đã hoàn thành" ngay cả khi chưa click vào item nào
+- Phase `in-progress` (H2): giữ nguyên node rỗng xám trung tính vì đây là công việc CHƯA đạt được, tránh gắn nhầm tín hiệu "đã xong" cho việc đang làm
+- Trạng thái `active` (đang click xem chi tiết) vẫn giữ nguyên pink đặc + check trắng, không đổi hành vi tương tác cũ, chỉ đổi trạng thái mặc định (chưa click) của node theo phase status
+
+### Issues gặp phải
+- Không có issue, verify bằng screenshot: Phase 1 toàn bộ 11 node hiện ✓ hồng nhạt ngay khi load trang (chưa click gì), Phase 2 vẫn giữ vòng tròn rỗng đúng như kỳ vọng, click 1 node ở Phase 1 vẫn chuyển đúng sang pink đặc. Mobile hiển thị rõ, không vỡ layout.
+
+### Lessons
+- Khi 1 danh sách milestone có ý nghĩa trạng thái khác nhau theo ngữ cảnh cha (ở đây là "phase status"), nên gắn trạng thái đó trực tiếp lên DOM (data attribute) để CSS tự suy ra style thay vì hard-code cùng 1 kiểu node cho mọi trường hợp — tránh phải sửa JS mỗi khi cần thêm biến thể trạng thái mới (VD sau này thêm "blocked"/"delayed").
+
+---
+
+## Fix 2 bug UI checkpoint sau khi thêm checkmark — 2026-07-06
+
+**File:** `demos/product-roadmap.html`
+
+### Brief
+User phát hiện ngay sau lần build checkmark trước: (1) đường line dọc nối các checkpoint bị lệch, không thẳng tâm; (2) bấm vào checkpoint (active state) thì bị "tô full màu" — thực chất là dấu ✓ biến mất/chìm màu.
+
+### Root cause
+1. **Lệch tâm**: khi đổi node từ 16px→18px lúc thêm checkmark, quên update lại `left` của `.rm-milestone::before` (đường line) theo tâm mới. Line vẫn để `left:9px` trong khi tâm node thực tế là `4px (padding-left) + 9px (bán kính 18/2) = 13px`.
+2. **Checkmark chìm màu khi active**: `.rm-milestone.active .rm-milestone-node::after { color: #fff; }` và `.rm-milestone-rail[data-status="done"] .rm-milestone-node::after { color: var(--momo); }` có **specificity bằng nhau** (đều 3 class/attribute). Rule thứ 2 đứng SAU trong file nên thắng, khiến check mark active vẫn bị tô màu hồng (chìm trên nền hồng đặc) thay vì trắng — lặp lại đúng loại bug specificity đã gặp ở lần build trước (`.rm-module-full`/`.rm-module-points`).
+
+### Decisions made
+- Sửa `left: 9px` → `left: 13px` cho `.rm-milestone::before`, đồng thời chỉnh `top: 24px` → `26px` cho khớp kích thước node mới
+- Thêm rule `.rm-milestone-rail[data-status="done"] .rm-milestone.active .rm-milestone-node::after { color: #fff; }` — combine thêm `.active` vào selector để specificity CAO HƠN rule đặt màu hồng mặc định, đảm bảo active luôn thắng bất kể thứ tự source
+
+### Issues gặp phải
+- Đã verify bằng `getComputedStyle(..., '::after').color` để chắc chắn giá trị runtime đúng `rgb(255,255,255)`, không chỉ tin mắt nhìn qua screenshot.
+
+### Lessons
+- **Bài học lặp lại lần 2 trong cùng file**: mỗi khi 2 rule CSS cùng target 1 pseudo-element/property với specificity ngang nhau, phải chủ động tăng specificity cho rule cần "thắng" (thường là rule biểu diễn trạng thái tương tác như `.active`/`.hover`) bằng cách nối thêm class vào selector, thay vì dựa vào thứ tự khai báo (dễ quên khi code được sửa nhiều lần qua nhiều buổi). Nên grep lại toàn bộ selector cùng target 1 property (`color`, `display`...) mỗi khi thêm 1 rule mới có khả năng đụng nhau.
+- Khi đổi kích thước 1 element có phần tử phụ thuộc vị trí tuyệt đối (line nối, connector...), luôn rà lại TẤT CẢ giá trị `left/top/right/bottom` liên quan thay vì chỉ sửa phần tử chính — kích thước và vị trí thường đi cùng nhau, quên 1 chỗ sẽ gây lệch.

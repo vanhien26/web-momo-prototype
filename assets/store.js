@@ -1285,8 +1285,8 @@ function buildLabDirectory() {
   const pinnedSection = pinnedItems.length ? `
     <div class="lab-section lab-section-pinned" data-group="pinned">
       <div class="lab-section-intro">
-        <p class="lab-section-eyebrow">Pinned <span class="lab-section-cnt">${pinnedItems.length}</span></p>
-        <h2 class="lab-section-title">Ghim đầu trang</h2>
+        <p class="lab-section-eyebrow">MoSpark <span class="lab-section-cnt">${pinnedItems.length}</span></p>
+        <h2 class="lab-section-title">Roadmap</h2>
       </div>
       <div class="lab-card-grid">${pinnedItems.map(p => buildProtoCard(p, 'pill-pink')).join('')}</div>
     </div>` : '';

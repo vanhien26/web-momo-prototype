@@ -102,16 +102,18 @@ a { color: inherit; }
 }
 .rm-milestone::before {
   content: '';
-  position: absolute; left: 8px; top: 22px; bottom: -4px;
+  position: absolute; left: 13px; top: 26px; bottom: -4px;
   width: 2px; background: var(--line);
 }
 .rm-milestone:last-child { padding-bottom: 8px; }
 .rm-milestone:last-child::before { display: none; }
 .rm-milestone-node {
   flex: none;
-  width: 16px; height: 16px; border-radius: 50%;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: grid; place-items: center;
   background: var(--white); border: 2px solid var(--grey-300);
-  transition: background .15s, border-color .15s;
+  font-size: 10px; font-weight: 900; line-height: 1;
+  transition: background .15s, border-color .15s, box-shadow .15s;
 }
 .rm-milestone-label {
   font: 700 12.5px 'MoMoTrustSans', sans-serif; color: var(--ink);
@@ -119,7 +121,21 @@ a { color: inherit; }
 }
 .rm-milestone:hover .rm-milestone-node { border-color: var(--momo); }
 .rm-milestone.active .rm-milestone-node { background: var(--momo); border-color: var(--momo); }
+.rm-milestone.active .rm-milestone-node::after { color: #fff; }
 .rm-milestone.active .rm-milestone-label { color: var(--momo); }
+
+/* Achieved goals — phase status "done" gets a checked-off look by default */
+.rm-milestone-rail[data-status="done"] .rm-milestone::before { background: var(--pink-100); }
+.rm-milestone-rail[data-status="done"] .rm-milestone-node {
+  background: var(--pink-50);
+  border-color: var(--pink-200);
+}
+.rm-milestone-rail[data-status="done"] .rm-milestone-node::after {
+  content: '✓'; color: var(--momo);
+}
+.rm-milestone-rail[data-status="done"] .rm-milestone:hover .rm-milestone-node { border-color: var(--momo); }
+.rm-milestone-rail[data-status="done"] .rm-milestone.active .rm-milestone-node { background: var(--momo); border-color: var(--momo); }
+.rm-milestone-rail[data-status="done"] .rm-milestone.active .rm-milestone-node::after { color: #fff; }
 
 /* Detail panel — fills the right side when a milestone is clicked */
 .rm-milestone-detail {
@@ -277,11 +293,11 @@ const ROADMAP_PHASES = [
       },
       {
         name: 'Utilities Tool',
-        preview: 'Đăng ký Calculator/Checker code tay, cấu hình CTA, nhúng qua Shortcode.',
+        preview: 'Quản lý tập trung Utilities PLG, tự động gán & thừa kế theo Microsite, kết hợp Ads Manager bán chéo.',
         points: [
-          { title: 'Coded Utilities Registry', desc: 'Quản lý danh sách các công cụ tiện ích (Calculator/Checker) được phát triển bằng phương thức viết mã nguồn (Write Code) chuẩn Mobase.' },
-          { title: 'CTA Configurator', desc: 'Cho phép cấu hình đơn giản các thông số cơ bản như nội dung nút bấm và đường link Onelink.' },
-          { title: 'Shortcode Embed', desc: 'Khả năng nhúng (embed) các công cụ này vào bất kỳ Mini Web hoặc bài viết Blog nào thông qua cú pháp Shortcode tiện lợi.' },
+          { title: 'Utilities Center', desc: 'Nơi quản lý tập trung toàn bộ các Utilities (tiện ích tương tác/giả lập) của MoMo do Cell Team yêu cầu hoặc do Platform chủ động xây dựng để thúc đẩy Product-Led Growth (PLG) trên Web.' },
+          { title: 'Auto-mapping & Auto-inheritance', desc: 'Hiển thị tiện ích trên các trang Microsite/Blog được thực hiện tự động qua cơ chế gán 1-1 với Microsite tương ứng. Mọi trang con thuộc Microsite đó tự động thừa kế và hiển thị tiện ích tại đúng vị trí quy chuẩn - hoàn toàn không cần Cell Team nhúng Shortcode hay kéo thả block code tự build.' },
+          { title: 'Ads Manager Cross-sell', desc: 'Kết hợp chặt chẽ với module Ads Manager để thực hiện kịch bản bán chéo bằng cách "khoét slot" quảng cáo hiển thị tương thích trên các trang/dự án khác có liên quan.' },
         ],
       },
       {
@@ -434,7 +450,7 @@ function buildRoadmap() {
         <h2 class="rm-phase-title">${p.title}</h2>
         <p class="rm-phase-summary">${p.summary}</p>
         <div class="rm-milestones">
-          <div class="rm-milestone-rail" data-phase="${p.period}">
+          <div class="rm-milestone-rail" data-phase="${p.period}" data-status="${p.status}">
             ${p.modules.map((m, i) => `
               <button type="button" class="rm-milestone" data-idx="${i}">
                 <span class="rm-milestone-node"></span>
