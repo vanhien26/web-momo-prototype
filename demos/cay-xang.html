@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cây Xăng Gần Đây - Tìm Trạm Xăng Dầu 24/7 | MoMo</title>
+<meta name="description" content="Tìm cây xăng gần bạn: Petrolimex, Shell, BP, Idemitsu, PVOIL. Xem giờ mở cửa, giá xăng từng trạm và thanh toán qua MoMo hoàn tiền Ví Trả Sau 10%.">
+<link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+</style>
+<style>
+:root {
+  --bg:        #F7F5FA;
+  --white:     #FFFFFF;
+  --pink-500:  #EB2F96;
+  --pink-600:  #C22181;
+  --pink-50:   #FFF0F8;
+  --pink-100:  #FFD6EE;
+  --gray-900:  #1C171A;
+  --gray-700:  #3D3040;
+  --gray-600:  #5C5060;
+  --gray-500:  #7A6E7F;
+  --gray-400:  #A09AA5;
+  --gray-300:  #C8C3CC;
+  --gray-200:  #E5E0E9;
+  --gray-100:  #F0EBF4;
+  --gray-50:   #F7F3FA;
+  --green-500: #16A34A;
+  --green-50:  #F0FDF4;
+  --amber-500: #D97706;
+  --amber-50:  #FFFBEB;
+  --red-500:   #DC2626;
+  --red-50:    #FEF2F2;
+  --shadow-s:  0 1px 3px rgba(28,23,26,.08), 0 1px 2px rgba(28,23,26,.06);
+  --shadow-m:  0 4px 12px rgba(28,23,26,.1), 0 2px 4px rgba(28,23,26,.06);
+  --shadow-l:  0 8px 28px rgba(28,23,26,.14), 0 4px 8px rgba(28,23,26,.06);
+  --r-sm:      8px;
+  --r-md:      12px;
+  --r-lg:      16px;
+  --content:   1240px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: var(--gray-900);
+  background: var(--bg);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; border: none; }
+input { font: inherit; }
+
+/* ── NAV ── */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-s);
+}
+.nav-inner {
+  max-width: var(--content); margin: 0 auto;
+  height: 60px; padding: 0 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.nav-back {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 600; color: var(--gray-400);
+  text-decoration: none; flex-shrink: 0;
+  padding: 5px 8px; border-radius: var(--r-sm);
+  transition: color .15s, background .15s;
+}
+.nav-back:hover { color: var(--gray-700); background: var(--gray-100); }
+.nav-sep { width: 1px; height: 18px; background: var(--gray-200); flex-shrink: 0; }
+.nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; flex-shrink: 0; }
+.logo-icon { width: 32px; height: 32px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
+.logo-icon img { width: 100%; height: 100%; display: block; }
+.logo-text { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.logo-text em { color: var(--pink-500); font-style: normal; }
+.nav-links { display: flex; gap: 2px; }
+.nav-link {
+  font-size: 13px; font-weight: 600; color: var(--gray-500);
+  text-decoration: none; padding: 7px 12px;
+  border-radius: var(--r-sm); transition: all .15s;
+  display: inline-block;
+}
+.nav-link:hover { background: var(--gray-100); color: var(--gray-900); }
+.nav-link.on { background: var(--pink-50); color: var(--pink-500); font-weight: 700; }
+.nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.nav-cta {
+  font-size: 13px; font-weight: 700; color: var(--white);
+  background: var(--pink-500); border: none;
+  border-radius: 999px; padding: 8px 18px; cursor: pointer; transition: all .15s;
+  font-family: inherit; flex-shrink: 0; text-decoration: none;
+}
+.nav-cta:hover { background: var(--pink-600); }
+
+/* ── BREADCRUMB + HERO ── */
+.page-top {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+.page-top-inner {
+  max-width: var(--content); margin: 0 auto;
+  padding: 16px 24px 18px;
+}
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--gray-500);
+  margin-bottom: 12px;
+}
+.breadcrumb a { color: var(--gray-500); }
+.breadcrumb a:hover { color: var(--pink-500); }
+.breadcrumb svg { flex: none; }
+.page-title {
+  font-family: 'MoMoTrustDisplay', sans-serif;
+  font-size: 24px; font-weight: 700; line-height: 1.2;
+  color: var(--gray-900); margin-bottom: 6px;
+}
+.page-desc { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+.page-stats {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+}
+.page-stat {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; color: var(--gray-900);
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  padding: 5px 12px; border-radius: 999px;
+}
+.page-stat strong { color: var(--pink-500); font-weight: 800; }
+.page-stat svg { flex: none; color: var(--pink-500); }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+.filter-bar-row {
+  max-width: var(--content); margin: 0 auto;
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 12px;
+  overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none;
+}
+.filter-bar-row::-webkit-scrollbar { display: none; }
+/* type switcher */
+.type-switcher {
+  display: flex; background: var(--gray-100);
+  border-radius: 999px; padding: 3px; gap: 2px; flex: none;
+}
+.type-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; color: var(--gray-500);
+  background: transparent; white-space: nowrap;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.type-btn.active {
+  background: var(--white); color: var(--gray-900);
+  box-shadow: var(--shadow-s);
+}
+/* divider between switcher & chips */
+.filter-divider {
+  width: 1px; height: 20px; background: var(--gray-200); flex: none;
+}
+.filter-bar-inner {
+  display: flex; align-items: center; gap: 8px; flex: none;
+}
+.filter-bar-inner::-webkit-scrollbar { display: none; }
+.filter-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 999px;
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  font-size: 12px; font-weight: 600; color: var(--gray-700);
+  white-space: nowrap; flex: none;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.filter-chip:hover { border-color: var(--gray-400); }
+.filter-chip.active {
+  background: var(--gray-900); border-color: var(--gray-900); color: #fff;
+}
+.filter-chip .brand-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex: none;
+}
+
+/* ── SPLIT LAYOUT ── */
+.split {
+  display: grid;
+  grid-template-columns: 380px 0px 1fr;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1);
+}
+.split.detail-open {
+  grid-template-columns: 290px 340px 1fr;
+}
+
+/* ── LIST PANE ── */
+.list-pane {
+  overflow-y: auto;
+  border-right: 1px solid var(--gray-200);
+  background: var(--bg);
+  min-height: 0;
+}
+.list-pane::-webkit-scrollbar { width: 4px; }
+.list-pane::-webkit-scrollbar-track { background: transparent; }
+.list-pane::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 99px; }
+
+.list-header {
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--bg); z-index: 10;
+  border-bottom: 1px solid var(--gray-100);
+}
+.list-header-left h2 {
+  font-size: 14px; font-weight: 700; color: var(--gray-900);
+}
+.list-header-left p {
+  font-size: 11px; color: var(--gray-500); margin-top: 2px;
+}
+.sort-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--gray-600);
+  background: var(--white); border: 1px solid var(--gray-200);
+  padding: 6px 10px; border-radius: var(--r-sm);
+}
+.sort-btn svg { flex: none; color: var(--gray-500); }
+.sort-btn select {
+  border: 0; outline: 0; background: transparent;
+  font-size: 11px; font-weight: 700; color: var(--gray-900); cursor: pointer;
+}
+
+.station-list { padding: 10px 10px 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.station-card {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--r-md);
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.station-card:hover {
+  border-color: var(--gray-300);
+  box-shadow: var(--shadow-m);
+  transform: translateY(-1px);
+}
+.station-card.is-active {
+  border-color: var(--pink-500);
+  box-shadow: 0 0 0 3px rgba(235,47,150,.12);
+}
+
+.station-brand-badge {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: grid; place-items: center; flex: none;
+  font-size: 9px; font-weight: 900; color: #fff; letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.station-info { flex: 1; min-width: 0; }
+.station-name {
+  font-size: 13px; font-weight: 700; color: var(--gray-900);
+  line-height: 1.3; margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.station-addr {
+  font-size: 11px; color: var(--gray-500); line-height: 1.4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 7px;
+}
+.station-meta {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+}
+.badge-open { background: var(--green-50); color: var(--green-500); }
+.badge-closed { background: var(--red-50); color: var(--red-500); }
+.badge-svc { background: var(--gray-100); color: var(--gray-600); }
+.badge-dist { background: var(--gray-100); color: var(--gray-600); font-size: 10px; }
+
+.station-price-row {
+  display: flex; align-items: center; gap: 8px; margin-top: 6px;
+}
+.fuel-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; color: var(--gray-600);
+}
+.fuel-pill strong { font-weight: 700; color: var(--gray-900); }
+
+/* ── MAP PANE ── */
+.map-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+}
+#map {
+  width: 100%; flex: 1; min-height: 0;
+  background: #e9eef3;
+}
+.leaflet-container { font-family: 'MoMoTrustSans', sans-serif; }
+.leaflet-control-zoom { display: none !important; }
+.leaflet-control-attribution {
+  font-size: 9px !important;
+  background: rgba(255,255,255,.85) !important;
+  padding: 2px 7px !important;
+}
+
+/* Map overlay badge */
+.map-badge {
+  position: absolute; top: 14px; left: 14px; z-index: 400;
+  background: rgba(255,255,255,.96); backdrop-filter: blur(10px);
+  border-radius: 999px; padding: 8px 14px;
+  font-size: 11px; font-weight: 700; color: var(--gray-900);
+  box-shadow: var(--shadow-m);
+  display: flex; align-items: center; gap: 7px;
+}
+.map-badge i {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--pink-500);
+  display: inline-block; animation: pulse 1.6s infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.6); opacity: .5; }
+}
+
+/* Map control stack */
+.map-ctrl {
+  position: absolute; top: 14px; right: 14px; z-index: 400;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.map-ctrl-btn {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(255,255,255,.96); backdrop-filter: blur(10px);
+  border: 0; display: grid; place-items: center;
+  color: var(--gray-900);
+  box-shadow: 0 2px 10px rgba(0,0,0,.1), 0 0 0 1px rgba(0,0,0,.04);
+  cursor: pointer; transition: transform .12s, background .12s;
+  font-size: 16px;
+}
+.map-ctrl-btn:hover { background: #fff; transform: translateY(-1px); }
+.map-ctrl-btn.active svg { color: var(--pink-500); }
+
+/* Custom pin marker */
+.pin {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: #fff; border-radius: 999px;
+  padding: 4px 9px 4px 5px;
+  font-size: 10.5px; font-weight: 800; color: var(--gray-900);
+  box-shadow: 0 2px 6px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.06);
+  white-space: nowrap;
+  cursor: pointer;
+  transform: translate(-50%, -100%) translateY(-4px);
+  position: relative;
+  transition: transform .15s, background .15s, color .15s;
+}
+.pin::after {
+  content: ''; position: absolute; bottom: -5px; left: 50%;
+  width: 8px; height: 8px; background: #fff;
+  transform: translateX(-50%) rotate(45deg);
+  box-shadow: 2px 2px 4px rgba(0,0,0,.08);
+  z-index: -1;
+}
+.pin.active {
+  background: var(--pink-500); color: #fff;
+  transform: translate(-50%, -100%) translateY(-4px) scale(1.15);
+  box-shadow: 0 4px 14px rgba(235,47,150,.45), 0 0 0 3px #fff;
+}
+.pin.active::after { background: var(--pink-500); }
+.pin-icon {
+  width: 20px; height: 20px; border-radius: 50%;
+  display: grid; place-items: center; flex: none;
+  font-size: 10px; color: #fff;
+}
+.pin-garage { font-size: 10px; }
+.pin-garage.active { background: var(--gray-900); color: #fff; }
+.pin-garage.active::after { background: var(--gray-900); }
+.pin.active .pin-icon { background: rgba(255,255,255,.25) !important; }
+
+/* Cluster */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+  background: rgba(235,47,150,.15) !important;
+}
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+  background: linear-gradient(135deg, var(--pink-500) 0%, var(--pink-600) 100%) !important;
+  color: #fff !important;
+  font-family: 'MoMoTrustSans', sans-serif; font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(235,47,150,.4) !important;
+  border: 2px solid #fff !important;
+}
+
+/* User location dot */
+.me-dot { position: relative; width: 14px; height: 14px; }
+.me-dot::before {
+  content: ''; position: absolute; inset: -8px; border-radius: 50%;
+  background: rgba(33,150,243,.2); animation: meRing 2s ease-out infinite;
+}
+.me-dot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: #2196f3; border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+@keyframes meRing {
+  0% { transform: scale(.5); opacity: .85; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Detail column (side panel) */
+.detail-panel {
+  min-width: 0; min-height: 0;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.detail-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px 0;
+  flex-shrink: 0;
+}
+.detail-panel-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--gray-100);
+  display: grid; place-items: center;
+  color: var(--gray-600);
+  margin-left: auto;
+}
+.detail-panel-close:hover { background: var(--gray-200); }
+.detail-hero {
+  height: 72px; flex-shrink: 0;
+  display: flex; align-items: center; padding: 0 16px;
+  position: relative; overflow: hidden;
+}
+.detail-hero-logo {
+  font-size: 32px; font-weight: 900; color: rgba(255,255,255,.9);
+  font-family: 'MoMoTrustDisplay', sans-serif;
+  letter-spacing: -.02em;
+}
+.detail-body { flex: 1; overflow-y: auto; padding: 16px 18px 24px; }
+.detail-name {
+  font-size: 17px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px;
+  line-height: 1.3;
+}
+.detail-addr {
+  font-size: 12px; color: var(--gray-500); margin-bottom: 12px;
+  line-height: 1.5;
+}
+.detail-actions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
+}
+.detail-action-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 8px; border-radius: var(--r-md);
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  font-size: 11px; font-weight: 600; color: var(--gray-700);
+  transition: background .15s, border-color .15s;
+}
+.detail-action-btn:hover { background: var(--gray-100); border-color: var(--gray-300); }
+.detail-action-btn svg { color: var(--pink-500); }
+.detail-section { margin-bottom: 16px; }
+.detail-section-title {
+  font-size: 11px; font-weight: 700; color: var(--gray-500);
+  text-transform: uppercase; letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+.detail-fuel-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.detail-fuel-item {
+  background: var(--gray-50); border: 1px solid var(--gray-100);
+  border-radius: var(--r-sm); padding: 8px 10px;
+}
+.detail-fuel-type { font-size: 10px; color: var(--gray-500); margin-bottom: 2px; }
+.detail-fuel-price { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.detail-fuel-unit { font-size: 10px; color: var(--gray-500); font-weight: 400; }
+.detail-hours {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--green-50); border-radius: var(--r-sm);
+  padding: 10px 12px;
+  font-size: 12px; font-weight: 600; color: var(--green-500);
+}
+.detail-hours svg { flex: none; }
+.detail-momo-promo {
+  background: var(--pink-50); border: 1px solid var(--pink-100);
+  border-radius: var(--r-md); padding: 12px 14px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.detail-momo-promo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--pink-500); display: grid; place-items: center;
+  flex: none; color: #fff;
+}
+.detail-momo-promo-text h4 { font-size: 12px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; }
+.detail-momo-promo-text p { font-size: 11px; color: var(--gray-600); line-height: 1.5; }
+.detail-cta {
+  margin-top: 4px;
+  background: var(--pink-500); color: #fff;
+  border-radius: var(--r-md); padding: 13px;
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s;
+  width: 100%;
+}
+.detail-cta:hover { background: var(--pink-600); }
+
+/* ── TRAVEL CONTROL ── */
+.travel-bar {
+  flex-shrink: 0;
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--gray-200);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 -4px 20px rgba(28,23,26,.08);
+}
+.travel-mode {
+  display: flex; background: var(--gray-100);
+  border-radius: 999px; padding: 3px; gap: 2px; flex: none;
+}
+.travel-mode-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; color: var(--gray-500);
+  background: transparent; border: 0;
+  transition: background .15s, color .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+.travel-mode-btn.active {
+  background: var(--white); color: var(--gray-900);
+  box-shadow: var(--shadow-s);
+}
+.travel-mode-btn svg { flex: none; }
+.travel-slider-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.travel-slider-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--gray-500);
+}
+.travel-slider-label strong { font-size: 13px; font-weight: 800; color: var(--gray-900); }
+.travel-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  background: var(--gray-200); border-radius: 99px; outline: none; cursor: pointer;
+}
+.travel-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--gray-900); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  border: 2px solid #fff;
+}
+.travel-slider::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--gray-900); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  border: 2px solid #fff;
+}
+.travel-update-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 999px;
+  background: var(--gray-900); color: #fff; border: 0;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+  transition: background .15s; flex: none;
+}
+.travel-update-btn:hover { background: #000; }
+.travel-update-btn svg { flex: none; }
+.travel-area-active .travel-slider { background: linear-gradient(to right, var(--pink-500) var(--fill), var(--gray-200) var(--fill)); }
+.travel-area-active .travel-slider::-webkit-slider-thumb { background: var(--pink-500); }
+.travel-area-active .travel-slider::-moz-range-thumb { background: var(--pink-500); }
+.travel-area-active .travel-mode-btn.active { color: var(--pink-500); }
+
+/* ── MOBILE ── */
+@media (max-width: 800px) {
+  .split {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .map-pane {
+    height: 55vw; min-height: 240px; max-height: 340px;
+  }
+  .list-pane {
+    overflow-y: visible; border-right: 0;
+    border-top: 1px solid var(--gray-200);
+  }
+  .detail-panel {
+    position: fixed; top: auto; bottom: 0; right: 0; left: 0;
+    width: 100%; height: 70vh;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    border-top: 1px solid var(--gray-200);
+    border-left: 0;
+    transform: translateY(100%); transition: transform .25s cubic-bezier(.4,0,.2,1);
+    right: auto;
+  }
+  .detail-panel.open { transform: translateY(0); right: auto; }
+  .nav-links { display: none; }
+  .nav-back span { display: none; }
+  .page-stats { gap: 6px; }
+}
+@media (max-width: 560px) {
+  .nav-inner { padding: 0 16px; }
+  .page-top-inner { padding: 14px 16px 16px; }
+  .filter-bar-inner { padding: 10px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-back" href="/lab.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>Lab</span>
+    </a>
+    <div class="nav-sep"></div>
+    <a class="nav-logo" href="/vehicle-hub">
+      <span class="logo-icon"><img src="/assets/images/momo-logo.svg" alt="MoMo"></span>
+      <span class="logo-text">MoMo <em>Xe & Giao Thông</em></span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="/vehicle-hub">Hub</a>
+      <a class="nav-link" href="/gia-xang">Giá xăng</a>
+      <a class="nav-link" href="/vehicle-hub#epass">ePass</a>
+      <a class="nav-link" href="/vehicle-hub#bao-hiem">Bảo hiểm</a>
+      <a class="nav-link on" href="/cay-xang">Cây xăng</a>
+    </div>
+    <div class="nav-right">
+      <a class="nav-cta" href="/vehicle-hub">Mở App MoMo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-top">
+  <div class="page-top-inner">
+    <div class="breadcrumb">
+      <a href="/vehicle-hub">Xe &amp; Giao Thông</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Cây xăng gần bạn</span>
+    </div>
+    <h1 class="page-title">Cây xăng gần bạn</h1>
+    <p class="page-desc">Tìm trạm xăng đối tác Petrolimex &amp; PVOIL gần nhất - thanh toán qua MoMo Pay, hoàn tiền Ví Trả Sau 10%.</p>
+    <div class="page-stats">
+      <div class="page-stat">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Cập nhật <strong>hôm nay</strong></span>
+      </div>
+      <div class="page-stat">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        <span><strong>Petrolimex &amp; PVOIL</strong> đối tác</span>
+      </div>
+      <div class="page-stat">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Hoàn <strong>10%</strong> qua Ví Trả Sau</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-bar-row">
+    <div class="type-switcher">
+      <button class="type-btn active" id="typeStation" onclick="setType('station')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.4 5M17 13l1.4 5M9 18a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        Cây xăng
+      </button>
+      <button class="type-btn" id="typeGarage" onclick="setType('garage')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Garage
+      </button>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-bar-inner" id="filterBar"></div>
+  </div>
+</div>
+
+<!-- SPLIT LAYOUT -->
+<div class="split">
+
+  <!-- LIST PANE -->
+  <div class="list-pane">
+    <div class="list-header">
+      <div class="list-header-left">
+        <h2 id="listCount">18 cây xăng</h2>
+        <p>Gần khu vực Quận 1, TP.HCM</p>
+      </div>
+      <div class="sort-btn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+        <select id="sortSelect" onchange="sortStations()">
+          <option value="dist">Gần nhất</option>
+          <option value="rating">Đánh giá cao</option>
+          <option value="open">Đang mở</option>
+        </select>
+      </div>
+    </div>
+    <div class="station-list" id="stationList"></div>
+  </div>
+
+  <!-- DETAIL COLUMN -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-panel-header">
+      <button class="detail-panel-close" onclick="closeDetail()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="detailContent" style="flex:1;overflow-y:auto;min-height:0"></div>
+  </div>
+
+  <!-- MAP PANE -->
+  <div class="map-pane">
+    <div id="map"></div>
+
+    <div class="map-badge">
+      <i></i>
+      <span id="mapCount">18 trạm</span>
+    </div>
+
+    <div class="map-ctrl">
+      <button class="map-ctrl-btn locate" id="locateBtn" title="Vị trí của tôi" onclick="locateMe()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg>
+      </button>
+      <button class="map-ctrl-btn" title="Phóng to" onclick="map.zoomIn()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+      <button class="map-ctrl-btn" title="Thu nhỏ" onclick="map.zoomOut()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- TRAVEL CONTROL -->
+    <div class="travel-bar" id="travelBar">
+      <div class="travel-mode">
+        <button class="travel-mode-btn active" id="modeWalk" onclick="setTravelMode('walk')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M8 14l2-4 2 2 2-4"/><path d="M7 21l2-5h6l2 5"/></svg>
+          Đi bộ
+        </button>
+        <button class="travel-mode-btn" id="modeDrive" onclick="setTravelMode('drive')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M16 7l-2-4H10L8 7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          Lái xe
+        </button>
+      </div>
+      <div class="travel-slider-wrap">
+        <div class="travel-slider-label">
+          <span>Thời gian di chuyển</span>
+          <strong id="travelMinsLabel">10 phút</strong>
+        </div>
+        <input class="travel-slider" id="travelSlider" type="range" min="5" max="30" step="5" value="10"
+          oninput="onSliderInput(this.value)">
+      </div>
+      <button class="travel-update-btn" onclick="applyTravelArea()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Cập nhật
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const BRANDS = {
+  plx:   { name: 'Petrolimex', short: 'PLX', color: '#DA2032', dark: '#A5172B' },
+  pvoil: { name: 'PVOIL',      short: 'PVO', color: '#003087', dark: '#001F5C' },
+};
+
+const FUELS_BASE = { ron95: 23150, ron92: 21810, diesel: 20150 };
+
+const GARAGE_BRANDS = {
+  honda:   { name: 'Honda Head',       short: 'HH',  color: '#CC0000', dark: '#8B0000' },
+  yamaha:  { name: 'Yamaha Town',      short: 'YT',  color: '#003087', dark: '#001A5C' },
+  vinfast: { name: 'VinFast Service',  short: 'VF',  color: '#00856F', dark: '#005C4C' },
+  generic: { name: 'Garage',           short: 'GA',  color: '#F59E0B', dark: '#D97706' },
+};
+const SVC_LABELS = { motorbike:'Xe máy', car:'Ô tô', oil:'Thay dầu', tire:'Vá lốp', wash:'Rửa xe', inspect:'Đăng kiểm', body:'Đồng sơn' };
+
+const GARAGES = [
+  { id:201, brand:'honda',   name:'Honda Head Nguyễn Trãi',         addr:'12 Nguyễn Trãi, P.Bến Thành, Q.1',        lat:10.7718, lng:106.6900, dist:0.8, open24:false, rating:4.7, vehicles:['motorbike'],        services:['oil','tire','wash'],            hours:'7:30 - 18:00' },
+  { id:202, brand:'yamaha',  name:'Yamaha Town Lê Lợi',              addr:'55 Lê Lợi, P.Bến Nghé, Q.1',              lat:10.7745, lng:106.7025, dist:1.1, open24:false, rating:4.5, vehicles:['motorbike'],        services:['oil','tire','wash','inspect'],  hours:'8:00 - 17:30' },
+  { id:203, brand:'generic', name:'Garage Ô Tô Trần Hưng Đạo',      addr:'122 Trần Hưng Đạo, P.Cầu Kho, Q.1',       lat:10.7656, lng:106.6912, dist:1.5, open24:false, rating:4.4, vehicles:['car'],              services:['oil','tire','body','wash'],     hours:'7:00 - 18:30' },
+  { id:204, brand:'honda',   name:'Honda Head Đinh Tiên Hoàng',      addr:'88 Đinh Tiên Hoàng, P.Đa Kao, Q.1',       lat:10.7905, lng:106.6990, dist:1.7, open24:false, rating:4.6, vehicles:['motorbike'],        services:['oil','tire','wash'],            hours:'7:30 - 17:30' },
+  { id:205, brand:'vinfast', name:'VinFast Service Center Q.3',      addr:'25 Võ Văn Tần, P.6, Q.3',                 lat:10.7810, lng:106.6830, dist:2.0, open24:false, rating:4.8, vehicles:['car'],              services:['oil','tire','body','inspect'],  hours:'7:00 - 19:00' },
+  { id:206, brand:'generic', name:'Garage Xe Máy Hai Bà Trưng',      addr:'230 Hai Bà Trưng, P.Tân Định, Q.1',       lat:10.7890, lng:106.6940, dist:2.2, open24:false, rating:4.2, vehicles:['motorbike'],        services:['oil','tire'],                  hours:'7:00 - 18:00' },
+  { id:207, brand:'yamaha',  name:'Yamaha Town Cách Mạng Tháng Tám', addr:'180 CMT8, P.3, Q.3',                       lat:10.7795, lng:106.6755, dist:2.9, open24:false, rating:4.3, vehicles:['motorbike'],        services:['oil','tire','wash','inspect'],  hours:'8:00 - 17:30' },
+  { id:208, brand:'generic', name:'Garage Ô Tô Bình Thạnh',          addr:'34 Đinh Bộ Lĩnh, P.24, Q.Bình Thạnh',    lat:10.8060, lng:106.7110, dist:3.5, open24:false, rating:4.5, vehicles:['car','motorbike'],  services:['oil','tire','body','wash'],     hours:'7:00 - 18:00' },
+  { id:209, brand:'honda',   name:'Honda Head Phú Nhuận',             addr:'92 Hoàng Văn Thụ, P.9, Q.Phú Nhuận',     lat:10.8000, lng:106.6720, dist:3.8, open24:false, rating:4.6, vehicles:['motorbike'],        services:['oil','tire','wash'],            hours:'7:30 - 18:00' },
+  { id:210, brand:'vinfast', name:'VinFast Service Center Q.5',       addr:'56 Nguyễn Trãi, P.2, Q.5',               lat:10.7580, lng:106.6820, dist:4.0, open24:false, rating:4.7, vehicles:['car'],              services:['oil','tire','body','inspect'],  hours:'7:00 - 19:00' },
+  { id:211, brand:'generic', name:'Garage Kỹ Thuật Lê Văn Sỹ',       addr:'290 Lê Văn Sỹ, P.14, Q.3',               lat:10.7890, lng:106.6680, dist:4.3, open24:false, rating:4.3, vehicles:['car','motorbike'],  services:['oil','tire','body'],            hours:'7:30 - 17:30' },
+  { id:212, brand:'yamaha',  name:'Yamaha Town Tân Bình',             addr:'44 Trường Sơn, P.2, Q.Tân Bình',          lat:10.8100, lng:106.6660, dist:4.9, open24:false, rating:4.4, vehicles:['motorbike'],        services:['oil','tire','wash','inspect'],  hours:'8:00 - 17:30' },
+];
+
+const STATIONS = [
+  { id:1,  brand:'plx',   name:'Petrolimex số 6 Đinh Tiên Hoàng',  addr:'6 Đinh Tiên Hoàng, P.Đa Kao, Q.1',      lat:10.7892, lng:106.6975, dist:0.4, open24:true,  rating:4.7, fuels:['ron95','ron92','diesel'], services:['carwash','shop'], delta:{} },
+  { id:2,  brand:'plx',   name:'Petrolimex Nguyễn Thị Minh Khai',  addr:'45 Nguyễn Thị Minh Khai, Q.1',          lat:10.7823, lng:106.6844, dist:1.2, open24:false, rating:4.3, fuels:['ron95','ron92'],          services:['shop'],           delta:{ ron95:-200 } },
+  { id:3,  brand:'plx',   name:'Petrolimex Lê Duẩn',               addr:'124 Lê Duẩn, P.Bến Nghé, Q.1',          lat:10.7799, lng:106.7005, dist:1.4, open24:true,  rating:4.6, fuels:['ron95','ron92','diesel'], services:['carwash'],        delta:{ ron95:-100 } },
+  { id:4,  brand:'pvoil', name:'PVOIL Điện Biên Phủ',               addr:'312 Điện Biên Phủ, P.4, Q.3',           lat:10.7831, lng:106.6803, dist:2.1, open24:true,  rating:4.4, fuels:['ron95','diesel'],         services:[],                 delta:{} },
+  { id:5,  brand:'plx',   name:'Petrolimex Hai Bà Trưng',           addr:'178 Hai Bà Trưng, P.Đa Kao, Q.1',       lat:10.7874, lng:106.6928, dist:2.3, open24:true,  rating:4.6, fuels:['ron95','ron92','diesel'], services:['carwash','shop'], delta:{} },
+  { id:6,  brand:'plx',   name:'Petrolimex Cách Mạng Tháng Tám',   addr:'210 CMT8, P.4, Q.3',                     lat:10.7789, lng:106.6780, dist:2.8, open24:true,  rating:4.5, fuels:['ron95','ron92','diesel'], services:['shop'],           delta:{} },
+  { id:7,  brand:'pvoil', name:'PVOIL Sư Vạn Hạnh',                 addr:'268 Sư Vạn Hạnh, P.9, Q.10',            lat:10.7780, lng:106.6686, dist:3.3, open24:true,  rating:4.5, fuels:['ron95','ron92'],          services:[],                 delta:{} },
+  { id:8,  brand:'pvoil', name:'PVOIL Nguyễn Trãi',                 addr:'405 Nguyễn Trãi, P.7, Q.5',             lat:10.7601, lng:106.6810, dist:3.6, open24:true,  rating:4.3, fuels:['ron95','ron92','diesel'], services:['carwash'],        delta:{ diesel:-100 } },
+  { id:9,  brand:'plx',   name:'Petrolimex Bình Thạnh',             addr:'50 Đinh Bộ Lĩnh, P.26, Q.Bình Thạnh',  lat:10.8074, lng:106.7097, dist:3.9, open24:true,  rating:4.7, fuels:['ron95','ron92','diesel'], services:['carwash','shop'], delta:{} },
+  { id:10, brand:'pvoil', name:'PVOIL Hoàng Diệu',                  addr:'90 Hoàng Diệu, P.9, Q.4',               lat:10.7656, lng:106.6964, dist:4.2, open24:false, rating:4.1, fuels:['ron95','diesel'],         services:[],                 delta:{ ron95:+100 } },
+  { id:11, brand:'pvoil', name:'PVOIL Nguyễn Hữu Cảnh',             addr:'100 Nguyễn Hữu Cảnh, Q.Bình Thạnh',    lat:10.7963, lng:106.7162, dist:4.1, open24:true,  rating:4.4, fuels:['ron95','diesel'],         services:['shop'],           delta:{} },
+  { id:12, brand:'plx',   name:'Petrolimex Phan Xích Long',         addr:'166 Phan Xích Long, P.2, Q.Phú Nhuận', lat:10.7966, lng:106.6800, dist:4.4, open24:false, rating:4.2, fuels:['ron95','ron92'],          services:[],                 delta:{} },
+  { id:13, brand:'pvoil', name:'PVOIL Lê Văn Sỹ',                   addr:'377 Lê Văn Sỹ, P.1, Q.Tân Bình',       lat:10.7898, lng:106.6663, dist:4.7, open24:true,  rating:4.4, fuels:['ron95','diesel'],         services:['carwash'],        delta:{} },
+  { id:14, brand:'plx',   name:'Petrolimex Tân Sơn Nhất',           addr:'22 Trường Sơn, P.2, Q.Tân Bình',        lat:10.8114, lng:106.6644, dist:5.2, open24:true,  rating:4.8, fuels:['ron95','ron92','diesel'], services:['carwash','shop'], delta:{} },
+  { id:15, brand:'plx',   name:'Petrolimex Hoàng Văn Thụ',         addr:'158 Hoàng Văn Thụ, P.8, Q.Phú Nhuận',  lat:10.7994, lng:106.6716, dist:5.5, open24:false, rating:4.3, fuels:['ron95','ron92','diesel'], services:['shop'],           delta:{} },
+];
+
+const FUEL_LABELS = { ron95: 'RON 95-III', ron92: 'E5 RON 92', diesel: 'Diesel' };
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let activeType = 'station'; // 'station' | 'garage'
+let activeFilter = 'all';
+let activeId = null;
+let markerMap = {};
+let meMarker = null;
+
+// Travel area state
+let travelMode = 'walk';   // 'walk' | 'drive'
+let travelMins = 10;
+let travelCenter = [10.7847, 106.6879]; // default = map center
+let travelCircle = null;
+let travelActive = false;
+
+// Speed m/min: walk 80, drive 500 (~30km/h city)
+const SPEED = { walk: 80, drive: 500 };
+
+function travelRadius() { return SPEED[travelMode] * travelMins; }
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ── MAP INIT ─────────────────────────────────────────────────────────────────
+const map = L.map('map', {
+  center: [10.7847, 106.6879],
+  zoom: 14,
+  zoomControl: false,
+  attributionControl: true,
+});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> &copy; <a href="https://carto.com">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const markerCluster = L.markerClusterGroup({
+  maxClusterRadius: 48,
+  iconCreateFunction: function(cluster) {
+    return L.divIcon({
+      html: `<div class="marker-cluster-inner">${cluster.getChildCount()}</div>`,
+      className: 'marker-cluster marker-cluster-medium',
+      iconSize: [40, 40]
+    });
+  }
+});
+map.addLayer(markerCluster);
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function fmtPrice(val) {
+  return val.toLocaleString('vi-VN') + 'đ';
+}
+function fuelPrice(s, fuel) {
+  return FUELS_BASE[fuel] + (s.delta[fuel] || 0);
+}
+
+function filtered() {
+  let list = activeType === 'station' ? [...STATIONS] : [...GARAGES];
+
+  if (activeType === 'station') {
+    if      (activeFilter === 'ron95')   list = list.filter(s => s.fuels.includes('ron95'));
+    else if (activeFilter === 'diesel')  list = list.filter(s => s.fuels.includes('diesel'));
+    else if (activeFilter === 'open24')  list = list.filter(s => s.open24);
+    else if (activeFilter === 'carwash') list = list.filter(s => s.services.includes('carwash'));
+  } else {
+    if      (activeFilter === 'motorbike') list = list.filter(g => g.vehicles.includes('motorbike'));
+    else if (activeFilter === 'car')       list = list.filter(g => g.vehicles.includes('car'));
+    else if (activeFilter === 'oil')       list = list.filter(g => g.services.includes('oil'));
+    else if (activeFilter === 'wash')      list = list.filter(g => g.services.includes('wash'));
+  }
+
+  if (travelActive) {
+    const r = travelRadius();
+    list = list.filter(s => haversine(travelCenter[0], travelCenter[1], s.lat, s.lng) <= r);
+  }
+
+  const sort = document.getElementById('sortSelect').value;
+  if (sort === 'dist')   list.sort((a,b) => a.dist - b.dist);
+  if (sort === 'rating') list.sort((a,b) => b.rating - a.rating);
+  if (sort === 'open')   list.sort((a,b) => (b.open24 ? 1:0) - (a.open24 ? 1:0));
+  return list;
+}
+
+// ── RENDER LIST ──────────────────────────────────────────────────────────────
+function renderList() {
+  const list = filtered();
+  const el = document.getElementById('stationList');
+  const label = activeType === 'station' ? 'cây xăng' : 'garage';
+  document.getElementById('listCount').textContent = list.length + ' ' + label;
+  document.getElementById('mapCount').textContent = list.length + ' trạm';
+
+  if (activeType === 'station') {
+    el.innerHTML = list.map(s => {
+      const b = BRANDS[s.brand];
+      const ron95price = fuelPrice(s, 'ron95');
+      return `
+      <div class="station-card${s.id === activeId ? ' is-active' : ''}" id="card-${s.id}" onclick="selectStation(${s.id})">
+        <div class="station-brand-badge" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">${b.short}</div>
+        <div class="station-info">
+          <div class="station-name">${s.name}</div>
+          <div class="station-addr">${s.addr}</div>
+          <div class="station-meta">
+            <span class="badge badge-dist"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${s.dist} km</span>
+            <span class="badge ${s.open24 ? 'badge-open' : 'badge-closed'}">${s.open24 ? '● Mở 24/7' : '○ Đóng cửa'}</span>
+            ${s.services.includes('carwash') ? `<span class="badge badge-svc">Rửa xe</span>` : ''}
+            ${s.services.includes('shop') ? `<span class="badge badge-svc">Shop</span>` : ''}
+          </div>
+          <div class="station-price-row">
+            <div class="fuel-pill">RON 95 <strong>${fmtPrice(ron95price)}/lít</strong></div>
+            ${s.fuels.includes('diesel') ? `<div class="fuel-pill">· Diesel <strong>${fmtPrice(fuelPrice(s,'diesel'))}/lít</strong></div>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    el.innerHTML = list.map(g => {
+      const b = GARAGE_BRANDS[g.brand];
+      const vehicleTag = g.vehicles.includes('car') && g.vehicles.includes('motorbike')
+        ? '<span class="badge badge-svc">Xe máy + Ô tô</span>'
+        : g.vehicles.includes('car')
+          ? '<span class="badge badge-svc">Ô tô</span>'
+          : '<span class="badge badge-svc">Xe máy</span>';
+      return `
+      <div class="station-card${g.id === activeId ? ' is-active' : ''}" id="card-${g.id}" onclick="selectStation(${g.id})">
+        <div class="station-brand-badge" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">${b.short}</div>
+        <div class="station-info">
+          <div class="station-name">${g.name}</div>
+          <div class="station-addr">${g.addr}</div>
+          <div class="station-meta">
+            <span class="badge badge-dist"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${g.dist} km</span>
+            ${vehicleTag}
+            ${g.services.slice(0,2).map(sv => `<span class="badge badge-svc">${SVC_LABELS[sv]||sv}</span>`).join('')}
+          </div>
+          <div class="station-price-row">
+            <div class="fuel-pill" style="color:var(--gray-600)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              ${g.hours}
+            </div>
+            <div class="fuel-pill" style="color:var(--gray-500)">★ ${g.rating}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── RENDER MARKERS ────────────────────────────────────────────────────────────
+function renderMarkers() {
+  markerCluster.clearLayers();
+  markerMap = {};
+  const list = filtered();
+
+  list.forEach(s => {
+    const isActive = s.id === activeId;
+    let pinHtml;
+    if (activeType === 'station') {
+      const b = BRANDS[s.brand];
+      pinHtml = `<div class="pin${isActive ? ' active' : ''}">
+        <div class="pin-icon" style="background:${b.color}">${b.short.slice(0,1)}</div>
+        ${fmtPrice(fuelPrice(s,'ron95')).replace('đ','')}
+      </div>`;
+    } else {
+      const b = GARAGE_BRANDS[s.brand];
+      pinHtml = `<div class="pin pin-garage${isActive ? ' active' : ''}">
+        <div class="pin-icon" style="background:${b.color}">${b.short.slice(0,1)}</div>
+        ${b.short}
+      </div>`;
+    }
+    const icon = L.divIcon({ html: pinHtml, className: '', iconSize: [null,null], iconAnchor: [0,0] });
+    const marker = L.marker([s.lat, s.lng], { icon }).addTo(markerCluster);
+    marker.on('click', () => selectStation(s.id));
+    markerMap[s.id] = marker;
+  });
+}
+
+// ── SELECT ────────────────────────────────────────────────────────────────────
+function selectStation(id) {
+  if (activeId === id) { closeDetail(); return; }
+  activeId = id;
+  renderList();
+  renderMarkers();
+  const dataset = activeType === 'station' ? STATIONS : GARAGES;
+  const s = dataset.find(x => x.id === id);
+  if (!s) return;
+  map.setView([s.lat, s.lng], 15, { animate: true });
+  showDetail(s);
+  setTimeout(() => {
+    const card = document.getElementById('card-' + id);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function closeDetail() {
+  activeId = null;
+  document.querySelector('.split').classList.remove('detail-open');
+  renderList();
+  renderMarkers();
+}
+
+function showDetail(s) {
+  const isGarage = activeType === 'garage';
+  const b = isGarage ? GARAGE_BRANDS[s.brand] : BRANDS[s.brand];
+
+  const heroName = isGarage
+    ? s.name.replace(b.name + ' ', '')
+    : s.name.replace(b.name + ' ', '');
+
+  const mainContent = isGarage ? `
+    <div class="detail-section">
+      <div class="detail-section-title">Dịch vụ</div>
+      <div class="detail-fuel-grid">
+        ${s.services.map(sv => `
+          <div class="detail-fuel-item">
+            <div class="detail-fuel-type">${SVC_LABELS[sv] || sv}</div>
+            <div class="detail-fuel-price" style="font-size:12px;color:var(--green-500)">Có dịch vụ</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Loại xe phục vụ</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${s.vehicles.map(v => `<span class="badge badge-svc" style="padding:6px 12px;font-size:12px">${SVC_LABELS[v]||v}</span>`).join('')}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Giờ mở cửa</div>
+      <div class="detail-hours">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ${s.hours} hằng ngày
+      </div>
+    </div>
+    <div class="detail-momo-promo">
+      <div class="detail-momo-promo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="detail-momo-promo-text">
+        <h4>Thanh toán qua MoMo</h4>
+        <p>Dùng Ví Trả Sau để thanh toán dịch vụ, nhận ưu đãi hoàn tiền.</p>
+      </div>
+    </div>
+  ` : `
+    <div class="detail-section">
+      <div class="detail-section-title">Giờ mở cửa</div>
+      <div class="detail-hours">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ${s.open24 ? 'Mở cửa 24/7 - Tất cả ngày trong tuần' : 'Mở cửa 6:00 - 22:00 hằng ngày'}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Giá nhiên liệu hôm nay</div>
+      <div class="detail-fuel-grid">
+        ${s.fuels.map(f => `
+          <div class="detail-fuel-item">
+            <div class="detail-fuel-type">${FUEL_LABELS[f]}</div>
+            <div class="detail-fuel-price">${fmtPrice(fuelPrice(s, f))}<span class="detail-fuel-unit">/lít</span></div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="detail-momo-promo">
+      <div class="detail-momo-promo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="detail-momo-promo-text">
+        <h4>Hoàn 10% khi đổ xăng qua MoMo</h4>
+        <p>Thanh toán qua Ví Trả Sau, hoàn tiền tối đa 50.000đ/giao dịch.</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-hero" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">
+      <div class="detail-hero-logo">${b.short}</div>
+      <div style="margin-left:12px;min-width:0">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em">${b.name}</div>
+        <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${heroName}</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <p class="detail-addr">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${s.addr} · <strong>${s.dist} km</strong>
+      </p>
+      <div class="detail-actions">
+        <button class="detail-action-btn" onclick="window.open('https://maps.google.com/?daddr=${s.lat},${s.lng}', '_blank')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Chỉ đường</span>
+        </button>
+        <button class="detail-action-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.08 4.18 2 2 0 015 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>Gọi điện</span>
+        </button>
+      </div>
+      ${mainContent}
+      <button class="detail-cta" onclick="window.open('https://momo.vn', '_blank')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Mở App MoMo
+      </button>
+    </div>
+  `;
+  document.querySelector('.split').classList.add('detail-open');
+}
+
+// ── FILTER & SORT ─────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  activeFilter = f;
+  activeId = null;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  closeDetail();
+  renderList();
+  renderMarkers();
+}
+function sortStations() { renderList(); renderMarkers(); }
+
+function setType(type) {
+  activeType = type;
+  activeFilter = 'all';
+  activeId = null;
+  document.getElementById('typeStation').classList.toggle('active', type === 'station');
+  document.getElementById('typeGarage').classList.toggle('active', type === 'garage');
+  closeDetail();
+  renderFilterChips();
+  renderList();
+  renderMarkers();
+}
+
+function renderFilterChips() {
+  const bar = document.getElementById('filterBar');
+  if (activeType === 'station') {
+    bar.innerHTML = `
+      <button class="filter-chip active" onclick="setFilter('all',this)">Tất cả</button>
+      <button class="filter-chip" onclick="setFilter('ron95',this)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.4 5M17 13l1.4 5M9 18a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        Xăng RON 95
+      </button>
+      <button class="filter-chip" onclick="setFilter('diesel',this)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+        Dầu Diesel
+      </button>
+      <button class="filter-chip" onclick="setFilter('open24',this)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Mở 24/7
+      </button>
+      <button class="filter-chip" onclick="setFilter('carwash',this)">Rửa xe</button>`;
+  } else {
+    bar.innerHTML = `
+      <button class="filter-chip active" onclick="setFilter('all',this)">Tất cả</button>
+      <button class="filter-chip" onclick="setFilter('motorbike',this)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-4l2-5h8l3 5h2a2 2 0 0 1 0 4h-1"/><path d="M9 8l2 4"/></svg>
+        Xe máy
+      </button>
+      <button class="filter-chip" onclick="setFilter('car',this)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M16 7l-2-4H10L8 7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        Ô tô
+      </button>
+      <button class="filter-chip" onclick="setFilter('oil',this)">Thay dầu</button>
+      <button class="filter-chip" onclick="setFilter('wash',this)">Rửa xe</button>`;
+  }
+}
+
+// ── TRAVEL AREA ───────────────────────────────────────────────────────────────
+function onSliderInput(val) {
+  travelMins = +val;
+  document.getElementById('travelMinsLabel').textContent = val + ' phút';
+  const pct = ((val - 5) / 25 * 100).toFixed(1) + '%';
+  document.getElementById('travelSlider').style.setProperty('--fill', pct);
+  if (travelCircle) {
+    travelCircle.setRadius(travelRadius());
+    renderList();
+    renderMarkers();
+  }
+}
+
+function setTravelMode(mode) {
+  travelMode = mode;
+  document.getElementById('modeWalk').classList.toggle('active', mode === 'walk');
+  document.getElementById('modeDrive').classList.toggle('active', mode === 'drive');
+  if (travelCircle) {
+    travelCircle.setRadius(travelRadius());
+    renderList();
+    renderMarkers();
+  }
+}
+
+function applyTravelArea() {
+  // Use current map center as anchor if no GPS
+  travelCenter = [map.getCenter().lat, map.getCenter().lng];
+  travelActive = true;
+
+  const r = travelRadius();
+  if (travelCircle) map.removeLayer(travelCircle);
+  travelCircle = L.circle(travelCenter, {
+    radius: r,
+    color: '#1C171A',
+    weight: 2,
+    dashArray: '6 4',
+    fillColor: '#1C171A',
+    fillOpacity: 0.05,
+  }).addTo(map);
+
+  document.getElementById('travelBar').classList.add('travel-area-active');
+  document.getElementById('travelSlider').style.setProperty('--fill',
+    ((travelMins - 5) / 25 * 100).toFixed(1) + '%');
+
+  renderList();
+  renderMarkers();
+
+  // Fit map to circle
+  map.fitBounds(travelCircle.getBounds(), { padding: [32, 32] });
+}
+
+function clearTravelArea() {
+  travelActive = false;
+  if (travelCircle) { map.removeLayer(travelCircle); travelCircle = null; }
+  document.getElementById('travelBar').classList.remove('travel-area-active');
+  renderList(); renderMarkers();
+}
+
+// ── GEOLOCATION ───────────────────────────────────────────────────────────────
+function locateMe() {
+  if (!navigator.geolocation) return;
+  document.getElementById('locateBtn').classList.add('active');
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    travelCenter = [lat, lng];
+    map.setView([lat, lng], 15);
+    if (meMarker) map.removeLayer(meMarker);
+    meMarker = L.marker([lat, lng], {
+      icon: L.divIcon({
+        html: '<div class="me-dot"></div>',
+        className: '', iconSize: [14, 14], iconAnchor: [7, 7]
+      })
+    }).addTo(map);
+    // Auto-apply travel area from GPS
+    travelActive = true;
+    applyTravelArea();
+    setTimeout(() => document.getElementById('locateBtn').classList.remove('active'), 2000);
+  }, () => {
+    document.getElementById('locateBtn').classList.remove('active');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderFilterChips();
+renderList();
+renderMarkers();
+</script>
+</body>
+</html>
