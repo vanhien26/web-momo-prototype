@@ -167,6 +167,55 @@ a { color: inherit; }
 .rm-module-points strong { color: var(--ink); }
 .rm-module-image { display: block; width: 100%; margin-top: 16px; border-radius: 10px; object-fit: cover; }
 
+/* ─── Track tabs ──────────────────────────────────────────── */
+.rm-track-tabs {
+  display: flex; gap: 4px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+}
+.rm-track-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px 8px;
+  border: none; background: transparent;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.rm-track-tab:hover { color: var(--ink); }
+.rm-track-tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.rm-track-tab[data-track="plg"].active {
+  color: var(--momo);
+  border-bottom-color: var(--momo);
+}
+.rm-track-tab-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 20px;
+  background: var(--grey-100); color: var(--muted);
+  transition: background .15s, color .15s;
+}
+.rm-track-tab.active .rm-track-tab-badge {
+  background: var(--grey-200); color: var(--ink);
+}
+.rm-track-tab[data-track="plg"].active .rm-track-tab-badge {
+  background: var(--pink-50); color: var(--momo);
+}
+
+.rm-track-panel { display: none; }
+.rm-track-panel.active { display: block; }
+
+/* PLG panel detail tint */
+.rm-track-panel[data-track="plg"] .rm-milestone-detail {
+  border-color: var(--pink-100);
+  background: var(--pink-50, #fff5fb);
+}
+
 @media (max-width: 780px) {
   .rm-milestones { flex-direction: column; gap: 16px; }
   .rm-milestone-rail { flex: none; width: 100%; }
@@ -208,7 +257,12 @@ const ROADMAP_PHASES = [
     status: 'done',
     title: 'Foundation & Core Builders',
     summary: 'Giai đoạn này tập trung vào việc xây dựng hạ tầng cơ bản, các công cụ khởi tạo Landing Page, Blog Editor, quản lý Keyword và đồng bộ dữ liệu Merchant.',
-    modules: [
+    tracks: [
+      {
+        id: 'platform',
+        label: 'Platform Foundation',
+        sublabel: 'MoSpark Core Modules',
+        modules: [
       {
         name: 'GenAI Content',
         preview: 'Sinh bài viết 2 tầng bằng Claude, đo Token và chi phí minh bạch theo thời gian thực.',
@@ -322,6 +376,39 @@ const ROADMAP_PHASES = [
         points: [
           { title: 'Umami Base Tracking', desc: 'Tích hợp mã theo dõi cơ bản các lượt xem trang (PageView) và tương tác nút bấm (Clicks) cho các module Microsite, Landing Page, và Ads.' },
           { title: 'User Identity Back-end', desc: 'Hoàn thành phát triển logic phân tích định danh và luồng dữ liệu stitch hành vi người dùng (Anonymous → Logged-in → chèn tham số ?wui= vào link deep-link Onelink → đối khớp chuyển đổi KYC/giao dịch trong App MoMo).' },
+        ],
+      },
+        ],
+      },
+      {
+        id: 'plg',
+        label: 'PLG Project',
+        sublabel: 'H1 Pilot',
+        modules: [
+          {
+            name: 'Phạt Nguội — Pilot PLG',
+            preview: 'Dự án PLG thực chiến đầu tiên: Microsite tra cứu phạt nguội, GenAI blog content, Utilities tra cứu biển số, Chatbot FAQ — toàn bộ chạy trên hạ tầng MoSpark.',
+            points: [
+              { title: 'Microsite Phạt Nguội (CEO Mandate - P0)', desc: 'Dự án PLG đầu tiên chạy trên MoSpark, đồng thời là pilot kiểm chứng toàn bộ hạ tầng: Microsite Engine, Blog Editor, Utilities Tool, Chatbot và Ads Manager hoạt động liên thông.' },
+              { title: 'GenAI Blog Content — 50+ bài đầu tiên', desc: 'Sinh bài viết hàng loạt bằng Claude từ keyword cluster tra cứu phạt nguội, mức phạt theo lỗi vi phạm, thủ tục nộp phạt qua MoMo. Đây là batch content GenAI đầu tiên được publish lên production.' },
+              { title: 'Utility: Tra cứu phạt nguội theo biển số', desc: 'Tool tương tác cho phép user nhập biển số xe để tra kết quả phạt nguội thực tế, kích hoạt deep-link Onelink dẫn thẳng vào luồng nộp phạt trong App MoMo.' },
+              { title: 'Utility: Tính mức phạt theo lỗi vi phạm', desc: 'Công cụ tra cứu mức phạt theo loại lỗi và phương tiện, hiển thị khung phạt theo Nghị định 168/2024. Tạo unique data không scrape được từ LLM — GEO moat đầu tiên.' },
+              { title: 'Chatbot FAQ Phạt Nguội', desc: 'Chatbot RAG trả lời các câu hỏi thường gặp về phạt nguội, thủ tục nộp phạt, mức phạt xe máy/ô tô — được nạp từ bài blog PLG Project để thử nghiệm toàn bộ pipeline.' },
+              { title: 'Web-to-App Funnel đầu tiên', desc: 'Toàn bộ luồng Organic Search → Microsite/Blog → Utility Tool → CTA Onelink → App MoMo → Nộp phạt được đo lường end-to-end bằng Umami + GA4 + Appsflyer. Đây là bộ dữ liệu benchmark cho mọi PLG project tiếp theo.' },
+            ],
+          },
+          {
+            name: 'Merchant Page',
+            preview: '200K+ trang merchant Ví Trả Sau được generate tự động — SEO local, GenAI content, deep-link O2O.',
+            image: 'https://homepage.momocdn.net/img/merchantpage-260706084934.jpg',
+            points: [
+              { title: 'Scale: 200K+ Merchant Pages', desc: 'Mỗi merchant Ví Trả Sau được cấp một trang riêng tự động — tạo ra bề mặt SEO local khổng lồ mà không tốn nhân lực content.' },
+              { title: 'GenAI Content tự động theo Category', desc: 'GenAI viết nội dung giới thiệu từng merchant dựa trên dữ liệu thực thể (tên, địa chỉ, category, MoMo Review, Google Maps) theo template ngành hàng F&B/Beauty/Retail.' },
+              { title: 'SEO Local — NAP chuẩn + Schema', desc: 'Mỗi trang có dữ liệu Name/Address/Phone chuẩn hóa, tọa độ Lat/Long, và schema LocalBusiness để tối ưu Google Local Search.' },
+              { title: 'O2O Deep-link tự động', desc: 'Tự sinh Onelink deep-link gắn mã merchant động — user scan QR tại quầy → mở thẳng App MoMo vào đúng trang thanh toán merchant đó.' },
+              { title: 'Umami Tracking per Merchant', desc: 'Mỗi merchant page có tracking riêng để đo lường traffic, CTR và conversion về App theo từng cửa hàng.' },
+            ],
+          },
         ],
       },
     ],
@@ -454,8 +541,43 @@ const PHASE_STATUS_LABELS = {
   planned: 'Sắp triển khai',
 };
 
+function renderMilestoneBlock(modules, railKey, status) {
+  const emptyHtml = '<p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>';
+  return `
+    <div class="rm-milestones">
+      <div class="rm-milestone-rail" data-rail="${railKey}" data-status="${status}">
+        ${modules.map((m, i) => `
+          <button type="button" class="rm-milestone" data-idx="${i}">
+            <span class="rm-milestone-node"></span>
+            <span class="rm-milestone-label">${m.name}</span>
+          </button>`).join('')}
+      </div>
+      <div class="rm-milestone-detail" data-rail="${railKey}">
+        ${emptyHtml}
+      </div>
+    </div>`;
+}
+
 function buildRoadmap() {
-  const stops = ROADMAP_PHASES.map(p => `
+  const stops = ROADMAP_PHASES.map(p => {
+    let contentHtml;
+    if (p.tracks) {
+      const tabBar = `<div class="rm-track-tabs">` +
+        p.tracks.map((t, ti) => `
+          <button class="rm-track-tab${ti === 0 ? ' active' : ''}" data-track="${t.id}" data-phase="${p.period}">
+            ${t.label}
+          </button>`).join('') +
+        `</div>`;
+      const panels = p.tracks.map((t, ti) => `
+        <div class="rm-track-panel${ti === 0 ? ' active' : ''}" data-track="${t.id}" data-phase="${p.period}">
+          ${renderMilestoneBlock(t.modules, p.period + '-' + t.id, p.status)}
+        </div>`).join('');
+      contentHtml = tabBar + panels;
+    } else {
+      contentHtml = renderMilestoneBlock(p.modules, p.period, p.status);
+    }
+
+    return `
     <div class="rm-stop rm-stop-${p.status}">
       <span class="rm-stop-node"></span>
       <div class="rm-stop-content">
@@ -465,29 +587,28 @@ function buildRoadmap() {
         </div>
         <h2 class="rm-phase-title">${p.title}</h2>
         <p class="rm-phase-summary">${p.summary}</p>
-        <div class="rm-milestones">
-          <div class="rm-milestone-rail" data-phase="${p.period}" data-status="${p.status}">
-            ${p.modules.map((m, i) => `
-              <button type="button" class="rm-milestone" data-idx="${i}">
-                <span class="rm-milestone-node"></span>
-                <span class="rm-milestone-label">${m.name}</span>
-              </button>`).join('')}
-          </div>
-          <div class="rm-milestone-detail" data-phase="${p.period}">
-            <p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>
-          </div>
-        </div>
+        ${contentHtml}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   document.getElementById('rmTrack').innerHTML = stops;
 
   document.querySelectorAll('.rm-milestone-rail').forEach(rail => {
-    const period = rail.dataset.phase;
-    const phase = ROADMAP_PHASES.find(p => p.period === period);
-    const detail = document.querySelector(`.rm-milestone-detail[data-phase="${period}"]`);
+    const railKey = rail.dataset.rail;
+    const detail = document.querySelector(`.rm-milestone-detail[data-rail="${railKey}"]`);
     const milestones = rail.querySelectorAll('.rm-milestone');
     const emptyHtml = '<p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>';
+
+    // Resolve which modules array this rail maps to
+    let modules;
+    const [period, trackId] = railKey.split(/-(?=[^-]*$)/); // split on last '-'
+    const phase = ROADMAP_PHASES.find(p => p.period === period);
+    if (phase.tracks) {
+      modules = phase.tracks.find(t => t.id === trackId)?.modules || [];
+    } else {
+      modules = phase.modules;
+    }
 
     milestones.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -501,7 +622,7 @@ function buildRoadmap() {
         }
 
         btn.classList.add('active');
-        const m = phase.modules[idx];
+        const m = modules[idx];
         detail.innerHTML = `
           <div class="rm-milestone-detail-inner">
             <h3 class="rm-milestone-detail-name">${m.name}</h3>
@@ -513,10 +634,31 @@ function buildRoadmap() {
       });
     });
   });
+
+  // Auto-select first milestone of each initially-visible rail
+  document.querySelectorAll('.rm-milestone-rail').forEach(rail => {
+    const panel = rail.closest('.rm-track-panel');
+    if (!panel || panel.classList.contains('active')) {
+      rail.querySelector('.rm-milestone')?.click();
+    }
+  });
+
+  // Tab switching
+  document.querySelectorAll('.rm-track-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const phase = tab.dataset.phase;
+      const track = tab.dataset.track;
+      document.querySelectorAll(`.rm-track-tab[data-phase="${phase}"]`).forEach(t => t.classList.remove('active'));
+      document.querySelectorAll(`.rm-track-panel[data-phase="${phase}"]`).forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const activePanel = document.querySelector(`.rm-track-panel[data-phase="${phase}"][data-track="${track}"]`);
+      activePanel?.classList.add('active');
+      activePanel?.querySelector('.rm-milestone')?.click();
+    });
+  });
 }
 
 buildRoadmap();
-document.querySelector('.rm-milestone')?.click();
 </script>
 </body>
 </html>
