@@ -79,6 +79,18 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'epass',
+    name: 'ePass x MoMo',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'Interactive',
+    description: 'Hub giới thiệu ePass x MoMo: liên kết tài khoản giao thông ETC, qua trạm tự động bằng tiền MoMo. Tích hợp 2 utilities tool tính chi phí qua trạm và thiết lập ngưỡng nạp tự động.',
+    jtbd: 'Qua trạm ETC không bị chặn mà không cần nạp tiền thẻ thủ công',
+    northStar: 'ePass link rate + auto-topup setup rate',
+    src: 'demos/epass.html',
+    address: 'web-momo-prototype.vercel.app/epass',
+  },
+  {
     id: 'ota',
     name: 'OTA · Du lịch Quốc tế',
     category: 'Platform',
@@ -349,6 +361,21 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/merchant-page-builder',
   },
   {
+    id: 'microsite-manager',
+    name: 'Microsite Manager',
+    category: 'MoSpark',
+    maturity: 'Interactive',
+    description: 'Bảng quản trị toàn bộ vòng đời một Microsite: Thông tin & preview live site, Cấu trúc trang (tree + publish status), Dash Analytics (traffic/bounce/duration), Blogs & AI cost tracking, và LLMS Content editor (Markdown split view để AI crawlers hiểu site).',
+    jtbd: 'Xem, kiểm soát và cập nhật mọi thứ của một Microsite từ một nơi mà không phải jump qua nhiều tool',
+    northStar: 'Time-to-update microsite content',
+    loop: 'Review → Edit → Publish → Monitor',
+    hypothesis: 'Một admin panel tập trung giúp team vận hành cập nhật nội dung, LLMS.txt và theo dõi analytics nhanh hơn workflow phân tán qua CMS + GSC + spreadsheet.',
+    value: 'Single source of truth cho mỗi Microsite: cấu trúc, traffic, blog inventory và AI readiness (LLMS).',
+    gate: 'Đo số lần cập nhật LLMS content, blog publish rate, time-to-publish, và analytics review frequency.',
+    src: '/microsite-manager',
+    address: 'web-momo-prototype.vercel.app/microsite-manager',
+  },
+  {
     id: 'seo-geo-score',
     name: 'PLG Content Score',
     category: 'MoSpark',
@@ -412,6 +439,38 @@ const PROTOTYPES = [
     tools: [
       { id: 'bill-lookup', name: 'Tra Cứu Hóa Đơn', category: 'Sub-page', description: 'Tra cứu hóa đơn điện, nước, internet theo mã khách hàng hoặc số điện thoại.', jtbd: 'Biết số tiền cần nộp trước khi thanh toán', src: 'demos/bill-lookup.html', address: 'web-momo-prototype.vercel.app/bill-lookup' },
       { id: 'metro-ticket', name: 'Mua Vé Metro HCM', category: 'Sub-page', description: 'Mua vé Metro TP.HCM: chọn tuyến, ga đi/đến, loại vé, số lượng và nhận QR.', jtbd: 'Mua vé metro nhanh không cần xếp hàng tại ga', src: 'demos/metro-ticket.html', address: 'web-momo-prototype.vercel.app/metro-ticket' },
+    ],
+  },
+  {
+    id: 'vehicle-hub',
+    name: 'Tiện Ích Giao Thông',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'Concept',
+    description: 'Mini App quản lý phương tiện toàn diện: tra phạt nguội không CAPTCHA, nạp ePass Auto-Topup, kiểm tra bảo hiểm/đăng kiểm, tìm cây xăng M4B đối tác và hạng MoXe loyalty. Hai Web Widget SEO: Giá xăng phân vùng và Phạt nguội lookup.',
+    jtbd: 'Quản lý xe thông minh, hành trình không gián đoạn - tra phạt, nạp ETC, gia hạn bảo hiểm và tìm cây xăng trong một surface duy nhất',
+    northStar: 'MEU (Monthly Engagement User) trên Vehicle Hub',
+    loop: 'Web Widget → W2A → Vehicle Profile → Auto-Scan → Alert → Service Purchase',
+    hypothesis: 'Tập trung 8 nhu cầu chủ xe vào một Hub với dữ liệu đã điền sẵn từ Vehicle Profile sẽ tăng attach rate dịch vụ bảo hiểm và ePass.',
+    value: 'Phễu tự nhiên kéo tệp chủ xe ARPU cao vào ecosystem MoMo qua SEO Widget + O2O QR tại cây xăng. Target: 100K saved vehicles, 800K MEU, 5% insurance CR.',
+    gate: 'Đo saved vehicles, auto-topup activation rate, insurance attach rate, W2A từ widget phạt nguội và số QR scan tại cột bơm.',
+    src: 'demos/vehicle-hub.html',
+    address: 'web-momo-prototype.vercel.app/vehicle-hub',
+    tools: [
+      {
+        id: 'gia-xang',
+        name: 'Giá Xăng Dầu Hôm Nay',
+        src: 'demos/gia-xang.html',
+        address: 'web-momo-prototype.vercel.app/gia-xang',
+        description: 'Spoke SEO: bảng giá Vùng 1/Vùng 2, lịch sử 10 kỳ điều hành, trend chart 90 ngày, công cụ tính tiền đổ xăng và countdown kỳ điều hành tiếp theo.',
+      },
+      {
+        id: 'cay-xang',
+        name: 'Cây Xăng Gần Bạn',
+        src: 'demos/cay-xang.html',
+        address: 'web-momo-prototype.vercel.app/cay-xang',
+        description: 'Spoke finder: split layout list + Leaflet map, 18 trạm xăng mẫu TP.HCM, filter theo thương hiệu/open24/MoMo, detail panel giá từng trạm + W2A.',
+      },
     ],
   },
   {
@@ -877,7 +936,7 @@ const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
-  Database: ['merchant-page-builder'],
+  Database: ['merchant-page-builder', 'microsite-manager'],
   Modules:  ['ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'seo-geo-score', 'chatbot'],
 };
 
@@ -896,10 +955,10 @@ function getWidgetCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
-  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'seo-geo-score', 'chatbot'],
+  MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['phat-nguoi', 'esim-du-lich', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'esim-du-lich', 'epass', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 
@@ -908,7 +967,7 @@ const GROUP_SUMMARY = {
     eyebrow: 'MoSpark Platform',
     title: 'MoSpark Platform',
     description: 'Chia thành 3 cụm: GenAI (năng lực tạo sinh & orchestration), Database (data layer & content tools), Modules (bề mặt vận hành & tăng trưởng).',
-    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Merchant Builder | Modules: Ads · PLG Project',
+    examples: 'GenAI: Orchestrator · Agentic Hub | Database: Merchant Builder · Microsite Manager | Modules: Ads · PLG Project',
   },
   MiniWeb: {
     eyebrow: 'Mini Web Overview',

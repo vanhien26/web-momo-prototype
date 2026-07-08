@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ePass x MoMo — Qua trạm ETC không cần nạp tiền</title>
+  <meta name="description" content="Liên kết ePass với MoMo, qua trạm ETC bằng tiền trong ví, không cần nạp ePass. Tính chi phí qua trạm và thiết lập nạp tự động.">
+  <link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/mobase-tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: #f4f6fb; color: var(--ink);
+      font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px; line-height: 1.5;
+    }
+    h1,h2,h3,h4,h5,h6,strong.display { font-family: 'MoMoTrustDisplay', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; cursor: pointer; }
+
+    /* ── HEADER */
+    .site-header {
+      background: #fff; border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 30;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-brand img { width: 28px; height: 28px; }
+    .header-brand strong { font-size: 14px; }
+    .header-brand small { font-size: 11px; color: var(--muted); display: block; }
+    .header-nav { display: flex; align-items: center; gap: 20px; }
+    .header-nav a { font-size: 12px; font-weight: 600; color: var(--muted); }
+    .header-nav a:hover { color: var(--momo); }
+    .nav-cta {
+      background: var(--momo); color: #fff !important; padding: 7px 16px;
+      border-radius: 999px; font-size: 12px; font-weight: 700;
+      transition: background .15s;
+    }
+    .nav-cta:hover { background: #8f0060 !important; }
+
+    /* ── SHELL */
+    .shell { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── HERO */
+    .hero {
+      background: linear-gradient(135deg, #fde8c8 0%, #fef3d0 40%, #fce4e4 80%, #fde0ef 100%);
+      padding: 60px 0 0;
+      overflow: hidden;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end;
+    }
+    .hero-kicker {
+      display: inline-block; background: rgba(175,1,113,.12); color: var(--momo);
+      font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-size: clamp(26px, 4vw, 40px); font-weight: 900; line-height: 1.1;
+      color: #1a1a2e; margin: 0 0 14px;
+    }
+    .hero h1 span { color: var(--momo); }
+    .hero-dek { font-size: 15px; color: #4a4a6a; margin: 0 0 28px; max-width: 520px; }
+    .benefit-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .benefit-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: rgba(255,255,255,.72); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.9); border-radius: 16px;
+      padding: 12px 16px;
+    }
+    .benefit-icon {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      background: rgba(175,1,113,.08);
+    }
+    .benefit-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #1a1a2e; }
+    .benefit-text small { color: #667085; font-size: 12px; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--momo); color: #fff;
+      font-size: 15px; font-weight: 800; padding: 14px 32px;
+      border-radius: 999px; border: none;
+      box-shadow: 0 6px 20px rgba(175,1,113,.28);
+      transition: background .15s, transform .15s, box-shadow .15s;
+    }
+    .hero-cta:hover { background: #8f0060; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(175,1,113,.32); }
+    .hero-visual { display: flex; align-items: flex-end; justify-content: flex-end; }
+    .hero-visual img { width: 220px; display: block; }
+    .hero-trust {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 20px; font-size: 11.5px; color: #667085;
+    }
+    .hero-trust svg { color: #12b76a; }
+
+    /* ── SECTION base */
+    .section { padding: 56px 0; }
+    .section-white { background: #fff; }
+    .section-head { margin-bottom: 32px; }
+    .section-kicker {
+      display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--momo); margin-bottom: 8px;
+    }
+    .section-head h2 { font-size: 24px; font-weight: 900; color: #1a1a2e; margin: 0 0 8px; }
+    .section-head p { color: #667085; margin: 0; }
+
+    /* ── UTILITIES (financial.html pattern exact) */
+    .util-card {
+      background: #fff; border: 1px solid rgba(15,23,42,.07);
+      border-radius: 28px; padding: 24px;
+      box-shadow: 0 4px 16px rgba(15,23,42,.04);
+      margin-bottom: 24px;
+    }
+    .util-head { margin-bottom: 20px; }
+    .util-kicker {
+      font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+      color: #98a2b3; display: block; margin-bottom: 4px;
+    }
+    .util-head h3 { font-size: 17px; font-weight: 800; color: #1a1a2e; margin: 0 0 4px; }
+    .util-head p { font-size: 12.5px; color: #667085; margin: 0; }
+
+    /* reuse financial.css patterns inline */
+    .calculator-layout {
+      display: grid; grid-template-columns: minmax(0,1.16fr) minmax(300px,.84fr); gap: 20px;
+      background: linear-gradient(180deg,#fff 0%,#fbfcff 100%);
+      border: 1px solid rgba(15,23,42,.08); border-radius: 28px; padding: 20px;
+      box-shadow: 0 18px 38px rgba(15,23,42,.05);
+    }
+    .input-panel { display: flex; flex-direction: column; gap: 18px; }
+    .field-label { font-size: 11px; font-weight: 700; color: #475467; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; display: block; }
+    .pills-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .pill-btn {
+      padding: 10px 8px; border: 1px solid var(--line); background: #fff;
+      border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--ink);
+      transition: all .15s; white-space: nowrap; text-align: center;
+    }
+    .pill-btn:hover { border-color: var(--momo); color: var(--momo); }
+    .pill-btn.active { background: var(--momo); border-color: var(--momo); color: #fff; box-shadow: 0 2px 8px rgba(165,0,100,.18); }
+    .chip-btn {
+      flex: 1; min-width: 0; padding: 6px 12px; border: 1px solid var(--line); background: #fff;
+      border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--muted);
+      transition: border-color .15s, color .15s, background .15s; white-space: nowrap; text-align: center;
+    }
+    .chip-btn:hover { border-color: rgba(175,1,113,.4); color: var(--momo); }
+    .chip-btn.active { border-color: var(--momo); background: #fff0f9; color: var(--momo); }
+    .chips-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .money-input-row {
+      display: flex; align-items: center; gap: 8px; background: #fff;
+      border: 1.5px solid #cfe7ff; border-radius: 20px; padding: 11px 14px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .money-input-row:focus-within { border-color: #4fc3ff; box-shadow: 0 0 0 4px rgba(79,195,255,.14); }
+    .money-input-row input {
+      flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+      font-size: 18px; font-weight: 700; color: var(--ink); padding: 0;
+    }
+    .money-input-row input::-webkit-inner-spin-button,
+    .money-input-row input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .unit-tag { font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .num-input-row {
+      display: flex; align-items: center; gap: 8px; background: #fff;
+      border: 1.5px solid #cfe7ff; border-radius: 20px; padding: 8px 12px;
+    }
+    .num-input-row input[type="number"] {
+      flex: 1; min-width: 0; border: none; background: transparent;
+      font-size: 18px; font-weight: 700; color: var(--ink); text-align: center;
+      outline: 0; -moz-appearance: textfield;
+    }
+    .num-input-row input::-webkit-inner-spin-button,
+    .num-input-row input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .num-step {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: #eff6ff; border: 1px solid #dbeafe; border-radius: 999px;
+      font-size: 18px; font-weight: 700; color: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+    }
+    .num-step:hover { background: #fff; border-color: #4fc3ff; }
+    .select-native {
+      width: 100%; padding: 11px 14px; border: 1.5px solid #cfe7ff; border-radius: 20px;
+      background: #fff; font-size: 14px; font-weight: 600; color: var(--ink);
+      outline: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .select-native:focus { border-color: #4fc3ff; box-shadow: 0 0 0 4px rgba(79,195,255,.14); }
+    .inline-note { font-size: 11px; color: #98a2b3; margin: 4px 0 0; }
+
+    /* Result panel */
+    .result-panel {
+      background: linear-gradient(180deg,#f6f8fd 0%,#eef3fa 100%);
+      border-radius: 22px; padding: 18px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .result-hero {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+      padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,.84);
+    }
+    .result-hero > div > span {
+      display: block; font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; color: #143c8b;
+    }
+    .result-hero > div > strong {
+      display: block; margin-top: 8px; font-size: 36px; font-weight: 900;
+      color: #143c8b; line-height: .95; letter-spacing: -.04em;
+      font-family: 'MoMoTrustDisplay', sans-serif;
+    }
+    .result-badge {
+      display: inline-flex; align-items: center; padding: 5px 12px;
+      border-radius: 999px; background: #dff6ff; color: #0b74b5;
+      font-size: 10px; font-weight: 800; white-space: nowrap; flex-shrink: 0;
+    }
+    .result-details {
+      border-radius: 18px; background: rgba(255,255,255,.78); overflow: hidden;
+    }
+    .result-row {
+      display: flex; justify-content: space-between; gap: 14px;
+      font-size: 11.5px; padding: 13px 16px;
+      border-bottom: 1px solid rgba(15,23,42,.07); color: #475467;
+    }
+    .result-row:last-child { border-bottom: 0; }
+    .result-row strong { color: #101828; font-weight: 800; text-align: right; }
+    .insight-box {
+      background: rgba(255,255,255,.78); border-radius: 18px; padding: 14px 16px;
+      font-size: 12px; color: #344054; line-height: 1.55;
+    }
+    .insight-box strong { color: #143c8b; }
+    .result-cta {
+      background: var(--momo); color: #fff; border: none;
+      padding: 12px 20px; border-radius: 18px; font-size: 13px; font-weight: 800;
+      text-align: center; transition: background .15s;
+    }
+    .result-cta:hover { background: #8f0060; }
+
+    /* ── GUIDE STEPS */
+    .steps-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .step-card {
+      background: #fff; border-radius: 20px; padding: 24px;
+      border: 1px solid rgba(15,23,42,.07);
+      box-shadow: 0 2px 12px rgba(15,23,42,.04);
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 12px; background: var(--momo);
+      color: #fff; font-size: 16px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px; font-family: 'MoMoTrustDisplay', sans-serif;
+    }
+    .step-card h3 { font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 6px; }
+    .step-card p { font-size: 12.5px; color: #667085; margin: 0; }
+    .steps-connector {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+    }
+
+    /* ── CROSS-SELL */
+    .crosssell-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+    .cs-card {
+      background: #fff; border-radius: 20px; padding: 20px;
+      border: 1px solid rgba(15,23,42,.07); display: flex; align-items: center; gap: 16px;
+      transition: box-shadow .15s, transform .15s;
+    }
+    .cs-card:hover { box-shadow: 0 6px 20px rgba(15,23,42,.08); transform: translateY(-2px); }
+    .cs-icon {
+      width: 48px; height: 48px; border-radius: 14px; background: #fff0f9;
+      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .cs-card h3 { font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 4px; }
+    .cs-card p { font-size: 12px; color: #667085; margin: 0 0 10px; }
+    .cs-link { font-size: 12px; font-weight: 700; color: var(--momo); }
+
+    /* ── CTA BAND */
+    .cta-band {
+      background: linear-gradient(135deg, var(--momo) 0%, #d4008a 100%);
+      border-radius: 28px; padding: 40px 44px;
+      display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    }
+    .cta-band h2 { font-size: 22px; font-weight: 900; color: #fff; margin: 0 0 6px; }
+    .cta-band p { font-size: 13.5px; color: rgba(255,255,255,.75); margin: 0; }
+    .cta-band-actions { display: flex; gap: 10px; flex-shrink: 0; }
+    .cta-btn-primary {
+      background: #fff; color: var(--momo); border: none;
+      padding: 13px 24px; border-radius: 999px; font-size: 14px; font-weight: 800;
+      box-shadow: 0 4px 14px rgba(0,0,0,.18); transition: transform .15s, box-shadow .15s;
+    }
+    .cta-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,.22); }
+    .cta-btn-sec {
+      background: rgba(255,255,255,.15); color: #fff; border: 1.5px solid rgba(255,255,255,.35);
+      padding: 13px 24px; border-radius: 999px; font-size: 14px; font-weight: 700;
+      transition: background .15s;
+    }
+    .cta-btn-sec:hover { background: rgba(255,255,255,.22); }
+
+    /* ── NOTICE STRIP */
+    .notice-strip {
+      background: linear-gradient(90deg, #fff0f9, #fce4e4);
+      border-top: 1px solid rgba(175,1,113,.12); border-bottom: 1px solid rgba(175,1,113,.12);
+      padding: 14px 0; text-align: center;
+      font-size: 13px; color: #7a1248; font-weight: 600;
+    }
+    .notice-strip strong { color: var(--momo); }
+
+    /* ── FOOTER */
+    .site-footer {
+      background: #fff; border-top: 1px solid var(--line); padding: 20px 0;
+    }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; }
+    .footer-inner span { font-size: 12px; color: var(--muted); }
+    .footer-links { display: flex; gap: 16px; }
+    .footer-links a { font-size: 12px; color: var(--muted); }
+    .footer-links a:hover { color: var(--momo); }
+
+    /* ── Responsive */
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .calculator-layout { grid-template-columns: 1fr; }
+      .steps-row { grid-template-columns: 1fr; }
+      .crosssell-grid { grid-template-columns: 1fr; }
+      .cta-band { flex-direction: column; text-align: center; }
+      .cta-band-actions { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-brand">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+      <div>
+        <strong>ePass x MoMo</strong>
+        <small>Giao thông điện tử · ETC</small>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#utilities">Tiện ích</a>
+      <a href="#guide">Hướng dẫn</a>
+      <a href="../lab.html">← Lab</a>
+      <a class="nav-cta" href="#hero-cta">Liên kết ngay</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="hero-cta">
+    <div class="shell">
+      <div class="hero-inner">
+        <div>
+          <span class="hero-kicker">Liên kết ePass x MoMo</span>
+          <h1>Qua trạm ETC<br><span>không cần nạp ePass</span></h1>
+          <p class="hero-dek">Thanh toán trạm thu phí tự động bằng tiền trong ví MoMo hoặc Túi Thần Tài. Không lo hết tiền — không bị chặn qua trạm.</p>
+
+          <div class="benefit-list">
+            <div class="benefit-item">
+              <div class="benefit-icon">🔗</div>
+              <div class="benefit-text">
+                <strong>5 giây có Tài khoản giao thông</strong>
+                <small>Đáp ứng Nghị định 119 · Tránh bị chặn qua trạm</small>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon">💸</div>
+              <div class="benefit-text">
+                <strong>Không cần nạp tiền vào ePass</strong>
+                <small>Qua trạm bằng số dư MoMo — tự động trừ mỗi lượt</small>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon">👛</div>
+              <div class="benefit-text">
+                <strong>Hỗ trợ đa dạng nguồn tiền</strong>
+                <small>Dùng được cả Ví MoMo và Túi Thần Tài</small>
+              </div>
+            </div>
+          </div>
+
+          <button class="hero-cta" onclick="alert('Mở MoMo để liên kết ePass')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Liên kết ngay trong MoMo
+          </button>
+
+          <div class="hero-trust">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Đáp ứng Nghị định 119/2024/NĐ-CP về tài khoản giao thông điện tử
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img src="https://homepage.momocdn.net/img/1-du-loai-xe-03-260612110634.png" alt="ePass MoMo">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTICE STRIP -->
+  <div class="notice-strip">
+    <strong>Nhớ đủ số dư</strong> trong Ví MoMo hoặc Túi Thần Tài để qua trạm ETC không bị gián đoạn
+  </div>
+
+  <!-- UTILITIES -->
+  <section class="section" id="utilities">
+    <div class="shell">
+      <div class="section-head">
+        <span class="section-kicker">Tiện ích ETC</span>
+        <h2>Tính toán chi phí qua trạm</h2>
+        <p>Ước tính chi phí hàng tháng và thiết lập ngưỡng nạp tự động phù hợp.</p>
+      </div>
+
+      <!-- CALCULATOR 1: Tính chi phí qua trạm -->
+      <div class="util-card">
+        <div class="util-head">
+          <span class="util-kicker">ETC / GIAO THÔNG</span>
+          <h3>Tính chi phí qua trạm</h3>
+          <p>Ước tính tổng phí ETC hàng tháng theo tuyến đường và tần suất đi lại.</p>
+        </div>
+        <div class="calculator-layout">
+          <div class="input-panel">
+
+            <!-- Loại xe -->
+            <div>
+              <span class="field-label">Loại phương tiện</span>
+              <div class="pills-grid" id="vehiclePills">
+                <button class="pill-btn active" onclick="setVehicle('xe1')">Xe con</button>
+                <button class="pill-btn" onclick="setVehicle('xe2')">Xe tải nhỏ</button>
+                <button class="pill-btn" onclick="setVehicle('xe3')">Xe tải lớn</button>
+              </div>
+            </div>
+
+            <!-- Tuyến đường -->
+            <div>
+              <span class="field-label">Tuyến đường thường đi</span>
+              <select class="select-native" id="routeSelect" onchange="calcToll()">
+                <option value="15000">Vành đai 3 HN (Pháp Vân - Linh Đàm) — 15.000đ/lượt</option>
+                <option value="25000">Pháp Vân - Cầu Giẽ — 25.000đ/lượt</option>
+                <option value="35000">Cao tốc HN - Ninh Bình — 35.000đ/lượt</option>
+                <option value="65000">Cao tốc HN - Hải Phòng — 65.000đ/lượt</option>
+                <option value="28000">Cao tốc HCM - Long Thành — 28.000đ/lượt</option>
+                <option value="48000">Cao tốc HCM - Dầu Giây — 48.000đ/lượt</option>
+                <option value="45000">Trung Lương - Mỹ Thuận — 45.000đ/lượt</option>
+              </select>
+            </div>
+
+            <!-- Số lần/tuần -->
+            <div>
+              <span class="field-label">Số lần qua trạm / tuần</span>
+              <div class="num-input-row">
+                <button class="num-step" onclick="changeTrips(-1)">−</button>
+                <input type="number" id="tripsInput" value="10" min="1" max="200" oninput="calcToll()">
+                <span class="unit-tag">lượt</span>
+                <button class="num-step" onclick="changeTrips(1)">+</button>
+              </div>
+              <div class="chips-row" style="margin-top:8px">
+                <button class="chip-btn" onclick="setTrips(5)">5 lượt</button>
+                <button class="chip-btn" onclick="setTrips(10)">10 lượt</button>
+                <button class="chip-btn active" onclick="setTrips(10)">10 lượt</button>
+                <button class="chip-btn" onclick="setTrips(20)">20 lượt</button>
+                <button class="chip-btn" onclick="setTrips(40)">40 lượt</button>
+              </div>
+              <p class="inline-note">Tính cả chiều đi và về nếu qua trạm 2 chiều.</p>
+            </div>
+
+          </div>
+          <div class="result-panel">
+            <div class="result-hero">
+              <div>
+                <span>CHI PHÍ / THÁNG</span>
+                <strong id="tollMonthly">0 đ</strong>
+              </div>
+              <span class="result-badge" id="tollBadge">Khả năng</span>
+            </div>
+            <div class="result-details">
+              <div class="result-row"><span>Phí mỗi lượt</span><strong id="tollPerTrip">0đ</strong></div>
+              <div class="result-row"><span>Số lượt / tháng</span><strong id="tollTripsMo">0 lượt</strong></div>
+              <div class="result-row"><span>Chi phí / năm</span><strong id="tollYearly">0đ</strong></div>
+            </div>
+            <div class="insight-box" id="tollInsight"></div>
+            <button class="result-cta" onclick="alert('Mở MoMo để liên kết ePass')">Liên kết ePass — qua trạm tự động</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALCULATOR 2: Thiết lập ngưỡng nạp tự động -->
+      <div class="util-card">
+        <div class="util-head">
+          <span class="util-kicker">AUTO-TOPUP / TỰ ĐỘNG</span>
+          <h3>Thiết lập ngưỡng nạp tự động</h3>
+          <p>Xem kịch bản nạp tiền tự động khi số dư MoMo thấp hơn ngưỡng đã đặt.</p>
+        </div>
+        <div class="calculator-layout">
+          <div class="input-panel">
+
+            <!-- Số dư hiện tại -->
+            <div>
+              <span class="field-label">Số dư hiện tại trong MoMo</span>
+              <div class="money-input-row">
+                <input type="number" id="balanceInput" value="500000" min="0" oninput="calcTopup()">
+                <span class="unit-tag">đ</span>
+              </div>
+              <div class="chips-row" style="margin-top:8px">
+                <button class="chip-btn" onclick="setBalance(200000)">200k</button>
+                <button class="chip-btn" onclick="setBalance(500000)">500k</button>
+                <button class="chip-btn active" onclick="setBalance(500000)">500k</button>
+                <button class="chip-btn" onclick="setBalance(1000000)">1tr</button>
+                <button class="chip-btn" onclick="setBalance(2000000)">2tr</button>
+              </div>
+            </div>
+
+            <!-- Ngưỡng cảnh báo -->
+            <div>
+              <span class="field-label">Ngưỡng nạp tự động</span>
+              <div class="chips-row" id="thresholdChips">
+                <button class="chip-btn" onclick="setThreshold(50000)">50k</button>
+                <button class="chip-btn active" onclick="setThreshold(100000)">100k</button>
+                <button class="chip-btn" onclick="setThreshold(150000)">150k</button>
+                <button class="chip-btn" onclick="setThreshold(200000)">200k</button>
+              </div>
+              <p class="inline-note">Khi số dư xuống dưới ngưỡng này, MoMo sẽ nạp tự động.</p>
+            </div>
+
+            <!-- Số tiền nạp mỗi lần -->
+            <div>
+              <span class="field-label">Số tiền nạp mỗi lần</span>
+              <div class="chips-row" id="topupAmtChips">
+                <button class="chip-btn" onclick="setTopupAmt(100000)">100k</button>
+                <button class="chip-btn active" onclick="setTopupAmt(200000)">200k</button>
+                <button class="chip-btn" onclick="setTopupAmt(300000)">300k</button>
+                <button class="chip-btn" onclick="setTopupAmt(500000)">500k</button>
+              </div>
+            </div>
+
+          </div>
+          <div class="result-panel">
+            <div class="result-hero">
+              <div>
+                <span>SAU KHI NẠP</span>
+                <strong id="topupAfter">0 đ</strong>
+              </div>
+              <span class="result-badge" id="topupBadge">Ổn định</span>
+            </div>
+            <div class="result-details">
+              <div class="result-row"><span>Nạp tự động khi dưới</span><strong id="topupThresholdDisplay">100.000đ</strong></div>
+              <div class="result-row"><span>Số tiền nạp mỗi lần</span><strong id="topupAmtDisplay">200.000đ</strong></div>
+              <div class="result-row"><span>Số dư sau khi nạp</span><strong id="topupAfter2">0đ</strong></div>
+            </div>
+            <div class="insight-box" id="topupInsight"></div>
+            <button class="result-cta" onclick="alert('Mở MoMo để thiết lập nạp tự động')">Thiết lập trong MoMo</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HƯỚNG DẪN LIÊN KẾT -->
+  <section class="section section-white" id="guide">
+    <div class="shell">
+      <div class="section-head">
+        <span class="section-kicker">Hướng dẫn</span>
+        <h2>Liên kết ePass trong 3 bước</h2>
+        <p>Chỉ cần làm một lần — sau đó qua trạm tự động mà không cần thao tác thêm.</p>
+      </div>
+      <div class="steps-row">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Mở MoMo, tìm "ePass"</h3>
+          <p>Vào mục Giao thông hoặc tìm kiếm "ePass" trong thanh tìm kiếm MoMo.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>Nhập thông tin xe</h3>
+          <p>Điền biển số, thông tin chủ xe theo CCCD/CMND và xác thực OTP để hoàn tất đăng ký Tài khoản giao thông.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Gắn thẻ ePass vào kính</h3>
+          <p>Nhận thẻ ePass (nếu chưa có), dán lên kính xe theo hướng dẫn. Qua trạm sẽ tự động trừ tiền MoMo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CROSS-SELL -->
+  <section class="section">
+    <div class="shell">
+      <div class="section-head">
+        <span class="section-kicker">Khám phá thêm</span>
+        <h2>Tiện ích liên quan</h2>
+      </div>
+      <div class="crosssell-grid">
+        <a class="cs-card" href="phat-nguoi.html">
+          <div class="cs-icon">📷</div>
+          <div>
+            <h3>Tra cứu Phạt Nguội</h3>
+            <p>Kiểm tra xe có vi phạm đang chờ xử lý. 1.800+ camera AI toàn quốc.</p>
+            <span class="cs-link">Tra cứu miễn phí →</span>
+          </div>
+        </a>
+        <a class="cs-card" href="#guide">
+          <div class="cs-icon">🚗</div>
+          <div>
+            <h3>Bảo hiểm ô tô</h3>
+            <p>Mua bảo hiểm xe máy, ô tô trực tuyến. Có hiệu lực ngay trong MoMo.</p>
+            <span class="cs-link">Xem gói bảo hiểm →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="section section-white">
+    <div class="shell">
+      <div class="cta-band">
+        <div>
+          <h2>Sẵn sàng qua trạm không lo hết tiền?</h2>
+          <p>Liên kết ePass với MoMo ngay hôm nay. Không mất phí — chỉ mất 5 giây.</p>
+        </div>
+        <div class="cta-band-actions">
+          <button class="cta-btn-primary" onclick="alert('Mở MoMo để liên kết ePass')">Liên kết ngay</button>
+          <a class="cta-btn-sec" href="#utilities">Tính chi phí trước</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <span>ePass x MoMo · Prototype · Dữ liệu phí tham khảo, không phải chính thức</span>
+      <nav class="footer-links">
+        <a href="phat-nguoi.html">Phạt Nguội</a>
+        <a href="vehicle-hub.html">Vehicle Hub</a>
+        <a href="../lab.html">Lab</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // ── STATE ────────────────────────────────────────────────────────────────────
+    const st1 = { vehicle: 'xe1', multiplier: 1, trips: 10 };
+    const st2 = { balance: 500000, threshold: 100000, topupAmt: 200000 };
+
+    // ── FORMAT ────────────────────────────────────────────────────────────────────
+    function fmt(n) {
+      return n.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // ── CALCULATOR 1: Toll ────────────────────────────────────────────────────────
+    const VEHICLE_MULTIPLIER = { xe1: 1, xe2: 1.8, xe3: 2.5 };
+
+    function setVehicle(v) {
+      st1.vehicle = v;
+      st1.multiplier = VEHICLE_MULTIPLIER[v] || 1;
+      document.querySelectorAll('#vehiclePills .pill-btn').forEach((b, i) => {
+        b.classList.toggle('active', ['xe1','xe2','xe3'][i] === v);
+      });
+      calcToll();
+    }
+
+    function changeTrips(delta) {
+      const inp = document.getElementById('tripsInput');
+      const val = Math.max(1, Math.min(200, parseInt(inp.value || 10) + delta));
+      inp.value = val;
+      st1.trips = val;
+      updateTripChips(val);
+      calcToll();
+    }
+
+    function setTrips(n) {
+      const inp = document.getElementById('tripsInput');
+      inp.value = n; st1.trips = n;
+      updateTripChips(n);
+      calcToll();
+    }
+
+    function updateTripChips(n) {
+      const presets = [5, 10, 10, 20, 40];
+      document.querySelectorAll('#tripsInput ~ .chips-row .chip-btn').forEach((b, i) => {
+        b.classList.toggle('active', presets[i] === n);
+      });
+    }
+
+    function calcToll() {
+      const select = document.getElementById('routeSelect');
+      const baseRate = parseInt(select.value) || 25000;
+      const rate = Math.round(baseRate * st1.multiplier);
+      const tripsInput = document.getElementById('tripsInput');
+      st1.trips = parseInt(tripsInput.value) || 10;
+      const tripsPerWeek = st1.trips;
+      const tripsPerMonth = Math.round(tripsPerWeek * 4.33);
+      const monthly = rate * tripsPerMonth;
+      const yearly = monthly * 12;
+
+      document.getElementById('tollMonthly').textContent = monthly.toLocaleString('vi-VN') + ' đ';
+      document.getElementById('tollPerTrip').textContent = fmt(rate);
+      document.getElementById('tollTripsMo').textContent = tripsPerMonth + ' lượt';
+      document.getElementById('tollYearly').textContent = fmt(yearly);
+
+      // badge
+      const badge = document.getElementById('tollBadge');
+      if (monthly < 200000) { badge.textContent = 'Thấp'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
+      else if (monthly < 600000) { badge.textContent = 'Trung bình'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
+      else { badge.textContent = 'Cao'; badge.style.background = '#fee2e2'; badge.style.color = '#991b1b'; }
+
+      // insight
+      const saved = Math.round(monthly * 0.15);
+      document.getElementById('tollInsight').innerHTML =
+        `Với MoMo ePass, bạn <strong>không cần giữ tiền mặt</strong> hay nạp thẻ trước. Tiền trừ tự động mỗi lượt — không lo dừng xe tại trạm.`;
+    }
+
+    // ── CALCULATOR 2: Auto-topup ──────────────────────────────────────────────────
+    function setBalance(n) {
+      document.getElementById('balanceInput').value = n;
+      st2.balance = n;
+      document.querySelectorAll('#balanceInput ~ .chips-row .chip-btn').forEach(b => {
+        const m = b.getAttribute('onclick').match(/\d+/);
+        b.classList.toggle('active', m && parseInt(m[0]) === n);
+      });
+      calcTopup();
+    }
+
+    function setThreshold(n) {
+      st2.threshold = n;
+      document.querySelectorAll('#thresholdChips .chip-btn').forEach(b => {
+        const m = b.getAttribute('onclick').match(/\d+/);
+        b.classList.toggle('active', m && parseInt(m[0]) === n);
+      });
+      calcTopup();
+    }
+
+    function setTopupAmt(n) {
+      st2.topupAmt = n;
+      document.querySelectorAll('#topupAmtChips .chip-btn').forEach(b => {
+        const m = b.getAttribute('onclick').match(/\d+/);
+        b.classList.toggle('active', m && parseInt(m[0]) === n);
+      });
+      calcTopup();
+    }
+
+    function calcTopup() {
+      const bal = parseInt(document.getElementById('balanceInput').value) || 0;
+      st2.balance = bal;
+      const after = bal + st2.topupAmt;
+
+      document.getElementById('topupAfter').textContent = fmt(after);
+      document.getElementById('topupAfter2').textContent = fmt(after);
+      document.getElementById('topupThresholdDisplay').textContent = fmt(st2.threshold);
+      document.getElementById('topupAmtDisplay').textContent = fmt(st2.topupAmt);
+
+      // badge
+      const badge = document.getElementById('topupBadge');
+      if (after >= 500000) { badge.textContent = 'Ổn định'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
+      else if (after >= 200000) { badge.textContent = 'Đủ dùng'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
+      else { badge.textContent = 'Cần thêm'; badge.style.background = '#fee2e2'; badge.style.color = '#991b1b'; }
+
+      // insight
+      let msg = '';
+      if (bal < st2.threshold) {
+        msg = `Số dư hiện tại <strong>${fmt(bal)}</strong> đang dưới ngưỡng. MoMo sẽ <strong>tự động nạp ${fmt(st2.topupAmt)}</strong> để đảm bảo đủ tiền qua trạm.`;
+      } else {
+        const remaining = bal - st2.threshold;
+        msg = `Số dư hiện tại ổn định. Khi giảm xuống dưới <strong>${fmt(st2.threshold)}</strong>, MoMo sẽ tự động nạp <strong>${fmt(st2.topupAmt)}</strong>.`;
+      }
+      document.getElementById('topupInsight').innerHTML = msg;
+    }
+
+    // ── INIT ─────────────────────────────────────────────────────────────────────
+    calcToll();
+    calcTopup();
+  </script>
+
+</body>
+</html>

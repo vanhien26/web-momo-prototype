@@ -2864,13 +2864,15 @@ function renderGenericPanel(tool) {
         const bare = +raw;
         const smartEl = document.getElementById(`${f.id}SmartChips`);
         if (smartEl && raw.length > 0 && raw === el.value.replace(/\s/g, '') && bare > 0 && bare <= 9999) {
-          const mults = [1_000_000, 10_000_000, 100_000_000];
-          if (bare <= 99) mults.push(1_000_000_000);
+          const mults = [1_000_000, 10_000_000, 100_000_000, 1_000_000_000];
           const suggs = mults.map(m => bare * m).filter(v => v >= 1_000_000 && v <= (f.max || 100_000_000_000));
           if (suggs.length) {
             smartEl.innerHTML = '<span class="smart-chips-hint">Ý bạn muốn nhập:</span>' +
               suggs.map(v => `<button type="button" class="chip-btn smart-chip" data-val="${v}">${fmtSmartChip(v)}</button>`).join('');
             smartEl.hidden = false;
+            smartEl.onmousedown = e => {
+              if (e.target.closest('.smart-chip')) e.preventDefault();
+            };
             smartEl.onclick = e => {
               const btn = e.target.closest('.smart-chip');
               if (!btn) return;
