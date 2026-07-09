@@ -316,7 +316,14 @@ body {
 .util-icon {
   width: 44px; height: 44px; border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: center; font-size: 22px;
-  margin-bottom: 14px;
+  margin-bottom: 14px; overflow: hidden; flex-shrink: 0;
+}
+.util-icon img { width: 100%; height: 100%; object-fit: contain; }
+.util-card.is-disabled { opacity: .5; pointer-events: none; cursor: default; }
+.util-card.is-disabled:hover { transform: none; box-shadow: var(--shadow-s); border-color: transparent; }
+.util-badge-off {
+  font-size: 9.5px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
+  background: var(--gray-100); color: var(--gray-500); letter-spacing: .04em;
 }
 .util-name { font-size: 15.5px; font-weight: 800; margin-bottom: 5px; }
 .util-desc { font-size: 13px; color: var(--gray-500); line-height: 1.55; margin-bottom: 12px; }
@@ -522,6 +529,59 @@ body {
 .o2o-note strong { color: var(--pink-600); }
 .o2o-qr { font-size: 26px; }
 
+/* ── CUU HO SECTION ──────────────────────── */
+.rescue-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.rescue-card {
+  background: var(--white); border-radius: var(--r-xl); padding: 24px;
+  box-shadow: var(--shadow-s); display: flex; flex-direction: column; gap: 16px;
+}
+.rescue-logo { width: 56px; height: 56px; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--gray-200); }
+.rescue-logo img { width: 100%; height: 100%; object-fit: contain; }
+.rescue-name { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+.rescue-meta { font-size: 13px; color: var(--gray-500); }
+.rescue-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.rescue-tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--amber-50); color: var(--amber-500); }
+.rescue-cta {
+  width: 100%; padding: 13px; border: 0; border-radius: var(--r-md);
+  background: var(--pink-500); color: #fff; font-size: 14px; font-weight: 800;
+  font-family: inherit; cursor: pointer; transition: background .15s;
+}
+.rescue-cta:hover { background: var(--pink-600); }
+.rescue-steps { display: flex; flex-direction: column; gap: 18px; padding: 8px 0; }
+.rescue-step { display: flex; gap: 14px; align-items: flex-start; }
+.rs-num {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: var(--pink-500); color: #fff; font-size: 13px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.rescue-step strong { font-size: 14px; font-weight: 800; display: block; margin-bottom: 3px; }
+.rescue-step p { margin: 0; font-size: 13px; color: var(--gray-500); line-height: 1.55; }
+
+/* ── PARKING SECTION ──────────────────────── */
+.parking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.parking-card {
+  background: var(--white); border-radius: var(--r-xl); padding: 24px;
+  box-shadow: var(--shadow-s); display: flex; flex-direction: column; gap: 14px;
+}
+.parking-card-top { display: flex; gap: 14px; align-items: center; }
+.parking-logo { width: 48px; height: 48px; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--gray-200); flex-shrink: 0; }
+.parking-logo img { width: 100%; height: 100%; object-fit: contain; }
+.parking-name { font-size: 16px; font-weight: 800; }
+.parking-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.parking-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; margin: 0; }
+.parking-feats { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--gray-600); }
+.parking-btn {
+  width: 100%; padding: 11px; border: 1.5px solid var(--gray-200); border-radius: var(--r-md);
+  background: #fff; color: var(--gray-900); font-size: 13px; font-weight: 800;
+  font-family: inherit; cursor: pointer; transition: all .15s; margin-top: auto;
+}
+.parking-btn:hover { border-color: var(--pink-500); color: var(--pink-500); }
+
+@media(max-width:768px) {
+  .rescue-panel { grid-template-columns: 1fr; }
+  .parking-grid { grid-template-columns: 1fr; }
+}
+
 /* ── W2A SECTION (profile / MoXe) ────────── */
 .w2a-panel {
   background: var(--white); border-radius: var(--r-xl); box-shadow: var(--shadow-s);
@@ -662,6 +722,8 @@ body {
       <a class="nav-link" href="/epass">ePass</a>
       <a class="nav-link" href="/vehicle-hub#bao-hiem">Bảo hiểm</a>
       <a class="nav-link" href="/cay-xang">Cây xăng</a>
+      <a class="nav-link" href="/vehicle-hub#cuu-ho">Cứu hộ</a>
+      <a class="nav-link" href="/vehicle-hub#parking">Đỗ xe</a>
     </div>
     <div class="nav-right">
       <button class="nav-cta" onclick="toast('Mở MoMo App...')">Mở App MoMo</button>
@@ -719,26 +781,32 @@ body {
       <div>
         <div class="section-eyebrow">Tiện ích giao thông</div>
         <h2 class="section-title">Mọi việc của chủ xe, một nơi lo hết</h2>
-        <p class="section-desc">Từ tra phạt, đổ xăng, qua trạm thu phí đến gia hạn bảo hiểm - MoMo gom 8 nhu cầu thường gặp nhất của chủ xe về một chỗ.</p>
+        <p class="section-desc">Từ tra phạt, đổ xăng, qua trạm thu phí đến cứu hộ và đỗ xe - MoMo gom 9 nhu cầu thường gặp nhất của chủ xe về một chỗ.</p>
       </div>
     </div>
     <div class="util-grid">
       <a class="util-card" href="#tra-phat-nguoi">
-        <div class="util-icon" style="background:var(--red-50)">📸</div>
+        <div class="util-icon"><img src="https://static.momocdn.net/app/icon/publicservice/logo_traffic_violation.jpg" alt="Tra phạt nguội"></div>
         <div class="util-name">Tra phạt nguội</div>
-        <div class="util-desc">Kiểm tra vi phạm theo biển số từ dữ liệu Cục CSGT. Không CAPTCHA, có cảnh báo tự động hàng tuần.</div>
+        <div class="util-desc">Kiểm tra vi phạm theo biển số từ dữ liệu Cục CSGT. Không CAPTCHA, có cảnh báo tự động.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--red-50);color:var(--red-500)">Miễn phí</span><span class="util-arrow">→</span></div>
       </a>
+      <a class="util-card" href="/phat-nguoi-nop-qua-momo">
+        <div class="util-icon"><img src="https://static.momocdn.net/app/icon/publicservice/dvc_hub/ic_dvc_nop_phat_qt.png" alt="Nộp phạt"></div>
+        <div class="util-name">Nộp phạt vi phạm</div>
+        <div class="util-desc">Nộp phạt giao thông trực tuyến qua Cổng DVCQG ngay trên MoMo, không cần đến kho bạc.</div>
+        <div class="util-foot"><span class="util-tag" style="background:var(--red-50);color:var(--red-500)">Trực tuyến</span><span class="util-arrow">→</span></div>
+      </a>
       <a class="util-card" href="/gia-xang">
-        <div class="util-icon" style="background:var(--amber-50)">⛽</div>
+        <div class="util-icon"><img src="https://static.momocdn.net/app/img/publicservice/ic-petrol-payment-new.png" alt="Giá xăng"></div>
         <div class="util-name">Giá xăng dầu hôm nay</div>
-        <div class="util-desc">Bảng giá RON 95, E5, Diesel theo Vùng 1 / Vùng 2, cập nhật đúng chu kỳ điều hành của Bộ Công Thương.</div>
-        <div class="util-foot"><span class="util-tag" style="background:var(--green-50);color:var(--green-500)">Cập nhật 26/06</span><span class="util-arrow">→</span></div>
+        <div class="util-desc">Bảng giá RON 95, E5, Diesel theo Vùng 1 / Vùng 2, cập nhật đúng chu kỳ điều hành Bộ Công Thương.</div>
+        <div class="util-foot"><span class="util-tag" style="background:var(--green-50);color:var(--green-500)">Cập nhật 09/07</span><span class="util-arrow">→</span></div>
       </a>
       <a class="util-card" href="/epass">
-        <div class="util-icon" style="background:var(--blue-50)">🛣️</div>
+        <div class="util-icon"><img src="https://static.momocdn.net/files/dHJhbnNwb3JOY2VudGVy/icon/ePass_icon.png" alt="ePass"></div>
         <div class="util-name">Nạp ePass tự động</div>
-        <div class="util-desc">Liên kết tài khoản ePass VTTI, bật Auto-Topup để không bao giờ kẹt tại trạm thu phí vì hết tiền.</div>
+        <div class="util-desc">Liên kết ePass VTTI, bật Auto-Topup để không bao giờ kẹt tại trạm thu phí vì hết tiền.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--blue-50);color:var(--blue-500)">Trong App</span><span class="util-arrow">→</span></div>
       </a>
       <a class="util-card" href="#bao-hiem">
@@ -748,17 +816,41 @@ body {
         <div class="util-foot"><span class="util-tag" style="background:var(--pink-50);color:var(--pink-500)">Từ 489.000đ/năm</span><span class="util-arrow">→</span></div>
       </a>
       <a class="util-card" href="/cay-xang">
-        <div class="util-icon" style="background:var(--green-50)">📍</div>
-        <div class="util-name">Cây xăng & garage đối tác</div>
-        <div class="util-desc">Tìm cây xăng Petrolimex, PV Oil và garage gần bạn. Thanh toán MoMo tại cột bơm, tích điểm mỗi lần đổ.</div>
+        <div class="util-icon"><img src="https://static.momocdn.net/app/img/publicservice/ic-petrol-payment-new.png" alt="Cây xăng"></div>
+        <div class="util-name">Cây xăng & garage gần bạn</div>
+        <div class="util-desc">Tìm cây xăng Petrolimex, PV Oil và garage đối tác. Thanh toán MoMo, tích điểm mỗi lần đổ.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--green-50);color:var(--green-500)">1.200+ điểm</span><span class="util-arrow">→</span></div>
+      </a>
+      <a class="util-card" href="#cuu-ho">
+        <div class="util-icon"><img src="https://static.momocdn.net/app/img/publicservice/logo_zuttoride.png" alt="Cứu hộ"></div>
+        <div class="util-name">Cứu hộ xe máy</div>
+        <div class="util-desc">Gọi cứu hộ Zuttoride ngay trên MoMo. Đến trong 30 phút, phủ sóng toàn quốc.</div>
+        <div class="util-foot"><span class="util-tag" style="background:var(--amber-50);color:var(--amber-500)">24/7</span><span class="util-arrow">→</span></div>
+      </a>
+      <a class="util-card" href="#parking">
+        <div class="util-icon"><img src="https://static.momocdn.net/app/img/transportcenter/ic_VETC_parking.png" alt="Đỗ xe"></div>
+        <div class="util-name">Tìm & thanh toán bãi đỗ</div>
+        <div class="util-desc">VETC Parking và eParking - tìm chỗ đỗ, thanh toán không tiền mặt qua MoMo.</div>
+        <div class="util-foot"><span class="util-tag" style="background:var(--blue-50);color:var(--blue-500)">Trong App</span><span class="util-arrow">→</span></div>
       </a>
       <a class="util-card" href="#ho-so-xe">
         <div class="util-icon" style="background:var(--gray-100)">🚗</div>
         <div class="util-name">Hồ sơ xe & nhắc hạn</div>
-        <div class="util-desc">Lưu xe một lần, MoMo nhắc mọi deadline: đăng kiểm, TNDS, bảo hiểm thân vỏ - không bao giờ quên hạn.</div>
+        <div class="util-desc">Lưu xe một lần, MoMo nhắc mọi deadline: đăng kiểm, TNDS, bảo hiểm - không bao giờ quên hạn.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--gray-100);color:var(--gray-600)">Trong App</span><span class="util-arrow">→</span></div>
       </a>
+      <div class="util-card is-disabled">
+        <div class="util-icon"><img src="https://static.momocdn.net/app/img/transportcenter/booking_inspection.png" alt="Đăng kiểm"></div>
+        <div class="util-name">Đặt lịch đăng kiểm</div>
+        <div class="util-desc">Đặt lịch kiểm định xe trực tuyến, chọn trung tâm đăng kiểm gần nhất.</div>
+        <div class="util-foot"><span class="util-badge-off">Đang bảo trì</span></div>
+      </div>
+      <div class="util-card is-disabled">
+        <div class="util-icon" style="background:var(--green-50)">⚡</div>
+        <div class="util-name">Trạm sạc xe điện</div>
+        <div class="util-desc">Tìm trạm sạc, đặt slot và thanh toán phí sạc qua MoMo - không cần tiền mặt.</div>
+        <div class="util-foot"><span class="util-badge-off">Sắp ra mắt</span></div>
+      </div>
     </div>
   </section>
 
@@ -950,6 +1042,82 @@ body {
     </div>
   </section>
 
+  <!-- CUU HO -->
+  <section class="section" id="cuu-ho">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">MoMo × Zuttoride</div>
+        <h2 class="section-title">Cứu hộ xe máy toàn quốc</h2>
+        <p class="section-desc">Hỏng xe giữa đường, gọi cứu hộ ngay trên MoMo. Zuttoride phủ sóng 63 tỉnh thành, đến trong 30 phút, thanh toán không tiền mặt.</p>
+      </div>
+    </div>
+    <div class="rescue-panel">
+      <div class="rescue-card" onclick="toast('Mở MoMo App để gọi cứu hộ...')">
+        <div class="rescue-logo"><img src="https://static.momocdn.net/app/img/publicservice/logo_zuttoride.png" alt="Zuttoride"></div>
+        <div class="rescue-body">
+          <div class="rescue-name">Zuttoride Rescue</div>
+          <div class="rescue-meta">🏍️ Xe máy mọi hãng · Cứu hộ tại chỗ hoặc kéo về garage</div>
+          <div class="rescue-tags">
+            <span class="rescue-tag">Đến trong 30 phút</span>
+            <span class="rescue-tag">63 tỉnh thành</span>
+            <span class="rescue-tag">Thanh toán MoMo</span>
+          </div>
+        </div>
+        <button class="rescue-cta">Gọi cứu hộ ngay</button>
+      </div>
+      <div class="rescue-steps">
+        <div class="rescue-step"><span class="rs-num">1</span><div><strong>Mở MoMo</strong><p>Tìm "Cứu hộ xe máy" trong mục Dịch vụ giao thông</p></div></div>
+        <div class="rescue-step"><span class="rs-num">2</span><div><strong>Xác nhận vị trí</strong><p>GPS tự định vị, điều chỉnh nếu cần - chia sẻ vị trí cho tài xế cứu hộ</p></div></div>
+        <div class="rescue-step"><span class="rs-num">3</span><div><strong>Theo dõi & thanh toán</strong><p>Xem tài xế di chuyển theo thời gian thực, thanh toán khi xong</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARKING -->
+  <section class="section" id="parking">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Bãi đỗ xe thông minh</div>
+        <h2 class="section-title">Tìm & thanh toán bãi đỗ</h2>
+        <p class="section-desc">VETC Parking và eParking - hai đối tác bãi đỗ lớn nhất, tích hợp thanh toán MoMo không tiền mặt tại cổng.</p>
+      </div>
+    </div>
+    <div class="parking-grid">
+      <div class="parking-card">
+        <div class="parking-card-top">
+          <div class="parking-logo"><img src="https://static.momocdn.net/app/img/transportcenter/ic_VETC_parking.png" alt="VETC Parking"></div>
+          <div>
+            <div class="parking-name">VETC Parking</div>
+            <div class="parking-sub">Bãi đỗ tích hợp thẻ VETC</div>
+          </div>
+        </div>
+        <p class="parking-desc">Vào cổng bằng thẻ VETC, phí tự trừ qua liên kết MoMo. Không cần lấy vé giấy, không cần chờ.</p>
+        <div class="parking-feats">
+          <span>🏢 50+ bãi đỗ</span>
+          <span>🚗 Ô tô & xe máy</span>
+          <span>📱 Thanh toán tự động</span>
+        </div>
+        <button class="parking-btn" onclick="toast('Mở VETC Parking trên MoMo...')">Nạp tiền bãi đỗ VETC</button>
+      </div>
+      <div class="parking-card">
+        <div class="parking-card-top">
+          <div class="parking-logo"><img src="https://static.momocdn.net/app/img/publicservice/eparking_topup.png" alt="eParking"></div>
+          <div>
+            <div class="parking-name">eParking</div>
+            <div class="parking-sub">Nạp tài khoản đỗ xe điện tử</div>
+          </div>
+        </div>
+        <p class="parking-desc">Nạp tiền vào tài khoản eParking qua MoMo. Áp dụng tại các bãi đỗ thông minh trong toà nhà, TTTM, bệnh viện.</p>
+        <div class="parking-feats">
+          <span>🏬 TTTM, bệnh viện</span>
+          <span>⚡ Nạp tức thì</span>
+          <span>📊 Lịch sử đỗ xe</span>
+        </div>
+        <button class="parking-btn" onclick="toast('Mở eParking trên MoMo...')">Nạp tài khoản eParking</button>
+      </div>
+    </div>
+  </section>
+
   <!-- W2A: VEHICLE PROFILE + MOXE -->
   <section class="section" id="ho-so-xe">
     <div class="w2a-panel">
@@ -1021,9 +1189,12 @@ body {
       <div class="footer-col">
         <h4>Tiện ích</h4>
         <a href="#tra-phat-nguoi">Tra phạt nguội</a>
+        <a href="/phat-nguoi-nop-qua-momo">Nộp phạt vi phạm</a>
         <a href="/gia-xang">Giá xăng hôm nay</a>
         <a href="/epass">Nạp ePass</a>
         <a href="#bao-hiem">Bảo hiểm TNDS</a>
+        <a href="#cuu-ho">Cứu hộ xe máy</a>
+        <a href="#parking">Bãi đỗ xe</a>
       </div>
       <div class="footer-col">
         <h4>Tra cứu phổ biến</h4>
@@ -1272,7 +1443,7 @@ body {
 
   /* nav active state on scroll */
   const navLinks = document.querySelectorAll('.nav-link');
-  const sections = ['tra-phat-nguoi', 'gia-xang', 'epass', 'bao-hiem', 'cay-xang'];
+  const sections = ['tra-phat-nguoi', 'gia-xang', 'epass', 'bao-hiem', 'cay-xang', 'cuu-ho', 'parking'];
   window.addEventListener('scroll', () => {
     let current = sections[0];
     sections.forEach(id => {
