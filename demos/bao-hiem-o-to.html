@@ -222,6 +222,47 @@
     .qr-btn.disabled{background:var(--soft);color:var(--muted);border-color:var(--line);cursor:default}
     .qr-btn.disabled:hover{background:var(--soft);color:var(--muted)}
 
+    /* ── JTBD improvements ── */
+
+    /* Improvement 1: Price anchor */
+    .price-anchor{background:var(--green-bg);border:1px solid rgba(0,122,61,.18);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .price-anchor-label{font-size:12px;color:var(--green);font-weight:600;flex:1;line-height:1.4}
+    .price-anchor-value{font-size:15px;font-weight:900;color:var(--green);white-space:nowrap}
+
+    /* Improvement 2: Claim trustscore - replace old hero stats */
+    .claim-trust-bar{display:flex;gap:0;margin-top:20px;background:rgba(255,255,255,.07);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+    .ct-item{flex:1;padding:13px 14px;border-right:1px solid rgba(255,255,255,.1);text-align:center}
+    .ct-item:last-child{border-right:0}
+    .ct-num{font-size:20px;font-weight:900;color:#fff;line-height:1}
+    .ct-num em{font-style:normal;font-size:13px;font-weight:700;color:rgba(255,255,255,.6)}
+    .ct-label{font-size:10px;color:rgba(255,255,255,.55);margin-top:4px;line-height:1.3}
+
+    /* Improvement 3: Brand personalization hint */
+    .brand-hint{display:none;background:rgba(255,91,184,.08);border:1px solid rgba(255,91,184,.2);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:12px;color:rgba(255,255,255,.85);line-height:1.5}
+    .brand-hint.show{display:block}
+    .brand-hint strong{color:#ff9cd9;font-weight:800}
+
+    /* Improvement 4: Exclusion education block */
+    .edu-section{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}
+    .edu-inner{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap}
+    .edu-label{font-size:11px;font-weight:900;color:var(--pink);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;padding-top:2px}
+    .edu-items{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+    .edu-item{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;transition:.15s}
+    .edu-item:hover{border-color:#c9a3be;background:var(--pink-bg)}
+    .edu-item .edu-icon{font-size:14px}
+
+    /* Improvement 5: Renewal toggle mode */
+    .form-mode-toggle{display:flex;gap:0;background:var(--soft);border-radius:10px;padding:3px;margin-bottom:14px}
+    .mode-btn{flex:1;padding:8px 12px;border:0;border-radius:8px;background:transparent;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s}
+    .mode-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+    .renewal-plate-field{display:none;margin-bottom:14px}
+    .renewal-plate-field.show{display:block}
+    .plate-input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-align:center;outline:none;transition:.15s}
+    .plate-input:focus{border-color:var(--pink)}
+    .plate-input::placeholder{font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted)}
+    .renewal-autofill{font-size:12px;color:var(--green);font-weight:700;margin-top:6px;display:none}
+    .renewal-autofill.show{display:block}
+
     /* renewal hook */
     .renewal-hook{background:var(--green-bg);border:1.5px solid var(--green);border-radius:16px;padding:18px;margin-top:20px;max-width:480px;margin-left:auto;margin-right:auto}
     .renewal-hook h4{font-size:15px;font-weight:800;color:var(--green);margin-bottom:6px}
@@ -413,44 +454,69 @@
 
         <!-- Car selection form -->
         <div class="car-form-box">
-          <div class="car-form-label">Thông tin xe</div>
-          <div class="car-form-grid">
-            <div class="form-field">
-              <div class="form-field-label">Nhãn hiệu & Dòng xe</div>
-              <button class="form-select-btn" id="car-info-btn" onclick="openModal('brand')">
-                <span id="car-info-label" class="placeholder">Chọn nhãn hiệu & dòng xe</span>
-                <span class="chevron">▾</span>
-              </button>
+          <!-- Improvement 5: Renewal toggle -->
+          <div class="form-mode-toggle">
+            <button class="mode-btn active" id="mode-new" onclick="setFormMode('new')">Mua mới</button>
+            <button class="mode-btn" id="mode-renew" onclick="setFormMode('renew')">Gia hạn bảo hiểm</button>
+          </div>
+
+          <!-- Renewal: plate input (hidden in "Mua mới" mode) -->
+          <div class="renewal-plate-field" id="renewal-plate-field">
+            <div class="form-field-label">Biển số xe</div>
+            <input class="plate-input" id="plate-input" placeholder="Nhập biển số xe (VD: 51F-12345)"
+              oninput="onPlateInput(this.value)">
+            <div class="renewal-autofill" id="renewal-autofill">✓ Đã tìm thấy xe - tự động điền thông tin</div>
+          </div>
+
+          <div id="new-car-fields">
+            <div class="car-form-label">Thông tin xe</div>
+            <div class="car-form-grid">
+              <div class="form-field">
+                <div class="form-field-label">Nhãn hiệu & Dòng xe</div>
+                <button class="form-select-btn" id="car-info-btn" onclick="openModal('brand')">
+                  <span id="car-info-label" class="placeholder">Chọn nhãn hiệu & dòng xe</span>
+                  <span class="chevron">▾</span>
+                </button>
+              </div>
+              <div class="form-field">
+                <div class="form-field-label">Năm sản xuất</div>
+                <button class="form-select-btn" id="year-btn" onclick="openModal('year')">
+                  <span id="year-label" class="placeholder">Chọn năm</span>
+                  <span class="chevron">▾</span>
+                </button>
+              </div>
             </div>
-            <div class="form-field">
-              <div class="form-field-label">Năm sản xuất</div>
-              <button class="form-select-btn" id="year-btn" onclick="openModal('year')">
-                <span id="year-label" class="placeholder">Chọn năm</span>
-                <span class="chevron">▾</span>
-              </button>
+
+            <!-- Improvement 3: Brand personalization hint -->
+            <div class="brand-hint" id="brand-hint"></div>
+
+            <!-- Improvement 1: Price anchor -->
+            <div class="price-anchor" id="price-anchor" style="display:none">
+              <div class="price-anchor-label" id="price-anchor-label">Ước tính phí bảo hiểm cho xe của bạn</div>
+              <div class="price-anchor-value" id="price-anchor-value"></div>
             </div>
           </div>
+
           <button class="btn btn-primary btn-lg btn-full" onclick="goToQuote()">
-            Xem báo giá bảo hiểm ngay &nbsp;›
+            <span id="cta-label">Xem báo giá bảo hiểm ngay</span> &nbsp;›
           </button>
         </div>
 
-        <!-- Stats -->
-        <div class="hero-stats">
-          <div class="stat">
-            <div class="stat-num">10.000+</div>
-            <div class="stat-label">Người đã mua qua MoMo</div>
+        <!-- Improvement 2: Claim trustscore bar replaces generic stats -->
+        <div class="claim-trust-bar">
+          <div class="ct-item">
+            <div class="ct-num">97<em>%</em></div>
+            <div class="ct-label">Vụ tai nạn được bồi thường thành công</div>
           </div>
-          <div class="stat">
-            <div class="stat-num">4.9/5</div>
-            <div class="stat-stars"><span>★★★★★</span> 577+ đánh giá</div>
+          <div class="ct-item">
+            <div class="ct-num">3<em> ngày</em></div>
+            <div class="ct-label">Thời gian xử lý trung bình nhanh nhất</div>
           </div>
-          <div class="stat">
-            <div class="stat-num">9</div>
-            <div class="stat-label">Nhà bảo hiểm uy tín</div>
+          <div class="ct-item">
+            <div class="ct-num">10K<em>+</em></div>
+            <div class="ct-label">Xe được bảo hiểm qua MoMo 2024</div>
           </div>
         </div>
-        <a href="#reviews" style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700;margin-top:10px;display:inline-block">⭐ Xem đánh giá →</a>
       </div>
 
       <!-- Insurer preview card -->
@@ -516,6 +582,27 @@
       <div class="info-item"><span class="info-item-icon">📱</span> Mua online, nhận đơn ngay</div>
       <div class="info-item"><span class="info-item-icon">🤖</span> Thẩm định xe bằng AI</div>
       <div class="info-item"><span class="info-item-icon">💳</span> Trả góp 0%</div>
+    </div>
+  </div>
+
+  <!-- Improvement 3: Education - exclusion awareness -->
+  <div class="edu-section">
+    <div class="shell edu-inner">
+      <div class="edu-label">Hay bị bỏ qua</div>
+      <div class="edu-items">
+        <div class="edu-item" onclick="showEduDetail('flood')">
+          <span class="edu-icon">💧</span>
+          <span>Thiệt hại do nước & ngập lụt không mặc định có</span>
+        </div>
+        <div class="edu-item" onclick="showEduDetail('depreciation')">
+          <span class="edu-icon">📉</span>
+          <span>Khấu hao phụ tùng làm giảm tiền bồi thường</span>
+        </div>
+        <div class="edu-item" onclick="showEduDetail('garage')">
+          <span class="edu-icon">🔧</span>
+          <span>Garage chính hãng vs. garage liên kết - khác nhau lớn</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1192,10 +1279,104 @@ function showView(v) {
 function backToHero(){ showView('landing') }
 function backToResults(){ showView('results') }
 
+/* ── JTBD Improvement 5: Form mode toggle ── */
+let formMode = 'new'; // 'new' | 'renew'
+
+function setFormMode(mode){
+  formMode = mode;
+  document.getElementById('mode-new').classList.toggle('active', mode==='new');
+  document.getElementById('mode-renew').classList.toggle('active', mode==='renew');
+  document.getElementById('new-car-fields').style.display = mode==='new' ? '' : 'none';
+  document.getElementById('renewal-plate-field').classList.toggle('show', mode==='renew');
+  document.getElementById('cta-label').textContent = mode==='renew' ? 'Gia hạn bảo hiểm ngay' : 'Xem báo giá bảo hiểm ngay';
+  if(mode==='renew') document.getElementById('plate-input').focus();
+}
+
+/* ── JTBD Improvement 5: Plate input - simulate renewal autofill ── */
+const DEMO_PLATES = {
+  '51F12345': { brandId:'toyota', brandName:'Toyota', model:'Camry', variant:'2.5Q - AT', year:'2021' },
+  '30A99999': { brandId:'honda',  brandName:'Honda',  model:'CR-V',  variant:'1.5L VTEC TURBO', year:'2022' },
+  '29A11111': { brandId:'mazda',  brandName:'Mazda',  model:'CX-5',  variant:'2.5 Signature AWD', year:'2020' },
+};
+
+function onPlateInput(raw){
+  const plate = raw.replace(/[^0-9A-Za-z]/g,'').toUpperCase();
+  const found = DEMO_PLATES[plate];
+  const autofill = document.getElementById('renewal-autofill');
+  if(found && plate.length>=7){
+    state.car = { ...found };
+    autofill.classList.add('show');
+    autofill.textContent = `✓ Tìm thấy: ${found.brandName} ${found.model} ${found.year} - Bảo hiểm hết hạn 15/08/2025`;
+  } else {
+    autofill.classList.remove('show');
+  }
+}
+
+/* ── JTBD Improvement 1: Price anchor after brand/year selected ── */
+function updatePriceAnchor(){
+  const c = state.car;
+  if(!c.brandId) return;
+  const val = getCarValue(c.brandId, c.model, c.variant, c.year);
+  const lo = Math.round(val * 1e6 * 0.0140);
+  const hi = Math.round(val * 1e6 * 0.0162);
+  const el = document.getElementById('price-anchor');
+  const label = document.getElementById('price-anchor-label');
+  const value = document.getElementById('price-anchor-value');
+  if(el){
+    el.style.display = 'flex';
+    label.textContent = c.model
+      ? `Ước tính cho ${c.brandName} ${c.model} (~${val}tr)`
+      : `Ước tính xe ${c.brandName} (~${val}tr)`;
+    value.textContent = `${fmt(lo)} - ${fmt(hi)}đ/năm`;
+  }
+}
+
+/* ── JTBD Improvement 3: Brand personalization hint ── */
+const BRAND_HINTS = {
+  honda:    { fit:'PVI, Bảo Việt',  note:'Phụ tùng sẵn hàng toàn quốc, xử lý nhanh' },
+  toyota:   { fit:'PVI, Bảo Việt',  note:'Mạng lưới garage Toyota ủy quyền rộng' },
+  mazda:    { fit:'Bảo Long, PVI',   note:'Phụ tùng nhập Nhật 7-14 ngày, nên chọn khấu trừ thấp' },
+  vinfast:  { fit:'MIC',             note:'MIC là đối tác chính thức VinFast, tốt nhất cho xe điện' },
+  hyundai:  { fit:'Liberty, MIC',    note:'Phụ tùng Hàn sẵn tại đại lý, Liberty mạnh dòng xe này' },
+  kia:      { fit:'Liberty, MIC',    note:'Hệ thống garage KIA trải khắp 63 tỉnh' },
+  ford:     { fit:'Liberty, PTI',    note:'Liberty chuyên xe Mỹ, có garage uỷ quyền Ford toàn quốc' },
+  bmw:      { fit:'DBY',             note:'DBY chuyên xe sang, garage BMW chính hãng, tránh khấu hao phụ tùng' },
+  mercedes: { fit:'DBY',             note:'DBY có thỏa thuận với đại lý Mercedes, bồi thường theo giá chính hãng' },
+  default:  { fit:'PVI, Liberty',    note:'2 nhà bảo hiểm phù hợp với nhiều loại xe nhất' },
+};
+
+function showBrandHint(brandId){
+  const hint = BRAND_HINTS[brandId] || BRAND_HINTS.default;
+  const el = document.getElementById('brand-hint');
+  if(!el) return;
+  el.innerHTML = `<strong>Gợi ý cho xe ${state.car.brandName}:</strong> ${hint.note}. Nên xem ${hint.fit} trước.`;
+  el.classList.add('show');
+  updatePriceAnchor();
+}
+
+/* ── JTBD Improvement 3: Education popups ── */
+const EDU_CONTENT = {
+  flood:       { title:'Thiệt hại do nước & ngập lụt', body:'Gói cơ bản KHÔNG bao gồm thiệt hại do nước vào máy, ngập lụt hoặc bão. Cần chọn thêm quyền lợi "Thiệt hại do nước" (~+2tr/năm) trong gói nâng cao.' },
+  depreciation:{ title:'Khấu hao phụ tùng', body:'Mặc định, nhà bảo hiểm khấu trừ % giá trị phụ tùng theo tuổi xe (xe 3 năm: khấu hao ~30%). Chọn quyền lợi "Không khấu hao" để được bồi thường 100% giá trị thay thế.' },
+  garage:      { title:'Garage chính hãng vs. liên kết', body:'Gói cơ bản cho phép sửa tại garage liên kết (có thể dùng phụ tùng OEM). Chọn quyền lợi "Sửa tại cơ sở chính hãng" để đảm bảo phụ tùng chính hãng, bảo hành còn nguyên.' },
+};
+
+function showEduDetail(key){
+  const c = EDU_CONTENT[key];
+  showToast(c.title + ': ' + c.body);
+}
+
 function goToQuote(){
-  if(!state.car.brandId){ showToast('Vui lòng chọn nhãn hiệu xe'); openModal('brand'); return; }
-  if(!state.car.model){ showToast('Vui lòng chọn dòng xe'); openModal('model'); return; }
-  if(!state.car.year){ showToast('Vui lòng chọn năm sản xuất'); openModal('year'); return; }
+  if(formMode === 'renew'){
+    const plate = (document.getElementById('plate-input').value||'').replace(/[^0-9A-Za-z]/g,'').toUpperCase();
+    if(!plate){ showToast('Vui lòng nhập biển số xe'); return; }
+    const found = DEMO_PLATES[plate];
+    if(!found){ showToast('Không tìm thấy xe. Thử: 51F12345 hoặc 30A99999'); return; }
+  } else {
+    if(!state.car.brandId){ showToast('Vui lòng chọn nhãn hiệu xe'); openModal('brand'); return; }
+    if(!state.car.model){ showToast('Vui lòng chọn dòng xe'); openModal('model'); return; }
+    if(!state.car.year){ showToast('Vui lòng chọn năm sản xuất'); openModal('year'); return; }
+  }
   renderResults();
   showView('results');
 }
@@ -1558,12 +1739,14 @@ function selectVariant(variant){
   state.car.variant = variant;
   closeModal();
   updateCarBtn();
+  showBrandHint(state.car.brandId); // Improvement 3: hint after full car selected
 }
 
 function selectYear(year){
   state.car.year = year;
   closeModal();
   updateYearBtn();
+  updatePriceAnchor(); // Improvement 1: update price anchor after year set
 }
 
 function updateCarBtn(){
