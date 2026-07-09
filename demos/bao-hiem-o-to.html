@@ -280,6 +280,37 @@
     .sidebar-total span{font-size:13px;color:var(--muted)}
     .sidebar-total strong{font-size:22px;font-weight:900;color:var(--pink)}
 
+    /* ── Situations view ── */
+    .sit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .sit-card{background:#fff;border:1.5px solid var(--line);border-radius:18px;overflow:hidden;transition:.18s;cursor:pointer}
+    .sit-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.08);transform:translateY(-2px)}
+    .sit-card.expanded{border-color:var(--pink-light)}
+    .sit-header{display:flex;align-items:flex-start;gap:14px;padding:20px}
+    .sit-icon{font-size:32px;flex-shrink:0;line-height:1}
+    .sit-meta{flex:1;min-width:0}
+    .sit-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+    .sit-badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:.3px}
+    .sit-badge.green{background:var(--green-bg);color:var(--green)}
+    .sit-badge.amber{background:#fff4e5;color:var(--amber)}
+    .sit-badge.gray{background:var(--soft);color:var(--muted)}
+    .sit-name{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:4px}
+    .sit-short{font-size:12px;color:var(--muted);line-height:1.5}
+    .sit-toggle{color:var(--pink);font-size:12px;font-weight:700;background:none;border:0;cursor:pointer;padding:0;margin-top:6px;display:flex;align-items:center;gap:4px}
+    .sit-body{display:none;border-top:1px solid var(--line);padding:18px 20px;background:var(--soft)}
+    .sit-body.open{display:block}
+    .sit-rows{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin-bottom:14px}
+    .sit-row{display:grid;grid-template-columns:1fr auto;align-items:start;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px;gap:12px}
+    .sit-row:last-child{border-bottom:0}
+    .sit-row-label{color:var(--muted);font-size:12px}
+    .sit-row-val{font-weight:700;text-align:right;font-size:13px}
+    .sit-row-val.green{color:var(--green)}
+    .sit-row-val.amber{color:var(--amber)}
+    .sit-row-val.red{color:#e5233d}
+    .sit-example{background:var(--pink-bg);border:1px solid var(--pink-light);border-radius:12px;padding:14px;font-size:13px;line-height:1.6}
+    .sit-example strong{color:var(--pink);display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .sit-warn{background:#fff4e5;border:1px solid rgba(179,92,0,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--amber);margin-top:10px;line-height:1.55}
+    .sit-warn::before{content:"⚠️ ";font-size:13px}
+
     /* ── Checkout view ── */
     #checkout-view{display:none}
     #checkout-view.show{display:block}
@@ -449,6 +480,9 @@
           <li>Tiết kiệm đến 37% so với mua trực tiếp</li>
           <li>Bồi thường 97% vụ, trung bình 3 ngày</li>
         </ul>
+        <a onclick="showSituations()" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--pink);cursor:pointer;margin-bottom:20px;text-decoration:none">
+          🔍 Bảo hiểm bồi thường những tình huống nào? →
+        </a>
 
         <!-- Car selection form -->
         <div class="car-form-box">
@@ -554,7 +588,7 @@
   <!-- Improvement 3: Education - exclusion awareness -->
   <div class="edu-section">
     <div class="shell edu-inner">
-      <div class="edu-label">Hay bị bỏ qua</div>
+      <div class="edu-label" style="cursor:pointer" onclick="showSituations()">8 tình huống →</div>
       <div class="edu-items">
         <div class="edu-item" onclick="showEduDetail('flood')">
           <span class="edu-icon">💧</span>
@@ -1080,6 +1114,48 @@
   </div>
 </div>
 
+<!-- ════════════════ Situations View ════════════════ -->
+<div id="situations-view" style="display:none">
+
+  <!-- Topbar mini -->
+  <div class="topbar">
+    <div class="shell topbar-inner">
+      <button class="btn btn-ghost" onclick="showView('landing')" style="font-size:14px;font-weight:700;color:var(--muted)">‹ Bảo hiểm Ô Tô</button>
+      <button class="btn btn-primary" onclick="showView('landing');setTimeout(()=>document.querySelector('.car-form-box .btn-primary').click(),300)" style="font-size:13px;padding:9px 18px">Xem báo giá ngay</button>
+    </div>
+  </div>
+
+  <div class="shell" style="padding:40px 0 80px">
+
+    <!-- Header -->
+    <div style="max-width:680px;margin-bottom:40px">
+      <div style="font-size:12px;font-weight:800;color:var(--pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Tình huống bảo hiểm</div>
+      <h1 style="font-size:clamp(28px,4vw,40px);font-weight:900;line-height:1.1;letter-spacing:-.5px;margin-bottom:12px">Bảo hiểm thân vỏ bồi thường<br>những tình huống nào?</h1>
+      <p style="font-size:15px;color:var(--muted);line-height:1.7">8 tình huống phổ biến nhất người dùng hay hiểu sai. Biết rõ trước khi chọn gói để không thiệt khi xảy ra sự cố.</p>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:block"></span>Gói cơ bản có sẵn</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:block"></span>Cần chọn thêm quyền lợi nâng cao</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700"><span style="width:10px;height:10px;border-radius:50%;background:var(--line);display:block"></span>Không thuộc phạm vi bảo hiểm</div>
+    </div>
+
+    <!-- Situations grid -->
+    <div id="situations-grid" class="sit-grid"></div>
+
+    <!-- CTA bottom -->
+    <div style="margin-top:48px;padding:28px;background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:16px;font-weight:900;margin-bottom:6px">Đã hiểu rõ phạm vi bồi thường?</div>
+        <div style="font-size:13px;color:var(--muted)">So sánh báo giá từ 9 nhà bảo hiểm. Gói nâng cao bao gồm thủy kích, mất cắp bộ phận và garage chính hãng.</div>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="showView('landing')">Xem báo giá bảo hiểm &nbsp;›</button>
+    </div>
+
+  </div>
+</div>
+
 <!-- ════════════════ Modals ════════════════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modal">
@@ -1228,16 +1304,17 @@ const state = {
 
 /* ────── VIEW MANAGEMENT ────── */
 function showView(v) {
-  document.getElementById('landing-view').style.display = v==='landing' ? 'block' : 'none';
+  document.getElementById('landing-view').style.display   = v==='landing'    ? 'block':'none';
+  document.getElementById('situations-view').style.display= v==='situations' ? 'block':'none';
   const rv = document.getElementById('results-view');
-  rv.style.display = v==='results' ? 'block' : 'none';
-  rv.className = v==='results' ? 'show' : '';
+  rv.style.display  = v==='results'  ? 'block':'none';
+  rv.className      = v==='results'  ? 'show':'';
   const cv = document.getElementById('checkout-view');
-  cv.style.display = v==='checkout' ? 'block' : 'none';
-  cv.className = v==='checkout' ? 'show' : '';
+  cv.style.display  = v==='checkout' ? 'block':'none';
+  cv.className      = v==='checkout' ? 'show':'';
   const sv = document.getElementById('success-view');
-  sv.style.display = v==='success' ? 'block' : 'none';
-  sv.className = v==='success' ? 'show' : '';
+  sv.style.display  = v==='success'  ? 'block':'none';
+  sv.className      = v==='success'  ? 'show':'';
   state.view = v;
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1796,6 +1873,158 @@ function toggleRenewal(el){
 }
 
 let toastTimer;
+/* ════════════════ SITUATIONS ════════════════ */
+const SITUATIONS = [
+  {
+    id:'collision', icon:'💥', name:'Va chạm & Tai nạn giao thông',
+    short:'Hư hỏng xe do va chạm với xe khác, vật cứng, lật xe, lao xuống mương.',
+    baseCover:true, badge:'Gói cơ bản',
+    rows:[
+      {label:'Phạm vi bồi thường', val:'Toàn bộ thiệt hại thân vỏ xe', cls:'green'},
+      {label:'Mức khấu trừ', val:'Tùy chọn: 500K - 5tr/vụ', cls:''},
+      {label:'Thời gian xử lý', val:'3 - 7 ngày làm việc', cls:''},
+      {label:'Điều kiện khai báo', val:'Trong vòng 24 giờ kể từ sự cố', cls:'amber'},
+    ],
+    example:'Xe City đâm vào dải phân cách, hỏng cản trước + đèn + mui. Thiệt hại ~28tr. PVI bồi thường 25tr sau khấu trừ 3tr.',
+    warn:'Không được tự ý đưa xe vào sửa trước khi có biên bản giám định. Tự ý sửa có thể mất quyền bồi thường.',
+  },
+  {
+    id:'thuykick', icon:'🌊', name:'Thủy kích (Nước vào máy)',
+    short:'Nước ngập lọt vào động cơ khi đi qua vùng ngập, gây hỏng piston, trục khuỷu.',
+    baseCover:false, badge:'Cần quyền lợi nâng cao',
+    rows:[
+      {label:'Gói cơ bản', val:'Không có', cls:'red'},
+      {label:'Thêm quyền lợi "Thiệt hại do nước"', val:'~+2tr/năm', cls:'amber'},
+      {label:'Chi phí sửa thủy kích điển hình', val:'40 - 120 triệu', cls:'red'},
+      {label:'Điều kiện được bồi thường', val:'Phải dừng xe ngay khi ngập', cls:'amber'},
+    ],
+    example:'Xe Fortuner bị thủy kích mùa mưa tháng 10, hỏng động cơ hoàn toàn. Sửa chữa 95tr. Người có quyền lợi nâng cao được hoàn 92tr.',
+    warn:'Tuyệt đối KHÔNG đề máy lại sau khi xe bị ngập nước. Đề lần 2 khi máy đã vào nước = hỏng hoàn toàn và mất quyền bồi thường.',
+  },
+  {
+    id:'fire', icon:'🔥', name:'Cháy nổ xe',
+    short:'Xe bốc cháy do chập điện, rò rỉ nhiên liệu, tai nạn hoặc tác nhân bên ngoài.',
+    baseCover:true, badge:'Gói cơ bản',
+    rows:[
+      {label:'Phạm vi bồi thường', val:'Thiệt hại do cháy toàn bộ hoặc một phần', cls:'green'},
+      {label:'Cháy do lỗi kỹ thuật của xe', val:'Có thể bị loại trừ', cls:'amber'},
+      {label:'Tài sản cá nhân trong xe bị cháy', val:'Không bồi thường', cls:'red'},
+      {label:'Chi phí điều tra nguyên nhân', val:'Chủ xe chịu', cls:''},
+    ],
+    example:'Xe Kia Cerato chập điện trong hầm parking, cháy 70% thân xe. Thiệt hại định giá 180tr. Bảo Việt bồi thường 175tr (trừ 5tr khấu hao).',
+    warn:'Xe cháy do bạo loạn, chiến tranh, khủng bố không được bảo hiểm. Cần lập biên bản Công an ngay khi sự việc xảy ra.',
+  },
+  {
+    id:'theft', icon:'🔓', name:'Mất cắp toàn bộ xe',
+    short:'Xe bị trộm hoàn toàn, không tìm lại được sau thời gian quy định.',
+    baseCover:true, badge:'Gói cơ bản',
+    rows:[
+      {label:'Điều kiện được bồi thường', val:'Trình báo CA trong 24h + 30 ngày không tìm lại', cls:'amber'},
+      {label:'Mức bồi thường', val:'Giá trị xe tại thời điểm mất (đã khấu hao)', cls:''},
+      {label:'Xe tìm lại được nhưng bị hỏng', val:'Bồi thường thiệt hại thực tế', cls:'green'},
+      {label:'Đồ vật trong xe bị lấy cắp', val:'Không bồi thường', cls:'red'},
+    ],
+    example:'Xe Camry mất tại bãi giữ sau 45 ngày không tìm lại. Giá trị xe thời điểm mất: 820tr. MIC bồi thường 818tr theo định giá thực tế.',
+    warn:'Phải có biên bản Công an và xác nhận không tìm được xe trong 30 ngày. Mất chìa khóa hoặc để chìa trong xe bị mất = loại trừ bồi thường.',
+  },
+  {
+    id:'parttheft', icon:'🔩', name:'Mất cắp bộ phận',
+    short:'Trộm bánh xe, vô lăng, đầu màn hình, catalytic converter, camera hành trình.',
+    baseCover:false, badge:'Cần quyền lợi nâng cao',
+    rows:[
+      {label:'Gói cơ bản', val:'Không có', cls:'red'},
+      {label:'Thêm quyền lợi "Mất cắp bộ phận"', val:'~+800K/năm', cls:'amber'},
+      {label:'Phổ biến nhất', val:'Bánh xe dự phòng, catalytic converter', cls:''},
+      {label:'Giá trị trung bình mỗi vụ', val:'3 - 15 triệu', cls:''},
+    ],
+    example:'Ford Ranger bị lấy cắp 4 bánh xe + mâm trong đêm ở bãi đất trống. Thiệt hại 18tr. Người có quyền lợi nâng cao được bồi thường 17.2tr.',
+    warn:'Bộ phận bị mất phải chứng minh được lắp trên xe từ đầu (theo hợp đồng hoặc hóa đơn phụ kiện). Không bồi thường bộ phận độ sau khi mua xe.',
+  },
+  {
+    id:'natural', icon:'⛈️', name:'Thiên tai (Bão, lũ, sét đánh)',
+    short:'Xe hỏng do bão, lũ lụt, sét đánh, cây đổ, đất sụt - không phải do lỗi lái xe.',
+    baseCover:false, badge:'Cần quyền lợi nâng cao',
+    rows:[
+      {label:'Cây đổ đè lên xe khi đỗ', val:'Gói cơ bản CÓ', cls:'green'},
+      {label:'Bão làm lật xe, vỡ kính', val:'Tùy điều khoản từng nhà BH', cls:'amber'},
+      {label:'Ngập lụt hư hỏng thân vỏ (không phải động cơ)', val:'Cần nâng cao', cls:'amber'},
+      {label:'Sét đánh trực tiếp', val:'Thường có trong cơ bản', cls:'green'},
+    ],
+    example:'Bão số 3 làm cây đổ vào xe Mazda CX-5 đỗ trên vỉa hè, hỏng mui + kính + trụ A. Thiệt hại 35tr. Gói cơ bản bồi thường đầy đủ.',
+    warn:'Lũ lụt ngập xe nhưng không gây thủy kích → bồi thường bình thường. Thủy kích phải có quyền lợi riêng. Hai tình huống khác nhau!',
+  },
+  {
+    id:'glass', icon:'🪟', name:'Vỡ kính (không kèm tai nạn)',
+    short:'Kính chắn gió hoặc kính cửa vỡ do đá văng, trộm, nhiệt độ - không phải va chạm.',
+    baseCover:true, badge:'Gói cơ bản',
+    rows:[
+      {label:'Kính vỡ đơn lẻ không va chạm', val:'Có bồi thường', cls:'green'},
+      {label:'Mức khấu trừ kính', val:'Thường 0 - 1tr/vụ', cls:'green'},
+      {label:'Thay kính chính hãng vs OEM', val:'Phụ thuộc gói garage', cls:'amber'},
+      {label:'Kính xe cổ / xe nhập hiếm', val:'Đặt hàng 2-4 tuần', cls:'amber'},
+    ],
+    example:'Đá từ xe tải văng vào kính chắn gió Camry tạo vết nứt 30cm. Thay kính chính hãng 8.5tr. PVI bồi thường toàn bộ, không khấu trừ.',
+    warn:'Không tự ý dán kính tạm trước khi báo bảo hiểm. Một số hợp đồng yêu cầu thay kính tại garage được chỉ định để có giá bảo hành.',
+  },
+  {
+    id:'parked', icon:'🚗', name:'Xe đỗ bị va / trầy xước',
+    short:'Xe đỗ trong bãi hoặc ven đường bị xe khác đâm, trầy xước mà bên gây thiệt hại bỏ trốn.',
+    baseCover:true, badge:'Gói cơ bản',
+    rows:[
+      {label:'Phạm vi bồi thường', val:'Thiệt hại thực tế thân vỏ', cls:'green'},
+      {label:'Cần bằng chứng', val:'Camera hành trình, nhân chứng hoặc CA xác nhận', cls:'amber'},
+      {label:'Bên gây thiệt hại bỏ trốn', val:'Vẫn được bồi thường qua bảo hiểm của mình', cls:'green'},
+      {label:'Trầy xước nhỏ < mức khấu trừ', val:'Chủ xe tự chi trả', cls:''},
+    ],
+    example:'Xe Hyundai Tucson bị đâm móp cản sau trong bãi đỗ chung cư, thiệt hại 6.8tr, không xác định được xe gây ra. Camera bãi xác nhận. Bảo Việt bồi thường 6.3tr.',
+    warn:'Trầy xước nhỏ (dưới mức khấu trừ 500K - 1tr) thường không đáng khai vì sẽ ảnh hưởng lịch sử bồi thường và tăng phí năm sau.',
+  },
+];
+
+function renderSituations(){
+  const grid = document.getElementById('situations-grid');
+  if(!grid) return;
+  grid.innerHTML = SITUATIONS.map(s=>{
+    const badgeCls = s.baseCover ? 'green' : 'amber';
+    return `
+    <div class="sit-card" id="sit-${s.id}">
+      <div class="sit-header">
+        <div class="sit-icon">${s.icon}</div>
+        <div class="sit-meta">
+          <div class="sit-badges">
+            <span class="sit-badge ${badgeCls}">${s.badge}</span>
+          </div>
+          <div class="sit-name">${s.name}</div>
+          <div class="sit-short">${s.short}</div>
+          <button class="sit-toggle" onclick="toggleSit('${s.id}',this)">Chi tiết & ví dụ thực tế <span>▾</span></button>
+        </div>
+      </div>
+      <div class="sit-body" id="sit-body-${s.id}">
+        <div class="sit-rows">
+          ${s.rows.map(r=>`<div class="sit-row"><span>${r.label}</span><span class="sit-row-val ${r.cls}">${r.val}</span></div>`).join('')}
+        </div>
+        <div class="sit-example"><strong>Ví dụ thực tế</strong>${s.example}</div>
+        ${s.warn?`<div class="sit-warn">${s.warn}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSit(id, btn){
+  const body = document.getElementById('sit-body-'+id);
+  const card = document.getElementById('sit-'+id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  card.classList.toggle('expanded',!isOpen);
+  btn.querySelector('span').textContent = isOpen ? '▾' : '▴';
+  btn.firstChild.textContent = isOpen ? 'Chi tiết & ví dụ thực tế ' : 'Thu gọn ';
+}
+
+function showSituations(){
+  renderSituations();
+  showView('situations');
+}
+
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
