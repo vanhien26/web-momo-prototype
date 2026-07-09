@@ -311,6 +311,48 @@
     .sit-warn{background:#fff4e5;border:1px solid rgba(179,92,0,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--amber);margin-top:10px;line-height:1.55}
     .sit-warn::before{content:"⚠️ ";font-size:13px}
 
+    /* ── Situation Detail ── */
+    .sit-detail-hero{display:flex;align-items:flex-start;gap:20px;padding:28px;background:#fff;border:1.5px solid var(--line);border-radius:20px;margin-bottom:28px}
+    .sit-detail-icon{font-size:48px;line-height:1;flex-shrink:0}
+    .sit-detail-meta{flex:1}
+    .sit-detail-title{font-size:clamp(22px,3.5vw,32px);font-weight:900;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px}
+    .sit-detail-desc{font-size:14px;color:var(--muted);line-height:1.7}
+    .sit-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+    .sit-detail-section{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:24px}
+    .sit-detail-section.full{grid-column:1/-1}
+    .sit-detail-section-label{font-size:11px;font-weight:800;color:var(--pink);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+    .sit-detail-section-title{font-size:16px;font-weight:800;margin-bottom:14px}
+    .sit-insurer-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+    .sit-insurer-row:last-child{border-bottom:0;padding-bottom:0}
+    .sit-insurer-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .sit-insurer-name{font-size:13px;font-weight:700;flex:1}
+    .sit-insurer-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+    .sit-insurer-status.base{background:#e8f8ef;color:#15803d}
+    .sit-insurer-status.addon{background:#fff4e5;color:#b45c00}
+    .sit-insurer-status.no{background:#fee2e2;color:#dc2626}
+    .sit-insurer-note{font-size:11px;color:var(--muted);margin-top:2px}
+    .sit-insurer-cost{font-size:11px;font-weight:700;color:var(--amber);margin-top:2px}
+    .claim-steps{display:flex;flex-direction:column;gap:0}
+    .claim-step{display:grid;grid-template-columns:36px 1fr;gap:0 14px;position:relative}
+    .claim-step:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--line);z-index:0}
+    .claim-step-num{width:36px;height:36px;border-radius:50%;background:var(--pink);color:#fff;font-size:13px;font-weight:800;display:grid;place-items:center;flex-shrink:0;position:relative;z-index:1}
+    .claim-step-body{padding:6px 0 24px}
+    .claim-step-title{font-size:14px;font-weight:700;margin-bottom:4px}
+    .claim-step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+    .claim-step-time{font-size:11px;font-weight:700;color:var(--pink);margin-top:6px;display:inline-flex;align-items:center;gap:4px}
+    .sit-excl-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+    .sit-excl-list li{font-size:13px;color:var(--muted);line-height:1.55;padding-left:20px;position:relative}
+    .sit-excl-list li::before{content:'✕';position:absolute;left:0;color:#dc2626;font-size:11px;font-weight:800;top:1px}
+    .sit-tip-box{background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:14px;padding:16px 18px}
+    .sit-tip-box p{font-size:13px;line-height:1.6;color:var(--ink);margin:0}
+    .sit-tip-box strong{color:var(--pink)}
+    .sit-detail-cta{display:flex;align-items:center;gap:20px;padding:24px;background:var(--soft);border-radius:18px;margin-top:8px;flex-wrap:wrap}
+    @media(max-width:640px){
+      .sit-detail-grid{grid-template-columns:1fr}
+      .sit-detail-section.full{grid-column:1}
+      .sit-detail-hero{flex-direction:column;gap:14px}
+    }
+
     /* ── Checkout view ── */
     #checkout-view{display:none}
     #checkout-view.show{display:block}
@@ -1156,6 +1198,19 @@
   </div>
 </div>
 
+<!-- ════════════════ Situation Detail ════════════════ -->
+<div id="situation-detail-view" style="display:none">
+  <div class="topbar">
+    <div class="shell topbar-inner">
+      <button class="btn btn-ghost" onclick="showView('situations')" style="font-size:14px;font-weight:700;color:var(--muted)">‹ Tất cả tình huống</button>
+      <button class="btn btn-primary" onclick="showView('landing')" style="font-size:13px;padding:9px 18px">Xem báo giá ngay</button>
+    </div>
+  </div>
+  <div class="shell" style="padding:32px 0 80px">
+    <div id="sit-detail-content"></div>
+  </div>
+</div>
+
 <!-- ════════════════ Modals ════════════════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modal">
@@ -1306,6 +1361,7 @@ const state = {
 function showView(v) {
   document.getElementById('landing-view').style.display   = v==='landing'    ? 'block':'none';
   document.getElementById('situations-view').style.display= v==='situations' ? 'block':'none';
+  document.getElementById('situation-detail-view').style.display= v==='situation-detail' ? 'block':'none';
   const rv = document.getElementById('results-view');
   rv.style.display  = v==='results'  ? 'block':'none';
   rv.className      = v==='results'  ? 'show':'';
@@ -1996,7 +2052,10 @@ function renderSituations(){
           </div>
           <div class="sit-name">${s.name}</div>
           <div class="sit-short">${s.short}</div>
-          <button class="sit-toggle" onclick="toggleSit('${s.id}',this)">Chi tiết & ví dụ thực tế <span>▾</span></button>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px">
+            <button class="sit-toggle" onclick="toggleSit('${s.id}',this)">Ví dụ thực tế <span>▾</span></button>
+            <button class="sit-toggle" style="color:var(--ink);font-weight:800" onclick="showSituationDetail('${s.id}')">Xem chi tiết &rsaquo;</button>
+          </div>
         </div>
       </div>
       <div class="sit-body" id="sit-body-${s.id}">
@@ -2024,6 +2083,354 @@ function showSituations(){
   renderSituations();
   showView('situations');
 }
+
+/* ════════════════ SITUATION DETAIL ════════════════ */
+const SIT_DETAIL = {
+  collision: {
+    detail: `Va chạm là tình huống phổ biến nhất trong bảo hiểm thân vỏ, chiếm hơn 60% số vụ bồi thường mỗi năm. Phạm vi bảo hiểm bao gồm: đâm vào xe khác, đâm vào vật cố định (cột điện, dải phân cách, tường), lật xe, lao xuống mương hố, và xe bị xe khác đâm vào khi đỗ. Mức bồi thường dựa trên chi phí sửa chữa thực tế trừ đi phần khấu trừ bắt buộc (deductible) đã thỏa thuận từ đầu trong hợp đồng.`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Nhanh nhất thị trường - 3 ngày làm việc', cost:''},
+      {id:'liberty',status:'base', note:'Hệ thống garage rộng, phủ 45 tỉnh thành', cost:''},
+      {id:'baoviet',status:'base', note:'Mạng lưới garage toàn quốc rộng nhất', cost:''},
+      {id:'pjico',  status:'base', note:'Xử lý tốt vùng ngoại thành & tỉnh thành', cost:''},
+      {id:'mic',    status:'base', note:'Đối tác garage VinFast chính thức', cost:''},
+      {id:'dby',    status:'base', note:'Garage uỷ quyền chính hãng BMW/Mercedes', cost:''},
+      {id:'baolong',status:'base', note:'Ít điều khoản loại trừ, phù hợp xe cũ', cost:''},
+      {id:'pti',    status:'base', note:'Mạnh về xe bán tải và SUV địa hình', cost:''},
+      {id:'gic',    status:'base', note:'Phù hợp xe nhập khẩu châu Âu ít phổ biến', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Dừng xe & giữ nguyên hiện trường', desc:'Không di chuyển xe trước khi có biên bản. Chụp ảnh toàn cảnh từ 4 phía, ảnh điểm va chạm cận cảnh. Nếu có người bị thương, ưu tiên gọi cấp cứu 115 trước.', time:'Ngay lập tức', icon:'📸'},
+      {step:2, title:'Liên hệ nhà bảo hiểm', desc:'Gọi hotline hoặc báo qua app trong vòng 24 giờ. Cung cấp: số hợp đồng, địa điểm sự cố, mô tả thiệt hại sơ bộ. Nhà BH sẽ cử giám định viên đến hoặc hẹn lịch.', time:'Trong 24 giờ', icon:'📞'},
+      {step:3, title:'Lập biên bản với cơ quan chức năng', desc:'Nếu va chạm với xe khác hoặc thiệt hại lớn (trên 20 triệu), cần trình báo Công an để lập biên bản. Biên bản CA là tài liệu bắt buộc khi bồi thường trên 50 triệu.', time:'Trong ngày', icon:'📋'},
+      {step:4, title:'Giám định thiệt hại', desc:'Giám định viên đến xem xe tại hiện trường hoặc tại garage. Ký biên bản giám định xác nhận danh sách phụ tùng và công sơn. Bản giám định = cơ sở tính tiền bồi thường.', time:'1-3 ngày sau báo', icon:'🔍'},
+      {step:5, title:'Đưa xe vào sửa', desc:'Chọn garage trong danh sách ủy quyền để được bảo hành và thanh toán trực tiếp giữa nhà BH - garage. Hoặc tự sửa ở garage khác và xuất trình hóa đơn để hoàn trả.', time:'Sau khi ký giám định', icon:'🔧'},
+      {step:6, title:'Nhận bồi thường', desc:'Nếu sửa tại garage ủy quyền: nhà BH trả thẳng cho garage, chủ xe chỉ đóng phần khấu trừ. Nếu sửa ngoài: chủ xe ứng trước, nhà BH hoàn trả trong 3-7 ngày.', time:'3-7 ngày làm việc', icon:'💰'},
+    ],
+    exclusions:[
+      'Hao mòn tự nhiên theo thời gian (lốp mòn, sơn xuống màu, ắc quy xuống điện)',
+      'Hư hỏng do bảo dưỡng sai hoặc không theo định kỳ của nhà sản xuất',
+      'Tai nạn khi lái xe trong trạng thái say rượu (BAC > 0.05mg/L trong máu)',
+      'Chủ xe cố tình gây tai nạn để trục lợi bảo hiểm',
+      'Thiệt hại xảy ra khi xe đang được cho thuê chưa được khai báo trong hợp đồng',
+    ],
+    tip:'Nếu tai nạn nhỏ và bên kia có lỗi rõ ràng, có thể yêu cầu bảo hiểm bên kia (TNDS) chi trả trước. Chỉ dùng bảo hiểm thân vỏ của bạn khi bên kia không hợp tác hoặc tự gây tai nạn.',
+  },
+  thuykick: {
+    detail: `Thủy kích xảy ra khi nước ngập vào buồng đốt động cơ trong khi piston đang nén. Do nước không nén được như không khí, áp lực cực lớn làm gãy thanh truyền, vỡ piston hoặc hỏng trục khuỷu. Chi phí sửa thủy kích dao động 40 - 120 triệu đồng. Đây là tình huống KHÔNG được bảo hiểm trong gói cơ bản - cần mua thêm quyền lợi "Thiệt hại do thủy kích" hoặc "Thiên tai & lũ lụt nâng cao".`,
+    insurers:[
+      {id:'pvi',    status:'addon', note:'Có quyền lợi "Thủy kích" riêng biệt', cost:'+1.8-2.5tr/năm'},
+      {id:'liberty',status:'addon', note:'Gói "Water Damage" - phổ biến với xe Mỹ/Hàn', cost:'+1.5-2.2tr/năm'},
+      {id:'baoviet',status:'addon', note:'Gói "Thiên tai nâng cao" gồm cả thủy kích', cost:'+2-3tr/năm'},
+      {id:'pjico',  status:'addon', note:'Có điều khoản mở rộng theo tỉnh thành', cost:'+1.5-2tr/năm'},
+      {id:'mic',    status:'addon', note:'Ưu tiên xe VinFast - pin điện không được BH thủy kích', cost:'+2-2.5tr/năm'},
+      {id:'dby',    status:'addon', note:'Garage BMW/Mercedes xử lý thủy kích chuyên nghiệp', cost:'+2.5-3.5tr/năm'},
+      {id:'baolong',status:'addon', note:'Điều khoản ít loại trừ hơn các nhà BH khác', cost:'+1.5-2tr/năm'},
+      {id:'pti',    status:'addon', note:'Mạnh về xe bán tải - SUV dễ bị thủy kích khi lội nước', cost:'+2-3tr/năm'},
+      {id:'gic',    status:'no',    note:'Không cung cấp quyền lợi thủy kích độc lập', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'DỪNG XE NGAY - Không đề máy lại', desc:'Đây là bước quan trọng nhất. Nếu xe chết máy trong vùng ngập, KHÔNG đề lại dù chỉ 1 lần. Mỗi lần đề khi đã có nước vào máy là một lần làm hỏng hoàn toàn. Tắt hết công tắc điện, rút chìa khóa.', time:'Ngay lập tức', icon:'🚫'},
+      {step:2, title:'Đẩy xe ra khỏi vùng ngập', desc:'Nhờ người đẩy xe đến nơi cao ráo. Không kéo xe bằng dây thừng vì có thể làm hỏng thêm. Chụp ảnh xe trong vùng ngập trước khi di chuyển làm bằng chứng.', time:'Trong 30 phút', icon:'🚗'},
+      {step:3, title:'Gọi hotline nhà bảo hiểm', desc:'Báo sự việc trong 24 giờ. Cung cấp: vị trí ngập, độ sâu nước ước tính, xe có bị chết máy không, đã đề lại chưa. Thông tin này ảnh hưởng trực tiếp đến quyết định bồi thường.', time:'Trong 24 giờ', icon:'📞'},
+      {step:4, title:'Không mở nắp capô hoặc tự tháo máy', desc:'Chờ giám định viên đến. Việc tự mở máy có thể làm mất bằng chứng mức nước ngập vào. Giám định viên cần kiểm tra dầu động cơ (có bọt = nước vào) và mức nước trong bộ lọc gió.', time:'Chờ giám định', icon:'🔒'},
+      {step:5, title:'Giám định & xác nhận mức nước', desc:'Giám định viên kiểm tra: mức dầu, bộ lọc gió, ảnh hiện trường, dữ liệu đồng hồ. Nếu có CCTV khu vực ngập, thu thập để làm bằng chứng bổ sung.', time:'1-2 ngày', icon:'🔍'},
+      {step:6, title:'Sửa chữa tại garage ủy quyền', desc:'Thủy kích thường cần tháo toàn bộ động cơ để làm sạch và kiểm tra. Chỉ nên đưa xe đến garage có chuyên môn về máy, không phải garage sơn - thân vỏ thông thường.', time:'7-21 ngày', icon:'🔧'},
+    ],
+    exclusions:[
+      'Đã đề lại máy sau khi xe ngập nước (nguyên nhân gây thiệt hại thêm)',
+      'Không có quyền lợi thủy kích trong hợp đồng bảo hiểm',
+      'Xe điện (pin lithium) bị ngập - pin điện có điều khoản riêng không thuộc thủy kích thông thường',
+      'Xe bị ngập do chủ xe cố tình lái vào vùng đã biết bị ngập sâu (trên 30cm)',
+      'Hư hỏng do rỉ sét lâu dài sau khi ngập (thiệt hại phát sinh chứ không phải tức thời)',
+    ],
+    tip:'Nếu bạn ở Hà Nội, TP.HCM, Đà Nẵng hoặc các tỉnh hay ngập mùa mưa, quyền lợi thủy kích chi phí thêm khoảng 2 triệu/năm nhưng tiết kiệm được 40-120 triệu khi xảy ra sự cố. ROI rất rõ ràng.',
+  },
+  fire: {
+    detail: `Bảo hiểm thân vỏ cơ bản CHÉ cháy do tác nhân bên ngoài (tai nạn, cháy lan từ xe khác, cháy do đường điện). Điều quan trọng cần phân biệt: cháy do lỗi kỹ thuật của nhà sản xuất (recall xe) thuộc trách nhiệm của hãng xe, không phải bảo hiểm thân vỏ. Tài sản cá nhân trong xe (laptop, ví tiền, điện thoại) bị cháy không được bồi thường.`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Bồi thường cháy 100% thiệt hại trừ khấu hao phụ tùng', cost:''},
+      {id:'liberty',status:'base', note:'Ưu tiên xe Mỹ/Hàn - kinh nghiệm xử lý cháy điện tử', cost:''},
+      {id:'baoviet',status:'base', note:'Điều tra nguyên nhân cháy trong 5 ngày làm việc', cost:''},
+      {id:'pjico',  status:'base', note:'Quy trình xử lý cháy có biên bản Công an bắt buộc', cost:''},
+      {id:'mic',    status:'base', note:'Xe điện VinFast cháy pin - điều khoản riêng cần xác nhận', cost:''},
+      {id:'dby',    status:'base', note:'Garage BMW/Mercedes xử lý cháy hệ thống điện cao cấp', cost:''},
+      {id:'baolong',status:'base', note:'Bao gồm cả thiệt hại do cháy lan từ công trình bên cạnh', cost:''},
+      {id:'pti',    status:'base', note:'Mạnh về xe bán tải - hệ thống nhiên liệu diesel', cost:''},
+      {id:'gic',    status:'base', note:'Phải có biên bản điều tra nguyên nhân cháy rõ ràng', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Gọi cứu hỏa 114 & đảm bảo an toàn', desc:'Ưu tiên thoát người ra khỏi xe và khu vực an toàn. Gọi 114. KHÔNG tự dập lửa xe đang cháy lớn vì nguy hiểm tính mạng. Chụp video từ xa nếu an toàn.', time:'Ngay lập tức', icon:'🚒'},
+      {step:2, title:'Trình báo Công an', desc:'Bắt buộc lập biên bản CA đối với mọi vụ cháy xe. CA sẽ điều tra nguyên nhân - đây là tài liệu cốt lõi để nhà BH quyết định bồi thường hay không. Không có biên bản CA = từ chối bồi thường.', time:'Trong ngày', icon:'📋'},
+      {step:3, title:'Liên hệ nhà bảo hiểm trong 24 giờ', desc:'Cung cấp: số hợp đồng, địa điểm, thời gian, mô tả sơ bộ, có biên bản CA chưa. Nhà BH cử giám định viên phối hợp với cơ quan điều tra.', time:'Trong 24 giờ', icon:'📞'},
+      {step:4, title:'Chờ kết quả điều tra nguyên nhân', desc:'Đây là bước lâu nhất. CA + Phòng cháy chữa cháy có thể mất 5-15 ngày để có kết luận nguyên nhân cháy. Kết luận này xác định: cháy được BH hay không.', time:'5-15 ngày', icon:'🔍'},
+      {step:5, title:'Giám định thiệt hại & định giá', desc:'Sau khi có kết quả điều tra, giám định viên đánh giá xe: cháy toàn phần (total loss - bồi thường theo giá xe hiện tại) hay cháy bộ phận (sửa chữa từng phần).', time:'2-5 ngày', icon:'📊'},
+      {step:6, title:'Nhận bồi thường', desc:'Cháy toàn phần: nhận tiền = giá trị xe tại thời điểm sự cố (đã trừ khấu hao). Cháy bộ phận: sửa tại garage ủy quyền, nhà BH trả thẳng cho garage.', time:'7-14 ngày', icon:'💰'},
+    ],
+    exclusions:[
+      'Cháy do nhà sản xuất xe triệu hồi (recall) - trách nhiệm của hãng xe',
+      'Cháy do bạo loạn, chiến tranh, khủng bố',
+      'Tài sản cá nhân trong xe bị cháy (laptop, điện thoại, tiền mặt)',
+      'Cháy do lỗi độ chế, nâng cấp điện - hệ thống âm thanh không chính hãng',
+      'Cháy bắt nguồn từ hàng hóa đang vận chuyển trong xe',
+    ],
+    tip:'Luôn chụp ảnh/video xe từ xa trước khi cứu hỏa dập tắt - đây là bằng chứng quan trọng về mức thiệt hại ban đầu. Sau khi dập tắt, không cho ai đụng vào xe trước khi CA lập biên bản.',
+  },
+  theft: {
+    detail: `Mất cắp toàn bộ xe được bảo hiểm khi: xe bị trộm và không tìm lại được trong vòng 30 ngày kể từ ngày trình báo. Mức bồi thường = giá trị xe tại thời điểm mất (đã khấu hao theo số năm sử dụng). Điều kiện bắt buộc: trình báo Công an trong 24 giờ và có xác nhận bằng văn bản của CA sau 30 ngày không tìm lại.`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Bồi thường nhanh nhất sau khi CA xác nhận', cost:''},
+      {id:'liberty',status:'base', note:'Có dịch vụ định vị xe - hỗ trợ tìm xe trước khi bồi thường', cost:''},
+      {id:'baoviet',status:'base', note:'Hệ thống phối hợp CA toàn quốc', cost:''},
+      {id:'pjico',  status:'base', note:'Xử lý tốt xe mất ở khu vực tỉnh thành', cost:''},
+      {id:'mic',    status:'base', note:'Hỗ trợ định vị VinFast qua ứng dụng', cost:''},
+      {id:'dby',    status:'base', note:'Phối hợp hãng xe (BMW/Mercedes) tra số khung tìm xe', cost:''},
+      {id:'baolong',status:'base', note:'Mức khấu hao thấp hơn mặt bằng thị trường', cost:''},
+      {id:'pti',    status:'base', note:'Bao gồm cả mất cắp khi xe đang giao cho xưởng sửa', cost:''},
+      {id:'gic',    status:'base', note:'Chuyên xe nhập - có kênh phối hợp Interpol', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Trình báo Công an trong 24 giờ', desc:'Đây là điều kiện tiên quyết và không thể thiếu. Đến CA nơi xe bị mất (hoặc CA phường/xã nơi phát hiện mất) để lập biên bản trình báo. Cung cấp: biển số, số khung, số máy, màu xe, vị trí đỗ cuối cùng.', time:'Trong 24 giờ', icon:'🚔'},
+      {step:2, title:'Thông báo nhà bảo hiểm', desc:'Gọi hotline và cung cấp biên bản trình báo CA. Nhà BH sẽ yêu cầu: hợp đồng bảo hiểm, giấy đăng ký xe, biên bản CA, và xác nhận bạn không đề chìa trong xe.', time:'Ngay sau khi có biên bản CA', icon:'📞'},
+      {step:3, title:'Phối hợp điều tra với Công an', desc:'CA mở hồ sơ điều tra, nhà BH phối hợp. Trong thời gian này, nhà BH có thể thuê thám tử hoặc công ty định vị để hỗ trợ tìm xe. Bạn cần hợp tác đầy đủ với cả hai bên.', time:'30 ngày', icon:'🔍'},
+      {step:4, title:'Nhận xác nhận không tìm được xe', desc:'Sau 30 ngày từ ngày trình báo, nếu không tìm lại được, CA cấp văn bản xác nhận. Đây là tài liệu để nhà BH chính thức xử lý bồi thường.', time:'Ngày thứ 30-35', icon:'📄'},
+      {step:5, title:'Định giá xe tại thời điểm mất', desc:'Nhà BH thuê công ty định giá (hoặc tự định giá) dựa trên: năm sản xuất, số km, tình trạng trước khi mất (theo hồ sơ bảo dưỡng), và giá thị trường hiện tại.', time:'3-5 ngày', icon:'📊'},
+      {step:6, title:'Nhận tiền bồi thường', desc:'Chuyển khoản về tài khoản chủ xe sau khi ký biên bản bàn giao. Nếu xe tìm lại được nhưng đã bị hỏng/bán, bồi thường theo thiệt hại thực tế.', time:'5-10 ngày sau định giá', icon:'💰'},
+    ],
+    exclusions:[
+      'Chủ xe để chìa khóa trong xe hoặc không khóa xe trước khi bị mất',
+      'Trình báo CA sau hơn 24 giờ kể từ khi phát hiện mất',
+      'Người thân/nhân viên được cho phép dùng xe tự lấy đi không trả (không phải trộm)',
+      'Mất một phần xe (bánh, đầu màn hình) không được xem là mất cắp toàn bộ',
+      'Xe đang được cho thuê khi bị mất và không khai báo trong hợp đồng BH',
+    ],
+    tip:'Lắp thiết bị định vị GPS (2-5 triệu) giúp tăng khả năng tìm lại xe và cũng là bằng chứng rõ ràng về vị trí xe trước khi mất, hỗ trợ quá trình bồi thường.',
+  },
+  parttheft: {
+    detail: `Mất cắp bộ phận là quyền lợi bổ sung, không có trong gói cơ bản. Phổ biến nhất: trộm 4 bánh xe + mâm, catalytic converter (ống xả khử độc), đầu màn hình, camera hành trình. Điều kiện: bộ phận phải là trang bị gốc của xe (theo hợp đồng mua xe hoặc hóa đơn phụ kiện được khai báo).`,
+    insurers:[
+      {id:'pvi',    status:'addon', note:'Quyền lợi "Mất cắp phụ tùng" - phải khai báo danh sách', cost:'+700K-1tr/năm'},
+      {id:'liberty',status:'addon', note:'Bao gồm cả thiết bị âm thanh chính hãng', cost:'+800K-1.2tr/năm'},
+      {id:'baoviet',status:'addon', note:'Giới hạn bồi thường 1 vụ/năm, tối đa 20 triệu', cost:'+600K-900K/năm'},
+      {id:'pjico',  status:'addon', note:'Cần danh sách phụ tùng đăng ký từ đầu hợp đồng', cost:'+700K-1tr/năm'},
+      {id:'mic',    status:'no',    note:'Không cung cấp quyền lợi mất cắp bộ phận', cost:''},
+      {id:'dby',    status:'addon', note:'Bao gồm cả bộ phận nhập khẩu chính hãng BMW/Mercedes', cost:'+1.5-2.5tr/năm'},
+      {id:'baolong',status:'addon', note:'Điều khoản linh hoạt, ít loại trừ nhất trong nhóm', cost:'+600K-800K/năm'},
+      {id:'pti',    status:'addon', note:'Mạnh về xe bán tải - bánh xe & catalytic converter', cost:'+800K-1.2tr/năm'},
+      {id:'gic',    status:'no',    note:'Không cung cấp quyền lợi mất cắp bộ phận', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Chụp ảnh hiện trường ngay', desc:'Ghi lại vị trí xe, những bộ phận bị lấy cắp, dấu vết để lại. Nếu có camera hành trình hoặc camera bãi đỗ, lưu lại footage ngay - nhiều camera ghi đè sau 24-48 giờ.', time:'Ngay lập tức', icon:'📸'},
+      {step:2, title:'Trình báo Công an & nhà bảo hiểm', desc:'Trình báo CA trong vòng 24 giờ. Mô tả rõ: bộ phận nào bị mất, số lượng, tình trạng trước khi mất. Liên hệ ngay nhà BH để kích hoạt quyền lợi bồi thường.', time:'Trong 24 giờ', icon:'📞'},
+      {step:3, title:'Cung cấp hóa đơn & chứng từ bộ phận', desc:'Nhà BH yêu cầu: hóa đơn mua bộ phận (nếu là phụ kiện thêm), ảnh xe trước khi mất (để xác nhận bộ phận từng có), danh sách trang bị theo hợp đồng mua xe gốc.', time:'2-3 ngày', icon:'📋'},
+      {step:4, title:'Giám định & định giá bộ phận', desc:'Giám định viên xác nhận bộ phận bị mất và định giá theo giá thay thế chính hãng hoặc OEM. Giá trị bộ phận cũ được tính theo khấu hao năm.', time:'2-4 ngày', icon:'🔍'},
+      {step:5, title:'Lắp thay thế & nhận bồi thường', desc:'Đưa xe đến garage ủy quyền để lắp bộ phận thay thế. Nhà BH trả thẳng cho garage hoặc hoàn trả sau khi bạn xuất trình hóa đơn sửa chữa.', time:'3-7 ngày', icon:'💰'},
+    ],
+    exclusions:[
+      'Bộ phận độ/nâng cấp sau khi mua xe không được khai báo trong hợp đồng BH',
+      'Camera hành trình, thiết bị giải trí lắp thêm không có trong danh sách đăng ký',
+      'Mất cắp xảy ra khi xe đang gửi tại xưởng sửa chữa hoặc bãi giữ có bảo vệ',
+      'Không có bằng chứng hoặc biên bản CA xác nhận mất cắp',
+      'Bộ phận có ký hiệu độ chế, không phải tiêu chuẩn xuất xưởng',
+    ],
+    tip:'Trước khi ký hợp đồng BH, liệt kê đầy đủ tất cả phụ kiện bạn đã hoặc sẽ lắp (camera 360, cảm biến lùi, màn hình nâng cấp). Khai báo sai/thiếu = không được bồi thường những thứ đó.',
+  },
+  natural: {
+    detail: `Thiên tai là tình huống có phạm vi bồi thường khó đoán nhất. Quy tắc cơ bản: cây đổ đè lên xe khi đỗ thường được bảo hiểm cơ bản (tác nhân bên ngoài). Nhưng lũ lụt làm hỏng thân vỏ, bão làm lật xe cần xem điều khoản từng hợp đồng. Thủy kích (nước vào máy) là quyền lợi riêng hoàn toàn tách biệt.`,
+    insurers:[
+      {id:'pvi',    status:'base',  note:'Cây đổ, sét đánh trong gói cơ bản. Bão/lũ cần gói nâng cao', cost:'Nâng cao: +1.5-2tr'},
+      {id:'liberty',status:'base',  note:'Gói "Natural Disaster" bao gồm cả bão, lũ thân vỏ', cost:'Nâng cao: +1.2-1.8tr'},
+      {id:'baoviet',status:'base',  note:'Cơ bản có cây đổ, sét đánh. Lũ lụt cần "Thiên tai nâng cao"', cost:'Nâng cao: +2-3tr'},
+      {id:'pjico',  status:'base',  note:'Mạnh về bảo hiểm thiên tai vùng tỉnh thành/bờ biển', cost:'Nâng cao: +1.5-2tr'},
+      {id:'mic',    status:'base',  note:'Xe VinFast điện - lũ lụt có điều khoản pin riêng', cost:'Cần xác nhận'},
+      {id:'dby',    status:'addon', note:'Thiên tai nâng cao là bắt buộc để có đủ phạm vi', cost:'+2.5-4tr/năm'},
+      {id:'baolong',status:'base',  note:'Điều khoản thiên tai rộng nhất trong nhóm cơ bản', cost:'Nâng cao: +1.5-2tr'},
+      {id:'pti',    status:'base',  note:'Mạnh về xe bán tải - thiên tai vùng nông thôn', cost:'Nâng cao: +1.5-2tr'},
+      {id:'gic',    status:'addon', note:'Xe nhập châu Âu - linh kiện khan hiếm sau thiên tai', cost:'+2-3tr/năm'},
+    ],
+    claimSteps:[
+      {step:1, title:'Chụp ảnh ngay khi an toàn tiếp cận', desc:'Ghi lại: xe và vật thể gây thiệt hại (cây, tường, cột điện), cảnh quan xung quanh (ngập lụt, cây đổ hàng loạt). Ảnh timestamp là bằng chứng quan trọng cho nguyên nhân thiên tai.', time:'Ngay khi an toàn', icon:'📸'},
+      {step:2, title:'Liên hệ nhà bảo hiểm & báo tin tức', desc:'Thông báo nhà BH trong 24-72 giờ (thiên tai được nới rộng hơn tai nạn thông thường). Thu thập tin tức, thông báo chính quyền về thiên tai tại khu vực - là bằng chứng khách quan.', time:'24-72 giờ', icon:'📞'},
+      {step:3, title:'Không di chuyển xe nếu đang bị ngập', desc:'Nếu xe đang ngập nước nhưng chưa thủy kích, chờ nước rút rồi đánh giá. Nếu xe bị cây đổ, không tự ý kéo - gọi dịch vụ cứu hộ có chuyên môn.', time:'Chờ điều kiện an toàn', icon:'⚠️'},
+      {step:4, title:'Giám định thiệt hại sau thiên tai', desc:'Giám định viên đánh giá từng hạng mục: thân vỏ, hệ thống điện, kính, nội thất. Thiên tai thường gây thiệt hại nhiều bộ phận cùng lúc - cần danh sách đầy đủ trong biên bản giám định.', time:'3-7 ngày', icon:'🔍'},
+      {step:5, title:'Sửa chữa ưu tiên theo mức độ', desc:'Thiên tai lớn làm nhiều xe bị hư hỏng cùng lúc, garage có thể quá tải. Nhà BH ưu tiên bố trí garage cho xe hư nặng, xe ít hư có thể chờ 1-2 tuần.', time:'Tùy mức thiệt hại', icon:'🔧'},
+      {step:6, title:'Nhận bồi thường', desc:'Bồi thường được xử lý sau khi hoàn tất sửa chữa và xác nhận từ garage. Trường hợp thiệt hại toàn phần (total loss), quy trình tương tự mất cắp toàn bộ xe.', time:'5-14 ngày sau sửa', icon:'💰'},
+    ],
+    exclusions:[
+      'Ngập nước vào động cơ (thủy kích) - cần quyền lợi riêng biệt',
+      'Hư hỏng do bão tại khu vực mà chính quyền đã có lệnh cấm hoặc khuyến cáo sơ tán',
+      'Thiệt hại xảy ra dần dần theo thời gian (rỉ sét do ẩm ướt kéo dài - không phải tức thời)',
+      'Thiên tai ở khu vực không có trong phạm vi địa lý của hợp đồng bảo hiểm',
+      'Xe không được đỗ đúng quy định (đỗ ở lòng đường, trên sông, kênh rạch)',
+    ],
+    tip:'Nếu bạn sống ở vùng hay bị lũ/bão (miền Trung, ĐBSCL), cần phân biệt rõ 3 quyền lợi: (1) Thiên tai thân vỏ, (2) Thủy kích động cơ, (3) Ngập điện tử. Ba quyền lợi này tách biệt và có mức phí riêng.',
+  },
+  glass: {
+    detail: `Vỡ kính đơn lẻ (không kèm va chạm) thường được bồi thường trong gói cơ bản mà không bị cộng vào lịch sử bồi thường tai nạn. Điều này có nghĩa là thay kính không ảnh hưởng đến phí bảo hiểm năm sau. Phạm vi: kính chắn gió, kính cửa, kính hậu. Không bao gồm: gương chiếu hậu, đèn pha, đèn hậu.`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Thay kính chính hãng tại 200+ garage, không khấu trừ', cost:''},
+      {id:'liberty',status:'base', note:'Có đối tác kính 3M và AGC tại 30 tỉnh thành', cost:''},
+      {id:'baoviet',status:'base', note:'Kính xe cũ hoặc nhập hiếm: đặt hàng trước 2-4 tuần', cost:''},
+      {id:'pjico',  status:'base', note:'Ưu tiên kính OEM (tương đương chính hãng, giá thấp hơn 30%)', cost:''},
+      {id:'mic',    status:'base', note:'Kính VinFast có kho dự trữ tại nhà máy', cost:''},
+      {id:'dby',    status:'base', note:'Chỉ thay kính chính hãng BMW/Mercedes/Audi - giá cao', cost:''},
+      {id:'baolong',status:'base', note:'Chấp nhận cả kính chính hãng lẫn OEM theo lựa chọn chủ xe', cost:''},
+      {id:'pti',    status:'base', note:'Mạnh về kính xe tải, bán tải cỡ lớn', cost:''},
+      {id:'gic',    status:'base', note:'Kính xe Volvo, Subaru nhập - đặt hàng 3-6 tuần', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Chụp ảnh vị trí & mức độ vỡ', desc:'Chụp ảnh rõ: vết vỡ, vị trí trên kính, nguyên nhân nếu xác định được (vết đá văng, dụng cụ cứng). Không tự dán kính bằng băng keo hoặc vật liệu tạm trước khi báo BH.', time:'Ngay khi phát hiện', icon:'📸'},
+      {step:2, title:'Liên hệ nhà bảo hiểm', desc:'Kính vỡ không cần báo CA (trừ khi nghi do phá hoại). Gọi hotline hoặc dùng app. Nhà BH sẽ chỉ định garage hoặc cho phép tự chọn.', time:'Trong 24-48 giờ', icon:'📞'},
+      {step:3, title:'Đến garage kính được chỉ định', desc:'Nhiều nhà BH có đối tác kính riêng - đưa xe đến đây để được thanh toán thẳng. Nếu tự chọn garage, nhà BH sẽ hoàn trả sau khi xuất trình hóa đơn.', time:'Sau khi có xác nhận', icon:'🪟'},
+      {step:4, title:'Thay kính & xác nhận chất lượng', desc:'Kiểm tra: kính mới đúng mã xe, không có bọt khí hay vết xước, gioăng viền kín khít. Ký xác nhận sau khi hài lòng. Kính chính hãng thường có bảo hành 12 tháng.', time:'Cùng ngày', icon:'✅'},
+      {step:5, title:'Nhận bồi thường (nếu tự ứng trước)', desc:'Nếu bạn đã ứng trước tiền thay kính, nộp hóa đơn và biên bản giám định cho nhà BH. Hoàn trả trong 3-5 ngày làm việc.', time:'3-5 ngày', icon:'💰'},
+    ],
+    exclusions:[
+      'Kính vỡ do va chạm (đã được tính trong bồi thường tai nạn chính, không tính thêm)',
+      'Gương chiếu hậu, gương cạnh (không phải kính thân xe)',
+      'Đèn pha, đèn hậu, đèn xi-nhan (không thuộc kính bảo hiểm)',
+      'Kính bị vỡ do chủ xe tự gây ra (đập kính khóa chìa, v.v.)',
+      'Vết nứt nhỏ không lan rộng thêm không cần thay ngay (thường dưới mức khấu trừ)',
+    ],
+    tip:'Vết nứt kính chắn gió nhỏ (dưới 2cm) có thể "bơm keo" để ngăn lan rộng - chi phí 500K-1tr, không cần khai bảo hiểm và không ảnh hưởng phí năm sau. Chỉ thay kính khi vết nứt đã lan rộng hoặc che tầm nhìn.',
+  },
+  parked: {
+    detail: `Xe đỗ bị va chạm là tình huống thường gặp ở đô thị - xe đỗ trong bãi hoặc ven đường bị xe khác đâm hoặc trầy xước, bên gây thiệt hại bỏ trốn. Gói cơ bản bồi thường thiệt hại thực tế, nhưng cần có bằng chứng xác nhận nguyên nhân bên ngoài (camera, nhân chứng, hoặc dấu vết va chạm rõ ràng).`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Chấp nhận ảnh camera hành trình làm bằng chứng', cost:''},
+      {id:'liberty',status:'base', note:'Hệ thống xử lý ảnh AI để đánh giá thiệt hại từ xa', cost:''},
+      {id:'baoviet',status:'base', note:'Cần biên bản CA nếu thiệt hại trên 15 triệu', cost:''},
+      {id:'pjico',  status:'base', note:'Chấp nhận xác nhận của ban quản lý tòa nhà/bãi đỗ', cost:''},
+      {id:'mic',    status:'base', note:'Phối hợp camera VinHome (nếu đỗ trong khu Vinhomes)', cost:''},
+      {id:'dby',    status:'base', note:'Yêu cầu biên bản CA cho xe sang (thiệt hại thường cao)', cost:''},
+      {id:'baolong',status:'base', note:'Linh hoạt nhất về bằng chứng - chấp nhận nhân chứng', cost:''},
+      {id:'pti',    status:'base', note:'Bao gồm thiệt hại khi xe bán tải đỗ công trường', cost:''},
+      {id:'gic',    status:'base', note:'Yêu cầu ảnh chất lượng cao cho xe nhập châu Âu', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Không di chuyển xe - thu thập bằng chứng ngay', desc:'Giữ nguyên xe. Chụp ảnh: toàn cảnh xe, điểm va chạm, sơn xe gây thiệt hại để lại trên xe bạn, dấu vết xe khác. Nếu có nhân chứng, lấy số điện thoại ngay.', time:'Ngay khi phát hiện', icon:'📸'},
+      {step:2, title:'Xem camera khu vực', desc:'Yêu cầu ban quản lý tòa nhà, bãi đỗ, hoặc cửa hàng gần đó cung cấp footage camera. Nhiều nhà BH chấp nhận ảnh chụp màn hình từ camera làm bằng chứng thay cho biên bản CA.', time:'Trong vài giờ', icon:'📹'},
+      {step:3, title:'Trình báo CA (nếu thiệt hại lớn)', desc:'Nếu thiệt hại ước tính trên 10-15 triệu hoặc không có camera làm bằng chứng, nên lập biên bản CA để đảm bảo quyền bồi thường. CA cũng có thể hỗ trợ xác định xe gây thiệt hại qua camera giao thông.', time:'Trong ngày', icon:'📋'},
+      {step:4, title:'Liên hệ nhà bảo hiểm', desc:'Gửi ảnh bằng chứng và mô tả sự việc. Nhà BH xem xét và quyết định có cần giám định viên trực tiếp không, hay có thể xử lý qua ảnh (digital claim).', time:'Trong 24-48 giờ', icon:'📞'},
+      {step:5, title:'Giám định & sửa chữa', desc:'Nếu thiệt hại nhỏ (dưới mức khấu trừ), cân nhắc tự sửa thay vì khai bảo hiểm - tránh ảnh hưởng lịch sử bồi thường. Nếu đáng khai: đưa xe đến garage ủy quyền sau khi ký biên bản giám định.', time:'3-7 ngày', icon:'🔧'},
+      {step:6, title:'Nhận bồi thường', desc:'Trừ phần khấu trừ đã thỏa thuận. Nếu tìm được xe gây thiệt hại và bên đó có TNDS/thân vỏ, nhà BH sẽ đòi bồi hoàn từ bên kia - bạn được bồi thường đầy đủ hơn.', time:'3-5 ngày', icon:'💰'},
+    ],
+    exclusions:[
+      'Trầy xước nhỏ dưới mức khấu trừ (chủ xe tự chịu - thường 500K-1tr)',
+      'Không có bất kỳ bằng chứng nào về va chạm bên ngoài',
+      'Xe đỗ sai quy định (lòng đường, bít lối thoát hiểm)',
+      'Hao mòn tự nhiên bề mặt sơn do thời tiết, bụi bẩn',
+      'Thiệt hại từ vật rơi từ công trình - thuộc trách nhiệm chủ công trình',
+    ],
+    tip:'Thiệt hại nhỏ (dưới 2-3 triệu) thường không nên khai bảo hiểm. Lịch sử có bồi thường có thể làm phí tăng 5-10% năm sau, tổng thiệt hại 5 năm cao hơn nhiều so với tự bỏ tiền sửa lần đó.',
+  },
+};
+
+const SIT_INSURER_MAP = Object.fromEntries(INSURERS.map(i=>[i.id, i]));
+
+function renderSituationDetail(id){
+  const s = SITUATIONS.find(x=>x.id===id);
+  const d = SIT_DETAIL[id];
+  if(!s || !d) return;
+  const badgeCls = s.baseCover ? 'green' : 'amber';
+
+  const insurerRows = d.insurers.map(r=>{
+    const ins = SIT_INSURER_MAP[r.id];
+    if(!ins) return '';
+    const statusLabel = {base:'Gói cơ bản', addon:'Quyền lợi nâng cao', no:'Không hỗ trợ'}[r.status];
+    return `<div class="sit-insurer-row">
+      <div class="sit-insurer-dot" style="background:${ins.color}"></div>
+      <div style="flex:1">
+        <div class="sit-insurer-name">${ins.name}</div>
+        <div class="sit-insurer-note">${r.note}</div>
+        ${r.cost?`<div class="sit-insurer-cost">${r.cost}</div>`:''}
+      </div>
+      <span class="sit-insurer-status ${r.status}">${statusLabel}</span>
+    </div>`;
+  }).join('');
+
+  const claimSteps = d.claimSteps.map(step=>`
+    <div class="claim-step">
+      <div class="claim-step-num">${step.step}</div>
+      <div class="claim-step-body">
+        <div class="claim-step-title">${step.icon} ${step.title}</div>
+        <div class="claim-step-desc">${step.desc}</div>
+        <div class="claim-step-time">⏱ ${step.time}</div>
+      </div>
+    </div>`).join('');
+
+  const exclItems = d.exclusions.map(e=>`<li>${e}</li>`).join('');
+
+  document.getElementById('sit-detail-content').innerHTML = `
+    <div class="sit-detail-hero">
+      <div class="sit-detail-icon">${s.icon}</div>
+      <div class="sit-detail-meta">
+        <div style="margin-bottom:10px">
+          <span class="sit-badge ${badgeCls}" style="font-size:11px;padding:4px 10px;border-radius:6px">${s.badge}</span>
+        </div>
+        <div class="sit-detail-title">${s.name}</div>
+        <div class="sit-detail-desc">${d.detail}</div>
+      </div>
+    </div>
+
+    <div class="sit-detail-grid">
+
+      <!-- Nhà bảo hiểm chi trả -->
+      <div class="sit-detail-section" style="grid-column:1/-1">
+        <div class="sit-detail-section-label">Nhà bảo hiểm</div>
+        <div class="sit-detail-section-title">Ai chi trả tình huống này?</div>
+        <div>${insurerRows}</div>
+      </div>
+
+      <!-- Quy trình yêu cầu bồi thường -->
+      <div class="sit-detail-section">
+        <div class="sit-detail-section-label">Quy trình</div>
+        <div class="sit-detail-section-title">Các bước yêu cầu bồi thường</div>
+        <div class="claim-steps">${claimSteps}</div>
+      </div>
+
+      <!-- Cột phải: loại trừ + tip -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="sit-detail-section">
+          <div class="sit-detail-section-label">Điều khoản loại trừ</div>
+          <div class="sit-detail-section-title">Trường hợp KHÔNG được bồi thường</div>
+          <ul class="sit-excl-list">${exclItems}</ul>
+        </div>
+        <div class="sit-detail-section">
+          <div class="sit-detail-section-label">Lưu ý thực tế</div>
+          <div class="sit-tip-box"><p>${d.tip}</p></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sit-detail-cta">
+      <div style="flex:1;min-width:220px">
+        <div style="font-size:15px;font-weight:900;margin-bottom:4px">So sánh báo giá theo tình huống này</div>
+        <div style="font-size:13px;color:var(--muted)">Chọn đúng gói có bảo hiểm tình huống ${s.name.toLowerCase()}.</div>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="showView('landing')">Xem báo giá &nbsp;›</button>
+    </div>
+  `;
+}
+
+function showSituationDetail(id){
+  renderSituationDetail(id);
+  showView('situation-detail');
+}
+
+/* ── URL param routing (for sidebar sub-tool links) ── */
+(function(){
+  const p = new URLSearchParams(location.search);
+  const v = p.get('view');
+  if(v === 'situations') { renderSituations(); showView('situations'); }
+  if(v === 'situation-detail') {
+    const id = p.get('id');
+    renderSituations();
+    if(id) { renderSituationDetail(id); showView('situation-detail'); }
+    else { showView('situations'); }
+  }
+})();
 
 function showToast(msg){
   const t = document.getElementById('toast');
