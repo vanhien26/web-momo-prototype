@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bảo Hiểm Ô Tô | MoMo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    :root{
+      --pink:#a50064;--pink2:#c8007a;--pink-bg:#fff0f8;--pink-light:#fce4f3;
+      --ink:#17131a;--muted:#6b6370;--line:#e8e3e8;--soft:#f7f5f7;
+      --green:#007a3d;--green-bg:#e6f5ee;
+      --amber:#b35c00;--amber-bg:#fff4e5;
+      --shadow:0 20px 60px rgba(37,19,32,.11);
+      --radius:20px;--font:'Be Vietnam Pro',system-ui,sans-serif;
+    }
+    body{font-family:var(--font);color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+    button,input,select{font:inherit}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%}
+
+    /* ── Layout ── */
+    .shell{width:min(1180px,calc(100% - 40px));margin:auto}
+
+    /* ── Topbar ── */
+    .topbar{height:64px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.95);backdrop-filter:blur(14px);position:sticky;top:0;z-index:200}
+    .topbar-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:11px}
+    .brand img{width:40px;height:40px;border-radius:12px}
+    .brand-copy strong{display:block;font-size:15px;font-weight:800}
+    .brand-copy small{color:var(--muted);font-size:11px}
+    .back-link{color:var(--muted);font-size:13px;font-weight:700}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:999px;padding:11px 20px;font-weight:800;cursor:pointer;transition:.18s;text-decoration:none;font-size:14px}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--pink);color:#fff;box-shadow:0 8px 24px rgba(165,0,100,.22)}
+    .btn-primary:hover{background:var(--pink2)}
+    .btn-outline{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+    .btn-lg{padding:15px 28px;font-size:16px}
+    .btn-full{width:100%}
+    .btn-ghost{background:transparent;border:0;color:var(--muted);padding:8px;cursor:pointer}
+
+    /* ── Breadcrumb ── */
+    .breadcrumb{padding:14px 0 0;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+    .breadcrumb a{color:var(--muted)}
+    .breadcrumb a:hover{color:var(--ink)}
+    .breadcrumb span{color:var(--ink);font-weight:600}
+
+    /* ── Tab nav ── */
+    .tab-nav{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:64px;z-index:100}
+    .tab-inner{display:flex;gap:0}
+    .tab-link{padding:16px 20px;font-size:14px;font-weight:700;color:var(--muted);border-bottom:2.5px solid transparent;cursor:pointer;transition:.15s;white-space:nowrap}
+    .tab-link.active{color:var(--pink);border-bottom-color:var(--pink)}
+    .tab-link:hover{color:var(--ink)}
+
+    /* ── Hero ── */
+    .hero{position:relative;overflow:hidden;background:#1a0f17;min-height:480px;color:#fff}
+    .hero-bg{position:absolute;inset:0;background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, #2e1a28 0%, #1a0f17 50%, #0d080c 100%)}
+    .hero-glow{position:absolute;inset:0;background:
+      radial-gradient(ellipse 40% 50% at 80% 45%, rgba(200,0,122,.12) 0%, transparent 60%)}
+    /* steering wheel art */
+    .hero-art{position:absolute;right:-2%;top:50%;transform:translateY(-50%);width:54%;max-width:640px;height:100%;pointer-events:none;overflow:hidden}
+    .hero-art svg{width:100%;height:100%;opacity:.55}
+    .hero-fade{position:absolute;left:0;top:0;bottom:0;width:52%;background:linear-gradient(to right,rgba(26,15,23,1) 55%,rgba(26,15,23,0) 100%)}
+    .hero-content{position:relative;z-index:2;padding:56px 0 48px;display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:center}
+    .hero-left h1{font-size:clamp(38px,5vw,56px);font-weight:900;line-height:1.05;letter-spacing:-1.5px;margin:16px 0 18px}
+    .hero-left h1 em{font-style:normal;color:#ff5bbf}
+    .hero-bullets{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+    .hero-bullets li{display:flex;align-items:center;gap:10px;font-size:15px;color:rgba(255,255,255,.88)}
+    .hero-bullets li:before{content:"✓";color:#ff5bbf;font-weight:900;font-size:14px;background:rgba(255,91,184,.12);border:1px solid rgba(255,91,184,.3);width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+    /* car form */
+    .car-form-box{background:rgba(255,255,255,.96);border-radius:18px;padding:22px;color:var(--ink);box-shadow:0 16px 50px rgba(0,0,0,.28)}
+    .car-form-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
+    .car-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .form-field{position:relative}
+    .form-field-label{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:5px}
+    .form-select-btn{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:12px 14px;text-align:left;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:8px;transition:.15s}
+    .form-select-btn:hover{border-color:#c9a3be}
+    .form-select-btn.filled{border-color:var(--pink);background:var(--pink-bg);color:var(--ink)}
+    .form-select-btn .chevron{color:var(--muted);font-size:10px;flex-shrink:0}
+    .form-select-btn .placeholder{color:var(--muted)}
+    .hero-stats{display:flex;gap:28px;margin-top:20px}
+    .stat{text-align:left}
+    .stat-num{font-size:22px;font-weight:900;color:rgba(255,255,255,.95)}
+    .stat-label{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px}
+    .stat-stars{display:flex;align-items:center;gap:5px;margin-top:2px;font-size:11px;color:rgba(255,255,255,.55)}
+    .stat-stars span{color:#f7b731;font-size:13px}
+
+    /* ── Insurer preview card (hero right) ── */
+    .insurer-preview{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .ip-header{background:var(--pink);padding:14px 16px;color:#fff;font-size:13px;font-weight:800;text-align:center}
+    .ip-list{padding:4px 0}
+    .ip-row{display:flex;align-items:center;gap:12px;padding:9px 16px;border-bottom:1px solid var(--line)}
+    .ip-row:last-child{border-bottom:0}
+    .ip-logo{width:56px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .ip-logo img{max-width:100%;max-height:100%;object-fit:contain}
+    .ip-logo-text{font-size:9px;font-weight:900;text-align:center;line-height:1.2}
+    .ip-price{margin-left:auto;font-size:13px;font-weight:700;color:var(--muted)}
+    .ip-price.filled{color:var(--pink)}
+
+    /* ── Info strip below hero ── */
+    .info-strip{background:var(--pink-bg);border-bottom:1px solid var(--pink-light);padding:16px 0}
+    .info-strip-inner{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+    .info-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+    .info-item-icon{font-size:18px}
+
+    /* ── Section ── */
+    .section{padding:68px 0}
+    .section.alt{background:var(--soft)}
+    .sec-head{text-align:center;max-width:680px;margin:0 auto 40px}
+    .sec-head h2{font-size:clamp(30px,4vw,44px);font-weight:900;line-height:1.06;letter-spacing:-.5px}
+    .sec-head p{color:var(--muted);margin-top:12px;line-height:1.65;font-size:15px}
+
+    /* ── How it works ── */
+    .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .step{border:1px solid var(--line);border-radius:20px;padding:22px;background:#fff;position:relative}
+    .step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:10px;background:var(--pink-bg);color:var(--pink);font-weight:900;font-size:13px;margin-bottom:16px}
+    .step h3{font-size:17px;font-weight:800;margin-bottom:8px}
+    .step p{font-size:13px;color:var(--muted);line-height:1.6}
+    .step-connector{position:absolute;top:35px;right:-24px;color:var(--line);font-size:20px;z-index:1}
+
+    /* ── Insurers grid ── */
+    .insurers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .insurer-card-preview{border:1.5px solid var(--line);border-radius:18px;padding:20px;background:#fff;display:flex;align-items:center;gap:14px;transition:.18s}
+    .insurer-card-preview:hover{border-color:#c9a3be;box-shadow:0 6px 22px rgba(165,0,100,.08)}
+    .insurer-logo-box{width:64px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .insurer-info{flex:1}
+    .insurer-info strong{display:block;font-size:14px;font-weight:800}
+    .insurer-info span{font-size:11px;color:var(--muted);margin-top:2px;display:block}
+    .insurer-rating{font-size:11px;color:var(--amber);font-weight:700}
+
+    /* ── FAQ ── */
+    .faq{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:10px}
+    details.faq-item{border:1px solid var(--line);border-radius:15px;background:#fff;padding:0 18px}
+    details.faq-item summary{cursor:pointer;font-weight:700;font-size:15px;padding:18px 32px 18px 0;position:relative;list-style:none}
+    details.faq-item summary::-webkit-details-marker{display:none}
+    details.faq-item summary:after{content:"+";position:absolute;right:4px;top:14px;font-size:24px;color:var(--pink);line-height:1}
+    details.faq-item[open] summary:after{content:"−"}
+    details.faq-item .faq-body{color:var(--muted);font-size:14px;line-height:1.7;padding-bottom:18px}
+
+    /* ── Results view ── */
+    #results-view{display:none}
+    #results-view.show{display:block}
+
+    /* 5-step stepper */
+    .step-stepper{background:#fff;border-bottom:1px solid var(--line);padding:20px 0}
+    .stepper-row{display:flex;align-items:center;justify-content:center;gap:0}
+    .st-item{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:100px;position:relative}
+    .st-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--muted);background:#fff;transition:.2s;position:relative;z-index:1}
+    .st-item.done .st-dot{border-color:var(--pink);background:var(--pink);color:#fff}
+    .st-item.active .st-dot{border-color:var(--pink);color:var(--pink);font-weight:900;box-shadow:0 0 0 4px var(--pink-bg)}
+    .st-label{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+    .st-item.done .st-label,.st-item.active .st-label{color:var(--ink);font-weight:700}
+    .st-line{flex:1;height:2px;background:var(--line);max-width:80px;margin:0 -4px;margin-bottom:18px;position:relative;z-index:0}
+    .st-line.done{background:var(--pink)}
+
+    /* Results layout */
+    .results-page{padding:24px 0 80px;background:var(--soft)}
+    .results-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+
+    /* Left config panel */
+    .config-panel{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;position:sticky;top:70px}
+    .config-section{padding:16px 18px;border-bottom:1px solid var(--line)}
+    .config-section:last-child{border-bottom:0}
+    .config-car-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+    .config-car-label a{color:var(--pink);font-size:12px;font-weight:700;text-transform:none;letter-spacing:0;cursor:pointer;text-decoration:none}
+    .config-car-name{font-size:15px;font-weight:800;color:var(--ink)}
+    .config-car-sub{font-size:12px;color:var(--muted);margin-top:3px}
+    .config-package{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .pkg-icon{width:36px;height:36px;border-radius:10px;background:var(--pink-bg);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+    .pkg-name{font-size:14px;font-weight:800}
+    .pkg-sub{font-size:11px;color:var(--muted);margin-top:1px}
+    .pkg-link{font-size:12px;color:var(--pink);font-weight:700;cursor:pointer;margin-top:4px;display:block}
+    .config-value-row{display:flex;align-items:baseline;gap:8px;margin-top:4px}
+    .config-value{font-size:22px;font-weight:900;color:var(--ink)}
+    .config-edit{color:var(--pink);cursor:pointer;font-size:16px}
+    .config-value-label{font-size:11px;color:var(--muted);margin-bottom:6px}
+
+    /* Collapsible benefit section */
+    .benefit-group{border-bottom:1px solid var(--line)}
+    .benefit-group:last-child{border-bottom:0}
+    .benefit-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;font-size:14px;font-weight:800;background:#fff;border:0;width:100%;text-align:left}
+    .benefit-toggle .chevron{color:var(--muted);transition:.2s;font-size:12px}
+    .benefit-toggle.open .chevron{transform:rotate(180deg)}
+    .benefit-body{padding:0 18px 14px;display:none}
+    .benefit-body.open{display:block}
+    .deductible-label{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .deductible-label strong{color:var(--ink)}
+    .deductible-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+    .d-pill{border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink);transition:.15s}
+    .d-pill.active{border-color:var(--pink);background:var(--pink-bg);color:var(--pink)}
+    .benefit-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+    .benefit-check input[type=checkbox]{width:17px;height:17px;accent-color:var(--pink);cursor:pointer;flex-shrink:0;margin-top:1px}
+    .benefit-check label{font-size:13px;color:var(--ink);cursor:pointer;line-height:1.4}
+    .benefit-check.disabled label{color:var(--muted)}
+    .benefit-check.disabled input{opacity:.4}
+    .config-cta{padding:16px 18px}
+    .config-cta button{background:var(--pink);color:#fff;border:0;border-radius:12px;width:100%;padding:14px;font-size:15px;font-weight:800;cursor:pointer;opacity:.5;transition:.2s}
+    .config-cta button.ready{opacity:1}
+
+    /* Right: insurer list */
+    .quote-header{font-size:17px;font-weight:800;margin-bottom:16px}
+    .quote-row{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:.15s}
+    .quote-row:hover{border-color:#c9a3be;box-shadow:0 4px 16px rgba(165,0,100,.07)}
+    .quote-row.unavailable{opacity:.65}
+    .qr-logo{width:56px;height:40px;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;padding:6px}
+    .qr-logo-text{font-size:9px;font-weight:900;text-align:center;line-height:1.3}
+    .qr-info{flex:1;min-width:0}
+    .qr-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .qr-name{font-size:14px;font-weight:800}
+    .qr-discount{background:#e5233d;color:#fff;font-size:10px;font-weight:900;padding:3px 7px;border-radius:6px}
+    .qr-detail{font-size:12px;color:var(--pink);font-weight:700;cursor:pointer;margin-top:3px;display:block}
+    .qr-unavail-note{font-size:11px;color:var(--muted);background:var(--soft);border-radius:8px;padding:4px 10px;margin-top:6px;display:inline-block}
+    .qr-price-block{text-align:right;flex-shrink:0}
+    .qr-price{font-size:18px;font-weight:900;color:var(--ink)}
+    .qr-original{font-size:12px;color:var(--muted);text-decoration:line-through;margin-bottom:6px}
+    .qr-btn{background:var(--pink-bg);color:var(--pink);border:1.5px solid var(--pink-light);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s;white-space:nowrap}
+    .qr-btn:hover{background:var(--pink);color:#fff}
+    .qr-btn.disabled{background:var(--soft);color:var(--muted);border-color:var(--line);cursor:default}
+    .qr-btn.disabled:hover{background:var(--soft);color:var(--muted)}
+
+    /* renewal hook */
+    .renewal-hook{background:var(--green-bg);border:1.5px solid var(--green);border-radius:16px;padding:18px;margin-top:20px;max-width:480px;margin-left:auto;margin-right:auto}
+    .renewal-hook h4{font-size:15px;font-weight:800;color:var(--green);margin-bottom:6px}
+    .renewal-hook p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+    .renewal-toggle{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .toggle-switch{width:42px;height:24px;border-radius:999px;background:var(--green);position:relative;transition:.2s;flex-shrink:0}
+    .renewal-toggle span{font-size:13px;font-weight:700;color:var(--green)}
+    /* sticky summary sidebar */
+    .sidebar-card{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:22px;position:sticky;top:80px}
+    .sidebar-card h3{font-size:16px;font-weight:800;margin-bottom:16px}
+    .sidebar-row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line)}
+    .sidebar-row:last-of-type{border-bottom:0}
+    .sidebar-row span{color:var(--muted)}
+    .sidebar-row strong{font-size:13px;text-align:right}
+    .sidebar-total{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 0;margin-top:4px;border-top:2px solid var(--line)}
+    .sidebar-total span{font-size:13px;color:var(--muted)}
+    .sidebar-total strong{font-size:22px;font-weight:900;color:var(--pink)}
+
+    /* ── Checkout view ── */
+    #checkout-view{display:none}
+    #checkout-view.show{display:block}
+    .checkout-header{background:#fff;border-bottom:1px solid var(--line);padding:20px 0}
+    .checkout-steps-row{display:flex;align-items:center;justify-content:center;gap:0;margin-top:12px}
+    .ck-step{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
+    .ck-step.active{color:var(--ink)}
+    .ck-step.done{color:var(--green)}
+    .ck-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800}
+    .ck-step.active .ck-dot{border-color:var(--pink);background:var(--pink);color:#fff}
+    .ck-step.done .ck-dot{border-color:var(--green);background:var(--green);color:#fff}
+    .ck-line{flex:1;height:2px;background:var(--line);max-width:60px;margin:0 6px}
+    .checkout-body{padding:40px 0 80px}
+    .checkout-layout{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+    .form-section{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:24px;margin-bottom:16px}
+    .form-section h3{font-size:17px;font-weight:800;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+    .form-row.full{grid-template-columns:1fr}
+    .form-group{display:flex;flex-direction:column;gap:6px}
+    .form-group label{font-size:12px;font-weight:700;color:var(--muted)}
+    .form-group input,.form-group select{height:46px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;background:#fff;color:var(--ink);font-size:14px;outline:0;font-family:var(--font);font-weight:500}
+    .form-group input:focus,.form-group select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(165,0,100,.08)}
+    .form-group input.error{border-color:#e5233d}
+    .payment-methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
+    .pay-method{border:1.5px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:.15s;font-size:12px;font-weight:700}
+    .pay-method.active{border-color:var(--pink);background:var(--pink-bg);color:var(--pink)}
+    .pay-method-icon{font-size:24px;margin-bottom:6px}
+    .checkout-policy{font-size:12px;color:var(--muted);line-height:1.65;margin-top:14px}
+    .checkout-policy a{color:var(--pink);font-weight:600}
+
+    /* ── Success view ── */
+    #success-view{display:none;padding:80px 0;text-align:center}
+    #success-view.show{display:block}
+    .success-icon{font-size:64px;margin-bottom:24px}
+    .success-title{font-size:36px;font-weight:900;margin-bottom:12px}
+    .success-sub{font-size:16px;color:var(--muted);max-width:480px;margin:0 auto 32px}
+    .success-card{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:24px;max-width:480px;margin:0 auto 28px;text-align:left}
+
+    /* ── Modal overlay ── */
+    .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(17,11,15,.55);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+    .modal-overlay.show{display:flex}
+    @media(min-width:600px){.modal-overlay{align-items:center}}
+    .modal{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:540px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+    @media(min-width:600px){.modal{border-radius:24px;max-height:80vh}}
+    .modal-header{padding:18px 18px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .modal-back{background:none;border:0;padding:6px;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+    .modal-title{flex:1;font-size:17px;font-weight:800;text-align:center}
+    .modal-close{background:none;border:0;padding:6px;cursor:pointer;color:var(--muted);font-size:18px;font-weight:700;line-height:1}
+    .modal-search{padding:12px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
+    .search-box{display:flex;align-items:center;gap:10px;background:var(--soft);border:1.5px solid var(--line);border-radius:14px;padding:0 14px}
+    .search-box input{flex:1;border:0;background:transparent;height:44px;font-size:15px;color:var(--ink);outline:0}
+    .search-box .search-icon{color:var(--muted);font-size:16px}
+    .modal-body{overflow-y:auto;flex:1}
+    .brand-section-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);padding:14px 16px 10px}
+    .brand-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 16px 16px}
+    .brand-card{border:1.5px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;transition:.15s;background:#fff}
+    .brand-card:hover{border-color:#c9a3be}
+    .brand-card.selected{border-color:var(--pink);background:var(--pink-bg)}
+    .brand-card img{width:48px;height:32px;object-fit:contain;margin-bottom:6px}
+    .brand-card .bname{font-size:10px;font-weight:800;color:var(--ink)}
+    .brand-list-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;font-size:15px;font-weight:600;transition:.12s}
+    .brand-list-item:hover{background:var(--soft)}
+    .brand-list-item.selected{background:var(--pink-bg);color:var(--pink);font-weight:800}
+    .brand-list-item .check{margin-left:auto;color:var(--pink);font-size:16px}
+    .year-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;font-size:15px;font-weight:600;transition:.12s}
+    .year-item:hover{background:var(--soft)}
+    .year-item.selected{background:var(--pink-bg);color:var(--pink);font-weight:800}
+
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);opacity:0;background:#1a0f17;color:#fff;border-radius:999px;padding:11px 20px;font-size:13px;font-weight:700;z-index:500;transition:.25s;pointer-events:none;white-space:nowrap}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+    /* ── Responsive ── */
+    @media(max-width:900px){
+      .hero-content{grid-template-columns:1fr;gap:24px}
+      .hero-art{display:none}
+      .hero-right{display:none}
+      .steps-grid{grid-template-columns:1fr 1fr}
+      .insurers-grid{grid-template-columns:1fr 1fr}
+      .results-layout{grid-template-columns:1fr}
+      .checkout-layout{grid-template-columns:1fr}
+      .sidebar-card.sticky{position:static}
+    }
+    @media(max-width:620px){
+      .shell{width:calc(100% - 28px)}
+      .tab-inner{overflow-x:auto;white-space:nowrap}
+      .car-form-grid{grid-template-columns:1fr}
+      .hero-left h1{font-size:36px}
+      .steps-grid{grid-template-columns:1fr}
+      .step-connector{display:none}
+      .insurers-grid{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      .payment-methods{grid-template-columns:1fr 1fr}
+      .brand-grid{grid-template-columns:repeat(4,1fr)}
+      .results-car-info{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="../lab.html">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+      <span class="brand-copy"><strong>Bảo Hiểm Ô Tô</strong><small>MoMo Prototype</small></span>
+    </a>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a class="back-link" href="../lab.html">← Lab</a>
+      <button class="btn btn-primary" onclick="goToQuote()">Xem báo giá</button>
+    </div>
+  </div>
+</header>
+
+<!-- Main landing view -->
+<div id="landing-view">
+
+  <!-- Tab nav -->
+  <nav class="tab-nav">
+    <div class="shell tab-inner">
+      <span class="tab-link active" onclick="switchTab(this,'than-vo')">Bảo hiểm Thân vỏ Ô tô</span>
+      <span class="tab-link" onclick="switchTab(this,'bat-buoc')">Bảo hiểm Ô tô Bắt buộc</span>
+      <span class="tab-link" onclick="switchTab(this,'tnds')">TNDS Tự nguyện</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-glow"></div>
+    <!-- Decorative car silhouette -->
+    <div class="hero-art">
+      <svg viewBox="0 0 600 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Steering wheel -->
+        <circle cx="300" cy="380" r="210" stroke="rgba(255,255,255,.06)" stroke-width="60"/>
+        <circle cx="300" cy="380" r="120" stroke="rgba(255,255,255,.05)" stroke-width="8"/>
+        <circle cx="300" cy="380" r="40" fill="rgba(255,255,255,.05)"/>
+        <!-- Spokes -->
+        <line x1="300" y1="340" x2="300" y2="250" stroke="rgba(255,255,255,.06)" stroke-width="20" stroke-linecap="round"/>
+        <line x1="264" y1="360" x2="190" y2="310" stroke="rgba(255,255,255,.06)" stroke-width="20" stroke-linecap="round"/>
+        <line x1="336" y1="360" x2="410" y2="310" stroke="rgba(255,255,255,.06)" stroke-width="20" stroke-linecap="round"/>
+        <!-- Dashboard glow -->
+        <rect x="50" y="100" width="500" height="180" rx="20" fill="rgba(200,0,122,.05)"/>
+        <!-- Speed/rpm arcs -->
+        <path d="M 120 200 A 80 80 0 0 1 240 200" stroke="rgba(255,255,255,.08)" stroke-width="3" fill="none"/>
+        <path d="M 360 200 A 80 80 0 0 1 480 200" stroke="rgba(255,255,255,.08)" stroke-width="3" fill="none"/>
+        <!-- Needle -->
+        <line x1="180" y1="200" x2="175" y2="140" stroke="#ff5bbf" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
+        <line x1="420" y1="200" x2="440" y2="145" stroke="#ff5bbf" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
+        <!-- Screen glow -->
+        <rect x="220" y="130" width="160" height="90" rx="10" fill="rgba(200,0,122,.08)"/>
+      </svg>
+    </div>
+    <div class="hero-fade"></div>
+
+    <div class="shell hero-content">
+      <div class="hero-left">
+        <div class="breadcrumb" style="color:rgba(255,255,255,.45)">
+          <a href="#" style="color:rgba(255,255,255,.45)">☰</a>
+          <span style="color:rgba(255,255,255,.45)">›</span>
+          <a href="#" style="color:rgba(255,255,255,.45)">Bảo hiểm xe ô tô</a>
+          <span style="color:rgba(255,255,255,.45)">›</span>
+          <span style="color:rgba(255,255,255,.85)">Bảo hiểm Thân vỏ Ô tô</span>
+        </div>
+        <h1>Bảo hiểm<br><em>Thân vỏ Ô Tô</em></h1>
+        <ul class="hero-bullets">
+          <li>Nhận báo giá nhanh chỉ với thông tin xe</li>
+          <li>So sánh giá từ 9 nhà bảo hiểm hàng đầu</li>
+          <li>Thẩm định xe online bằng AI</li>
+        </ul>
+
+        <!-- Car selection form -->
+        <div class="car-form-box">
+          <div class="car-form-label">Thông tin xe</div>
+          <div class="car-form-grid">
+            <div class="form-field">
+              <div class="form-field-label">Nhãn hiệu & Dòng xe</div>
+              <button class="form-select-btn" id="car-info-btn" onclick="openModal('brand')">
+                <span id="car-info-label" class="placeholder">Chọn nhãn hiệu & dòng xe</span>
+                <span class="chevron">▾</span>
+              </button>
+            </div>
+            <div class="form-field">
+              <div class="form-field-label">Năm sản xuất</div>
+              <button class="form-select-btn" id="year-btn" onclick="openModal('year')">
+                <span id="year-label" class="placeholder">Chọn năm</span>
+                <span class="chevron">▾</span>
+              </button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg btn-full" onclick="goToQuote()">
+            Xem báo giá bảo hiểm ngay &nbsp;›
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-num">10.000+</div>
+            <div class="stat-label">Người đã mua qua MoMo</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">4.9/5</div>
+            <div class="stat-stars"><span>★★★★★</span> 577+ đánh giá</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">9</div>
+            <div class="stat-label">Nhà bảo hiểm uy tín</div>
+          </div>
+        </div>
+        <a href="#reviews" style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700;margin-top:10px;display:inline-block">⭐ Xem đánh giá →</a>
+      </div>
+
+      <!-- Insurer preview card -->
+      <div class="hero-right">
+        <div class="insurer-preview">
+          <div class="ip-header">Nhận báo giá tốt nhất cho bạn</div>
+          <div class="ip-list">
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#c8122c;font-size:11px;font-weight:900">★ PVI<br>INSURANCE</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">PVI Insurance</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#007a3d">BAO VIET<br>●</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">Bảo Việt</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#003087">PJICO</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">PJICO</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#1a1a2e;font-size:10px">DBY<br>Insurance</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">DBY Insurance</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#e63329;font-size:10px">BAO<br>LONG ●</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">Bảo Long</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#00529b;font-size:11px">Liberty<br>★</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">Liberty</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#003087;font-size:12px">pti</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">PTI</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#e63329;font-size:12px">★ MIC</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">MIC</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+            <div class="ip-row">
+              <div class="ip-logo"><div class="ip-logo-text" style="color:#004b87;font-size:12px">GIC<br>◆</div></div>
+              <div style="flex:1;font-size:12px;font-weight:600">GIC</div>
+              <div class="ip-price">VNĐ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info strip -->
+  <div class="info-strip">
+    <div class="shell info-strip-inner">
+      <div class="info-item"><span class="info-item-icon">🛡️</span> Bồi thường nhanh trong 24h</div>
+      <div class="info-item"><span class="info-item-icon">📱</span> Mua online, nhận đơn ngay</div>
+      <div class="info-item"><span class="info-item-icon">🤖</span> Thẩm định xe bằng AI</div>
+      <div class="info-item"><span class="info-item-icon">💳</span> Trả góp 0%</div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="shell">
+      <div class="sec-head">
+        <h2>Mua bảo hiểm ô tô dễ như thế nào?</h2>
+        <p>Chỉ cần 4 bước đơn giản, hoàn tất trong vòng 5 phút</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div style="font-size:28px;margin-bottom:12px">🚗</div>
+          <h3>Nhập thông tin xe</h3>
+          <p>Chọn hãng, dòng xe, phiên bản và năm sản xuất. Hệ thống tự động định giá xe.</p>
+          <span class="step-connector">→</span>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div style="font-size:28px;margin-bottom:12px">📊</div>
+          <h3>So sánh báo giá</h3>
+          <p>Nhận ngay báo giá từ 9 công ty bảo hiểm uy tín. Lọc theo giá, quyền lợi, đánh giá.</p>
+          <span class="step-connector">→</span>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div style="font-size:28px;margin-bottom:12px">📝</div>
+          <h3>Điền thông tin mua</h3>
+          <p>Nhập thông tin chủ xe và xe. Hỗ trợ thẩm định xe bằng AI chỉ cần chụp ảnh.</p>
+          <span class="step-connector">→</span>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div style="font-size:28px;margin-bottom:12px">✅</div>
+          <h3>Thanh toán & nhận đơn</h3>
+          <p>Thanh toán qua ví MoMo hoặc thẻ. Nhận giấy bảo hiểm PDF ngay lập tức.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insurers showcase -->
+  <section class="section alt">
+    <div class="shell">
+      <div class="sec-head">
+        <h2>9 công ty bảo hiểm hàng đầu</h2>
+        <p>MoMo hợp tác với các nhà bảo hiểm uy tín nhất Việt Nam, được cấp phép bởi Bộ Tài chính</p>
+      </div>
+      <div class="insurers-grid">
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:14px;font-weight:900;color:#c8122c">★ PVI</div></div>
+          <div class="insurer-info"><strong>PVI Insurance</strong><span>Công ty BH Petro Vietnam</span></div>
+          <div class="insurer-rating">★ 4.8</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:12px;font-weight:900;color:#007a3d">BAO VIET</div></div>
+          <div class="insurer-info"><strong>Bảo Việt</strong><span>Tập đoàn Bảo Việt</span></div>
+          <div class="insurer-rating">★ 4.7</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:14px;font-weight:900;color:#003087">PJICO</div></div>
+          <div class="insurer-info"><strong>PJICO</strong><span>BH Petrolimex</span></div>
+          <div class="insurer-rating">★ 4.6</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:12px;font-weight:900;color:#1a1a2e">DBY</div></div>
+          <div class="insurer-info"><strong>DBY Insurance</strong><span>BH DB &amp; You</span></div>
+          <div class="insurer-rating">★ 4.5</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:12px;font-weight:900;color:#e63329">BAO LONG</div></div>
+          <div class="insurer-info"><strong>Bảo Long</strong><span>BH Bảo Long</span></div>
+          <div class="insurer-rating">★ 4.5</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:13px;font-weight:900;color:#00529b">Liberty</div></div>
+          <div class="insurer-info"><strong>Liberty</strong><span>Liberty Insurance VN</span></div>
+          <div class="insurer-rating">★ 4.7</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:15px;font-weight:900;color:#003087">pti</div></div>
+          <div class="insurer-info"><strong>PTI</strong><span>BH Bưu Điện</span></div>
+          <div class="insurer-rating">★ 4.4</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:14px;font-weight:900;color:#e63329">★ MIC</div></div>
+          <div class="insurer-info"><strong>MIC</strong><span>BH Quân đội</span></div>
+          <div class="insurer-rating">★ 4.6</div>
+        </div>
+        <div class="insurer-card-preview">
+          <div class="insurer-logo-box"><div style="font-size:14px;font-weight:900;color:#004b87">GIC ◆</div></div>
+          <div class="insurer-info"><strong>GIC</strong><span>BH GIC Việt Nam</span></div>
+          <div class="insurer-rating">★ 4.4</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="shell">
+      <div class="sec-head">
+        <h2>Câu hỏi thường gặp</h2>
+      </div>
+      <div class="faq">
+        <details class="faq-item">
+          <summary>Bảo hiểm thân vỏ ô tô là gì?</summary>
+          <p class="faq-body">Bảo hiểm thân vỏ ô tô (hay còn gọi là bảo hiểm vật chất xe ô tô) là loại bảo hiểm bảo vệ xe của bạn trước các rủi ro như tai nạn, va chạm, mất cắp, thiên tai, cháy nổ. Đây là bảo hiểm tự nguyện, bổ sung cho bảo hiểm TNDS bắt buộc.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Phí bảo hiểm được tính như thế nào?</summary>
+          <p class="faq-body">Phí bảo hiểm thân vỏ được tính dựa trên giá trị thực tế của xe và tỷ lệ phí (thường từ 1.2% - 1.8%/năm). Giá trị xe phụ thuộc vào hãng, dòng xe, phiên bản và năm sản xuất. Xe càng mới, giá trị càng cao, phí bảo hiểm càng cao.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Khi xảy ra tai nạn, tôi cần làm gì?</summary>
+          <p class="faq-body">Khi xảy ra tai nạn: (1) Giữ nguyên hiện trường, chụp ảnh; (2) Gọi ngay đường dây hotline của công ty bảo hiểm; (3) Khai báo tai nạn trong vòng 24-48 giờ; (4) Phối hợp với giám định viên để thẩm định thiệt hại; (5) Nhận tiền bồi thường sau khi hoàn thiện hồ sơ.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Mua qua MoMo có an toàn không?</summary>
+          <p class="faq-body">Tuyệt đối an toàn. MoMo là đối tác chính thức được ủy quyền bởi các công ty bảo hiểm. Hợp đồng bảo hiểm có giá trị pháp lý đầy đủ. Bạn nhận giấy chứng nhận bảo hiểm điện tử có chữ ký số, được cơ quan chức năng công nhận.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Tôi có thể huỷ hợp đồng và hoàn tiền không?</summary>
+          <p class="faq-body">Có. Bạn có thể huỷ hợp đồng bảo hiểm bất kỳ lúc nào. Phí hoàn trả được tính theo số ngày còn lại theo quy định, trừ đi phí hành chính. Trường hợp đã phát sinh bồi thường, số tiền hoàn trả sẽ được trừ theo quy định của từng công ty bảo hiểm.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /landing-view -->
+
+<!-- ════════════════ Results View ════════════════ -->
+<div id="results-view">
+
+  <!-- 5-step stepper -->
+  <div class="step-stepper">
+    <div class="shell">
+      <div class="stepper-row">
+        <div class="st-item done">
+          <div class="st-dot">✓</div>
+          <span class="st-label">Thông tin xe</span>
+        </div>
+        <div class="st-line done"></div>
+        <div class="st-item active">
+          <div class="st-dot">2</div>
+          <span class="st-label">Gói bảo hiểm</span>
+        </div>
+        <div class="st-line"></div>
+        <div class="st-item">
+          <div class="st-dot">3</div>
+          <span class="st-label">Thẩm định</span>
+        </div>
+        <div class="st-line"></div>
+        <div class="st-item">
+          <div class="st-dot">4</div>
+          <span class="st-label">Thông tin hợp đồng</span>
+        </div>
+        <div class="st-line"></div>
+        <div class="st-item">
+          <div class="st-dot">5</div>
+          <span class="st-label">Thanh toán</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-page">
+    <div class="shell results-layout">
+
+      <!-- LEFT: config panel -->
+      <div class="config-panel">
+
+        <!-- Car info -->
+        <div class="config-section">
+          <div class="config-car-label">
+            Thông tin xe
+            <a onclick="backToHero()">Chỉnh sửa</a>
+          </div>
+          <div class="config-car-name" id="cfg-car-name">HONDA Accord.2.0 2019</div>
+          <div class="config-car-sub" id="cfg-car-sub">Xe 5 chỗ ngồi | Không kinh doanh vận tải</div>
+        </div>
+
+        <!-- Package -->
+        <div class="config-section">
+          <div class="config-package">
+            <div class="pkg-icon">🛡️</div>
+            <div>
+              <div class="pkg-name">Gói Cơ Bản</div>
+              <div class="pkg-sub">5 quyền lợi cơ bản</div>
+              <a class="pkg-link" onclick="showToast('Xem chi tiết gói sẽ mở popup')">Xem chi tiết gói</a>
+            </div>
+          </div>
+          <div class="config-value-label">Tổng giá trị được bảo hiểm</div>
+          <div class="config-value-row">
+            <div class="config-value" id="cfg-insured-value">523.787.988đ</div>
+            <span class="config-edit" onclick="showToast('Chỉnh sửa giá trị bảo hiểm')">✏️</span>
+          </div>
+        </div>
+
+        <!-- Basic benefits -->
+        <div class="benefit-group">
+          <button class="benefit-toggle open" onclick="toggleBenefit(this)">
+            Quyền lợi cơ bản <span class="chevron">▲</span>
+          </button>
+          <div class="benefit-body open" id="basic-body">
+            <div class="deductible-label">Mức khấu trừ <strong id="deductible-label">500.000đ/vụ</strong></div>
+            <div class="deductible-pills">
+              <button class="d-pill active" onclick="setDeductible(this,'500.000đ/vụ',0)">500.000đ/vụ</button>
+              <button class="d-pill" onclick="setDeductible(this,'1.000.000đ/vụ',-0.005)">1.000.000đ/vụ</button>
+              <button class="d-pill" onclick="setDeductible(this,'2.000.000đ/vụ',-0.01)">2.000.000đ/vụ</button>
+              <button class="d-pill" onclick="setDeductible(this,'5.000.000đ/vụ',-0.015)">5.000.000đ/vụ</button>
+            </div>
+            <div class="benefit-check disabled">
+              <input type="checkbox" checked disabled id="b-total-loss">
+              <label for="b-total-loss">Tổn thất toàn bộ xe</label>
+            </div>
+            <div class="benefit-check disabled">
+              <input type="checkbox" checked disabled id="b-partial">
+              <label for="b-partial">Tổn thất bộ phận xe</label>
+            </div>
+            <div class="benefit-check disabled">
+              <input type="checkbox" checked disabled id="b-theft">
+              <label for="b-theft">Mất cắp toàn bộ xe</label>
+            </div>
+            <div class="benefit-check disabled">
+              <input type="checkbox" checked disabled id="b-rescue">
+              <label for="b-rescue">Miễn phí cứu hộ</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced benefits -->
+        <div class="benefit-group">
+          <button class="benefit-toggle open" onclick="toggleBenefit(this)">
+            Quyền lợi nâng cao <span class="chevron">▲</span>
+          </button>
+          <div class="benefit-body open" id="adv-body">
+            <div class="benefit-check">
+              <input type="checkbox" id="adv-garage" onchange="onAdvChange()">
+              <label for="adv-garage">Lựa chọn cơ sở sửa chữa chính hãng</label>
+            </div>
+            <div class="benefit-check">
+              <input type="checkbox" id="adv-noDepreciation" onchange="onAdvChange()">
+              <label for="adv-noDepreciation">Không tính khấu hao phụ tùng, vật tư thay mới</label>
+            </div>
+            <div class="benefit-check">
+              <input type="checkbox" id="adv-flood" onchange="onAdvChange()">
+              <label for="adv-flood">Thiệt hại động cơ do ảnh hưởng của nước</label>
+            </div>
+            <div class="benefit-check">
+              <input type="checkbox" id="adv-partTheft" onchange="onAdvChange()">
+              <label for="adv-partTheft">Mất cắp bộ phận</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-cta">
+          <button id="cfg-cta-btn" class="ready" onclick="renderQuoteList(currentSort)">Xem báo giá</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: insurer list -->
+      <div>
+        <div class="quote-header" id="quote-header">Tìm được 9 nhà bảo hiểm phù hợp</div>
+        <div id="quote-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /results-view -->
+
+<!-- ════════════════ Checkout View ════════════════ -->
+<div id="checkout-view">
+  <div class="checkout-header">
+    <div class="shell">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <button class="btn btn-ghost" onclick="backToResults()" style="font-weight:700;color:var(--ink);background:none;border:0;cursor:pointer;padding:0">← Quay lại</button>
+        <div style="text-align:center">
+          <div style="font-size:15px;font-weight:800" id="checkout-insurer-name">PVI Insurance</div>
+          <div style="font-size:12px;color:var(--muted)">Bảo hiểm Thân vỏ Ô tô</div>
+        </div>
+        <div style="width:60px"></div>
+      </div>
+      <div class="checkout-steps-row" style="margin-top:16px">
+        <div class="ck-step active" id="ck1">
+          <div class="ck-dot">1</div>
+          <span>Thông tin</span>
+        </div>
+        <div class="ck-line"></div>
+        <div class="ck-step" id="ck2">
+          <div class="ck-dot">2</div>
+          <span>Thanh toán</span>
+        </div>
+        <div class="ck-line"></div>
+        <div class="ck-step" id="ck3">
+          <div class="ck-dot">3</div>
+          <span>Xác nhận</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkout-body">
+    <div class="shell checkout-layout">
+      <!-- Forms -->
+      <div id="ck-step1">
+        <div class="form-section">
+          <h3>Thông tin chủ xe</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Họ và tên *</label>
+              <input type="text" placeholder="Nguyễn Văn An" id="f-name">
+            </div>
+            <div class="form-group">
+              <label>Số điện thoại *</label>
+              <input type="tel" placeholder="0901 234 567" id="f-phone">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" placeholder="example@email.com" id="f-email">
+            </div>
+            <div class="form-group">
+              <label>CMND / CCCD *</label>
+              <input type="text" placeholder="012345678901" id="f-cccd">
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label>Địa chỉ thường trú *</label>
+              <input type="text" placeholder="123 Đường ABC, Quận 1, TP.HCM" id="f-address">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Thông tin xe</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Biển số xe *</label>
+              <input type="text" placeholder="51F-123.45" id="f-plate">
+            </div>
+            <div class="form-group">
+              <label>Số khung (VIN) *</label>
+              <input type="text" placeholder="KMHD341DCKU012345" id="f-vin">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Số máy *</label>
+              <input type="text" placeholder="G4NE123456" id="f-engine">
+            </div>
+            <div class="form-group">
+              <label>Số chỗ ngồi</label>
+              <select id="f-seats">
+                <option>5 chỗ</option>
+                <option>7 chỗ</option>
+                <option>9 chỗ</option>
+              </select>
+            </div>
+          </div>
+          <div style="background:var(--soft);border-radius:14px;padding:14px;margin-top:4px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:8px">🤖 Thẩm định xe bằng AI</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px">Chụp 4 mặt xe để AI đánh giá tình trạng và xác minh thông tin nhanh hơn</div>
+            <button class="btn btn-outline" style="font-size:13px;padding:10px 18px" onclick="showToast('Tính năng chụp ảnh thẩm định xe sẽ mở sau khi tích hợp camera')">📸 Chụp ảnh thẩm định</button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Thời hạn bảo hiểm</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ngày bắt đầu *</label>
+              <input type="date" id="f-start" value="2026-07-10">
+            </div>
+            <div class="form-group">
+              <label>Thời hạn</label>
+              <select id="f-duration">
+                <option>1 năm</option>
+                <option>2 năm</option>
+                <option>3 năm</option>
+              </select>
+            </div>
+          </div>
+          <div style="background:var(--amber-bg);border-radius:12px;padding:12px;font-size:12px;color:var(--amber);font-weight:600;margin-top:4px">
+            ⚠️ Thời hạn bảo hiểm: 10/07/2026 - 09/07/2027 (12 tháng)
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-full" onclick="goToPayment()">Tiếp tục → Thanh toán</button>
+      </div>
+
+      <!-- Step 2: Payment -->
+      <div id="ck-step2" style="display:none">
+        <div class="form-section">
+          <h3>Phương thức thanh toán</h3>
+          <div class="payment-methods">
+            <div class="pay-method active" onclick="selectPayment(this)">
+              <div class="pay-method-icon">💜</div>
+              Ví MoMo
+            </div>
+            <div class="pay-method" onclick="selectPayment(this)">
+              <div class="pay-method-icon">💳</div>
+              Thẻ tín dụng
+            </div>
+            <div class="pay-method" onclick="selectPayment(this)">
+              <div class="pay-method-icon">🏦</div>
+              Chuyển khoản
+            </div>
+          </div>
+          <div style="margin-top:20px;padding:16px;background:var(--pink-bg);border-radius:14px;display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px">💜</div>
+            <div>
+              <div style="font-size:14px;font-weight:800">Thanh toán qua Ví MoMo</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">Số dư ví: <strong style="color:var(--pink)" id="wallet-balance">1.250.000đ</strong></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;border:1.5px solid var(--line);border-radius:14px;padding:16px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:12px">Chi tiết thanh toán</div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)">
+              <span style="color:var(--muted)">Phí bảo hiểm</span>
+              <strong id="pay-premium">8.960.000đ</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)">
+              <span style="color:var(--muted)">Thuế VAT (10%)</span>
+              <strong id="pay-vat">896.000đ</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0">
+              <span style="color:var(--green);font-weight:700">Giảm giá MoMo</span>
+              <strong style="color:var(--green)" id="pay-discount">-200.000đ</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:900;padding-top:12px;margin-top:6px;border-top:2px solid var(--line)">
+              <span>Tổng thanh toán</span>
+              <strong style="color:var(--pink)" id="pay-total">9.656.000đ</strong>
+            </div>
+          </div>
+          <p class="checkout-policy">Bằng cách tiếp tục, bạn đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Quy tắc bảo hiểm</a> của <span id="pay-insurer-name">PVI Insurance</span>. Giấy chứng nhận bảo hiểm sẽ được gửi qua email và lưu trong ứng dụng MoMo.</p>
+        </div>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-outline" onclick="backToInfo()" style="flex:1">← Quay lại</button>
+          <button class="btn btn-primary btn-lg" onclick="goToSuccess()" style="flex:2">Thanh toán ngay</button>
+        </div>
+      </div>
+
+      <!-- Checkout sidebar -->
+      <div>
+        <div class="sidebar-card">
+          <div style="display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px">
+            <div style="width:48px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--pink)" id="ck-logo">★ PVI</div>
+            <div>
+              <div style="font-size:14px;font-weight:800" id="ck-insurer-display">PVI Insurance</div>
+              <div style="font-size:11px;color:var(--muted)">Bảo hiểm Thân vỏ Ô tô</div>
+            </div>
+          </div>
+          <div class="sidebar-row"><span>Xe bảo hiểm</span><strong id="ck-car">Honda HR-V L</strong></div>
+          <div class="sidebar-row"><span>Năm SX</span><strong id="ck-year">2018</strong></div>
+          <div class="sidebar-row"><span>Giá trị xe</span><strong id="ck-value">~640 triệu</strong></div>
+          <div class="sidebar-row"><span>Mức miễn thường</span><strong>500.000đ/vụ</strong></div>
+          <div class="sidebar-row"><span>Phạm vi BH</span><strong>Toàn quốc</strong></div>
+          <div class="sidebar-total">
+            <span>Phí/năm</span>
+            <strong id="ck-total">8.960.000đ</strong>
+          </div>
+          <div style="margin-top:14px;background:var(--green-bg);border-radius:12px;padding:11px;font-size:11px;color:var(--green);font-weight:700">
+            ✓ Giấy chứng nhận điện tử có giá trị ngay sau thanh toán
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /checkout-view -->
+
+<!-- ════════════════ Success View ════════════════ -->
+<div id="success-view">
+  <div class="shell">
+    <div class="success-icon">🎉</div>
+    <h2 class="success-title">Mua bảo hiểm thành công!</h2>
+    <p class="success-sub">Giấy chứng nhận bảo hiểm đã được gửi đến email và lưu trong ứng dụng MoMo của bạn.</p>
+    <div class="success-card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)">
+        <div style="font-size:40px">🛡️</div>
+        <div>
+          <div style="font-size:16px;font-weight:800" id="sc-insurer">PVI Insurance</div>
+          <div style="font-size:13px;color:var(--muted)">Bảo hiểm Thân vỏ Ô tô</div>
+        </div>
+        <div style="margin-left:auto;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:800;padding:5px 10px;border-radius:8px">✓ Hiệu lực</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted)">Số hợp đồng</span><strong>PVI-2026-0709-1234</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted)">Xe bảo hiểm</span><strong id="sc-car">Honda HR-V L 2018</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted)">Thời hạn</span><strong>10/07/2026 - 09/07/2027</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted)">Đã thanh toán</span><strong style="color:var(--pink)" id="sc-total">9.656.000đ</strong></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+      <button class="btn btn-outline" onclick="showToast('Đang mở file PDF...')">📄 Tải giấy chứng nhận</button>
+      <button class="btn btn-primary" onclick="resetAll()">Mua thêm bảo hiểm</button>
+    </div>
+    <div class="renewal-hook">
+      <h4>🔔 Nhắc gia hạn tự động</h4>
+      <p>MoMo sẽ nhắc bạn 30 ngày trước khi bảo hiểm hết hạn (09/06/2027) để không bị hở bảo hiểm.</p>
+      <div class="renewal-toggle" onclick="toggleRenewal(this)">
+        <div class="toggle-switch" id="renewal-sw"></div>
+        <span id="renewal-label">Đang bật nhắc nhở gia hạn</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ Modals ════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <button class="modal-back" id="modal-back-btn" onclick="goBackModal()" style="display:none">‹</button>
+      <span class="modal-title" id="modal-title">Chọn nhãn hiệu</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-search" id="modal-search">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="modal-search-input" placeholder="Nhập để tìm kiếm..." oninput="onSearch(this.value)">
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ────── DATA ────── */
+const BRANDS = [
+  { id:'toyota',    name:'TOYOTA',    popular:true  },
+  { id:'honda',     name:'HONDA',     popular:true  },
+  { id:'hyundai',   name:'HYUNDAI',   popular:true  },
+  { id:'kia',       name:'KIA',       popular:true  },
+  { id:'mazda',     name:'MAZDA',     popular:true  },
+  { id:'ford',      name:'FORD',      popular:true  },
+  { id:'mitsubishi',name:'MITSUBISHI',popular:true  },
+  { id:'vinfast',   name:'VINFAST',   popular:true  },
+  { id:'mercedes',  name:'MERCEDES',  popular:false },
+  { id:'bmw',       name:'BMW',       popular:false },
+  { id:'audi',      name:'AUDI',      popular:false },
+  { id:'chevrolet', name:'CHEVROLET', popular:false },
+  { id:'isuzu',     name:'ISUZU',     popular:false },
+  { id:'jaecoo',    name:'JAECOO',    popular:false },
+  { id:'jaguar',    name:'JAGUAR',    popular:false },
+  { id:'lexus',     name:'LEXUS',     popular:false },
+  { id:'nissan',    name:'NISSAN',    popular:false },
+  { id:'subaru',    name:'SUBARU',    popular:false },
+  { id:'suzuki',    name:'SUZUKI',    popular:false },
+  { id:'volvo',     name:'VOLVO',     popular:false },
+];
+
+const MODELS = {
+  toyota:    ['Camry','Corolla','Cross','Fortuner','Hilux','Innova','Land Cruiser','Raize','Rush','Veloz','Vios','Wigo','Yaris'],
+  honda:     ['Accord','BR-V','Brio','CR-V','CR-Z','City','Civic','Fit','HR-V','Jazz','Odyssey','Pilot'],
+  hyundai:   ['Accent','Creta','Elantra','Ioniq 5','Kona','Santa Fe','Stargazer','Tucson'],
+  kia:       ['Carnival','Cerato','Seltos','Sonet','Sorento','Sportage','Telluride'],
+  mazda:     ['CX-3','CX-30','CX-5','CX-8','Mazda2','Mazda3','Mazda6'],
+  ford:      ['Bronco','Edge','Everest','Explorer','Ranger','Territory'],
+  mitsubishi:['Attrage','Eclipse Cross','Outlander','Pajero','Triton','Xpander','Xforce'],
+  vinfast:   ['VF 3','VF 5','VF 6','VF 7','VF 8','VF 9','VF e34'],
+  mercedes:  ['C-Class','E-Class','GLC','GLE','S-Class'],
+  bmw:       ['3 Series','5 Series','7 Series','X3','X5'],
+  audi:      ['A4','A6','Q3','Q5','Q7'],
+  chevrolet: ['Colorado','Spark','Trailblazer','Trax'],
+  isuzu:     ['D-Max','mu-X'],
+  jaecoo:    ['J7','J8'],
+  jaguar:    ['E-Pace','F-Pace','XE','XF'],
+  lexus:     ['ES','GX','IS','LX','NX','RX'],
+  nissan:    ['Kicks','Navara','Terra','X-Trail'],
+  subaru:    ['Forester','Outback'],
+  suzuki:    ['Ciaz','Ertiga','Swift','XL7'],
+  volvo:     ['S60','S90','V60','XC40','XC60','XC90'],
+};
+
+const VARIANTS = {
+  'honda:HR-V':  ['HR-V.E - 5 chỗ','HR-V.G - 5 chỗ','HR-V.L - 5 chỗ','HR-V.RS - 5 chỗ'],
+  'honda:CR-V':  ['CR-V.E - 5 chỗ','CR-V.G - 5 chỗ','CR-V.L - 7 chỗ','CR-V.Touring - 7 chỗ'],
+  'honda:City':  ['City.E - 5 chỗ','City.G - 5 chỗ','City.L - 5 chỗ','City.RS - 5 chỗ'],
+  'honda:Civic': ['Civic.E - 5 chỗ','Civic.G - 5 chỗ','Civic.RS - 5 chỗ'],
+  'honda:Accord':['Accord.1.5 - 5 chỗ','Accord.2.0 - 5 chỗ'],
+  'honda:Brio':  ['Brio.E - 5 chỗ','Brio.G - 5 chỗ','Brio.S - 5 chỗ'],
+  'toyota:Camry':['Camry.2.0G - 5 chỗ','Camry.2.5Q - 5 chỗ','Camry.2.5HV - 5 chỗ'],
+  'toyota:Vios': ['Vios.E MT - 5 chỗ','Vios.E CVT - 5 chỗ','Vios.G CVT - 5 chỗ'],
+  'toyota:Innova':['Innova.E - 8 chỗ','Innova.G - 8 chỗ','Innova.V - 8 chỗ','Innova.GR-S - 7 chỗ'],
+  'toyota:Cross':['Cross.E CVT - 5 chỗ','Cross.V CVT - 5 chỗ','Cross.HV - 5 chỗ'],
+  'mazda:CX-5':  ['CX-5.Deluxe - 5 chỗ','CX-5.Luxury - 5 chỗ','CX-5.Signature 2.5 - 5 chỗ'],
+  'hyundai:Tucson':['Tucson.2.0 AT - 5 chỗ','Tucson.1.6T - 5 chỗ'],
+  'kia:Seltos':  ['Seltos.Premium - 5 chỗ','Seltos.Deluxe - 5 chỗ'],
+};
+
+const YEARS = Array.from({length:16},(_,i)=>(2026-i).toString());
+
+/* Car values by year (approximate, in millions VND) */
+function getCarValue(brandId, model, variant, year) {
+  const base = {
+    'honda:HR-V':{2024:760,2023:720,2022:680,2021:640,2020:600,2019:560,2018:520,2017:480},
+    'honda:CR-V':{2024:1050,2023:980,2022:920,2021:860,2020:800,2019:740,2018:680,2017:640},
+    'honda:City':{2024:600,2023:560,2022:520,2021:480,2020:440,2019:400,2018:370,2017:340},
+    'toyota:Camry':{2024:1050,2023:980,2022:900,2021:840,2020:780,2019:720,2018:660},
+    'toyota:Vios':{2024:540,2023:500,2022:470,2021:440,2020:410,2019:380,2018:350,2017:320},
+    'toyota:Innova':{2024:860,2023:800,2022:740,2021:680,2020:620,2019:570,2018:520,2017:480},
+    'mazda:CX-5':{2024:850,2023:800,2022:740,2021:690,2020:640,2019:600,2018:560,2017:520},
+  };
+  const key = brandId+':'+model;
+  const yearNum = parseInt(year);
+  if(base[key] && base[key][yearNum]) return base[key][yearNum];
+  return 600; // default
+}
+
+// claimRate: % vụ được bồi thường thành công
+// avgClaimDays: số ngày xử lý TB
+// brandFit: hãng xe mà insurer bồi thường tốt hơn trung bình
+// perDayFit: true = giá/ngày hiển thị ưu tiên
+const INSURERS = [
+  { id:'pvi',     name:'PVI Insurance',     short:'PVI',     color:'#c8122c', rate:0.0140, baseDiscount:28, rating:4.8, avgClaimDays:3,  claimRate:97, brandFit:['honda','toyota','mazda'],      note:'Mạnh về xe Nhật, bồi thường nhanh nhất thị trường' },
+  { id:'liberty', name:'Liberty Insurance', short:'Liberty', color:'#00529b', rate:0.0142, baseDiscount:37, rating:4.7, avgClaimDays:5,  claimRate:95, brandFit:['ford','hyundai','kia'],         note:'Chuyên xe Mỹ & Hàn, hệ thống garage rộng' },
+  { id:'baoviet', name:'Bảo Việt',          short:'BaoViet', color:'#007a3d', rate:0.0145, baseDiscount:33, rating:4.7, avgClaimDays:5,  claimRate:94, brandFit:['toyota','vinfast','mitsubishi'],note:'Uy tín lâu đời, mạng lưới garage toàn quốc rộng nhất' },
+  { id:'pjico',   name:'PJICO',             short:'PJICO',   color:'#003087', rate:0.0148, baseDiscount:20, rating:4.6, avgClaimDays:6,  claimRate:93, brandFit:['toyota','honda','ford'],        note:'Phủ sóng tốt vùng ngoại thành & tỉnh thành' },
+  { id:'mic',     name:'MIC',               short:'MIC',     color:'#e63329', rate:0.0150, baseDiscount:13, rating:4.6, avgClaimDays:6,  claimRate:92, brandFit:['vinfast','kia','hyundai'],      note:'Đối tác chính thức của VinFast, phù hợp xe điện' },
+  { id:'dby',     name:'DBY Insurance',     short:'DBY',     color:'#1a1a2e', rate:0.0152, baseDiscount:10, rating:4.5, avgClaimDays:7,  claimRate:91, brandFit:['bmw','mercedes','audi'],        note:'Chuyên xe sang, có garage uỷ quyền chính hãng' },
+  { id:'baolong', name:'Bảo Long',          short:'BaoLong', color:'#e63329', rate:0.0155, baseDiscount:15, rating:4.5, avgClaimDays:8,  claimRate:90, brandFit:['mazda','suzuki','chevrolet'],   note:'Tốt cho xe cũ trên 5 năm, ít điều khoản loại trừ' },
+  { id:'pti',     name:'PTI',               short:'PTI',     color:'#003087', rate:0.0158, baseDiscount:12, rating:4.4, avgClaimDays:8,  claimRate:89, brandFit:['ford','isuzu','mitsubishi'],    note:'Mạnh về xe bán tải, SUV địa hình' },
+  { id:'gic',     name:'GIC',               short:'GIC',     color:'#004b87', rate:0.0162, baseDiscount: 8, rating:4.4, avgClaimDays:10, claimRate:87, brandFit:['lexus','volvo','subaru'],       note:'Phù hợp xe nhập khẩu châu Âu ít phổ biến' },
+];
+
+/* Repair cost estimates by brand (triệu VND) for risk banner */
+const REPAIR_RISK = {
+  honda:    { minor:'8-25', major:'45-120', parts:'Phụ tùng Honda đặt trước 3-7 ngày' },
+  toyota:   { minor:'7-22', major:'40-110', parts:'Phụ tùng Toyota sẵn hàng toàn quốc' },
+  hyundai:  { minor:'6-20', major:'38-100', parts:'Phụ tùng Hyundai cần nhập 5-10 ngày' },
+  kia:      { minor:'6-18', major:'35-95',  parts:'Phụ tùng KIA từ đại lý chính hãng' },
+  mazda:    { minor:'8-24', major:'42-115', parts:'Phụ tùng Mazda nhập từ Nhật 7-14 ngày' },
+  ford:     { minor:'9-28', major:'50-130', parts:'Phụ tùng Ford từ đại lý chính hãng' },
+  mitsubishi:{ minor:'8-26', major:'44-118', parts:'Phụ tùng Mitsubishi cần đặt trước' },
+  vinfast:  { minor:'7-22', major:'40-105', parts:'Phụ tùng VinFast bảo hành chính hãng' },
+  mercedes: { minor:'20-80', major:'150-400', parts:'Phụ tùng Mercedes nhập nguyên gốc 10-21 ngày' },
+  bmw:      { minor:'18-75', major:'140-380', parts:'Phụ tùng BMW nhập 14-21 ngày' },
+  default:  { minor:'8-25', major:'40-120', parts:'Chi phí phụ tùng và sửa chữa tại garage' },
+};
+
+/* ────── STATE ────── */
+const state = {
+  view: 'landing',
+  modal: null,
+  modalStep: 'brand', // brand | model | variant | year
+  car: { brandId:null, brandName:null, model:null, variant:null, year:null },
+  search: '',
+  selectedInsurer: null,
+  ckStep: 1,
+};
+
+/* ────── VIEW MANAGEMENT ────── */
+function showView(v) {
+  document.getElementById('landing-view').style.display = v==='landing' ? 'block' : 'none';
+  const rv = document.getElementById('results-view');
+  rv.style.display = v==='results' ? 'block' : 'none';
+  rv.className = v==='results' ? 'show' : '';
+  const cv = document.getElementById('checkout-view');
+  cv.style.display = v==='checkout' ? 'block' : 'none';
+  cv.className = v==='checkout' ? 'show' : '';
+  const sv = document.getElementById('success-view');
+  sv.style.display = v==='success' ? 'block' : 'none';
+  sv.className = v==='success' ? 'show' : '';
+  state.view = v;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backToHero(){ showView('landing') }
+function backToResults(){ showView('results') }
+
+function goToQuote(){
+  if(!state.car.brandId){ showToast('Vui lòng chọn nhãn hiệu xe'); openModal('brand'); return; }
+  if(!state.car.model){ showToast('Vui lòng chọn dòng xe'); openModal('model'); return; }
+  if(!state.car.year){ showToast('Vui lòng chọn năm sản xuất'); openModal('year'); return; }
+  renderResults();
+  showView('results');
+}
+
+function goToCheckout(insurerId){
+  state.selectedInsurer = INSURERS.find(i=>i.id===insurerId);
+  renderCheckout();
+  showView('checkout');
+}
+
+function goToPayment(){
+  // Simple validation
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  if(!name||!phone){ showToast('Vui lòng điền đầy đủ thông tin'); return; }
+  document.getElementById('ck-step1').style.display='none';
+  document.getElementById('ck-step2').style.display='block';
+  document.getElementById('ck1').className='ck-step done';
+  document.getElementById('ck1').querySelector('.ck-dot').textContent='✓';
+  document.getElementById('ck2').className='ck-step active';
+  state.ckStep=2;
+}
+
+function backToInfo(){
+  document.getElementById('ck-step1').style.display='block';
+  document.getElementById('ck-step2').style.display='none';
+  document.getElementById('ck1').className='ck-step active';
+  document.getElementById('ck1').querySelector('.ck-dot').textContent='1';
+  document.getElementById('ck2').className='ck-step';
+}
+
+function goToSuccess(){
+  const ins = state.selectedInsurer;
+  const val = getCarValue(state.car.brandId, state.car.model, state.car.variant, state.car.year);
+  const premium = Math.round(val * 1e6 * ins.rate);
+  const vat = Math.round(premium*0.1);
+  const discount = 200000;
+  const total = premium + vat - discount;
+  document.getElementById('sc-insurer').textContent = ins.name;
+  document.getElementById('sc-car').textContent = `${state.car.brandName} ${state.car.model||''} ${state.car.variant||''} ${state.car.year}`.trim();
+  document.getElementById('sc-total').textContent = fmt(total)+'đ';
+  showView('success');
+}
+
+function resetAll(){
+  state.car = {brandId:null,brandName:null,model:null,variant:null,year:null};
+  state.selectedInsurer = null;
+  updateCarBtn();
+  updateYearBtn();
+  showView('landing');
+}
+
+/* ────── RESULTS STATE ────── */
+let currentSort = 'price';
+let deductibleAdj = 0; // rate adjustment from deductible choice
+let advAdj = 0;        // rate adjustment from advanced benefits
+
+/* ────── RESULTS RENDER ────── */
+function renderResults(){
+  const c = state.car;
+  const val = getCarValue(c.brandId, c.model, c.variant, c.year);
+
+  // Left panel: car info
+  const carName = [c.brandName, c.model, c.variant ? c.variant.split(' - ')[0] : '', c.year].filter(Boolean).join(' ');
+  document.getElementById('cfg-car-name').textContent = carName;
+  document.getElementById('cfg-car-sub').textContent = 'Xe 5 chỗ ngồi | Không kinh doanh vận tải';
+  document.getElementById('cfg-insured-value').textContent = fmt(val * 1e6) + 'đ';
+
+  renderQuoteList('price');
+}
+
+function renderQuoteList(sortBy){
+  const c = state.car;
+  const val = getCarValue(c.brandId, c.model, c.variant, c.year);
+  currentSort = sortBy;
+
+  // Which insurers "support" this brand - those that don't show unavailable note
+  const unavailable = ['pjico']; // demo: PJICO unavailable (like screenshot)
+
+  let sorted = [...INSURERS];
+  // always push unavailable to bottom
+  sorted.sort((a,b)=>{
+    const aU = unavailable.includes(a.id)?1:0;
+    const bU = unavailable.includes(b.id)?1:0;
+    if(aU!==bU) return aU-bU;
+    if(sortBy==='rating') return b.rating-a.rating;
+    if(sortBy==='claim')  return a.avgClaimDays-b.avgClaimDays;
+    if(sortBy==='fit'){
+      const aF=a.brandFit.includes(c.brandId)?1:0;
+      const bF=b.brandFit.includes(c.brandId)?1:0;
+      return bF-aF || a.rate-b.rate;
+    }
+    return a.rate-b.rate; // default: price
+  });
+
+  const available = sorted.filter(i=>!unavailable.includes(i.id));
+  document.getElementById('quote-header').textContent = `Tìm được ${available.length} nhà bảo hiểm phù hợp`;
+
+  document.getElementById('quote-list').innerHTML = sorted.map(ins=>{
+    const isUnavail = unavailable.includes(ins.id);
+    // Base rate adjusted by deductible + advanced benefits selections
+    const effectiveRate = ins.rate + deductibleAdj + advAdj;
+    const premium = Math.round(val * 1e6 * effectiveRate);
+    // "original" price = discounted price before MoMo deal
+    const discountPct = ins.baseDiscount;
+    const original = Math.round(premium / (1 - discountPct/100));
+
+    if(isUnavail) return `
+    <div class="quote-row unavailable">
+      <div class="qr-logo"><div class="qr-logo-text" style="color:${ins.color}">${ins.short}</div></div>
+      <div class="qr-info">
+        <div class="qr-name-row"><span class="qr-name">Bảo hiểm ${ins.name}</span></div>
+        <a class="qr-detail" onclick="event.stopPropagation();showToast('Xem chi tiết ${ins.name}')">Xem chi tiết</a>
+        <span class="qr-unavail-note">Đối tác chưa hỗ trợ cho xe của bạn</span>
+      </div>
+    </div>`;
+
+    return `
+    <div class="quote-row" onclick="goToCheckout('${ins.id}')">
+      <div class="qr-logo"><div class="qr-logo-text" style="color:${ins.color};font-weight:900;font-size:10px;line-height:1.3">${ins.short}</div></div>
+      <div class="qr-info">
+        <div class="qr-name-row">
+          <span class="qr-name">Bảo hiểm ${ins.name}</span>
+          <span class="qr-discount">-${discountPct}%</span>
+        </div>
+        <a class="qr-detail" onclick="event.stopPropagation();showToast('Xem chi tiết ${ins.name}')">Xem chi tiết</a>
+      </div>
+      <div class="qr-price-block">
+        <div class="qr-original">${fmt(original)}đ</div>
+        <div class="qr-price">${fmt(premium)}đ</div>
+        <button class="qr-btn" onclick="event.stopPropagation();goToCheckout('${ins.id}')">Chọn gói</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ────── CONFIG PANEL INTERACTIONS ────── */
+function toggleBenefit(btn){
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open');
+  btn.querySelector('.chevron').textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+function setDeductible(btn, label, adj){
+  document.querySelectorAll('.d-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('deductible-label').textContent = label;
+  deductibleAdj = adj;
+  renderQuoteList(currentSort);
+}
+
+function onAdvChange(){
+  // Each advanced benefit adds ~0.002 to rate
+  const checks = ['adv-garage','adv-noDepreciation','adv-flood','adv-partTheft'];
+  const count = checks.filter(id=>document.getElementById(id).checked).length;
+  advAdj = count * 0.002;
+  renderQuoteList(currentSort);
+}
+
+/* ────── CHECKOUT RENDER ────── */
+function renderCheckout(){
+  const ins = state.selectedInsurer;
+  const c = state.car;
+  const val = getCarValue(c.brandId, c.model, c.variant, c.year);
+  const premium = Math.round(val * 1e6 * ins.rate);
+  const vat = Math.round(premium*0.1);
+  const discount = 200000;
+  const total = premium + vat - discount;
+
+  document.getElementById('checkout-insurer-name').textContent = ins.name;
+  document.getElementById('checkout-insurer-name').nextElementSibling.textContent = 'Bảo hiểm Thân vỏ Ô tô';
+  document.getElementById('ck-logo').textContent = '★ '+ins.short;
+  document.getElementById('ck-logo').style.color = ins.color;
+  document.getElementById('ck-insurer-display').textContent = ins.name;
+  document.getElementById('ck-car').textContent = [c.brandName,c.model,c.variant].filter(Boolean).join(' ');
+  document.getElementById('ck-year').textContent = c.year;
+  document.getElementById('ck-value').textContent = `~${val} triệu`;
+  document.getElementById('ck-total').textContent = fmt(premium)+'đ';
+  document.getElementById('pay-premium').textContent = fmt(premium)+'đ';
+  document.getElementById('pay-vat').textContent = fmt(vat)+'đ';
+  document.getElementById('pay-discount').textContent = '-'+fmt(discount)+'đ';
+  document.getElementById('pay-total').textContent = fmt(total)+'đ';
+  document.getElementById('pay-insurer-name').textContent = ins.name;
+  // Reset to step 1
+  document.getElementById('ck-step1').style.display='block';
+  document.getElementById('ck-step2').style.display='none';
+  document.getElementById('ck1').className='ck-step active';
+  document.getElementById('ck1').querySelector('.ck-dot').textContent='1';
+  document.getElementById('ck2').className='ck-step';
+  document.getElementById('ck3').className='ck-step';
+}
+
+function selectPayment(el){
+  document.querySelectorAll('.pay-method').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ────── MODAL ────── */
+function openModal(type){
+  state.modal = type;
+  state.search = '';
+  document.getElementById('modal-search-input').value = '';
+
+  if(type==='brand'){
+    state.modalStep='brand';
+    document.getElementById('modal-back-btn').style.display='none';
+    renderModalContent('brand');
+  } else if(type==='model'){
+    state.modalStep='model';
+    document.getElementById('modal-back-btn').style.display='none';
+    renderModalContent('model');
+  } else if(type==='year'){
+    state.modalStep='year';
+    document.getElementById('modal-back-btn').style.display='none';
+    renderModalContent('year');
+  }
+
+  document.getElementById('modal-overlay').classList.add('show');
+  setTimeout(()=>document.getElementById('modal-search-input').focus(),200);
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('show');
+  state.modal = null;
+}
+
+function closeModalOutside(e){
+  if(e.target===document.getElementById('modal-overlay')) closeModal();
+}
+
+function goBackModal(){
+  if(state.modalStep==='model'){
+    state.modalStep='brand';
+    state.car.model=null; state.car.variant=null;
+    document.getElementById('modal-back-btn').style.display='none';
+    renderModalContent('brand');
+  } else if(state.modalStep==='variant'){
+    state.modalStep='model';
+    state.car.variant=null;
+    document.getElementById('modal-back-btn').style.display='flex';
+    renderModalContent('model');
+  }
+  state.search='';
+  document.getElementById('modal-search-input').value='';
+}
+
+function renderModalContent(step){
+  const q = state.search.toLowerCase();
+  const body = document.getElementById('modal-body');
+  const title = document.getElementById('modal-title');
+  const searchPlaceholder = document.getElementById('modal-search-input');
+
+  if(step==='brand'){
+    title.textContent = 'Chọn nhãn hiệu';
+    searchPlaceholder.placeholder = 'Nhập nhãn hiệu';
+    const popular = BRANDS.filter(b=>b.popular && (!q||b.name.toLowerCase().includes(q)));
+    const all = BRANDS.filter(b=>(!q||b.name.toLowerCase().includes(q))).sort((a,b)=>a.name.localeCompare(b.name));
+
+    const LOGOS = {
+      toyota:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/48px-Toyota_carlogo.svg.png',
+      honda:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Honda_Logo.svg/48px-Honda_Logo.svg.png',
+      hyundai:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Hyundai_Motor_Company_logo.svg/48px-Hyundai_Motor_Company_logo.svg.png',
+      kia:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kia-logo.svg/48px-Kia-logo.svg.png',
+      mazda:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Mazda_logo_with_japanese_text.svg/48px-Mazda_logo_with_japanese_text.svg.png',
+      ford:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Ford_logo_flat.svg/48px-Ford_logo_flat.svg.png',
+      mitsubishi:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Mitsubishi_logo.svg/32px-Mitsubishi_logo.svg.png',
+      vinfast:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/VinFast_logo.svg/48px-VinFast_logo.svg.png',
+    };
+
+    body.innerHTML = `
+      ${popular.length?`
+      <div class="brand-section-label">THƯƠNG HIỆU XE PHỔ BIẾN</div>
+      <div class="brand-grid">
+        ${popular.map(b=>`
+          <div class="brand-card${state.car.brandId===b.id?' selected':''}" onclick="selectBrand('${b.id}','${b.name}')">
+            ${LOGOS[b.id]?`<img src="${LOGOS[b.id]}" alt="${b.name}" onerror="this.style.display='none'">`:
+              `<div style="font-size:11px;font-weight:900;color:#444;height:32px;display:flex;align-items:center;justify-content:center">${b.name}</div>`}
+            <div class="bname">${b.name}</div>
+          </div>
+        `).join('')}
+      </div>`:''}
+      <div class="brand-section-label">TẤT CẢ THƯƠNG HIỆU</div>
+      ${all.map(b=>`
+        <div class="brand-list-item${state.car.brandId===b.id?' selected':''}" onclick="selectBrand('${b.id}','${b.name}')">
+          ${b.name}
+          ${state.car.brandId===b.id?'<span class="check">✓</span>':''}
+        </div>
+      `).join('')}
+    `;
+  }
+  else if(step==='model'){
+    title.textContent = 'Chọn dòng xe';
+    searchPlaceholder.placeholder = 'Nhập dòng xe';
+    document.getElementById('modal-back-btn').style.display='flex';
+    const models = (MODELS[state.car.brandId]||[]).filter(m=>!q||m.toLowerCase().includes(q));
+    body.innerHTML = models.length ?
+      models.map(m=>`
+        <div class="brand-list-item${state.car.model===m?' selected':''}" onclick="selectModel('${m}')">
+          ${m}
+          ${state.car.model===m?'<span class="check">✓</span>':''}
+        </div>
+      `).join('') :
+      '<div style="padding:32px;text-align:center;color:var(--muted)">Không tìm thấy dòng xe</div>';
+  }
+  else if(step==='variant'){
+    title.textContent = 'Chọn phiên bản';
+    searchPlaceholder.placeholder = 'Nhập phiên bản';
+    document.getElementById('modal-back-btn').style.display='flex';
+    const key = state.car.brandId+':'+state.car.model;
+    const variants = (VARIANTS[key]||[`${state.car.model}.Standard - 5 chỗ`,`${state.car.model}.Luxury - 5 chỗ`])
+      .filter(v=>!q||v.toLowerCase().includes(q));
+    body.innerHTML = variants.map(v=>`
+      <div class="brand-list-item${state.car.variant===v?' selected':''}" onclick="selectVariant('${v}')">
+        ${v}
+        ${state.car.variant===v?'<span class="check">✓</span>':''}
+      </div>
+    `).join('');
+  }
+  else if(step==='year'){
+    title.textContent = 'Năm sản xuất';
+    searchPlaceholder.placeholder = 'Nhập năm sản xuất';
+    const years = YEARS.filter(y=>!q||y.includes(q));
+    body.innerHTML = years.map(y=>`
+      <div class="year-item${state.car.year===y?' selected':''}" onclick="selectYear('${y}')">
+        ${y}
+        ${state.car.year===y?'<span style="margin-left:auto;color:var(--pink);font-size:16px">✓</span>':''}
+      </div>
+    `).join('');
+  }
+}
+
+function onSearch(val){
+  state.search = val;
+  renderModalContent(state.modalStep);
+}
+
+/* ────── SELECTION HANDLERS ────── */
+function selectBrand(id, name){
+  if(state.car.brandId !== id){
+    state.car.model = null;
+    state.car.variant = null;
+  }
+  state.car.brandId = id;
+  state.car.brandName = name;
+  state.search=''; document.getElementById('modal-search-input').value='';
+  state.modalStep = 'model';
+  renderModalContent('model');
+}
+
+function selectModel(model){
+  if(state.car.model !== model) state.car.variant = null;
+  state.car.model = model;
+  state.search=''; document.getElementById('modal-search-input').value='';
+  state.modalStep = 'variant';
+  renderModalContent('variant');
+}
+
+function selectVariant(variant){
+  state.car.variant = variant;
+  closeModal();
+  updateCarBtn();
+}
+
+function selectYear(year){
+  state.car.year = year;
+  closeModal();
+  updateYearBtn();
+}
+
+function updateCarBtn(){
+  const btn = document.getElementById('car-info-btn');
+  const label = document.getElementById('car-info-label');
+  const c = state.car;
+  if(c.brandName){
+    const txt = [c.brandName, c.model, c.variant].filter(Boolean).join(' - ');
+    label.textContent = txt.length>32 ? txt.slice(0,32)+'…' : txt;
+    label.classList.remove('placeholder');
+    btn.classList.add('filled');
+  } else {
+    label.textContent = 'Chọn nhãn hiệu & dòng xe';
+    label.classList.add('placeholder');
+    btn.classList.remove('filled');
+  }
+}
+
+function updateYearBtn(){
+  const btn = document.getElementById('year-btn');
+  const label = document.getElementById('year-label');
+  if(state.car.year){
+    label.textContent = state.car.year;
+    label.classList.remove('placeholder');
+    btn.classList.add('filled');
+  } else {
+    label.textContent = 'Chọn năm';
+    label.classList.add('placeholder');
+    btn.classList.remove('filled');
+  }
+}
+
+/* ────── UI HELPERS ────── */
+function switchTab(el, type){
+  document.querySelectorAll('.tab-link').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if(type!=='than-vo') showToast('Tính năng đang phát triển');
+}
+
+function fmt(n){
+  return n.toLocaleString('vi-VN');
+}
+
+function toggleRenewal(el){
+  const sw = document.getElementById('renewal-sw');
+  const label = document.getElementById('renewal-label');
+  const isOn = sw.style.background !== 'var(--line)' && sw.style.background !== '#e8e3e8';
+  if(isOn){
+    sw.style.background='var(--line)';
+    sw.style.setProperty('--tw','0px');
+    sw.querySelector?.(null);
+    // move knob left
+    sw.style.cssText='background:var(--line);width:42px;height:24px;border-radius:999px;position:relative;transition:.2s;flex-shrink:0';
+    sw.innerHTML='<span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;display:block"></span>';
+    label.textContent='Đã tắt nhắc nhở gia hạn';
+    label.style.color='var(--muted)';
+  } else {
+    sw.style.cssText='background:var(--green);width:42px;height:24px;border-radius:999px;position:relative;transition:.2s;flex-shrink:0';
+    sw.innerHTML='<span style="position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;display:block"></span>';
+    label.textContent='Đang bật nhắc nhở gia hạn';
+    label.style.color='var(--green)';
+  }
+}
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>

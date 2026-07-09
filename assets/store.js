@@ -60,6 +60,22 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'bao-hiem-o-to',
+    name: 'Bảo Hiểm Ô Tô',
+    category: 'Platform',
+    ownerGroup: 'Cell Team',
+    maturity: 'Interactive',
+    description: 'Luồng mua bảo hiểm thân vỏ ô tô end-to-end: chọn xe (hãng → dòng → phiên bản → năm), so sánh báo giá từ 9 nhà bảo hiểm, điền thông tin, thanh toán và nhận đơn điện tử.',
+    jtbd: 'Biết ngay phí bảo hiểm và mua được gói phù hợp mà không cần ra đại lý',
+    northStar: 'Checkout completion rate từ quote comparison',
+    loop: 'Chọn xe → So sánh báo giá → Nhập thông tin → Thanh toán → Nhận đơn',
+    hypothesis: 'So sánh nhiều nhà bảo hiểm trong một trang, kèm định giá xe tự động và thẩm định AI, sẽ tăng tỉ lệ chốt mua so với luồng mua từng công ty riêng lẻ.',
+    value: 'SEO acquisition surface cho từ khóa bảo hiểm ô tô (SoV 0%, market 74K/tháng) kết hợp W2A funnel cho tệp chủ xe ARPU cao.',
+    gate: 'Đo car selection rate, quote view rate, checkout intent, payment completion và policy issuance.',
+    src: 'demos/bao-hiem-o-to.html',
+    address: 'web-momo-prototype.vercel.app/bao-hiem-o-to',
+  },
+  {
     id: 'esim-du-lich',
     name: 'eSIM Du Lịch',
     category: 'Platform',
@@ -958,7 +974,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'esim-du-lich', 'epass', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'esim-du-lich', 'epass', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 
