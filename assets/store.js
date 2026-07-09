@@ -74,6 +74,17 @@ const PROTOTYPES = [
     gate: 'Đo car selection rate, quote view rate, checkout intent, payment completion và policy issuance.',
     src: 'demos/bao-hiem-o-to.html',
     address: 'web-momo-prototype.vercel.app/bao-hiem-o-to',
+    tools: [
+      {
+        id: 'bao-hiem-tinh-huong',
+        name: 'Tình Huống Bồi Thường',
+        category: 'Content Hub',
+        description: '8 tình huống phổ biến: va chạm, thủy kích, cháy nổ, mất cắp, thiên tai. Mỗi tình huống có bảng chi tiết bồi thường, ví dụ số tiền thực tế và cảnh báo điểm loại trừ.',
+        jtbd: 'Hiểu rõ tình huống nào được bồi thường trước khi chọn gói',
+        src: 'demos/bao-hiem-o-to.html?view=situations',
+        address: 'web-momo-prototype.vercel.app/bao-hiem-o-to?view=situations',
+      },
+    ],
   },
   {
     id: 'esim-du-lich',
