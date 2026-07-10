@@ -286,7 +286,7 @@
     .sit-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.08);transform:translateY(-2px)}
     .sit-card.expanded{border-color:var(--pink-light)}
     .sit-header{display:flex;align-items:flex-start;gap:14px;padding:20px}
-    .sit-icon{font-size:32px;flex-shrink:0;line-height:1}
+    .sit-icon{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--soft);border-radius:12px;color:var(--pink)}
     .sit-meta{flex:1;min-width:0}
     .sit-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
     .sit-badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:.3px}
@@ -308,12 +308,12 @@
     .sit-row-val.red{color:#e5233d}
     .sit-example{background:var(--pink-bg);border:1px solid var(--pink-light);border-radius:12px;padding:14px;font-size:13px;line-height:1.6}
     .sit-example strong{color:var(--pink);display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-    .sit-warn{background:#fff4e5;border:1px solid rgba(179,92,0,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--amber);margin-top:10px;line-height:1.55}
-    .sit-warn::before{content:"⚠️ ";font-size:13px}
+    .sit-warn{background:#fff4e5;border:1px solid rgba(179,92,0,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--amber);margin-top:10px;line-height:1.55;display:flex;gap:8px;align-items:flex-start}
+    .sit-warn::before{content:'';display:none}
 
     /* ── Situation Detail ── */
     .sit-detail-hero{display:flex;align-items:flex-start;gap:20px;padding:28px;background:#fff;border:1.5px solid var(--line);border-radius:20px;margin-bottom:28px}
-    .sit-detail-icon{font-size:48px;line-height:1;flex-shrink:0}
+    .sit-detail-icon{width:72px;height:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:18px;color:var(--pink)}
     .sit-detail-meta{flex:1}
     .sit-detail-title{font-size:clamp(22px,3.5vw,32px);font-weight:900;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px}
     .sit-detail-desc{font-size:14px;color:var(--muted);line-height:1.7}
@@ -341,8 +341,8 @@
     .claim-step-desc{font-size:13px;color:var(--muted);line-height:1.6}
     .claim-step-time{font-size:11px;font-weight:700;color:var(--pink);margin-top:6px;display:inline-flex;align-items:center;gap:4px}
     .sit-excl-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-    .sit-excl-list li{font-size:13px;color:var(--muted);line-height:1.55;padding-left:20px;position:relative}
-    .sit-excl-list li::before{content:'✕';position:absolute;left:0;color:#dc2626;font-size:11px;font-weight:800;top:1px}
+    .sit-excl-list li{font-size:13px;color:var(--muted);line-height:1.55;display:flex;gap:8px;align-items:flex-start}
+    .sit-excl-list li svg{flex-shrink:0;color:#dc2626;margin-top:2px}
     .sit-tip-box{background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:14px;padding:16px 18px}
     .sit-tip-box p{font-size:13px;line-height:1.6;color:var(--ink);margin:0}
     .sit-tip-box strong{color:var(--pink)}
@@ -450,6 +450,7 @@
       .results-car-info{flex-direction:column;align-items:flex-start}
     }
   </style>
+  <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -1162,7 +1163,7 @@
   <!-- Topbar mini -->
   <div class="topbar">
     <div class="shell topbar-inner">
-      <button class="btn btn-ghost" onclick="showView('landing')" style="font-size:14px;font-weight:700;color:var(--muted)">‹ Bảo hiểm Ô Tô</button>
+      <button class="btn btn-ghost" onclick="showView('landing')" style="font-size:14px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:4px" id="sit-back-btn"><span id="sit-back-icon"></span> Bảo hiểm Ô Tô</button>
       <button class="btn btn-primary" onclick="showView('landing');setTimeout(()=>document.querySelector('.car-form-box .btn-primary').click(),300)" style="font-size:13px;padding:9px 18px">Xem báo giá ngay</button>
     </div>
   </div>
@@ -1202,7 +1203,7 @@
 <div id="situation-detail-view" style="display:none">
   <div class="topbar">
     <div class="shell topbar-inner">
-      <button class="btn btn-ghost" onclick="showView('situations')" style="font-size:14px;font-weight:700;color:var(--muted)">‹ Tất cả tình huống</button>
+      <button class="btn btn-ghost" onclick="showView('situations')" style="font-size:14px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:4px" id="sit-detail-back-btn"><span id="sit-detail-back-icon"></span> Tất cả tình huống</button>
       <button class="btn btn-primary" onclick="showView('landing')" style="font-size:13px;padding:9px 18px">Xem báo giá ngay</button>
     </div>
   </div>
@@ -1233,6 +1234,47 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* ────── LUCIDE ICON HELPER ────── */
+function licon(name, size=20, sw=1.75, cls='') {
+  if (!window.lucide || !window.lucide[name]) return '';
+  /* Lucide UMD: icon is directly the children array [[tag, attrs], ...] */
+  const children = window.lucide[name].map(([tag, attrs]) => {
+    const attrStr = Object.entries(attrs).map(([k,v])=>`${k}="${v}"`).join(' ');
+    return `<${tag} ${attrStr}/>`;
+  }).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"${cls?' class="'+cls+'"':''}>${children}</svg>`;
+}
+
+/* Situation icon map → Lucide name */
+const SIT_ICONS = {
+  collision: 'Zap',
+  thuykick:  'Waves',
+  fire:      'Flame',
+  theft:     'LockOpen',
+  parttheft: 'Wrench',
+  natural:   'CloudLightning',
+  glass:     'PanelTop',
+  parked:    'Car',
+};
+
+/* Claim step icon map */
+const STEP_ICONS = {
+  '📸': 'Camera',  '📞': 'Phone',    '📋': 'ClipboardList',
+  '🔍': 'Search',  '🔧': 'Wrench',   '💰': 'Banknote',
+  '🚫': 'Ban',     '🚗': 'Car',      '🔒': 'Lock',
+  '🚔': 'ShieldAlert', '📄': 'FileText', '📊': 'BarChart2',
+  '🚒': 'Truck',   '📹': 'Video',    '✅': 'CheckCircle',
+  '⚠️': 'AlertTriangle', '🪟': 'RectangleHorizontal',
+};
+
+function sitIcon(id, size=36) {
+  return licon(SIT_ICONS[id] || 'Shield', size, 1.5);
+}
+function stepIcon(emoji, size=15) {
+  const name = STEP_ICONS[emoji] || 'Circle';
+  return licon(name, size, 2);
+}
+
 /* ────── DATA ────── */
 const BRANDS = [
   { id:'toyota',    name:'TOYOTA',    popular:true  },
@@ -2045,7 +2087,7 @@ function renderSituations(){
     return `
     <div class="sit-card" id="sit-${s.id}">
       <div class="sit-header">
-        <div class="sit-icon">${s.icon}</div>
+        <div class="sit-icon">${sitIcon(s.id, 32)}</div>
         <div class="sit-meta">
           <div class="sit-badges">
             <span class="sit-badge ${badgeCls}">${s.badge}</span>
@@ -2053,8 +2095,8 @@ function renderSituations(){
           <div class="sit-name">${s.name}</div>
           <div class="sit-short">${s.short}</div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px">
-            <button class="sit-toggle" onclick="toggleSit('${s.id}',this)">Ví dụ thực tế <span>▾</span></button>
-            <button class="sit-toggle" style="color:var(--ink);font-weight:800" onclick="showSituationDetail('${s.id}')">Xem chi tiết &rsaquo;</button>
+            <button class="sit-toggle" onclick="toggleSit('${s.id}',this)" style="display:inline-flex;align-items:center;gap:5px">Ví dụ thực tế <span class="sit-chev">${licon('ChevronDown',13,2.5)}</span></button>
+            <button class="sit-toggle" style="color:var(--ink);font-weight:800;display:inline-flex;align-items:center;gap:4px" onclick="showSituationDetail('${s.id}')">Xem chi tiết ${licon('ArrowRight',13,2.5)}</button>
           </div>
         </div>
       </div>
@@ -2063,7 +2105,7 @@ function renderSituations(){
           ${s.rows.map(r=>`<div class="sit-row"><span>${r.label}</span><span class="sit-row-val ${r.cls}">${r.val}</span></div>`).join('')}
         </div>
         <div class="sit-example"><strong>Ví dụ thực tế</strong>${s.example}</div>
-        ${s.warn?`<div class="sit-warn">${s.warn}</div>`:''}
+        ${s.warn?`<div class="sit-warn"><span style="flex-shrink:0;margin-top:1px">${licon('AlertTriangle',14,2)}</span><span>${s.warn}</span></div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -2075,8 +2117,8 @@ function toggleSit(id, btn){
   const isOpen = body.classList.contains('open');
   body.classList.toggle('open',!isOpen);
   card.classList.toggle('expanded',!isOpen);
-  btn.querySelector('span').textContent = isOpen ? '▾' : '▴';
-  btn.firstChild.textContent = isOpen ? 'Chi tiết & ví dụ thực tế ' : 'Thu gọn ';
+  btn.querySelector('.sit-chev').innerHTML = isOpen ? licon('ChevronDown',13,2.5) : licon('ChevronUp',13,2.5);
+  btn.childNodes[0].textContent = isOpen ? 'Ví dụ thực tế ' : 'Thu gọn ';
 }
 
 function showSituations(){
@@ -2353,17 +2395,18 @@ function renderSituationDetail(id){
     <div class="claim-step">
       <div class="claim-step-num">${step.step}</div>
       <div class="claim-step-body">
-        <div class="claim-step-title">${step.icon} ${step.title}</div>
+        <div class="claim-step-title" style="display:flex;align-items:center;gap:6px">${stepIcon(step.icon)} ${step.title}</div>
         <div class="claim-step-desc">${step.desc}</div>
-        <div class="claim-step-time">⏱ ${step.time}</div>
+        <div class="claim-step-time">${licon('Clock',13,2)} ${step.time}</div>
       </div>
     </div>`).join('');
 
-  const exclItems = d.exclusions.map(e=>`<li>${e}</li>`).join('');
+  const xIcon = licon('XCircle', 14, 2);
+  const exclItems = d.exclusions.map(e=>`<li>${xIcon}<span>${e}</span></li>`).join('');
 
   document.getElementById('sit-detail-content').innerHTML = `
     <div class="sit-detail-hero">
-      <div class="sit-detail-icon">${s.icon}</div>
+      <div class="sit-detail-icon">${sitIcon(s.id, 52)}</div>
       <div class="sit-detail-meta">
         <div style="margin-bottom:10px">
           <span class="sit-badge ${badgeCls}" style="font-size:11px;padding:4px 10px;border-radius:6px">${s.badge}</span>
@@ -2431,6 +2474,16 @@ function showSituationDetail(id){
     else { showView('situations'); }
   }
 })();
+
+/* ── Inject static Lucide icons into DOM elements ── */
+function initLucideUI() {
+  const el = (id) => document.getElementById(id);
+  if(el('sit-back-icon'))        el('sit-back-icon').innerHTML        = licon('ChevronLeft',16,2.5);
+  if(el('sit-detail-back-icon')) el('sit-detail-back-icon').innerHTML = licon('ChevronLeft',16,2.5);
+  const modalBack = document.getElementById('modal-back-btn');
+  if(modalBack) modalBack.innerHTML = licon('ChevronLeft',18,2.5);
+}
+document.addEventListener('DOMContentLoaded', initLucideUI);
 
 function showToast(msg){
   const t = document.getElementById('toast');
