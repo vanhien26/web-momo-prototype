@@ -48,17 +48,18 @@
   --content:   1240px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { background: var(--bg); scroll-behavior: smooth; }
+html { background: var(--bg); scroll-behavior: smooth; overflow-x: hidden; }
 body {
   font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg); color: var(--gray-900); min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ── NAV ─────────────────────────────────── */
 .site-nav {
   position: sticky; top: 36px; z-index: 200;
   background: var(--white); border-bottom: 1px solid var(--gray-200);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-s); overflow: hidden;
 }
 .nav-inner {
   max-width: var(--content); margin: 0 auto;
@@ -88,6 +89,7 @@ body {
 }
 .nav-link:hover { background: var(--gray-100); color: var(--gray-900); }
 .nav-link.on { background: var(--pink-50); color: var(--pink-500); font-weight: 700; }
+.nav-top-row { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
 .nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 .nav-cta {
   font-size: 13px; font-weight: 700; color: #fff;
@@ -96,7 +98,20 @@ body {
   font-family: inherit; flex-shrink: 0;
 }
 .nav-cta:hover { background: var(--pink-600); }
-@media(max-width:768px){ .nav-links { display: none; } .nav-back span { display: none; } }
+@media(max-width:768px){
+  .nav-back span { display: none; }
+  .nav-inner { height: auto; flex-wrap: wrap; padding: 0; gap: 0; }
+  .nav-top-row { display: flex; align-items: center; gap: 10px; padding: 0 14px; height: 52px; width: 100%; }
+  .nav-links {
+    width: 100%; overflow-x: auto; scrollbar-width: none;
+    display: flex; gap: 0; padding: 0 10px 8px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-link { font-size: 12.5px; padding: 6px 10px; white-space: nowrap; flex-shrink: 0; }
+  .nav-right { margin-left: auto; }
+  .logo-text { display: none; }
+}
 
 /* ── HERO: PLATE LOOKUP ──────────────────── */
 .hero {
@@ -131,9 +146,9 @@ body {
   letter-spacing: -.01em; margin-bottom: 16px;
 }
 .hero-title em { font-style: normal; color: var(--pink-400); }
-.hero-desc { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.55); max-width: 460px; margin-bottom: 22px; }
+.hero-desc { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.55); max-width: 100%; margin-bottom: 22px; }
 .hero-usps { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.hero-usps li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: rgba(255,255,255,.75); }
+.hero-usps li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: rgba(255,255,255,.75); word-break: break-word; overflow-wrap: anywhere; }
 .hero-usp-icon {
   width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
   background: rgba(235,47,150,.25); color: var(--pink-400);
@@ -266,6 +281,7 @@ body {
 .gas-strip {
   background: var(--gray-900);
   position: sticky; top: 0; z-index: 201;
+  overflow: hidden;
 }
 .gas-strip-inner {
   max-width: var(--content); margin: 0 auto; padding: 8px 20px;
@@ -580,6 +596,16 @@ body {
 @media(max-width:768px) {
   .rescue-panel { grid-template-columns: 1fr; }
   .parking-grid { grid-template-columns: 1fr; }
+  .ins-wrap { grid-template-columns: 1fr; }
+  .ins-row { padding: 11px 14px; gap: 10px; }
+  .ins-perk { display: none; }
+  .ins-name { font-size: 13px; }
+  .ins-price { font-size: 14px; }
+  .ins-buy { padding: 6px 12px; font-size: 12px; }
+  .ins-logo { width: 32px; height: 32px; font-size: 10px; }
+  .section-eyebrow { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .w2a-panel { grid-template-columns: 1fr; }
+  .w2a-copy { padding: 28px 20px; }
 }
 
 /* ── W2A SECTION (profile / MoXe) ────────── */
@@ -637,6 +663,53 @@ body {
 .faq-a { display: none; padding: 0 20px 16px; font-size: 13.5px; color: var(--gray-600); line-height: 1.7; }
 .faq-item.open .faq-a { display: block; }
 
+/* ── VEHICLE COST CALCULATOR ─────────────── */
+.vc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.vc-form { background: var(--white); border-radius: var(--r-xl); border: 1px solid var(--gray-200); padding: 24px; }
+.vc-result { background: var(--white); border-radius: var(--r-xl); border: 1px solid var(--gray-200); padding: 24px; position: sticky; top: 72px; }
+.vc-field { margin-bottom: 18px; }
+.vc-label { font-size: 12px; font-weight: 700; color: var(--gray-600); letter-spacing: .3px; display: flex; align-items: center; gap: 5px; margin-bottom: 7px; }
+.vc-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.vc-pill { padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--gray-200); font-size: 12.5px; font-weight: 600; color: var(--gray-600); background: var(--white); cursor: pointer; transition: all .15s; }
+.vc-pill.on { border-color: var(--pink-500); background: var(--pink-50); color: var(--pink-500); }
+.vc-slider-row { display: flex; align-items: center; gap: 10px; }
+.vc-slider { flex: 1; -webkit-appearance: none; height: 4px; border-radius: 4px; background: var(--gray-200); outline: none; }
+.vc-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--pink-500); cursor: pointer; border: 2px solid var(--white); box-shadow: 0 0 0 2px var(--pink-100); }
+.vc-slider-val { min-width: 72px; text-align: right; font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.vc-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+.vc-toggle-row:last-child { border-bottom: none; }
+.vc-toggle-label { font-size: 13px; color: var(--gray-700); }
+.vc-toggle { position: relative; width: 36px; height: 20px; }
+.vc-toggle input { opacity: 0; width: 0; height: 0; }
+.vc-toggle-track { position: absolute; inset: 0; border-radius: 20px; background: var(--gray-200); cursor: pointer; transition: background .2s; }
+.vc-toggle input:checked + .vc-toggle-track { background: var(--pink-500); }
+.vc-toggle-track::after { content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.vc-toggle input:checked + .vc-toggle-track::after { transform: translateX(16px); }
+/* result panel */
+.vc-total { text-align: center; padding: 18px 0 20px; border-bottom: 1px solid var(--gray-100); margin-bottom: 18px; }
+.vc-total-label { font-size: 11.5px; font-weight: 700; color: var(--gray-500); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 4px; }
+.vc-total-num { font-size: 32px; font-weight: 800; color: var(--gray-900); letter-spacing: -1px; }
+.vc-total-unit { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+.vc-chart-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
+.vc-chart-wrap svg { width: 100%; height: 100%; }
+.vc-chart-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.vc-chart-center-num { font-size: 18px; font-weight: 800; color: var(--gray-900); }
+.vc-chart-center-sub { font-size: 10px; color: var(--gray-500); margin-top: 1px; }
+.vc-breakdown { display: flex; flex-direction: column; gap: 0; }
+.vc-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--gray-50); }
+.vc-row:last-child { border-bottom: none; }
+.vc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.vc-row-name { flex: 1; font-size: 12.5px; color: var(--gray-600); }
+.vc-row-pct { font-size: 11px; color: var(--gray-400); width: 32px; text-align: right; }
+.vc-row-val { font-size: 13px; font-weight: 700; color: var(--gray-900); text-align: right; min-width: 80px; }
+.vc-insight { margin-top: 16px; background: var(--pink-50); border-radius: var(--r-md); padding: 12px 14px; font-size: 12.5px; color: var(--gray-700); line-height: 1.55; border: 1px solid var(--pink-100); }
+.vc-insight strong { color: var(--pink-500); }
+.vc-cta { display: block; width: 100%; margin-top: 16px; padding: 13px; background: var(--pink-500); color: #fff; font-size: 14px; font-weight: 700; border-radius: var(--r-lg); border: none; cursor: pointer; text-align: center; }
+.vc-cta:hover { background: var(--pink-600); }
+@media(max-width:768px){
+  .vc-wrap { grid-template-columns: 1fr; }
+  .vc-result { position: static; }
+}
 /* ── FOOTER ──────────────────────────────── */
 .site-footer { background: var(--gray-900); margin-top: 64px; }
 .footer-inner { max-width: var(--content); margin: 0 auto; padding: 44px 20px 30px; }
@@ -664,8 +737,9 @@ body {
 
 /* ── RESPONSIVE ──────────────────────────── */
 @media(max-width: 980px) {
-  .hero-inner { grid-template-columns: 1fr; padding: 44px 20px 60px; gap: 32px; }
-  .hero-title { font-size: 34px; }
+  .hero-inner { grid-template-columns: minmax(0, 1fr); padding: 44px 20px 60px; gap: 32px; }
+  .hero-content { min-width: 0; overflow: hidden; }
+  .hero-title { font-size: 34px; overflow-wrap: break-word; word-break: break-word; }
   .util-grid { grid-template-columns: 1fr 1fr; }
   .gas-panel { grid-template-columns: 1fr; }
   .gas-side { border-left: none; border-top: 1px solid var(--gray-100); }
@@ -679,7 +753,10 @@ body {
   .footer-cols { grid-template-columns: 1fr 1fr; }
 }
 @media(max-width: 560px) {
-  .hero-title { font-size: 29px; }
+  .hero-title { font-size: 26px; overflow-wrap: break-word; word-break: break-word; }
+  .hero-content { max-width: 100%; min-width: 0; overflow: hidden; }
+  .hero-desc { font-size: 14px; }
+  .lookup-card { padding: 20px 16px 18px; }
   .util-grid { grid-template-columns: 1fr; }
   .station-grid { grid-template-columns: 1fr; }
   .section-title { font-size: 23px; }
@@ -707,15 +784,20 @@ body {
 <!-- NAV -->
 <nav class="site-nav">
   <div class="nav-inner">
-    <a class="nav-back" href="/lab.html">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      <span>Lab</span>
-    </a>
-    <div class="nav-sep"></div>
-    <a class="nav-logo" href="/vehicle-hub">
-      <span class="logo-icon"><img src="/assets/images/momo-logo.svg" alt="MoMo"></span>
-      <span class="logo-text">MoMo <em>Xe & Giao Thông</em></span>
-    </a>
+    <div class="nav-top-row">
+      <a class="nav-back" href="/lab.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Lab</span>
+      </a>
+      <div class="nav-sep"></div>
+      <a class="nav-logo" href="/vehicle-hub">
+        <span class="logo-icon"><img src="/assets/images/momo-logo.svg" alt="MoMo"></span>
+        <span class="logo-text">Tiện Ích <em>Giao Thông</em></span>
+      </a>
+      <div class="nav-right">
+        <button class="nav-cta" onclick="toast('Mở MoMo App...')">Mở App MoMo</button>
+      </div>
+    </div>
     <div class="nav-links">
       <a class="nav-link on" href="/vehicle-hub">Hub</a>
       <a class="nav-link" href="/gia-xang">Giá xăng</a>
@@ -724,9 +806,7 @@ body {
       <a class="nav-link" href="/cay-xang">Cây xăng</a>
       <a class="nav-link" href="/vehicle-hub#cuu-ho">Cứu hộ</a>
       <a class="nav-link" href="/vehicle-hub#parking">Đỗ xe</a>
-    </div>
-    <div class="nav-right">
-      <button class="nav-cta" onclick="toast('Mở MoMo App...')">Mở App MoMo</button>
+      <a class="nav-link" href="/vehicle-hub#chi-phi-xe">Chi phí</a>
     </div>
   </div>
 </nav>
@@ -786,13 +866,13 @@ body {
     </div>
     <div class="util-grid">
       <a class="util-card" href="#tra-phat-nguoi">
-        <div class="util-icon"><img src="https://static.momocdn.net/app/icon/publicservice/logo_traffic_violation.jpg" alt="Tra phạt nguội"></div>
+        <div class="util-icon"><img src="https://homepage.momocdn.net/img/logo-phat-nguoi-260515135627.png" alt="Tra phạt nguội"></div>
         <div class="util-name">Tra phạt nguội</div>
         <div class="util-desc">Kiểm tra vi phạm theo biển số từ dữ liệu Cục CSGT. Không CAPTCHA, có cảnh báo tự động.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--red-50);color:var(--red-500)">Miễn phí</span><span class="util-arrow">→</span></div>
       </a>
       <a class="util-card" href="/phat-nguoi-nop-qua-momo">
-        <div class="util-icon"><img src="https://static.momocdn.net/app/icon/publicservice/dvc_hub/ic_dvc_nop_phat_qt.png" alt="Nộp phạt"></div>
+        <div class="util-icon" style="background:var(--red-50);display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></div>
         <div class="util-name">Nộp phạt vi phạm</div>
         <div class="util-desc">Nộp phạt giao thông trực tuyến qua Cổng DVCQG ngay trên MoMo, không cần đến kho bạc.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--red-50);color:var(--red-500)">Trực tuyến</span><span class="util-arrow">→</span></div>
@@ -804,7 +884,7 @@ body {
         <div class="util-foot"><span class="util-tag" style="background:var(--green-50);color:var(--green-500)">Cập nhật 09/07</span><span class="util-arrow">→</span></div>
       </a>
       <a class="util-card" href="/epass">
-        <div class="util-icon"><img src="https://static.momocdn.net/files/dHJhbnNwb3JOY2VudGVy/icon/ePass_icon.png" alt="ePass"></div>
+        <div class="util-icon" style="background:var(--blue-50);display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
         <div class="util-name">Nạp ePass tự động</div>
         <div class="util-desc">Liên kết ePass VTTI, bật Auto-Topup để không bao giờ kẹt tại trạm thu phí vì hết tiền.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--blue-50);color:var(--blue-500)">Trong App</span><span class="util-arrow">→</span></div>
@@ -838,6 +918,12 @@ body {
         <div class="util-name">Hồ sơ xe & nhắc hạn</div>
         <div class="util-desc">Lưu xe một lần, MoMo nhắc mọi deadline: đăng kiểm, TNDS, bảo hiểm - không bao giờ quên hạn.</div>
         <div class="util-foot"><span class="util-tag" style="background:var(--gray-100);color:var(--gray-600)">Trong App</span><span class="util-arrow">→</span></div>
+      </a>
+      <a class="util-card" href="#chi-phi-xe">
+        <div class="util-icon" style="background:var(--amber-50);font-size:22px;display:flex;align-items:center;justify-content:center">💰</div>
+        <div class="util-name">Chi phí nuôi xe</div>
+        <div class="util-desc">Tính tổng chi phí xăng, bảo hiểm, đăng kiểm, bảo dưỡng và ETC theo tháng/năm.</div>
+        <div class="util-foot"><span class="util-tag">Miễn phí</span><span class="util-arrow">→</span></div>
       </a>
       <div class="util-card is-disabled">
         <div class="util-icon"><img src="https://static.momocdn.net/app/img/transportcenter/booking_inspection.png" alt="Đăng kiểm"></div>
@@ -1178,6 +1264,100 @@ body {
 
 </div>
 
+<!-- VEHICLE COST CALCULATOR -->
+<section class="section" id="chi-phi-xe">
+  <div style="max-width:var(--content);margin:0 auto;padding:0 20px">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Calculator · Chi phí sở hữu xe</div>
+        <h2 class="section-title">Nuôi xe tốn bao nhiêu mỗi tháng?</h2>
+        <p class="section-desc">Nhập thói quen di chuyển, hệ thống tính tổng chi phí thực tế gồm xăng, bảo hiểm, bảo dưỡng, đăng kiểm và phí ETC.</p>
+      </div>
+    </div>
+    <div class="vc-wrap">
+      <!-- FORM -->
+      <div class="vc-form">
+        <div class="vc-field">
+          <div class="vc-label">Loại phương tiện</div>
+          <div class="vc-pills" id="vc-vehicle-pills">
+            <button class="vc-pill on" data-vc-vehicle="oto">🚗 Ô tô</button>
+            <button class="vc-pill" data-vc-vehicle="xemay">🏍️ Xe máy</button>
+            <button class="vc-pill" data-vc-vehicle="xedien">🛵 Xe điện</button>
+          </div>
+        </div>
+        <div class="vc-field" id="vc-fuel-field">
+          <div class="vc-label">Loại nhiên liệu</div>
+          <div class="vc-pills" id="vc-fuel-pills">
+            <button class="vc-pill on" data-vc-fuel="ron95">RON 95-III</button>
+            <button class="vc-pill" data-vc-fuel="e5">E5 RON 92</button>
+            <button class="vc-pill" data-vc-fuel="diesel">Diesel</button>
+          </div>
+        </div>
+        <div class="vc-field">
+          <div class="vc-label">Km đi mỗi tháng</div>
+          <div class="vc-slider-row">
+            <input class="vc-slider" type="range" id="vc-km" min="200" max="5000" step="100" value="1500">
+            <span class="vc-slider-val" id="vc-km-val">1.500 km</span>
+          </div>
+        </div>
+        <div class="vc-field" id="vc-consumption-field">
+          <div class="vc-label">Mức tiêu thụ nhiên liệu</div>
+          <div class="vc-slider-row">
+            <input class="vc-slider" type="range" id="vc-consume" min="4" max="20" step="0.5" value="10">
+            <span class="vc-slider-val" id="vc-consume-val">10 L/100km</span>
+          </div>
+        </div>
+        <div class="vc-field">
+          <div class="vc-label">Các chi phí cố định</div>
+          <div class="vc-toggle-row">
+            <span class="vc-toggle-label">Bảo hiểm TNDS</span>
+            <label class="vc-toggle"><input type="checkbox" id="vc-tnds" checked><span class="vc-toggle-track"></span></label>
+          </div>
+          <div class="vc-toggle-row">
+            <span class="vc-toggle-label">Bảo hiểm vật chất xe</span>
+            <label class="vc-toggle"><input type="checkbox" id="vc-vcx"><span class="vc-toggle-track"></span></label>
+          </div>
+          <div class="vc-toggle-row">
+            <span class="vc-toggle-label">Phí đường bộ (theo năm)</span>
+            <label class="vc-toggle"><input type="checkbox" id="vc-road" checked><span class="vc-toggle-track"></span></label>
+          </div>
+          <div class="vc-toggle-row">
+            <span class="vc-toggle-label">ETC / phí cao tốc</span>
+            <label class="vc-toggle"><input type="checkbox" id="vc-etc" checked><span class="vc-toggle-track"></span></label>
+          </div>
+          <div class="vc-toggle-row">
+            <span class="vc-toggle-label">Bảo dưỡng định kỳ</span>
+            <label class="vc-toggle"><input type="checkbox" id="vc-maintenance" checked><span class="vc-toggle-track"></span></label>
+          </div>
+          <div class="vc-toggle-row">
+            <span class="vc-toggle-label">Đăng kiểm (phân bổ theo tháng)</span>
+            <label class="vc-toggle"><input type="checkbox" id="vc-inspection" checked><span class="vc-toggle-track"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="vc-result">
+        <div class="vc-total">
+          <div class="vc-total-label">Tổng chi phí ước tính</div>
+          <div class="vc-total-num" id="vc-total-num">—</div>
+          <div class="vc-total-unit">/tháng &nbsp;·&nbsp; <span id="vc-total-year">—</span>/năm</div>
+        </div>
+        <div class="vc-chart-wrap">
+          <svg id="vc-donut" viewBox="0 0 140 140"></svg>
+          <div class="vc-chart-center">
+            <div class="vc-chart-center-num" id="vc-chart-center-num">—</div>
+            <div class="vc-chart-center-sub">đ/km</div>
+          </div>
+        </div>
+        <div class="vc-breakdown" id="vc-breakdown"></div>
+        <div class="vc-insight" id="vc-insight"></div>
+        <button class="vc-cta" onclick="window.open('https://momo.vn','_blank')">Tối ưu chi phí xe với MoMo →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="footer-inner">
@@ -1443,7 +1623,7 @@ body {
 
   /* nav active state on scroll */
   const navLinks = document.querySelectorAll('.nav-link');
-  const sections = ['tra-phat-nguoi', 'gia-xang', 'epass', 'bao-hiem', 'cay-xang', 'cuu-ho', 'parking'];
+  const sections = ['tra-phat-nguoi', 'gia-xang', 'epass', 'bao-hiem', 'cay-xang', 'cuu-ho', 'parking', 'chi-phi-xe'];
   window.addEventListener('scroll', () => {
     let current = sections[0];
     sections.forEach(id => {
@@ -1455,6 +1635,180 @@ body {
 
   renderGas(1);
   renderInsurers();
+
+  /* ── VEHICLE COST CALCULATOR ──────────────────────────────────────────── */
+  (function () {
+    const FUEL_PRICE = { ron95: 21100, e5: 20700, diesel: 19940 };
+    const COLORS = ['#EB2F96','#F472B6','#D97706','#2563EB','#16A34A','#7C3AED'];
+
+    // Cost constants (VND/month unless noted)
+    const COSTS = {
+      oto: {
+        tnds: Math.round(481000 / 12),         // ~481k/năm ô tô dưới 6 chỗ
+        vcx: Math.round(3500000 / 12),          // ~3.5tr/năm (giá trị xe 500tr, ~0.7%)
+        road: Math.round(1560000 / 12),         // phí đường bộ nhóm 2
+        etc: 300000,                            // phí cao tốc trung bình
+        maintenance: Math.round(4800000 / 12),  // 2 lần bảo dưỡng/năm ~4.8tr
+        inspection: Math.round(340000 / 24),    // đăng kiểm 2 năm/lần ~340k
+        consume: 10,                             // L/100km mặc định
+      },
+      xemay: {
+        tnds: Math.round(66000 / 12),
+        vcx: Math.round(600000 / 12),
+        road: Math.round(100000 / 12),
+        etc: 0,
+        maintenance: Math.round(800000 / 12),
+        inspection: Math.round(80000 / 12),
+        consume: 3,
+      },
+      xedien: {
+        tnds: Math.round(66000 / 12),
+        vcx: Math.round(500000 / 12),
+        road: Math.round(100000 / 12),
+        etc: 0,
+        maintenance: Math.round(400000 / 12),
+        inspection: Math.round(80000 / 12),
+        consume: 0, // điện
+      },
+    };
+
+    let vehicle = 'oto', fuel = 'ron95';
+
+    function fmt(n) {
+      if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + ' tr';
+      return n.toLocaleString('vi-VN');
+    }
+
+    function calcFuel() {
+      if (vehicle === 'xedien') {
+        // ~2.5kWh/100km, giá điện ~3500đ/kWh → 87.5đ/km
+        const km = +document.getElementById('vc-km').value;
+        return Math.round(km * 87.5);
+      }
+      const km = +document.getElementById('vc-km').value;
+      const consume = +document.getElementById('vc-consume').value;
+      return Math.round(km / 100 * consume * FUEL_PRICE[fuel]);
+    }
+
+    function calc() {
+      const c = COSTS[vehicle];
+      const km = +document.getElementById('vc-km').value;
+      const fuelCost = calcFuel();
+      const items = [
+        { name: 'Xăng / Điện', val: fuelCost, on: true },
+        { name: 'Bảo hiểm TNDS', val: c.tnds, on: document.getElementById('vc-tnds').checked },
+        { name: 'Bảo hiểm vật chất', val: c.vcx, on: document.getElementById('vc-vcx').checked },
+        { name: 'Phí đường bộ', val: c.road, on: document.getElementById('vc-road').checked },
+        { name: 'ETC / cao tốc', val: c.etc, on: document.getElementById('vc-etc').checked },
+        { name: 'Bảo dưỡng', val: c.maintenance, on: document.getElementById('vc-maintenance').checked },
+        { name: 'Đăng kiểm', val: c.inspection, on: document.getElementById('vc-inspection').checked },
+      ];
+      const active = items.filter(i => i.on && i.val > 0);
+      const total = active.reduce((s, i) => s + i.val, 0);
+      const costPerKm = km > 0 ? Math.round(total / km) : 0;
+      return { active, total, costPerKm, km };
+    }
+
+    function drawDonut(items, total) {
+      const svg = document.getElementById('vc-donut');
+      const R = 60, r = 40, cx = 70, cy = 70;
+      const circumference = 2 * Math.PI * R;
+      let offset = 0;
+      let paths = '';
+      items.forEach((item, i) => {
+        const pct = total > 0 ? item.val / total : 0;
+        const dash = pct * circumference;
+        const gap = circumference - dash;
+        // rotate so first segment starts at top
+        const rot = (offset / circumference) * 360 - 90;
+        paths += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${COLORS[i % COLORS.length]}" stroke-width="20" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" stroke-dashoffset="0" transform="rotate(${rot.toFixed(2)} ${cx} ${cy})" />`;
+        offset += dash;
+      });
+      svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--gray-100)" stroke-width="20"/>` + paths + `<circle cx="${cx}" cy="${cy}" r="${r}" fill="white"/>`;
+    }
+
+    function render() {
+      const { active, total, costPerKm, km } = calc();
+
+      document.getElementById('vc-total-num').textContent = fmt(total) + 'đ';
+      document.getElementById('vc-total-year').textContent = fmt(total * 12) + 'đ';
+      document.getElementById('vc-chart-center-num').textContent = fmt(costPerKm);
+
+      drawDonut(active, total);
+
+      const breakdown = document.getElementById('vc-breakdown');
+      breakdown.innerHTML = active.map((item, i) => {
+        const pct = total > 0 ? Math.round(item.val / total * 100) : 0;
+        return `<div class="vc-row">
+          <div class="vc-dot" style="background:${COLORS[i % COLORS.length]}"></div>
+          <div class="vc-row-name">${item.name}</div>
+          <div class="vc-row-pct">${pct}%</div>
+          <div class="vc-row-val">${fmt(item.val)}đ</div>
+        </div>`;
+      }).join('');
+
+      // insight
+      const fuelItem = active[0];
+      const fuelPct = total > 0 ? Math.round(fuelItem.val / total * 100) : 0;
+      let insight = '';
+      const benchmarks = { oto: 850, xemay: 250, xedien: 120 };
+      const bench = benchmarks[vehicle];
+      if (costPerKm > bench * 1.2) {
+        insight = `Chi phí <strong>${fmt(costPerKm)}đ/km</strong> cao hơn mức trung bình ${fmt(bench)}đ/km của xe cùng loại. Xem xét tối ưu lộ trình hoặc bảo dưỡng định kỳ để giảm tiêu hao.`;
+      } else if (costPerKm < bench * 0.85) {
+        insight = `Chi phí <strong>${fmt(costPerKm)}đ/km</strong> tốt hơn mức trung bình ${fmt(bench)}đ/km. Tiếp tục duy trì thói quen vận hành hiệu quả.`;
+      } else {
+        insight = `Chi phí <strong>${fmt(costPerKm)}đ/km</strong> ở mức trung bình. Khoản chiếm tỷ trọng lớn nhất: <strong>${fuelItem.name} (${fuelPct}%)</strong>.`;
+      }
+      document.getElementById('vc-insight').innerHTML = insight;
+    }
+
+    function setVehicle(v) {
+      vehicle = v;
+      document.querySelectorAll('[data-vc-vehicle]').forEach(b => b.classList.toggle('on', b.dataset.vcVehicle === v));
+      const c = COSTS[v];
+      const consumeSlider = document.getElementById('vc-consume');
+      consumeSlider.value = c.consume;
+      document.getElementById('vc-consume-val').textContent = v === 'xedien' ? '—' : c.consume + ' L/100km';
+      document.getElementById('vc-fuel-field').style.display = v === 'xedien' ? 'none' : '';
+      document.getElementById('vc-consumption-field').style.display = v === 'xedien' ? 'none' : '';
+      document.getElementById('vc-etc').closest('.vc-toggle-row').style.display = v === 'oto' ? '' : 'none';
+      render();
+    }
+
+    // vehicle pills
+    document.querySelectorAll('[data-vc-vehicle]').forEach(b => {
+      b.addEventListener('click', () => setVehicle(b.dataset.vcVehicle));
+    });
+
+    // fuel pills
+    document.querySelectorAll('[data-vc-fuel]').forEach(b => {
+      b.addEventListener('click', () => {
+        fuel = b.dataset.vcFuel;
+        document.querySelectorAll('[data-vc-fuel]').forEach(x => x.classList.toggle('on', x === b));
+        render();
+      });
+    });
+
+    // sliders
+    const kmSlider = document.getElementById('vc-km');
+    const consumeSlider = document.getElementById('vc-consume');
+    kmSlider.addEventListener('input', () => {
+      document.getElementById('vc-km-val').textContent = (+kmSlider.value).toLocaleString('vi-VN') + ' km';
+      render();
+    });
+    consumeSlider.addEventListener('input', () => {
+      document.getElementById('vc-consume-val').textContent = consumeSlider.value + ' L/100km';
+      render();
+    });
+
+    // toggles
+    ['vc-tnds','vc-vcx','vc-road','vc-etc','vc-maintenance','vc-inspection'].forEach(id => {
+      document.getElementById(id).addEventListener('change', render);
+    });
+
+    setVehicle('oto');
+  })();
 </script>
 </body>
 </html>
