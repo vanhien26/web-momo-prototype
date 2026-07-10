@@ -499,6 +499,14 @@ const PROTOTYPES = [
         address: 'web-momo-prototype.vercel.app/cay-xang',
         description: 'Spoke finder: split layout list + Leaflet map, 18 trạm xăng mẫu TP.HCM, filter theo thương hiệu/open24/MoMo, detail panel giá từng trạm + W2A.',
       },
+      {
+        id: 'bai-do-xe',
+        name: 'Tìm Bãi Đậu Xe',
+        category: 'Child Page',
+        src: 'demos/bai-do-xe.html',
+        address: 'web-momo-prototype.vercel.app/bai-do-xe',
+        description: 'Parking finder: SVG map tối với P-marker pulse theo trạng thái (còn/ít/đầy), split list + map, filter xe máy/ô tô/MoMo-only, detail panel phí + CTA. Đối tác: VETC, eParking, iParking. Bảng giá theo khu vực + FAQ.',
+      },
     ],
   },
   {
