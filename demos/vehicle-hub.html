@@ -267,10 +267,10 @@ body {
 }
 .hub-dash-tile-action svg { width: 12px; height: 12px; stroke-width: 2.5; flex-shrink: 0; }
 
-/* skeleton / preview state */
-.hub-dash--preview .hub-dash-tile { opacity: .55; pointer-events: none; }
-.hub-dash--preview .hub-dash-tile-action { visibility: hidden; }
-.hub-dash--preview .hub-dash-tile-icon { background: var(--gray-100) !important; color: var(--gray-300) !important; }
+/* demo state — show data but signal it's example */
+.hub-dash--demo .hub-dash-plate-tag::after { content: ' · Nhập BSX để xem xe bạn'; font-weight: 400; opacity: .6; font-size: 10px; }
+.hub-dash--demo .hub-dash-tile { opacity: .72; }
+.hub-dash--demo .hub-dash-reset { display: none; }
 @keyframes skel-pulse { 0%,100%{opacity:.4} 50%{opacity:.85} }
 @keyframes plate-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
 .skel-bar {
@@ -1928,6 +1928,7 @@ body {
       }
       const plate = raw.slice(0, 3) + '-' + raw.slice(3);
       localStorage.setItem(SAVED_KEY, raw);
+      hubDash.classList.remove('hub-dash--demo');
       renderDash(plate, getPlateData(raw));
     }
 
@@ -1935,21 +1936,18 @@ body {
       localStorage.removeItem(SAVED_KEY);
       plateInput.value = '';
       plateProvince.classList.remove('is-visible');
-      hubDash.classList.add('hub-dash--preview');
-      hubDashHeader.style.display = 'none';
-      [0,1,2,3].forEach(i => {
-        document.getElementById('dashIcon' + i).className = 'hub-dash-tile-icon icon-ok';
-        document.getElementById('dashIcon' + i).innerHTML = '';
-        document.getElementById('dashVal' + i).className = 'hub-dash-tile-value';
-        document.getElementById('dashVal' + i).innerHTML = '<span class="skel-bar"></span>';
-      });
+      /* Restore demo state */
+      const demoPlate = '51A12345';
+      renderDash('51A-12345', getPlateData(demoPlate));
+      document.getElementById('hubDashPlateTag').textContent = 'Demo · 51A-12345';
+      hubDash.classList.add('hub-dash--demo');
       plateInput.focus();
     }
 
     plateSubmit.addEventListener('click', submitPlate);
     plateInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitPlate(); });
 
-    /* Restore saved plate on load */
+    /* Restore saved plate or show demo data immediately */
     const saved = localStorage.getItem(SAVED_KEY);
     if (saved && saved.length >= 7) {
       const formatted = saved.slice(0, 3) + '-' + saved.slice(3);
@@ -1957,6 +1955,13 @@ body {
       const province = detectProvince(saved);
       if (province) { plateProvince.textContent = province; plateProvince.classList.add('is-visible'); }
       renderDash(formatted, getPlateData(saved));
+    } else {
+      /* Show demo data so user sees what they'll get */
+      const demoPlate = '51A12345';
+      renderDash('51A-12345', getPlateData(demoPlate));
+      /* Mark as demo so plate tag shows hint */
+      document.getElementById('hubDashPlateTag').textContent = 'Demo · 51A-12345';
+      hubDash.classList.add('hub-dash--demo');
     }
   }());
 
