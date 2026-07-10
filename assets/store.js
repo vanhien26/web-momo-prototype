@@ -63,7 +63,7 @@ const PROTOTYPES = [
     id: 'bao-hiem-o-to',
     name: 'Bảo Hiểm Ô Tô',
     category: 'Platform',
-    ownerGroup: 'Cell Team',
+    ownerGroup: 'Tiện ích Giao Thông',
     maturity: 'Interactive',
     description: 'Luồng mua bảo hiểm thân vỏ ô tô end-to-end: chọn xe (hãng → dòng → phiên bản → năm), so sánh báo giá từ 9 nhà bảo hiểm, điền thông tin, thanh toán và nhận đơn điện tử.',
     jtbd: 'Biết ngay phí bảo hiểm và mua được gói phù hợp mà không cần ra đại lý',
@@ -103,13 +103,14 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/esim-du-lich',
     tools: [
       {id:'destination-detail',name:'Destination Detail',category:'Child Page',description:'Một template trang con dùng query parameter để render quốc gia hoặc khu vực đã chọn.',jtbd:'Chọn gói, kiểm tra thiết bị và hiểu cách kích hoạt tại điểm đến',src:'demos/esim/destination.html?destination=thailand',address:'web-momo-prototype.vercel.app/esim/destination?destination=thailand'},
+      {id:'dia-diem-du-lich',name:'Địa Điểm Du Lịch',category:'Hub Page',description:'Trang tổng hợp địa điểm du lịch Việt Nam và quốc tế bằng bộ icon landmark monoline tím, có search và filter theo nhóm điểm đến.',jtbd:'Duyệt nhanh điểm đến phù hợp cho chuyến đi trong nước hoặc nước ngoài',src:'demos/dia-diem-du-lich.html',address:'web-momo-prototype.vercel.app/dia-diem-du-lich'},
     ],
   },
   {
     id: 'epass',
     name: 'ePass x MoMo',
     category: 'Platform',
-    ownerGroup: 'Cell Team',
+    ownerGroup: 'Tiện ích Giao Thông',
     maturity: 'Interactive',
     description: 'Hub giới thiệu ePass x MoMo: liên kết tài khoản giao thông ETC, qua trạm tự động bằng tiền MoMo. Tích hợp 2 utilities tool tính chi phí qua trạm và thiết lập ngưỡng nạp tự động.',
     jtbd: 'Qua trạm ETC không bị chặn mà không cần nạp tiền thẻ thủ công',
@@ -472,7 +473,7 @@ const PROTOTYPES = [
     id: 'vehicle-hub',
     name: 'Tiện Ích Giao Thông',
     category: 'Platform',
-    ownerGroup: 'Cell Team',
+    ownerGroup: 'Tiện ích Giao Thông',
     maturity: 'Concept',
     description: 'Mini App quản lý phương tiện toàn diện: tra phạt nguội không CAPTCHA, nạp ePass Auto-Topup, kiểm tra bảo hiểm/đăng kiểm, tìm cây xăng M4B đối tác và hạng MoXe loyalty. Hai Web Widget SEO: Giá xăng phân vùng và Phạt nguội lookup.',
     jtbd: 'Quản lý xe thông minh, hành trình không gián đoạn - tra phạt, nạp ETC, gia hạn bảo hiểm và tìm cây xăng trong một surface duy nhất',
@@ -785,7 +786,7 @@ const PROTOTYPES = [
     id: 'phat-nguoi',
     name: 'Phạt Nguội',
     category: 'Platform',
-    ownerGroup: 'Cell Team',
+    ownerGroup: 'Tiện ích Giao Thông',
     maturity: 'Hub',
     description: 'Hub Phạt Nguội toàn quốc: lookup biển số, định tuyến theo nhu cầu, directory tỉnh/thành và internal link tới Giải đáp, Nộp phạt cùng các Location Detail.',
     jtbd: 'Tra cứu vi phạm theo biển số và đi tiếp đến đúng hướng dẫn hoặc địa phương cần xử lý',
@@ -959,7 +960,7 @@ function buildLabActivityDashboard() {
       </div>
     </section>`;
 }
-const PLG_OWNER_ORDER = ['Cell Team', 'Web Platform'];
+const PLG_OWNER_ORDER = ['Tiện ích Giao Thông', 'Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
@@ -1173,6 +1174,7 @@ const MOSPARK_AUDIENCE = [
 let activeProtoId = null;
 let activeToolId  = null;
 const expanded    = new Set();
+const collapsedOwnerGroups = new Set(); // owner groups that are collapsed
 
 function findToolPath(proto, toolId, tools = proto?.tools || [], ancestors = []) {
   for (const tool of tools) {
@@ -1262,9 +1264,13 @@ function renderNav() {
       ? PLG_OWNER_ORDER.map(owner => {
           const ownerItems = groupItems.filter(item => item.ownerGroup === owner);
           if (!ownerItems.length) return '';
-          return `<div class="proto-owner-group">
-            <p class="proto-owner-label">${owner}</p>
-            ${ownerItems.map(item => renderNavItem(item, groupItems.indexOf(item))).join('')}
+          const isCollapsible = owner === 'Tiện ích Giao Thông';
+          const isCollapsed = isCollapsible && collapsedOwnerGroups.has(owner);
+          return `<div class="proto-owner-group${isCollapsible ? ' owner-group--collapsible' : ''}${isCollapsed ? ' owner-group--collapsed' : ''}">
+            <p class="proto-owner-label${isCollapsible ? ' proto-owner-label--toggle' : ''}" data-owner-toggle="${isCollapsible ? owner : ''}">${owner}${isCollapsible ? `<span class="owner-caret${isCollapsed ? '' : ' open'}">›</span>` : ''}</p>
+            <div class="owner-group-items">
+              ${ownerItems.map(item => renderNavItem(item, groupItems.indexOf(item))).join('')}
+            </div>
           </div>`;
         }).join('')
       : groupName === 'MoSpark'
@@ -1301,6 +1307,16 @@ function renderNav() {
 
   nav.querySelectorAll('.tool-nav-btn').forEach(btn => {
     btn.addEventListener('click', () => selectTool(btn.dataset.proto, btn.dataset.tool));
+  });
+
+  nav.querySelectorAll('[data-owner-toggle]').forEach(el => {
+    const owner = el.dataset.ownerToggle;
+    if (!owner) return;
+    el.addEventListener('click', () => {
+      if (collapsedOwnerGroups.has(owner)) collapsedOwnerGroups.delete(owner);
+      else collapsedOwnerGroups.add(owner);
+      renderNav();
+    });
   });
 }
 
