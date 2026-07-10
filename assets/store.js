@@ -488,6 +488,7 @@ const PROTOTYPES = [
       {
         id: 'gia-xang',
         name: 'Giá Xăng Dầu Hôm Nay',
+        category: 'Child Page',
         src: 'demos/gia-xang.html',
         address: 'web-momo-prototype.vercel.app/gia-xang',
         description: 'Spoke SEO: bảng giá Vùng 1/Vùng 2, lịch sử 10 kỳ điều hành, trend chart 90 ngày, công cụ tính tiền đổ xăng và countdown kỳ điều hành tiếp theo.',
@@ -495,6 +496,7 @@ const PROTOTYPES = [
       {
         id: 'cay-xang',
         name: 'Cây Xăng Gần Bạn',
+        category: 'Child Page',
         src: 'demos/cay-xang.html',
         address: 'web-momo-prototype.vercel.app/cay-xang',
         description: 'Spoke finder: split layout list + Leaflet map, 18 trạm xăng mẫu TP.HCM, filter theo thương hiệu/open24/MoMo, detail panel giá từng trạm + W2A.',
