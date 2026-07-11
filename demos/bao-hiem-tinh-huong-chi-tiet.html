@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title id="page-title">Tình Huống Bồi Thường | Bảo Hiểm Ô Tô MoMo</title>
+  <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
+  <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --pink:#af0171; --pink-light:rgba(175,1,113,.18); --pink-bg:rgba(175,1,113,.06);
+      --green:#16a34a; --green-bg:#f0fdf4; --amber:#d97706; --amber-bg:#fffbeb;
+      --red:#dc2626;
+      --ink:#1a0f17; --muted:#6b5768; --soft:#f5f0f4; --line:#e8dfe6;
+      --card:#fff; --bg:#faf8f9;
+    }
+    body{font-family:-apple-system,BlinkMacSystemFont,'Be Vietnam Pro','Segoe UI',sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;font-family:inherit}
+
+    /* ── Shell ── */
+    .shell{width:min(1100px,calc(100% - 40px));margin:0 auto}
+
+    /* ── Header ── */
+    .topbar{height:64px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.97);backdrop-filter:blur(14px);position:sticky;top:0;z-index:200}
+    .topbar-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .brand img{width:36px;height:36px;border-radius:10px}
+    .brand-copy strong{display:block;font-size:15px;font-weight:800}
+    .brand-copy small{color:var(--muted);font-size:11px}
+    .bh-nav{display:flex;align-items:center;gap:2px;margin:0 auto}
+    .bh-nav-link{color:var(--muted);font-size:14px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:.15s;border:none;background:none;font-family:inherit;text-decoration:none;display:inline-block}
+    .bh-nav-link:hover{color:var(--ink);background:var(--soft)}
+    .bh-nav-link.active{color:var(--pink);font-weight:700}
+    .back-link{color:var(--muted);font-size:13px;font-weight:700;text-decoration:none}
+
+    /* ── Breadcrumb ── */
+    .bh-breadcrumb-bar{padding:10px 0;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:64px;z-index:100}
+    .bh-bc-inner{display:flex;align-items:center;gap:4px}
+    .bh-bc-btn{color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;padding:0;font-family:inherit;display:inline-flex;align-items:center;gap:3px;text-decoration:none}
+    .bh-bc-btn:hover{color:var(--pink)}
+    .bh-bc-sep{color:var(--line);font-size:12px;margin:0 2px}
+    .bh-bc-current{color:var(--ink);font-size:13px;font-weight:700}
+
+    /* ── Buttons ── */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;cursor:pointer;font-family:inherit;font-weight:700;border-radius:12px;transition:.15s;text-decoration:none}
+    .btn-primary{background:var(--pink);color:#fff;padding:10px 20px;font-size:14px}
+    .btn-primary:hover{background:#8f015d}
+    .btn-lg{padding:14px 28px;font-size:15px;border-radius:14px}
+    .btn-full{width:100%;justify-content:center}
+
+    /* ── Situation Detail ── */
+    .sit-detail-hero{display:flex;align-items:flex-start;gap:20px;margin-bottom:32px;padding:28px;background:var(--card);border:1px solid var(--line);border-radius:20px}
+    .sit-detail-icon{width:72px;height:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:18px;color:var(--pink)}
+    .sit-detail-meta{flex:1}
+    .sit-detail-title{font-size:clamp(22px,3vw,30px);font-weight:900;line-height:1.15;letter-spacing:-.3px;margin-bottom:10px}
+    .sit-detail-desc{font-size:15px;color:var(--muted);line-height:1.7}
+    .sit-badge{display:inline-block;font-size:11px;font-weight:800;padding:4px 10px;border-radius:6px;margin-bottom:10px}
+    .sit-badge.green{background:var(--green-bg);color:var(--green)}
+    .sit-badge.amber{background:var(--amber-bg);color:var(--amber)}
+
+    /* ── Detail sections ── */
+    .sit-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .sit-detail-section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+    .sit-detail-section-label{font-size:11px;font-weight:800;color:var(--pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+    .sit-detail-section-title{font-size:17px;font-weight:800;margin-bottom:18px;line-height:1.25}
+
+    /* ── Insurer rows ── */
+    .sit-insurer-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+    .sit-insurer-row:last-child{border-bottom:none}
+    .sit-insurer-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .sit-insurer-name{font-size:14px;font-weight:700}
+    .sit-insurer-note{font-size:12px;color:var(--muted);margin-top:2px}
+    .sit-insurer-cost{font-size:12px;color:var(--pink);font-weight:700;margin-top:2px}
+    .sit-insurer-status{font-size:11px;font-weight:800;padding:4px 9px;border-radius:6px;white-space:nowrap}
+    .sit-insurer-status.base{background:var(--green-bg);color:var(--green)}
+    .sit-insurer-status.addon{background:var(--amber-bg);color:var(--amber)}
+    .sit-insurer-status.no{background:#fef2f2;color:#dc2626}
+
+    /* ── Claim steps ── */
+    .claim-steps{display:flex;flex-direction:column;gap:16px}
+    .claim-step{display:flex;gap:14px;align-items:flex-start}
+    .claim-step-num{width:28px;height:28px;border-radius:50%;background:var(--pink);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+    .claim-step-body{flex:1}
+    .claim-step-title{font-size:13px;font-weight:800;margin-bottom:4px}
+    .claim-step-desc{font-size:12px;color:var(--muted);line-height:1.55}
+    .claim-step-time{font-size:11px;color:var(--pink);font-weight:700;margin-top:5px;display:flex;align-items:center;gap:4px}
+
+    /* ── Exclusions ── */
+    .sit-excl-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .sit-excl-list li{display:flex;gap:8px;font-size:13px;color:var(--muted);line-height:1.45;align-items:flex-start}
+    .sit-excl-list li svg{flex-shrink:0;color:#dc2626;margin-top:2px}
+    .sit-tip-box{background:var(--amber-bg);border:1px solid rgba(217,119,6,.2);border-radius:12px;padding:14px 16px;font-size:13px;color:#92400e;line-height:1.6}
+    .sit-warn{background:#fef2f2;border:1px solid rgba(220,38,38,.15);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#b91c1c;line-height:1.55;display:flex;gap:8px;align-items:flex-start;margin-top:12px}
+
+    /* ── Quote form ── */
+    .car-form-box{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:24px;max-width:520px}
+    .car-form-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+    .car-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .form-field-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+    .form-select-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--soft);border:1.5px solid var(--line);border-radius:10px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:.15s}
+    .form-select-btn:hover{border-color:var(--pink)}
+    .form-select-btn.filled{border-color:var(--pink);background:var(--pink-bg)}
+    .form-select-btn .placeholder{color:var(--muted)}
+    .chevron{font-size:10px;color:var(--muted)}
+    .price-anchor{display:flex;align-items:center;justify-content:space-between;background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:10px;padding:10px 14px;margin:12px 0}
+    .price-anchor-label{font-size:12px;color:var(--green);font-weight:600;flex:1;line-height:1.4}
+    .price-anchor-value{font-size:15px;font-weight:900;color:var(--green);white-space:nowrap}
+    .brand-hint{display:none;background:rgba(175,1,113,.06);border:1px solid rgba(175,1,113,.15);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
+    .brand-hint.show{display:block}
+    .brand-hint strong{color:var(--pink);font-weight:800}
+
+    /* ── Modal ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;display:none;align-items:flex-end;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:80vh;display:flex;flex-direction:column}
+    .modal-header{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);gap:8px}
+    .modal-title{flex:1;font-size:16px;font-weight:800}
+    .modal-close{border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px}
+    .modal-back{border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px}
+    .modal-search{padding:12px 16px;border-bottom:1px solid var(--line)}
+    .search-box{display:flex;align-items:center;gap:8px;background:var(--soft);border-radius:10px;padding:8px 12px}
+    .search-box input{border:none;background:none;font-size:14px;flex:1;outline:none;font-family:inherit}
+    .modal-body{flex:1;overflow-y:auto}
+    .brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px}
+    .brand-card{display:flex;flex-direction:column;align-items:center;padding:12px 8px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;transition:.15s;gap:4px}
+    .brand-card:hover,.brand-card.selected{border-color:var(--pink);background:var(--pink-bg)}
+    .brand-card-name{font-size:11px;font-weight:800;text-align:center}
+    .brand-list-item{padding:13px 16px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;transition:.12s}
+    .brand-list-item:hover{background:var(--soft)}
+    .brand-list-item.selected{background:var(--pink-bg);color:var(--pink);font-weight:800}
+    .year-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;font-size:15px;font-weight:600;transition:.12s}
+    .year-item:hover{background:var(--soft)}
+    .year-item.selected{background:var(--pink-bg);color:var(--pink);font-weight:800}
+
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);opacity:0;background:#1a0f17;color:#fff;border-radius:999px;padding:11px 20px;font-size:13px;font-weight:700;z-index:999;transition:.25s;pointer-events:none;white-space:nowrap}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+    /* ── Error ── */
+    .error-page{text-align:center;padding:80px 20px}
+    .error-page h2{font-size:24px;font-weight:900;margin-bottom:12px}
+    .error-page p{color:var(--muted);margin-bottom:24px}
+
+    /* ── Responsive ── */
+    @media(max-width:760px){
+      .sit-detail-grid{grid-template-columns:1fr}
+      .sit-detail-hero{flex-direction:column}
+      .car-form-grid{grid-template-columns:1fr}
+      .bh-nav{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="bao-hiem-o-to.html">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+      <span class="brand-copy"><strong>Bảo Hiểm Ô Tô</strong><small>MoMo Prototype</small></span>
+    </a>
+    <nav class="bh-nav">
+      <a class="bh-nav-link" href="bao-hiem-o-to.html">Báo giá</a>
+      <a class="bh-nav-link active" href="bao-hiem-tinh-huong-chi-tiet.html">Tình huống</a>
+      <a class="bh-nav-link" href="bao-hiem-o-to.html#faq">Hỏi đáp</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a class="back-link" href="../lab.html">← Lab</a>
+      <a class="btn btn-primary" href="bao-hiem-o-to.html">Xem báo giá</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── Breadcrumb ── -->
+<div class="bh-breadcrumb-bar">
+  <div class="shell bh-bc-inner">
+    <a class="bh-bc-btn" href="bao-hiem-o-to.html">
+      <span id="bc-home-icon"></span> Bảo hiểm Ô Tô
+    </a>
+    <span class="bh-bc-sep">›</span>
+    <a class="bh-bc-btn" href="bao-hiem-tinh-huong-chi-tiet.html">Tình huống</a>
+    <span class="bh-bc-sep" id="bc-sep2" style="display:none">›</span>
+    <span class="bh-bc-current" id="bc-current" style="display:none"></span>
+  </div>
+</div>
+
+<!-- ── Main content ── -->
+<div class="shell" style="padding:32px 0 80px" id="main-content">
+  <!-- Rendered by JS -->
+</div>
+
+<!-- ── Modal ── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <button class="modal-back" id="modal-back-btn" onclick="goBackModal()" style="display:none">‹</button>
+      <span class="modal-title" id="modal-title">Chọn nhãn hiệu</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-search" id="modal-search">
+      <div class="search-box">
+        <span>⌕</span>
+        <input type="text" id="modal-search-input" placeholder="Nhập để tìm kiếm..." oninput="onSearch(this.value)">
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Lucide helper ── */
+function licon(name, size=20, sw=1.75, cls='') {
+  if (!window.lucide || !window.lucide[name]) return '';
+  const children = window.lucide[name].map(([tag, attrs]) => {
+    const attrStr = Object.entries(attrs).map(([k,v])=>`${k}="${v}"`).join(' ');
+    return `<${tag} ${attrStr}/>`;
+  }).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"${cls?' class="'+cls+'"':''}>${children}</svg>`;
+}
+const SIT_ICONS = { collision:'Zap', thuykick:'Waves', fire:'Flame', theft:'LockOpen', parttheft:'Wrench', natural:'CloudLightning', glass:'PanelTop', parked:'Car' };
+const STEP_ICONS = { '📸':'Camera','📞':'Phone','📋':'ClipboardList','🔍':'Search','🔧':'Wrench','💰':'Banknote','🚫':'Ban','🚗':'Car','🔒':'Lock','🚔':'ShieldAlert','📄':'FileText','📊':'BarChart2','🚒':'Truck','📹':'Video','✅':'CheckCircle','⚠️':'AlertTriangle','🪟':'RectangleHorizontal' };
+function sitIcon(id, size=36) { return licon(SIT_ICONS[id]||'Shield', size, 1.5); }
+function stepIcon(emoji, size=15) { return licon(STEP_ICONS[emoji]||'Circle', size, 2); }
+function fmt(n){ return new Intl.NumberFormat('vi-VN').format(Math.round(n)); }
+
+/* ── Data ── */
+const INSURERS = [
+  { id:'pvi',     name:'PVI Insurance',     short:'PVI',     color:'#c8122c', rate:0.0140, rating:4.8, avgClaimDays:3  },
+  { id:'liberty', name:'Liberty Insurance', short:'Liberty', color:'#00529b', rate:0.0142, rating:4.7, avgClaimDays:5  },
+  { id:'baoviet', name:'Bảo Việt',          short:'BaoViet', color:'#007a3d', rate:0.0145, rating:4.7, avgClaimDays:5  },
+  { id:'pjico',   name:'PJICO',             short:'PJICO',   color:'#003087', rate:0.0148, rating:4.6, avgClaimDays:6  },
+  { id:'mic',     name:'MIC',               short:'MIC',     color:'#e63329', rate:0.0150, rating:4.6, avgClaimDays:6  },
+  { id:'dby',     name:'DBY Insurance',     short:'DBY',     color:'#1a1a2e', rate:0.0152, rating:4.5, avgClaimDays:7  },
+  { id:'baolong', name:'Bảo Long',          short:'BaoLong', color:'#e63329', rate:0.0155, rating:4.5, avgClaimDays:8  },
+  { id:'pti',     name:'PTI',               short:'PTI',     color:'#003087', rate:0.0158, rating:4.4, avgClaimDays:8  },
+  { id:'gic',     name:'GIC',               short:'GIC',     color:'#004b87', rate:0.0162, rating:4.4, avgClaimDays:10 },
+];
+const SIT_INSURER_MAP = Object.fromEntries(INSURERS.map(i=>[i.id,i]));
+
+const SITUATIONS = [
+  { id:'collision', name:'Va chạm & Tai nạn giao thông', baseCover:true,  badge:'Gói cơ bản', short:'Hư hỏng xe do va chạm với xe khác, vật cứng, lật xe, lao xuống mương.' },
+  { id:'thuykick',  name:'Thủy kích (Nước vào máy)',     baseCover:false, badge:'Cần quyền lợi nâng cao', short:'Nước ngập lọt vào động cơ khi đi qua vùng ngập, gây hỏng piston, trục khuỷu.' },
+  { id:'fire',      name:'Cháy nổ xe',                   baseCover:true,  badge:'Gói cơ bản', short:'Xe bốc cháy do chập điện, rò rỉ nhiên liệu, tai nạn hoặc tác nhân bên ngoài.' },
+  { id:'theft',     name:'Mất cắp toàn bộ xe',           baseCover:true,  badge:'Gói cơ bản', short:'Xe bị trộm hoàn toàn, không tìm lại được sau thời gian quy định.' },
+  { id:'parttheft', name:'Mất cắp bộ phận',              baseCover:false, badge:'Cần quyền lợi nâng cao', short:'Trộm bánh xe, vô lăng, đầu màn hình, catalytic converter.' },
+  { id:'natural',   name:'Thiên tai (Bão, lũ, sét đánh)', baseCover:false, badge:'Cần quyền lợi nâng cao', short:'Xe hỏng do bão, lũ lụt, sét đánh, cây đổ - không phải do lỗi lái xe.' },
+  { id:'glass',     name:'Vỡ kính (không kèm tai nạn)',  baseCover:true,  badge:'Gói cơ bản', short:'Kính chắn gió hoặc kính cửa vỡ do đá văng, trộm, nhiệt độ.' },
+  { id:'parked',    name:'Xe đỗ bị va / trầy xước',      baseCover:true,  badge:'Gói cơ bản', short:'Xe đỗ trong bãi hoặc ven đường bị xe khác đâm mà bên gây thiệt hại bỏ trốn.' },
+];
+
+const SIT_DETAIL = {
+  collision: {
+    detail:`Va chạm là tình huống phổ biến nhất trong bảo hiểm thân vỏ, chiếm hơn 60% số vụ bồi thường mỗi năm. Phạm vi bảo hiểm bao gồm: đâm vào xe khác, đâm vào vật cố định (cột điện, dải phân cách, tường), lật xe, lao xuống mương hố, và xe bị xe khác đâm vào khi đỗ. Mức bồi thường dựa trên chi phí sửa chữa thực tế trừ đi phần khấu trừ bắt buộc (deductible) đã thỏa thuận từ đầu trong hợp đồng.`,
+    insurers:[
+      {id:'pvi',    status:'base',  note:'Nhanh nhất thị trường - 3 ngày làm việc', cost:''},
+      {id:'liberty',status:'base',  note:'Hệ thống garage rộng, phủ 45 tỉnh thành', cost:''},
+      {id:'baoviet',status:'base',  note:'Mạng lưới garage toàn quốc rộng nhất', cost:''},
+      {id:'pjico',  status:'base',  note:'Xử lý tốt vùng ngoại thành & tỉnh thành', cost:''},
+      {id:'mic',    status:'base',  note:'Đối tác chính thức VinFast, tốt cho xe điện', cost:''},
+      {id:'dby',    status:'base',  note:'Chuyên xe sang, garage BMW/Mercedes chính hãng', cost:''},
+      {id:'baolong',status:'base',  note:'Tốt cho xe cũ trên 5 năm, ít điều khoản loại trừ', cost:''},
+      {id:'pti',    status:'base',  note:'Mạnh về xe bán tải, SUV địa hình', cost:''},
+      {id:'gic',    status:'base',  note:'Phù hợp xe nhập khẩu châu Âu ít phổ biến', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Dừng xe - không di chuyển - bật đèn cảnh báo', desc:'Giữ nguyên hiện trường. Chụp ảnh từ 4 phía và điểm va chạm trước khi bất kỳ ai can thiệp.', time:'Ngay lập tức', icon:'📸'},
+      {step:2, title:'Gọi cấp cứu nếu có người bị thương', desc:'115 nếu có thương vong. Giữ bình tĩnh và không thừa nhận lỗi trước khi có mặt cảnh sát.', time:'Trong 5 phút', icon:'📞'},
+      {step:3, title:'Lập biên bản Công an giao thông', desc:'Yêu cầu biên bản CA có ký xác nhận. Đây là tài liệu quan trọng nhất để yêu cầu bồi thường.', time:'Trong 1-2 giờ', icon:'📋'},
+      {step:4, title:'Báo nhà bảo hiểm trong 24 giờ', desc:'Gọi hotline hoặc gửi ảnh qua app. Trễ quá 24h có thể bị từ chối bồi thường hoặc giảm mức bồi thường.', time:'Trong 24 giờ', icon:'📞'},
+      {step:5, title:'Phối hợp giám định viên', desc:'Giám định viên sẽ đánh giá thiệt hại và xác định mức bồi thường. Không tự ý đưa xe đi sửa trước bước này.', time:'2-3 ngày', icon:'🔍'},
+      {step:6, title:'Nhận bồi thường sau sửa chữa', desc:'Nhà bảo hiểm thanh toán thẳng garage hoặc hoàn tiền sau khi bạn nộp hóa đơn. Trừ phần khấu trừ đã thỏa thuận.', time:'3-7 ngày', icon:'💰'},
+    ],
+    exclusions:['Tai nạn do lái xe trong tình trạng say rượu (BAC > 50mg/100ml)','Lái xe không có bằng lái hợp lệ hoặc bằng không đúng hạng xe','Sử dụng xe vào mục đích đua xe, kinh doanh vận tải (nếu hợp đồng ghi xe cá nhân)','Thiệt hại gây ra cố ý cho xe của chính chủ hoặc người thân','Hao mòn tự nhiên, lỗi kỹ thuật từ nhà sản xuất'],
+    tip:'Khai báo tai nạn trong 24 giờ là quy định bắt buộc của hầu hết nhà bảo hiểm. Nếu trễ, nhà BH có quyền giảm mức bồi thường hoặc từ chối. Lưu số hotline nhà BH trước khi cần dùng.',
+  },
+  thuykick: {
+    detail:`Thủy kích xảy ra khi nước lọt vào buồng đốt động cơ khi xe đang nổ máy - gây hỏng piston, trục khuỷu và toàn bộ block máy. Chi phí sửa thủy kích thường từ 40-120 triệu đồng. Đây là loại thiệt hại KHÔNG có trong gói bảo hiểm cơ bản - phải mua thêm quyền lợi "Thiệt hại do nước" (khoảng +2tr/năm).`,
+    insurers:[
+      {id:'pvi',    status:'addon', note:'Quyền lợi nước: +1.8tr/năm, bồi thường 100% block máy', cost:'+1.8tr/năm'},
+      {id:'liberty',status:'addon', note:'Quyền lợi nước: +2.0tr/năm, garage Toyota/Honda ủy quyền', cost:'+2.0tr/năm'},
+      {id:'baoviet',status:'addon', note:'Quyền lợi nước: +1.9tr/năm, mạng lưới rộng nhất', cost:'+1.9tr/năm'},
+      {id:'pjico',  status:'addon', note:'Quyền lợi nước: +2.2tr/năm, phủ tốt tỉnh thành', cost:'+2.2tr/năm'},
+      {id:'mic',    status:'addon', note:'Quyền lợi nước: +2.1tr/năm, tốt cho VinFast', cost:'+2.1tr/năm'},
+      {id:'dby',    status:'addon', note:'Quyền lợi nước: +2.5tr/năm, chuyên xe sang', cost:'+2.5tr/năm'},
+      {id:'baolong',status:'addon', note:'Quyền lợi nước: +1.9tr/năm, ít điều khoản loại trừ nhất', cost:'+1.9tr/năm'},
+      {id:'pti',    status:'addon', note:'Quyền lợi nước: +2.0tr/năm', cost:'+2.0tr/năm'},
+      {id:'gic',    status:'addon', note:'Quyền lợi nước: +2.3tr/năm, xe châu Âu', cost:'+2.3tr/năm'},
+    ],
+    claimSteps:[
+      {step:1, title:'KHÔNG đề máy lại - đây là nguyên tắc số 1', desc:'Khi xe bị ngập và máy chết, tuyệt đối không đề lại. Đề máy khi nước đã vào buồng đốt = phá hủy hoàn toàn động cơ và mất quyền bồi thường.', time:'Ngay khi phát hiện', icon:'🚫'},
+      {step:2, title:'Đẩy xe khỏi vùng ngập nếu an toàn', desc:'Nếu mực nước hạ và có thể đẩy tay, đẩy xe lên nơi khô ráo. Không gọi xe kéo cẩu bình thường - cần xe kéo chuyên dụng.', time:'Khi an toàn', icon:'🚗'},
+      {step:3, title:'Gọi hotline bảo hiểm ngay', desc:'Báo tình huống, địa điểm và tình trạng xe. Nhà BH sẽ điều phối cứu hộ và giám định viên đến trực tiếp.', time:'Trong 2 giờ', icon:'📞'},
+      {step:4, title:'Chụp ảnh bằng chứng ngập', desc:'Chụp mực nước, trạng thái xe, đường/khu vực ngập. Ảnh camera hành trình là bằng chứng quan trọng chứng minh ngập nước khách quan.', time:'Trước khi di chuyển xe', icon:'📸'},
+      {step:5, title:'Giám định và kiểm tra động cơ', desc:'Kỹ thuật viên được nhà BH cử đến kiểm tra. Đừng tự ý tháo/sửa bất kỳ bộ phận nào trước khi có mặt giám định viên.', time:'Trong ngày', icon:'🔍'},
+      {step:6, title:'Sửa chữa tại garage được chỉ định', desc:'Thủy kích nặng có thể cần thay toàn bộ block máy. Nhà BH thanh toán thẳng garage. Thời gian sửa thường 7-15 ngày.', time:'7-15 ngày', icon:'🔧'},
+    ],
+    exclusions:['Không có quyền lợi nâng cao "Thiệt hại do nước" trong hợp đồng','Tự ý đề máy lại sau khi xe bị ngập nước','Cố ý lái xe vào vùng ngập sâu đã được cảnh báo','Thiệt hại phụ tùng không liên quan đến thủy kích'],
+    tip:'Mùa mưa lũ: bật ứng dụng cảnh báo ngập nước địa phương. Nếu thấy mực nước quá ½ bánh xe, không tiếp tục di chuyển. Chi phí thủy kích trung bình 80tr - quyền lợi nâng cao +2tr/năm là khoản đầu tư cực kỳ hợp lý.',
+  },
+  fire: {
+    detail:`Bảo hiểm cháy nổ bao gồm thiệt hại do xe bốc cháy từ nhiều nguyên nhân: chập điện, rò rỉ nhiên liệu, tai nạn giao thông dẫn đến cháy, hoặc cháy từ bên ngoài lan vào xe. Tuy nhiên, cháy do lỗi kỹ thuật của nhà sản xuất thường bị loại trừ và phải yêu cầu nhà sản xuất bồi thường theo lỗi sản phẩm.`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Bao gồm cháy do chập điện và cháy từ bên ngoài', cost:''},
+      {id:'liberty',status:'base', note:'Có dịch vụ cứu hỏa hỗ trợ 24/7', cost:''},
+      {id:'baoviet',status:'base', note:'Bao gồm cháy trong hầm xe và parking có mái', cost:''},
+      {id:'pjico',  status:'base', note:'Xử lý nhanh, ít yêu cầu giấy tờ với xe dưới 5 năm', cost:''},
+      {id:'mic',    status:'base', note:'Tốt cho xe điện VinFast - cháy pin được bảo hiểm', cost:''},
+      {id:'dby',    status:'base', note:'Garage chính hãng xe sang, phụ tùng nguyên gốc', cost:''},
+      {id:'baolong',status:'base', note:'Ít điều khoản loại trừ nhất cho xe cũ', cost:''},
+      {id:'pti',    status:'base', note:'Bao gồm cháy xe bán tải trong công trình', cost:''},
+      {id:'gic',    status:'base', note:'Phụ tùng nhập khẩu xe châu Âu được bảo hiểm đầy đủ', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Thoát khỏi xe ngay lập tức', desc:'An toàn tính mạng là ưu tiên. Tắt máy nếu có thể, mở cửa xe và ra khỏi xe ngay. Không quay lại lấy đồ.', time:'Ngay lập tức', icon:'🚗'},
+      {step:2, title:'Gọi 114 (Cứu hỏa)', desc:'Báo cháy xe với địa điểm chính xác. Đứng cách xa xe ít nhất 30m - bình xăng có thể nổ.', time:'Trong 2 phút', icon:'🚒'},
+      {step:3, title:'Chụp ảnh và quay video', desc:'Sau khi đám cháy được kiểm soát, chụp toàn cảnh, tập trung vào nguồn gốc cháy (khoang động cơ, hệ thống điện). Đây là bằng chứng quan trọng.', time:'Sau khi an toàn', icon:'📹'},
+      {step:4, title:'Lập biên bản với Cảnh sát PCCC', desc:'Yêu cầu Cảnh sát PCCC lập biên bản xác nhận đám cháy và nguyên nhân sơ bộ. Đây là điều kiện bắt buộc để khai bảo hiểm.', time:'Cùng ngày', icon:'📋'},
+      {step:5, title:'Báo nhà bảo hiểm trong 24 giờ', desc:'Gửi ảnh, biên bản PCCC và thông tin xe. Nhà BH sẽ cử giám định viên đến kiểm tra xe bị cháy.', time:'Trong 24 giờ', icon:'📞'},
+      {step:6, title:'Chờ kết quả giám định và bồi thường', desc:'Với xe cháy toàn phần (total loss), nhà BH bồi thường giá trị thực tế của xe. Thời gian xử lý thường 7-14 ngày.', time:'7-14 ngày', icon:'💰'},
+    ],
+    exclusions:['Cháy do cố ý của chủ xe hoặc người được ủy quyền','Cháy do lỗi kỹ thuật/khuyết tật sản phẩm từ nhà sản xuất (phải yêu cầu nhà sản xuất)','Cháy do bạo loạn, chiến tranh, khủng bố','Tài sản cá nhân trong xe bị cháy (không bồi thường)','Xe sử dụng để chở hàng hóa nguy hiểm, dễ cháy nổ'],
+    tip:'Kiểm tra bình cứu hỏa trên xe 6 tháng/lần và biết cách sử dụng. Bình cứu hỏa mini dập được đám cháy nhỏ ban đầu, nhưng nếu lửa đã bùng lên - thoát ra và gọi 114 ngay.',
+  },
+  theft: {
+    detail:`Bảo hiểm mất cắp toàn bộ xe (vehicle theft) bồi thường giá trị thực tế của xe tại thời điểm mất - đã được khấu hao theo tuổi xe và tình trạng sử dụng. Để được bồi thường, phải trình báo Công an trong 24 giờ và chờ ít nhất 30 ngày không tìm lại được xe. Nếu xe được tìm lại nhưng bị hư hỏng, nhà BH bồi thường thiệt hại thực tế.`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Bồi thường 100% giá trị thực tế sau khấu hao', cost:''},
+      {id:'liberty',status:'base', note:'Quy trình xử lý nhanh, không yêu cầu nhiều giấy tờ', cost:''},
+      {id:'baoviet',status:'base', note:'Uy tín lâu đời, bồi thường đúng hạn', cost:''},
+      {id:'pjico',  status:'base', note:'Tốt cho xe đỗ ở tỉnh thành, ngoại ô', cost:''},
+      {id:'mic',    status:'base', note:'Bảo hiểm đầy đủ kể cả xe điện', cost:''},
+      {id:'dby',    status:'base', note:'Xe sang bồi thường theo giá thị trường thực tế', cost:''},
+      {id:'baolong',status:'base', note:'Ít yêu cầu nhất về điều khoản chứng minh', cost:''},
+      {id:'pti',    status:'base', note:'Tốt cho xe bán tải, SUV', cost:''},
+      {id:'gic',    status:'base', note:'Xe nhập khẩu định giá theo giá nhập + thuế', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Báo ngay cho Công an trong 24 giờ', desc:'Trình báo tại CA phường/xã nơi xe bị mất. Lấy biên bản tiếp nhận tin báo - đây là điều kiện bắt buộc đầu tiên.', time:'Trong 24 giờ', icon:'🚔'},
+      {step:2, title:'Thu thập bằng chứng', desc:'Ảnh vị trí đỗ xe cuối cùng, footage camera an ninh khu vực (nếu có), nhân chứng. Thông báo cho ban quản lý tòa nhà/bãi đỗ.', time:'Ngay sau khi phát hiện', icon:'📹'},
+      {step:3, title:'Báo nhà bảo hiểm', desc:'Gửi biên bản CA và thông tin xe. Nhà BH sẽ hướng dẫn quy trình chờ đợi và các giấy tờ cần thiết.', time:'Trong 24 giờ', icon:'📞'},
+      {step:4, title:'Chờ 30 ngày theo dõi điều tra', desc:'CA và nhà BH phối hợp tìm kiếm xe trong 30 ngày. Trong thời gian này, không bán hay chuyển nhượng quyền sở hữu xe.', time:'30 ngày', icon:'📋'},
+      {step:5, title:'Hoàn thiện hồ sơ bồi thường', desc:'Nộp đủ: biên bản CA, đăng ký xe, bản gốc giấy phép lưu hành, CMND/CCCD, hợp đồng bảo hiểm. Ký biên bản chuyển quyền sở hữu cho nhà BH.', time:'Sau 30 ngày', icon:'📄'},
+      {step:6, title:'Nhận tiền bồi thường', desc:'Nhà BH bồi thường giá trị xe thực tế tại thời điểm mất (đã khấu hao). Thời gian chi trả 3-5 ngày làm việc sau khi hồ sơ đầy đủ.', time:'3-5 ngày', icon:'💰'},
+    ],
+    exclusions:['Để chìa khóa trong xe hoặc để xe không khóa','Mất cắp bởi người được chủ xe trao chìa khóa (người thân, nhân viên)','Xe sử dụng cho kinh doanh vận tải (nếu hợp đồng ghi xe cá nhân)','Đồ vật cá nhân trong xe bị lấy cắp','Không trình báo CA trong vòng 24 giờ'],
+    tip:'Lắp thiết bị định vị GPS (700K-2tr) - nhiều nhà BH chiết khấu phí thêm 3-5% và thiết bị giúp CA tìm xe nhanh hơn nhiều. Luôn đỗ xe tại nơi có camera và ánh sáng tốt, đặc biệt ban đêm.',
+  },
+  parttheft: {
+    detail:`Mất cắp bộ phận là tình huống ngày càng phổ biến tại đô thị lớn. Các bộ phận hay bị trộm nhất: bánh xe + mâm (xe SUV), catalytic converter (xe xăng đời cũ), camera hành trình, đầu màn hình, vô lăng. Để được bồi thường, cần chứng minh bộ phận đó đã được lắp sẵn trên xe theo hợp đồng bảo hiểm.`,
+    insurers:[
+      {id:'pvi',    status:'addon', note:'Quyền lợi mất cắp bộ phận: +600K/năm', cost:'+600K/năm'},
+      {id:'liberty',status:'addon', note:'Quyền lợi mất cắp bộ phận: +700K/năm, xử lý nhanh', cost:'+700K/năm'},
+      {id:'baoviet',status:'addon', note:'Quyền lợi mất cắp bộ phận: +650K/năm', cost:'+650K/năm'},
+      {id:'pjico',  status:'addon', note:'Quyền lợi mất cắp bộ phận: +800K/năm', cost:'+800K/năm'},
+      {id:'mic',    status:'addon', note:'Quyền lợi mất cắp bộ phận: +750K/năm', cost:'+750K/năm'},
+      {id:'dby',    status:'addon', note:'Quyền lợi mất cắp bộ phận: +900K/năm, xe sang', cost:'+900K/năm'},
+      {id:'baolong',status:'addon', note:'Linh hoạt nhất về bằng chứng - chấp nhận nhân chứng', cost:'+700K/năm'},
+      {id:'pti',    status:'addon', note:'Bao gồm thiệt hại khi xe bán tải đỗ công trường', cost:'+750K/năm'},
+      {id:'gic',    status:'addon', note:'Yêu cầu ảnh chất lượng cao cho xe nhập châu Âu', cost:'+850K/năm'},
+    ],
+    claimSteps:[
+      {step:1, title:'Không di chuyển xe - thu thập bằng chứng ngay', desc:'Giữ nguyên xe. Chụp ảnh: toàn cảnh xe, điểm thiếu bộ phận, dấu vết kẻ trộm để lại. Nếu có nhân chứng, lấy số điện thoại ngay.', time:'Ngay khi phát hiện', icon:'📸'},
+      {step:2, title:'Xem camera khu vực', desc:'Yêu cầu ban quản lý tòa nhà, bãi đỗ, hoặc cửa hàng gần đó cung cấp footage camera. Nhiều nhà BH chấp nhận ảnh chụp màn hình từ camera làm bằng chứng.', time:'Trong vài giờ', icon:'📹'},
+      {step:3, title:'Trình báo CA (nếu thiệt hại lớn)', desc:'Nếu thiệt hại ước tính trên 10-15 triệu hoặc không có camera làm bằng chứng, nên lập biên bản CA để đảm bảo quyền bồi thường.', time:'Trong ngày', icon:'📋'},
+      {step:4, title:'Liên hệ nhà bảo hiểm', desc:'Gửi ảnh bằng chứng và mô tả sự việc. Nhà BH xem xét và quyết định có cần giám định viên trực tiếp không hay xử lý qua ảnh (digital claim).', time:'Trong 24-48 giờ', icon:'📞'},
+      {step:5, title:'Giám định & sửa chữa', desc:'Nếu thiệt hại nhỏ (dưới mức khấu trừ), cân nhắc tự sửa. Nếu đáng khai: đưa xe đến garage ủy quyền sau khi ký biên bản giám định.', time:'3-7 ngày', icon:'🔧'},
+      {step:6, title:'Nhận bồi thường', desc:'Trừ phần khấu trừ đã thỏa thuận. Nếu tìm được kẻ trộm và bên đó có bảo hiểm, nhà BH sẽ đòi bồi hoàn - bạn được bồi thường đầy đủ hơn.', time:'3-5 ngày', icon:'💰'},
+    ],
+    exclusions:['Trầy xước nhỏ dưới mức khấu trừ (thường 500K-1tr)','Không có bất kỳ bằng chứng nào về mất cắp','Bộ phận được độ sau khi ký hợp đồng bảo hiểm (không được khai báo)','Đồ vật cá nhân (điện thoại, ví, túi xách) để trong xe','Xe đỗ sai quy định tại thời điểm bị mất cắp'],
+    tip:'Lắp camera hành trình 360° và thiết bị chống trộm bánh xe. Nếu xe thường xuyên đỗ ngoài trời qua đêm tại khu đông dân, quyền lợi mất cắp bộ phận +700-800K/năm là khoản bảo vệ cực tốt.',
+  },
+  natural: {
+    detail:`Thiên tai được chia thành nhiều nhóm với mức độ bồi thường khác nhau. Cây đổ đè lên xe khi đỗ thường có trong gói cơ bản. Bão làm hỏng thân vỏ thường được bảo hiểm. Ngập lụt làm hỏng thân vỏ (không phải động cơ) cần quyền lợi nâng cao. Thủy kích (nước vào máy) là quyền lợi riêng biệt.`,
+    insurers:[
+      {id:'pvi',    status:'addon', note:'Gói cơ bản: cây đổ, sét đánh. Nâng cao: ngập lụt +1.5tr/năm', cost:''},
+      {id:'liberty',status:'addon', note:'Bao gồm thiệt hại do bão, lốc xoáy cấp 6 trở lên', cost:''},
+      {id:'baoviet',status:'addon', note:'Phủ tốt thiên tai miền Trung và đồng bằng sông Cửu Long', cost:''},
+      {id:'pjico',  status:'addon', note:'Quyền lợi thiên tai linh hoạt, phù hợp tỉnh thành', cost:''},
+      {id:'mic',    status:'addon', note:'Tốt cho xe điện VinFast trong điều kiện thiên tai', cost:''},
+      {id:'dby',    status:'addon', note:'Thiên tai xe sang bồi thường theo giá phụ tùng chính hãng', cost:''},
+      {id:'baolong',status:'addon', note:'Ít loại trừ nhất về điều kiện thiên tai', cost:''},
+      {id:'pti',    status:'addon', note:'Tốt cho xe bán tải làm việc trong điều kiện thời tiết khắc nghiệt', cost:''},
+      {id:'gic',    status:'addon', note:'Phụ tùng xe nhập được bồi thường đầy đủ sau thiên tai', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Đảm bảo an toàn tính mạng trước', desc:'Không ra ngoài khi bão đang xảy ra. Theo dõi cảnh báo địa phương. Nếu xe đang đỗ ngoài trời trong bão - đừng ra di chuyển xe khi bão chưa qua.', time:'Trong bão', icon:'⚠️'},
+      {step:2, title:'Chụp ảnh thiệt hại ngay sau bão', desc:'Chụp toàn cảnh xe và thiệt hại từ nhiều góc. Chụp thêm cảnh hiện trường (cây đổ, mực nước, hướng gió) để chứng minh thiên tai.', time:'Ngay sau bão', icon:'📸'},
+      {step:3, title:'Liên hệ nhà bảo hiểm', desc:'Báo tình trạng và gửi ảnh. Nhà BH sẽ hướng dẫn quy trình và cử giám định viên - đặc biệt nếu thiệt hại lớn do bão.', time:'Trong 24 giờ', icon:'📞'},
+      {step:4, title:'Xác nhận thiên tai từ cơ quan có thẩm quyền', desc:'Một số nhà BH yêu cầu xác nhận thiên tai từ UBND xã/phường. Chứng cứ từ bản tin thời tiết chính thức cũng có thể chấp nhận.', time:'1-3 ngày', icon:'📋'},
+      {step:5, title:'Đánh giá và phân loại thiệt hại', desc:'Giám định viên xác định thiệt hại nào thuộc gói cơ bản (cây đổ, sét đánh) và thiệt hại nào cần quyền lợi nâng cao (ngập lụt thân vỏ).', time:'2-5 ngày', icon:'🔍'},
+      {step:6, title:'Sửa chữa và nhận bồi thường', desc:'Đưa xe đến garage sau khi nhận được thẩm quyền sửa chữa từ nhà BH. Thời gian sửa tùy theo mức độ thiệt hại.', time:'5-14 ngày', icon:'🔧'},
+    ],
+    exclusions:['Thiệt hại do thủy kích (nước vào máy) - cần quyền lợi riêng biệt','Ngập lụt làm hỏng thân vỏ nếu không có quyền lợi nâng cao','Thiên tai xảy ra trong khu vực có cảnh báo đặc biệt mà chủ xe không tuân thủ','Xe đỗ tại khu vực cấm đỗ hoặc nguy hiểm đã được cảnh báo','Thiệt hại gián tiếp như mất giá trị thương mại sau thiên tai'],
+    tip:'Mùa bão lũ: luôn đỗ xe tại nơi có mái che và không có cây cao. Theo dõi app thiên tai địa phương. Nếu sống ở vùng hay ngập: quyền lợi nâng cao cho cả thủy kích + ngập lụt thân vỏ là cần thiết.',
+  },
+  glass: {
+    detail:`Bảo hiểm vỡ kính đơn lẻ (không kèm tai nạn) bao gồm thiệt hại kính chắn gió và kính cửa bị vỡ do đá văng, trộm phá kính, nứt vỡ do nhiệt độ, hoặc vật rơi không phải va chạm xe. Đây là quyền lợi có trong hầu hết gói cơ bản và thường có mức khấu trừ rất thấp (0-1 triệu/vụ).`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Không khấu trừ cho kính chắn gió chính hãng', cost:''},
+      {id:'liberty',status:'base', note:'Thay kính tại garage Toyota/Honda ủy quyền', cost:''},
+      {id:'baoviet',status:'base', note:'Mạng lưới đối tác thay kính rộng nhất', cost:''},
+      {id:'pjico',  status:'base', note:'Xử lý nhanh, không cần giám định viên cho kính', cost:''},
+      {id:'mic',    status:'base', note:'Bảo hiểm kính cho cả xe điện VinFast', cost:''},
+      {id:'dby',    status:'base', note:'Kính xe sang (BMW/Mercedes) thay tại đại lý chính hãng', cost:''},
+      {id:'baolong',status:'base', note:'Linh hoạt về garage thay kính, không ép garage chỉ định', cost:''},
+      {id:'pti',    status:'base', note:'Bảo hiểm kính cho xe bán tải và kính đặc chủng', cost:''},
+      {id:'gic',    status:'base', note:'Kính nhập khẩu xe châu Âu đặt hàng 2-4 tuần', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Chụp ảnh tình trạng kính vỡ ngay', desc:'Chụp rõ vết nứt hoặc vỡ, góc chụp toàn xe để thấy không có dấu hiệu va chạm. Ảnh chụp ngay sau sự cố có giá trị cao hơn.', time:'Ngay khi phát hiện', icon:'📸'},
+      {step:2, title:'Liên hệ nhà bảo hiểm (không cần CA)', desc:'Vỡ kính đơn lẻ không cần biên bản CA. Gửi ảnh và mô tả tình huống. Nhiều nhà BH duyệt qua app trong vài giờ.', time:'Trong ngày', icon:'📞'},
+      {step:3, title:'Chờ giám định (hoặc digital claim)', desc:'Với kính nhỏ và thiệt hại rõ ràng, nhiều nhà BH cho phép digital claim - không cần giám định viên đến tận nơi.', time:'1-2 ngày', icon:'🔍'},
+      {step:4, title:'Đưa xe đến garage thay kính', desc:'Sử dụng garage trong danh sách ủy quyền của nhà BH để được đảm bảo chất lượng. Một số nhà BH có dịch vụ thay kính tại nhà.', time:'½ ngày', icon:'🔧'},
+      {step:5, title:'Thanh toán và nhận hóa đơn', desc:'Nhà BH thanh toán thẳng garage hoặc hoàn tiền sau khi bạn gửi hóa đơn. Giữ hóa đơn gốc.', time:'1-3 ngày', icon:'💰'},
+    ],
+    exclusions:['Kính vỡ kèm theo tai nạn/va chạm (xử lý theo quy trình tai nạn)','Vết nứt nhỏ dưới mức khấu trừ (thường 500K-1tr)','Kính rạn nứt do hao mòn tự nhiên hoặc lỗi lắp đặt','Gương chiếu hậu bị gãy (không phải kính xe)','Phủ ceramic hoặc màng dán kính - không bồi thường chi phí dán lại'],
+    tip:'Vết nứt kính nhỏ (dưới 10cm) nên xử lý bằng kit trám kính (200-400K) thay vì khai bảo hiểm. Trám sớm ngăn vết nứt lan rộng và giữ lịch sử bồi thường sạch để không tăng phí năm sau.',
+  },
+  parked: {
+    detail:`Xe đỗ bị va chạm là tình huống phổ biến ở đô thị, đặc biệt trong bãi đỗ chung cư và khu đông dân. Khó khăn chính là xác định bên gây thiệt hại. Bảo hiểm thân vỏ giải quyết vấn đề này: bạn không cần tìm được xe gây ra mà vẫn được bồi thường qua bảo hiểm của chính mình (sau khấu trừ).`,
+    insurers:[
+      {id:'pvi',    status:'base', note:'Chấp nhận footage camera bãi đỗ thay biên bản CA', cost:''},
+      {id:'liberty',status:'base', note:'Hệ thống garage rộng, phủ 45 tỉnh thành', cost:''},
+      {id:'baoviet',status:'base', note:'Mạng lưới garage toàn quốc rộng nhất', cost:''},
+      {id:'pjico',  status:'base', note:'Xử lý tốt vùng ngoại thành & tỉnh thành', cost:''},
+      {id:'mic',    status:'base', note:'Tốt cho xe điện đỗ tại trạm sạc', cost:''},
+      {id:'dby',    status:'base', note:'Yêu cầu biên bản CA cho xe sang (thiệt hại thường cao)', cost:''},
+      {id:'baolong',status:'base', note:'Linh hoạt nhất về bằng chứng - chấp nhận nhân chứng', cost:''},
+      {id:'pti',    status:'base', note:'Bao gồm thiệt hại khi xe bán tải đỗ công trường', cost:''},
+      {id:'gic',    status:'base', note:'Yêu cầu ảnh chất lượng cao cho xe nhập châu Âu', cost:''},
+    ],
+    claimSteps:[
+      {step:1, title:'Không di chuyển xe - thu thập bằng chứng ngay', desc:'Giữ nguyên xe. Chụp ảnh: toàn cảnh xe, điểm va chạm, sơn xe gây thiệt hại để lại trên xe bạn, dấu vết xe khác. Nếu có nhân chứng, lấy số điện thoại ngay.', time:'Ngay khi phát hiện', icon:'📸'},
+      {step:2, title:'Xem camera khu vực', desc:'Yêu cầu ban quản lý tòa nhà, bãi đỗ, hoặc cửa hàng gần đó cung cấp footage camera. Nhiều nhà BH chấp nhận ảnh chụp màn hình từ camera làm bằng chứng thay cho biên bản CA.', time:'Trong vài giờ', icon:'📹'},
+      {step:3, title:'Trình báo CA (nếu thiệt hại lớn)', desc:'Nếu thiệt hại ước tính trên 10-15 triệu hoặc không có camera làm bằng chứng, nên lập biên bản CA để đảm bảo quyền bồi thường.', time:'Trong ngày', icon:'📋'},
+      {step:4, title:'Liên hệ nhà bảo hiểm', desc:'Gửi ảnh bằng chứng và mô tả sự việc. Nhà BH xem xét và quyết định có cần giám định viên trực tiếp không, hay có thể xử lý qua ảnh (digital claim).', time:'Trong 24-48 giờ', icon:'📞'},
+      {step:5, title:'Giám định & sửa chữa', desc:'Nếu thiệt hại nhỏ (dưới mức khấu trừ), cân nhắc tự sửa thay vì khai bảo hiểm - tránh ảnh hưởng lịch sử bồi thường. Nếu đáng khai: đưa xe đến garage ủy quyền sau khi ký biên bản giám định.', time:'3-7 ngày', icon:'🔧'},
+      {step:6, title:'Nhận bồi thường', desc:'Trừ phần khấu trừ đã thỏa thuận. Nếu tìm được xe gây thiệt hại và bên đó có TNDS/thân vỏ, nhà BH sẽ đòi bồi hoàn từ bên kia - bạn được bồi thường đầy đủ hơn.', time:'3-5 ngày', icon:'💰'},
+    ],
+    exclusions:['Trầy xước nhỏ dưới mức khấu trừ (chủ xe tự chịu - thường 500K-1tr)','Không có bất kỳ bằng chứng nào về va chạm bên ngoài','Xe đỗ sai quy định (lòng đường, bít lối thoát hiểm)','Hao mòn tự nhiên bề mặt sơn do thời tiết, bụi bẩn','Thiệt hại từ vật rơi từ công trình - thuộc trách nhiệm chủ công trình'],
+    tip:'Thiệt hại nhỏ (dưới 2-3 triệu) thường không nên khai bảo hiểm. Lịch sử có bồi thường có thể làm phí tăng 5-10% năm sau, tổng thiệt hại 5 năm cao hơn nhiều so với tự bỏ tiền sửa lần đó.',
+  },
+};
+
+/* ── State for quote form ── */
+const state = { car:{ brandId:null, brandName:null, model:null, variant:null, year:null }, modal:null, modalStep:'brand', search:'' };
+const BRANDS = [
+  {id:'toyota',name:'TOYOTA',popular:true},{id:'honda',name:'HONDA',popular:true},{id:'hyundai',name:'HYUNDAI',popular:true},{id:'kia',name:'KIA',popular:true},{id:'mazda',name:'MAZDA',popular:true},{id:'ford',name:'FORD',popular:true},{id:'mitsubishi',name:'MITSUBISHI',popular:true},{id:'vinfast',name:'VINFAST',popular:true},{id:'mercedes',name:'MERCEDES',popular:false},{id:'bmw',name:'BMW',popular:false},{id:'audi',name:'AUDI',popular:false},{id:'chevrolet',name:'CHEVROLET',popular:false},{id:'isuzu',name:'ISUZU',popular:false},{id:'lexus',name:'LEXUS',popular:false},{id:'nissan',name:'NISSAN',popular:false},{id:'subaru',name:'SUBARU',popular:false},{id:'suzuki',name:'SUZUKI',popular:false},
+];
+const MODELS = {
+  toyota:['Camry','Corolla','Cross','Fortuner','Innova','Land Cruiser','Raize','Rush','Veloz','Vios','Wigo'],
+  honda:['Accord','BR-V','Brio','CR-V','City','Civic','HR-V'],
+  hyundai:['Accent','Creta','Elantra','Kona','Santa Fe','Tucson'],
+  kia:['Carnival','Cerato','Seltos','Sorento','Sportage'],
+  mazda:['CX-3','CX-30','CX-5','CX-8','Mazda3','Mazda6'],
+  ford:['Everest','Explorer','Ranger','Territory'],
+  mitsubishi:['Eclipse Cross','Outlander','Pajero','Xpander','Xforce'],
+  vinfast:['VF 3','VF 5','VF 6','VF 7','VF 8','VF 9'],
+  mercedes:['C-Class','E-Class','GLC','GLE','S-Class'],
+  bmw:['3 Series','5 Series','X3','X5'],
+  audi:['A4','A6','Q3','Q5'],
+  chevrolet:['Colorado','Trailblazer','Trax'],
+  isuzu:['D-Max','mu-X'],
+  lexus:['ES','NX','RX'],
+  nissan:['Navara','Terra','X-Trail'],
+  subaru:['Forester','Outback'],
+  suzuki:['Ertiga','XL7'],
+};
+
+function getCarValue(brandId, model, variant, year) {
+  const baseMap = {toyota:600,honda:550,hyundai:500,kia:480,mazda:550,ford:650,mitsubishi:520,vinfast:450,mercedes:1800,bmw:2000,audi:1500,chevrolet:450,isuzu:580,lexus:1800,nissan:550,subaru:650,suzuki:380,default:500};
+  let base = baseMap[brandId] || baseMap.default;
+  if(model&&model.toLowerCase().includes('fortuner')) base = 980;
+  if(model&&model.toLowerCase().includes('land cruiser')) base = 3200;
+  if(model&&model.toLowerCase().includes('ranger')) base = 850;
+  if(year){ const age = 2025 - parseInt(year); base = Math.round(base * Math.pow(0.88, Math.min(age,10))); }
+  return base;
+}
+
+/* ── Render ── */
+function renderPage() {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const main = document.getElementById('main-content');
+
+  if (!id) {
+    // Show situation list
+    document.getElementById('bc-sep2').style.display = 'none';
+    document.getElementById('bc-current').style.display = 'none';
+    document.title = 'Tình Huống Bồi Thường | Bảo Hiểm Ô Tô MoMo';
+    main.innerHTML = renderSituationList();
+    return;
+  }
+
+  const s = SITUATIONS.find(x => x.id === id);
+  const d = SIT_DETAIL[id];
+  if (!s || !d) {
+    main.innerHTML = `<div class="error-page"><h2>Không tìm thấy tình huống</h2><p>Tình huống "${id}" không tồn tại.</p><a href="bao-hiem-tinh-huong-chi-tiet.html" class="btn btn-primary">Xem tất cả tình huống</a></div>`;
+    return;
+  }
+
+  // Update breadcrumb
+  document.getElementById('bc-sep2').style.display = '';
+  document.getElementById('bc-current').style.display = '';
+  document.getElementById('bc-current').textContent = s.name;
+  document.title = s.name + ' | Bảo Hiểm Ô Tô MoMo';
+
+  const badgeCls = s.baseCover ? 'green' : 'amber';
+  const insurerRows = d.insurers.map(r => {
+    const ins = SIT_INSURER_MAP[r.id];
+    if (!ins) return '';
+    const statusLabel = {base:'Gói cơ bản', addon:'Quyền lợi nâng cao', no:'Không hỗ trợ'}[r.status];
+    return `<div class="sit-insurer-row">
+      <div class="sit-insurer-dot" style="background:${ins.color}"></div>
+      <div style="flex:1">
+        <div class="sit-insurer-name">${ins.name}</div>
+        <div class="sit-insurer-note">${r.note}</div>
+        ${r.cost?`<div class="sit-insurer-cost">${r.cost}</div>`:''}
+      </div>
+      <span class="sit-insurer-status ${r.status}">${statusLabel}</span>
+    </div>`;
+  }).join('');
+
+  const claimSteps = d.claimSteps.map(step => `
+    <div class="claim-step">
+      <div class="claim-step-num">${step.step}</div>
+      <div class="claim-step-body">
+        <div class="claim-step-title" style="display:flex;align-items:center;gap:6px">${stepIcon(step.icon)} ${step.title}</div>
+        <div class="claim-step-desc">${step.desc}</div>
+        <div class="claim-step-time">${licon('Clock',13,2)} ${step.time}</div>
+      </div>
+    </div>`).join('');
+
+  const xIcon = licon('XCircle', 14, 2);
+  const exclItems = d.exclusions.map(e => `<li>${xIcon}<span>${e}</span></li>`).join('');
+
+  // Related situations
+  const related = SITUATIONS.filter(x => x.id !== id).slice(0, 3);
+  const relatedCards = related.map(r => `
+    <a href="?id=${r.id}" class="sit-related-card" style="display:block;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-decoration:none;transition:.15s">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--pink-bg);border-radius:8px;color:var(--pink)">${sitIcon(r.id, 18)}</div>
+        <span class="sit-badge ${r.baseCover?'green':'amber'}" style="font-size:10px;padding:2px 8px">${r.badge}</span>
+      </div>
+      <div style="font-size:13px;font-weight:800;margin-bottom:4px;color:var(--ink)">${r.name}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.45">${r.short}</div>
+    </a>`).join('');
+
+  main.innerHTML = `
+    <div class="sit-detail-hero">
+      <div class="sit-detail-icon">${sitIcon(s.id, 52)}</div>
+      <div class="sit-detail-meta">
+        <div style="margin-bottom:10px"><span class="sit-badge ${badgeCls}">${s.badge}</span></div>
+        <div class="sit-detail-title">${s.name}</div>
+        <div class="sit-detail-desc">${d.detail}</div>
+        ${s.warn?`<div class="sit-warn" style="margin-top:14px">${licon('AlertTriangle',14,2)}<span>${s.warn}</span></div>`:''}
+      </div>
+    </div>
+
+    <div class="sit-detail-grid" style="margin-bottom:24px">
+      <!-- Nhà bảo hiểm chi trả -->
+      <div class="sit-detail-section" style="grid-column:1/-1">
+        <div class="sit-detail-section-label">Nhà bảo hiểm</div>
+        <div class="sit-detail-section-title">Ai chi trả tình huống này?</div>
+        <div>${insurerRows}</div>
+      </div>
+
+      <!-- Quy trình yêu cầu bồi thường -->
+      <div class="sit-detail-section">
+        <div class="sit-detail-section-label">Quy trình</div>
+        <div class="sit-detail-section-title">Các bước yêu cầu bồi thường</div>
+        <div class="claim-steps">${claimSteps}</div>
+      </div>
+
+      <!-- Cột phải: loại trừ + tip -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="sit-detail-section">
+          <div class="sit-detail-section-label">Điều khoản loại trừ</div>
+          <div class="sit-detail-section-title">Trường hợp KHÔNG được bồi thường</div>
+          <ul class="sit-excl-list">${exclItems}</ul>
+        </div>
+        <div class="sit-detail-section">
+          <div class="sit-detail-section-label">Lưu ý thực tế</div>
+          <div class="sit-tip-box"><p>${d.tip}</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline quote form -->
+    <div class="sit-detail-section" style="margin-bottom:24px">
+      <div class="sit-detail-section-label">Báo giá bảo hiểm</div>
+      <div class="sit-detail-section-title" style="margin-bottom:20px">Nhập thông tin xe — xem ngay giá từ 9 nhà bảo hiểm</div>
+      <div class="car-form-box">
+        <div class="car-form-label">Thông tin xe</div>
+        <div class="car-form-grid">
+          <div class="form-field">
+            <div class="form-field-label">Nhãn hiệu &amp; Dòng xe</div>
+            <button class="form-select-btn" id="car-info-btn" onclick="openModal('brand')">
+              <span id="car-info-label" class="placeholder">Chọn hãng &amp; dòng xe</span>
+              <span class="chevron">&#9660;</span>
+            </button>
+          </div>
+          <div class="form-field">
+            <div class="form-field-label">Năm sản xuất</div>
+            <button class="form-select-btn" id="year-btn" onclick="openModal('year')">
+              <span id="year-label" class="placeholder">Chọn năm</span>
+              <span class="chevron">&#9660;</span>
+            </button>
+          </div>
+        </div>
+        <div class="brand-hint" id="brand-hint"></div>
+        <div class="price-anchor">
+          <div class="price-anchor-label" id="price-anchor-label">Chọn xe để xem ước tính phí riêng cho bạn</div>
+          <div class="price-anchor-value" id="price-anchor-value">5.6 - 13tr/năm</div>
+        </div>
+        <a class="btn btn-primary btn-lg btn-full" id="quote-cta" href="bao-hiem-o-to.html">Xem báo giá đầy đủ &nbsp;›</a>
+      </div>
+    </div>
+
+    <!-- Related situations -->
+    <div class="sit-detail-section">
+      <div class="sit-detail-section-label">Tình huống liên quan</div>
+      <div class="sit-detail-section-title" style="margin-bottom:16px">Các tình huống khác cần biết</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${relatedCards}</div>
+    </div>
+  `;
+
+  // Hover effect for related cards
+  document.querySelectorAll('.sit-related-card').forEach(c => {
+    c.addEventListener('mouseenter', () => c.style.borderColor = 'var(--pink)');
+    c.addEventListener('mouseleave', () => c.style.borderColor = 'var(--line)');
+  });
+}
+
+function renderSituationList() {
+  const cards = SITUATIONS.map(s => {
+    const badgeCls = s.baseCover ? 'green' : 'amber';
+    return `<a href="?id=${s.id}" style="display:block;padding:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;text-decoration:none;transition:.15s" onmouseenter="this.style.borderColor='var(--pink)'" onmouseleave="this.style.borderColor='var(--line)'">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:12px;color:var(--pink);flex-shrink:0">${sitIcon(s.id, 26)}</div>
+        <span class="sit-badge ${badgeCls}">${s.badge}</span>
+      </div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:5px;color:var(--ink)">${s.name}</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5">${s.short}</div>
+      <div style="margin-top:10px;font-size:12px;font-weight:700;color:var(--pink);display:flex;align-items:center;gap:4px">Xem chi tiết ${licon('ArrowRight',12,2.5)}</div>
+    </a>`;
+  }).join('');
+
+  return `
+    <div style="max-width:680px;margin-bottom:40px">
+      <div style="font-size:12px;font-weight:800;color:var(--pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Tình huống bảo hiểm</div>
+      <h1 style="font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.1;letter-spacing:-.5px;margin-bottom:12px">Bảo hiểm thân vỏ bồi thường<br>những tình huống nào?</h1>
+      <p style="font-size:15px;color:var(--muted);line-height:1.7">8 tình huống phổ biến nhất người dùng hay hiểu sai. Biết rõ trước khi chọn gói để không thiệt khi xảy ra sự cố.</p>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:block"></span>Gói cơ bản có sẵn</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:block"></span>Cần chọn thêm quyền lợi nâng cao</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:48px">${cards}</div>
+    <div style="padding:28px;background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:16px;font-weight:900;margin-bottom:6px">Đã hiểu rõ phạm vi bồi thường?</div>
+        <div style="font-size:13px;color:var(--muted)">So sánh báo giá từ 9 nhà bảo hiểm. Gói nâng cao bao gồm thủy kích, mất cắp bộ phận và garage chính hãng.</div>
+      </div>
+      <a href="bao-hiem-o-to.html" class="btn btn-primary btn-lg">Xem báo giá bảo hiểm &nbsp;›</a>
+    </div>`;
+}
+
+/* ── Modal ── */
+function openModal(step) {
+  state.modalStep = step;
+  state.search = '';
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('open');
+  document.getElementById('modal-search-input').value = '';
+  if (step === 'brand') {
+    document.getElementById('modal-title').textContent = 'Chọn nhãn hiệu';
+    document.getElementById('modal-search').style.display = 'block';
+    document.getElementById('modal-back-btn').style.display = 'none';
+    renderBrandGrid('');
+  } else if (step === 'model') {
+    document.getElementById('modal-title').textContent = 'Chọn dòng xe';
+    document.getElementById('modal-search').style.display = 'block';
+    document.getElementById('modal-back-btn').style.display = 'block';
+    renderModelList('');
+  } else if (step === 'year') {
+    document.getElementById('modal-title').textContent = 'Chọn năm sản xuất';
+    document.getElementById('modal-search').style.display = 'none';
+    document.getElementById('modal-back-btn').style.display = 'none';
+    renderYearList();
+  }
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+function goBackModal() { if (state.modalStep === 'model') openModal('brand'); }
+
+function onSearch(q) {
+  state.search = q;
+  if (state.modalStep === 'brand') renderBrandGrid(q);
+  else if (state.modalStep === 'model') renderModelList(q);
+}
+
+function renderBrandGrid(q) {
+  const body = document.getElementById('modal-body');
+  const filtered = BRANDS.filter(b => b.name.toLowerCase().includes(q.toLowerCase()));
+  const popular = filtered.filter(b => b.popular);
+  const others = filtered.filter(b => !b.popular);
+  let html = '';
+  if (popular.length && !q) html += `<div style="padding:10px 16px 4px;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase">Phổ biến</div>`;
+  html += `<div class="brand-grid">${[...popular,...(q?[]:others)].map(b=>`
+    <div class="brand-card ${state.car.brandId===b.id?'selected':''}" onclick="selectBrand('${b.id}','${b.name}')">
+      <div class="brand-card-name">${b.name}</div>
+    </div>`).join('')}</div>`;
+  if (!q && others.length) html += `<div style="padding:4px 16px 4px;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase">Khác</div>
+    <div class="brand-grid">${others.map(b=>`<div class="brand-card ${state.car.brandId===b.id?'selected':''}" onclick="selectBrand('${b.id}','${b.name}')"><div class="brand-card-name">${b.name}</div></div>`).join('')}</div>`;
+  body.innerHTML = html;
+}
+
+function renderModelList(q) {
+  const models = (MODELS[state.car.brandId] || []).filter(m => m.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('modal-body').innerHTML = models.map(m => `
+    <div class="brand-list-item ${state.car.model===m?'selected':''}" onclick="selectModel('${m}')">
+      ${m} ${state.car.model===m?'<span class="check" style="margin-left:auto;color:var(--pink)">✓</span>':''}
+    </div>`).join('') || '<div style="padding:20px;text-align:center;color:var(--muted)">Không tìm thấy</div>';
+}
+
+function renderYearList() {
+  const years = Array.from({length:16}, (_,i)=>2025-i);
+  document.getElementById('modal-body').innerHTML = years.map(y => `
+    <div class="year-item ${state.car.year==y?'selected':''}" onclick="selectYear(${y})">${y}</div>`).join('');
+}
+
+function selectBrand(id, name) {
+  state.car.brandId = id; state.car.brandName = name;
+  state.car.model = null; state.car.variant = null;
+  if (MODELS[id]?.length) { state.modalStep = 'model'; openModal('model'); }
+  else { closeModal(); updateCarBtn(); }
+}
+
+function selectModel(m) {
+  state.car.model = m;
+  closeModal();
+  updateCarBtn();
+  updatePriceAnchor();
+}
+
+function selectYear(y) {
+  state.car.year = y;
+  closeModal();
+  updateYearBtn();
+  updatePriceAnchor();
+}
+
+function updateCarBtn() {
+  const btn = document.getElementById('car-info-btn');
+  const label = document.getElementById('car-info-label');
+  const c = state.car;
+  if (!btn || !label) return;
+  if (c.brandName) {
+    const txt = [c.brandName, c.model].filter(Boolean).join(' - ');
+    label.textContent = txt.length > 32 ? txt.slice(0,32)+'…' : txt;
+    label.classList.remove('placeholder');
+    btn.classList.add('filled');
+  } else {
+    label.textContent = 'Chọn hãng & dòng xe';
+    label.classList.add('placeholder');
+    btn.classList.remove('filled');
+  }
+}
+
+function updateYearBtn() {
+  const btn = document.getElementById('year-btn');
+  const label = document.getElementById('year-label');
+  if (!btn || !label) return;
+  if (state.car.year) {
+    label.textContent = state.car.year;
+    label.classList.remove('placeholder');
+    btn.classList.add('filled');
+  } else {
+    label.textContent = 'Chọn năm';
+    label.classList.add('placeholder');
+    btn.classList.remove('filled');
+  }
+}
+
+function updatePriceAnchor() {
+  const c = state.car;
+  if (!c.brandId) return;
+  const val = getCarValue(c.brandId, c.model, null, c.year);
+  const lo = Math.round(val * 1e6 * 0.0140);
+  const hi = Math.round(val * 1e6 * 0.0162);
+  const anchorLabel = c.model ? `Ước tính cho ${c.brandName} ${c.model} (~${val}tr)` : `Ước tính cho xe ${c.brandName} (~${val}tr)`;
+  const anchorValue = `${fmt(lo)} - ${fmt(hi)}đ/năm`;
+  const lbl = document.getElementById('price-anchor-label');
+  const val2 = document.getElementById('price-anchor-value');
+  if (lbl) { lbl.textContent = anchorLabel; val2.textContent = anchorValue; }
+  // Update CTA to pass car info
+  const cta = document.getElementById('quote-cta');
+  if (cta) cta.href = `bao-hiem-o-to.html`;
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderPage();
+  // Inject Lucide into breadcrumb home icon
+  const bcHome = document.getElementById('bc-home-icon');
+  if (bcHome) bcHome.innerHTML = licon('ChevronLeft', 14, 2.5);
+});
+</script>
+</body>
+</html>

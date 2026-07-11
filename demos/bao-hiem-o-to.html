@@ -33,6 +33,16 @@
     .brand-copy strong{display:block;font-size:15px;font-weight:800}
     .brand-copy small{color:var(--muted);font-size:11px}
     .back-link{color:var(--muted);font-size:13px;font-weight:700}
+    .bh-nav{display:flex;align-items:center;gap:2px;margin:0 auto}
+    .bh-nav-link{color:var(--muted);font-size:14px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:.15s;border:none;background:none;font-family:inherit;text-decoration:none;display:inline-block}
+    .bh-nav-link:hover{color:var(--ink);background:var(--soft)}
+    .bh-nav-link.active{color:var(--pink);font-weight:700}
+    .bh-breadcrumb-bar{padding:10px 0;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:64px;z-index:100}
+    .bh-bc-inner{display:flex;align-items:center;gap:4px}
+    .bh-bc-btn{color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;padding:0;font-family:inherit;display:inline-flex;align-items:center;gap:3px}
+    .bh-bc-btn:hover{color:var(--pink)}
+    .bh-bc-sep{color:var(--line);font-size:12px;margin:0 2px}
+    .bh-bc-current{color:var(--ink);font-size:13px;font-weight:700}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:999px;padding:11px 20px;font-weight:800;cursor:pointer;transition:.18s;text-decoration:none;font-size:14px}
     .btn:hover{transform:translateY(-1px)}
     .btn-primary{background:var(--pink);color:#fff;box-shadow:0 8px 24px rgba(165,0,100,.22)}
@@ -490,10 +500,15 @@
 <!-- Topbar -->
 <header class="topbar">
   <div class="shell topbar-inner">
-    <a class="brand" href="../lab.html">
+    <a class="brand" href="bao-hiem-o-to.html">
       <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
       <span class="brand-copy"><strong>Bảo Hiểm Ô Tô</strong><small>MoMo Prototype</small></span>
     </a>
+    <nav class="bh-nav">
+      <button class="bh-nav-link active" onclick="showView('landing')">Báo giá</button>
+      <button class="bh-nav-link" onclick="showSituations()">Tình huống</button>
+      <a class="bh-nav-link" href="#faq">Hỏi đáp</a>
+    </nav>
     <div style="display:flex;align-items:center;gap:12px">
       <a class="back-link" href="../lab.html">← Lab</a>
       <button class="btn btn-primary" onclick="goToQuote()">Xem báo giá</button>
@@ -1193,11 +1208,11 @@
 <!-- ════════════════ Situations View ════════════════ -->
 <div id="situations-view" style="display:none">
 
-  <!-- Topbar mini -->
-  <div class="topbar">
-    <div class="shell topbar-inner">
-      <button class="btn btn-ghost" onclick="showView('landing')" style="font-size:14px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:4px" id="sit-back-btn"><span id="sit-back-icon"></span> Bảo hiểm Ô Tô</button>
-      <button class="btn btn-primary" onclick="showView('landing');setTimeout(()=>document.querySelector('.car-form-box .btn-primary').click(),300)" style="font-size:13px;padding:9px 18px">Xem báo giá ngay</button>
+  <div class="bh-breadcrumb-bar">
+    <div class="shell bh-bc-inner">
+      <button class="bh-bc-btn" onclick="showView('landing')" id="sit-back-btn"><span id="sit-back-icon"></span> Bảo hiểm Ô Tô</button>
+      <span class="bh-bc-sep">›</span>
+      <span class="bh-bc-current">Tình huống bồi thường</span>
     </div>
   </div>
 
@@ -1234,10 +1249,13 @@
 
 <!-- ════════════════ Situation Detail ════════════════ -->
 <div id="situation-detail-view" style="display:none">
-  <div class="topbar">
-    <div class="shell topbar-inner">
-      <button class="btn btn-ghost" onclick="showView('situations')" style="font-size:14px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:4px" id="sit-detail-back-btn"><span id="sit-detail-back-icon"></span> Tất cả tình huống</button>
-      <button class="btn btn-primary" onclick="showView('landing')" style="font-size:13px;padding:9px 18px">Xem báo giá ngay</button>
+  <div class="bh-breadcrumb-bar">
+    <div class="shell bh-bc-inner">
+      <button class="bh-bc-btn" onclick="showView('landing')" id="sit-detail-back-btn"><span id="sit-detail-back-icon"></span> Bảo hiểm Ô Tô</button>
+      <span class="bh-bc-sep">›</span>
+      <button class="bh-bc-btn" onclick="showView('situations')">Tình huống</button>
+      <span class="bh-bc-sep">›</span>
+      <span class="bh-bc-current" id="sit-detail-breadcrumb">Chi tiết</span>
     </div>
   </div>
   <div class="shell" style="padding:32px 0 80px">
@@ -1447,6 +1465,10 @@ function showView(v) {
   sv.style.display  = v==='success'  ? 'block':'none';
   sv.className      = v==='success'  ? 'show':'';
   state.view = v;
+  // Sync nav active state
+  document.querySelectorAll('.bh-nav-link').forEach(el => el.classList.remove('active'));
+  if(v === 'landing')   document.querySelector('.bh-nav [onclick*="landing"]')?.classList.add('active');
+  if(v === 'situations' || v === 'situation-detail') document.querySelector('.bh-nav [onclick*="Situation"]')?.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2417,6 +2439,8 @@ function renderSituationDetail(id){
   const s = SITUATIONS.find(x=>x.id===id);
   const d = SIT_DETAIL[id];
   if(!s || !d) return;
+  const bc = document.getElementById('sit-detail-breadcrumb');
+  if(bc) bc.textContent = s.name;
   const badgeCls = s.baseCover ? 'green' : 'amber';
 
   const insurerRows = d.insurers.map(r=>{
