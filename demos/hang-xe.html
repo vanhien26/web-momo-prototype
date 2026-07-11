@@ -1,0 +1,1446 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="page-title">Hãng Xe - Tiện Ích Giao Thông MoMo</title>
+<meta name="description" content="Tra cứu model xe, loại xe và chi phí sử dụng theo từng hãng xe trên MoMo.">
+<link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+:root{
+  --bg:#F7F5FA;--white:#FFFFFF;
+  --pink-500:#EB2F96;--pink-600:#C22181;--pink-50:#FFF0F8;--pink-100:#FFD6EE;--pink-400:#F472B6;
+  --gray-900:#1C171A;--gray-700:#3D3040;--gray-600:#5C5060;--gray-500:#7A6E7F;
+  --gray-400:#A09AA5;--gray-300:#C8C3CC;--gray-200:#E5E0E9;--gray-100:#F0EBF4;--gray-50:#F7F3FA;
+  --mobase-ink:#0F172A;--mobase-ink-2:#1E293B;--mobase-surface:#F8FAFC;--mobase-surface-2:#EEF2F7;
+  --mobase-line:#CBD5E1;--mobase-blue:#2563EB;--mobase-blue-soft:#E0ECFF;--mobase-teal:#0F766E;--mobase-teal-soft:#D9F2EF;
+  --amber-500:#D97706;--amber-50:#FFFBEB;
+  --green-500:#16A34A;--green-50:#F0FDF4;
+  --blue-50:#EFF6FF;--blue-500:#2563EB;
+  --red-50:#FEF2F2;--red-500:#DC2626;
+  --shadow-s:0 1px 3px rgba(28,23,26,.08),0 1px 2px rgba(28,23,26,.06);
+  --shadow-m:0 4px 12px rgba(28,23,26,.1),0 2px 4px rgba(28,23,26,.06);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--content:1040px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg);scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--gray-900);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+.wrap{max-width:var(--content);margin:0 auto;padding:0 40px}
+
+/* ── NAV (Vehicle Hub pattern) ── */
+.gas-strip{height:36px;background:var(--gray-900);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gas-strip-inner{display:flex;align-items:center;gap:20px;font-size:11.5px;white-space:nowrap}
+.gs-label{color:rgba(255,255,255,.45);display:flex;align-items:center;gap:6px;font-weight:700}
+.gs-dot{width:6px;height:6px;border-radius:50%;background:#16a34a}
+.gs-item{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.7)}
+.gs-name{font-weight:600}
+.gs-price{font-weight:800;color:#fff}
+.gs-change{font-size:10px;font-weight:700}.gs-change.up{color:#4ade80}.gs-change.down{color:#f87171}
+.gs-link{color:var(--pink-400);font-weight:700;font-size:11.5px}
+
+.site-nav{position:sticky;top:36px;z-index:200;background:var(--white);border-bottom:1px solid var(--gray-200);box-shadow:var(--shadow-s);overflow:hidden}
+.nav-inner{max-width:var(--content);margin:0 auto;height:60px;padding:0 20px;display:flex;align-items:center;gap:16px}
+.nav-top-row{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+.nav-back{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--gray-400);padding:5px 8px;border-radius:var(--r-sm);transition:.15s}
+.nav-back:hover{color:var(--gray-700);background:var(--gray-100)}
+.nav-sep{width:1px;height:18px;background:var(--gray-200);flex-shrink:0}
+.nav-logo{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.logo-icon{width:32px;height:32px;border-radius:9px;overflow:hidden;flex-shrink:0}
+.logo-icon img{width:100%;height:100%;display:block}
+.logo-text{font-size:14px;font-weight:800;color:var(--gray-900)}
+.logo-text em{color:var(--pink-500);font-style:normal}
+.nav-context{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);background:var(--gray-100);border:1px solid var(--gray-200);border-radius:999px;padding:6px 10px;white-space:nowrap}
+.secondary-nav{max-width:var(--content);margin:0 auto;padding:0 20px 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.secondary-nav::-webkit-scrollbar{display:none}
+.secondary-link{font-size:12px;font-weight:700;color:var(--gray-500);background:var(--gray-50);border:1px solid var(--gray-200);padding:7px 12px;border-radius:999px;white-space:nowrap;transition:.15s}
+.secondary-link:hover{border-color:var(--pink-100);color:var(--pink-500);background:var(--pink-50)}
+.secondary-link.on{color:#fff;background:var(--gray-900);border-color:var(--gray-900)}
+.nav-links{max-width:var(--content);margin:0 auto;padding:0 40px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:13px;font-weight:600;color:var(--gray-500);background:none;border:none;cursor:pointer;text-decoration:none;padding:7px 12px;border-radius:var(--r-sm);transition:.15s;display:inline-block;white-space:nowrap;flex-shrink:0}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{background:var(--pink-50);color:var(--pink-500);font-weight:700}
+
+/* ── BREADCRUMB ── */
+.breadcrumb-bar{background:var(--white);border-bottom:1px solid var(--gray-200);padding:10px 0;position:sticky;top:calc(36px + 60px + 44px);z-index:100}
+.bc-inner{display:flex;align-items:center;gap:4px;font-size:12.5px}
+.bc-link{color:var(--gray-400);font-weight:600;transition:.15s}
+.bc-link:hover{color:var(--pink-500)}
+.bc-sep{color:var(--gray-300);margin:0 3px}
+.bc-current{color:var(--gray-900);font-weight:700}
+
+/* ── LISTING HERO ── */
+.listing-hero{padding:48px 0 36px;border-bottom:1px solid var(--gray-200);background:var(--white)}
+.listing-eyebrow{font-size:11px;font-weight:800;color:var(--pink-500);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.listing-title{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:900;line-height:1.1;letter-spacing:-.5px;color:var(--gray-900);margin-bottom:10px}
+.listing-title em{color:var(--pink-500);font-style:normal}
+.listing-desc{font-size:15px;color:var(--gray-500);line-height:1.65;max-width:540px}
+
+/* ── FILTER ── */
+.filter-bar{padding:20px 0 24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.filter-btn{font-size:13px;font-weight:700;padding:7px 16px;border-radius:999px;border:1.5px solid var(--gray-200);color:var(--gray-600);background:var(--white);transition:.15s;cursor:pointer}
+.filter-btn.on{background:var(--pink-500);color:#fff;border-color:var(--pink-500)}
+.filter-btn:hover:not(.on){border-color:var(--pink-500);color:var(--pink-500)}
+.filter-count{font-size:11px;font-weight:700;opacity:.6;margin-left:4px}
+
+/* ── BRAND CARDS GRID ── */
+.brand-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:56px}
+.brand-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:20px;display:block;transition:.2s;position:relative}
+.brand-card:hover{box-shadow:var(--shadow-m);border-color:var(--pink-100);transform:translateY(-2px)}
+.brand-mark{border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-weight:900;letter-spacing:-.5px;margin-bottom:14px}
+.brand-card-name{font-size:17px;font-weight:800;color:var(--gray-900);margin-bottom:3px}
+.brand-card-origin{font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:10px}
+.brand-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.tag{display:inline-flex;align-items:center;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;gap:3px}
+.tag-petrol{background:#FFFBEB;color:#92400e}
+.tag-hybrid{background:#F0FDF4;color:#166534}
+.tag-electric{background:#EFF6FF;color:#1d4ed8}
+.tag-luxury{background:var(--gray-100);color:var(--gray-700)}
+.tag-popular{background:var(--pink-50);color:var(--pink-500)}
+.brand-card-meta{font-size:12px;color:var(--gray-500);margin-bottom:10px}
+.brand-card-bh{font-size:13px;font-weight:800;color:var(--pink-500)}
+.brand-card-cta{font-size:12px;font-weight:700;color:var(--pink-500);display:flex;align-items:center;gap:4px;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100)}
+
+/* ── CAR TYPE SECTION ── */
+.type-section{margin:32px 0 0}
+.type-section-title{font-size:13px;font-weight:800;color:var(--gray-500);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.type-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:36px}
+.type-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);padding:14px 10px 11px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.15s;text-align:center}
+.type-card:hover{border-color:var(--pink-300);background:var(--pink-50);transform:translateY(-1px);box-shadow:var(--shadow-s)}
+.type-card.on{border-color:var(--pink-500);background:var(--pink-50)}
+.type-card-svg{width:72px;height:40px;display:flex;align-items:center;justify-content:center}
+.type-card-svg svg{width:100%;height:100%}
+.type-card-label{font-size:11.5px;font-weight:700;color:var(--gray-700)}
+.type-card.on .type-card-label{color:var(--pink-500)}
+
+/* ── DETAIL HERO ── */
+.detail-hero{background:var(--white);border-bottom:1px solid var(--gray-200);padding:36px 0}
+.detail-hero-inner{display:flex;align-items:flex-start;gap:24px}
+.detail-brand-mark{border-radius:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-weight:900;letter-spacing:-.5px}
+.detail-hero-meta{flex:1}
+.detail-eyebrow{font-size:11px;font-weight:800;color:var(--pink-500);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.detail-title{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.1;letter-spacing:-.5px;color:var(--gray-900);margin-bottom:6px}
+.detail-tagline{font-size:14px;color:var(--gray-500);margin-bottom:14px;line-height:1.5}
+.detail-hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.quick-nav{display:flex;gap:8px;flex-wrap:wrap}
+.quick-pill{font-size:13px;font-weight:700;padding:7px 16px;border-radius:999px;background:var(--gray-100);color:var(--gray-700);border:none;cursor:pointer;transition:.15s;text-decoration:none;display:inline-block}
+.quick-pill:hover{background:var(--pink-50);color:var(--pink-500)}
+.type-pills{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.type-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.01em;background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200)}
+.type-pill strong{color:var(--gray-900)}
+
+/* ── DETAIL CONTENT ── */
+.detail-body{padding:36px 0}
+.d-section{margin-bottom:44px}
+.d-section-head{margin-bottom:20px}
+.eyebrow{font-size:11px;font-weight:800;color:var(--pink-500);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.section-h{font-size:22px;font-weight:800;color:var(--gray-900);line-height:1.2;margin-bottom:5px}
+.section-sub{font-size:14px;color:var(--gray-500);line-height:1.6}
+
+/* ── MODEL GRID ── */
+.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.model-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:.15s;text-align:left;padding:0}
+.model-card:hover{border-color:var(--pink-500);box-shadow:var(--shadow-s)}
+.model-card.sel{border-color:var(--pink-500)}
+.model-card.sel .model-img{opacity:1}
+.model-img{width:100%;height:90px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:.2s}
+.model-img svg{width:88%;max-height:76px;display:block}
+.model-info{padding:11px 14px 13px}
+.model-name{font-size:13.5px;font-weight:800;color:var(--gray-900);margin-bottom:2px}
+.model-desc{font-size:11px;color:var(--gray-500);margin-bottom:6px;line-height:1.4}
+.model-type{font-size:12px;font-weight:800;color:var(--gray-700);display:flex;align-items:center;gap:6px}
+.model-type span{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:var(--gray-100);color:var(--gray-600);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+
+/* ── BRAND CARD DESC ── */
+.brand-card-desc{font-size:11.5px;color:var(--gray-500);line-height:1.55;margin-bottom:10px}
+
+/* ── LISTING CARD BOTTOM ── */
+.brand-card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--gray-100)}
+.brand-card-top-model{font-size:11px;font-weight:700;color:var(--gray-500)}
+.brand-card-top-model strong{color:var(--gray-900);font-weight:800}
+.brand-card-type{font-size:12px;font-weight:800;color:var(--gray-700)}
+
+/* ── SCORE PILLS ── */
+.score-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.score-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;border:1.5px solid}
+.score-pill.good{background:var(--green-50);border-color:rgba(22,163,74,.2);color:#166534}
+.score-pill.mid{background:#FFFBEB;border-color:rgba(217,119,6,.2);color:#92400e}
+.score-pill.high{background:var(--blue-50);border-color:rgba(37,99,235,.2);color:#1d4ed8}
+.score-pill.neutral{background:var(--gray-50);border-color:var(--gray-200);color:var(--gray-600)}
+.score-pill-label{opacity:.7}
+.score-pill-val{font-weight:900}
+
+/* ── MODEL FEATURED ── */
+.model-card{outline:none}
+.model-card-featured{grid-column:span 2;outline:none;border-color:var(--gray-200)!important}
+.model-card-featured .model-img{height:160px}
+.model-card-featured .model-name{font-size:15px}
+.model-card-featured .model-type{font-size:13px}
+.model-featured-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--pink-50);color:var(--pink-500);margin-bottom:8px;letter-spacing:.2px;border:1px solid var(--pink-100)}
+
+/* ── BRAND DESC BAND ── */
+.brand-desc-band{background:var(--white);border-bottom:1px solid var(--gray-100);padding:20px 0 24px}
+.brand-desc-inner{display:flex;align-items:flex-start;gap:20px}
+.brand-desc-text{font-size:14px;color:var(--gray-600);line-height:1.7;flex:1}
+
+/* ── SERVICES STRIP ── */
+.services-strip{background:var(--white);border-bottom:1px solid var(--gray-200);padding:24px 0}
+.services-label{font-size:11px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.services-row{display:flex;gap:10px;flex-wrap:wrap}
+.svc-card{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);text-decoration:none;transition:.15s;min-width:0}
+.svc-card:hover{border-color:var(--pink-300);background:var(--pink-50);box-shadow:var(--shadow-s);transform:translateY(-1px)}
+.svc-icon{font-size:20px;flex-shrink:0;line-height:1}
+.svc-body{}
+.svc-name{font-size:13px;font-weight:700;color:var(--gray-900);white-space:nowrap}
+.svc-hint{font-size:11px;color:var(--gray-400);margin-top:1px;white-space:nowrap}
+
+@media(max-width:640px){
+  .model-card-featured{grid-column:span 1}
+}
+
+/* ── BH SECTION: 2-col ── */
+.bh-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.bh-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:24px}
+.form-lbl{font-size:11px;font-weight:800;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:block}
+.form-sel{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:var(--r-md);font-family:inherit;font-size:14px;font-weight:600;color:var(--gray-900);background:var(--white);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A09AA5' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;transition:.15s;margin-bottom:10px}
+.form-sel:focus{outline:none;border-color:var(--pink-500)}
+.estimate-box{background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-md);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.est-label{font-size:12px;color:var(--gray-600)}
+.est-value{font-size:20px;font-weight:900;color:var(--pink-500)}
+.btn-full{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--pink-500);color:#fff;font-family:inherit;font-size:14px;font-weight:700;padding:13px 24px;border-radius:var(--r-md);border:none;cursor:pointer;transition:.15s;text-decoration:none;width:100%}
+.btn-full:hover{background:var(--pink-600)}
+.ins-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--gray-100)}
+.ins-row:last-child{border-bottom:none}
+.ins-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ins-body{flex:1;display:flex;align-items:center;gap:12px;min-width:0}
+.ins-logo{width:44px;height:44px;border-radius:12px;border:1px solid var(--gray-200);background:#fff;display:grid;place-items:center;flex-shrink:0;overflow:hidden}
+.ins-logo img{width:100%;height:100%;object-fit:contain;display:block;padding:6px}
+.ins-logo-fallback{font-size:10px;font-weight:900;letter-spacing:.04em;color:var(--gray-700);text-align:center;line-height:1.1}
+.ins-meta{min-width:0}
+.ins-name{font-size:13px;font-weight:800;color:var(--gray-900);line-height:1.3}
+.ins-pill{display:none}
+.ins-reason{display:none}
+.ins-badge{display:none}
+
+/* ── OWNERS INSIGHT PANEL ── */
+.insight-panel{border-radius:var(--r-xl);overflow:hidden;margin-bottom:44px;border:1.5px solid var(--mobase-line);box-shadow:0 12px 32px rgba(15,23,42,.06)}
+.insight-header{padding:18px 24px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.insight-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.16);letter-spacing:.2px}
+.insight-badge-dot{width:6px;height:6px;border-radius:50%;background:#60a5fa;flex-shrink:0}
+.insight-owners{font-size:12px;font-weight:700;opacity:.78}
+.insight-body{display:grid;grid-template-columns:1fr 1fr;gap:0;background:linear-gradient(180deg,var(--mobase-surface) 0%,var(--mobase-surface-2) 100%)}
+.insight-main{padding:24px;border-right:1px solid rgba(15,23,42,.08)}
+.insight-monthly-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;opacity:.6}
+.insight-monthly-val{font-size:40px;font-weight:900;line-height:1;letter-spacing:-1.5px;margin-bottom:4px}
+.insight-monthly-unit{font-size:13px;font-weight:600;opacity:.62}
+.insight-model-note{font-size:12px;margin-top:10px;opacity:.66}
+.insight-vs{display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.14);color:var(--mobase-blue)}
+.insight-vs.positive{background:rgba(37,99,235,.08);border-color:rgba(37,99,235,.16);color:var(--mobase-blue)}
+.insight-vs.negative{background:rgba(15,118,110,.08);border-color:rgba(15,118,110,.16);color:var(--mobase-teal)}
+.insight-right{padding:24px}
+.insight-city-toggle{display:flex;gap:6px;margin-bottom:16px}
+.city-btn{font-size:11.5px;font-weight:800;padding:5px 14px;border-radius:999px;border:1.5px solid rgba(15,23,42,.15);cursor:pointer;transition:.15s;background:rgba(255,255,255,.72);font-family:inherit;opacity:.72;color:var(--mobase-ink)}
+.city-btn.on{background:#fff;opacity:1;border-color:rgba(37,99,235,.28);color:var(--mobase-blue)}
+.insight-city-val{font-size:28px;font-weight:900;letter-spacing:-.8px;margin-bottom:4px;color:var(--mobase-ink)}
+.insight-city-sub{font-size:11px;opacity:.6;margin-bottom:18px;color:var(--mobase-ink)}
+.insight-breakdown-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;opacity:.52;margin-bottom:10px;color:var(--mobase-ink)}
+.insight-bars{}
+.insight-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.insight-bar-name{font-size:11px;font-weight:700;width:110px;flex-shrink:0;opacity:.75;color:var(--mobase-ink)}
+.insight-bar-track{flex:1;height:6px;border-radius:3px;background:rgba(15,23,42,.1);overflow:hidden}
+.insight-bar-fill{height:100%;border-radius:3px;transition:.4s}
+.insight-bar-val{font-size:11px;font-weight:800;width:48px;text-align:right;flex-shrink:0;color:var(--mobase-ink)}
+
+/* ── COST BREAKDOWN ── */
+.cost-model-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cost-model-sel{padding:9px 14px;border:1.5px solid var(--gray-200);border-radius:var(--r-md);font-family:inherit;font-size:13px;font-weight:700;color:var(--gray-900);background:var(--white);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23A09AA5' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.cost-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.cost-tile{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);padding:16px}
+.cost-tile-label{font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:7px;line-height:1.3}
+.cost-tile-val{font-size:20px;font-weight:900;color:var(--gray-900);line-height:1}
+.cost-tile-unit{font-size:11px;color:var(--gray-400);margin-top:3px}
+.cost-tile-note{font-size:10px;color:var(--gray-400);margin-top:4px;line-height:1.4}
+.cost-tile.pink .cost-tile-val{color:var(--mobase-blue)}
+.cost-tile.free .cost-tile-val{color:var(--green-500)}
+.cost-total-bar{background:linear-gradient(135deg,var(--mobase-ink) 0%,var(--mobase-ink-2) 100%);border-radius:var(--r-lg);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 12px 28px rgba(15,23,42,.16)}
+.cost-total-left{flex:1}
+.cost-total-label{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:3px}
+.cost-total-model{font-size:14px;font-weight:700;color:rgba(255,255,255,.8)}
+.cost-total-val{font-size:28px;font-weight:900;color:#fff;flex-shrink:0}
+.cost-total-unit{font-size:13px;color:rgba(255,255,255,.5)}
+
+/* ── GARAGE SECTION ── */
+.garage-filter{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.garage-filter-btn{font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;border:1.5px solid var(--gray-200);color:var(--gray-600);background:var(--white);cursor:pointer;transition:.15s;font-family:inherit}
+.garage-filter-btn.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.garage-filter-btn:hover:not(.on){border-color:var(--gray-400);color:var(--gray-900)}
+.garage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.garage-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);padding:18px 20px;transition:.15s}
+.garage-card:hover{border-color:var(--gray-300);box-shadow:var(--shadow-s)}
+.garage-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.garage-type-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.garage-type-badge.official{background:#EFF6FF;color:#1d4ed8}
+.garage-type-badge.authorized{background:var(--green-50);color:#166534}
+.garage-name{font-size:14px;font-weight:800;color:var(--gray-900);line-height:1.3;flex:1}
+.garage-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.garage-city{font-size:11px;font-weight:700;color:var(--gray-500);display:flex;align-items:center;gap:3px}
+.garage-address{font-size:11px;color:var(--gray-400)}
+.garage-rating{font-size:11.5px;font-weight:800;color:var(--amber-500);display:flex;align-items:center;gap:3px}
+.garage-claims{font-size:11px;font-weight:700;color:var(--pink-500);display:flex;align-items:center;gap:4px}
+.garage-claims-dot{width:5px;height:5px;border-radius:50%;background:var(--pink-500)}
+.garage-note{font-size:12px;color:var(--gray-500);line-height:1.6;margin-bottom:10px}
+.garage-bh-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.garage-bh-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px}
+.garage-bh-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gray-100);color:var(--gray-700)}
+
+/* ── BRAND NOTES Q&A ── */
+.brand-note{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;margin-bottom:8px}
+.brand-note-q{padding:15px 18px;font-size:13.5px;font-weight:700;color:var(--gray-900);display:flex;align-items:flex-start;gap:10px;line-height:1.45}
+.brand-note-q::before{content:'Q';width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--pink-500);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.brand-note-a{padding:0 18px 15px 50px;font-size:13px;color:var(--gray-600);line-height:1.7}
+
+/* ── SCENARIO CARDS ── */
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.scenario-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);padding:16px;display:block;transition:.15s}
+.scenario-card:hover{border-color:var(--pink-500);box-shadow:var(--shadow-s)}
+.scenario-icon{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;background:var(--pink-50);margin-bottom:10px;font-size:22px}
+.scenario-badge{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;margin-bottom:8px}
+.badge-green{background:var(--green-50);color:#166534}
+.badge-amber{background:var(--amber-50);color:#92400e}
+.scenario-name{font-size:14px;font-weight:800;color:var(--gray-900);margin-bottom:4px}
+.scenario-short{font-size:12px;color:var(--gray-500);line-height:1.5}
+.scenario-link{font-size:12px;font-weight:700;color:var(--pink-500);display:flex;align-items:center;gap:3px;margin-top:10px}
+
+/* ── CTA BLOCK ── */
+.cta-block{background:var(--gray-900);border-radius:var(--r-xl);padding:32px 36px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:48px}
+.cta-block-copy{}
+.cta-block-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px}
+.cta-block-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.5}
+.btn-white{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--gray-900);font-family:inherit;font-size:14px;font-weight:800;padding:13px 24px;border-radius:var(--r-md);border:none;cursor:pointer;transition:.15s;white-space:nowrap;text-decoration:none}
+.btn-white:hover{background:var(--gray-100)}
+
+/* ── EMPTY ── */
+.empty{padding:60px 20px;text-align:center;color:var(--gray-400)}
+.empty p{font-size:15px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .brand-grid{grid-template-columns:repeat(3,1fr)}
+  .model-grid{grid-template-columns:repeat(2,1fr)}
+  .bh-cols{grid-template-columns:1fr}
+  .cost-tiles{grid-template-columns:repeat(2,1fr)}
+  .scenario-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .brand-grid{grid-template-columns:repeat(2,1fr)}
+  .listing-hero{padding:28px 0 24px}
+  .detail-hero{padding:24px 0}
+  .detail-brand-mark{width:60px!important;height:60px!important;font-size:18px!important}
+  .scenario-grid{grid-template-columns:1fr}
+  .cost-tiles{grid-template-columns:1fr 1fr}
+  .cta-block{padding:24px 20px}
+  .nav-inner{height:52px;padding:0 8px 0 4px;gap:6px}
+  .nav-back span{display:none}
+  .nav-sep{display:none}
+  .logo-text{display:none}
+  .nav-context{display:none}
+  .logo-icon{width:28px;height:28px}
+  .secondary-nav{padding:0 8px 8px}
+  .nav-links{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;padding:0 4px}
+}
+</style>
+</head>
+<body>
+
+<!-- GAS STRIP -->
+<div class="gas-strip">
+  <div class="gas-strip-inner">
+    <span class="gs-label"><span class="gs-dot"></span>Giá xăng 09/07</span>
+    <span class="gs-item"><span class="gs-name">RON 95-III</span><span class="gs-price">20.003đ</span><span class="gs-change down">▼412</span></span>
+    <span class="gs-item"><span class="gs-name">E5 RON 92</span><span class="gs-price">19.191đ</span><span class="gs-change down">▼539</span></span>
+    <a class="gs-link" href="/gia-xang">Xem chi tiết →</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <div class="nav-top-row">
+      <a class="nav-back" href="/lab.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Lab</span>
+      </a>
+      <div class="nav-sep"></div>
+      <a class="nav-logo" href="/vehicle-hub">
+        <span class="logo-icon" style="background:#0B0A12;border-radius:9px;display:flex;align-items:center;justify-content:center">
+          <img src="https://homepage.momocdn.net/img/dang-kiem-260710113006.png" alt="MoMo Giao Thông" style="width:80%;height:80%;object-fit:contain">
+        </span>
+        <span class="logo-text">Tiện Ích <em>Giao Thông</em></span>
+      </a>
+      <div class="nav-context">Model Detail</div>
+    </div>
+  </div>
+  <div class="secondary-nav">
+    <a class="secondary-link" href="/vehicle-hub">Hub</a>
+    <a class="secondary-link" href="/gia-xang">Giá xăng</a>
+    <a class="secondary-link" href="/epass">ePass</a>
+    <a class="secondary-link" href="/cay-xang">Cây xăng</a>
+    <a class="secondary-link on" href="/hang-xe">Hãng xe</a>
+    <a class="secondary-link" href="#models">Dòng xe</a>
+    <a class="secondary-link" href="#chi-phi">Chi phí</a>
+    <a class="secondary-link" href="#garage">Garage</a>
+    <a class="secondary-link" href="#tinh-huong">Tình huống</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="app"></main>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;z-index:9999;white-space:nowrap"></div>
+
+<script>
+/* ── DATA ── */
+const BRANDS = {
+  toyota:{
+    name:'Toyota',origin:'Nhật Bản',color:'#EB0A1E',tagline:'Bền bỉ · Tiết kiệm xăng · Giá trị lâu dài',
+    fuels:['xăng','hybrid'],popular:true,
+    desc:'Thương hiệu Nhật Bản với độ tin cậy hàng đầu thị trường. Toyota dẫn đầu phân khúc SUV và MPV tại Việt Nam nhờ chi phí bảo dưỡng thấp và giá trị giữ xe tốt nhất phân khúc.',
+    models:[
+      {name:'Fortuner',type:'suv',bh:12,desc:'SUV 7 chỗ phổ biến nhất',monthly:{bh:1000,fuel:3200,reg:175,maint:400}},
+      {name:'Camry',type:'sedan',bh:14,desc:'Sedan hạng D, có hybrid',monthly:{bh:1167,fuel:2800,reg:180,maint:350}},
+      {name:'Corolla Cross',type:'suv',bh:10,desc:'Crossover compact',monthly:{bh:833,fuel:2400,reg:155,maint:280}},
+      {name:'Innova Cross',type:'mpv',bh:11,desc:'MPV 8 chỗ',monthly:{bh:917,fuel:2800,reg:165,maint:300}},
+      {name:'Veloz',type:'mpv',bh:8,desc:'MPV giá tốt',monthly:{bh:667,fuel:2600,reg:145,maint:250}},
+      {name:'Raize',type:'suv',bh:7,desc:'SUV đô thị cỡ nhỏ',monthly:{bh:583,fuel:2000,reg:135,maint:220}},
+      {name:'Vios',type:'sedan',bh:6,desc:'Sedan hạng B tiết kiệm',monthly:{bh:500,fuel:2000,reg:130,maint:200}},
+      {name:'Land Cruiser',type:'suv',bh:45,desc:'SUV cao cấp flagship',monthly:{bh:3750,fuel:4200,reg:450,maint:1200}},
+    ],
+    topInsurers:[
+      {name:'Liberty Insurance',color:'#2E4099',badge:'Garage Toyota ủy quyền',reason:'Thỏa thuận trực tiếp với Toyota Vietnam. Phụ tùng genuine được duyệt tự động. Xử lý 3 ngày làm việc.'},
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất thị trường',reason:'Bồi thường trong 3 ngày làm việc. Mạng lưới garage rộng, phủ tốt Toyota ở tỉnh thành và ngoại ô.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Phủ rộng',reason:'Hệ thống garage toàn quốc. Phù hợp xe Toyota thường xuyên di chuyển liên tỉnh.'},
+    ],
+    notes:[
+      {q:'Camry hybrid và xe xăng thường bảo hiểm có khác nhau không?',a:'Không khác nhau về phí và quy trình. Motor điện hư hỏng do tai nạn được bồi thường như phụ tùng thông thường. Giá trị bồi thường total loss cao hơn vì giá xe hybrid cao hơn xe xăng cùng model.'},
+      {q:'Toyota CKD (lắp ráp tại VN) vs CBU (nhập khẩu) ảnh hưởng BH thế nào?',a:'Phí BH không bị ảnh hưởng bởi nguồn gốc. Xe CBU có giá trị thực tế cao hơn CKD cùng dòng — nên khi xảy ra total loss, mức bồi thường nhận được cao hơn.'},
+      {q:'Nên chọn NB nào để sửa tại garage Toyota chính hãng sau tai nạn?',a:'Liberty Insurance có thỏa thuận authorized repair trực tiếp với Toyota Vietnam. Xe được đưa thẳng vào Toyota ủy quyền, phụ tùng genuine được duyệt tự động, không cần chờ giám định viên riêng.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★★',level:'good'},
+      {label:'Bảo dưỡng',val:'Rẻ nhất',level:'good'},
+      {label:'Phụ tùng',val:'Dễ tìm',level:'good'},
+      {label:'Garage',val:'Toàn quốc',level:'good'},
+    ],
+    insight:{owners:6840,topModel:'Fortuner',monthly:4780,vs_estimate:+0.5,hcm:5120,hn:4290,breakdown:{bh:1000,fuel:3200,road:180,maint:400}},
+    garages:[
+      {name:'Toyota Lý Thường Kiệt',type:'official',city:'HCM',address:'555 Lý Thường Kiệt, Q.10',bh:['Liberty','PVI'],claims:840,rating:4.8,note:'Đại lý Toyota chính hãng. Phụ tùng genuine, kỹ thuật viên được đào tạo tại Nhật.'},
+      {name:'Toyota Gò Vấp',type:'official',city:'HCM',address:'Quang Trung, Gò Vấp',bh:['Liberty'],claims:610,rating:4.7,note:'Lớn nhất khu vực Gò Vấp. Dịch vụ nhanh, có xe thay thế khi sửa chữa.'},
+      {name:'Toyota Hoàng Mai',type:'official',city:'HN',address:'272 Lĩnh Nam, Hoàng Mai',bh:['Liberty','Bảo Việt'],claims:720,rating:4.7,note:'Đại lý chính hãng lớn nhất Hà Nội. Phủ tốt khu vực phía Nam thủ đô.'},
+      {name:'Garage Minh Trung Auto',type:'authorized',city:'HCM',address:'Bình Thạnh, HCM',bh:['PVI','Bảo Việt'],claims:390,rating:4.6,note:'Garage ủy quyền BH. Chuyên Toyota 10+ năm, phụ tùng genuine, giá thấp hơn đại lý 15-20%.'},
+      {name:'Auto Care Toyota Cầu Giấy',type:'authorized',city:'HN',address:'Cầu Giấy, Hà Nội',bh:['PVI'],claims:280,rating:4.5,note:'Garage uy tín cộng đồng. Được recommend nhiều nhất trên các group chủ xe Toyota HN.'},
+    ],
+    scenarios:['collision','thuykick','parked'],
+  },
+  honda:{
+    name:'Honda',origin:'Nhật Bản',color:'#CC0000',tagline:'Niềm vui vận hành · Tin cậy · Tiết kiệm',
+    fuels:['xăng'],popular:true,
+    desc:'Thương hiệu Nhật Bản nổi tiếng về động cơ tiết kiệm và độ bền cao. Honda City và CR-V là hai mẫu bán chạy nhất phân khúc, phù hợp người dùng đô thị cần xe đáng tin cậy hằng ngày.',
+    models:[
+      {name:'CR-V',type:'suv',bh:11,desc:'SUV 5 chỗ phổ biến',monthly:{bh:917,fuel:2600,reg:160,maint:280}},
+      {name:'City',type:'sedan',bh:7,desc:'Sedan hạng B',monthly:{bh:583,fuel:2000,reg:130,maint:200}},
+      {name:'Civic',type:'sedan',bh:9,desc:'Sedan sporty hạng C',monthly:{bh:750,fuel:2400,reg:150,maint:250}},
+      {name:'HR-V',type:'suv',bh:9,desc:'Crossover compact',monthly:{bh:750,fuel:2200,reg:148,maint:240}},
+      {name:'BR-V',type:'suv',bh:8,desc:'SUV 7 chỗ tầm trung',monthly:{bh:667,fuel:2400,reg:145,maint:230}},
+      {name:'Accord',type:'sedan',bh:14,desc:'Sedan hạng D',monthly:{bh:1167,fuel:2800,reg:180,maint:350}},
+      {name:'Brio',type:'sedan',bh:5,desc:'Hatchback đô thị',monthly:{bh:417,fuel:1800,reg:120,maint:170}},
+    ],
+    topInsurers:[
+      {name:'Liberty Insurance',color:'#2E4099',badge:'Garage Honda ủy quyền',reason:'Thỏa thuận garage ủy quyền Honda Vietnam. Phụ tùng genuine được duyệt, xử lý 3-4 ngày.'},
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất',reason:'Xử lý bồi thường trong 3 ngày, mạng lưới garage rộng tốt cho Honda ở TP lớn.'},
+      {name:'PJICO',color:'#CC0000',badge:'Tốt cho tỉnh thành',reason:'Phủ rộng ở tỉnh thành, phù hợp Honda City và Brio ở vùng ven và ngoại tỉnh.'},
+    ],
+    notes:[
+      {q:'Honda CR-V hybrid và xăng bảo hiểm có khác nhau không?',a:'Cùng mức phí. Motor điện của hybrid được BH thân vỏ bảo vệ khi tai nạn. CR-V hybrid trị giá cao hơn nên khấu hao chậm hơn, bồi thường total loss nhận nhiều hơn trong 5 năm đầu.'},
+      {q:'Nên sửa xe Honda tại đại lý chính hãng hay garage ngoài để BH thanh toán được?',a:'BH thân vỏ thanh toán cả hai. Sửa tại đại lý Honda ủy quyền đảm bảo phụ tùng genuine và bảo hành công việc. Liberty và PVI có thỏa thuận trực tiếp với Honda Vietnam — chọn 2 NB này để không qua khâu giám định riêng.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★☆',level:'good'},
+      {label:'Bảo dưỡng',val:'Rẻ',level:'good'},
+      {label:'Phụ tùng',val:'Dễ tìm',level:'good'},
+      {label:'Garage',val:'Rộng khắp',level:'good'},
+    ],
+    insight:{owners:5210,topModel:'CR-V',monthly:3960,vs_estimate:-2.1,hcm:4250,hn:3580,breakdown:{bh:917,fuel:2600,road:160,maint:280}},
+    garages:[
+      {name:'Honda Ô tô Sài Gòn - Bình Dương',type:'official',city:'HCM',address:'Bình Dương',bh:['Liberty','PVI'],claims:690,rating:4.8,note:'Đại lý Honda chính hãng. Phụ tùng genuine, kỹ thuật viên Honda-certified.'},
+      {name:'Honda Ô tô Mỹ Đình',type:'official',city:'HN',address:'Mỹ Đình, Nam Từ Liêm',bh:['Liberty','PVI'],claims:580,rating:4.7,note:'Đại lý chính hãng lớn nhất Hà Nội. Chuyên Honda City, CR-V, Civic.'},
+      {name:'Garage Hoàng Gia Auto',type:'authorized',city:'HCM',address:'Tân Bình, HCM',bh:['PVI','PJICO'],claims:340,rating:4.6,note:'Garage ủy quyền BH. Chuyên Honda đô thị, giá dịch vụ cạnh tranh, phụ tùng genuine.'},
+      {name:'Auto Honda Đống Đa',type:'authorized',city:'HN',address:'Đống Đa, Hà Nội',bh:['PJICO'],claims:210,rating:4.5,note:'Được cộng đồng chủ xe Honda HN đánh giá cao nhất khu vực nội thành.'},
+    ],
+    scenarios:['collision','parked','glass'],
+  },
+  hyundai:{
+    name:'Hyundai',origin:'Hàn Quốc',color:'#002C5F',tagline:'Thiết kế hiện đại · Công nghệ Hàn Quốc',
+    fuels:['xăng','điện'],popular:true,
+    desc:'Thương hiệu Hàn Quốc dẫn đầu xu hướng xe điện tại Việt Nam với Ioniq 6 và Kona Electric. Dòng xe xăng Tucson và Santa Fe tiếp tục phổ biến nhờ thiết kế hiện đại và công nghệ an toàn tốt.',
+    models:[
+      {name:'Tucson',type:'suv',bh:10,desc:'SUV 5 chỗ phổ biến',monthly:{bh:833,fuel:2600,reg:158,maint:270}},
+      {name:'Santa Fe',type:'suv',bh:14,desc:'SUV 7 chỗ',monthly:{bh:1167,fuel:3000,reg:180,maint:350}},
+      {name:'Accent',type:'sedan',bh:6,desc:'Sedan hạng B',monthly:{bh:500,fuel:1900,reg:128,maint:190}},
+      {name:'Creta',type:'suv',bh:8,desc:'Crossover compact',monthly:{bh:667,fuel:2200,reg:145,maint:230}},
+      {name:'Ioniq 6',type:'ev',bh:18,desc:'Sedan điện cao cấp',monthly:{bh:1500,fuel:1100,reg:0,maint:150}},
+      {name:'Kona Electric',type:'ev',bh:12,desc:'SUV điện đô thị',monthly:{bh:1000,fuel:850,reg:0,maint:120}},
+    ],
+    topInsurers:[
+      {name:'MIC Insurance',color:'#E52A2A',badge:'Xe điện',reason:'Kinh nghiệm xử lý bồi thường xe điện Hyundai. Có kinh nghiệm với pin EV và quy trình xử lý riêng.'},
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất',reason:'Xử lý nhanh, mạng lưới garage rộng cho Hyundai xăng (Tucson, Santa Fe, Accent).'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Ổn định',reason:'Uy tín lâu đời, phù hợp cho Hyundai Accent và Tucson ở thị trường phổ thông.'},
+    ],
+    notes:[
+      {q:'Xe điện Hyundai (Ioniq 6, Kona EV) có được bảo vệ không?',a:'Có. Gói bảo vệ xe bao gồm thân xe và các bộ phận cơ khí. Nếu muốn tách riêng phần pin điện, cần hỏi rõ phạm vi của từng nhà cung cấp.'},
+      {q:'Hyundai nhập từ Thái Lan về VN, phụ tùng sau tai nạn có khó tìm không?',a:'Một số phụ tùng body đặc thù cần đặt hàng thêm 1-2 tuần. Khuyến nghị chọn NB có garage Hyundai ủy quyền để đảm bảo phụ tùng genuine và tránh chờ đợi.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★☆',level:'good'},
+      {label:'Bảo dưỡng',val:'Trung bình',level:'mid'},
+      {label:'Phụ tùng',val:'Tương đối',level:'mid'},
+      {label:'Xe điện',val:'Hàng đầu',level:'high'},
+    ],
+    insight:{owners:3180,topModel:'Tucson',monthly:3840,vs_estimate:+1.2,hcm:4100,hn:3490,breakdown:{bh:833,fuel:2600,road:158,maint:270}},
+    garages:[
+      {name:'Hyundai Thành Công - Láng Hạ',type:'official',city:'HN',address:'Láng Hạ, Đống Đa',bh:['PVI','Bảo Việt'],claims:510,rating:4.7,note:'Đại lý Hyundai chính hãng lớn nhất HN. Chuyên Tucson, Santa Fe, Ioniq 6.'},
+      {name:'Hyundai An Lạc',type:'official',city:'HCM',address:'Bình Tân, HCM',bh:['MIC','PVI'],claims:470,rating:4.7,note:'Đại lý chính hãng HCM. Có kỹ thuật viên chuyên xe điện Ioniq 6, Kona EV.'},
+      {name:'Garage EV Care Hyundai',type:'authorized',city:'HCM',address:'Quận 7, HCM',bh:['MIC'],claims:180,rating:4.8,note:'Chuyên sâu xe điện Hyundai. Kỹ thuật viên được đào tạo về pin EV và hệ thống ADAS.'},
+    ],
+    scenarios:['collision','thuykick','theft'],
+  },
+  kia:{
+    name:'Kia',origin:'Hàn Quốc',color:'#05141F',tagline:'Movement that inspires · Thiết kế táo bạo',
+    fuels:['xăng','điện'],popular:true,
+    desc:'Thương hiệu Hàn Quốc nổi bật với thiết kế táo bạo và giá trị trang bị tốt nhất phân khúc. Kia Seltos và Carnival là những mẫu bán chạy hàng đầu, được chuộng bởi sự kết hợp giữa phong cách và thực dụng.',
+    models:[
+      {name:'Seltos',type:'suv',bh:9,desc:'Crossover compact',monthly:{bh:750,fuel:2200,reg:148,maint:240}},
+      {name:'Sportage',type:'suv',bh:11,desc:'SUV 5 chỗ',monthly:{bh:917,fuel:2600,reg:162,maint:270}},
+      {name:'Carnival',type:'mpv',bh:16,desc:'MPV 8 chỗ cao cấp',monthly:{bh:1333,fuel:3200,reg:200,maint:420}},
+      {name:'Sorento',type:'suv',bh:14,desc:'SUV 7 chỗ',monthly:{bh:1167,fuel:3000,reg:178,maint:350}},
+      {name:'Cerato',type:'sedan',bh:8,desc:'Sedan hạng C',monthly:{bh:667,fuel:2200,reg:145,maint:230}},
+      {name:'EV6',type:'ev',bh:20,desc:'SUV điện cao cấp',monthly:{bh:1667,fuel:1200,reg:0,maint:180}},
+    ],
+    topInsurers:[
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất',reason:'Xử lý bồi thường 3 ngày, phù hợp Kia Seltos và Sportage ở các TP lớn.'},
+      {name:'MIC Insurance',color:'#E52A2A',badge:'Tốt nhất cho Kia EV6',reason:'Kinh nghiệm xử lý EV, phù hợp Kia EV6 với quyền lợi pin điện riêng.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Mạng lưới rộng',reason:'Phủ rộng tỉnh thành, tốt cho Kia Carnival và Sorento.'},
+    ],
+    notes:[
+      {q:'Kia Carnival CBU nhập Hàn có phụ tùng khó tìm sau tai nạn không?',a:'Carnival CBU có một số phụ tùng body cần đặt từ 2-3 tuần. Chọn NB có garage Kia authorized — phụ tùng genuine được đặt thẳng từ Kia Vietnam thay vì qua trung gian.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★☆',level:'good'},
+      {label:'Bảo dưỡng',val:'Trung bình',level:'mid'},
+      {label:'Phụ tùng',val:'Tương đối',level:'mid'},
+      {label:'Thiết kế',val:'Táo bạo',level:'high'},
+    ],
+    insight:{owners:2940,topModel:'Seltos',monthly:3720,vs_estimate:-0.8,hcm:3980,hn:3380,breakdown:{bh:750,fuel:2200,road:148,maint:240}},
+    garages:[
+      {name:'Kia Trường Chinh',type:'official',city:'HCM',address:'Trường Chinh, Tân Bình',bh:['PVI','Bảo Việt'],claims:480,rating:4.7,note:'Đại lý Kia lớn nhất HCM. Chuyên Seltos, Carnival, EV6. Có khu vực waiting lounge.'},
+      {name:'Kia Phạm Văn Đồng',type:'official',city:'HN',address:'Phạm Văn Đồng, Cầu Giấy',bh:['PVI','MIC'],claims:390,rating:4.6,note:'Đại lý Kia chính hãng HN. Phụ tùng genuine Hàn Quốc, thời gian xử lý claim nhanh.'},
+      {name:'Garage Kia Xanh',type:'authorized',city:'HCM',address:'Bình Dương',bh:['MIC'],claims:160,rating:4.7,note:'Chuyên Kia EV6. Kỹ thuật viên được đào tạo về pin điện và fast-charging system.'},
+    ],
+    scenarios:['collision','parked','natural'],
+  },
+  mazda:{
+    name:'Mazda',origin:'Nhật Bản',color:'#910000',tagline:'Jinba Ittai · Xe và người là một',
+    fuels:['xăng'],popular:true,
+    desc:'Thương hiệu Nhật Bản độc đáo với triết lý thiết kế Kodo và cảm giác lái thể thao Jinba Ittai. Mazda CX-5 là SUV 5 chỗ được chuộng nhất phân khúc tầm trung, nổi bật với sơn Soul Red Crystal và nội thất sang trọng vượt tầm giá.',
+    models:[
+      {name:'CX-5',type:'suv',bh:11,desc:'SUV 5 chỗ phổ biến',monthly:{bh:917,fuel:2500,reg:160,maint:320}},
+      {name:'CX-8',type:'suv',bh:15,desc:'SUV 7 chỗ cao cấp',monthly:{bh:1250,fuel:3000,reg:185,maint:400}},
+      {name:'Mazda3',type:'sedan',bh:9,desc:'Sedan/hatchback hạng C',monthly:{bh:750,fuel:2200,reg:148,maint:280}},
+      {name:'CX-3',type:'suv',bh:8,desc:'Crossover đô thị',monthly:{bh:667,fuel:2000,reg:140,maint:250}},
+      {name:'CX-30',type:'suv',bh:9,desc:'Crossover compact',monthly:{bh:750,fuel:2100,reg:145,maint:260}},
+      {name:'Mazda6',type:'sedan',bh:12,desc:'Sedan hạng D',monthly:{bh:1000,fuel:2600,reg:168,maint:320}},
+    ],
+    topInsurers:[
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất thị trường',reason:'Xử lý bồi thường nhanh nhất, mạng lưới garage rộng cho Mazda.'},
+      {name:'Liberty Insurance',color:'#2E4099',badge:'Garage Mazda authorized',reason:'Thỏa thuận với một số đại lý Mazda, phụ tùng genuine được duyệt.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Ổn định',reason:'Mạng lưới rộng, phù hợp CX-5 và CX-8 ở tỉnh thành.'},
+    ],
+    notes:[
+      {q:'Sơn Mazda (Soul Red Crystal, Machine Grey) có làm chi phí sửa tăng không?',a:'Có thể cao hơn 15-25% so với sơn thông thường do kỹ thuật phun đặc biệt và nhiều lớp hơn. Nhà BH bồi thường theo chi phí thực tế — chủ xe không thiệt. Lưu ý chọn garage có thợ được đào tạo sơn Mazda để đúng màu.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★☆',level:'good'},
+      {label:'Bảo dưỡng',val:'Trung bình',level:'mid'},
+      {label:'Sơn đặc biệt',val:'Tốn kém hơn',level:'mid'},
+      {label:'Cảm giác lái',val:'Hàng đầu',level:'high'},
+    ],
+    insight:{owners:3560,topModel:'CX-5',monthly:4010,vs_estimate:+0.3,hcm:4280,hn:3650,breakdown:{bh:917,fuel:2500,road:160,maint:320}},
+    garages:[
+      {name:'Mazda Lê Văn Lương',type:'official',city:'HCM',address:'Lê Văn Lương, Q.7',bh:['PVI','Liberty'],claims:420,rating:4.8,note:'Đại lý Mazda chính hãng. Thợ sơn được đào tạo riêng cho Soul Red Crystal và Machine Grey.'},
+      {name:'Mazda Trần Duy Hưng',type:'official',city:'HN',address:'Trần Duy Hưng, Cầu Giấy',bh:['Liberty','Bảo Việt'],claims:350,rating:4.7,note:'Đại lý lớn nhất HN. Kỹ thuật viên được Mazda Japan chứng nhận. Phụ tùng genuine.'},
+      {name:'Auto Mazda Tân Phú',type:'authorized',city:'HCM',address:'Tân Phú, HCM',bh:['PVI'],claims:190,rating:4.6,note:'Garage ủy quyền. Giá sơn cạnh tranh hơn đại lý 20%, cam kết đúng màu Soul Red Crystal.'},
+    ],
+    scenarios:['collision','parked','glass'],
+  },
+  ford:{
+    name:'Ford',origin:'Mỹ',color:'#003178',tagline:'Built Tough · Built for Vietnam',
+    fuels:['xăng'],popular:true,
+    desc:'Thương hiệu Mỹ với dòng xe bán tải và SUV địa hình mạnh mẽ nhất thị trường. Ford Ranger liên tục dẫn đầu phân khúc bán tải nhiều năm, được yêu thích bởi tính đa dụng cho cả công việc và cuộc sống.',
+    models:[
+      {name:'Ranger',type:'truck',bh:14,desc:'Bán tải số 1 VN',monthly:{bh:1167,fuel:3800,reg:220,maint:550}},
+      {name:'Everest',type:'suv',bh:18,desc:'SUV 7 chỗ cao cấp',monthly:{bh:1500,fuel:3600,reg:240,maint:500}},
+      {name:'Territory',type:'suv',bh:10,desc:'Crossover đô thị',monthly:{bh:833,fuel:2400,reg:155,maint:280}},
+      {name:'Explorer',type:'suv',bh:30,desc:'SUV flagship',monthly:{bh:2500,fuel:4500,reg:320,maint:800}},
+    ],
+    topInsurers:[
+      {name:'PTI Insurance',color:'#005BAA',badge:'Chuyên bán tải Ford',reason:'Mạnh về xe bán tải và SUV địa hình, kinh nghiệm bồi thường Ford Ranger nhiều nhất.'},
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất',reason:'Xử lý nhanh, garage Ford ủy quyền trong mạng lưới PVI.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Rộng khắp',reason:'Mạng lưới rộng, tốt cho Ford Everest di chuyển liên tỉnh.'},
+    ],
+    notes:[
+      {q:'Ford Ranger lắp thùng hoặc phụ kiện độ có ảnh hưởng bảo hiểm không?',a:'Có. Phụ kiện lắp sau khi mua xe không khai báo sẽ không được bồi thường nếu hỏng. Thùng lắp thêm cần thông báo nhà BH để điều chỉnh giá trị bảo hiểm — phí BH tăng thêm khoảng 5-10%.'},
+      {q:'Ford Ranger dùng kinh doanh vận tải có mua BH thân vỏ được không?',a:'Được, nhưng phải khai báo đúng mục đích sử dụng. BH cá nhân không hợp lệ khi xe dùng vận tải thương mại. BH thương mại phí cao hơn khoảng 20-30% nhưng bảo vệ đúng phạm vi sử dụng.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★☆☆',level:'mid'},
+      {label:'Bảo dưỡng',val:'Cao hơn',level:'mid'},
+      {label:'Bán tải',val:'Số 1 VN',level:'good'},
+      {label:'Địa hình',val:'Hàng đầu',level:'high'},
+    ],
+    insight:{owners:2870,topModel:'Ranger',monthly:5740,vs_estimate:+2.8,hcm:6120,hn:5180,breakdown:{bh:1167,fuel:3800,road:220,maint:550}},
+    garages:[
+      {name:'Ford Bình Dương',type:'official',city:'HCM',address:'Thuận An, Bình Dương',bh:['PTI','PVI'],claims:560,rating:4.7,note:'Đại lý Ford lớn nhất miền Nam. Chuyên Ranger và Everest. Có pit riêng cho bán tải.'},
+      {name:'Ford Thăng Long',type:'official',city:'HN',address:'Đông Anh, Hà Nội',bh:['PTI','Bảo Việt'],claims:430,rating:4.6,note:'Đại lý Ford chính hãng HN. Chuyên bán tải, có xưởng độ phụ kiện Ranger.'},
+      {name:'4x4 Auto Garage',type:'authorized',city:'HCM',address:'Quận 12, HCM',bh:['PTI'],claims:240,rating:4.8,note:'Chuyên sâu Ford Ranger và Everest địa hình. Thay khung gầm, phụ tùng genuine, giá tốt hơn đại lý.'},
+    ],
+    scenarios:['collision','parttheft','natural'],
+  },
+  mitsubishi:{
+    name:'Mitsubishi',origin:'Nhật Bản',color:'#D0021B',tagline:'Drive the future · Plug-in hybrid',
+    fuels:['xăng','hybrid'],popular:true,
+    desc:'Thương hiệu Nhật Bản đang đẩy mạnh dòng xe PHEV và địa hình tại Việt Nam. Mitsubishi Xpander là MPV 7 chỗ bán chạy nhất phân khúc gia đình, nổi bật về không gian rộng và chi phí sở hữu hợp lý.',
+    models:[
+      {name:'Xpander',type:'mpv',bh:9,desc:'MPV 7 chỗ bán chạy',monthly:{bh:750,fuel:2700,reg:155,maint:280}},
+      {name:'Xforce',type:'suv',bh:9,desc:'Crossover mới nhất',monthly:{bh:750,fuel:2400,reg:148,maint:260}},
+      {name:'Outlander',type:'suv',bh:12,desc:'SUV 7 chỗ',monthly:{bh:1000,fuel:2800,reg:165,maint:320}},
+      {name:'Eclipse Cross',type:'suv',bh:11,desc:'SUV PHEV',monthly:{bh:917,fuel:1200,reg:155,maint:280}},
+      {name:'Pajero Sport',type:'suv',bh:16,desc:'SUV địa hình',monthly:{bh:1333,fuel:3600,reg:210,maint:480}},
+    ],
+    topInsurers:[
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất',reason:'Bồi thường nhanh, mạng lưới garage tốt cho Xpander và Xforce.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Rộng khắp',reason:'Mạng lưới toàn quốc, tốt cho Mitsubishi ở tỉnh thành.'},
+      {name:'Liberty Insurance',color:'#2E4099',badge:'Garage authorized',reason:'Phụ tùng genuine được duyệt, garage Mitsubishi ủy quyền trong mạng.'},
+    ],
+    notes:[
+      {q:'Eclipse Cross PHEV bảo hiểm có khác xe xăng thường không?',a:'Phí BH tương đương, nhưng chi phí sửa motor điện và pin PHEV có thể cao hơn. Một số NB tính quyền lợi pin PHEV là phụ tùng thông thường; số khác yêu cầu khai báo riêng. Nên hỏi rõ NB trước khi ký hợp đồng.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★☆',level:'good'},
+      {label:'Bảo dưỡng',val:'Trung bình',level:'mid'},
+      {label:'Phụ tùng',val:'Tương đối',level:'mid'},
+      {label:'MPV 7 chỗ',val:'Bán chạy',level:'good'},
+    ],
+    insight:{owners:2410,topModel:'Xpander',monthly:3880,vs_estimate:-1.3,hcm:4050,hn:3610,breakdown:{bh:750,fuel:2700,road:155,maint:280}},
+    garages:[
+      {name:'Mitsubishi Motors Việt Nam - Bắc Từ Liêm',type:'official',city:'HN',address:'Bắc Từ Liêm, Hà Nội',bh:['PVI','Bảo Việt'],claims:380,rating:4.6,note:'Đại lý Mitsubishi chính hãng HN. Chuyên Xpander và Xforce. Phụ tùng genuine.'},
+      {name:'Mitsubishi Tân Sơn Nhất',type:'official',city:'HCM',address:'Gò Vấp, HCM',bh:['PVI','Liberty'],claims:310,rating:4.6,note:'Đại lý lớn nhất HCM. Chuyên PHEV Eclipse Cross và Pajero Sport địa hình.'},
+      {name:'Garage MPV Center',type:'authorized',city:'HCM',address:'Bình Thạnh, HCM',bh:['PVI'],claims:150,rating:4.5,note:'Chuyên MPV 7 chỗ Mitsubishi và Toyota. Phụ tùng genuine, giá tốt hơn đại lý 10-15%.'},
+    ],
+    scenarios:['collision','thuykick','parked'],
+  },
+  vinfast:{
+    name:'VinFast',origin:'Việt Nam',color:'#0069AA',tagline:'Xe điện Việt · Vì người Việt · Chi phí thấp nhất',
+    fuels:['điện'],popular:true,
+    desc:'Thương hiệu xe điện Việt Nam đầu tiên với đầy đủ dải sản phẩm từ mini EV đến SUV 7 chỗ. VF 8 là xe điện bán chạy nhất Việt Nam, tiết kiệm 3-4tr/tháng so với SUV xăng cùng phân khúc.',
+    models:[
+      {name:'VF 8',type:'ev',bh:15,desc:'SUV điện cỡ C tốt nhất',monthly:{bh:1250,fuel:1100,reg:0,maint:150}},
+      {name:'VF 9',type:'ev',bh:25,desc:'SUV điện 7 chỗ cỡ D',monthly:{bh:2083,fuel:1400,reg:0,maint:200}},
+      {name:'VF 7',type:'ev',bh:13,desc:'SUV-coupe điện',monthly:{bh:1083,fuel:950,reg:0,maint:130}},
+      {name:'VF 6',type:'ev',bh:10,desc:'Crossover điện tầm trung',monthly:{bh:833,fuel:800,reg:0,maint:120}},
+      {name:'VF 5',type:'ev',bh:7,desc:'SUV điện đô thị',monthly:{bh:583,fuel:650,reg:0,maint:100}},
+      {name:'VF 3',type:'ev',bh:5,desc:'Mini EV đô thị',monthly:{bh:417,fuel:500,reg:0,maint:80}},
+    ],
+    topInsurers:[
+      {name:'MIC Insurance',color:'#E52A2A',badge:'Đối tác chính thức VinFast',reason:'Đối tác BH chính thức của VinFast. Kinh nghiệm xử lý bồi thường xe điện VF, pin và motor được bồi thường đúng quy trình.'},
+      {name:'PVI Insurance',color:'#FF6600',badge:'Quyền lợi pin EV',reason:'Đã có gói quyền lợi pin điện riêng cho VinFast, xử lý bồi thường nhanh.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Ổn định',reason:'Đang mở rộng năng lực xử lý xe điện VinFast, uy tín lâu đời.'},
+    ],
+    notes:[
+      {q:'Pin xe điện VinFast có được bảo vệ không?',a:'Gói bảo vệ xe thường xử lý phần thân xe và bộ phận cơ khí. Nếu cần phạm vi riêng cho pin, nên kiểm tra rõ điều khoản của từng nhà cung cấp trước khi mua.'},
+      {q:'Thủy kích trên xe điện VinFast xử lý thế nào?',a:'VinFast được thiết kế IP67 (chịu ngâm 1m/30 phút). Tuy nhiên nếu nước vào motor hoặc hộp điện do tai nạn nghiêm trọng, cần chọn gói có phạm vi xử lý xe điện rõ ràng. Chi phí sửa motor VF 8 khoảng 80-150tr.'},
+      {q:'Chi phí nuôi xe điện VinFast thực sự rẻ hơn xe xăng bao nhiêu?',a:'Ước tính VF 8 (1.200km/tháng): điện tại nhà ~1.1tr vs xăng Toyota Fortuner ~3.2tr. Cộng thêm miễn phí đường bộ và bảo dưỡng thấp hơn 60-70%, tổng tiết kiệm ~3-4tr/tháng so với SUV xăng cùng phân khúc.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★☆☆',level:'mid'},
+      {label:'Chi phí điện',val:'Rẻ nhất',level:'good'},
+      {label:'Bảo dưỡng',val:'Thấp nhất',level:'good'},
+      {label:'Eco',val:'Zero emission',level:'high'},
+    ],
+    insight:{owners:4920,topModel:'VF 8',monthly:2640,vs_estimate:-38.2,hcm:2810,hn:2430,breakdown:{bh:1250,fuel:1100,road:0,maint:150}},
+    garages:[
+      {name:'VinFast Smart Service - Phú Mỹ Hưng',type:'official',city:'HCM',address:'Phú Mỹ Hưng, Q.7',bh:['MIC','PVI'],claims:820,rating:4.8,note:'Trung tâm dịch vụ VinFast tiêu chuẩn cao nhất HCM. Kỹ thuật viên EV chuyên biệt, OTA update tại chỗ.'},
+      {name:'VinFast Smart Service - Mỹ Đình',type:'official',city:'HN',address:'Mỹ Đình, Nam Từ Liêm',bh:['MIC','PVI'],claims:910,rating:4.8,note:'Trung tâm dịch vụ VinFast lớn nhất HN. Xử lý pin EV và motor, có xe VF thay thế miễn phí.'},
+      {name:'VinFast Service - Thủ Đức',type:'official',city:'HCM',address:'Thủ Đức, HCM',bh:['MIC'],claims:540,rating:4.7,note:'Phủ khu Đông HCM. Chuyên VF 8 và VF 9, nhanh nhất khu vực theo đánh giá chủ xe MoMo.'},
+    ],
+    scenarios:['thuykick','collision','theft'],
+  },
+  mercedes:{
+    name:'Mercedes',origin:'Đức',color:'#1C1C1C',tagline:'The best or nothing · Xe sang hàng đầu',
+    fuels:['xăng','hybrid'],popular:false,
+    desc:'Thương hiệu xe sang hàng đầu thế giới từ Đức. Mercedes C-Class và GLC là hai mẫu bán chạy nhất phân khúc sang tại Việt Nam, được lựa chọn bởi phân khúc doanh nhân cần phụ tùng genuine và dịch vụ chính hãng.',
+    models:[
+      {name:'C-Class',type:'sedan',bh:28,desc:'Sedan sang hạng C',monthly:{bh:2333,fuel:3500,reg:380,maint:1500}},
+      {name:'E-Class',type:'sedan',bh:40,desc:'Sedan sang hạng D',monthly:{bh:3333,fuel:4000,reg:450,maint:2000}},
+      {name:'GLC',type:'suv',bh:35,desc:'SUV 5 chỗ premium',monthly:{bh:2917,fuel:3800,reg:400,maint:1800}},
+      {name:'GLE',type:'suv',bh:55,desc:'SUV 7 chỗ cao cấp',monthly:{bh:4583,fuel:4800,reg:500,maint:2500}},
+      {name:'S-Class',type:'sedan',bh:85,desc:'Sedan flagship',monthly:{bh:7083,fuel:5500,reg:700,maint:4000}},
+    ],
+    topInsurers:[
+      {name:'DBY Insurance',color:'#1C1C1C',badge:'Chuyên xe sang BMW/Merc',reason:'Đối tác garage chính hãng Mercedes-Benz Vietnam. Phụ tùng genuine, kỹ thuật viên Mercedes-certified.'},
+      {name:'GIC Insurance',color:'#2D6B3F',badge:'Xe nhập châu Âu',reason:'Chuyên xe nhập khẩu châu Âu, định giá và bồi thường đúng giá trị thực tế xe sang.'},
+      {name:'Bảo Việt',color:'#1B60A8',badge:'Uy tín',reason:'Cam kết bồi thường đúng hạn cho xe sang Mercedes.'},
+    ],
+    notes:[
+      {q:'Phụ tùng Mercedes chính hãng vs OEM khi bồi thường khác nhau thế nào?',a:'Nhà BH mặc định bồi thường phụ tùng OEM (chất lượng tương đương, không phải genuine). Với Mercedes, nhiều chủ xe muốn genuine parts. Cần chọn DBY có thỏa thuận garage Mercedes chính hãng, hoặc thêm điều khoản "genuine parts" vào hợp đồng — phí cao hơn 10-20%.'},
+      {q:'Hệ thống điện tử phức tạp (MBUX, hệ thống an toàn) hư sau tai nạn có được BH không?',a:'Có, nếu hư hỏng trực tiếp do tai nạn. Giám định viên cần xác nhận liệu lỗi điện tử là hậu quả tai nạn hay lỗi phần mềm có từ trước. Garage Mercedes authorized có khả năng xác định chính xác — lý do nên chọn DBY.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★☆☆',level:'mid'},
+      {label:'Bảo dưỡng',val:'Rất cao',level:'neutral'},
+      {label:'Phụ tùng',val:'Genuine khó',level:'neutral'},
+      {label:'Đẳng cấp',val:'Hàng đầu',level:'high'},
+    ],
+    insight:{owners:890,topModel:'C-Class',monthly:8230,vs_estimate:+3.1,hcm:8910,hn:7420,breakdown:{bh:2333,fuel:3500,road:380,maint:1500}},
+    garages:[
+      {name:'Mercedes-Benz Vietnam Star - Trường Sơn',type:'official',city:'HCM',address:'Trường Sơn, Q.Tân Bình',bh:['DBY','GIC'],claims:310,rating:4.9,note:'Đại lý Mercedes chính hãng hàng đầu HCM. Phụ tùng genuine Germany, kỹ thuật viên Mercedes-certified.'},
+      {name:'Mercedes-Benz Vietnam Star - Hào Nam',type:'official',city:'HN',address:'Hào Nam, Đống Đa',bh:['DBY','GIC'],claims:270,rating:4.9,note:'Showroom flagship HN. Dedicated claims lane cho xe sang, thời gian xử lý ưu tiên.'},
+      {name:'Star Auto Thảo Điền',type:'authorized',city:'HCM',address:'Thảo Điền, Q.2',bh:['DBY'],claims:120,rating:4.8,note:'Garage cao cấp khu Thảo Điền. Chuyên xe sang châu Âu, phụ tùng genuine import, kỹ thuật viên 15+ năm kinh nghiệm Mercedes.'},
+    ],
+    scenarios:['collision','theft','parttheft'],
+  },
+  bmw:{
+    name:'BMW',origin:'Đức',color:'#1C69D4',tagline:'Sheer Driving Pleasure · Niềm vui lái xe',
+    fuels:['xăng','hybrid'],popular:false,
+    desc:'Thương hiệu xe sang Đức nổi tiếng với triết lý lái thể thao thuần túy. BMW X3 và 3 Series phổ biến nhất tại Việt Nam, được yêu thích bởi cảm giác lái sắc nét và công nghệ BMW Intelligent Personal Assistant.',
+    models:[
+      {name:'3 Series',type:'sedan',bh:30,desc:'Sedan sporty premium',monthly:{bh:2500,fuel:3800,reg:400,maint:1800}},
+      {name:'5 Series',type:'sedan',bh:45,desc:'Sedan hạng D cao cấp',monthly:{bh:3750,fuel:4200,reg:480,maint:2200}},
+      {name:'X3',type:'suv',bh:35,desc:'SUV 5 chỗ phổ biến nhất',monthly:{bh:2917,fuel:3900,reg:420,maint:1900}},
+      {name:'X5',type:'suv',bh:60,desc:'SUV 7 chỗ flagship',monthly:{bh:5000,fuel:5000,reg:550,maint:2800}},
+    ],
+    topInsurers:[
+      {name:'DBY Insurance',color:'#1C1C1C',badge:'Chuyên BMW/Mercedes',reason:'Đối tác garage BMW chính hãng. Kỹ thuật viên BMW-certified, phụ tùng genuine Bavarian được duyệt tự động.'},
+      {name:'GIC Insurance',color:'#2D6B3F',badge:'Xe nhập châu Âu',reason:'Chuyên xe nhập châu Âu, định giá tốt và bồi thường đúng giá trị thực tế BMW.'},
+      {name:'PVI Insurance',color:'#FF6600',badge:'Nhanh nhất',reason:'Xử lý bồi thường 3 ngày — kiểm tra thỏa thuận garage BMW trước khi ký hợp đồng.'},
+    ],
+    notes:[
+      {q:'BMW xDrive vs sDrive ảnh hưởng phí bảo hiểm thế nào?',a:'xDrive (4WD) có giá xe cao hơn sDrive cùng model ~5-10%, nên phí BH thân vỏ cũng cao hơn tương ứng. Hệ thống xDrive phức tạp hơn nên chi phí sửa chữa sau tai nạn cũng cao hơn.'},
+      {q:'BMW mua tại đại lý chính hãng vs nhập tư có ảnh hưởng BH không?',a:'Đại lý chính hãng: bảo hành đầy đủ, phụ tùng genuine sẵn có. Nhập tư: phải kiểm tra VIN để xác nhận phù hợp tiêu chuẩn VN, phí BH tương đương nhưng định giá xe có thể khác. DBY và GIC chuyên xử lý cả 2 trường hợp.'},
+    ],
+    scores:[
+      {label:'Giữ giá',val:'★★★★☆',level:'good'},
+      {label:'Bảo dưỡng',val:'Rất cao',level:'neutral'},
+      {label:'Phụ tùng',val:'Genuine khó',level:'neutral'},
+      {label:'Cảm giác lái',val:'Sporty #1',level:'high'},
+    ],
+    insight:{owners:720,topModel:'X3',monthly:9120,vs_estimate:+2.4,hcm:9780,hn:8310,breakdown:{bh:2917,fuel:3900,road:420,maint:1900}},
+    garages:[
+      {name:'BMW Euro Auto - Trường Sơn',type:'official',city:'HCM',address:'Trường Sơn, Q.Tân Bình',bh:['DBY','GIC'],claims:240,rating:4.9,note:'Đại lý BMW chính hãng lớn nhất VN. Kỹ thuật viên BMW-certified, phụ tùng Bavarian genuine, diagnostic chính hãng.'},
+      {name:'BMW Euro Auto - Trần Duy Hưng',type:'official',city:'HN',address:'Trần Duy Hưng, Cầu Giấy',bh:['DBY','GIC'],claims:200,rating:4.8,note:'Flagship showroom HN. Dedicated service lane cho claim BH, thay xe lớp lux khi sửa chữa dài ngày.'},
+      {name:'Prestige Auto Thảo Điền',type:'authorized',city:'HCM',address:'Quận 2, HCM',bh:['GIC'],claims:90,rating:4.8,note:'Chuyên BMW và xe sang châu Âu. Giá tốt hơn đại lý 15%, không dùng phụ tùng OEM, cam kết genuine.'},
+    ],
+    scenarios:['collision','theft','parttheft'],
+  },
+};
+
+const BRAND_LIST = ['toyota','honda','hyundai','kia','mazda','ford','mitsubishi','vinfast','mercedes','bmw'];
+
+const CAR_TYPES = [
+  {id:'sedan',  label:'Sedan',        svgType:'sedan', color:'#5C5060'},
+  {id:'suv',    label:'SUV',          svgType:'suv',   color:'#5C5060'},
+  {id:'crossover',label:'Crossover',  svgType:'suv',   color:'#5C5060'},
+  {id:'mpv',    label:'MPV',          svgType:'mpv',   color:'#5C5060'},
+  {id:'truck',  label:'Bán tải',      svgType:'truck', color:'#5C5060'},
+  {id:'ev',     label:'Ô tô điện',    svgType:'ev',    color:'#2563EB'},
+];
+
+const SCENARIOS = {
+  collision:{name:'Va chạm & Tai nạn',badge:'Tiêu chuẩn',badgeCls:'badge-green',short:'Phổ biến nhất, chiếm 60% vụ bồi thường. Dừng xe, chụp ảnh, gọi CA.',icon:'⚡'},
+  thuykick:{name:'Thủy kích',badge:'Mở rộng thêm',badgeCls:'badge-amber',short:'KHÔNG đề máy lại sau ngập nước. Chi phí sửa 40-120tr. Cần thêm +2tr/năm.',icon:'💧'},
+  parked:{name:'Xe đỗ bị va chạm',badge:'Tiêu chuẩn',badgeCls:'badge-green',short:'Không cần tìm được xe gây thiệt hại. BH của chính bạn chi trả sau khấu trừ.',icon:'🅿️'},
+  glass:{name:'Vỡ kính',badge:'Tiêu chuẩn',badgeCls:'badge-green',short:'Đá văng, vỡ do nhiệt. Không cần biên bản CA. Xử lý qua app nhiều NB.',icon:'🪟'},
+  theft:{name:'Mất cắp toàn bộ xe',badge:'Tiêu chuẩn',badgeCls:'badge-green',short:'Trình báo CA trong 24h. Chờ 30 ngày. Bồi thường giá trị thực tế trừ khấu hao.',icon:'🔑'},
+  parttheft:{name:'Mất cắp bộ phận',badge:'Mở rộng thêm',badgeCls:'badge-amber',short:'Bánh xe, camera, đầu màn hình. Cần quyền lợi thêm +600-900K/năm.',icon:'🔧'},
+  fire:{name:'Cháy xe',badge:'Tiêu chuẩn',badgeCls:'badge-green',short:'Thoát ra ngay, gọi 114. Đứng cách xa 30m. Bảo hiểm bồi thường theo thiệt hại thực tế.',icon:'🔥'},
+  natural:{name:'Thiên tai',badge:'Mở rộng thêm',badgeCls:'badge-amber',short:'Cây đổ thường được xử lý trong phạm vi tiêu chuẩn. Ngập lụt thân vỏ và thủy kích cần phạm vi riêng.',icon:'🌊'},
+};
+
+/* ── HELPERS ── */
+const fmt = n => n >= 1000 ? (n/1000).toFixed(n%1000===0?0:1)+'tr' : n+'K';
+const fmtM = n => n === 0 ? 'Miễn phí' : fmt(n) + '/tháng';
+
+function carSVG(type, color) {
+  const c = color; const op1 = '0.18'; const op2 = '0.32'; const op3 = '0.55';
+  if (type === 'sedan' || type === 'coupe') {
+    return `<svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:72px">
+      <path d="M8,56 L8,40 Q12,22 38,18 L62,11 L138,11 L162,18 Q186,24 192,40 L192,56 Z" fill="${c}" opacity="${op1}"/>
+      <path d="M62,11 L75,4 L125,4 L138,11 Z" fill="${c}" opacity="${op2}"/>
+      <rect x="18" y="42" width="164" height="4" rx="2" fill="${c}" opacity="0.1"/>
+      <circle cx="48" cy="56" r="14" fill="${c}" opacity="${op2}"/><circle cx="48" cy="56" r="8" fill="white" opacity="0.75"/>
+      <circle cx="152" cy="56" r="14" fill="${c}" opacity="${op2}"/><circle cx="152" cy="56" r="8" fill="white" opacity="0.75"/>
+    </svg>`;
+  }
+  if (type === 'truck') {
+    return `<svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:72px">
+      <rect x="8" y="24" width="80" height="34" rx="4" fill="${c}" opacity="${op2}"/>
+      <rect x="88" y="34" width="104" height="24" rx="2" fill="${c}" opacity="${op1}"/>
+      <path d="M88,34 L88,58 L192,58 L192,34 Z" fill="${c}" opacity="${op1}"/>
+      <rect x="8" y="14" width="80" height="12" rx="3" fill="${c}" opacity="${op3}"/>
+      <circle cx="38" cy="60" r="12" fill="${c}" opacity="${op2}"/><circle cx="38" cy="60" r="7" fill="white" opacity="0.75"/>
+      <circle cx="162" cy="60" r="12" fill="${c}" opacity="${op2}"/><circle cx="162" cy="60" r="7" fill="white" opacity="0.75"/>
+    </svg>`;
+  }
+  if (type === 'mpv') {
+    return `<svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:72px">
+      <path d="M8,58 L8,34 Q10,12 38,10 L162,10 Q188,12 192,34 L192,58 Z" fill="${c}" opacity="${op1}"/>
+      <path d="M38,10 L42,4 L158,4 L162,10 Z" fill="${c}" opacity="${op2}"/>
+      <rect x="18" y="10" width="164" height="3" rx="1.5" fill="${c}" opacity="0.12"/>
+      <circle cx="48" cy="58" r="13" fill="${c}" opacity="${op2}"/><circle cx="48" cy="58" r="7" fill="white" opacity="0.75"/>
+      <circle cx="152" cy="58" r="13" fill="${c}" opacity="${op2}"/><circle cx="152" cy="58" r="7" fill="white" opacity="0.75"/>
+    </svg>`;
+  }
+  if (type === 'ev') {
+    return `<svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:72px">
+      <path d="M8,56 L8,36 Q14,14 42,12 L158,12 Q184,14 192,36 L192,56 Z" fill="${c}" opacity="${op1}"/>
+      <path d="M42,12 L50,5 L150,5 L158,12 Z" fill="${c}" opacity="${op2}"/>
+      <path d="M86,26 L94,14 L106,14 L98,26 L110,26 L88,46 L94,32 L82,32 Z" fill="${c}" opacity="0.45"/>
+      <circle cx="48" cy="56" r="13" fill="${c}" opacity="${op2}"/><circle cx="48" cy="56" r="7" fill="white" opacity="0.75"/>
+      <circle cx="152" cy="56" r="13" fill="${c}" opacity="${op2}"/><circle cx="152" cy="56" r="7" fill="white" opacity="0.75"/>
+    </svg>`;
+  }
+  // suv (default)
+  return `<svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:72px">
+    <path d="M8,58 L8,38 Q14,18 40,14 L160,14 Q184,18 192,38 L192,58 Z" fill="${c}" opacity="${op1}"/>
+    <path d="M40,14 L46,6 L154,6 L160,14 Z" fill="${c}" opacity="${op2}"/>
+    <rect x="46" y="20" width="108" height="20" rx="3" fill="${c}" opacity="0.08"/>
+    <circle cx="48" cy="58" r="13" fill="${c}" opacity="${op2}"/><circle cx="48" cy="58" r="7" fill="white" opacity="0.75"/>
+    <circle cx="152" cy="58" r="13" fill="${c}" opacity="${op2}"/><circle cx="152" cy="58" r="7" fill="white" opacity="0.75"/>
+  </svg>`;
+}
+
+function brandMark(id, w=56, h=56, r=14, fs=17) {
+  const b = BRANDS[id];
+  const abbr = {toyota:'TOY',honda:'HON',hyundai:'HYN',kia:'KIA',mazda:'MZD',ford:'FOR',mitsubishi:'MIT',vinfast:'VF',mercedes:'MBZ',bmw:'BMW'}[id]||id.slice(0,3).toUpperCase();
+  return `<div class="brand-mark" style="width:${w}px;height:${h}px;border-radius:${r}px;background:${b.color};font-size:${fs}px">${abbr}</div>`;
+}
+
+function fuelTag(f) {
+  const map = {xăng:'tag-petrol',hybrid:'tag-hybrid',điện:'tag-electric'};
+  const icon = {xăng:'⛽',hybrid:'🔋',điện:'⚡'}[f]||'';
+  return `<span class="tag ${map[f]||'tag-petrol'}">${icon} ${f}</span>`;
+}
+
+const TYPE_LABELS = {
+  sedan: 'Sedan',
+  suv: 'SUV',
+  crossover: 'Crossover',
+  mpv: 'MPV',
+  truck: 'Bán tải',
+  ev: 'EV',
+};
+
+function modelTypeLabel(m) {
+  return TYPE_LABELS[m.type || 'suv'] || 'Xe';
+}
+
+function brandTypeSummary(b) {
+  const types = [...new Set(b.models.map(modelTypeLabel))];
+  const fuels = [];
+  if (b.fuels.includes('hybrid')) fuels.push('Hybrid');
+  if (b.fuels.includes('điện') && b.fuels.length === 1) fuels.push('EV');
+  return [...types.slice(0, 2), ...fuels].join(' · ');
+}
+
+const INSURER_LOGOS = {
+  'Liberty Insurance': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Liberty_Mutual_Logo.svg/160px-Liberty_Mutual_Logo.svg.png',
+  'PVI Insurance': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/PVI_Holdings_logo.svg/160px-PVI_Holdings_logo.svg.png',
+  'Bảo Việt': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Bao_Viet_Holdings_logo.svg/160px-Bao_Viet_Holdings_logo.svg.png',
+  'MIC Insurance': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/MIC_logo.svg/160px-MIC_logo.svg.png',
+  'PJICO': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/PJICO_logo.svg/160px-PJICO_logo.svg.png',
+  'PTI Insurance': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/PTI_logo.svg/160px-PTI_logo.svg.png',
+  'GIC Insurance': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/GIC_logo.svg/160px-GIC_logo.svg.png',
+  'DBY Insurance': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/DBY_logo.svg/160px-DBY_logo.svg.png',
+};
+
+function insurerLogoHtml(name) {
+  const src = INSURER_LOGOS[name];
+  const short = name.replace(/ Insurance$/, '').replace(/[^A-Z0-9ĐĂÂÊÔƠƯ]/gi, '').slice(0, 4).toUpperCase() || name.slice(0, 3).toUpperCase();
+  if (src) {
+    return `<div class="ins-logo"><img src="${src}" alt="${name}" onerror="this.outerHTML='<div class=&quot;ins-logo-fallback&quot;>${short}</div>'"></div>`;
+  }
+  return `<div class="ins-logo"><div class="ins-logo-fallback">${short}</div></div>`;
+}
+
+let selectedModel = {};
+
+/* ── RENDER LISTING ── */
+function renderListing() {
+  document.getElementById('page-title').textContent = 'Hãng Xe - Tiện Ích Giao Thông MoMo';
+  let currentFilter = 'all';
+
+  function cards(filter) {
+    return BRAND_LIST.filter(id => {
+      const b = BRANDS[id];
+      if (filter === 'popular') return b.popular;
+      if (filter === 'electric') return b.fuels.includes('điện');
+      if (filter === 'luxury') return !b.popular;
+      return true;
+    }).map(id => {
+      const b = BRANDS[id];
+      const topModel = b.models[0];
+      return `<a class="brand-card" href="/hang-xe?id=${id}">
+        ${brandMark(id,48,48,12,14)}
+        <div class="brand-card-name">${b.name}</div>
+        <div class="brand-card-origin">${b.origin}</div>
+        <div class="brand-card-bottom">
+          <div class="brand-card-top-model">🏆 <strong>${topModel.name}</strong></div>
+          <div class="brand-card-type">${brandTypeSummary(b)}</div>
+        </div>
+      </a>`;
+    }).join('');
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="listing-hero">
+      <div class="wrap">
+        <div class="listing-eyebrow">Hãng xe</div>
+        <h1 class="listing-title">Dịch vụ MoMo cho <em>hãng xe của bạn</em></h1>
+        <p class="listing-desc">Chọn hãng xe để xem model chủ lực, loại xe, và chi phí sử dụng theo từng dòng xe. Nội dung được ưu tiên theo nhu cầu thực tế của chủ xe.</p>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="filter-bar">
+        <button class="filter-btn on" id="pill-all" onclick="applyFilter('all',this)">Tất cả <span class="filter-count">(${BRAND_LIST.length})</span></button>
+        <button class="filter-btn" onclick="applyFilter('popular',this)">Xe phổ biến</button>
+        <button class="filter-btn" onclick="applyFilter('luxury',this)">Xe sang</button>
+      </div>
+      <div class="type-section">
+        <div class="type-section-title">Loại xe</div>
+        <div class="type-grid">
+          ${CAR_TYPES.map(t=>`
+            <button class="type-card" onclick="filterByType('${t.id}',this)">
+              <div class="type-card-svg">${carSVG(t.svgType, t.color)}</div>
+              <div class="type-card-label">${t.label}</div>
+            </button>`).join('')}
+        </div>
+      </div>
+      <div class="brand-grid" id="brand-grid">${cards('all')}</div>
+    </div>`;
+}
+
+window.applyFilter = function(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('on'));
+  const list = BRAND_LIST.filter(id => {
+    const b = BRANDS[id];
+    if (f==='popular') return b.popular;
+    if (f==='electric') return b.fuels.includes('điện');
+    if (f==='luxury') return !b.popular;
+    return true;
+  });
+  document.getElementById('brand-grid').innerHTML = list.map(id => {
+    const b = BRANDS[id];
+    const topModel = b.models[0];
+    return `<a class="brand-card" href="/hang-xe?id=${id}">
+      ${brandMark(id,48,48,12,14)}
+      <div class="brand-card-name">${b.name}</div>
+      <div class="brand-card-origin">${b.origin}</div>
+      <div class="brand-card-bottom">
+        <div class="brand-card-top-model">🏆 <strong>${topModel.name}</strong></div>
+        <div class="brand-card-type">${brandTypeSummary(b)}</div>
+      </div>
+    </a>`;
+  }).join('') || '<div class="empty"><p>Không tìm thấy hãng xe phù hợp</p></div>';
+};
+
+window.filterByType = function(typeId, btn) {
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
+  // Map type id -> model types to match
+  const typeMap = {sedan:['sedan','coupe'],suv:['suv'],crossover:['suv'],mpv:['mpv'],truck:['truck'],ev:['ev']};
+  const matchTypes = typeMap[typeId]||[typeId];
+  const list = BRAND_LIST.filter(id => BRANDS[id].models.some(m=>(m.type||'suv')===matchTypes[0]||matchTypes.includes(m.type||'suv')));
+  const topModelFn = id => BRANDS[id].models.find(m=>matchTypes.includes(m.type||'suv'))||BRANDS[id].models[0];
+  document.getElementById('brand-grid').innerHTML = list.map(id => {
+    const b = BRANDS[id];
+    const topModel = topModelFn(id);
+    return `<a class="brand-card" href="/hang-xe?id=${id}">
+      ${brandMark(id,48,48,12,14)}
+      <div class="brand-card-name">${b.name}</div>
+      <div class="brand-card-origin">${b.origin}</div>
+      <div class="brand-card-bottom">
+        <div class="brand-card-top-model">🏆 <strong>${topModel.name}</strong></div>
+        <div class="brand-card-type">${modelTypeLabel(topModel)}</div>
+      </div>
+    </a>`;
+  }).join('') || '<div class="empty"><p>Không tìm thấy hãng xe có loại xe này</p></div>';
+};
+
+/* ── RENDER GARAGE SECTION ── */
+function renderGarages(b, id) {
+  if (!b.garages || !b.garages.length) return '';
+  function cards(city) {
+    const list = city === 'all' ? b.garages : b.garages.filter(g => g.city === city);
+    return list.map(g => `
+      <div class="garage-card">
+        <div class="garage-card-top">
+          <div class="garage-name">${g.name}</div>
+          <span class="garage-type-badge ${g.type}">${g.type === 'official' ? '🏢 Chính hãng' : '✅ Ủy quyền'}</span>
+        </div>
+        <div class="garage-meta">
+          <span class="garage-city">📍 ${g.city === 'HCM' ? 'TP.HCM' : 'Hà Nội'}</span>
+          <span class="garage-address">${g.address}</span>
+          <span class="garage-rating">★ ${g.rating}</span>
+          <span class="garage-claims"><span class="garage-claims-dot"></span>${g.claims.toLocaleString('vi')} lượt xử lý qua MoMo</span>
+        </div>
+        <div class="garage-note">${g.note}</div>
+        <div class="garage-bh-row">
+          <span class="garage-bh-label">Nhà BH:</span>
+          ${g.bh.map(name => `<span class="garage-bh-tag">${name}</span>`).join('')}
+        </div>
+      </div>`).join('') || '<p style="color:var(--gray-400);font-size:13px;padding:8px 0">Chưa có dữ liệu garage tại thành phố này</p>';
+  }
+  return `
+    <div class="garage-filter" id="gf-${id}">
+      <button class="garage-filter-btn on" onclick="filterGarage('all','${id}',this)">Tất cả (${b.garages.length})</button>
+      <button class="garage-filter-btn" onclick="filterGarage('HCM','${id}',this)">TP.HCM</button>
+      <button class="garage-filter-btn" onclick="filterGarage('HN','${id}',this)">Hà Nội</button>
+    </div>
+    <div class="garage-grid" id="garage-grid-${id}">${cards('all')}</div>`;
+}
+
+window.filterGarage = function(city, id, btn) {
+  document.querySelectorAll(`#gf-${id} .garage-filter-btn`).forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const b = BRANDS[id];
+  const list = city === 'all' ? b.garages : b.garages.filter(g => g.city === city);
+  document.getElementById(`garage-grid-${id}`).innerHTML = list.map(g => `
+    <div class="garage-card">
+      <div class="garage-card-top">
+        <div class="garage-name">${g.name}</div>
+        <span class="garage-type-badge ${g.type}">${g.type === 'official' ? '🏢 Chính hãng' : '✅ Ủy quyền'}</span>
+      </div>
+      <div class="garage-meta">
+        <span class="garage-city">📍 ${g.city === 'HCM' ? 'TP.HCM' : 'Hà Nội'}</span>
+        <span class="garage-address">${g.address}</span>
+        <span class="garage-rating">★ ${g.rating}</span>
+        <span class="garage-claims"><span class="garage-claims-dot"></span>${g.claims.toLocaleString('vi')} lượt xử lý qua MoMo</span>
+      </div>
+      <div class="garage-note">${g.note}</div>
+      <div class="garage-bh-row">
+        <span class="garage-bh-label">Nhà BH:</span>
+        ${g.bh.map(name => `<span class="garage-bh-tag">${name}</span>`).join('')}
+      </div>
+    </div>`).join('') || '<p style="color:var(--gray-400);font-size:13px;padding:8px 0">Chưa có dữ liệu garage tại thành phố này</p>';
+};
+
+/* ── RENDER INSIGHT PANEL ── */
+function renderInsightPanel(b, id) {
+  const ins = b.insight;
+  if (!ins) return '';
+  const total = ins.monthly;
+  const bd = ins.breakdown;
+  const maxVal = Math.max(bd.bh, bd.fuel, bd.road, bd.maint);
+  const bar = (val, fillColor) => {
+    const pct = Math.round((val / maxVal) * 100);
+    return `<div class="insight-bar-track"><div class="insight-bar-fill" style="width:${pct}%;background:${fillColor}"></div></div>`;
+  };
+  const vsSign = ins.vs_estimate > 0 ? '+' : '';
+  const vsCls = ins.vs_estimate > 0 ? 'positive' : 'negative';
+  const vsLabel = ins.vs_estimate > 0
+    ? `Cao hơn ước tính ${vsSign}${ins.vs_estimate}%`
+    : `Tiết kiệm hơn ước tính ${Math.abs(ins.vs_estimate)}%`;
+
+  return `<div class="insight-panel" id="insight-panel-${id}">
+    <div class="insight-header" style="background:linear-gradient(135deg,var(--mobase-ink) 0%,var(--mobase-ink-2) 100%);color:#fff">
+      <div class="insight-owners">${ins.owners.toLocaleString('vi')} chủ xe ${b.name}</div>
+    </div>
+    <div class="insight-body">
+      <div class="insight-main">
+        <div class="insight-monthly-label">Thực chi trung bình / tháng</div>
+        <div class="insight-monthly-val">${(total/1000).toFixed(1).replace('.',',')}tr</div>
+        <div class="insight-monthly-unit">đồng / tháng · xe ${ins.topModel}</div>
+        <div class="insight-model-note">Gồm các khoản sử dụng chính: bảo vệ xe, nhiên liệu, đường bộ và bảo dưỡng</div>
+        <div class="insight-vs ${vsCls}">${vsLabel}</div>
+      </div>
+      <div class="insight-right">
+        <div class="insight-city-toggle">
+          <button class="city-btn on" onclick="switchCity('hcm','${id}')" id="city-hcm-${id}">HCM</button>
+          <button class="city-btn" onclick="switchCity('hn','${id}')" id="city-hn-${id}">Hà Nội</button>
+        </div>
+        <div class="insight-city-val" id="city-val-${id}">${(ins.hcm/1000).toFixed(1).replace('.',',')}tr</div>
+        <div class="insight-city-sub" id="city-sub-${id}">TP.HCM · trung bình / tháng</div>
+        <div class="insight-breakdown-label">Cơ cấu chi phí</div>
+        <div class="insight-bars">
+          <div class="insight-bar-row">
+            <div class="insight-bar-name">Bảo vệ xe</div>
+            ${bar(bd.bh, 'var(--mobase-ink)')}
+            <div class="insight-bar-val">${fmt(bd.bh)}</div>
+          </div>
+          <div class="insight-bar-row">
+            <div class="insight-bar-name">${b.fuels.includes('điện')&&b.fuels.length===1?'Điện':'Nhiên liệu'}</div>
+            ${bar(bd.fuel, 'var(--mobase-blue)')}
+            <div class="insight-bar-val">${fmt(bd.fuel)}</div>
+          </div>
+          <div class="insight-bar-row">
+            <div class="insight-bar-name">Đường bộ & ĐK</div>
+            ${bar(bd.road||1, 'var(--mobase-teal)')}
+            <div class="insight-bar-val">${bd.road?fmt(bd.road):'Miễn phí'}</div>
+          </div>
+          <div class="insight-bar-row">
+            <div class="insight-bar-name">Bảo dưỡng</div>
+            ${bar(bd.maint, 'var(--gray-500)')}
+            <div class="insight-bar-val">${fmt(bd.maint)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.switchCity = function(city, id) {
+  const b = BRANDS[id];
+  const ins = b.insight;
+  document.querySelectorAll(`#city-hcm-${id}, #city-hn-${id}`).forEach(el=>el.classList.remove('on'));
+  document.getElementById(`city-${city}-${id}`).classList.add('on');
+  const val = city === 'hcm' ? ins.hcm : ins.hn;
+  const label = city === 'hcm' ? 'TP.HCM · trung bình / tháng' : 'Hà Nội · trung bình / tháng';
+  document.getElementById(`city-val-${id}`).textContent = (val/1000).toFixed(1).replace('.',',') + 'tr';
+  document.getElementById(`city-sub-${id}`).textContent = label;
+};
+
+/* ── RENDER DETAIL ── */
+function renderDetail(id) {
+  const b = BRANDS[id];
+  if (!b) { renderListing(); return; }
+  document.getElementById('page-title').textContent = b.name + ' - Hãng xe trên MoMo';
+
+  // Breadcrumb
+  const bc = `<div class="breadcrumb-bar"><div class="wrap"><div class="bc-inner">
+    <a class="bc-link" href="/vehicle-hub">Tiện Ích Giao Thông</a>
+    <span class="bc-sep">›</span>
+    <a class="bc-link" href="/hang-xe">Hãng xe</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-current">${b.name}</span>
+  </div></div></div>`;
+
+  // Hero
+  const hero = `<div class="detail-hero">
+    <div class="wrap">
+      <div class="detail-hero-inner">
+        ${brandMark(id,80,80,20,22)}
+        <div class="detail-hero-meta">
+          <div class="detail-eyebrow">Hãng xe · ${b.origin}</div>
+          <h1 class="detail-title">${b.name}</h1>
+          <p class="detail-tagline">${b.tagline}</p>
+          <div class="type-pills">
+            <span class="type-pill"><strong>Model</strong> ${b.models[0].name}</span>
+            <span class="type-pill"><strong>Loại</strong> ${brandTypeSummary(b)}</span>
+          </div>
+          <div class="score-pills">
+            ${(b.scores||[]).map(s=>`<span class="score-pill ${s.level}"><span class="score-pill-label">${s.label}</span><span class="score-pill-val">${s.val}</span></span>`).join('')}
+          </div>
+          <div class="quick-nav">
+            <a class="quick-pill" href="#models">Dòng xe</a>
+            <a class="quick-pill" href="#bh">Đối tác</a>
+            <a class="quick-pill" href="#chi-phi">Chi phí</a>
+            <a class="quick-pill" href="#garage">Garage</a>
+            <a class="quick-pill" href="#notes">Ghi chú</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  // Models
+  const modelCards = b.models.map((m,i) => {
+    const isFeatured = i === 0;
+    const cls = `model-card${isFeatured?' model-card-featured':''}`;
+    const imgBg = isFeatured
+      ? `linear-gradient(160deg,${b.color}28 0%,${b.color}10 100%)`
+      : `linear-gradient(160deg,${b.color}14 0%,${b.color}06 100%)`;
+    return `<button class="${cls}" onclick="selectModel(${i},'${id}')" id="mc-${i}">
+      <div class="model-img" style="background:${imgBg}">
+        ${carSVG(m.type||'suv', b.color)}
+      </div>
+      <div class="model-info">
+        ${isFeatured?'<div class="model-featured-badge">🏆 Bán chạy nhất</div>':''}
+        <div class="model-name">${m.name}</div>
+        <div class="model-type"><span>Loại xe</span> ${modelTypeLabel(m)}</div>
+      </div>
+    </button>`;
+  }).join('');
+
+  // BH section
+  const insRows = b.topInsurers.map(ins => `
+    <div class="ins-row">
+      <div class="ins-body">
+        ${insurerLogoHtml(ins.name)}
+        <div class="ins-meta">
+          <div class="ins-name">${ins.name}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Year options
+  const years = Array.from({length:16},(_,i)=>2025-i).map(y=>`<option value="${y}">${y}</option>`).join('');
+
+  // Model options for quote
+  const modelOpts = b.models.map((m,i)=>`<option value="${i}">${m.name}</option>`).join('');
+
+  // Cost tiles for first model
+  const firstM = b.models[0];
+
+  // Scenarios
+  const scCards = b.scenarios.map(sid => {
+    const sc = SCENARIOS[sid];
+    if (!sc) return '';
+    return `<a class="scenario-card" href="/bao-hiem-tinh-huong-chi-tiet?id=${sid}">
+      <div class="scenario-icon">${sc.icon}</div>
+      <span class="scenario-badge ${sc.badgeCls}">${sc.badge}</span>
+      <div class="scenario-name">${sc.name}</div>
+      <div class="scenario-short">${sc.short}</div>
+      <div class="scenario-link">Xem chi tiết <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </a>`;
+  }).join('');
+
+  // Notes
+  const noteHtml = b.notes.map(n => `
+    <div class="brand-note">
+      <div class="brand-note-q">${n.q}</div>
+      <div class="brand-note-a">${n.a}</div>
+    </div>`).join('');
+
+  // Model options for cost
+  const costModelOpts = b.models.map((m,i)=>`<option value="${i}">${m.name}</option>`).join('');
+  const fuelLabel = b.fuels.includes('điện') ? 'Điện (tháng)' : 'Xăng (tháng)';
+
+  // Brand desc + services
+  const isEV = b.fuels.includes('điện') && b.fuels.length === 1;
+  const services = [
+    isEV
+      ? {icon:'⚡', name:'Trạm sạc điện', hint:'Tìm trạm gần nhất', href:'/cay-xang'}
+      : {icon:'⛽', name:'Giá xăng hôm nay', hint:'RON 95, E5, Dầu', href:'/gia-xang'},
+    isEV
+      ? null
+      : {icon:'🗺️', name:'Tìm cây xăng', hint:'Gần vị trí của bạn', href:'/cay-xang'},
+    {icon:'🔍', name:'Đăng kiểm', hint:'Lịch hẹn & tra cứu', href:'/dang-kiem'},
+    {icon:'🛣️', name:'ePass · Phí đường bộ', hint:'Nạp tiền ETC nhanh', href:'/epass'},
+    {icon:'🅿️', name:'Bãi đỗ xe', hint:'Giữ chỗ trước', href:'/bai-do-xe'},
+    {icon:'📋', name:'Phạt nguội', hint:'Tra cứu biển số', href:'/phat-nguoi'},
+  ].filter(Boolean);
+
+  const descBand = `<div class="brand-desc-band">
+    <div class="wrap"><div class="brand-desc-text">${b.desc}</div></div>
+  </div>`;
+
+  const svcStrip = `<div class="services-strip" id="dich-vu">
+    <div class="wrap">
+      <div class="services-label">Dịch vụ cho xe ${b.name} trên MoMo</div>
+      <div class="services-row">
+        ${services.map(s=>`<a class="svc-card" href="${s.href}">
+          <div class="svc-icon">${s.icon}</div>
+          <div class="svc-body">
+            <div class="svc-name">${s.name}</div>
+            <div class="svc-hint">${s.hint}</div>
+          </div>
+        </a>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('app').innerHTML = bc + hero + descBand + svcStrip + `
+    <div class="wrap detail-body">
+
+      <!-- MODELS -->
+      <div class="d-section" id="models">
+        <div class="d-section-head">
+          <div class="eyebrow">Dòng xe</div>
+          <div class="section-h">Dòng xe ${b.name} phổ biến tại Việt Nam</div>
+          <div class="section-sub">Chọn dòng xe để xem loại xe và chi phí sử dụng cụ thể</div>
+        </div>
+        <div class="model-grid">${modelCards}</div>
+      </div>
+
+      <!-- BẢO HIỂM -->
+      <div class="d-section" id="bh">
+        <div class="d-section-head">
+          <div class="eyebrow">Đối tác xử lý</div>
+          <div class="section-h">Đơn vị có kinh nghiệm xử lý cho xe ${b.name}</div>
+          <div class="section-sub">Danh sách tham khảo nhanh theo mạng lưới garage và tốc độ xử lý</div>
+        </div>
+        <div class="bh-cols">
+          <div class="bh-card">
+            <div class="eyebrow" style="margin-bottom:14px">Khung tham chiếu</div>
+            <label class="form-lbl">Dòng xe</label>
+            <select class="form-sel" id="quote-model" onchange="updateQuote('${id}')">
+              ${modelOpts}
+            </select>
+            <label class="form-lbl">Năm sản xuất</label>
+            <select class="form-sel" id="quote-year" onchange="updateQuote('${id}')">
+              ${years}
+            </select>
+            <div class="estimate-box">
+              <div class="est-label" id="est-label">Ước tính chi phí bảo vệ xe / năm</div>
+              <div class="est-value" id="est-value">${firstM.bh}tr/năm</div>
+            </div>
+          </div>
+          <div class="bh-card">
+            <div class="eyebrow" style="margin-bottom:14px">Đơn vị nổi bật cho ${b.name}</div>
+            ${insRows}
+          </div>
+        </div>
+      </div>
+
+      <!-- GARAGE -->
+      <div class="d-section" id="garage">
+        <div class="d-section-head">
+          <div class="eyebrow">Garage & Dịch vụ</div>
+          <div class="section-h">Garage tốt nhất cho xe ${b.name}</div>
+          <div class="section-sub">Xếp hạng theo số lượng xử lý qua MoMo · Phụ tùng genuine · Có trong mạng lưới hỗ trợ</div>
+        </div>
+        ${renderGarages(b, id)}
+      </div>
+
+      <!-- CHI PHÍ VẬN HÀNH -->
+      <div class="d-section" id="chi-phi">
+        <div class="d-section-head">
+          <div class="eyebrow">Chi phí vận hành</div>
+          <div class="section-h">Chủ xe ${b.name} thực chi bao nhiêu mỗi tháng?</div>
+          <div class="section-sub">Dữ liệu từ ${(b.insight?.owners||0).toLocaleString('vi')} chủ xe ${b.name} · Cập nhật ${new Date().toLocaleDateString('vi',{month:'long',year:'numeric'})}</div>
+        </div>
+        ${renderInsightPanel(b, id)}
+        <div class="cost-model-bar" style="margin-top:28px">
+          <span style="font-size:13px;font-weight:700;color:var(--gray-500)">Ước tính theo dòng xe:</span>
+          <select class="cost-model-sel" id="cost-model" onchange="updateCost('${id}')">
+            ${costModelOpts}
+          </select>
+        </div>
+        <div class="cost-tiles" id="cost-tiles">${renderCostTiles(firstM, b)}</div>
+        <div class="cost-total-bar" id="cost-total-bar">${renderCostTotal(firstM, b)}</div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="d-section" id="notes">
+        <div class="d-section-head">
+          <div class="eyebrow">Đặc thù hãng</div>
+          <div class="section-h">Những điều cần biết về xe ${b.name}</div>
+          <div class="section-sub">Thông tin thực tế từ kinh nghiệm bồi thường — không có ở nơi khác</div>
+        </div>
+        ${noteHtml}
+      </div>
+
+      <!-- SCENARIOS -->
+      <div class="d-section" id="tinh-huong">
+        <div class="d-section-head">
+          <div class="eyebrow">Tình huống hay gặp</div>
+          <div class="section-h">Tình huống bồi thường phổ biến với xe ${b.name}</div>
+          <div class="section-sub">Xem quy trình xử lý và điều khoản cụ thể cho từng tình huống</div>
+        </div>
+        <div class="scenario-grid">${scCards}</div>
+      </div>
+
+      <!-- CTA -->
+    </div>`;
+}
+
+function renderCostTiles(m, b) {
+  const fuelLabel = b.fuels.includes('điện') ? 'Điện (1.200km/tháng)' : 'Xăng (1.200km/tháng)';
+  const regFree = b.fuels.includes('điện') && !b.fuels.includes('xăng');
+  return `
+    <div class="cost-tile pink">
+      <div class="cost-tile-label">Dự phòng xe</div>
+      <div class="cost-tile-val">${fmt(m.monthly.bh)}</div>
+      <div class="cost-tile-unit">/tháng</div>
+      <div class="cost-tile-note">khoản dự phòng cho bảo vệ xe</div>
+    </div>
+    <div class="cost-tile${regFree?' free':''}">
+      <div class="cost-tile-label">${fuelLabel}</div>
+      <div class="cost-tile-val">${m.monthly.fuel === 0 ? 'Miễn phí' : fmt(m.monthly.fuel)}</div>
+      <div class="cost-tile-unit">${m.monthly.fuel > 0 ? '/tháng' : ''}</div>
+      <div class="cost-tile-note">${regFree&&m.monthly.fuel===0?'xe điện miễn phí đến 2027':'ước tính 1.200km/tháng'}</div>
+    </div>
+    <div class="cost-tile${regFree?' free':''}">
+      <div class="cost-tile-label">Phí đường bộ & đăng kiểm</div>
+      <div class="cost-tile-val">${m.monthly.reg === 0 ? 'Miễn phí' : fmt(m.monthly.reg)}</div>
+      <div class="cost-tile-unit">${m.monthly.reg > 0 ? '/tháng' : ''}</div>
+      <div class="cost-tile-note">${m.monthly.reg === 0 ? 'xe điện được miễn đến 2027' : 'phân bổ theo năm'}</div>
+    </div>
+    <div class="cost-tile">
+      <div class="cost-tile-label">Bảo dưỡng định kỳ</div>
+      <div class="cost-tile-val">${fmt(m.monthly.maint)}</div>
+      <div class="cost-tile-unit">/tháng</div>
+      <div class="cost-tile-note">ước tính trung bình năm</div>
+    </div>`;
+}
+
+function renderCostTotal(m, b) {
+  const total = m.monthly.bh + m.monthly.fuel + m.monthly.reg + m.monthly.maint;
+  return `
+    <div class="cost-total-left">
+      <div class="cost-total-label">Tổng chi phí ước tính</div>
+      <div class="cost-total-model">${b.name} ${m.name} · 1.200km/tháng</div>
+    </div>
+    <div style="text-align:right">
+      <div class="cost-total-val">${fmt(total)}</div>
+      <div class="cost-total-unit">/tháng</div>
+    </div>`;
+}
+
+window.selectModel = function(i, id) {
+  document.querySelectorAll('.model-card').forEach((c,j)=>c.classList.toggle('sel',j===i));
+};
+
+window.updateQuote = function(id) {
+  const b = BRANDS[id];
+  const mi = parseInt(document.getElementById('quote-model').value);
+  const year = parseInt(document.getElementById('quote-year').value);
+  const m = b.models[mi];
+  const age = 2025 - year;
+  const adj = Math.round(m.bh * Math.pow(0.92, Math.min(age,10)));
+  document.getElementById('est-value').textContent = adj + 'tr/năm';
+  document.getElementById('est-label').textContent = `Ước tính ${b.name} ${m.name} (${year})`;
+};
+
+window.updateCost = function(id) {
+  const b = BRANDS[id];
+  const mi = parseInt(document.getElementById('cost-model').value);
+  const m = b.models[mi];
+  document.getElementById('cost-tiles').innerHTML = renderCostTiles(m, b);
+  document.getElementById('cost-total-bar').innerHTML = renderCostTotal(m, b);
+};
+
+/* ── TOAST ── */
+window.toast = function(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)'},2400);
+};
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const id = new URLSearchParams(location.search).get('id');
+  if (id && BRANDS[id]) renderDetail(id);
+  else renderListing();
+});
+</script>
+</body>
+</html>
