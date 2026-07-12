@@ -563,6 +563,24 @@ const PROTOTYPES = [
       },
 
       {
+        id: 'bao-duong-xe',
+        name: 'Lịch Bảo Dưỡng Xe',
+        category: 'Child Page',
+        src: 'demos/bao-duong-xe.html',
+        address: 'web-momo-prototype.vercel.app/bao-duong-xe',
+        description: 'PLG utility tool: nhập km hiện tại + hãng/model xe → tính toàn bộ chu kỳ bảo dưỡng (dầu máy, bugi, lọc gió, đai cam, má phanh, lốp). Health score, km timeline signature, item cards status. Hỗ trợ xe máy, ô tô xăng và VinFast EV.',
+        tools: [
+          {
+            id: 'bao-duong-model',
+            name: 'pSEO - Bảo dưỡng theo Model',
+            category: 'Child Page',
+            src: 'demos/bao-duong-model.html?brand=honda&model=airblade-125',
+            address: 'web-momo-prototype.vercel.app/bao-duong/honda/airblade-125',
+            description: 'pSEO template: /bao-duong/:brand/:model - guide bảo dưỡng theo từng model xe (10 model từ Honda, Yamaha, Toyota, Hyundai, VinFast). FAQ Schema, cost estimate, mini calculator, related models. Mỗi URL = 1 trang editorial targeting long-tail keyword.',
+          },
+        ],
+      },
+      {
         id: 'hang-xe',
         name: 'Hãng Xe · Chi tiết',
         category: 'Child Page',

@@ -18,49 +18,120 @@
 }
 body { background: var(--gray-50); min-height: 100vh; }
 
-/* ── TOP BAR ── */
-.topbar {
-  display: flex; align-items: center; gap: 12px;
-  padding: 0 20px; height: 56px;
-  background: #fff; border-bottom: 1px solid var(--gray-100);
-  position: sticky; top: 0; z-index: 100;
+/* ── SITE NAV (Mega Menu) ── */
+.site-nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--gray-200);box-shadow:0 1px 3px rgba(0,0,0,.06);transition:background .2s,border-color .2s,box-shadow .2s}
+.site-nav:has(.nav-item:hover){background:#1a2535;border-bottom-color:transparent;box-shadow:none}
+.site-nav:has(.nav-item:hover) .nav-trigger{color:rgba(255,255,255,.6)}
+.site-nav:has(.nav-item:hover) .nav-item:hover .nav-trigger{color:#fff}
+.site-nav:has(.nav-item:hover) .nav-back{color:rgba(255,255,255,.9)}
+.site-nav:has(.nav-item:hover) .nav-back:hover{color:#fff;background:rgba(255,255,255,.12)}
+.site-nav:has(.nav-item:hover) .nav-sep{background:rgba(255,255,255,.15)}
+.site-nav:has(.nav-item:hover) .logo-text{color:#fff}
+.site-nav:has(.nav-item:hover) .logo-text em{color:rgba(255,255,255,.7)}
+.nav-inner{max-width:1200px;margin:0 auto;height:56px;padding:0 20px;display:flex;align-items:center;gap:16px;overflow:visible}
+.nav-left{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.nav-back{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--gray-400);text-decoration:none;padding:5px 8px;border-radius:7px;transition:color .15s,background .15s}
+.nav-back:hover{color:var(--gray-700);background:var(--gray-100)}
+.nav-sep{width:1px;height:18px;background:var(--gray-200);flex-shrink:0}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-icon{width:32px;height:32px;border-radius:9px;overflow:hidden;flex-shrink:0}
+.logo-icon img{width:100%;height:100%;display:block}
+.logo-text{font-size:14px;font-weight:800;color:var(--gray-900)}
+.logo-text em{color:var(--pink-500);font-style:normal}
+.nav-links{display:flex;gap:0;margin-left:8px}
+.nav-item{position:static}
+.nav-trigger{display:inline-flex;align-items:center;gap:5px;height:56px;padding:0 14px;font-size:13px;font-weight:600;color:var(--gray-500);background:none;border:none;cursor:pointer;text-decoration:none;white-space:nowrap;transition:color .15s;font-family:var(--font)}
+.nav-trigger:hover,.nav-item:hover .nav-trigger{color:var(--gray-900)}
+.nav-trigger svg{transition:transform .2s;flex:none}
+.nav-item:hover .nav-trigger svg{transform:rotate(180deg)}
+.mega{position:absolute;top:100%;left:0;right:0;z-index:400;background:#1a2535;border-radius:0 0 20px 20px;padding:28px 32px 36px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 20px 48px rgba(0,0,0,.28)}
+.nav-item:hover .mega{opacity:1;transform:translateY(0);pointer-events:auto}
+.mega-header{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;margin-bottom:24px;opacity:.9;transition:opacity .12s}
+.mega-header:hover{opacity:1}
+.mega-header svg{flex:none}
+.mega-cols{display:flex;gap:48px}
+.mega-col{display:flex;flex-direction:column;gap:0;min-width:140px}
+.mega-col-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.04em;margin-bottom:10px}
+.mega-item{display:block;padding:7px 0;font-size:15px;font-weight:500;color:rgba(255,255,255,.85);text-decoration:none;transition:color .12s;white-space:nowrap}
+.mega-item:hover{color:#fff}
+@media(max-width:768px){
+  .nav-inner{height:48px;padding:0 10px;gap:8px}
+  .nav-back span{display:none}
+  .nav-sep{display:none}
+  .logo-text{display:none}
+  .logo-icon{width:28px;height:28px}
+  .nav-links{overflow-x:auto;scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-trigger{height:48px;padding:0 10px;font-size:12px}
+  .mega{display:none}
 }
-.topbar-back {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 700; color: var(--gray-600);
-  text-decoration: none; padding: 6px 10px; border-radius: 8px; transition: background .15s;
-}
-.topbar-back:hover { background: var(--gray-100); color: var(--gray-900); }
-.topbar-title { font-size: 14px; font-weight: 800; color: var(--gray-900); }
-.topbar-sep { color: var(--gray-300); margin: 0 2px; }
 
 /* ── ROUTE HEADER ── */
 .route-header {
   background: #fff; border-bottom: 1px solid var(--gray-100);
-  padding: 16px 20px;
+  padding: 12px 20px;
 }
 .route-header-inner {
   max-width: var(--content); margin: 0 auto;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
-.route-display {
-  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;
+/* text input field */
+.rfield {
+  position: relative; flex: 1; min-width: 160px; max-width: 260px;
 }
-.rd-from { font-size: 20px; font-weight: 900; color: var(--gray-900); }
-.rd-arrow { color: var(--gray-300); flex: none; }
-.rd-to { font-size: 20px; font-weight: 900; color: var(--pink-500); }
+.rfield-icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: var(--gray-400);
+}
+.rfield-input {
+  width: 100%; height: 42px; padding: 0 12px 0 34px;
+  border: 1.5px solid var(--gray-200); border-radius: 10px;
+  font-size: 13.5px; font-weight: 600; color: var(--gray-900);
+  font-family: var(--font); background: #fff; outline: none;
+  transition: border-color .15s;
+}
+.rfield-input:focus { border-color: var(--pink-400); box-shadow: 0 0 0 3px rgba(235,47,150,.06); }
+.rfield-input::placeholder { color: var(--gray-400); font-weight: 400; }
+/* swap */
+.rsel-swap {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1.5px solid var(--gray-200); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-500); cursor: pointer; flex-shrink: 0;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.rsel-swap:hover { border-color: var(--pink-400); color: var(--pink-500); background: var(--pink-50); }
+/* vehicle pills */
+.rh-vpills { display: flex; gap: 4px; flex-shrink: 0; }
+.rh-vpill {
+  display: flex; align-items: center; gap: 5px;
+  height: 42px; padding: 0 13px;
+  border: 1.5px solid var(--gray-200); border-radius: 10px;
+  font-size: 12.5px; font-weight: 700; color: var(--gray-600);
+  background: #fff; cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+  font-family: var(--font);
+}
+.rh-vpill:hover { border-color: var(--gray-300); color: var(--gray-900); }
+.rh-vpill.on { border-color: var(--pink-500); color: var(--pink-600); background: var(--pink-50); }
+/* calc button */
+.rh-calc-btn {
+  height: 42px; padding: 0 18px;
+  background: var(--pink-500); color: #fff;
+  border: none; border-radius: 10px;
+  font-size: 13.5px; font-weight: 800; font-family: var(--font);
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background .15s, opacity .15s;
+}
+.rh-calc-btn:hover { background: var(--pink-600); }
+.rh-calc-btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+/* km badge */
 .rd-km {
   font-size: 12px; font-weight: 700; color: var(--gray-500);
   background: var(--gray-100); padding: 4px 10px; border-radius: 20px; white-space: nowrap;
+  display: none;
 }
-.edit-route-btn {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 700; color: var(--gray-600);
-  padding: 7px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px;
-  background: #fff; cursor: pointer; text-decoration: none; white-space: nowrap;
-  transition: border-color .15s;
-}
-.edit-route-btn:hover { border-color: var(--pink-300); color: var(--pink-600); }
+.rd-km.show { display: inline-block; }
 
 /* ── MAIN ── */
 .main { max-width: var(--content); margin: 0 auto; padding: 24px 20px 60px; }
@@ -185,27 +256,88 @@ body { background: var(--gray-50); min-height: 100vh; }
 </head>
 <body>
 
-<div class="topbar">
-  <a class="topbar-back" href="/vehicle-hub">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    Vehicle Hub
-  </a>
-  <span class="topbar-sep">/</span>
-  <span class="topbar-title">Tính chi phí chuyến đi</span>
-</div>
+<nav class="site-nav">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a class="nav-back" href="/vehicle-hub">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Giao Thông</span>
+      </a>
+      <div class="nav-sep"></div>
+      <a class="nav-logo" href="/vehicle-hub">
+        <div class="logo-icon"><img src="https://homepage.momocdn.net/img/dang-kiem-260710113006.png" alt=""></div>
+        <span class="logo-text">Tiện Ích <em>Giao Thông</em></span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <div class="nav-item">
+        <button class="nav-trigger">Lên đường <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega">
+          <a class="mega-header" href="/trip-planner">Lên đường <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+          <div class="mega-cols">
+            <div class="mega-col"><div class="mega-col-label">Chuẩn bị</div><a class="mega-item" href="/trip-planner">Lập lịch chuyến đi</a><a class="mega-item" href="/tinh-phi-etc">Tính phí ETC</a></div>
+            <div class="mega-col"><div class="mega-col-label">Nhiên liệu</div><a class="mega-item" href="/gia-xang">Giá xăng hôm nay</a><a class="mega-item" href="/cay-xang">Tìm cây xăng</a><a class="mega-item" href="/tram-sac">Trạm sạc xe điện</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-trigger">An toàn & Pháp lý <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega">
+          <a class="mega-header" href="/bao-hiem-o-to">An toàn & Pháp lý <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+          <div class="mega-cols">
+            <div class="mega-col"><div class="mega-col-label">Bảo hiểm</div><a class="mega-item" href="/bao-hiem-o-to">Bảo hiểm ô tô vật chất</a><a class="mega-item" href="/bao-hiem-o-to">Bảo hiểm TNDS</a></div>
+            <div class="mega-col"><div class="mega-col-label">Tuân thủ</div><a class="mega-item" href="/phat-nguoi">Tra cứu phạt nguội</a><a class="mega-item" href="/dang-kiem">Đăng kiểm xe</a><a class="mega-item" href="/bao-duong-xe">Bảo dưỡng xe</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-trigger">Tiện ích <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega">
+          <a class="mega-header" href="/epass">Tiện ích <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+          <div class="mega-cols">
+            <div class="mega-col"><div class="mega-col-label">Phí & Đỗ xe</div><a class="mega-item" href="/epass">ePass - Thu phí điện tử</a><a class="mega-item" href="/bai-do-xe">Tìm bãi đỗ xe</a></div>
+            <div class="mega-col"><div class="mega-col-label">Hỗ trợ</div><a class="mega-item" href="/vehicle-hub#cuu-ho">Cứu hộ khẩn cấp</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button class="nav-trigger">Xe & Chi phí <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mega">
+          <a class="mega-header" href="/hang-xe">Xe & Chi phí <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+          <div class="mega-cols">
+            <div class="mega-col"><div class="mega-col-label">Thông tin xe</div><a class="mega-item" href="/hang-xe">Hãng xe & Dòng xe</a><a class="mega-item" href="/vehicle-hub#chi-phi-xe">Chi phí sở hữu xe</a><a class="mega-item" href="/vehicle-hub#ho-so-xe">Hồ sơ xe cá nhân</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
 
 <div class="route-header">
   <div class="route-header-inner">
-    <div class="route-display">
-      <span class="rd-from" id="rdFrom">—</span>
-      <svg class="rd-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      <span class="rd-to" id="rdTo">—</span>
-      <span class="rd-km" id="rdKm"></span>
+    <div class="rfield">
+      <span class="rfield-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </span>
+      <input id="inpFrom" class="rfield-input" list="cityList" placeholder="VD: Hà Nội, TP. Hồ Chí Minh" autocomplete="off" oninput="onRouteInput()">
     </div>
-    <a class="edit-route-btn" href="/vehicle-hub#chuyen-di">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Đổi tuyến
-    </a>
+    <button class="rsel-swap" onclick="swapRoute()" title="Đảo chiều">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+    </button>
+    <div class="rfield">
+      <span class="rfield-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      </span>
+      <input id="inpTo" class="rfield-input" list="cityList" placeholder="VD: Đà Lạt, Vũng Tàu, Hải Phòng..." autocomplete="off" oninput="onRouteInput()">
+    </div>
+    <datalist id="cityList"></datalist>
+    <div class="rh-vpills">
+      <button class="rh-vpill" data-v="motorbike" onclick="selectVehicleH('motorbike',this)">🛵 Xe máy</button>
+      <button class="rh-vpill on" data-v="car-gas" onclick="selectVehicleH('car-gas',this)">🚗 Ô tô xăng</button>
+      <button class="rh-vpill" data-v="car-ev" onclick="selectVehicleH('car-ev',this)">⚡ Ô tô điện</button>
+    </div>
+    <button id="calcBtn" class="rh-calc-btn" onclick="applyRoute()" disabled>Tính chi phí →</button>
+    <span class="rd-km" id="rdKm"></span>
   </div>
 </div>
 
@@ -508,53 +640,82 @@ function updateCalc() {
   }
 }
 
+function populateCityList() {
+  const dl = document.getElementById('cityList');
+  Object.keys(CITIES).sort((a,b) => a.localeCompare(b,'vi')).forEach(c => {
+    const opt = document.createElement('option'); opt.value = c; dl.appendChild(opt);
+  });
+}
+
+function computeAndRender(fromCity, toCity) {
+  const knownKey = `${fromCity}|${toCity}`;
+  const revKey   = `${toCity}|${fromCity}`;
+  let km = 0, isEstimate = false;
+  if (KNOWN_ROUTES[knownKey]) { km = KNOWN_ROUTES[knownKey].km; }
+  else if (KNOWN_ROUTES[revKey]) { km = KNOWN_ROUTES[revKey].km; }
+  else {
+    const a = CITIES[fromCity], b = CITIES[toCity];
+    if (a && b) { km = Math.round(haversineKm(a.lat,a.lng,b.lat,b.lng)*1.35); isEstimate = true; }
+  }
+  S.from = fromCity; S.to = toCity; S.km = km;
+  const kmEl = document.getElementById('rdKm');
+  if (km) { kmEl.textContent = `${km} km`; kmEl.classList.add('show'); }
+  else { kmEl.textContent = ''; kmEl.classList.remove('show'); }
+  document.getElementById('estNotice').style.display = isEstimate ? 'block' : 'none';
+  updateCalc();
+}
+
+function onRouteInput() {
+  const from = document.getElementById('inpFrom').value.trim();
+  const to   = document.getElementById('inpTo').value.trim();
+  const valid = CITIES[from] && CITIES[to] && from !== to;
+  document.getElementById('calcBtn').disabled = !valid;
+}
+
+function applyRoute() {
+  const from = document.getElementById('inpFrom').value.trim();
+  const to   = document.getElementById('inpTo').value.trim();
+  if (CITIES[from] && CITIES[to]) computeAndRender(from, to);
+}
+
+function swapRoute() {
+  const fi = document.getElementById('inpFrom');
+  const ti = document.getElementById('inpTo');
+  const tmp = fi.value; fi.value = ti.value; ti.value = tmp;
+  onRouteInput();
+  applyRoute();
+}
+
+function selectVehicleH(v, btn) {
+  document.querySelectorAll('.rh-vpill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  selectVehicle(v, document.querySelector(`.vpill[data-v="${v}"]`) || btn);
+}
+
 // Init from URL params
 (function init() {
+  populateCityList();
+
   const p = new URLSearchParams(location.search);
   const fromCity = p.get('from') || '';
   const toCity   = p.get('to')   || '';
   const vehicle  = p.get('vehicle') || 'car-gas';
 
-  S.from = fromCity;
-  S.to   = toCity;
+  if (fromCity) document.getElementById('inpFrom').value = fromCity;
+  if (toCity)   document.getElementById('inpTo').value   = toCity;
+  if (fromCity && toCity) document.getElementById('calcBtn').disabled = false;
+
   S.vehicle = vehicle;
-
-  document.getElementById('rdFrom').textContent = fromCity || '?';
-  document.getElementById('rdTo').textContent   = toCity   || '?';
-
-  // Set vehicle pill
-  document.querySelectorAll('.vpill').forEach(b => b.classList.remove('on'));
-  const vBtn = document.querySelector(`.vpill[data-v="${vehicle}"]`);
-  if (vBtn) vBtn.classList.add('on');
+  document.querySelectorAll('.rh-vpill').forEach(b => b.classList.toggle('on', b.dataset.v === vehicle));
+  document.querySelectorAll('.vpill').forEach(b => b.classList.toggle('on', b.dataset.v === vehicle));
   const mRow = document.getElementById('modelRow');
   const eRow = document.getElementById('evRow');
   if(vehicle === 'motorbike') { mRow.style.display = 'none'; eRow.style.display = 'none'; }
   else if(vehicle === 'car-ev') { mRow.style.display = 'none'; eRow.style.display = 'flex'; }
+  else { mRow.style.display = 'flex'; eRow.style.display = 'none'; }
 
-  // Compute km
-  const knownKey = `${fromCity}|${toCity}`;
-  const revKey   = `${toCity}|${fromCity}`;
-  let km = 0;
-  let isEstimate = false;
-
-  if (KNOWN_ROUTES[knownKey]) {
-    km = KNOWN_ROUTES[knownKey].km;
-  } else if (KNOWN_ROUTES[revKey]) {
-    km = KNOWN_ROUTES[revKey].km;
-  } else {
-    // Haversine estimate
-    const a = CITIES[fromCity], b = CITIES[toCity];
-    if (a && b) {
-      km = Math.round(haversineKm(a.lat, a.lng, b.lat, b.lng) * 1.35);
-      isEstimate = true;
-    }
-  }
-
-  S.km = km;
-  document.getElementById('rdKm').textContent = km ? `${km} km` : '';
-  document.getElementById('estNotice').style.display = isEstimate ? 'block' : 'none';
-
-  updateCalc();
+  if (fromCity && toCity) computeAndRender(fromCity, toCity);
+  else updateCalc();
 })();
 </script>
 </body>
