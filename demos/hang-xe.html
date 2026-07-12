@@ -195,18 +195,21 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .section-sub{font-size:14px;color:var(--gray-500);line-height:1.6}
 
 /* ── MODEL GRID ── */
-.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.model-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:.15s;text-align:left;padding:0}
-.model-card:hover{border-color:var(--pink-500);box-shadow:var(--shadow-s)}
-.model-card.sel{border-color:var(--pink-500)}
-.model-card.sel .model-img{opacity:1}
-.model-img{width:100%;height:90px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:.2s}
-.model-img svg{width:88%;max-height:76px;display:block}
-.model-info{padding:11px 14px 13px}
-.model-name{font-size:13.5px;font-weight:800;color:var(--gray-900);margin-bottom:2px}
-.model-desc{font-size:11.5px;color:var(--gray-500);margin-bottom:0;line-height:1.4}
-.model-type{font-size:11px;font-weight:700;color:var(--gray-500);display:flex;align-items:center;gap:6px;margin-top:4px}
-.model-type span{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:var(--gray-100);color:var(--gray-600);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.model-card{background:var(--white);border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.25s cubic-bezier(0.2,0.8,0.2,1),border-color 0.2s ease,box-shadow 0.25s cubic-bezier(0.2,0.8,0.2,1);text-align:left;padding:0;box-shadow:0 1px 3px rgba(28,23,26,0.04);text-decoration:none;display:flex;flex-direction:column}
+.model-card:hover{border-color:var(--pink-500);transform:translateY(-4px);box-shadow:0 10px 20px -8px rgba(28,23,26,0.12)}
+.model-card.sel{border-color:var(--pink-500);background:var(--pink-50)}
+.model-img{width:100%;height:96px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.model-img svg{width:82%;max-height:76px;display:block;transition:transform 0.3s cubic-bezier(0.2,0.8,0.2,1)}
+.model-card:hover .model-img svg{transform:scale(1.06)}
+.model-info{padding:14px 16px;display:flex;flex-direction:column;flex-grow:1}
+.model-name{font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:8px}
+.model-meta{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.model-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:9999px;background:var(--gray-100);color:var(--gray-600);transition:background 0.2s,color 0.2s}
+.model-card:hover .model-badge{background:var(--pink-50);color:var(--pink-500)}
+.model-card.sel .model-badge{background:var(--pink-100);color:var(--pink-600)}
+.model-arrow{color:var(--gray-400);display:inline-flex;align-items:center;justify-content:center;transition:transform 0.25s cubic-bezier(0.2,0.8,0.2,1),color 0.2s ease}
+.model-card:hover .model-arrow{color:var(--pink-500);transform:translateX(4px)}
 
 /* ── BRAND CARD DESC ── */
 .brand-card-desc{font-size:11.5px;color:var(--gray-500);line-height:1.55;margin-bottom:10px}
@@ -228,12 +231,10 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .score-pill-val{font-weight:900}
 
 /* ── MODEL FEATURED ── */
-.model-card{outline:none}
-.model-card-featured{grid-column:span 2;outline:none;border-color:var(--gray-200)!important}
+.model-card-featured{grid-column:span 2;border-color:var(--gray-200)}
 .model-card-featured .model-img{height:160px}
-.model-card-featured .model-name{font-size:15px}
-.model-card-featured .model-type{font-size:13px}
-.model-featured-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--pink-50);color:var(--pink-500);margin-bottom:8px;letter-spacing:.2px;border:1px solid var(--pink-100)}
+.model-card-featured .model-name{font-size:16px}
+.model-featured-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:4px 8px;border-radius:9999px;background:var(--pink-50);color:var(--pink-500);margin-bottom:8px;letter-spacing:.2px;border:1px solid var(--pink-100);width:fit-content}
 
 /* ── BRAND DESC BAND ── */
 .brand-desc-band{background:var(--white);border-bottom:1px solid var(--gray-100);padding:20px 0 24px}
@@ -1480,7 +1481,10 @@ function renderDetail(id) {
       <div class="model-info">
         ${isFeatured?'<div class="model-featured-badge">🏆 Bán chạy nhất</div>':''}
         <div class="model-name">${m.name}</div>
-        <div class="model-type"><span>Loại xe</span> ${modelTypeLabel(m)}${m.slug?' →':''}</div>
+        <div class="model-meta">
+          <span class="model-badge">${modelTypeLabel(m)}</span>
+          ${m.slug ? '<span class="model-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>' : ''}
+        </div>
       </div>
     </${tag}>`;
   }).join('');
@@ -2079,7 +2083,10 @@ function renderModelDetail(brandId, modelSlug) {
         <div class="model-img" style="background:${imgBg}">${carSVG(om.type||'suv', b.color)}</div>
         <div class="model-info">
           <div class="model-name">${om.name}</div>
-          <div class="model-type"><span>Loại xe</span> ${modelTypeLabel(om)}${om.slug?' →':''}</div>
+          <div class="model-meta">
+            <span class="model-badge">${modelTypeLabel(om)}</span>
+            ${om.slug ? '<span class="model-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>' : ''}
+          </div>
         </div>
       </${tag}>`;
     }).join('');
