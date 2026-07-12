@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tính Phí ETC Theo Tuyến | MoMo Vehicle Hub</title>
+<meta name="description" content="Tính chính xác phí qua trạm ETC theo từng tuyến đường. Biết trước số tiền cần nạp vào ePass trước chuyến đi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink-50:#fdf2f8;--pink-500:#EB2F96;--pink-600:#db2777;--pink-400:#f472b6;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;
+  --gray-800:#1f2937;--gray-900:#111827;
+  --amber-50:#fffbeb;--amber-400:#fbbf24;--amber-500:#f59e0b;--amber-600:#d97706;
+  --green-50:#f0fdf4;--green-500:#22c55e;--green-600:#16a34a;
+  --road-bg:#0f1e2e;
+  --font:'Be Vietnam Pro',-apple-system,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--gray-900);background:#f8f9fb;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font:inherit}
+svg{display:block}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--gray-100)}
+.hdr-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:52px;display:flex;align-items:center;gap:12px}
+.back{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--gray-400);white-space:nowrap;flex-shrink:0}
+.back:hover{color:var(--gray-700)}
+.back svg{width:15px;height:15px}
+.hdr-sep{width:1px;height:18px;background:var(--gray-200)}
+.hdr-title{font-size:14px;font-weight:800;color:var(--gray-900)}
+.hdr-badge{margin-left:auto;background:var(--amber-50);border:1px solid #fde68a;color:var(--amber-600);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+
+/* ROUTE SELECTOR BAR */
+.sel-bar{background:#fff;border-bottom:1px solid var(--gray-100);padding:14px 20px}
+.sel-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sel-group{display:flex;align-items:center;gap:8px;flex:1;min-width:280px}
+.sel-label{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.sel-wrap{position:relative;flex:1}
+.sel-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--gray-400)}
+.sel-icon svg{width:14px;height:14px}
+.sel-drop{
+  width:100%;height:38px;border:1.5px solid var(--gray-200);border-radius:9px;
+  padding:0 10px 0 32px;font-size:13px;font-family:var(--font);color:var(--gray-900);
+  background:#fff;cursor:pointer;appearance:none;outline:none;transition:border-color .15s;
+}
+.sel-drop:focus{border-color:var(--pink-500)}
+.sel-swap{width:34px;height:34px;border-radius:8px;background:var(--gray-100);color:var(--gray-500);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sel-swap:hover{background:var(--gray-200);color:var(--gray-800)}
+.sel-swap svg{width:16px;height:16px}
+.vtabs{display:flex;gap:3px;flex-shrink:0}
+.vtab{height:34px;padding:0 13px;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--gray-500);background:var(--gray-100);transition:all .15s}
+.vtab.on{background:var(--gray-900);color:#fff}
+.vtab:hover:not(.on){background:var(--gray-200);color:var(--gray-700)}
+.btn-calc{height:38px;padding:0 22px;background:var(--pink-500);color:#fff;border-radius:9px;font-size:13px;font-weight:800;transition:background .15s;flex-shrink:0;white-space:nowrap}
+.btn-calc:hover{background:var(--pink-600)}
+
+/* POPULAR CHIPS */
+.popular-bar{background:#f8f9fb;border-bottom:1px solid var(--gray-100);padding:8px 20px;overflow-x:auto;scrollbar-width:none}
+.popular-bar::-webkit-scrollbar{display:none}
+.popular-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pop-label{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.pop-chip{height:28px;padding:0 12px;border-radius:20px;font-size:12px;font-weight:600;background:#fff;border:1.5px solid var(--gray-200);color:var(--gray-600);transition:all .15s;white-space:nowrap;cursor:pointer}
+.pop-chip:hover{border-color:var(--pink-400);color:var(--pink-500);background:var(--pink-50)}
+.pop-chip.on{border-color:var(--pink-500);color:var(--pink-500);background:var(--pink-50)}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 160px)}
+
+/* LEFT PANEL */
+.left-panel{padding:20px;border-right:1px solid var(--gray-100);background:#fff;overflow-y:auto}
+
+/* EMPTY STATE */
+.empty-state{padding:48px 20px;text-align:center}
+.empty-icon{font-size:48px;margin-bottom:16px}
+.empty-title{font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:6px}
+.empty-desc{font-size:13px;color:var(--gray-500);line-height:1.6}
+.empty-routes{display:flex;flex-direction:column;gap:6px;margin-top:20px}
+.empty-route-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border:1.5px solid var(--gray-100);border-radius:10px;
+  font-size:13px;font-weight:600;color:var(--gray-700);background:#fff;
+  transition:all .15s;cursor:pointer;text-align:left;
+}
+.empty-route-btn:hover{border-color:var(--pink-400);background:var(--pink-50);color:var(--pink-600)}
+.empty-route-meta{font-size:11.5px;color:var(--gray-400);font-weight:400}
+
+/* RESULT */
+.result{display:none}
+.result.show{display:block}
+
+/* Route summary */
+.route-summary{
+  background:linear-gradient(135deg,#0f1e2e 0%,#1a2840 100%);
+  border-radius:12px;padding:18px;margin-bottom:14px;
+}
+.rs-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.rs-route{flex:1}
+.rs-from-to{font-size:15px;font-weight:900;color:#fff;line-height:1.2}
+.rs-road{font-size:11.5px;color:rgba(255,255,255,.4);margin-top:3px}
+.rs-stats{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
+.rs-stat{text-align:center}
+.rs-stat-num{font-size:18px;font-weight:900;color:var(--amber-400);line-height:1}
+.rs-stat-lbl{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px}
+.rs-total{text-align:right}
+.rs-total-lbl{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em}
+.rs-total-num{font-size:28px;font-weight:900;color:#fff;line-height:1;margin-top:2px;font-variant-numeric:tabular-nums}
+.rs-total-num small{font-size:13px;opacity:.5;font-weight:500}
+
+/* Station list */
+.station-list-wrap{margin-bottom:14px}
+.sl-head{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:1px solid var(--gray-100);margin-bottom:4px}
+.station-item{
+  display:flex;align-items:center;gap-10px;padding:10px 4px;
+  border-bottom:1px solid var(--gray-50);transition:background .1s;
+  gap:10px;
+}
+.station-item:last-child{border-bottom:none}
+.si-marker{
+  width:28px;height:28px;border-radius:7px;background:var(--amber-50);
+  border:1.5px solid #fde68a;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.si-marker svg{width:14px;height:14px;color:var(--amber-500)}
+.si-info{flex:1;min-width:0}
+.si-name{font-size:12.5px;font-weight:700;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si-km{font-size:11px;color:var(--gray-400);margin-top:1px}
+.si-fee{font-size:13px;font-weight:800;color:var(--gray-800);flex-shrink:0}
+.si-momo{font-size:10px;color:var(--pink-500);font-weight:600}
+
+/* ePass widget */
+.epass-widget{
+  border:1.5px solid var(--gray-200);
+  border-radius:12px;padding:16px;margin-bottom:14px;background:#fff;
+}
+.ew-label{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.ew-total{font-size:36px;font-weight:900;color:var(--pink-500);line-height:1;font-variant-numeric:tabular-nums;margin-bottom:12px}
+.ew-roundtrip-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ew-roundtrip-row label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--gray-700);font-weight:500;user-select:none}
+.ew-roundtrip-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--pink-500);cursor:pointer;flex-shrink:0}
+.ew-return-label{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.ew-return-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.ew-return-chip{height:27px;padding:0 11px;border-radius:20px;font-size:11.5px;font-weight:600;background:var(--gray-100);border:1.5px solid var(--gray-200);color:var(--gray-600);cursor:pointer;transition:all .15s}
+.ew-return-chip.on{background:var(--pink-50);border-color:var(--pink-500);color:var(--pink-500)}
+.ew-cta{
+  width:100%;height:38px;border-radius:9px;font-size:13px;font-weight:800;
+  font-family:var(--font);background:var(--pink-500);color:#fff;
+  transition:background .15s;border:none;cursor:pointer;
+}
+.ew-cta:hover{background:var(--pink-600)}
+
+/* Camera section */
+.camera-wrap{margin-bottom:14px}
+.camera-head{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:1px solid var(--gray-100);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+.camera-head a{font-size:10.5px;font-weight:600;color:var(--pink-500);text-transform:none;letter-spacing:0}
+.camera-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--gray-50)}
+.camera-item:last-child{border-bottom:none}
+.ci-icon{width:28px;height:28px;border-radius:7px;background:#fff1f2;border:1.5px solid #fecdd3;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-icon svg{width:14px;height:14px;color:#e11d48}
+.ci-info{flex:1;min-width:0}
+.ci-road{font-size:12px;font-weight:600;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-km{font-size:11px;color:var(--gray-400);margin-top:1px}
+.ci-limit{font-size:12px;font-weight:800;color:#e11d48;flex-shrink:0}
+.camera-note{font-size:11px;color:var(--gray-400);padding:6px 4px 0;display:flex;align-items:center;gap:5px}
+
+/* Tips */
+.tips-section{background:var(--amber-50);border:1px solid #fde68a;border-radius:10px;padding:14px}
+.tips-title{font-size:12px;font-weight:800;color:var(--amber-600);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.tips-title svg{width:14px;height:14px}
+.tip-item{font-size:12px;color:var(--gray-700);line-height:1.5;padding:3px 0;display:flex;gap:6px}
+.tip-item::before{content:'•';color:var(--amber-500);flex-shrink:0}
+
+/* RIGHT: ROAD PANEL */
+.road-panel{background:var(--road-bg);position:relative;overflow:hidden}
+.road-svg{position:absolute;inset:0;width:100%;height:100%}
+.route-empty-right{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+}
+.rer-label{font-size:13px;color:rgba(255,255,255,.2);font-weight:600}
+
+/* SVG map labels */
+.rl-city{font-family:var(--font);font-size:11px;font-weight:700;fill:rgba(255,255,255,.7)}
+.rl-km{font-family:var(--font);font-size:10px;fill:rgba(255,255,255,.3)}
+.rl-road{font-family:var(--font);font-size:9.5px;fill:rgba(255,255,255,.2)}
+.rl-toll-name{font-family:var(--font);font-size:10.5px;font-weight:700;fill:rgba(251,191,36,.9)}
+.rl-toll-fee{font-family:var(--font);font-size:10px;fill:rgba(251,191,36,.55)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gray-900);color:#fff;border-radius:24px;padding:9px 20px;font-size:13px;font-weight:600;pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;z-index:9999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Responsive */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+  .road-panel{display:none}
+  .sel-group{min-width:220px}
+}
+@media(max-width:600px){
+  .sel-inner{flex-direction:column;align-items:stretch}
+  .vtabs{justify-content:center}
+  .btn-calc{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <a class="back" href="/vehicle-hub">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Tiện ích Giao Thông
+    </a>
+    <div class="hdr-sep"></div>
+    <span class="hdr-title">Tính phí ETC theo tuyến</span>
+    <span class="hdr-badge">Demo · Phí tham khảo</span>
+  </div>
+</header>
+
+<!-- ROUTE SELECTOR -->
+<div class="sel-bar">
+  <div class="sel-inner">
+    <div class="sel-group">
+      <span class="sel-label">Từ</span>
+      <div class="sel-wrap">
+        <span class="sel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <select class="sel-drop" id="selFrom">
+          <option value="">Chọn điểm xuất phát</option>
+          <option value="hcm" selected>TP. Hồ Chí Minh</option>
+          <option value="hn">Hà Nội</option>
+          <option value="danang">Đà Nẵng</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="sel-swap" onclick="swapRoute()" title="Đổi chiều">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+    </button>
+
+    <div class="sel-group">
+      <span class="sel-label">Đến</span>
+      <div class="sel-wrap">
+        <span class="sel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+        <select class="sel-drop" id="selTo">
+          <option value="">Chọn điểm đến</option>
+          <optgroup label="Từ TP. Hồ Chí Minh">
+            <option value="dalat">Đà Lạt, Lâm Đồng</option>
+            <option value="phan-thiet">Phan Thiết, Bình Thuận</option>
+            <option value="vung-tau">Vũng Tàu, BRVT</option>
+            <option value="can-tho">Cần Thơ</option>
+            <option value="nha-trang">Nha Trang, Khánh Hoà</option>
+          </optgroup>
+          <optgroup label="Từ Hà Nội">
+            <option value="hai-phong">Hải Phòng</option>
+            <option value="ninh-binh">Ninh Bình</option>
+            <option value="ha-long">Hạ Long, Quảng Ninh</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+    <div class="vtabs" id="vtabs">
+      <button class="vtab on" data-v="1" onclick="selectVehicle(this)">Xe con</button>
+      <button class="vtab" data-v="2" onclick="selectVehicle(this)">Xe khách</button>
+      <button class="vtab" data-v="3" onclick="selectVehicle(this)">Xe tải</button>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">Tính phí →</button>
+  </div>
+</div>
+
+<!-- POPULAR ROUTES -->
+<div class="popular-bar">
+  <div class="popular-inner">
+    <span class="pop-label">Tuyến phổ biến</span>
+    <button class="pop-chip" onclick="quickRoute('hcm','dalat')">HCM → Đà Lạt</button>
+    <button class="pop-chip" onclick="quickRoute('hcm','phan-thiet')">HCM → Phan Thiết</button>
+    <button class="pop-chip" onclick="quickRoute('hcm','vung-tau')">HCM → Vũng Tàu</button>
+    <button class="pop-chip" onclick="quickRoute('hcm','can-tho')">HCM → Cần Thơ</button>
+    <button class="pop-chip" onclick="quickRoute('hcm','nha-trang')">HCM → Nha Trang</button>
+    <button class="pop-chip" onclick="quickRoute('hn','hai-phong')">HN → Hải Phòng</button>
+    <button class="pop-chip" onclick="quickRoute('hn','ninh-binh')">HN → Ninh Bình</button>
+    <button class="pop-chip" onclick="quickRoute('hn','ha-long')">HN → Hạ Long</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- LEFT -->
+  <div class="left-panel">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🛣️</div>
+      <div class="empty-title">Chọn tuyến đường để tính phí ETC</div>
+      <div class="empty-desc">Biết trước tổng phí trạm thu, số tiền cần nạp vào ePass trước khi lên đường.</div>
+      <div class="empty-routes">
+        <button class="empty-route-btn" onclick="quickRoute('hcm','dalat')">
+          <span>TP. Hồ Chí Minh → Đà Lạt</span>
+          <span class="empty-route-meta">308km · 5 trạm · ~246.000đ</span>
+        </button>
+        <button class="empty-route-btn" onclick="quickRoute('hcm','vung-tau')">
+          <span>TP. Hồ Chí Minh → Vũng Tàu</span>
+          <span class="empty-route-meta">128km · 3 trạm · ~147.000đ</span>
+        </button>
+        <button class="empty-route-btn" onclick="quickRoute('hn','hai-phong')">
+          <span>Hà Nội → Hải Phòng</span>
+          <span class="empty-route-meta">120km · 3 trạm · ~130.000đ</span>
+        </button>
+        <button class="empty-route-btn" onclick="quickRoute('hn','ha-long')">
+          <span>Hà Nội → Hạ Long</span>
+          <span class="empty-route-meta">175km · 4 trạm · ~165.000đ</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="resultPanel">
+
+      <!-- Summary -->
+      <div class="route-summary" id="routeSummary"></div>
+
+      <!-- Station list -->
+      <div class="station-list-wrap">
+        <div class="sl-head">Trạm thu phí trên tuyến</div>
+        <div id="stationList"></div>
+      </div>
+
+      <!-- Camera section -->
+      <div class="camera-wrap" id="cameraWrap"></div>
+
+      <!-- ePass widget -->
+      <div class="epass-widget" id="epassWidget"></div>
+
+      <!-- Tips -->
+      <div class="tips-section">
+        <div class="tips-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          Lưu ý trước khi đi
+        </div>
+        <div class="tip-item">Phí ETC được tính cho một chiều. Tick "Có tuyến về" để tính cả khứ hồi.</div>
+        <div class="tip-item">Số dư ePass nên có tối thiểu 50.000đ dự phòng sau khi qua hết trạm.</div>
+        <div class="tip-item" id="tipMomo">Tài khoản ePass liên kết MoMo sẽ tự nạp khi xuống dưới ngưỡng đã đặt.</div>
+        <div class="tip-item">Một số trạm BOT có thể thay đổi phí theo quyết định UBND - kiểm tra lại trước chuyến dài.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: road visualization -->
+  <div class="road-panel" id="roadPanel">
+    <div class="route-empty-right" id="roadEmpty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l2-8h14l2 8H3z"/><path d="M9 17V9"/><path d="M15 17V9"/></svg>
+      <span class="rer-label">Chọn tuyến để xem trực quan</span>
+    </div>
+    <svg class="road-svg" id="roadSvg" viewBox="0 0 580 700" preserveAspectRatio="xMidYMid meet" style="display:none"></svg>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── ROUTE DATA ──────────────────────────── */
+const ROUTES = {
+  'hcm-dalat': {
+    from:'TP. Hồ Chí Minh', to:'Đà Lạt, Lâm Đồng',
+    distance:308, duration:'6-7 giờ',
+    road:'QL20 · Cao tốc Dầu Giây',
+    stations:[
+      { name:'Trạm BOT Dầu Giây',       km:1,   fees:[45000,70000,100000] },
+      { name:'Trạm BOT Túc Trưng',       km:63,  fees:[52000,80000,110000] },
+      { name:'Trạm BOT Định Quán',       km:109, fees:[52000,80000,110000] },
+      { name:'Trạm BOT Mađaguôi',        km:164, fees:[45000,70000,100000] },
+      { name:'Trạm BOT Liên Khương',     km:257, fees:[52000,80000,110000] },
+    ],
+    cameras:[
+      { km:12,  road:'QL1A / nút giao Dầu Giây',      limit:60  },
+      { km:38,  road:'QL20 đoạn Trảng Bom - Định Quán', limit:80  },
+      { km:84,  road:'QL20 trước đèo Bảo Lộc',         limit:60  },
+      { km:145, road:'QL20 đoạn Mađaguôi - Liên Nghĩa', limit:80  },
+    ]
+  },
+  'hcm-phan-thiet': {
+    from:'TP. Hồ Chí Minh', to:'Phan Thiết, Bình Thuận',
+    distance:198, duration:'3-4 giờ',
+    road:'Cao tốc Phan Thiết - Dầu Giây',
+    stations:[
+      { name:'Trạm BOT Dầu Giây',            km:1,   fees:[45000,70000,100000] },
+      { name:'Trạm thu phí Gia Kiệm',         km:52,  fees:[62000,90000,125000] },
+      { name:'Trạm thu phí Phan Thiết (Bắc)', km:130, fees:[75000,110000,155000] },
+      { name:'Trạm thu phí Phan Thiết (Nam)', km:178, fees:[45000,70000,100000] },
+    ],
+    cameras:[
+      { km:22,  road:'QL1A đoạn Long Khánh',         limit:60 },
+      { km:75,  road:'Cao tốc Phan Thiết - Dầu Giây đoạn Xuân Lộc', limit:100 },
+      { km:155, road:'QL1A vào TP. Phan Thiết',       limit:50 },
+    ]
+  },
+  'hcm-vung-tau': {
+    from:'TP. Hồ Chí Minh', to:'Vũng Tàu, BRVT',
+    distance:128, duration:'2-2.5 giờ',
+    road:'QL51 · Cao tốc Biên Hoà - Vũng Tàu',
+    stations:[
+      { name:'Trạm BOT Long Phước',  km:8,  fees:[50000,75000,105000] },
+      { name:'Trạm BOT Ngãi Giao',   km:58, fees:[52000,80000,110000] },
+      { name:'Trạm BOT Phước Thái',  km:95, fees:[45000,70000,100000] },
+    ],
+    cameras:[
+      { km:15,  road:'QL51 đoạn Ngã tư Vũng Tàu - Long Thành', limit:80 },
+      { km:45,  road:'QL51 qua thị trấn Ngãi Giao',             limit:60 },
+      { km:110, road:'QL51 vào TP. Vũng Tàu',                   limit:50 },
+    ]
+  },
+  'hcm-can-tho': {
+    from:'TP. Hồ Chí Minh', to:'Cần Thơ',
+    distance:181, duration:'3-3.5 giờ',
+    road:'Cao tốc Trung Lương - Mỹ Thuận · QL1',
+    stations:[
+      { name:'Cao tốc Trung Lương - Mỹ Thuận', km:43,  fees:[70000,105000,145000] },
+      { name:'Cầu Mỹ Thuận',                   km:105, fees:[40000,60000,85000]  },
+      { name:'Cầu Cần Thơ',                    km:148, fees:[40000,60000,85000]  },
+    ],
+    note:'Đoạn TP.HCM - Trung Lương (40km) hiện miễn phí ETC.',
+    cameras:[
+      { km:30,  road:'QL1A đoạn Bến Lức - Tân An',   limit:80 },
+      { km:78,  road:'QL1A trước cầu Mỹ Thuận',       limit:60 },
+      { km:165, road:'QL1A vào TP. Cần Thơ',          limit:50 },
+    ]
+  },
+  'hcm-nha-trang': {
+    from:'TP. Hồ Chí Minh', to:'Nha Trang, Khánh Hoà',
+    distance:448, duration:'8-9 giờ',
+    road:'QL1A · Cao tốc Nha Trang - Cam Lâm',
+    stations:[
+      { name:'Trạm BOT Dầu Giây',         km:1,   fees:[45000,70000,100000] },
+      { name:'Trạm BOT Ninh Xuân (Phan Rang)', km:260, fees:[52000,80000,110000] },
+      { name:'Trạm thu phí Cam Lâm',      km:390, fees:[62000,90000,125000] },
+      { name:'Trạm thu phí Nha Trang (Bắc)',   km:425, fees:[52000,80000,110000] },
+      { name:'Cao tốc Cam Lâm - Vĩnh Hảo (đoạn 1)', km:350, fees:[60000,90000,125000] },
+    ],
+    cameras:[
+      { km:55,  road:'QL1A đoạn Phan Thiết',          limit:80 },
+      { km:180, road:'QL1A qua Phan Rang - Tháp Chàm', limit:60 },
+      { km:310, road:'QL1A đoạn Cam Ranh',             limit:80 },
+      { km:420, road:'QL1A vào TP. Nha Trang',         limit:50 },
+    ]
+  },
+  'hn-hai-phong': {
+    from:'Hà Nội', to:'Hải Phòng',
+    distance:120, duration:'1.5-2 giờ',
+    road:'Cao tốc Hà Nội - Hải Phòng',
+    stations:[
+      { name:'Trạm thu phí Phù Đổng',  km:4,  fees:[70000,105000,145000] },
+      { name:'Trạm thu phí An Dương',   km:85, fees:[40000,60000,85000]  },
+      { name:'Trạm thu phí Đình Vũ',   km:110, fees:[25000,40000,55000]  },
+    ],
+    cameras:[
+      { km:18,  road:'Cao tốc HN-HP đoạn Văn Giang',   limit:120 },
+      { km:60,  road:'Cao tốc HN-HP đoạn Hải Dương',   limit:120 },
+      { km:95,  road:'QL5 vào TP. Hải Phòng',           limit:60  },
+    ]
+  },
+  'hn-ninh-binh': {
+    from:'Hà Nội', to:'Ninh Bình',
+    distance:93, duration:'1.5 giờ',
+    road:'Cao tốc Pháp Vân - Cầu Giẽ - Ninh Bình',
+    stations:[
+      { name:'Trạm BOT Pháp Vân',    km:2,  fees:[35000,55000,75000] },
+      { name:'Trạm BOT Cao Bồ',      km:55, fees:[42000,65000,90000] },
+      { name:'Trạm BOT Gián Khẩu',   km:85, fees:[45000,70000,100000] },
+    ],
+    cameras:[
+      { km:10,  road:'Cao tốc Pháp Vân - Cầu Giẽ đoạn Thường Tín', limit:120 },
+      { km:48,  road:'Cao tốc Cầu Giẽ - Ninh Bình đoạn Phủ Lý',    limit:120 },
+      { km:82,  road:'QL1A vào TP. Ninh Bình',                       limit:60  },
+    ]
+  },
+  'hn-ha-long': {
+    from:'Hà Nội', to:'Hạ Long, Quảng Ninh',
+    distance:175, duration:'2.5-3 giờ',
+    road:'Cao tốc Hà Nội - Hải Phòng · Hạ Long - Hải Phòng',
+    stations:[
+      { name:'Trạm thu phí Phù Đổng', km:4,  fees:[70000,105000,145000] },
+      { name:'Trạm thu phí An Dương',  km:85, fees:[40000,60000,85000]  },
+      { name:'Trạm thu phí Hoàng Mai', km:125,fees:[32000,48000,67000]  },
+      { name:'Cầu Bạch Đằng',          km:150,fees:[35000,55000,75000]  },
+    ],
+    cameras:[
+      { km:18,  road:'Cao tốc HN-HP đoạn Văn Giang',        limit:120 },
+      { km:105, road:'Cao tốc Hạ Long - Hải Phòng đoạn Uông Bí', limit:100 },
+      { km:148, road:'QL18 vào TP. Hạ Long',                 limit:60  },
+    ]
+  },
+};
+
+let state = { fromKey:'hcm', toKey:'dalat', vehicleClass:1, routeKey:null, hasReturn:false, returnKey:null };
+
+/* ── UTILS ──────────────────────────────── */
+function fmt(n){ return n.toLocaleString('vi-VN') + 'đ'; }
+
+function getRouteKey(from, to){
+  const key = from + '-' + to;
+  if(ROUTES[key]) return key;
+  const rev = to + '-' + from;
+  if(ROUTES[rev]) return rev;
+  return null;
+}
+
+function getVehicleIdx(){ return state.vehicleClass - 1; }
+
+function calcTotal(route){
+  const idx = getVehicleIdx();
+  return route.stations.reduce((s, st) => s + (st.fees[idx] || 0), 0);
+}
+
+/* ── RENDER ─────────────────────────────── */
+function calculate(){
+  const from = document.getElementById('selFrom').value;
+  const to   = document.getElementById('selTo').value;
+  if(!from || !to){ toast('Vui lòng chọn điểm đi và điểm đến'); return; }
+  state.fromKey = from;
+  state.toKey = to;
+  const key = getRouteKey(from, to);
+  if(!key){ toast('Tuyến đường này chưa có dữ liệu - vui lòng chọn tuyến khác'); return; }
+  state.routeKey = key;
+  renderResult(key);
+}
+
+function renderResult(key){
+  const route = ROUTES[key];
+  const idx = getVehicleIdx();
+  const total = calcTotal(route);
+  const VEHICLE_LABELS = ['xe con / dưới 12 chỗ','xe khách 12-30 chỗ','xe tải / xe đầu kéo'];
+
+  // Show/hide
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultPanel').classList.add('show');
+
+  // Summary
+  document.getElementById('routeSummary').innerHTML = `
+    <div class="rs-header">
+      <div class="rs-route">
+        <div class="rs-from-to">${route.from} → ${route.to}</div>
+        <div class="rs-road">${route.road}</div>
+      </div>
+      <div class="rs-total">
+        <div class="rs-total-lbl">Tổng phí ETC</div>
+        <div class="rs-total-num">${(total/1000).toFixed(0) + '.000'}<small>đ</small></div>
+      </div>
+    </div>
+    <div class="rs-stats">
+      <div class="rs-stat"><div class="rs-stat-num">${route.stations.length}</div><div class="rs-stat-lbl">trạm ETC</div></div>
+      <div class="rs-stat"><div class="rs-stat-num">${route.distance}</div><div class="rs-stat-lbl">km</div></div>
+      <div class="rs-stat"><div class="rs-stat-num">${route.duration}</div><div class="rs-stat-lbl">thời gian</div></div>
+      <div class="rs-stat"><div class="rs-stat-num">${VEHICLE_LABELS[idx].split('/')[0].trim()}</div><div class="rs-stat-lbl">loại xe</div></div>
+    </div>
+  `;
+
+  // Station list
+  const tollIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+  document.getElementById('stationList').innerHTML = route.stations.map((s,i) => `
+    <div class="station-item">
+      <div class="si-marker">${tollIcon}</div>
+      <div class="si-info">
+        <div class="si-name">${s.name}</div>
+        <div class="si-km">Km ${s.km}+000 · ${i===0?'Xuất phát':i===route.stations.length-1?'Gần điểm đến':'Dọc tuyến'}</div>
+      </div>
+      <div>
+        <div class="si-fee">${fmt(s.fees[idx])}</div>
+        <div class="si-momo">ETC/ePass</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Camera section
+  const camIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
+  const cameras = route.cameras || [];
+  document.getElementById('cameraWrap').innerHTML = cameras.length ? `
+    <div class="camera-head">
+      <span>📷 Camera phạt nguội trên tuyến</span>
+      <a href="/phat-nguoi" target="_blank">Tra biển số →</a>
+    </div>
+    ${cameras.map((c,i) => `
+      <div class="camera-item">
+        <div class="ci-icon">${camIcon}</div>
+        <div class="ci-info">
+          <div class="ci-road">${c.road}</div>
+          <div class="ci-km">Khoảng Km ${c.km}+000</div>
+        </div>
+        <div class="ci-limit">${c.limit}<small style="font-size:9px;font-weight:600">km/h</small></div>
+      </div>
+    `).join('')}
+    <div class="camera-note">⚠ Vị trí tham khảo · Camera di động có thể thay đổi</div>
+  ` : '';
+
+  // ePass widget
+  renderEpassWidget();
+
+  // Road SVG
+  renderRoadSvg(route, key, idx);
+
+  // Scroll into view on mobile
+  document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── ROAD SVG ────────────────────────────── */
+function renderRoadSvg(route, key, idx){
+  const svg = document.getElementById('roadSvg');
+  const empty = document.getElementById('roadEmpty');
+  svg.style.display = 'block';
+  empty.style.display = 'none';
+
+  const W = 580, H = 700;
+  const ROAD_X = W/2;
+  const ROAD_W = 52;
+  const START_Y = 80, END_Y = H - 80;
+  const ROAD_H = END_Y - START_Y;
+
+  const stations = route.stations;
+  const maxKm = route.distance;
+
+  function yPos(km){ return START_Y + (km / maxKm) * ROAD_H; }
+
+  const stationMarks = stations.map((s, i) => {
+    const y = yPos(s.km);
+    const fee = s.fees[idx];
+    const isLeft = i % 2 === 0;
+    const lx = isLeft ? ROAD_X - ROAD_W/2 - 14 : ROAD_X + ROAD_W/2 + 14;
+    const anchor = isLeft ? 'end' : 'start';
+    const lineX2 = isLeft ? ROAD_X - ROAD_W/2 : ROAD_X + ROAD_W/2;
+
+    return `
+      <!-- Toll station ${i+1} -->
+      <line x1="${lineX2}" y1="${y}" x2="${lx}" y2="${y}" stroke="rgba(251,191,36,.35)" stroke-width="1" stroke-dasharray="3 2"/>
+      <circle cx="${ROAD_X}" cy="${y}" r="11" fill="#1a2840" stroke="#f59e0b" stroke-width="2"/>
+      <text x="${ROAD_X}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="#fbbf24" font-size="9" font-weight="900" font-family="Be Vietnam Pro,sans-serif">${i+1}</text>
+      <text x="${lx + (isLeft?-8:8)}" y="${y - 8}" text-anchor="${anchor}" class="rl-toll-name">${s.name.replace('Trạm BOT ','').replace('Trạm thu phí ','').replace('Cao tốc ','').replace('Cầu ','Cầu ')}</text>
+      <text x="${lx + (isLeft?-8:8)}" y="${y + 7}" text-anchor="${anchor}" class="rl-toll-fee">${fmt(fee)}</text>
+    `;
+  }).join('');
+
+
+  // km markers on road
+  const kmMarkers = [0.25, 0.5, 0.75].map(pct => {
+    const km = Math.round(maxKm * pct);
+    const y = START_Y + pct * ROAD_H;
+    return `<text x="${ROAD_X}" y="${y}" text-anchor="middle" class="rl-km" dominant-baseline="central">${km}km</text>`;
+  }).join('');
+
+  svg.innerHTML = `
+    <!-- Background -->
+    <rect width="${W}" height="${H}" fill="#0f1e2e"/>
+
+    <!-- Terrain bg -->
+    <rect x="0" y="0" width="${ROAD_X - ROAD_W/2 - 10}" height="${H}" fill="#0d1a28"/>
+    <rect x="${ROAD_X + ROAD_W/2 + 10}" y="0" width="${W - ROAD_X - ROAD_W/2 - 10}" height="${H}" fill="#0d1a28"/>
+
+    <!-- Road surface -->
+    <rect x="${ROAD_X - ROAD_W/2}" y="${START_Y}" width="${ROAD_W}" height="${ROAD_H}" fill="#1e2f40"/>
+    <!-- Road edges -->
+    <line x1="${ROAD_X - ROAD_W/2}" y1="${START_Y}" x2="${ROAD_X - ROAD_W/2}" y2="${END_Y}" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+    <line x1="${ROAD_X + ROAD_W/2}" y1="${START_Y}" x2="${ROAD_X + ROAD_W/2}" y2="${END_Y}" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+    <!-- Center dashes -->
+    ${Array.from({length:20}, (_,i) => {
+      const y = START_Y + (i/20) * ROAD_H;
+      const dy = ROAD_H/20;
+      return `<line x1="${ROAD_X}" y1="${y + 4}" x2="${ROAD_X}" y2="${y + dy - 4}" stroke="rgba(255,255,255,.2)" stroke-width="2"/>`;
+    }).join('')}
+
+    <!-- Start city -->
+    <circle cx="${ROAD_X}" cy="${START_Y}" r="10" fill="${'#EB2F96'}" opacity="0.9"/>
+    <circle cx="${ROAD_X}" cy="${START_Y}" r="4" fill="#fff"/>
+    <text x="${ROAD_X}" y="${START_Y - 20}" text-anchor="middle" class="rl-city">${route.from.replace('TP. ','')}</text>
+    <text x="${ROAD_X}" y="${START_Y - 8}" text-anchor="middle" class="rl-road" style="font-size:9px">${route.road}</text>
+
+    <!-- End city -->
+    <circle cx="${ROAD_X}" cy="${END_Y}" r="10" fill="#EB2F96" opacity="0.9"/>
+    <circle cx="${ROAD_X}" cy="${END_Y}" r="4" fill="#fff"/>
+    <text x="${ROAD_X}" y="${END_Y + 20}" text-anchor="middle" class="rl-city">${route.to.split(',')[0]}</text>
+    <text x="${ROAD_X}" y="${END_Y + 34}" text-anchor="middle" class="rl-road">${route.distance}km · ${route.duration}</text>
+
+    <!-- KM markers -->
+    ${kmMarkers}
+
+    <!-- Stations -->
+    ${stationMarks}
+
+    <!-- Total label -->
+    <rect x="${W/2 - 80}" y="${H - 46}" width="160" height="28" rx="6" fill="rgba(235,47,150,.15)" stroke="rgba(235,47,150,.3)" stroke-width="1"/>
+    <text x="${W/2}" y="${H - 27}" text-anchor="middle" fill="#EB2F96" font-size="11.5" font-weight="800" font-family="Be Vietnam Pro,sans-serif">Tổng ETC: ${fmt(calcTotal(route))}</text>
+  `;
+}
+
+/* ── EPASS WIDGET ───────────────────────── */
+function renderEpassWidget(){
+  const route = ROUTES[state.routeKey];
+  const idx = getVehicleIdx();
+  const outTotal = calcTotal(route);
+
+  let returnTotal = 0;
+  if(state.hasReturn && state.returnKey && ROUTES[state.returnKey]){
+    returnTotal = ROUTES[state.returnKey].stations.reduce((s,st) => s + (st.fees[idx]||0), 0);
+  }
+  const tripTotal = outTotal + returnTotal;
+
+  // Build return chips HTML
+  const returnChips = Object.entries(ROUTES).map(([k,r]) => `
+    <button class="ew-return-chip${state.returnKey===k?' on':''}" onclick="selectReturnRoute('${k}',this)">
+      ${r.from.replace('TP. ','').replace('Hà Nội','HN')} → ${r.to.split(',')[0]}
+    </button>
+  `).join('');
+
+  document.getElementById('epassWidget').innerHTML = `
+    <div class="ew-label">Phí ETC cần có cho chuyến đi</div>
+    <div class="ew-total">${fmt(tripTotal)}</div>
+    <div class="ew-roundtrip-row">
+      <label>
+        <input type="checkbox" id="ewRoundTrip" ${state.hasReturn?'checked':''} onchange="toggleReturnRoute(this)">
+        Có tuyến về
+      </label>
+    </div>
+    ${state.hasReturn ? `
+      <div class="ew-return-label">Tuyến về</div>
+      <div class="ew-return-chips">${returnChips}</div>
+    ` : ''}
+    <button class="ew-cta" onclick="toast('Đang nạp ${fmt(tripTotal)} vào ePass...')">
+      Nạp ${fmt(tripTotal)} vào ePass
+    </button>
+  `;
+}
+
+function toggleReturnRoute(el){
+  state.hasReturn = el.checked;
+  if(state.hasReturn && !state.returnKey){
+    state.returnKey = state.routeKey; // default same route
+  }
+  renderEpassWidget();
+}
+
+function selectReturnRoute(key, el){
+  state.returnKey = key;
+  renderEpassWidget();
+}
+
+/* ── INTERACTIONS ───────────────────────── */
+function quickRoute(from, to){
+  document.getElementById('selFrom').value = from;
+  document.getElementById('selTo').value = to;
+  state.fromKey = from; state.toKey = to;
+  document.querySelectorAll('.pop-chip').forEach(c => c.classList.remove('on'));
+  event.target.classList.add('on');
+  calculate();
+}
+
+function swapRoute(){
+  const f = document.getElementById('selFrom');
+  const t = document.getElementById('selTo');
+  const fv = f.value, tv = t.value;
+  f.value = tv.includes('-')?'':'hcm';
+  // just notify
+  toast('Đổi chiều - chọn điểm đến phù hợp rồi bấm Tính phí');
+}
+
+function selectVehicle(el){
+  document.querySelectorAll('.vtab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  state.vehicleClass = parseInt(el.dataset.v);
+  if(state.routeKey){ renderResult(state.routeKey); }
+}
+
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* ── URL PARAM ──────────────────────────── */
+const params = new URLSearchParams(location.search);
+if(params.get('r')){
+  const r = params.get('r');
+  if(ROUTES[r]){
+    const [fromK, ...toArr] = r.split('-');
+    state.fromKey = fromK;
+    state.toKey = toArr.join('-');
+    state.routeKey = r;
+    const fromMap = {'hcm':'hcm','hn':'hn','danang':'danang'};
+    document.getElementById('selFrom').value = fromMap[fromK]||fromK;
+    document.getElementById('selTo').value = state.toKey;
+    renderResult(r);
+    // highlight popular chip
+    document.querySelectorAll('.pop-chip').forEach(c => {
+      if(c.onclick && c.onclick.toString().includes(r)) c.classList.add('on');
+    });
+  }
+}
+
+// Auto-load HCM->DaLat as default
+if(!params.get('r')){
+  // leave empty state
+}
+</script>
+</body>
+</html>

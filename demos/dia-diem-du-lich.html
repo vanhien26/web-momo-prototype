@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Địa điểm du lịch Việt Nam & Quốc tế - MoMo</title>
+  <meta name="description" content="Trang tổng hợp các địa điểm du lịch nổi bật ở Việt Nam và quốc tế, hiển thị bằng bộ icon monoline MoMo pink theo phong cách fintech UI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap">
+  <style>
+    :root{
+      --accent:#a50064;
+      --accent-strong:#8c0054;
+      --accent-soft:#fff0f7;
+      --accent-soft-2:#ffe4f0;
+      --icon-ink:#7252b5;
+      --icon-bg:#f6f1ff;
+      --icon-line:#e8dff8;
+      --ink:#171522;
+      --muted:#665f76;
+      --line:#edd6df;
+      --bg:#fffafb;
+      --surface:#ffffff;
+      --shadow:0 20px 50px rgba(165,0,100,.10);
+      --shadow-soft:0 10px 24px rgba(165,0,100,.06);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Be Vietnam Pro',sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(165,0,100,.10), transparent 24%),
+        radial-gradient(circle at 10% 30%, rgba(165,0,100,.06), transparent 18%),
+        var(--bg);
+    }
+    a{color:inherit}
+    button,input{font:inherit}
+    .shell{width:min(1180px,calc(100% - 32px));margin:0 auto}
+
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter:blur(16px);
+      background:rgba(255,255,255,.86);
+      border-bottom:1px solid rgba(231,221,255,.8);
+    }
+    .topbar-inner{
+      height:64px;display:flex;align-items:center;justify-content:space-between;gap:14px
+    }
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .brand img{width:36px;height:36px;border-radius:12px}
+    .brand-copy strong{display:block;font-size:14px;line-height:1.2}
+    .brand-copy small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+    .top-actions{display:flex;align-items:center;gap:10px}
+    .ghost-link{
+      display:inline-flex;align-items:center;gap:6px;
+      text-decoration:none;color:var(--muted);font-size:12px;font-weight:700;
+      padding:9px 12px;border-radius:999px;border:1px solid transparent;
+    }
+    .ghost-link:hover{border-color:var(--line);background:#fff}
+    .button{
+      border:0;border-radius:999px;padding:10px 16px;
+      background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+      text-decoration:none;display:inline-flex;align-items:center;justify-content:center;
+      box-shadow:0 10px 22px rgba(165,0,100,.22)
+    }
+    .button:hover{background:var(--accent-strong)}
+    .button.secondary{
+      background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none
+    }
+
+    .hero{padding:34px 0 18px}
+    .hero-grid{
+      display:grid;grid-template-columns:1.12fr .88fr;gap:28px;align-items:center
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:16px
+    }
+    .hero h1{
+      margin:0;
+      font-size:clamp(40px,6vw,70px);
+      line-height:.96;
+      letter-spacing:-.05em;
+      max-width:12ch;
+    }
+    .hero-copy{
+      max-width:58ch;
+      margin:18px 0 0;
+      font-size:16px;line-height:1.7;color:var(--muted)
+    }
+    .hero-meta{
+      display:flex;flex-wrap:wrap;gap:10px;margin-top:22px
+    }
+    .meta-pill{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:9px 12px;border-radius:999px;
+      background:#fff;border:1px solid var(--line);color:var(--ink);
+      font-size:12px;font-weight:800;box-shadow:var(--shadow-soft)
+    }
+
+    .hero-panel{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:linear-gradient(180deg,#fff 0%, #fbf9ff 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      min-height:420px;
+    }
+    .hero-panel::before{
+      content:"";
+      position:absolute;inset:auto auto -90px -90px;
+      width:280px;height:280px;border-radius:50%;
+      background:rgba(165,0,100,.10);filter:blur(2px)
+    }
+    .hero-panel-inner{
+      position:absolute;inset:0;
+      padding:22px;
+      display:grid;grid-template-rows:auto 1fr auto;
+      gap:18px;
+    }
+    .panel-top{
+      display:flex;justify-content:space-between;gap:14px;align-items:flex-start
+    }
+    .panel-tag{
+      display:inline-flex;align-items:center;gap:6px;
+      border-radius:999px;padding:7px 10px;
+      font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.12em;
+      color:var(--accent);background:var(--accent-soft);border:1px solid var(--line)
+    }
+    .panel-count{
+      color:var(--muted);font-size:12px;font-weight:700;
+      padding-top:4px
+    }
+    .landmark-frame{
+      align-self:center;justify-self:center;
+      width:min(100%,340px);aspect-ratio:1;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(165,0,100,.08), transparent 28%),
+        linear-gradient(180deg,#fff7fb 0%, #fff0f7 100%);
+      border:1px solid rgba(165,0,100,.14);
+      display:grid;place-items:center;
+      position:relative;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .landmark-frame::after{
+      content:"";
+      position:absolute;inset:18px;
+      border:1px dashed rgba(165,0,100,.16);
+      border-radius:22px;
+    }
+    .landmark-mark{
+      width:144px;height:144px;border-radius:34px;
+      background:#fff;
+      display:grid;place-items:center;
+      color:var(--accent);
+      box-shadow:0 18px 40px rgba(72,35,139,.12)
+    }
+    .landmark-mark svg{width:94px;height:94px;display:block}
+    .panel-bottom{
+      display:flex;justify-content:space-between;gap:12px;align-items:flex-end;
+      flex-wrap:wrap
+    }
+    .panel-stack{display:flex;gap:10px;flex-wrap:wrap}
+    .panel-mini{
+      min-width:110px;
+      border-radius:18px;border:1px solid rgba(165,0,100,.12);
+      background:#fff;padding:12px 14px
+    }
+    .panel-mini strong{display:block;font-size:18px;line-height:1;color:var(--accent)}
+    .panel-mini span{display:block;font-size:11px;color:var(--muted);margin-top:6px}
+
+    .toolbar{padding:24px 0 6px}
+    .search-row{
+      display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center
+    }
+    .search{
+      display:flex;align-items:center;gap:10px;
+      background:#fff;border:1px solid var(--line);border-radius:18px;
+      padding:12px 14px;box-shadow:var(--shadow-soft)
+    }
+    .search input{
+      width:100%;border:0;outline:0;background:transparent;color:var(--ink)
+    }
+    .search input::placeholder{color:#8b84a0}
+    .search button{
+      border:0;border-radius:12px;padding:10px 14px;
+      background:var(--accent);color:#fff;font-weight:800;cursor:pointer
+    }
+    .reset-btn{
+      border:1px solid var(--line);background:#fff;color:var(--ink);
+      border-radius:14px;padding:12px 14px;font-weight:800;cursor:pointer
+    }
+    .chips{
+      display:flex;gap:8px;overflow-x:auto;padding:14px 0 2px;
+      scrollbar-width:none
+    }
+    .chips::-webkit-scrollbar{display:none}
+    .chip{
+      flex-shrink:0;
+      border:1px solid var(--line);background:#fff;color:var(--muted);
+      border-radius:999px;padding:9px 14px;font-size:12px;font-weight:800;
+      cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+      transition:.18s
+    }
+    .chip:hover{border-color:rgba(165,0,100,.28)}
+    .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+    .section{padding:28px 0 14px}
+    .section-head{
+      display:flex;justify-content:space-between;gap:16px;align-items:flex-end;
+      margin-bottom:16px
+    }
+    .section-head h2{
+      margin:0;font-size:clamp(24px,3vw,34px);line-height:1.02;letter-spacing:-.04em
+    }
+    .section-head p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.6;max-width:62ch}
+    .section-count{font-size:12px;font-weight:800;color:var(--accent);background:var(--accent-soft);border:1px solid var(--line);border-radius:999px;padding:8px 12px;white-space:nowrap}
+    .place-grid{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px
+    }
+    .place-card{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:14px;box-shadow:var(--shadow-soft)
+    }
+    .place-card:hover{border-color:rgba(165,0,100,.24);box-shadow:0 18px 36px rgba(165,0,100,.08)}
+    .place-top{display:flex;align-items:flex-start;gap:12px}
+    .icon-box{
+      width:64px;height:64px;flex:0 0 auto;
+      border-radius:18px;background:linear-gradient(180deg,#fbf8ff 0%, var(--icon-bg) 100%);
+      border:1px solid rgba(114,82,181,.12);
+      display:grid;place-items:center;color:var(--accent);
+      box-shadow:none
+    }
+    .icon-box svg{width:38px;height:38px;display:block;stroke-width:1.15}
+    .icon-box.has-photo{background:none;border-color:rgba(165,0,100,.12);overflow:hidden;padding:0}
+    .icon-box.has-photo img{width:100%;height:100%;object-fit:cover;display:block}
+    .place-copy{min-width:0;flex:1}
+    .place-name{font-size:15px;font-weight:900;line-height:1.25;margin:2px 0 4px}
+    .place-loc{font-size:12px;color:var(--muted);line-height:1.45}
+    .place-desc{
+      margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.6;min-height:38px
+    }
+    .place-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 9px;border-radius:999px;background:#fff8fc;
+      border:1px solid rgba(165,0,100,.10);color:#7e3556;
+      font-size:11px;font-weight:800
+    }
+    .place-footer{
+      margin-top:14px;padding-top:12px;border-top:1px solid rgba(231,221,255,.8);
+      display:flex;align-items:center;justify-content:space-between;gap:10px
+    }
+    .place-badges{display:flex;flex-wrap:wrap;gap:6px}
+    .badge{
+      font-size:10px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;
+      padding:5px 8px;border-radius:999px
+    }
+    .badge.vn{background:#fff0f7;color:#a50064}
+    .badge.global{background:#fff0f7;color:#a50064}
+    .place-from{font-size:12px;color:var(--muted)}
+    .place-from strong{display:block;font-size:15px;color:var(--ink)}
+
+    .country-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px
+    }
+    .country-card{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:14px;box-shadow:var(--shadow-soft)
+    }
+    .country-card:hover{border-color:rgba(165,0,100,.24);box-shadow:0 18px 36px rgba(165,0,100,.08)}
+    .country-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .country-kicker{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--accent);background:var(--accent-soft);border:1px solid var(--line);
+      border-radius:999px;padding:5px 8px
+    }
+    .country-name{font-size:16px;font-weight:900;line-height:1.2;margin:8px 0 4px}
+    .country-meta{font-size:12px;color:var(--muted);line-height:1.45}
+    .country-step{
+      margin-top:12px;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--muted)
+    }
+    .landmark-list{
+      display:flex;flex-wrap:wrap;gap:6px;margin-top:8px
+    }
+    .landmark-chip{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 9px;border-radius:999px;background:#fff8fc;
+      border:1px solid rgba(165,0,100,.10);color:#7e3556;
+      font-size:11px;font-weight:800
+    }
+    .country-icon-block{
+      margin-top:14px;padding:12px;border-radius:20px;
+      background:linear-gradient(180deg,#fbf8ff 0%, var(--icon-bg) 100%);
+      border:1px solid rgba(114,82,181,.12);
+      display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center
+    }
+    .country-icon-box{
+      width:74px;height:74px;border-radius:20px;
+      display:grid;place-items:center;color:var(--icon-ink);
+      background:rgba(255,255,255,.72);border:1px solid rgba(114,82,181,.10)
+    }
+    .country-icon-box svg{width:42px;height:42px;display:block;stroke-width:1.1}
+    .country-icon-copy strong{display:block;font-size:12px;line-height:1.3}
+    .country-icon-copy span{display:block;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}
+    .country-note{
+      margin-top:10px;font-size:11px;color:var(--muted);line-height:1.6
+    }
+
+    .empty{
+      margin-top:18px;padding:28px;border-radius:24px;border:1px dashed rgba(165,0,100,.22);
+      background:rgba(255,255,255,.68);color:var(--muted);text-align:center
+    }
+
+    .footer{
+      margin:42px 0 26px;
+      border-top:1px solid rgba(231,221,255,.8);
+      padding-top:18px;
+      display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap
+    }
+    .footer small{color:var(--muted);line-height:1.6}
+
+    .mobase-icon{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex:0 0 auto}
+    .mobase-icon svg{display:block;width:100%;height:100%}
+
+    @media(max-width:980px){
+      .hero-grid{grid-template-columns:1fr}
+      .place-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .country-grid{grid-template-columns:1fr}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .search-row{grid-template-columns:1fr}
+    }
+    @media(max-width:620px){
+      .shell{width:min(calc(100% - 24px),1180px)}
+      .topbar-inner{height:58px}
+      .brand img{width:32px;height:32px}
+      .ghost-link{display:none}
+      .hero{padding:22px 0 10px}
+      .hero h1{max-width:none}
+      .hero-copy{font-size:14px}
+      .hero-panel{min-height:360px}
+      .hero-panel-inner{padding:16px}
+      .landmark-frame{width:100%;max-width:300px}
+      .place-grid{grid-template-columns:1fr}
+      .place-card{padding:13px}
+      .country-card{padding:13px}
+      .country-icon-block{grid-template-columns:1fr}
+      .country-icon-box{width:64px;height:64px}
+      .icon-box{width:58px;height:58px;border-radius:16px}
+      .icon-box svg{width:34px;height:34px}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="/lab.html">
+        <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+        <span class="brand-copy">
+          <strong>Địa điểm du lịch</strong>
+          <small>Việt Nam và Quốc tế</small>
+        </span>
+      </a>
+      <div class="top-actions">
+        <a class="ghost-link" href="/lab.html">Prototype Lab</a>
+        <a class="button" href="#viet-nam">Khám phá ngay</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <h1>Điểm đến du lịch Việt Nam & Quốc tế</h1>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="shell">
+        <div class="search-row">
+          <label class="search" aria-label="Tìm kiếm địa điểm">
+            <input id="searchInput" type="search" placeholder="Tìm địa điểm, quốc gia, mùa đẹp..." autocomplete="off">
+            <button type="button" onclick="applyFilters()">Tìm</button>
+          </label>
+          <button class="reset-btn" type="button" onclick="resetFilters()">Xoá lọc</button>
+        </div>
+        <div class="chips" id="chips">
+          <button class="chip active" type="button" data-filter="all">Tất cả</button>
+          <button class="chip" type="button" data-filter="vn">Việt Nam</button>
+          <button class="chip" type="button" data-filter="global">Quốc tế</button>
+          <button class="chip" type="button" data-filter="heritage">Di sản</button>
+          <button class="chip" type="button" data-filter="sea">Biển đảo</button>
+          <button class="chip" type="button" data-filter="city">Đô thị</button>
+          <button class="chip" type="button" data-filter="nature">Thiên nhiên</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="viet-nam">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <h2>Việt Nam</h2>
+            <p>Các điểm đến đặc trưng trong nước, ưu tiên landmark, di sản, biển đảo và thành phố có sức hút cao cho chuyến đi ngắn ngày.</p>
+          </div>
+          <div class="section-count" id="vnLabel">8 điểm đến</div>
+        </div>
+        <div class="place-grid" id="vnGrid"></div>
+        <div class="empty" id="vnEmpty" hidden>Không có điểm đến phù hợp trong nhóm Việt Nam.</div>
+      </div>
+    </section>
+
+    <section class="section" id="quoc-te">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <h2>Quốc tế</h2>
+            <p>Với Quốc tế, tôi tách thành 2 lớp: lớp đầu là danh lam / điểm đến tiêu biểu trong từng quốc gia, lớp sau mới là icon quốc gia được vẽ theo cùng ngôn ngữ line.</p>
+          </div>
+          <div class="section-count" id="globalLabel">8 quốc gia</div>
+        </div>
+        <div class="country-grid" id="globalGrid"></div>
+        <div class="empty" id="globalEmpty" hidden>Không có điểm đến phù hợp trong nhóm Quốc tế.</div>
+      </div>
+    </section>
+
+    <div class="shell footer">
+        <small>
+        Bộ icon dùng cùng một stroke MoMo pink, không fill, bối cảnh nền hồng nhạt để giữ cảm giác hệ thống và dễ đọc trong UI catalog.
+      </small>
+      <a class="button secondary" href="/demos/esim-du-lich.html">Đi tiếp sang eSIM Du Lịch</a>
+    </div>
+  </main>
+
+  <script>
+    const vnPlaces = [
+      {
+        group: 'vn',
+        name: 'Hồ Chí Minh',
+        loc: 'TP.HCM',
+        img: 'https://homepage.momocdn.net/img/02-ho-chi-minh-260710132648.png',
+        icon: 'hcm-skyline',
+        desc: 'Đô thị năng động, nightlife, quán cà phê và nhịp sống hiện đại.',
+        tags: ['Đô thị', 'Ẩm thực', 'Mua sắm'],
+        season: 'Quanh năm',
+        from: 'Từ 1.4 tr',
+        meta: 'Miền Nam',
+        filters: ['city'],
+      },
+      {
+        group: 'vn',
+        name: 'Hà Nội',
+        loc: 'Thủ đô',
+        img: 'https://homepage.momocdn.net/img/01-ha-noi-260710132650.png',
+        icon: 'hanoi-lake',
+        desc: 'Phố cổ, hồ, di tích và nhịp sống đô thị cổ kính.',
+        tags: ['Di sản', 'Ẩm thực', 'City break'],
+        season: 'Thu - đông',
+        from: 'Từ 1.5 tr',
+        meta: 'Miền Bắc',
+        filters: ['city', 'heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Hải Phòng',
+        loc: 'Hải Phòng',
+        img: 'https://homepage.momocdn.net/img/03-hai-phong-260710132645.png',
+        icon: 'haiphong-port',
+        desc: 'Thành phố cảng sầm uất, cửa ngõ miền Bắc với di sản phố Pháp và ẩm thực đặc trưng.',
+        tags: ['Đô thị', 'Ẩm thực', 'Di sản'],
+        season: 'Tháng 3 - 9',
+        from: 'Từ 1.3 tr',
+        meta: 'Miền Bắc',
+        filters: ['city', 'heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Hạ Long',
+        loc: 'Quảng Ninh',
+        icon: 'halong-karst',
+        desc: 'Kỳ quan vịnh biển với đảo đá vôi và du thuyền ngắm cảnh.',
+        tags: ['Biển đảo', 'Du thuyền', 'Di sản'],
+        season: 'Tháng 10 - 4',
+        from: 'Từ 1.9 tr',
+        meta: 'Miền Bắc',
+        filters: ['sea', 'heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Đà Lạt',
+        loc: 'Lâm Đồng',
+        icon: 'dalat-pine',
+        desc: 'Khí hậu mát, hồ, rừng thông và các góc chụp ảnh nhẹ nhàng.',
+        tags: ['Thiên nhiên', 'Nghỉ dưỡng', 'Chill'],
+        season: 'Quanh năm',
+        from: 'Từ 1.5 tr',
+        meta: 'Tây Nguyên',
+        filters: ['nature'],
+      },
+      {
+        group: 'vn',
+        name: 'Hội An',
+        loc: 'Quảng Nam',
+        icon: 'hoian-lantern',
+        desc: 'Phố cổ đèn lồng, dạo bộ, cà phê và trải nghiệm văn hoá.',
+        tags: ['Di sản', 'Walkable', 'Đêm'],
+        season: 'Tháng 2 - 8',
+        from: 'Từ 1.6 tr',
+        meta: 'Miền Trung',
+        filters: ['heritage', 'city'],
+      },
+      {
+        group: 'vn',
+        name: 'Huế',
+        loc: 'Thừa Thiên Huế',
+        img: 'https://homepage.momocdn.net/img/06-hue-260710132638.png',
+        icon: 'hue-citadel',
+        desc: 'Kinh thành, lăng tẩm và kiến trúc cung đình đặc trưng.',
+        tags: ['Di sản', 'Lịch sử', 'Văn hoá'],
+        season: 'Tháng 1 - 4',
+        from: 'Từ 1.4 tr',
+        meta: 'Miền Trung',
+        filters: ['heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Đà Nẵng',
+        loc: 'Đà Nẵng',
+        img: 'https://homepage.momocdn.net/img/04-da-nang-260710132642.png',
+        icon: 'danang-bridge',
+        desc: 'Biển, cầu biểu tượng và làm điểm nối cho miền Trung.',
+        tags: ['Biển', 'Đô thị', 'Gia đình'],
+        season: 'Tháng 3 - 8',
+        from: 'Từ 1.7 tr',
+        meta: 'Miền Trung',
+        filters: ['sea', 'city'],
+      },
+      {
+        group: 'vn',
+        name: 'Nha Trang',
+        loc: 'Khánh Hòa',
+        icon: 'nhatrang-coast',
+        desc: 'Dải biển đô thị, tour đảo và hoạt động nghỉ dưỡng.',
+        tags: ['Biển đảo', 'Resort', 'Nắng ấm'],
+        season: 'Tháng 1 - 9',
+        from: 'Từ 1.8 tr',
+        meta: 'Miền Trung',
+        filters: ['sea'],
+      },
+      {
+        group: 'vn',
+        name: 'Cần Thơ',
+        loc: 'Cần Thơ',
+        img: 'https://homepage.momocdn.net/img/05-can-tho-260710132641.png',
+        icon: 'cantho-market',
+        desc: 'Thủ phủ miền Tây với chợ nổi Cái Răng, vườn cây ăn trái và sông nước chằng chịt.',
+        tags: ['Thiên nhiên', 'Ẩm thực', 'Sông nước'],
+        season: 'Tháng 11 - 4',
+        from: 'Từ 1.2 tr',
+        meta: 'Miền Nam',
+        filters: ['nature', 'city'],
+      },
+      {
+        group: 'vn',
+        name: 'Phú Quốc',
+        loc: 'Kiên Giang',
+        icon: 'phuquoc-island',
+        desc: 'Đảo nghỉ dưỡng với bãi biển dài, hoàng hôn và trải nghiệm resort.',
+        tags: ['Biển đảo', 'Resort', 'Hoàng hôn'],
+        season: 'Tháng 11 - 4',
+        from: 'Từ 2.2 tr',
+        meta: 'Miền Nam',
+        filters: ['sea', 'nature'],
+      },
+      {
+        group: 'vn',
+        name: 'An Giang',
+        loc: 'An Giang',
+        img: 'https://homepage.momocdn.net/img/07-an-giang-260710134043.png',
+        icon: 'angiang-temple',
+        desc: 'Vùng đất tâm linh miền Tây với núi Sam, chùa Bà Chúa Xứ và mùa nước nổi sông Mê Kông.',
+        tags: ['Tâm linh', 'Thiên nhiên', 'Sông nước'],
+        season: 'Tháng 10 - 4',
+        from: 'Từ 1.1 tr',
+        meta: 'Miền Nam',
+        filters: ['nature', 'heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Bắc Ninh',
+        loc: 'Bắc Ninh',
+        img: 'https://homepage.momocdn.net/img/08-bac-ninh-260710134032.png',
+        icon: 'bacninh-pagoda',
+        desc: 'Cái nôi của quan họ, đình chùa cổ và làng nghề truyền thống gần Hà Nội.',
+        tags: ['Di sản', 'Văn hoá', 'Làng nghề'],
+        season: 'Quanh năm',
+        from: 'Từ 0.8 tr',
+        meta: 'Miền Bắc',
+        filters: ['heritage', 'city'],
+      },
+      {
+        group: 'vn',
+        name: 'Cà Mau',
+        loc: 'Cà Mau',
+        img: 'https://homepage.momocdn.net/img/09-ca-mau-260710134041.png',
+        icon: 'camau-mangrove',
+        desc: 'Điểm cực Nam của đất nước với rừng đước, vườn quốc gia và hệ sinh thái ngập mặn độc đáo.',
+        tags: ['Thiên nhiên', 'Sinh thái', 'Sông nước'],
+        season: 'Tháng 12 - 4',
+        from: 'Từ 1.3 tr',
+        meta: 'Miền Nam',
+        filters: ['nature', 'sea'],
+      },
+      {
+        group: 'vn',
+        name: 'Cao Bằng',
+        loc: 'Cao Bằng',
+        img: 'https://homepage.momocdn.net/img/10-cao-bang-260710134038.png',
+        icon: 'caobang-falls',
+        desc: 'Thác Bản Giốc hùng vĩ, hang Pác Bó và địa hình núi đá vôi đặc trưng vùng biên giới phía Bắc.',
+        tags: ['Thiên nhiên', 'Di sản', 'Thác nước'],
+        season: 'Tháng 9 - 11',
+        from: 'Từ 1.5 tr',
+        meta: 'Miền Bắc',
+        filters: ['nature', 'heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Đắk Lắk',
+        loc: 'Đắk Lắk',
+        img: 'https://homepage.momocdn.net/img/11-dak-lak-260710134036.png',
+        icon: 'daklak-elephant',
+        desc: 'Thủ phủ Tây Nguyên với hồ Lắk, buôn làng Ê Đê, voi và cà phê đặc sản Ban Mê Thuột.',
+        tags: ['Thiên nhiên', 'Văn hoá', 'Tây Nguyên'],
+        season: 'Tháng 11 - 4',
+        from: 'Từ 1.6 tr',
+        meta: 'Tây Nguyên',
+        filters: ['nature'],
+      },
+      {
+        group: 'vn',
+        name: 'Điện Biên',
+        loc: 'Điện Biên',
+        img: 'https://homepage.momocdn.net/img/12-dien-bien-260710134034.png',
+        icon: 'dienbien-valley',
+        desc: 'Lòng chảo lịch sử Điện Biên Phủ, ruộng bậc thang Mường Phăng và bản làng dân tộc vùng Tây Bắc.',
+        tags: ['Lịch sử', 'Thiên nhiên', 'Văn hoá'],
+        season: 'Tháng 3 - 5',
+        from: 'Từ 1.8 tr',
+        meta: 'Miền Bắc',
+        filters: ['heritage', 'nature'],
+      },
+      {
+        group: 'vn',
+        name: 'Đồng Nai',
+        loc: 'Đồng Nai',
+        img: 'https://homepage.momocdn.net/img/13-dong-nai-260710135453.png',
+        icon: 'dongnai-river',
+        desc: 'Cửa ngõ miền Đông với vườn quốc gia Cát Tiên, thác Giang Điền và làng bưởi Tân Triều.',
+        tags: ['Thiên nhiên', 'Sinh thái', 'Thác nước'],
+        season: 'Tháng 11 - 4',
+        from: 'Từ 0.5 tr',
+        meta: 'Miền Đông',
+        filters: ['nature'],
+      },
+      {
+        group: 'vn',
+        name: 'Đồng Tháp',
+        loc: 'Đồng Tháp',
+        img: 'https://homepage.momocdn.net/img/14-dong-thap-260710135452.png',
+        icon: 'dongthap-lotus',
+        desc: 'Xứ sen hồng với vườn quốc gia Tràm Chim, làng hoa Sa Đéc và mùa nước nổi rực rỡ.',
+        tags: ['Thiên nhiên', 'Sinh thái', 'Sông nước'],
+        season: 'Tháng 9 - 11',
+        from: 'Từ 1.0 tr',
+        meta: 'Miền Nam',
+        filters: ['nature'],
+      },
+      {
+        group: 'vn',
+        name: 'Gia Lai',
+        loc: 'Gia Lai',
+        img: 'https://homepage.momocdn.net/img/15-gia-lai-260710135450.png',
+        icon: 'gialai-plateau',
+        desc: 'Cao nguyên xanh với biển hồ Tơ Nưng, thác Phú Cường và văn hóa cồng chiêng Bahnar, Jarai.',
+        tags: ['Thiên nhiên', 'Văn hoá', 'Tây Nguyên'],
+        season: 'Tháng 11 - 4',
+        from: 'Từ 1.5 tr',
+        meta: 'Tây Nguyên',
+        filters: ['nature'],
+      },
+      {
+        group: 'vn',
+        name: 'Hà Tĩnh',
+        loc: 'Hà Tĩnh',
+        img: 'https://homepage.momocdn.net/img/16-ha-tinh-260710135447.png',
+        icon: 'hatinh-coast',
+        desc: 'Bãi biển Thiên Cầm, Xuân Thành, khu di tích Ngã ba Đồng Lộc và vườn quốc gia Vũ Quang.',
+        tags: ['Biển', 'Lịch sử', 'Thiên nhiên'],
+        season: 'Tháng 4 - 8',
+        from: 'Từ 1.0 tr',
+        meta: 'Miền Trung',
+        filters: ['sea', 'heritage'],
+      },
+      {
+        group: 'vn',
+        name: 'Hưng Yên',
+        loc: 'Hưng Yên',
+        img: 'https://homepage.momocdn.net/img/17-hung-yen-260710135445.png',
+        icon: 'hungyen-longan',
+        desc: 'Xứ nhãn lồng với phố Hiến cổ, đền Chử Đồng Tử và vườn nhãn trĩu quả mùa hè.',
+        tags: ['Di sản', 'Ẩm thực', 'Làng nghề'],
+        season: 'Tháng 7 - 8',
+        from: 'Từ 0.5 tr',
+        meta: 'Miền Bắc',
+        filters: ['heritage', 'city'],
+      },
+      {
+        group: 'vn',
+        name: 'Khánh Hòa',
+        loc: 'Khánh Hòa',
+        img: 'https://homepage.momocdn.net/img/18-khanh-hoa-260710135443.png',
+        icon: 'khanhhoa-bay',
+        desc: 'Vịnh Vân Phong, đảo Bình Ba và tháp Bà Ponagar bên cạnh thành phố biển Nha Trang sôi động.',
+        tags: ['Biển đảo', 'Di sản', 'Resort'],
+        season: 'Tháng 1 - 9',
+        from: 'Từ 1.8 tr',
+        meta: 'Miền Trung',
+        filters: ['sea', 'heritage'],
+      }
+    ];
+
+    const internationalCountries = [
+      {
+        group: 'global',
+        name: 'Thái Lan',
+        loc: 'Bangkok, Chiang Mai, Phuket',
+        icon: 'thailand-stupa',
+        iconLabel: 'Spire + temple outline',
+        iconNote: 'Dựng từ chùa tháp, đường mái cong và nhịp thành phố nhiệt đới.',
+        desc: 'Quốc gia này có thể đọc từ Bangkok, Ayutthaya, Chiang Mai tới Phuket trước khi vẽ icon.',
+        landmarks: ['Bangkok', 'Ayutthaya', 'Chiang Mai', 'Phuket'],
+        tags: ['Đô thị', 'Di sản', 'Biển đảo'],
+        season: 'Tháng 11 - 2',
+        from: 'Từ 1.8 tr',
+        meta: 'Đông Nam Á',
+        filters: ['city', 'heritage', 'sea'],
+      },
+      {
+        group: 'global',
+        name: 'Singapore',
+        loc: 'Marina Bay, Sentosa, Gardens by the Bay',
+        icon: 'singapore-bay',
+        iconLabel: 'Bay skyline outline',
+        iconNote: 'Căn theo skyline gọn, bờ vịnh và cụm kiến trúc xanh.',
+        desc: 'Chọn các mốc Marina Bay, Sentosa và Gardens by the Bay rồi mới chuyển sang icon.',
+        landmarks: ['Marina Bay', 'Sentosa', 'Gardens by the Bay'],
+        tags: ['Đô thị', 'Gia đình', 'Shopping'],
+        season: 'Quanh năm',
+        from: 'Từ 2.1 tr',
+        meta: 'Đông Nam Á',
+        filters: ['city'],
+      },
+      {
+        group: 'global',
+        name: 'Nhật Bản',
+        loc: 'Tokyo, Kyoto, Osaka',
+        icon: 'japan-torii',
+        iconLabel: 'Torii + sun outline',
+        iconNote: 'Dùng torii, mặt trời và nhịp mái cong để tránh lẫn với icon thành phố Việt Nam.',
+        desc: 'Lấy Tokyo, Kyoto, Osaka, núi Phú Sĩ làm lớp tham chiếu trước khi dựng icon.',
+        landmarks: ['Tokyo', 'Kyoto', 'Osaka', 'Mt. Fuji'],
+        tags: ['Đô thị', 'Văn hoá', 'Mùa hoa'],
+        season: 'Xuân - thu',
+        from: 'Từ 4.5 tr',
+        meta: 'Đông Á',
+        filters: ['city', 'heritage'],
+      },
+      {
+        group: 'global',
+        name: 'Hàn Quốc',
+        loc: 'Seoul, Busan, Jeju',
+        icon: 'korea-palace',
+        iconLabel: 'Palace roof outline',
+        iconNote: 'Mái cung điện và mặt trăng giúp icon tách khỏi dạng skyline thông thường.',
+        desc: 'Có Seoul, Busan, Jeju và cung điện trước, sau đó mới chọn hình icon.',
+        landmarks: ['Seoul', 'Busan', 'Jeju'],
+        tags: ['Đô thị', 'Shopping', 'Ẩm thực'],
+        season: 'Xuân - thu',
+        from: 'Từ 3.2 tr',
+        meta: 'Đông Á',
+        filters: ['city', 'heritage'],
+      },
+      {
+        group: 'global',
+        name: 'Pháp',
+        loc: 'Paris, Nice, Provence',
+        icon: 'france-tower',
+        iconLabel: 'Paris tower outline',
+        iconNote: 'Biểu tượng xoay quanh tháp sắt và trục đối xứng nhẹ.',
+        desc: 'Paris, Nice và Provence là lớp định danh trước khi đi vào nét icon.',
+        landmarks: ['Paris', 'Nice', 'Provence'],
+        tags: ['Di sản', 'Kiến trúc', 'Lãng mạn'],
+        season: 'Xuân - thu',
+        from: 'Từ 14 tr',
+        meta: 'Châu Âu',
+        filters: ['heritage', 'city'],
+      },
+      {
+        group: 'global',
+        name: 'Úc',
+        loc: 'Sydney, Melbourne, Great Ocean Road',
+        icon: 'australia-sails',
+        iconLabel: 'Sails + harbor outline',
+        iconNote: 'Dùng cánh buồm, cầu và vịnh để khác hẳn các landmark châu Á.',
+        desc: 'Sydney, Melbourne và Great Ocean Road là dữ liệu đầu vào cho icon.',
+        landmarks: ['Sydney', 'Melbourne', 'Great Ocean Road'],
+        tags: ['Đô thị', 'Biển', 'Biểu tượng'],
+        season: 'Tháng 9 - 4',
+        from: 'Từ 9.5 tr',
+        meta: 'Châu Đại Dương',
+        filters: ['sea', 'city'],
+      },
+      {
+        group: 'global',
+        name: 'UAE',
+        loc: 'Dubai, Abu Dhabi, sa mạc',
+        icon: 'dubai-dunes',
+        iconLabel: 'Dune tower outline',
+        iconNote: 'Mũi tháp kết hợp dải cát để nhận ra ngay bối cảnh sa mạc.',
+        desc: 'Dubai, Abu Dhabi và sa mạc cần được liệt kê trước để icon không bị generic.',
+        landmarks: ['Dubai', 'Abu Dhabi', 'Desert Safari'],
+        tags: ['Đô thị', 'Biểu tượng', 'Luxury'],
+        season: 'Tháng 11 - 3',
+        from: 'Từ 11.2 tr',
+        meta: 'Trung Đông',
+        filters: ['city'],
+      },
+      {
+        group: 'global',
+        name: 'Mỹ',
+        loc: 'New York, Los Angeles, San Francisco',
+        icon: 'usa-skyline',
+        iconLabel: 'Skyline + star outline',
+        iconNote: 'Skyline và ngôi sao tạo cảm giác đô thị khác bộ icon Việt Nam.',
+        desc: 'New York, Los Angeles, San Francisco là bộ landmarks trước khi vẽ.',
+        landmarks: ['New York', 'Los Angeles', 'San Francisco'],
+        tags: ['Đô thị', 'Biểu tượng', 'Culture'],
+        season: 'Xuân - thu',
+        from: 'Từ 16 tr',
+        meta: 'Bắc Mỹ',
+        filters: ['city'],
+      }
+    ];
+
+    const state = { filter: 'all', query: '' };
+    const iconArt = {
+      'hcm-skyline': '<path d="M6 20V11l3-2v11"/><path d="M10 20V8l3 2v10"/><path d="M14 20v-9l3-3v12"/><path d="M4 16h16"/><path d="M7 20c2-2 4.1-3 6-3s4 .9 6 3"/>',
+      'hanoi-lake': '<path d="M6 20h12"/><path d="M8 20V9l4-2 4 2v11"/><path d="M12 5V3"/><path d="M7 14c2-.7 3.9-1 5.8-1s3.8.3 5.8 1"/>',
+      'halong-karst': '<path d="M4 18c2.1-3 3.9-4.5 5.5-4.5 1.2 0 2.1.7 2.9 2 1.4-2.4 3-4 4.8-4 1.9 0 3.6 1.8 5.3 5.5"/><path d="M4 20h16"/>',
+      'dalat-pine': '<path d="M12 5l3 5h-2.2l2.2 4H13l1.6 3"/><path d="M12 5l-3 5h2.2L9 14h2l-1.6 3"/><path d="M6 20h12"/><path d="M8 17c1.2-1.6 2.6-2.4 4-2.4s2.8.8 4 2.4"/>',
+      'hoian-lantern': '<path d="M12 4v2"/><path d="M9 7h6l1.5 3-1.5 6H9L7.5 10z"/><path d="M10 11h4"/><path d="M9.5 18l-.8 2"/><path d="M15.3 18l.8 2"/>',
+      'hue-citadel': '<path d="M5 20h14"/><path d="M7 20V9l2-2h6l2 2v11"/><path d="M10 20v-4h4v4"/><path d="M8 8h8"/>',
+      'danang-bridge': '<path d="M4 17c3-3.2 5.8-4.9 8-4.9s5 1.7 8 4.9"/><path d="M5 17h14"/><path d="M6 20h12"/><path d="M12 10v7"/>',
+      'nhatrang-coast': '<path d="M4 15c2.8-.8 5.1-.8 7 0 1.9.8 4.2.8 7 0"/><path d="M6 20c1.2-2.8 2.7-4.2 4.5-4.2s3.3 1.4 4.5 4.2"/><circle cx="17.5" cy="7.5" r="1.6"/>',
+      'phuquoc-island': '<path d="M5 20h14"/><path d="M8 20c1.2-4.2 3-6.4 4-6.4s2.8 2.2 4 6.4"/><path d="M13.8 12.5c0-1.7 1-3.5 3.2-3.5"/><path d="M15 9l1.6-2.4L17.8 9"/>',
+      'thailand-stupa': '<path d="M12 4l1.7 2.8h-3.4z"/><path d="M9 7h6l1.2 3-1.2 8H9L7.8 10z"/><path d="M10 12h4"/><path d="M8 19h8"/><path d="M12 3v1"/>',
+      'singapore-bay': '<path d="M5 20V10l3-2v12"/><path d="M9 20V8l3 2v10"/><path d="M13 20v-7l4-3v10"/><path d="M4 15h16"/><path d="M10 6c1-1.5 2.4-2.2 4.3-2.2s3.3.7 4.3 2.2"/>',
+      'japan-torii': '<path d="M6 9h12"/><path d="M8 9v9"/><path d="M16 9v9"/><path d="M5 13h14"/><path d="M8 7c1.4-1.5 3.2-2.2 4-2.2s2.6.7 4 2.2"/>',
+      'korea-palace': '<path d="M5 20h14"/><path d="M7 20V9l2-2 2 2 2-2 2 2v11"/><path d="M9 20v-4h6v4"/><path d="M8 8h8"/><path d="M18 6c0 1.1-.9 2-2 2"/>',
+      'france-tower': '<path d="M12 3l1.5 3h-3z"/><path d="M10.4 6h3.2l.8 4h-4.8z"/><path d="M9.2 10h5.6l-.7 4H9.9z"/><path d="M8.2 14h7.6l-.8 6H9z"/><path d="M12 20v-6"/><path d="M6 20h12"/>',
+      'australia-sails': '<path d="M5 20h14"/><path d="M8 19c1.1-4.4 2.3-7.8 3.5-10 1.3 2.2 2.5 5.6 3.5 10"/><path d="M12 7l5 7"/><path d="M14 9l3.5 9"/><path d="M6 15c2-.9 3.8-1.4 6-1.4s4 .5 6 1.4"/>',
+      'dubai-dunes': '<path d="M4 18c3-1.6 5.4-2.3 7.2-2.3 1.8 0 4.2.7 7.2 2.3"/><path d="M7 18c1.6-3.8 3.3-5.8 5-5.8s3.4 2 5 5.8"/><path d="M12 3l1 4h-2z"/><path d="M10.5 7h3l.8 4h-4.6z"/><path d="M12 20v-6"/>',
+      'usa-skyline': '<path d="M5 20V10l3-2v12"/><path d="M9 20V8l3 2v10"/><path d="M13 20v-7l3-3v10"/><path d="M17 20V9l2 1v10"/><path d="M4 16h16"/><path d="M12 5l1 .8L14 5l-.4 1.2.8.8-1.2-.1L12 8l-.2-1.1-1.2.1.8-.8L11 5.8z"/>'
+    };
+
+    function icon(type){
+      const path = iconArt[type] || iconArt['singapore-bay'];
+      return `<span class="mobase-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg></span>`;
+    }
+
+    function card(place){
+      const searchText = (place.name + ' ' + place.loc + ' ' + place.desc + ' ' + place.tags.join(' ') + ' ' + place.meta).toLowerCase();
+      return `
+        <article class="place-card" data-group="${place.group}" data-tags="${place.filters.join(' ')}" data-name="${searchText}">
+          <div class="place-top">
+            <div class="icon-box${place.img ? ' has-photo' : ''}">${place.img ? '<img src="' + place.img + '" alt="' + place.name + '" loading="lazy">' : icon(place.icon)}</div>
+            <div class="place-copy">
+              <div class="place-name">${place.name}</div>
+              <div class="place-loc">${place.loc} · ${place.meta}</div>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function countryCard(country){
+      const searchText = (country.name + ' ' + country.loc + ' ' + country.desc + ' ' + country.tags.join(' ') + ' ' + country.meta + ' ' + country.landmarks.join(' ')).toLowerCase();
+      return `
+        <article class="place-card" data-group="${country.group}" data-tags="${country.filters.join(' ')}" data-name="${searchText}">
+          <div class="place-top">
+            <div class="icon-box">${icon(country.icon)}</div>
+            <div class="place-copy">
+              <div class="place-name">${country.name}</div>
+              <div class="place-loc">${country.loc} · ${country.meta}</div>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function matchesItem(item){
+      const q = state.query.trim().toLowerCase();
+      const text = item.name.toLowerCase() + ' ' + item.loc.toLowerCase() + ' ' + item.desc.toLowerCase() + ' ' + item.tags.join(' ').toLowerCase() + ' ' + item.meta.toLowerCase() + ' ' + (item.landmarks || []).join(' ').toLowerCase();
+      const matchQuery = !q || text.includes(q);
+      const matchGroup = state.filter === 'all' || item.group === state.filter;
+      const matchTag = ['heritage','sea','city','nature'].includes(state.filter) ? item.filters.includes(state.filter) : true;
+      return matchQuery && matchGroup && matchTag;
+    }
+
+    function applyFilters(){
+      state.query = document.getElementById('searchInput').value;
+      render();
+    }
+
+    function resetFilters(){
+      state.filter = 'all';
+      state.query = '';
+      document.getElementById('searchInput').value = '';
+      document.querySelectorAll('.chip').forEach((chip) => chip.classList.toggle('active', chip.dataset.filter === 'all'));
+      render();
+    }
+
+    function render(){
+      const filteredVn = vnPlaces.filter(matchesItem);
+      const filteredGlobal = internationalCountries.filter(matchesItem);
+      const filtered = filteredVn.length + filteredGlobal.length;
+      const vn = filteredVn;
+      const global = filteredGlobal;
+      document.getElementById('vnGrid').innerHTML = vn.map(card).join('');
+      document.getElementById('globalGrid').innerHTML = global.map(countryCard).join('');
+      document.getElementById('vnEmpty').hidden = vn.length > 0;
+      document.getElementById('globalEmpty').hidden = global.length > 0;
+      document.getElementById('vnLabel').textContent = `${vn.length} điểm đến`;
+      document.getElementById('globalLabel').textContent = `${global.length} quốc gia`;
+      const summaryEl = document.getElementById('summaryCount');
+      if (summaryEl) summaryEl.textContent = `${filtered} điểm đến`;
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('chips').addEventListener('click', (event) => {
+      const btn = event.target.closest('.chip');
+      if (!btn) return;
+      state.filter = btn.dataset.filter;
+      document.querySelectorAll('.chip').forEach((chip) => chip.classList.toggle('active', chip === btn));
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2503 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsite Manager - MoSpark</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --pink: #EB2F96;
+    --pink-light: #FFF0F6;
+    --pink-border: #FFADD2;
+    --green: #52C41A;
+    --green-bg: #F6FFED;
+    --green-border: #B7EB8F;
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #E8E8E8;
+    --gray-300: #D9D9D9;
+    --gray-400: #BFBFBF;
+    --gray-500: #8C8C8C;
+    --gray-600: #595959;
+    --gray-700: #434343;
+    --gray-900: #1C171A;
+    --radius: 8px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  body { font-family: var(--font); font-size: 14px; color: var(--gray-900); background: #fff; min-height: 100vh; }
+
+  /* TOP BAR */
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 28px 0; border-bottom: 1px solid var(--gray-200);
+  }
+  .top-left { display: flex; flex-direction: column; gap: 4px; padding-bottom: 16px; }
+  .page-title { font-size: 22px; font-weight: 700; }
+  .page-sub { font-size: 12px; color: var(--gray-500); }
+  .top-right { display: flex; align-items: center; gap: 10px; padding-bottom: 16px; }
+
+  .badge-published {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--green-bg); border: 1px solid var(--green-border);
+    color: #389E0D; font-size: 13px; font-weight: 500;
+    padding: 4px 12px; border-radius: 20px;
+  }
+  .badge-published::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: block; }
+  .badge-draft {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--gray-100); border: 1px solid var(--gray-300);
+    color: var(--gray-600); font-size: 12px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  .btn-icon {
+    width: 32px; height: 32px; border: 1px solid var(--gray-200);
+    background: #fff; border-radius: var(--radius); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; color: var(--gray-500);
+    font-size: 16px; transition: background 0.15s;
+  }
+  .btn-icon:hover { background: var(--gray-100); }
+  .btn-outline {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border: 1px solid var(--gray-300); background: #fff;
+    border-radius: var(--radius); font-size: 13px; font-weight: 500;
+    cursor: pointer; color: var(--gray-700); transition: background 0.15s;
+  }
+  .btn-outline:hover { background: var(--gray-100); }
+  .btn-primary {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; background: var(--pink); border: none;
+    border-radius: var(--radius); font-size: 13px; font-weight: 500;
+    cursor: pointer; color: #fff; transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+
+  /* TABS */
+  .tabs-bar {
+    display: flex; gap: 0; padding: 0 28px;
+    border-bottom: 1px solid var(--gray-200);
+    background: #fff; position: sticky; top: 0; z-index: 10;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 12px 16px; font-size: 13px; font-weight: 500;
+    color: var(--gray-500); border: none; background: none;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color 0.15s; white-space: nowrap; margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--gray-900); }
+  .tab-btn.active { color: var(--gray-900); border-bottom-color: var(--gray-900); }
+  .tab-icon { font-size: 14px; }
+
+  /* CONTENT AREA */
+  .tab-content { display: none; padding: 24px 28px; }
+  .tab-content.active { display: block; }
+
+  /* === TAB 1: THONG TIN === */
+  .thongtin-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+
+  .browser-mock {
+    border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .browser-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-red { background: #FF5F57; }
+  .dot-yellow { background: #FFBD2E; }
+  .dot-green { background: #28C840; }
+  .browser-url {
+    flex: 1; background: #fff; border: 1px solid var(--gray-200);
+    border-radius: 6px; padding: 5px 10px; font-size: 12px; color: var(--gray-600);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .browser-url-icon { font-size: 11px; color: var(--gray-400); }
+  .browser-external { color: var(--gray-400); font-size: 13px; cursor: pointer; }
+  .browser-external:hover { color: var(--pink); }
+
+  .browser-content {
+    background: #EBF8FF;
+    min-height: 480px;
+    overflow: hidden;
+    position: relative;
+  }
+  .site-nav {
+    background: #fff; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .site-logo { display: flex; align-items: center; gap: 8px; }
+  .logo-box {
+    width: 32px; height: 32px; background: var(--pink);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 13px;
+  }
+  .logo-text { font-size: 11px; font-weight: 600; color: var(--gray-900); line-height: 1.2; }
+  .site-nav-links { display: flex; gap: 16px; font-size: 12px; color: var(--gray-600); }
+  .site-nav-links span { cursor: pointer; }
+  .site-nav-links span:hover { color: var(--pink); }
+
+  .site-breadcrumb { padding: 6px 20px; font-size: 11px; color: var(--gray-500); background: #fff; }
+  .site-breadcrumb a { color: var(--gray-400); }
+
+  .site-hero {
+    display: flex; gap: 0; min-height: 200px; background: linear-gradient(135deg, #EBF8FF 0%, #DBEAFE 100%);
+    position: relative; overflow: hidden;
+  }
+  .hero-text { flex: 1; padding: 28px 24px; }
+  .hero-title { font-size: 18px; font-weight: 800; line-height: 1.3; color: var(--gray-900); margin-bottom: 10px; }
+  .hero-desc { font-size: 11px; color: var(--gray-600); line-height: 1.5; margin-bottom: 14px; }
+  .hero-cta {
+    display: inline-block; padding: 8px 16px; background: #fff;
+    border: 1px solid var(--gray-300); border-radius: 6px;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+  }
+  .hero-img {
+    width: 200px; flex-shrink: 0; position: relative;
+    background: linear-gradient(180deg, rgba(100,180,255,0.3) 0%, rgba(100,200,255,0.1) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; overflow: hidden;
+  }
+  .hero-img-svg { width: 140px; height: 140px; }
+  .hero-wave {
+    position: absolute; right: 0; top: 0; bottom: 0; width: 20px;
+    background: repeating-linear-gradient(90deg, rgba(100,180,255,0.4) 0px, rgba(100,180,255,0.4) 3px, transparent 3px, transparent 8px);
+  }
+
+  .site-why {
+    background: #fff; padding: 20px 24px; text-align: center;
+    border-top: 1px solid var(--gray-100);
+  }
+  .site-why-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .site-why-sub { font-size: 10px; color: var(--gray-500); margin-bottom: 14px; }
+  .site-why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .why-item { text-align: center; }
+  .why-icon { font-size: 20px; margin-bottom: 6px; }
+  .why-label { font-size: 10px; font-weight: 600; margin-bottom: 4px; }
+  .why-desc { font-size: 9px; color: var(--gray-500); line-height: 1.4; }
+
+  /* Right panel */
+  .info-panel { display: flex; flex-direction: column; gap: 16px; }
+  .panel-tabs { display: flex; border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
+  .panel-tab {
+    flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 500;
+    text-align: center; cursor: pointer; color: var(--gray-500);
+    background: #fff; border: none; display: flex; align-items: center;
+    justify-content: center; gap: 5px; transition: background 0.15s;
+  }
+  .panel-tab.active { background: var(--gray-100); color: var(--gray-900); }
+  .panel-tab:first-child { border-right: 1px solid var(--gray-200); }
+
+  .info-card { border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
+  .info-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+  }
+  .info-card-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+  .info-card-title-icon { font-size: 15px; }
+  .btn-edit-sm {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--gray-500); cursor: pointer;
+    padding: 4px 8px; border-radius: 6px; border: none; background: none;
+    transition: background 0.15s;
+  }
+  .btn-edit-sm:hover { background: var(--gray-100); color: var(--gray-700); }
+
+  .info-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px; border-bottom: 1px solid var(--gray-100);
+    font-size: 12px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row-label { display: flex; align-items: center; gap: 7px; color: var(--gray-500); font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 0.03em; }
+  .info-row-value { color: var(--gray-800); font-weight: 500; }
+
+  .publish-card { border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
+  .publish-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+  }
+  .publish-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+  .publish-icon { font-size: 16px; color: var(--pink); }
+
+  .url-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-top: 1px solid var(--gray-100);
+  }
+  .url-row-icon { color: var(--gray-400); font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+  .url-row-content { flex: 1; }
+  .url-row-label { font-size: 10px; color: var(--gray-400); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+  .url-row-value { font-size: 13px; font-weight: 500; }
+  .url-live { color: var(--pink); display: flex; align-items: center; gap: 4px; }
+  .url-live-ext { font-size: 11px; }
+
+  /* === TAB 2: CAU TRUC SITE === */
+  .struct-card { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .struct-card-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 16px 20px; border-bottom: 1px solid var(--gray-100);
+    font-weight: 600; font-size: 15px; color: var(--pink);
+  }
+  .struct-card-header-icon { font-size: 16px; }
+
+  .tree-root {
+    display: flex; align-items: center;
+    padding: 14px 20px; background: var(--pink-light);
+    border-bottom: 1px solid var(--pink-border);
+    cursor: pointer;
+  }
+  .tree-root-toggle { color: var(--gray-400); font-size: 11px; margin-right: 8px; }
+  .tree-root-icon { font-size: 16px; color: var(--pink); margin-right: 8px; }
+  .tree-root-name { font-weight: 600; color: var(--pink); font-size: 14px; flex: 1; }
+  .tree-root-slug { font-size: 11px; color: var(--gray-400); font-weight: 400; margin-top: 1px; }
+  .tree-root-name-wrap { display: flex; flex-direction: column; flex: 1; }
+  .drag-handle { color: var(--gray-300); font-size: 14px; margin-left: 4px; cursor: grab; }
+
+  .badge-viewing {
+    background: var(--pink); color: #fff; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; margin-right: 10px;
+  }
+
+  .tree-row {
+    display: flex; align-items: center;
+    padding: 12px 20px 12px 44px;
+    border-bottom: 1px solid var(--gray-100);
+    position: relative;
+  }
+  .tree-row:last-child { border-bottom: none; }
+  .tree-row::before {
+    content: ''; position: absolute;
+    left: 26px; top: 0; bottom: 0; width: 1px;
+    background: var(--gray-200);
+  }
+  .tree-row-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gray-300); border: 1.5px solid var(--gray-400);
+    margin-right: 10px; flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .tree-row-icon { font-size: 14px; margin-right: 8px; }
+  .tree-row-name-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .tree-row-name { font-size: 13px; font-weight: 500; color: var(--gray-900); }
+  .tree-row-slug { font-size: 11px; color: var(--gray-400); }
+  .tree-row-actions { display: flex; align-items: center; gap: 8px; }
+  .icon-btn { color: var(--gray-400); cursor: pointer; font-size: 13px; }
+  .icon-btn:hover { color: var(--gray-700); }
+
+  /* === STRUCT TOOLBAR === */
+  .struct-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--gray-100); gap: 12px;
+  }
+  .filter-chips { display: flex; gap: 6px; }
+  .filter-chip {
+    padding: 4px 12px; font-size: 12px; font-weight: 500; border-radius: 20px;
+    border: 1px solid var(--gray-200); background: #fff; color: var(--gray-500);
+    cursor: pointer; transition: all .15s;
+  }
+  .filter-chip:hover { border-color: var(--pink); color: var(--pink); }
+  .filter-chip.active { background: var(--pink-light); border-color: var(--pink-border); color: var(--pink); font-weight: 600; }
+  .filter-chip .chip-count { font-size: 11px; margin-left: 4px; color: inherit; opacity: .7; }
+  .struct-summary {
+    padding: 8px 20px; font-size: 12px; color: var(--gray-400);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .struct-summary strong { color: var(--gray-600); }
+
+  /* === PAGE ROW DROPDOWN === */
+  .page-menu-wrap { position: relative; }
+  .page-menu {
+    position: absolute; right: 0; top: calc(100% + 4px); z-index: 200;
+    background: #fff; border: 1px solid var(--gray-200); border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.10); min-width: 180px;
+    overflow: hidden; display: none;
+  }
+  .page-menu.open { display: block; }
+  .page-menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; font-size: 13px; color: var(--gray-700);
+    cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+    transition: background .1s;
+  }
+  .page-menu-item:hover { background: var(--gray-50); }
+  .page-menu-item.danger { color: #FF4D4F; }
+  .page-menu-item.danger:hover { background: #FFF1F0; }
+  .page-menu-divider { height: 1px; background: var(--gray-100); margin: 4px 0; }
+  .page-menu-confirm {
+    padding: 10px 14px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .page-menu-confirm-msg { font-size: 12px; color: var(--gray-600); }
+  .page-menu-confirm-btns { display: flex; gap: 6px; }
+  .btn-confirm-yes {
+    padding: 4px 12px; background: #FF4D4F; color: #fff; border: none;
+    border-radius: 6px; font-size: 12px; cursor: pointer;
+  }
+  .btn-confirm-no {
+    padding: 4px 12px; background: var(--gray-100); color: var(--gray-600); border: none;
+    border-radius: 6px; font-size: 12px; cursor: pointer;
+  }
+
+  /* === DRAG STATES === */
+  .tree-row.dragging { opacity: .4; background: var(--gray-50); }
+  .tree-row.drag-over-above { border-top: 2px solid var(--pink); }
+  .tree-row.drag-over-below { border-bottom: 2px solid var(--pink); }
+
+  /* === BADGE STATUS CLICKABLE === */
+  .badge-published.clickable, .badge-draft.clickable { cursor: pointer; transition: opacity .15s; }
+  .badge-published.clickable:hover, .badge-draft.clickable:hover { opacity: .75; }
+
+  /* === ADD PAGE MODAL === */
+  .modal-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .modal-field label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+  .modal-field input, .modal-field select {
+    padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 8px;
+    font-size: 13px; color: var(--gray-900); outline: none;
+    transition: border-color .15s;
+  }
+  .modal-field input:focus, .modal-field select:focus { border-color: var(--pink); }
+  .modal-slug-preview {
+    font-size: 11px; color: var(--gray-400); margin-top: 2px;
+    font-family: monospace;
+  }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  .btn-modal-cancel {
+    padding: 8px 18px; border: 1px solid var(--gray-200); border-radius: 8px;
+    font-size: 13px; background: #fff; color: var(--gray-600); cursor: pointer;
+  }
+  .btn-modal-primary {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    font-size: 13px; background: var(--pink); color: #fff; font-weight: 600; cursor: pointer;
+  }
+  .btn-modal-primary:hover { background: #c40060; }
+  .status-radio-group { display: flex; gap: 12px; }
+  .status-radio { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: var(--gray-700); }
+
+  /* === TAB 3: DASH ANALYTICS === */
+  .analytics-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  }
+  .analytics-sub-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--gray-200); }
+  .analytics-tab {
+    padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--gray-500);
+    border: none; background: none; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s;
+  }
+  .analytics-tab.active { color: var(--gray-900); border-bottom-color: var(--gray-900); }
+  .analytics-controls { display: flex; align-items: center; gap: 8px; }
+  .date-select {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 12px; font-weight: 500; background: #fff; cursor: pointer; color: var(--gray-700);
+  }
+  .btn-sm {
+    padding: 6px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 12px; font-weight: 500; background: #fff; cursor: pointer;
+    color: var(--gray-700); display: flex; align-items: center; gap: 5px;
+    transition: background 0.15s;
+  }
+  .btn-sm:hover { background: var(--gray-100); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .metric-card {
+    border: 1px solid var(--gray-200); border-radius: 10px;
+    padding: 18px 18px 14px; position: relative; overflow: hidden;
+  }
+  .metric-label { font-size: 12px; color: var(--gray-500); font-weight: 500; display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+  .metric-icon-info { color: var(--gray-300); font-size: 12px; }
+  .metric-sparkline { position: absolute; top: 16px; right: 12px; }
+  .metric-val { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .metric-change { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
+  .metric-change.down { color: #F5222D; }
+  .metric-change.up { color: var(--green); }
+
+  /* Sparkline SVG */
+  .sparkline { width: 64px; height: 28px; }
+
+  .chart-card { border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px 24px; }
+  .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+  .chart-wrapper { height: 220px; position: relative; }
+  .chart-legend { display: flex; gap: 20px; justify-content: center; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--gray-500); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* === TAB 4: BLOGS === */
+  .blogs-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .blogs-header-left h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .blogs-header-left p { font-size: 12px; color: var(--gray-500); }
+  .blog-icon { font-size: 16px; color: var(--pink); }
+
+  .blog-table { width: 100%; border-collapse: collapse; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .blog-table th {
+    text-align: left; padding: 11px 16px;
+    font-size: 12px; font-weight: 600; color: var(--gray-500);
+    background: var(--gray-50); border-bottom: 1px solid var(--gray-200);
+  }
+  .blog-table td { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+  .blog-table tr:last-child td { border-bottom: none; }
+  .blog-table tr:hover td { background: var(--gray-50); }
+
+  .blog-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+  .blog-thumb-placeholder {
+    width: 40px; height: 40px; border-radius: 6px; background: var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .blog-title-cell { display: flex; align-items: center; gap: 12px; }
+  .blog-title-text { font-size: 13px; font-weight: 500; max-width: 260px; }
+
+  .tag-manual {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--gray-100); border: 1px solid var(--gray-200);
+    color: var(--gray-600); font-size: 11px; font-weight: 500;
+    padding: 3px 8px; border-radius: 12px; white-space: nowrap;
+  }
+  .tag-ai {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #F0F5FF; border: 1px solid #ADC6FF;
+    color: #2F54EB; font-size: 11px; font-weight: 500;
+    padding: 3px 8px; border-radius: 12px; white-space: nowrap;
+  }
+  .kw-text { font-size: 12px; color: var(--gray-600); }
+  .badge-published-sm {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--green-bg); border: 1px solid var(--green-border);
+    color: #389E0D; font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 12px;
+  }
+  .badge-published-sm::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .badge-draft-sm {
+    display: inline-flex; align-items: center;
+    background: var(--gray-100); border: 1px solid var(--gray-200);
+    color: var(--gray-500); font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 12px;
+  }
+  .ai-cost { font-size: 12px; color: var(--gray-700); font-variant-numeric: tabular-nums; }
+  .dash-text { color: var(--gray-300); font-size: 14px; }
+
+  /* === TAB 5: LLMS CONTENT === */
+  .llms-top {
+    display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px;
+  }
+  .llms-top h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .llms-top p { font-size: 12px; color: var(--gray-500); }
+
+  .llms-layout { display: grid; grid-template-columns: 1fr 1fr 260px; gap: 16px; height: calc(100vh - 240px); min-height: 400px; }
+  .editor-panel { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .editor-toolbar {
+    display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+    padding: 8px 12px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50);
+  }
+  .toolbar-btn {
+    width: 26px; height: 26px; border-radius: 4px; border: none;
+    background: none; cursor: pointer; font-size: 12px; font-weight: 600;
+    color: var(--gray-600); display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s;
+  }
+  .toolbar-btn:hover { background: var(--gray-200); }
+  .toolbar-divider { width: 1px; height: 18px; background: var(--gray-200); margin: 0 4px; }
+  .editor-body {
+    flex: 1; padding: 16px; font-family: 'Courier New', monospace;
+    font-size: 12px; line-height: 1.7; overflow-y: auto;
+    color: var(--gray-700); white-space: pre-wrap; outline: none;
+    background: #fff;
+  }
+  .editor-footer {
+    padding: 8px 12px; border-top: 1px solid var(--gray-100);
+    font-size: 11px; color: var(--gray-400); display: flex; justify-content: space-between;
+    background: var(--gray-50);
+  }
+
+  .preview-panel { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .preview-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); font-size: 12px; color: var(--gray-500); background: var(--gray-50); font-weight: 500; }
+  .preview-body { flex: 1; padding: 16px; overflow-y: auto; font-size: 13px; line-height: 1.7; color: var(--gray-800); }
+  .preview-body h1 { font-size: 18px; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+  .preview-body h2 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+  .preview-body p { margin-bottom: 10px; }
+  .preview-body strong { font-weight: 600; }
+  .preview-body ul, .preview-body ol { padding-left: 20px; margin-bottom: 10px; }
+  .preview-body li { margin-bottom: 4px; }
+  .preview-body blockquote {
+    border-left: 3px solid var(--pink); background: var(--pink-light);
+    padding: 10px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .guide-panel { display: flex; flex-direction: column; gap: 12px; }
+  .guide-card { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .guide-card-header {
+    padding: 12px 16px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100);
+    font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;
+  }
+  .guide-card-header-icon { color: #1890FF; font-size: 14px; }
+  .guide-card-body { padding: 12px 16px; font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+  .guide-card-body a { color: var(--pink); text-decoration: none; }
+  .guide-subtitle { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+  .guide-code { background: var(--gray-900); color: #A0D8FF; padding: 10px 12px; border-radius: 6px; font-family: monospace; font-size: 11px; line-height: 1.6; margin-top: 8px; }
+
+  /* === TAB 6: CHATBOT CONFIG === */
+  .config-section { margin-bottom: 32px; }
+  .config-section-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .config-section-desc { font-size: 12px; color: var(--gray-500); margin-bottom: 20px; }
+  .config-row { display: grid; grid-template-columns: 1fr auto auto; gap: 24px; align-items: start; }
+  .config-field { display: flex; flex-direction: column; gap: 6px; }
+  .config-label { font-size: 13px; font-weight: 500; }
+  .config-input {
+    padding: 9px 12px; border: 1px solid var(--gray-300); border-radius: var(--radius);
+    font-size: 13px; color: var(--gray-900); outline: none; width: 100%;
+    transition: border-color 0.15s;
+  }
+  .config-input:focus { border-color: var(--pink); }
+  .config-select {
+    padding: 9px 32px 9px 12px; border: 1px solid var(--gray-300); border-radius: var(--radius);
+    font-size: 13px; color: var(--gray-900); outline: none; appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 10px center;
+    width: 200px; cursor: pointer;
+  }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; margin-top: 28px; }
+  .toggle {
+    width: 42px; height: 24px; border-radius: 12px; background: var(--pink);
+    position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.2s;
+  }
+  .toggle::after {
+    content: ''; position: absolute; width: 18px; height: 18px;
+    border-radius: 50%; background: #fff; top: 3px; left: 3px;
+    transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 21px; }
+  .toggle-label { font-size: 13px; font-weight: 500; color: var(--pink); }
+
+  /* Theme cards */
+  .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .theme-card {
+    border: 2px solid var(--gray-200); border-radius: 12px; overflow: hidden;
+    cursor: pointer; transition: border-color 0.15s; position: relative;
+  }
+  .theme-card.selected { border-color: var(--pink); }
+  .theme-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; color: #fff; font-size: 11px; font-weight: 600;
+  }
+  .theme-card-header-left { display: flex; align-items: center; gap: 6px; }
+  .theme-avatar { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .theme-actions { display: flex; gap: 6px; color: rgba(255,255,255,0.8); font-size: 13px; }
+  .theme-body { padding: 10px; background: #F5EFE8; min-height: 200px; }
+  .theme-msg-bot { background: #fff; border-radius: 8px; padding: 6px 8px; font-size: 9px; margin-bottom: 6px; max-width: 80%; color: var(--gray-700); }
+  .theme-msg-user { border-radius: 8px; padding: 6px 8px; font-size: 9px; margin-bottom: 6px; max-width: 70%; margin-left: auto; color: #fff; }
+  .theme-chips { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .theme-chip { border: 1px solid currentColor; border-radius: 12px; padding: 2px 7px; font-size: 8px; background: transparent; }
+  .theme-bubble { width: 22px; height: 22px; border-radius: 50%; background: var(--pink); position: absolute; bottom: 10px; right: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; }
+
+  /* Upload zones */
+  .upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+  .upload-zone {
+    border: 1.5px dashed var(--gray-300); border-radius: 10px;
+    padding: 28px; text-align: center; cursor: pointer; transition: border-color 0.15s;
+    background: var(--gray-50);
+  }
+  .upload-zone:hover { border-color: var(--pink); }
+  .upload-zone-icon { font-size: 24px; margin-bottom: 8px; color: var(--gray-400); }
+  .upload-zone-text { font-size: 12px; color: var(--gray-500); }
+  .upload-zone-text strong { color: var(--pink); }
+
+  /* === TAB 7: CHATBOT (live view) === */
+  .chatbot-outer {
+    background: #fff; min-height: calc(100vh - 180px);
+    position: relative; overflow: hidden;
+  }
+  .chatbot-pattern {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='12' fill='none' stroke='%23FFADD2' stroke-width='1.5'/%3E%3Ccircle cx='30' cy='30' r='5' fill='%23FFADD2' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.35;
+  }
+  .chatbot-wrap {
+    max-width: 700px; margin: 0 auto; padding: 40px 24px;
+    position: relative; z-index: 1;
+  }
+  .chatbot-msg-row { display: flex; gap: 12px; margin-bottom: 20px; }
+  .chatbot-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--pink-light); border: 2px solid var(--pink-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .chatbot-msg-content { flex: 1; }
+  .chatbot-name { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--gray-900); }
+  .chatbot-bubble {
+    background: #fff; border: 1px solid var(--gray-200);
+    border-radius: 4px 16px 16px 16px; padding: 12px 16px;
+    font-size: 14px; line-height: 1.6; color: var(--gray-900);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: inline-block;
+    max-width: 560px;
+  }
+  .chatbot-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .chatbot-chip {
+    border: 1.5px solid var(--pink); color: var(--pink); background: #fff;
+    border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .chatbot-chip:hover { background: var(--pink-light); }
+
+  /* Utilities */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-8 { gap: 8px; }
+  .ml-auto { margin-left: auto; }
+  .text-pink { color: var(--pink); }
+  .text-gray { color: var(--gray-500); }
+
+  /* === DROPDOWN MENU === */
+  .dropdown-wrap { position: relative; }
+  .dropdown-menu {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    background: #333; border-radius: 10px; overflow: hidden;
+    min-width: 180px; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+  .dropdown-menu.open { display: block; }
+  .dropdown-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; font-size: 14px; font-weight: 500;
+    color: #fff; cursor: pointer; transition: background 0.12s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .dropdown-item:hover { background: rgba(255,255,255,0.1); }
+  .dropdown-item.pink { color: var(--pink); }
+  .dropdown-item-icon { font-size: 15px; flex-shrink: 0; }
+
+  /* === MODAL OVERLAY === */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 200;
+    align-items: flex-start; justify-content: center; padding-top: 60px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; width: 520px; max-height: 80vh;
+    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-100);
+    position: sticky; top: 0; background: #fff; z-index: 1;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; }
+  .modal-close {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: none; background: var(--gray-100); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--gray-500); transition: background 0.12s;
+  }
+  .modal-close:hover { background: var(--gray-200); }
+  .modal-body { padding: 20px 24px; }
+  .modal-footer {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 10px; padding: 14px 24px 20px;
+    border-top: 1px solid var(--gray-100);
+    position: sticky; bottom: 0; background: #fff;
+  }
+
+  /* Modal form */
+  .form-group { margin-bottom: 20px; }
+  .form-label { font-size: 14px; font-weight: 600; display: block; margin-bottom: 8px; }
+  .form-label .req { color: var(--pink); margin-left: 2px; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); font-size: 14px; color: var(--gray-900);
+    outline: none; transition: border-color 0.15s; font-family: var(--font);
+  }
+  .form-input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(235,47,150,0.08); }
+  .form-textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); font-size: 14px; color: var(--gray-900);
+    outline: none; transition: border-color 0.15s; font-family: var(--font);
+    resize: vertical; min-height: 72px;
+  }
+  .form-textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(235,47,150,0.08); }
+  .form-hint { font-size: 12px; color: var(--gray-500); margin-top: 5px; }
+  .form-select {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); font-size: 14px; color: var(--gray-900);
+    outline: none; appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 14px center;
+    cursor: pointer;
+  }
+  .form-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px; border: 1px solid var(--gray-200); border-radius: var(--radius);
+  }
+  .form-toggle-label { font-size: 14px; font-weight: 600; }
+  .form-toggle-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .form-toggle-switch {
+    width: 44px; height: 26px; border-radius: 13px; background: var(--pink);
+    position: relative; cursor: pointer; flex-shrink: 0;
+  }
+  .form-toggle-switch::after {
+    content: ''; position: absolute; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff; top: 3px; left: 21px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .logo-preview {
+    width: 100%; border: 1px solid var(--gray-200); border-radius: var(--radius);
+    padding: 14px; display: flex; align-items: center; justify-content: center;
+    background: var(--gray-50); min-height: 90px;
+  }
+  .logo-preview-img { width: 60px; height: 60px; border-radius: 10px; background: #1565C0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; }
+
+  /* SEO modal tabs */
+  .seo-tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--gray-100); border-radius: var(--radius); padding: 3px; margin-bottom: 20px; }
+  .seo-tab {
+    padding: 8px; text-align: center; font-size: 13px; font-weight: 500;
+    border-radius: 6px; cursor: pointer; color: var(--gray-500); border: none; background: none; transition: all 0.15s;
+  }
+  .seo-tab.active { background: #fff; color: var(--gray-900); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  .status-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--pink-light); border: 1px solid var(--pink-border);
+    border-radius: var(--radius); margin-bottom: 20px;
+  }
+  .status-banner-left { display: flex; align-items: center; gap: 8px; }
+  .status-banner-icon { font-size: 16px; color: var(--pink); }
+  .status-banner-title { font-size: 14px; font-weight: 600; }
+  .status-banner-desc { font-size: 12px; color: var(--gray-500); }
+  .status-banner-select {
+    display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 13px; font-weight: 500; background: #fff; cursor: pointer;
+    color: var(--green); white-space: nowrap;
+  }
+
+  .slug-field-wrap { position: relative; }
+  .slug-check { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--green); font-size: 16px; }
+  .slug-url-preview { font-size: 12px; color: var(--gray-400); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+  .slug-url-preview code { color: var(--gray-600); font-size: 12px; font-family: monospace; }
+
+  .char-count { font-size: 12px; color: var(--gray-400); margin-left: 6px; }
+  .char-count.warn { color: #FA8C16; }
+
+  .keyword-tags-wrap {
+    min-height: 42px; padding: 6px 10px; border: 1px solid var(--gray-200);
+    border-radius: var(--radius); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; cursor: text;
+    transition: border-color 0.15s;
+  }
+  .keyword-tags-wrap:focus-within { border-color: var(--pink); }
+  .kw-tag {
+    display: flex; align-items: center; gap: 4px; background: var(--gray-100);
+    border: 1px solid var(--gray-200); border-radius: 6px; padding: 2px 8px;
+    font-size: 12px; color: var(--gray-700); font-weight: 500;
+  }
+  .kw-tag-del { cursor: pointer; color: var(--gray-400); font-size: 11px; line-height: 1; }
+  .kw-tag-del:hover { color: var(--gray-700); }
+  .kw-input {
+    border: none; outline: none; font-size: 13px; font-family: var(--font);
+    color: var(--gray-900); background: transparent; min-width: 80px; flex: 1;
+  }
+  .kw-hint { font-size: 12px; color: var(--gray-400); margin-top: 5px; }
+
+  .serp-preview {
+    border: 1px solid var(--gray-200); border-radius: var(--radius);
+    padding: 14px 16px; background: #fff; margin-top: 10px;
+  }
+  .serp-url { font-size: 12px; color: #006621; margin-bottom: 2px; }
+  .serp-title { font-size: 16px; color: #1a0dab; margin-bottom: 3px; font-weight: 400; cursor: pointer; }
+  .serp-title:hover { text-decoration: underline; }
+  .serp-desc { font-size: 13px; color: #545454; line-height: 1.5; }
+
+  .og-preview {
+    border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; margin-top: 8px;
+  }
+  .og-img { width: 100%; height: 160px; object-fit: cover; background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); display: flex; align-items: center; justify-content: center; }
+  .og-img-placeholder { text-align: center; }
+  .og-img-placeholder .og-headline { font-size: 20px; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; }
+  .og-img-placeholder .og-headline span { background: #FF5722; color: #fff; padding: 0 4px; border-radius: 3px; }
+  .og-img-placeholder .og-sub { font-size: 13px; color: var(--gray-600); }
+  .og-meta { padding: 10px 14px; background: var(--gray-50); border-top: 1px solid var(--gray-200); }
+  .og-meta-url { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.04em; }
+  .og-meta-title { font-size: 14px; font-weight: 600; color: var(--gray-900); margin-top: 2px; }
+  .og-meta-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .lucide { width: 15px; height: 15px; stroke-width: 1.8; vertical-align: middle; flex-shrink: 0; }
+  .lucide-lg { width: 17px; height: 17px; stroke-width: 1.8; vertical-align: middle; flex-shrink: 0; }
+  .lucide-sm { width: 13px; height: 13px; stroke-width: 1.8; vertical-align: middle; flex-shrink: 0; }
+</style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-left">
+  <a href="/lab.html" target="_top" style="font-size:12px;color:#8C8C8C;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-bottom:6px;transition:color .15s;" onmouseover="this.style.color='#1C171A'" onmouseout="this.style.color='#8C8C8C'"><i data-lucide="arrow-left" class="lucide-sm"></i> Lab</a>
+    <div class="page-title">Phạt nguội</div>
+    <div class="page-sub">Microsite Phạt Nguội (https://www.momo.vn/phat-nguoi/sitemap.xml)</div>
+  </div>
+  <div class="top-right">
+    <div class="badge-published">Published</div>
+    <div class="dropdown-wrap">
+      <button class="btn-icon" title="More options" onclick="toggleDropdown(event)"><i data-lucide="more-horizontal" class="lucide"></i></button>
+      <div class="dropdown-menu" id="top-dropdown">
+        <button class="dropdown-item" onclick="closeDropdown(); openModal('modal-edit-general')">
+          <i data-lucide="pencil" class="lucide"></i> Edit general
+        </button>
+        <button class="dropdown-item" onclick="closeDropdown()">
+          <i data-lucide="copy" class="lucide"></i> Copy content
+        </button>
+        <button class="dropdown-item pink" onclick="closeDropdown(); openModal('modal-seo')">
+          <i data-lucide="rocket" class="lucide" style="color:var(--pink)"></i> Update SEO
+        </button>
+      </div>
+    </div>
+    <button class="btn-outline">
+      <i data-lucide="eye" class="lucide"></i> Preview
+      <i data-lucide="external-link" class="lucide-sm" style="color:var(--gray-400)"></i>
+    </button>
+    <button class="btn-primary">
+      <i data-lucide="pencil" class="lucide"></i> Edit page
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: EDIT GENERAL -->
+<div class="modal-overlay" id="modal-edit-general" onclick="handleOverlayClick(event, 'modal-edit-general')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">Chỉnh sửa thông tin trang</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-general')"><i data-lucide="x" class="lucide"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tiêu đề trang</label>
+        <input class="form-input" type="text" value="Phạt nguội" id="general-title">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mô tả</label>
+        <input class="form-input" type="text" value="Microsite Phạt Nguội (https://www.momo.vn/phat-nguoi/sitemap.xml)" id="general-desc">
+        <div class="form-hint">Mô tả tóm tắt mục đích hoặc nội dung của trang.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Module Microsite</label>
+        <select class="form-select" id="general-module">
+          <option selected>Kiểm tra Phạt nguội</option>
+          <option>Bảo hiểm xe máy</option>
+          <option>Bảo hiểm ô tô</option>
+          <option>Vay nhanh</option>
+          <option>Ví trả sau (BNPL)</option>
+          <option>Báo cáo lừa đảo</option>
+          <option>CIC Score</option>
+          <option>eSIM du lịch</option>
+        </select>
+        <div class="form-hint">Phân loại nghiệp vụ chính của Microsite này.</div>
+      </div>
+      <div class="form-group">
+        <div class="form-toggle-row">
+          <div>
+            <div class="form-toggle-label">Hiển thị trên Menu</div>
+            <div class="form-toggle-desc">Bật để người dùng có thể thấy liên kết này trên thanh điều hướng.</div>
+          </div>
+          <div class="form-toggle-switch" onclick="this.style.background=this.style.background==='' || this.style.background==='var(--pink)' ? 'var(--gray-300)' : 'var(--pink)'"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Logo</label>
+        <div class="form-label" style="font-weight:400;font-size:13px;margin-bottom:8px;color:var(--gray-600);">Logo URL</div>
+        <div class="logo-preview">
+          <div class="logo-preview-img"><i data-lucide="image" class="lucide" style="width:24px;height:24px;stroke-width:1.5;color:#bbb;"></i></div>
+        </div>
+        <div class="form-hint" style="margin-top:8px;">URL hình ảnh logo hiển thị trên header microsite.</div>
+        <input class="form-input" type="text" placeholder="https://..." style="margin-top:8px;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeModal('modal-edit-general')">Hủy bỏ</button>
+      <button class="btn-primary" onclick="saveGeneral()">Lưu thay đổi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: UPDATE SEO -->
+<div class="modal-overlay" id="modal-seo" onclick="handleOverlayClick(event, 'modal-seo')">
+  <div class="modal" style="width:560px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">Edit MoSpark Page SEO</span>
+      <button class="modal-close" onclick="closeModal('modal-seo')"><i data-lucide="x" class="lucide"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="seo-tabs">
+        <button class="seo-tab active" id="seo-tab-basic" onclick="switchSeoTab('basic')">Basic Information</button>
+        <button class="seo-tab" id="seo-tab-advanced" onclick="switchSeoTab('advanced')">Advanced SEO</button>
+      </div>
+
+      <!-- Basic tab -->
+      <div id="seo-panel-basic">
+        <div class="status-banner">
+          <div class="status-banner-left">
+            <i data-lucide="rocket" class="lucide-lg" style="color:var(--pink)"></i>
+            <div>
+              <div class="status-banner-title">Public website status</div>
+              <div class="status-banner-desc">Page is live and publicly accessible via slug.</div>
+            </div>
+          </div>
+          <div class="status-banner-select"><i data-lucide="globe" class="lucide-sm"></i> Đã xuất bản <i data-lucide="chevron-down" class="lucide-sm"></i></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Slug <span class="req">*</span></label>
+          <div class="slug-field-wrap">
+            <input class="form-input" type="text" value="phat-nguoi" id="seo-slug" oninput="updateSerp()" style="padding-right:36px;">
+            <span class="slug-check"><i data-lucide="check" class="lucide-sm"></i></span>
+          </div>
+          <div class="slug-url-preview">
+            <i data-lucide="copy" class="lucide-sm"></i>
+            <span>URL: </span><code id="serp-url-slug">https://www.momo.vn/phat-nguoi</code>
+          </div>
+          <div class="form-hint">URL-friendly identifier. This will be your public URL path.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
+            <span>SEO &amp; Social Sharing</span>
+          </label>
+          <label class="form-label" style="font-weight:500;font-size:13px;margin-bottom:6px;">
+            Title <span class="req">*</span> <span class="char-count" id="seo-title-count">(38/60)</span>
+          </label>
+          <input class="form-input" type="text" id="seo-title" value="Tra Cứu Phạt Nguội Toàn Quốc Trên MoMo" oninput="updateSerp(); updateCharCount('seo-title', 60, 'seo-title-count')">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:500;font-size:13px;margin-bottom:6px;">
+            Description <span class="req">*</span> <span class="char-count" id="seo-desc-count">(141/160)</span>
+          </label>
+          <textarea class="form-textarea" id="seo-desc" rows="3" oninput="updateSerp(); updateCharCount('seo-desc', 160, 'seo-desc-count')">Kiểm tra phạt nguội 2026 nhanh chóng trên MoMo từ dữ liệu từ Cục CSGT, kết quả trong 5 giây. Nhận cảnh báo tự động và nộp phạt ngay trên app.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:500;font-size:13px;margin-bottom:6px;">Keywords</label>
+          <div class="keyword-tags-wrap" onclick="document.getElementById('kw-input').focus()">
+            <div class="kw-tag">Tra Cứu Phạt Nguội <span class="kw-tag-del" onclick="removeKeyword(this)"><i data-lucide="x" class="lucide-sm"></i></span></div>
+            <div class="kw-tag">Tra Cứu Phạt Nguội Toàn Quốc <span class="kw-tag-del" onclick="removeKeyword(this)"><i data-lucide="x" class="lucide-sm"></i></span></div>
+            <input class="kw-input" id="kw-input" placeholder="" onkeydown="handleKwInput(event)">
+          </div>
+          <div class="kw-hint">List of keywords for SEO. Press Enter or comma to add.</div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:500;color:var(--gray-600);margin-bottom:6px;">SERP Preview</div>
+          <div class="serp-preview">
+            <div class="serp-url" id="serp-url">https://www.momo.vn/phat-nguoi</div>
+            <div class="serp-title" id="serp-title">Tra Cứu Phạt Nguội Toàn Quốc Trên MoMo</div>
+            <div class="serp-desc" id="serp-desc">Kiểm tra phạt nguội 2026 nhanh chóng trên MoMo từ dữ liệu từ Cục CSGT, kết quả trong 5 giây. Nhận cảnh báo tự động và nộp phạt ngay trên app.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:500;font-size:13px;margin-bottom:6px;">OG Image URL</label>
+          <input class="form-input" type="text" placeholder="https://..." style="margin-bottom:8px;" value="https://homepage.momocdn.net/img/og-phat-nguoi.jpg">
+          <div class="og-preview">
+            <div class="og-img">
+              <div class="og-img-placeholder">
+                <div class="og-headline">Đừng mất cảnh giác<br>với <span>phạt nguội</span></div>
+                <div class="og-sub">Tra ngay tin từ Cục CSGT!</div>
+              </div>
+            </div>
+            <div class="og-meta">
+              <div class="og-meta-url">momo.vn</div>
+              <div class="og-meta-title" id="og-title">Tra Cứu Phạt Nguội Toàn Quốc Trên MoMo</div>
+              <div class="og-meta-desc" id="og-desc">Kiểm tra phạt nguội 2026 nhanh chóng trên MoMo từ dữ liệu từ Cục CSGT...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced tab -->
+      <div id="seo-panel-advanced" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Canonical URL</label>
+          <input class="form-input" type="text" value="https://www.momo.vn/phat-nguoi">
+          <div class="form-hint">Đặt canonical nếu trang này có nội dung trùng lặp với URL khác.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Robots directive</label>
+          <select class="form-select">
+            <option selected>index, follow</option>
+            <option>noindex, follow</option>
+            <option>index, nofollow</option>
+            <option>noindex, nofollow</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Schema markup</label>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox" checked> WebPage</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox" checked> BreadcrumbList</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox" checked> FAQPage</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox"> HowTo</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox"> SoftwareApplication</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sitemap priority</label>
+          <select class="form-select">
+            <option>0.5 (default)</option>
+            <option selected>0.8 (high)</option>
+            <option>1.0 (max)</option>
+            <option>0.3 (low)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Change frequency</label>
+          <select class="form-select">
+            <option>always</option>
+            <option>hourly</option>
+            <option>daily</option>
+            <option selected>weekly</option>
+            <option>monthly</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeModal('modal-seo')">Cancel</button>
+      <button class="btn-primary" onclick="closeModal('modal-seo')">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABS BAR -->
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('thongtin', this)">
+    <i data-lucide="file-text" class="lucide tab-icon"></i> Thông tin
+  </button>
+  <button class="tab-btn" onclick="switchTab('cautruc', this)">
+    <i data-lucide="network" class="lucide tab-icon"></i> Cấu trúc site
+  </button>
+  <button class="tab-btn" onclick="switchTab('analytics', this)">
+    <i data-lucide="bar-chart-2" class="lucide tab-icon"></i> Dash Analytics
+  </button>
+  <button class="tab-btn" onclick="switchTab('blogs', this)">
+    <i data-lucide="book-open" class="lucide tab-icon"></i> Blogs
+  </button>
+  <button class="tab-btn" onclick="switchTab('llms', this)">
+    <i data-lucide="sparkles" class="lucide tab-icon"></i> LLMS Content
+  </button>
+  <button class="tab-btn" onclick="switchTab('chatbot-config', this)">
+    <i data-lucide="settings-2" class="lucide tab-icon"></i> Chatbot Config
+  </button>
+  <button class="tab-btn" onclick="switchTab('chatbot', this)">
+    <i data-lucide="message-circle" class="lucide tab-icon"></i> Chatbot
+  </button>
+</div>
+
+<!-- TAB 1: THONG TIN -->
+<div id="tab-thongtin" class="tab-content active">
+  <div class="thongtin-layout">
+    <!-- Left: Browser preview -->
+    <div class="browser-mock">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-url">
+          <i data-lucide="lock" class="lucide-sm browser-url-icon"></i>
+          https://www.momo.vn/phat-nguoi
+        </div>
+        <i data-lucide="external-link" class="lucide-sm browser-external"></i>
+      </div>
+      <div class="browser-content">
+        <div class="site-nav">
+          <div class="site-logo">
+            <div class="logo-box">mo</div>
+            <div class="logo-text">Tra cứu<br>Phạt nguội</div>
+          </div>
+          <div class="site-nav-links">
+            <span>Tra cứu <i data-lucide="chevron-down" class="lucide-sm"></i></span>
+            <span>Tiện ích</span>
+            <span>Hỏi đáp</span>
+            <span>Blog</span>
+          </div>
+        </div>
+        <div class="site-breadcrumb"><i data-lucide="home" class="lucide-sm"></i> › Phạt Nguội</div>
+        <div class="site-hero">
+          <div class="hero-text">
+            <div class="hero-title">Tra cứu Phạt nguội trên MoMo - Nhanh, Chính Xác, Miễn phí</div>
+            <div class="hero-desc">1.800+ Camera AI phạt nguội trên toàn quốc. Hơn <strong>1.000.000+</strong> người dùng đã tin tưởng tra cứu cùng MoMo.</div>
+            <div class="hero-cta">TRA CỨU NGAY</div>
+          </div>
+          <div class="hero-img">
+            <svg class="hero-img-svg" viewBox="0 0 140 140" fill="none">
+              <rect x="20" y="40" width="60" height="40" rx="6" fill="#1890FF" opacity="0.8"/>
+              <circle cx="35" cy="90" r="10" fill="#333"/>
+              <circle cx="65" cy="90" r="10" fill="#333"/>
+              <rect x="55" y="25" width="30" height="20" rx="3" fill="#555"/>
+              <circle cx="70" cy="18" r="5" fill="#888"/>
+              <rect x="0" y="85" width="140" height="8" fill="#888" opacity="0.3"/>
+            </svg>
+            <div class="hero-wave"></div>
+          </div>
+        </div>
+        <div class="site-why">
+          <div class="site-why-title">Tại sao nên chọn <span style="color:var(--pink);font-style:italic">Tra cứu phạt nguội</span> trên MoMo?</div>
+          <div class="site-why-sub">Chuẩn xác - Nhanh chóng - Cập nhật mới nhất</div>
+          <div class="site-why-grid">
+            <div class="why-item">
+              <div class="why-icon"><i data-lucide="zap" class="lucide"></i></div>
+              <div class="why-label">Mới nhất &amp; chính xác</div>
+              <div class="why-desc">Dữ liệu chính thống, Cập nhật 24/7 Kết nối trực tiếp Cục CSGT &amp; Trung tâm đăng kiểm Việt Nam.</div>
+            </div>
+            <div class="why-item">
+              <div class="why-icon"><i data-lucide="shield" class="lucide"></i></div>
+              <div class="why-label">Bảo mật dữ liệu</div>
+              <div class="why-desc">Tra cứu riêng tư, Dữ liệu mã hoá tuyệt đối. Không lưu trữ, không chia sẻ, không quảng cáo.</div>
+            </div>
+            <div class="why-item">
+              <div class="why-icon"><i data-lucide="bell" class="lucide"></i></div>
+              <div class="why-label">Cảnh báo tự động</div>
+              <div class="why-desc">Cảnh báo tức thì ngay khi hệ thống Cục CSGT ghi nhận. Xử lý sớm, tránh phạt trể.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Info panel -->
+    <div class="info-panel">
+      <div class="panel-tabs">
+        <button class="panel-tab active" onclick="switchPanelTab('general', this)"><i data-lucide="file-text" class="lucide-sm"></i> General</button>
+        <button class="panel-tab" onclick="switchPanelTab('seo', this)"><i data-lucide="search" class="lucide-sm"></i> SEO</button>
+      </div>
+
+      <div id="panel-general">
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-title"><span class="info-card-title-icon"><i data-lucide="file-text" class="lucide-sm"></i></span> Thông tin</div>
+            <button class="btn-edit-sm"><i data-lucide="pencil" class="lucide-sm"></i> Edit general</button>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label"><i data-lucide="clock" class="lucide-sm"></i> LAST UPDATED</span>
+            <span class="info-row-value">Jul 6, 2026</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label"><i data-lucide="calendar" class="lucide-sm"></i> CREATED</span>
+            <span class="info-row-value">May 8, 2026</span>
+          </div>
+        </div>
+
+        <div class="publish-card">
+          <div class="publish-header">
+            <div class="publish-title"><span class="publish-icon"><i data-lucide="rocket" class="lucide-sm"></i></span> Publish</div>
+            <div class="badge-published">Published</div>
+          </div>
+          <div class="url-row">
+            <span class="url-row-icon"><i data-lucide="link" class="lucide-sm"></i></span>
+            <div class="url-row-content">
+              <div class="url-row-label">URL LIVE</div>
+              <div class="url-row-value url-live">
+                phat-nguoi <span class="url-live-ext"><i data-lucide="external-link" class="lucide-sm"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="url-row">
+            <span class="url-row-icon"><i data-lucide="calendar" class="lucide-sm"></i></span>
+            <div class="url-row-content">
+              <div class="url-row-label">PUBLISHED AT</div>
+              <div class="url-row-value">Jul 6, 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-seo" style="display:none;">
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-title"><span class="info-card-title-icon"><i data-lucide="search" class="lucide-sm"></i></span> SEO Metadata</div>
+            <button class="btn-edit-sm"><i data-lucide="pencil" class="lucide-sm"></i> Edit SEO</button>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">META TITLE</span>
+            <span class="info-row-value" style="font-size:11px;max-width:160px;text-align:right;color:var(--gray-600)">Tra Cứu Phạt Nguội - Nhanh, Chính Xác...</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">META DESC</span>
+            <span class="info-row-value" style="font-size:11px;max-width:160px;text-align:right;color:var(--gray-600)">Tra cứu phạt nguội xe máy, ô tô...</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">CANONICAL</span>
+            <span class="info-row-value" style="font-size:11px;color:var(--pink)">momo.vn/phat-nguoi</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">SITEMAP</span>
+            <div class="badge-published-sm">Included</div>
+          </div>
+          <div class="info-row">
+            <span class="info-row-label">ROBOTS</span>
+            <span class="info-row-value" style="font-size:11px;">index, follow</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: CAU TRUC SITE -->
+<div id="tab-cautruc" class="tab-content">
+  <div class="struct-card" id="struct-card"></div>
+</div>
+
+<!-- ADD PAGE MODAL -->
+<div class="modal-overlay" id="modal-add-page" onclick="if(event.target===this)closeModal('modal-add-page')">
+  <div class="modal-box" style="max-width:460px;">
+    <div class="modal-header">
+      <span class="modal-title"><i data-lucide="plus-circle" class="lucide-sm"></i> Thêm trang mới</span>
+      <button class="modal-close" onclick="closeModal('modal-add-page')"><i data-lucide="x" class="lucide"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <label>Tên trang</label>
+        <input type="text" id="ap-name" placeholder="VD: Xe Máy Điện" oninput="updateAddPageSlug()">
+      </div>
+      <div class="modal-field">
+        <label>URL Slug</label>
+        <input type="text" id="ap-slug" placeholder="xe-may-dien">
+        <div class="modal-slug-preview" id="ap-slug-preview">phat-nguoi/</div>
+      </div>
+      <div class="modal-field">
+        <label>Trang cha</label>
+        <select id="ap-parent">
+          <option value="root">Phạt nguội (root)</option>
+          <option value="blog">Blog Phạt Nguội</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Template</label>
+        <select id="ap-template">
+          <option value="page">Standard Page</option>
+          <option value="blog">Blog Listing</option>
+          <option value="hub">Hub / Landing</option>
+          <option value="tool">Utility Tool</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Trạng thái</label>
+        <div class="status-radio-group">
+          <label class="status-radio"><input type="radio" name="ap-status" value="draft" checked> Draft</label>
+          <label class="status-radio"><input type="radio" name="ap-status" value="published"> Published</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeModal('modal-add-page')">Hủy</button>
+        <button class="btn-modal-primary" onclick="addNewPage()"><i data-lucide="plus" class="lucide-sm"></i> Tạo trang</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: DASH ANALYTICS -->
+<div id="tab-analytics" class="tab-content">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+    <div class="analytics-sub-tabs">
+      <button class="analytics-tab active" onclick="switchAnalyticsTab('overview', this)">Overview</button>
+      <button class="analytics-tab" onclick="switchAnalyticsTab('audience', this)">Audience</button>
+      <button class="analytics-tab" onclick="switchAnalyticsTab('acquisition', this)">Acquisition</button>
+      <button class="analytics-tab" onclick="switchAnalyticsTab('product', this)">Product Performance</button>
+    </div>
+    <div class="analytics-controls">
+      <div class="date-select">Last 24 hours <i data-lucide="chevron-down" class="lucide-sm"></i></div>
+      <button class="btn-sm"><i data-lucide="calendar" class="lucide-sm"></i> Custom</button>
+      <button class="btn-sm"><i data-lucide="refresh-cw" class="lucide-sm"></i> Refresh</button>
+    </div>
+  </div>
+
+  <div id="analytics-overview" style="margin-top:20px;">
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label"><i data-lucide="users" class="lucide-sm"></i> Visitors <span class="metric-icon-info"><i data-lucide="info" class="lucide-sm"></i></span>
+          <div class="metric-sparkline">
+            <svg class="sparkline" viewBox="0 0 64 28">
+              <polyline points="0,22 10,20 20,18 30,16 40,14 50,18 64,22" fill="none" stroke="#FFADD2" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="metric-val">2.4K</div>
+        <div class="metric-change down"><i data-lucide="trending-down" class="lucide-sm"></i> -2.5% vs prev period</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label"><i data-lucide="eye" class="lucide-sm"></i> Pageviews <span class="metric-icon-info"><i data-lucide="info" class="lucide-sm"></i></span>
+          <div class="metric-sparkline">
+            <svg class="sparkline" viewBox="0 0 64 28">
+              <polyline points="0,20 10,18 20,16 30,14 40,12 50,10 64,8" fill="none" stroke="#FFADD2" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="metric-val">3.9K</div>
+        <div class="metric-change up"><i data-lucide="trending-up" class="lucide-sm"></i> +7.7% vs prev period</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label"><i data-lucide="arrow-up-right" class="lucide-sm"></i> Bounce rate <span class="metric-icon-info"><i data-lucide="info" class="lucide-sm"></i></span>
+          <div class="metric-sparkline">
+            <svg class="sparkline" viewBox="0 0 64 28">
+              <polyline points="0,10 10,12 20,14 30,16 40,14 50,12 64,10" fill="none" stroke="#FFADD2" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="metric-val">86%</div>
+        <div class="metric-change up"><i data-lucide="trending-up" class="lucide-sm"></i> -2.2% vs prev period</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label"><i data-lucide="clock" class="lucide-sm"></i> Avg. duration <span class="metric-icon-info"><i data-lucide="info" class="lucide-sm"></i></span>
+          <div class="metric-sparkline">
+            <svg class="sparkline" viewBox="0 0 64 28">
+              <polyline points="0,24 10,20 20,16 30,14 40,10 50,8 64,6" fill="none" stroke="#FFADD2" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="metric-val">1m 36s</div>
+        <div class="metric-change up"><i data-lucide="trending-up" class="lucide-sm"></i> +43.4% vs prev period</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Traffic over time <span style="font-size:12px;color:var(--gray-400);"><i data-lucide="info" class="lucide-sm"></i></span></div>
+      <div class="chart-wrapper">
+        <canvas id="trafficChart" style="width:100%;height:220px;"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#FFADD2;"></div> Views</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--pink);"></div> Visitors</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="analytics-audience" style="margin-top:20px;display:none;">
+    <div style="text-align:center;padding:60px;color:var(--gray-400);">
+      <div style="margin-bottom:12px;"><i data-lucide="users" class="lucide" style="width:32px;height:32px;stroke-width:1.5;"></i></div>
+      <div style="font-size:14px;font-weight:500;">Audience analytics</div>
+      <div style="font-size:12px;margin-top:6px;">Demographics, device breakdown, new vs returning</div>
+    </div>
+  </div>
+  <div id="analytics-acquisition" style="margin-top:20px;display:none;">
+    <div style="text-align:center;padding:60px;color:var(--gray-400);">
+      <div style="margin-bottom:12px;"><i data-lucide="link" class="lucide" style="width:32px;height:32px;stroke-width:1.5;"></i></div>
+      <div style="font-size:14px;font-weight:500;">Acquisition breakdown</div>
+      <div style="font-size:12px;margin-top:6px;">Organic, Direct, Referral, Social sources</div>
+    </div>
+  </div>
+  <div id="analytics-product" style="margin-top:20px;display:none;">
+    <div style="text-align:center;padding:60px;color:var(--gray-400);">
+      <div style="margin-bottom:12px;"><i data-lucide="bar-chart-2" class="lucide" style="width:32px;height:32px;stroke-width:1.5;"></i></div>
+      <div style="font-size:14px;font-weight:500;">Product performance</div>
+      <div style="font-size:12px;margin-top:6px;">Conversion events, CTA clicks, App installs</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: BLOGS -->
+<div id="tab-blogs" class="tab-content">
+  <div class="blogs-header">
+    <div class="blogs-header-left">
+      <h2><i data-lucide="book-open" class="lucide blog-icon"></i> Blogs &amp; Số liệu AI</h2>
+      <p>Quản lý các bài viết blog thuộc Microsite này và theo dõi hiệu suất nội dung AI.</p>
+    </div>
+    <button class="btn-primary">+ Tạo bài viết</button>
+  </div>
+
+  <table class="blog-table">
+    <thead>
+      <tr>
+        <th style="width:340px;">Bài viết</th>
+        <th>Cách tạo</th>
+        <th>Từ khóa</th>
+        <th>Trạng thái</th>
+        <th>Chi phí AI (ước tính) <i data-lucide="info" class="lucide-sm"></i></th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody id="blog-tbody"></tbody>
+  </table>
+</div>
+
+<!-- TAB 5: LLMS CONTENT -->
+<div id="tab-llms" class="tab-content">
+  <div class="llms-top">
+    <div>
+      <h2><i data-lucide="sparkles" class="lucide" style="color:var(--pink);"></i> Quản lý LLMS Content</h2>
+      <p>Soạn thảo nội dung Markdown để các hệ thống AI có thể hiểu rõ microsite của bạn.</p>
+    </div>
+    <button class="btn-primary"><i data-lucide="save" class="lucide-sm"></i> Lưu thay đổi</button>
+  </div>
+
+  <div class="llms-layout">
+    <!-- Editor -->
+    <div class="editor-panel">
+      <div class="editor-toolbar">
+        <button class="toolbar-btn" title="Bold"><strong>B</strong></button>
+        <button class="toolbar-btn" title="Underline"><u>U</u></button>
+        <button class="toolbar-btn" title="Italic"><em>I</em></button>
+        <button class="toolbar-btn" title="Heading">H</button>
+        <button class="toolbar-btn" title="Strike"><s>S</s></button>
+        <button class="toolbar-btn" title="Subscript">x&#8322;</button>
+        <button class="toolbar-btn" title="Superscript">x&#178;</button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" title="Quote">&#8220;&#8221;</button>
+        <button class="toolbar-btn" title="Bullet list">&#8226;&#8212;</button>
+        <button class="toolbar-btn" title="Ordered list">1.</button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" title="Code">&lt;&gt;</button>
+        <button class="toolbar-btn" title="Image"><i data-lucide="image" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Link"><i data-lucide="link" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Table"><i data-lucide="table" class="lucide-sm"></i></button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" title="Undo"><i data-lucide="undo" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Redo"><i data-lucide="redo" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Save"><i data-lucide="save" class="lucide-sm"></i></button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" title="Expand"><i data-lucide="expand" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Fullscreen"><i data-lucide="maximize" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Preview"><i data-lucide="eye" class="lucide-sm"></i></button>
+        <button class="toolbar-btn" title="Code view">&lt;/&gt;</button>
+        <button class="toolbar-btn" title="Settings"><i data-lucide="settings" class="lucide-sm"></i></button>
+      </div>
+      <div class="editor-body" contenteditable="true" id="llms-editor"># MoMo – Official Traffic Violation Lookup Service (llms.txt)
+> **Summary:** MoMo provides official traffic violation data via CSGT &amp; Vietnam Register. Features include real-time alerts (Silver/Gold plans), secure lookup without Captcha, and direct fine payment on app.
+
+## Giới thiệu chung
+- **MoMo** cung cấp dịch vụ tra cứu phạt nguội nhanh chóng, chính xác, miễn phí ngay trên Web và App.
+- **Nguồn dữ liệu:** Chính thống từ Cục CSGT và Cục Đăng kiểm Việt Nam.
+- **Độ phủ:** Hơn 1.800 camera AI trên toàn quốc.
+- **Người dùng:** Hơn 1 triệu người dùng, hơn 5 triệu lượt tra cứu, 50.000+ cảnh báo đã gửi.
+- **Điểm mạnh:** Không cần Captcha, dữ liệu cập nhật 24/7, bảo mật tuyệt đối (PCI DSS), không lưu trữ hay chia sẻ dữ liệu.
+
+## Chức năng &amp; Tính năng chính
+1. **Tra cứu nhanh:** Kết quả trả về trong 5 giây (ô tô) hoặc 2-3 giây (xe máy) trên trình duyệt Web hoặc App.
+2. **Cảnh báo tự động:** Thông báo ngay khi hệ thống Cục CSGT ghi nhận vi phạm mới – phân theo gói Silver/Gold.
+3. **Thanh toán trực tiếp:** Nộp phạt nguội ngay trên App MoMo, không cần đến bưu điện.
+4. **Không cần Captcha:** Tra cứu trơn tru, không bị chặn bởi xác thực robot.
+5. **Lịch sử tra cứu:** Lưu lịch sử phương tiện đã tra cứu (tính năng App).
+
+## Use Cases
+- Chủ xe muốn kiểm tra phạt nguội trước khi đi đăng kiểm.
+- Người mua xe cũ cần xác nhận phương tiện không có vi phạm tồn đọng.
+- Gia đình muốn theo dõi xe của người thân.
+
+## Thông tin kỹ thuật
+- **Sitemap:** https://www.momo.vn/phat-nguoi/sitemap.xml
+- **Robots:** index, follow
+- **Schema:** FAQPage, BreadcrumbList, WebPage
+- **Canonical:** https://www.momo.vn/phat-nguoi</div>
+      <div class="editor-footer">
+        <span>Character Count: 8578</span>
+        <span>Scroll Auto &#10003;</span>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-panel">
+      <div class="preview-header">Preview</div>
+      <div class="preview-body">
+        <h1>MoMo - Official Traffic Violation Lookup Service (llms.txt)</h1>
+        <blockquote><strong>Summary:</strong> MoMo provides official traffic violation data via CSGT &amp; Vietnam Register. Features include real-time alerts (Silver/Gold plans), secure lookup without Captcha, and direct fine payment on app.</blockquote>
+        <h2>Giới thiệu chung</h2>
+        <ul>
+          <li><strong>MoMo</strong> cung cấp dịch vụ tra cứu phạt nguội nhanh chóng, chính xác, miễn phí ngay trên Web và App.</li>
+          <li><strong>Nguồn dữ liệu:</strong> Chính thống từ Cục CSGT và Cục Đăng kiểm Việt Nam.</li>
+          <li><strong>Độ phủ:</strong> Hơn 1.800 camera AI trên toàn quốc.</li>
+          <li><strong>Người dùng:</strong> Hơn 1 triệu người dùng, hơn 5 triệu lượt tra cứu, 50.000+ cảnh báo đã gửi.</li>
+          <li><strong>Điểm mạnh:</strong> Không cần Captcha, dữ liệu cập nhật 24/7, bảo mật tuyệt đối (PCI DSS), không lưu trữ hay chia sẻ dữ liệu.</li>
+        </ul>
+        <h2>Chức năng &amp; Tính năng chính</h2>
+        <ol>
+          <li><strong>Tra cứu nhanh:</strong> Kết quả trả về trong 5 giây (ô tô) hoặc 2-3 giây (xe máy) trên trình duyệt Web hoặc App.</li>
+          <li><strong>Cảnh báo tự động:</strong> Thông báo ngay khi hệ thống Cục CSGT ghi nhận vi phạm mới.</li>
+          <li><strong>Thanh toán trực tiếp:</strong> Nộp phạt nguội ngay trên App MoMo, không cần đến bưu điện.</li>
+          <li><strong>Không cần Captcha:</strong> Tra cứu trơn tru, không bị chặn bởi xác thực robot.</li>
+          <li><strong>Lịch sử tra cứu:</strong> Lưu lịch sử phương tiện đã tra cứu (tính năng App).</li>
+        </ol>
+        <h2>Use Cases</h2>
+        <ul>
+          <li>Chủ xe muốn kiểm tra phạt nguội trước khi đi đăng kiểm.</li>
+          <li>Người mua xe cũ cần xác nhận phương tiện không có vi phạm tồn đọng.</li>
+          <li>Gia đình muốn theo dõi xe của người thân.</li>
+        </ul>
+        <h2>Thông tin kỹ thuật</h2>
+        <ul>
+          <li><strong>Sitemap:</strong> https://www.momo.vn/phat-nguoi/sitemap.xml</li>
+          <li><strong>Robots:</strong> index, follow</li>
+          <li><strong>Schema:</strong> FAQPage, BreadcrumbList, WebPage</li>
+          <li><strong>Canonical:</strong> https://www.momo.vn/phat-nguoi</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Guide sidebar -->
+    <div class="guide-panel">
+      <div class="guide-card">
+        <div class="guide-card-header">
+          <i data-lucide="info" class="lucide guide-card-header-icon"></i> Hướng dẫn
+        </div>
+        <div class="guide-card-body">
+          <p>Sử dụng Markdown để cấu trúc thông tin rõ ràng. Các hệ thống AI như ChatGPT hay Claude sẽ ưu tiên đọc file này.</p>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header">
+          <i data-lucide="bar-chart-2" class="lucide guide-card-header-icon" style="color:var(--pink);"></i> Vẽ biểu đồ (Mermaid)
+        </div>
+        <div class="guide-card-body">
+          <div class="guide-subtitle">Cú pháp mẫu:</div>
+          <div class="guide-code">```mermaid<br>graph LR<br>&nbsp;&nbsp;A[Start] --&gt; B(End)<br>```</div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header">
+          <i data-lucide="link" class="lucide guide-card-header-icon" style="color:#52C41A;"></i> llms.txt standard
+        </div>
+        <div class="guide-card-body">
+          <p>File này sẽ được serve tại <strong>/phat-nguoi/llms.txt</strong> và <strong>/phat-nguoi/llms-full.txt</strong>.</p>
+          <p style="margin-top:8px;">AI crawlers như GPTBot, ClaudeBot đọc file này để hiểu site context.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 6: CHATBOT CONFIG -->
+<div id="tab-chatbot-config" class="tab-content">
+  <div class="llms-top">
+    <div>
+      <h2><i data-lucide="settings-2" class="lucide" style="color:var(--pink);"></i> Cấu hình Chatbot</h2>
+      <p>Cấu hình TypebotBubble riêng cho page hiện tại.</p>
+    </div>
+    <button class="btn-primary"><i data-lucide="save" class="lucide-sm"></i> Lưu thay đổi</button>
+  </div>
+
+  <!-- Thông tin cơ bản -->
+  <div class="config-section">
+    <div class="config-section-title">Thông tin cơ bản</div>
+    <div class="config-section-desc">Thiết lập tên, kiểu hiển thị và trạng thái hoạt động của chatbot.</div>
+    <div class="config-row">
+      <div class="config-field">
+        <label class="config-label">Tên hiển thị</label>
+        <input class="config-input" type="text" value="Trợ lý Cinema" id="chatbot-name-input" oninput="updateChatbotName(this.value)">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Kiểu hiển thị</label>
+        <select class="config-select">
+          <option>Embed</option>
+          <option>Bubble</option>
+          <option>Popup</option>
+          <option>Proactive</option>
+        </select>
+      </div>
+      <div class="config-field">
+        <label class="config-label">Trạng thái</label>
+        <div class="toggle-wrap">
+          <div class="toggle on" id="chatbot-toggle" onclick="toggleChatbot()"></div>
+          <span class="toggle-label" id="chatbot-toggle-label">Đang bật</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mẫu thiết kế -->
+  <div class="config-section">
+    <div class="config-section-title">Mẫu thiết kế</div>
+    <div class="config-section-desc">Chọn giao diện mẫu để áp dụng nhanh bộ màu sắc và hình ảnh.</div>
+    <div class="theme-grid">
+      <!-- Theme 1: Green -->
+      <div class="theme-card" onclick="selectTheme(0, this)">
+        <div class="theme-card-header" style="background:#00695C;">
+          <div class="theme-card-header-left">
+            <div class="theme-avatar"><i data-lucide="bot" class="lucide"></i></div>
+            <span>Trợ lý MoMo</span>
+          </div>
+          <div class="theme-actions"><i data-lucide="refresh-cw" class="lucide-sm"></i> <i data-lucide="x" class="lucide-sm"></i></div>
+        </div>
+        <div class="theme-body" style="background:#F5EFE8;">
+          <div class="theme-msg-bot" style="display:flex;gap:6px;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:#00695C;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;"><i data-lucide="bot" class="lucide" style="width:10px;height:10px;stroke:white;"></i></div>
+            <div style="background:#fff;border-radius:6px;padding:5px 7px;font-size:8px;color:#555;">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+          </div>
+          <div style="margin:8px 0;display:flex;justify-content:flex-end;">
+            <div class="theme-msg-user" style="background:#00695C;">Tôi muốn tra cứu phạt nguội</div>
+          </div>
+          <div class="theme-msg-bot" style="display:flex;gap:6px;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:#00695C;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;"><i data-lucide="bot" class="lucide" style="width:10px;height:10px;stroke:white;"></i></div>
+            <div style="background:#fff;border-radius:6px;padding:5px 7px;font-size:8px;color:#555;">Để tra cứu, bạn cần...</div>
+          </div>
+          <div class="theme-chips">
+            <div class="theme-chip" style="color:#00695C;border-color:#00695C;">Tra cứu</div>
+            <div class="theme-chip" style="color:#00695C;border-color:#00695C;">Nộp phạt</div>
+            <div class="theme-chip" style="color:#00695C;border-color:#00695C;">Hỏi đáp</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 2: Red (selected) -->
+      <div class="theme-card selected" onclick="selectTheme(1, this)">
+        <div class="theme-card-header" style="background:#C62828;">
+          <div class="theme-card-header-left">
+            <div class="theme-avatar"><i data-lucide="bot" class="lucide"></i></div>
+            <span>Trợ lý Cinema</span>
+          </div>
+          <div class="theme-actions"><i data-lucide="refresh-cw" class="lucide-sm"></i> <i data-lucide="x" class="lucide-sm"></i></div>
+        </div>
+        <div class="theme-body" style="background:#FFF8F8;">
+          <div class="theme-msg-bot" style="display:flex;gap:6px;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:#C62828;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;"><i data-lucide="bot" class="lucide" style="width:10px;height:10px;stroke:white;"></i></div>
+            <div style="background:#fff;border-radius:6px;padding:5px 7px;font-size:8px;color:#555;">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+          </div>
+          <div style="margin:8px 0;display:flex;justify-content:flex-end;">
+            <div class="theme-msg-user" style="background:#C62828;">Tôi muốn tra cứu phạt nguội</div>
+          </div>
+          <div class="theme-chips">
+            <div class="theme-chip" style="color:#C62828;border-color:#C62828;">Tra cứu</div>
+            <div class="theme-chip" style="color:#C62828;border-color:#C62828;">Nộp phạt</div>
+            <div class="theme-chip" style="color:#C62828;border-color:#C62828;">Hỏi đáp</div>
+          </div>
+          <div class="theme-bubble" style="background:#C62828;">&#9679;</div>
+        </div>
+      </div>
+
+      <!-- Theme 3: Purple -->
+      <div class="theme-card" onclick="selectTheme(2, this)">
+        <div class="theme-card-header" style="background:#4A148C;">
+          <div class="theme-card-header-left">
+            <div class="theme-avatar"><i data-lucide="bot" class="lucide"></i></div>
+            <span>Trợ lý MoMo</span>
+          </div>
+          <div class="theme-actions"><i data-lucide="refresh-cw" class="lucide-sm"></i> <i data-lucide="x" class="lucide-sm"></i></div>
+        </div>
+        <div class="theme-body" style="background:#F3E8FF;">
+          <div class="theme-msg-bot" style="display:flex;gap:6px;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:#4A148C;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;"><i data-lucide="bot" class="lucide" style="width:10px;height:10px;stroke:white;"></i></div>
+            <div style="background:#fff;border-radius:6px;padding:5px 7px;font-size:8px;color:#555;">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+          </div>
+          <div style="margin:8px 0;display:flex;justify-content:flex-end;">
+            <div class="theme-msg-user" style="background:#4A148C;">Tôi muốn tra cứu phạt nguội</div>
+          </div>
+          <div class="theme-msg-bot" style="display:flex;gap:6px;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:#4A148C;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;"><i data-lucide="bot" class="lucide" style="width:10px;height:10px;stroke:white;"></i></div>
+            <div style="background:#fff;border-radius:6px;padding:5px 7px;font-size:8px;color:#555;">Để tra cứu, bạn cần...</div>
+          </div>
+          <div class="theme-chips">
+            <div class="theme-chip" style="color:#4A148C;border-color:#4A148C;">Tra cứu</div>
+            <div class="theme-chip" style="color:#4A148C;border-color:#4A148C;">Nộp phạt</div>
+            <div class="theme-chip" style="color:#4A148C;border-color:#4A148C;">Hỏi đáp</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 4: Pink (MoMo) -->
+      <div class="theme-card" onclick="selectTheme(3, this)">
+        <div class="theme-card-header" style="background:var(--pink);">
+          <div class="theme-card-header-left">
+            <div class="theme-avatar"><i data-lucide="bot" class="lucide"></i></div>
+            <span>Trợ lý MoMo</span>
+          </div>
+          <div class="theme-actions"><i data-lucide="refresh-cw" class="lucide-sm"></i> <i data-lucide="x" class="lucide-sm"></i></div>
+        </div>
+        <div class="theme-body" style="background:#FFF0F6;">
+          <div class="theme-msg-bot" style="display:flex;gap:6px;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:var(--pink);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;"><i data-lucide="bot" class="lucide" style="width:10px;height:10px;stroke:white;"></i></div>
+            <div style="background:#fff;border-radius:6px;padding:5px 7px;font-size:8px;color:#555;">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+          </div>
+          <div style="margin:8px 0;display:flex;justify-content:flex-end;">
+            <div class="theme-msg-user" style="background:var(--pink);">Tôi muốn tra cứu phạt nguội</div>
+          </div>
+          <div class="theme-chips">
+            <div class="theme-chip" style="color:var(--pink);border-color:var(--pink);">Tra cứu</div>
+            <div class="theme-chip" style="color:var(--pink);border-color:var(--pink);">Nộp phạt</div>
+            <div class="theme-chip" style="color:var(--pink);border-color:var(--pink);">Hỏi đáp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hình ảnh & Tuỳ chỉnh -->
+  <div class="config-section">
+    <div class="config-section-title">Hình ảnh &amp; Tùy chỉnh</div>
+    <div class="config-section-desc">Tùy chỉnh thủ công ảnh nền và avatar bot nếu cần.</div>
+    <div class="upload-row">
+      <div>
+        <div class="config-label" style="margin-bottom:10px;">Background image</div>
+        <div class="upload-zone" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" style="display:none;">
+          <div class="upload-zone-icon"><i data-lucide="image" class="lucide" style="width:28px;height:28px;stroke-width:1.5;"></i></div>
+          <div class="upload-zone-text"><strong>Click để tải ảnh</strong> hoặc kéo thả vào đây<br><span style="font-size:11px;color:var(--gray-400);">PNG, JPG, WEBP tối đa 2MB</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="config-label" style="margin-bottom:10px;">Bot avatar</div>
+        <div class="upload-zone" onclick="this.querySelector('input').click()" style="padding:20px;">
+          <input type="file" accept="image/*" style="display:none;">
+          <div style="margin-bottom:8px;"><i data-lucide="bot" class="lucide" style="width:40px;height:40px;stroke-width:1.5;color:var(--gray-300);"></i></div>
+          <div class="upload-zone-text"><strong>Thay ảnh avatar</strong><br><span style="font-size:11px;color:var(--gray-400);">PNG, JPG - tỷ lệ 1:1, tối đa 500KB</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Greeting & Quick replies -->
+  <div class="config-section">
+    <div class="config-section-title">Greeting &amp; Quick replies</div>
+    <div class="config-section-desc">Tin nhắn chào và các nút gợi ý hiển thị khi người dùng mở chatbot lần đầu.</div>
+    <div class="config-field" style="margin-bottom:16px;">
+      <label class="config-label">Tin nhắn chào</label>
+      <textarea class="config-input" rows="2" style="resize:vertical;">Xin chào 👋 Tôi là trợ lý hỗ trợ tra cứu và xử lý phạt nguội trên MoMo. Bạn đang cần hỗ trợ điều gì?</textarea>
+    </div>
+    <div class="config-field">
+      <label class="config-label">Quick reply chips <span style="font-size:11px;color:var(--gray-400);">(tối đa 4)</span></label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;" id="quick-replies-list">
+        <div style="display:flex;gap:8px;">
+          <input class="config-input" type="text" value="🚗 Kiểm tra xe tôi có bị phạt không" style="flex:1;">
+          <button class="btn-icon"><i data-lucide="x" class="lucide-sm"></i></button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input class="config-input" type="text" value="⚠️ Tôi có lỗi phạt nguội, phải làm sao?" style="flex:1;">
+          <button class="btn-icon"><i data-lucide="x" class="lucide-sm"></i></button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input class="config-input" type="text" value="📖 Hiểu thêm về phạt nguội" style="flex:1;">
+          <button class="btn-icon"><i data-lucide="x" class="lucide-sm"></i></button>
+        </div>
+      </div>
+      <button class="btn-outline" style="margin-top:10px;width:fit-content;">+ Thêm chip</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 7: CHATBOT LIVE -->
+<div id="tab-chatbot" class="tab-content" style="padding:0;">
+  <div class="chatbot-outer">
+    <div class="chatbot-pattern"></div>
+    <div class="chatbot-wrap">
+      <div class="chatbot-msg-row">
+        <div class="chatbot-avatar"><i data-lucide="bot" class="lucide"></i></div>
+        <div class="chatbot-msg-content">
+          <div class="chatbot-name" id="chatbot-display-name">Trợ lý Cinema</div>
+          <div class="chatbot-bubble">
+            Xin chào 👋 Tôi là trợ lý hỗ trợ tra cứu và xử lý phạt nguội trên MoMo. Bạn đang cần hỗ trợ điều gì?
+          </div>
+          <div class="chatbot-chips">
+            <div class="chatbot-chip" onclick="chatbotReply(this)">🚗 Kiểm tra xe tôi có bị phạt không</div>
+            <div class="chatbot-chip" onclick="chatbotReply(this)">⚠️ Tôi có lỗi phạt nguội, phải làm sao?</div>
+            <div class="chatbot-chip" onclick="chatbotReply(this)">📖 Hiểu thêm về phạt nguội</div>
+          </div>
+        </div>
+      </div>
+      <div id="chatbot-conversation"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BLOGS = [
+  {
+    title: 'Mức phạt lỗi vượt đèn đỏ ô tô 2026 và cách...',
+    method: 'manual',
+    keyword: null,
+    status: 'draft',
+    cost: null,
+    color: '#9C27B0',
+    initial: 'M',
+  },
+  {
+    title: 'Lỗi Không Giấy Phép Lái Xe - Mức Phạt Và...',
+    method: 'ai',
+    keyword: 'lỗi không giấy phép lái xe',
+    status: 'published',
+    cost: '$0.102935',
+    img: true,
+    imgColor: '#FFA000',
+  },
+  {
+    title: 'Lỗi Vượt Đèn Đỏ Xe Máy, Ô Tô Bị Phạt Bao...',
+    method: 'ai',
+    keyword: 'lỗi vượt đèn đỏ',
+    status: 'published',
+    cost: '$0.00',
+    img: true,
+    imgColor: '#1565C0',
+  },
+  {
+    title: '5 Cách Kiểm Tra Phạt Nguội Chính Xác Khô...',
+    method: 'ai',
+    keyword: 'cách kiểm tra phạt nguội',
+    status: 'published',
+    cost: '$0.00',
+    img: true,
+    imgColor: '#2E7D32',
+  },
+  {
+    title: 'App Tra Cứu Phạt Nguội Miễn Phí, Chính Xác',
+    method: 'ai',
+    keyword: 'app tra cứu phạt nguội',
+    status: 'published',
+    cost: '$0.00',
+    img: true,
+    imgColor: '#00838F',
+  },
+  {
+    title: 'Mức Phạt Lỗi Không Mũ Bảo Hiểm 2026 -...',
+    method: 'ai',
+    keyword: 'lỗi không mũ bảo hiểm',
+    status: 'published',
+    cost: '$0.105271',
+    img: true,
+    imgColor: '#558B2F',
+  },
+  {
+    title: 'Lỗi Đi Vào Đường 1 Chiều - Mức Phạt 2026...',
+    method: 'ai',
+    keyword: 'lỗi đi vào đường 1 chiều',
+    status: 'published',
+    cost: '$0.225442',
+    img: true,
+    imgColor: '#E65100',
+  },
+  {
+    title: 'Lỗi vượt đèn vàng - Mức phạt, quy định và...',
+    method: 'ai',
+    keyword: 'lỗi vượt đèn vàng',
+    status: 'published',
+    cost: '$0.300574',
+    img: true,
+    imgColor: '#F9A825',
+  },
+  {
+    title: 'Lỗi Giao Xe Cho Người Không Đủ Điều Kiện:...',
+    method: 'ai',
+    keyword: 'lỗi giao xe cho người khôn...',
+    status: 'draft',
+    cost: '$0.3027',
+    img: true,
+    imgColor: '#6A1B9A',
+  },
+  {
+    title: 'Mức Phạt Lỗi Đi Sai Làn Đường Ô Tô & Xe M...',
+    method: 'ai',
+    keyword: 'lỗi đi sai làn đường',
+    status: 'published',
+    cost: '$0.106595',
+    img: true,
+    imgColor: '#1565C0',
+  },
+];
+
+function renderBlogs() {
+  const tbody = document.getElementById('blog-tbody');
+  tbody.innerHTML = BLOGS.map(b => `
+    <tr>
+      <td>
+        <div class="blog-title-cell">
+          ${b.img ? `<div class="blog-thumb-placeholder" style="background:${b.imgColor};">&#128247;</div>` : `<div class="blog-thumb-placeholder" style="background:${b.color || '#9E9E9E'};">${b.initial || ''}</div>`}
+          <span class="blog-title-text">${b.title}</span>
+        </div>
+      </td>
+      <td>
+        ${b.method === 'ai'
+          ? '<span class="tag-ai">&#10024; AI-powered</span>'
+          : '<span class="tag-manual">Thủ công</span>'}
+      </td>
+      <td><span class="kw-text">${b.keyword || '<span style="color:var(--gray-300)">-</span>'}</span></td>
+      <td>
+        ${b.status === 'published'
+          ? '<div class="badge-published-sm">Published</div>'
+          : '<div class="badge-draft-sm">Draft</div>'}
+      </td>
+      <td><span class="ai-cost">${b.cost || '<span style="color:var(--gray-300)">-</span>'}</span></td>
+      <td>
+        <div style="display:flex;gap:8px;">
+          <button style="border:none;background:none;cursor:pointer;color:var(--gray-400);"><i data-lucide="pencil" class="lucide-sm"></i></button>
+          <button style="border:none;background:none;cursor:pointer;color:var(--gray-400);"><i data-lucide="external-link" class="lucide-sm"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'analytics') renderChart();
+}
+
+function switchPanelTab(tab, el) {
+  document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-general').style.display = tab === 'general' ? 'flex' : 'none';
+  document.getElementById('panel-general').style.flexDirection = 'column';
+  document.getElementById('panel-general').style.gap = '16px';
+  document.getElementById('panel-seo').style.display = tab === 'seo' ? 'block' : 'none';
+}
+
+function switchAnalyticsTab(tab, el) {
+  document.querySelectorAll('.analytics-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  ['overview', 'audience', 'acquisition', 'product'].forEach(t => {
+    const el = document.getElementById('analytics-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+// ─── STRUCT / PAGE TREE ─────────────────────────────────────────────────────
+
+const PAGES_DATA = [
+  { id: 'xe-may-dien',   name: 'Xe Máy Điện',    slug: 'phat-nguoi/xe-may-dien',    status: 'published', type: 'page' },
+  { id: 'blog-pn',       name: 'Blog Phạt Nguội', slug: 'phat-nguoi/blog',            status: 'published', type: 'blog' },
+  { id: 'blog-detail',   name: 'Chi tiết blog',   slug: 'phat-nguoi/blog/detail',    status: 'published', type: 'page' },
+  { id: 'lien-he',       name: 'Trang liên hệ',   slug: 'phat-nguoi/lien-he',        status: 'draft',     type: 'page' },
+  { id: 'xe-may',        name: 'Xe Máy',           slug: 'phat-nguoi/xe-may',         status: 'published', type: 'page' },
+  { id: 'o-to',          name: 'Ô tô',             slug: 'phat-nguoi/o-to',           status: 'published', type: 'page' },
+];
+
+let structFilter = 'all';
+let treeExpanded = true;
+let openMenuId = null;
+let dragSrcIdx = null;
+
+function getFilteredPages() {
+  if (structFilter === 'all') return PAGES_DATA;
+  return PAGES_DATA.filter(p => p.status === structFilter);
+}
+
+function structSummary() {
+  const pub = PAGES_DATA.filter(p => p.status === 'published').length;
+  const draft = PAGES_DATA.filter(p => p.status === 'draft').length;
+  return `<strong>${PAGES_DATA.length + 1}</strong> trang &nbsp;·&nbsp; <strong style="color:#52C41A;">${pub}</strong> published &nbsp;·&nbsp; <strong style="color:#8C8C8C;">${draft}</strong> draft`;
+}
+
+function iconForType(type) {
+  if (type === 'blog') return 'book-open';
+  if (type === 'hub')  return 'layers';
+  if (type === 'tool') return 'wrench';
+  return 'file-text';
+}
+function iconColorForType(type) {
+  if (type === 'blog') return '#FA8C16';
+  if (type === 'hub')  return 'var(--pink)';
+  return 'var(--gray-500)';
+}
+
+function renderStructure() {
+  const card = document.getElementById('struct-card');
+  if (!card) return;
+
+  const counts = {
+    all: PAGES_DATA.length,
+    published: PAGES_DATA.filter(p => p.status === 'published').length,
+    draft: PAGES_DATA.filter(p => p.status === 'draft').length,
+  };
+  const chips = ['all','published','draft'].map(f => `
+    <button class="filter-chip ${structFilter===f?'active':''}" onclick="setStructFilter('${f}')">
+      ${f==='all'?'Tất cả':f==='published'?'Published':'Draft'}
+      <span class="chip-count">${counts[f]}</span>
+    </button>`).join('');
+
+  const filtered = getFilteredPages();
+  const rows = filtered.map((p, i) => {
+    const isPub = p.status === 'published';
+    const badge = isPub
+      ? `<div class="badge-published clickable" onclick="togglePageStatus('${p.id}')" title="Click để chuyển Draft">Published</div>`
+      : `<div class="badge-draft clickable"     onclick="togglePageStatus('${p.id}')" title="Click để Publish">Draft</div>`;
+    const dotStyle = isPub ? '' : 'style="background:var(--gray-200);border-color:var(--gray-300);"';
+    const extBtn = isPub
+      ? `<button class="btn-icon" style="border:none;background:none;cursor:pointer;color:var(--gray-400);" title="Xem live"><i data-lucide="external-link" class="lucide-sm"></i></button>`
+      : `<button class="btn-icon" style="border:none;background:none;cursor:pointer;color:var(--gray-200);" disabled title="Chưa published"><i data-lucide="external-link" class="lucide-sm"></i></button>`;
+
+    const menuHtml = openMenuId === p.id ? buildPageMenu(p) : `<div class="page-menu" id="menu-${p.id}"></div>`;
+
+    return `
+    <div class="tree-row" draggable="true"
+      ondragstart="onDragStart(event,${i})"
+      ondragover="onDragOver(event,${i})"
+      ondragleave="onDragLeave(event)"
+      ondrop="onDrop(event,${i})"
+      ondragend="onDragEnd(event)"
+      id="row-${p.id}">
+      <div class="tree-row-dot" ${dotStyle}></div>
+      <i data-lucide="${iconForType(p.type)}" class="lucide tree-row-icon" style="color:${iconColorForType(p.type)};"></i>
+      <div class="tree-row-name-wrap">
+        <span class="tree-row-name">${p.name}</span>
+        <span class="tree-row-slug">${p.slug}</span>
+      </div>
+      <i data-lucide="grip-vertical" class="lucide drag-handle"></i>
+      <div class="tree-row-actions">
+        ${badge}
+        <div class="page-menu-wrap">
+          <button class="btn-icon" style="border:none;background:none;cursor:pointer;color:var(--gray-400);" onclick="togglePageMenu(event,'${p.id}')">
+            <i data-lucide="more-horizontal" class="lucide"></i>
+          </button>
+          ${menuHtml}
+        </div>
+        ${extBtn}
+        <button class="btn-icon" style="border:none;background:none;cursor:pointer;color:var(--gray-400);" title="Edit" onclick="editPageName('${p.id}')">
+          <i data-lucide="pencil" class="lucide-sm"></i>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const emptyState = filtered.length === 0
+    ? `<div style="text-align:center;padding:40px;color:var(--gray-400);font-size:13px;">Không có trang nào ở trạng thái này</div>`
+    : '';
+
+  card.innerHTML = `
+    <div class="struct-card-header">
+      <i data-lucide="network" class="lucide struct-card-header-icon"></i>
+      <span style="flex:1;">Cấu trúc microsite</span>
+      <button class="btn-primary" style="font-size:12px;padding:6px 14px;" onclick="openModal('modal-add-page')">
+        <i data-lucide="plus" class="lucide-sm"></i> Add page
+      </button>
+    </div>
+    <div class="struct-toolbar">
+      <div class="filter-chips">${chips}</div>
+    </div>
+    <div class="struct-summary">${structSummary()}</div>
+
+    <!-- Root row -->
+    <div class="tree-root" onclick="toggleTree()">
+      <i data-lucide="${treeExpanded?'chevron-down':'chevron-right'}" class="lucide tree-root-toggle"></i>
+      <i data-lucide="home" class="lucide tree-root-icon"></i>
+      <div class="tree-root-name-wrap">
+        <span class="tree-root-name">Phạt nguội</span>
+        <span class="tree-root-slug">phat-nguoi</span>
+      </div>
+      <i data-lucide="grip-vertical" class="lucide drag-handle" style="opacity:.4;cursor:default;"></i>
+      <div style="margin-left:16px;display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
+        <span class="badge-viewing">Đang xem</span>
+        <div class="badge-published">Published</div>
+        <button class="btn-icon" style="border:none;background:none;cursor:pointer;color:var(--gray-400);" title="Xem live">
+          <i data-lucide="external-link" class="lucide-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Children -->
+    <div id="tree-children" style="display:${treeExpanded?'block':'none'};">
+      ${rows}${emptyState}
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function buildPageMenu(p) {
+  const isPub = p.status === 'published';
+  return `
+  <div class="page-menu open" id="menu-${p.id}" onclick="event.stopPropagation()">
+    <button class="page-menu-item" onclick="togglePageStatus('${p.id}');closePageMenu()">
+      <i data-lucide="${isPub?'eye-off':'eye'}" class="lucide-sm"></i>
+      ${isPub ? 'Chuyển sang Draft' : 'Publish ngay'}
+    </button>
+    <button class="page-menu-item" onclick="duplicatePage('${p.id}');closePageMenu()">
+      <i data-lucide="copy" class="lucide-sm"></i> Duplicate
+    </button>
+    <button class="page-menu-item" onclick="editPageName('${p.id}');closePageMenu()">
+      <i data-lucide="pencil" class="lucide-sm"></i> Đổi tên
+    </button>
+    <div class="page-menu-divider"></div>
+    <button class="page-menu-item danger" onclick="confirmDeletePage('${p.id}')">
+      <i data-lucide="trash-2" class="lucide-sm"></i> Xóa trang
+    </button>
+  </div>`;
+}
+
+function toggleTree() {
+  treeExpanded = !treeExpanded;
+  renderStructure();
+}
+
+function setStructFilter(f) {
+  structFilter = f;
+  closePageMenu();
+  renderStructure();
+}
+
+function togglePageStatus(id) {
+  const page = PAGES_DATA.find(p => p.id === id);
+  if (!page) return;
+  page.status = page.status === 'published' ? 'draft' : 'published';
+  renderStructure();
+}
+
+function duplicatePage(id) {
+  const page = PAGES_DATA.find(p => p.id === id);
+  if (!page) return;
+  const newId = id + '-copy-' + Date.now().toString().slice(-4);
+  PAGES_DATA.push({
+    ...page,
+    id: newId,
+    name: page.name + ' (copy)',
+    slug: page.slug + '-copy',
+    status: 'draft',
+  });
+  renderStructure();
+}
+
+function editPageName(id) {
+  const page = PAGES_DATA.find(p => p.id === id);
+  if (!page) return;
+  const nameEl = document.querySelector(`#row-${id} .tree-row-name`);
+  if (!nameEl) return;
+  const current = page.name;
+  nameEl.innerHTML = `<input type="text" value="${current}" style="font-size:13px;font-weight:500;border:1px solid var(--pink);border-radius:4px;padding:2px 6px;outline:none;width:160px;"
+    onblur="savePageName('${id}', this.value)"
+    onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.value='${current}';this.blur();}"
+    onclick="event.stopPropagation()">`;
+  nameEl.querySelector('input').focus();
+}
+
+function savePageName(id, val) {
+  const page = PAGES_DATA.find(p => p.id === id);
+  if (!page) return;
+  const trimmed = val.trim();
+  if (trimmed && trimmed !== page.name) {
+    page.name = trimmed;
+  }
+  renderStructure();
+}
+
+function confirmDeletePage(id) {
+  const menu = document.getElementById('menu-' + id);
+  if (!menu) return;
+  menu.innerHTML = `
+    <div class="page-menu-confirm">
+      <div class="page-menu-confirm-msg">Xóa trang này? Không thể hoàn tác.</div>
+      <div class="page-menu-confirm-btns">
+        <button class="btn-confirm-yes" onclick="deletePage('${id}')">Xóa</button>
+        <button class="btn-confirm-no" onclick="closePageMenu();renderStructure()">Hủy</button>
+      </div>
+    </div>`;
+  lucide.createIcons();
+}
+
+function deletePage(id) {
+  const idx = PAGES_DATA.findIndex(p => p.id === id);
+  if (idx > -1) PAGES_DATA.splice(idx, 1);
+  closePageMenu();
+  renderStructure();
+}
+
+function togglePageMenu(event, id) {
+  event.stopPropagation();
+  if (openMenuId === id) { closePageMenu(); return; }
+  openMenuId = id;
+  renderStructure();
+}
+
+function closePageMenu() {
+  if (!openMenuId) return;
+  openMenuId = null;
+}
+
+// Drag & drop reorder
+function onDragStart(event, idx) {
+  dragSrcIdx = idx;
+  setTimeout(() => {
+    const filtered = getFilteredPages();
+    const row = document.getElementById('row-' + filtered[idx].id);
+    if (row) row.classList.add('dragging');
+  }, 0);
+  event.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragOver(event, idx) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+  const filtered = getFilteredPages();
+  document.querySelectorAll('.tree-row').forEach(r => {
+    r.classList.remove('drag-over-above','drag-over-below');
+  });
+  const row = document.getElementById('row-' + filtered[idx].id);
+  if (row && dragSrcIdx !== idx) {
+    row.classList.add(idx < dragSrcIdx ? 'drag-over-above' : 'drag-over-below');
+  }
+}
+
+function onDragLeave(event) {
+  event.currentTarget.classList.remove('drag-over-above','drag-over-below');
+}
+
+function onDrop(event, targetIdx) {
+  event.preventDefault();
+  if (dragSrcIdx === null || dragSrcIdx === targetIdx) return;
+  const filtered = getFilteredPages();
+  const srcPage  = filtered[dragSrcIdx];
+  const srcGlobal = PAGES_DATA.indexOf(srcPage);
+  const tgtPage  = filtered[targetIdx];
+  const tgtGlobal = PAGES_DATA.indexOf(tgtPage);
+  if (srcGlobal < 0 || tgtGlobal < 0) return;
+  const [moved] = PAGES_DATA.splice(srcGlobal, 1);
+  const newTgt = PAGES_DATA.indexOf(tgtPage);
+  PAGES_DATA.splice(newTgt + (targetIdx > dragSrcIdx ? 1 : 0), 0, moved);
+  renderStructure();
+}
+
+function onDragEnd(event) {
+  dragSrcIdx = null;
+  document.querySelectorAll('.tree-row').forEach(r => {
+    r.classList.remove('dragging','drag-over-above','drag-over-below');
+  });
+}
+
+// Add page modal
+function updateAddPageSlug() {
+  const name = document.getElementById('ap-name').value;
+  const slug = name.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/đ/g,'d').replace(/[^a-z0-9\s-]/g,'')
+    .trim().replace(/\s+/g,'-');
+  document.getElementById('ap-slug').value = slug;
+  document.getElementById('ap-slug-preview').textContent = 'phat-nguoi/' + (slug || '...');
+}
+
+function addNewPage() {
+  const name = document.getElementById('ap-name').value.trim();
+  const slug = document.getElementById('ap-slug').value.trim();
+  const template = document.getElementById('ap-template').value;
+  const status = document.querySelector('input[name="ap-status"]:checked').value;
+  if (!name || !slug) { alert('Vui lòng nhập tên trang và slug.'); return; }
+  const id = slug.replace(/\//g, '-') + '-' + Date.now().toString().slice(-4);
+  PAGES_DATA.push({ id, name, slug: 'phat-nguoi/' + slug, status, type: template });
+  closeModal('modal-add-page');
+  document.getElementById('ap-name').value = '';
+  document.getElementById('ap-slug').value = '';
+  document.getElementById('ap-slug-preview').textContent = 'phat-nguoi/';
+  renderStructure();
+}
+
+// Close all menus on outside click
+document.addEventListener('click', () => {
+  if (openMenuId) { closePageMenu(); renderStructure(); }
+});
+
+let chartRendered = false;
+function renderChart() {
+  if (chartRendered) return;
+  chartRendered = true;
+
+  const canvas = document.getElementById('trafficChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth;
+  const H = 220;
+  canvas.width = W;
+  canvas.height = H;
+
+  const labels = ['12:00','14:00','16:00','18:00','20:00','22:00','00:00','02:00','04:00','06:00','08:00','10:00','12:00'];
+  const views =    [300, 290, 300, 310, 295, 310, 325, 450, 325, 180, 60, 80, 120, 310, 485, 455, 485, 300];
+  const visitors = [145, 140, 148, 152, 143, 155, 158, 165, 158, 100, 30, 35, 55, 135, 175, 160, 180, 140];
+
+  const barCount = views.length;
+  const padL = 40, padR = 10, padT = 10, padB = 40;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const barW = (chartW / barCount) * 0.6;
+  const barGap = chartW / barCount;
+  const maxVal = 600;
+
+  // Grid lines
+  ctx.strokeStyle = '#F0F0F0';
+  ctx.lineWidth = 1;
+  [0, 150, 300, 450, 600].forEach(v => {
+    const y = padT + chartH - (v / maxVal) * chartH;
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+    ctx.fillStyle = '#BFBFBF';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v, padL - 6, y + 3);
+  });
+
+  // Bars
+  views.forEach((v, i) => {
+    const x = padL + i * barGap + (barGap - barW) / 2;
+    const visH = (visitors[i] / maxVal) * chartH;
+    const viewH = (v / maxVal) * chartH;
+
+    // Views bar (light pink, full height)
+    ctx.fillStyle = '#FFADD2';
+    ctx.beginPath();
+    ctx.roundRect(x, padT + chartH - viewH, barW, viewH, [3, 3, 0, 0]);
+    ctx.fill();
+
+    // Visitors bar (dark pink, stacked on bottom)
+    ctx.fillStyle = '#EB2F96';
+    ctx.beginPath();
+    ctx.roundRect(x, padT + chartH - visH, barW, visH, [3, 3, 0, 0]);
+    ctx.fill();
+
+    // X labels (every 2)
+    if (i % 2 === 0 || i === views.length - 1) {
+      ctx.fillStyle = '#BFBFBF';
+      ctx.font = '9px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      const lbl = labels[Math.floor(i / (views.length / labels.length))] || '';
+      if (lbl) ctx.fillText(lbl, x + barW / 2, padT + chartH + 16);
+    }
+  });
+}
+
+function selectTheme(idx, el) {
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleChatbot() {
+  const toggle = document.getElementById('chatbot-toggle');
+  const label = document.getElementById('chatbot-toggle-label');
+  const on = toggle.classList.toggle('on');
+  label.textContent = on ? 'Đang bật' : 'Đã tắt';
+  label.style.color = on ? 'var(--pink)' : 'var(--gray-500)';
+  toggle.style.background = on ? 'var(--pink)' : 'var(--gray-300)';
+}
+
+function updateChatbotName(val) {
+  const el = document.getElementById('chatbot-display-name');
+  if (el) el.textContent = val || 'Trợ lý';
+}
+
+const CHATBOT_RESPONSES = {
+  'phạt': 'Để kiểm tra xe có bị phạt nguội không, bạn cần nhập **biển số xe**. Hệ thống sẽ kết nối trực tiếp với Cục CSGT và trả kết quả trong vòng 2-5 giây.',
+  'kiểm tra': 'Nhập biển số xe của bạn vào ô tra cứu bên dưới. Ví dụ: **51F-123.45** (xe máy) hoặc **51A-123.45** (ô tô).',
+  'nộp': 'Để nộp phạt nguội trên MoMo:\n1. Mở App MoMo → Phạt nguội\n2. Nhập biển số xe\n3. Chọn khoản phạt cần nộp\n4. Xác nhận thanh toán',
+  'mặc định': 'Cảm ơn bạn đã liên hệ! Tôi có thể hỗ trợ tra cứu phạt nguội, hướng dẫn nộp phạt, và giải đáp các thắc mắc liên quan đến vi phạm giao thông.',
+};
+
+function chatbotReply(chip) {
+  const text = chip.textContent.trim();
+  chip.style.opacity = '0.5';
+  chip.style.pointerEvents = 'none';
+  const conv = document.getElementById('chatbot-conversation');
+
+  // User bubble
+  const userRow = document.createElement('div');
+  userRow.style.cssText = 'display:flex;justify-content:flex-end;margin-bottom:16px;';
+  userRow.innerHTML = `<div style="background:var(--pink);color:#fff;border-radius:16px 4px 16px 16px;padding:10px 16px;font-size:14px;max-width:400px;">${text}</div>`;
+  conv.appendChild(userRow);
+
+  // Typing indicator then reply
+  const typingRow = document.createElement('div');
+  typingRow.className = 'chatbot-msg-row';
+  typingRow.innerHTML = `<div class="chatbot-avatar">&#129302;</div><div class="chatbot-bubble" style="color:var(--gray-400);font-size:13px;">&#8226;&#8226;&#8226;</div>`;
+  conv.appendChild(typingRow);
+  conv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+  const lower = text.toLowerCase();
+  const key = Object.keys(CHATBOT_RESPONSES).find(k => lower.includes(k)) || 'mặc định';
+  const reply = CHATBOT_RESPONSES[key];
+
+  setTimeout(() => {
+    typingRow.innerHTML = `<div class="chatbot-avatar">&#129302;</div>
+      <div class="chatbot-msg-content">
+        <div class="chatbot-name">${document.getElementById('chatbot-display-name').textContent}</div>
+        <div class="chatbot-bubble">${reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</div>
+      </div>`;
+    conv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 900);
+}
+
+// === DROPDOWN ===
+function toggleDropdown(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('top-dropdown');
+  menu.classList.toggle('open');
+}
+function closeDropdown() {
+  document.getElementById('top-dropdown').classList.remove('open');
+}
+document.addEventListener('click', () => closeDropdown());
+
+// === MODALS ===
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+function saveGeneral() {
+  const title = document.getElementById('general-title').value;
+  if (title) document.querySelector('.page-title').textContent = title;
+  const desc = document.getElementById('general-desc').value;
+  if (desc) document.querySelector('.page-sub').textContent = desc;
+  closeModal('modal-edit-general');
+}
+
+// === SEO MODAL ===
+function switchSeoTab(tab) {
+  document.getElementById('seo-tab-basic').classList.toggle('active', tab === 'basic');
+  document.getElementById('seo-tab-advanced').classList.toggle('active', tab === 'advanced');
+  document.getElementById('seo-panel-basic').style.display = tab === 'basic' ? 'block' : 'none';
+  document.getElementById('seo-panel-advanced').style.display = tab === 'advanced' ? 'block' : 'none';
+}
+
+function updateSerp() {
+  const slug = document.getElementById('seo-slug').value || 'phat-nguoi';
+  const title = document.getElementById('seo-title').value;
+  const desc = document.getElementById('seo-desc').value;
+  const url = 'https://www.momo.vn/' + slug;
+  document.getElementById('serp-url-slug').textContent = url;
+  document.getElementById('serp-url').textContent = url;
+  document.getElementById('serp-title').textContent = title;
+  document.getElementById('serp-desc').textContent = desc;
+  document.getElementById('og-title').textContent = title;
+  document.getElementById('og-desc').textContent = desc.substring(0, 80) + (desc.length > 80 ? '...' : '');
+}
+
+function updateCharCount(inputId, max, countId) {
+  const el = document.getElementById(inputId);
+  const len = el.value.length;
+  const countEl = document.getElementById(countId);
+  countEl.textContent = `(${len}/${max})`;
+  countEl.className = 'char-count' + (len > max * 0.9 ? ' warn' : '');
+}
+
+function removeKeyword(el) {
+  el.closest('.kw-tag').remove();
+}
+
+function handleKwInput(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/,$/, '');
+    if (!val) return;
+    const wrap = e.target.parentElement;
+    const tag = document.createElement('div');
+    tag.className = 'kw-tag';
+    tag.innerHTML = `${val} <span class="kw-tag-del" onclick="removeKeyword(this)"><i data-lucide="x" class="lucide-sm"></i></span>`;
+    wrap.insertBefore(tag, e.target);
+    e.target.value = '';
+    lucide.createIcons();
+  }
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  renderBlogs();
+  renderStructure();
+  lucide.createIcons();
+  // Fix panel-general display
+  const pg = document.getElementById('panel-general');
+  pg.style.display = 'flex';
+  pg.style.flexDirection = 'column';
+  pg.style.gap = '16px';
+});
+</script>
+</body>
+</html>
