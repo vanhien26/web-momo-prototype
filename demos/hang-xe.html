@@ -1205,7 +1205,7 @@ function renderListing() {
     }).map(id => {
       const b = BRANDS[id];
       const topModel = b.models[0];
-      return `<a class="brand-card" href="/hang-xe?id=${id}">
+      return `<a class="brand-card" href="/hang-xe/${id}">
         ${brandMark(id,48,48,12,14)}
         <div class="brand-card-name">${b.name}</div>
         <div class="brand-card-origin">${b.origin}</div>
@@ -1255,7 +1255,7 @@ window.applyFilter = function(f, btn) {
   document.getElementById('brand-grid').innerHTML = list.map(id => {
     const b = BRANDS[id];
     const topModel = b.models[0];
-    return `<a class="brand-card" href="/hang-xe?id=${id}">
+    return `<a class="brand-card" href="/hang-xe/${id}">
       ${brandMark(id,48,48,12,14)}
       <div class="brand-card-name">${b.name}</div>
       <div class="brand-card-origin">${b.origin}</div>
@@ -1275,7 +1275,7 @@ window.filterByType = function(typeId, btn) {
   document.getElementById('brand-grid').innerHTML = list.map(id => {
     const b = BRANDS[id];
     const topModel = topModelFn(id);
-    return `<a class="brand-card" href="/hang-xe?id=${id}">
+    return `<a class="brand-card" href="/hang-xe/${id}">
       ${brandMark(id,48,48,12,14)}
       <div class="brand-card-name">${b.name}</div>
       <div class="brand-card-origin">${b.origin}</div>
@@ -1472,7 +1472,7 @@ function renderDetail(id) {
       ? `linear-gradient(160deg,${b.color}28 0%,${b.color}10 100%)`
       : `linear-gradient(160deg,${b.color}14 0%,${b.color}06 100%)`;
     const tag = m.slug ? 'a' : 'button';
-    const linkAttr = m.slug ? `href="/hang-xe?id=${id}&model=${m.slug}"` : `onclick="selectModel(${i},'${id}')"`;
+    const linkAttr = m.slug ? `href="/hang-xe/${id}/${m.slug}"` : `onclick="selectModel(${i},'${id}')"`;
     return `<${tag} class="${cls}" ${linkAttr} id="mc-${i}">
       <div class="model-img" style="background:${imgBg}">
         ${carSVG(m.type||'suv', b.color)}
@@ -1778,7 +1778,7 @@ function renderModelDetail(brandId, modelSlug) {
     <span class="bc-sep">›</span>
     <a class="bc-link" href="/hang-xe">Hãng xe</a>
     <span class="bc-sep">›</span>
-    <a class="bc-link" href="/hang-xe?id=${id}">${b.name}</a>
+    <a class="bc-link" href="/hang-xe/${id}">${b.name}</a>
     <span class="bc-sep">›</span>
     <span class="bc-current">${m.name}</span>
   </div></div></div>`;
@@ -2074,7 +2074,7 @@ function renderModelDetail(brandId, modelSlug) {
     const cards = otherModels.map(om => {
       const imgBg = `linear-gradient(160deg,${b.color}14 0%,${b.color}06 100%)`;
       const tag = om.slug ? 'a' : 'div';
-      const linkAttr = om.slug ? `href="/hang-xe?id=${brandId}&model=${om.slug}"` : '';
+      const linkAttr = om.slug ? `href="/hang-xe/${brandId}/${om.slug}"` : '';
       return `<${tag} class="model-card" ${linkAttr} style="cursor:${om.slug?'pointer':'default'}">
         <div class="model-img" style="background:${imgBg}">${carSVG(om.type||'suv', b.color)}</div>
         <div class="model-info">
@@ -2254,11 +2254,24 @@ function demoLookup(type, arg) {
   el.innerHTML = text;
 }
 
-/* ── INIT ── */
 document.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id');
-  const model = params.get('model');
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  let id = null;
+  let model = null;
+  
+  // pathParts could look like: ['hang-xe', 'hyundai', 'santa-fe'] or ['hang-xe', 'hyundai']
+  if (pathParts[0] === 'hang-xe') {
+    id = pathParts[1] || null;
+    model = pathParts[2] || null;
+  }
+  
+  // Fallback to URL search parameters for backward compatibility
+  if (!id) {
+    const params = new URLSearchParams(location.search);
+    id = params.get('id') || params.get('brand');
+    model = params.get('model');
+  }
+  
   if (id && model && BRANDS[id]) renderModelDetail(id, model);
   else if (id && BRANDS[id]) renderDetail(id);
   else renderListing();
