@@ -326,11 +326,17 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .cost-total-unit{font-size:13px;color:rgba(255,255,255,.5)}
 
 /* ── GARAGE SECTION ── */
-.garage-filter{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.garage-search-container{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.garage-search-box{position:relative;flex:1;min-width:240px}
+.garage-search-input{width:100%;padding:8px 12px 8px 36px;font-size:12.5px;border:1.5px solid var(--gray-200);border-radius:8px;outline:none;background:var(--white);color:var(--gray-900);transition:border-color .2s,box-shadow .2s;font-family:inherit}
+.garage-search-input:focus{border-color:var(--pink-500);box-shadow:0 0 0 3px rgba(235,47,150,.1)}
+.garage-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:13px;pointer-events:none}
+.garage-filter{display:flex;gap:6px;flex-wrap:wrap}
 .garage-filter-btn{font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;border:1.5px solid var(--gray-200);color:var(--gray-600);background:var(--white);cursor:pointer;transition:.15s;font-family:inherit}
 .garage-filter-btn.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
 .garage-filter-btn:hover:not(.on){border-color:var(--gray-400);color:var(--gray-900)}
 .garage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.garage-empty{grid-column:span 2;text-align:center;padding:36px 20px;color:var(--gray-400);font-size:13.5px}
 .garage-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);padding:18px 20px;transition:border-color .2s,box-shadow .2s,transform .2s}
 .garage-card:hover{border-color:var(--gray-300);box-shadow:var(--shadow-s);transform:translateY(-1px)}
 .garage-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
@@ -1288,52 +1294,64 @@ window.filterByType = function(typeId, btn) {
   }).join('') || '<div class="empty"><p>Không tìm thấy hãng xe có loại xe này</p></div>';
 };
 
-/* ── RENDER GARAGE SECTION ── */
-function renderGarages(b, id) {
-  if (!b.garages || !b.garages.length) return '';
-  function cards(city) {
-    const list = city === 'all' ? b.garages : b.garages.filter(g => g.city === city);
-    return list.map(g => `
-      <div class="garage-card">
-        <div class="garage-card-top">
-          <div class="garage-name">${g.name}</div>
-          <span class="garage-type-badge ${g.type}">${g.type === 'official' ? '🏢 Chính hãng' : '✅ Ủy quyền'}</span>
-        </div>
-        <div class="garage-meta">
-          <span class="garage-city">📍 ${g.city === 'HCM' ? 'TP.HCM' : 'Hà Nội'}</span>
-          <span class="garage-address">${g.address}</span>
-          <span class="garage-rating">★ ${g.rating}</span>
-          <span class="garage-claims"><span class="garage-claims-dot"></span>${g.claims.toLocaleString('vi')} lượt xử lý qua MoMo</span>
-        </div>
-        <div class="garage-note">${g.note}</div>
-        <div class="garage-bh-row">
-          <span class="garage-bh-label">Nhà BH:</span>
-          ${g.bh.map(name => `<span class="garage-bh-tag">${name}</span>`).join('')}
-        </div>
-      </div>`).join('') || '<p style="color:var(--gray-400);font-size:13px;padding:8px 0">Chưa có dữ liệu garage tại thành phố này</p>';
-  }
-  return `
-    <div class="garage-filter" id="gf-${id}">
-      <button class="garage-filter-btn on" onclick="filterGarage('all','${id}',this)">Tất cả (${b.garages.length})</button>
-      <button class="garage-filter-btn" onclick="filterGarage('HCM','${id}',this)">TP.HCM</button>
-      <button class="garage-filter-btn" onclick="filterGarage('HN','${id}',this)">Hà Nội</button>
-    </div>
-    <div class="garage-grid" id="garage-grid-${id}">${cards('all')}</div>`;
+function getCityLabel(city) {
+  const map = {
+    'HCM': 'TP.HCM',
+    'HN': 'Hà Nội',
+    'DN': 'Đà Nẵng',
+    'BD': 'Bình Dương',
+    'HP': 'Hải Phòng',
+    'CT': 'Cần Thơ'
+  };
+  return map[city] || city;
 }
 
-window.filterGarage = function(city, id, btn) {
-  document.querySelectorAll(`#gf-${id} .garage-filter-btn`).forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  const b = BRANDS[id];
-  const list = city === 'all' ? b.garages : b.garages.filter(g => g.city === city);
-  document.getElementById(`garage-grid-${id}`).innerHTML = list.map(g => `
+function renderGarages(b, id) {
+  if (!b.garages || !b.garages.length) return '';
+  
+  // Count garages per city dynamically
+  const counts = { all: b.garages.length, HCM: 0, HN: 0, DN: 0, BD: 0, HP: 0, CT: 0 };
+  b.garages.forEach(g => {
+    if (counts[g.city] !== undefined) counts[g.city]++;
+  });
+
+  const cityButtons = Object.entries(counts)
+    .filter(([city, count]) => count > 0)
+    .map(([city, count]) => {
+      const label = city === 'all' ? 'Tất cả' : getCityLabel(city);
+      const activeCls = city === 'all' ? ' on' : '';
+      return `<button class="garage-filter-btn${activeCls}" data-city="${city}" onclick="filterGarage('${city}','${id}',this)">${label} (${count})</button>`;
+    }).join('');
+
+  return `
+    <div class="garage-search-container">
+      <div class="garage-search-box">
+        <span class="garage-search-icon">🔍</span>
+        <input type="text" placeholder="Nhập tên, địa chỉ hoặc tỉnh thành (ví dụ: Đà Nẵng, Bình Dương...)" oninput="searchGarage('${id}', this.value)" class="garage-search-input" id="gsearch-${id}">
+      </div>
+      <div class="garage-filter" id="gf-${id}">
+        ${cityButtons}
+      </div>
+    </div>
+    <div class="garage-grid" id="garage-grid-${id}">
+      ${renderGarageCards(b.garages)}
+    </div>`;
+}
+
+function renderGarageCards(list) {
+  if (!list || !list.length) {
+    return `<div class="garage-empty">
+      <p>Không tìm thấy garage nào phù hợp với từ khóa tìm kiếm của bạn.</p>
+    </div>`;
+  }
+  return list.map(g => `
     <div class="garage-card">
       <div class="garage-card-top">
         <div class="garage-name">${g.name}</div>
         <span class="garage-type-badge ${g.type}">${g.type === 'official' ? '🏢 Chính hãng' : '✅ Ủy quyền'}</span>
       </div>
       <div class="garage-meta">
-        <span class="garage-city">📍 ${g.city === 'HCM' ? 'TP.HCM' : 'Hà Nội'}</span>
+        <span class="garage-city">📍 ${getCityLabel(g.city)}</span>
         <span class="garage-address">${g.address}</span>
         <span class="garage-rating">★ ${g.rating}</span>
         <span class="garage-claims"><span class="garage-claims-dot"></span>${g.claims.toLocaleString('vi')} lượt xử lý qua MoMo</span>
@@ -1343,7 +1361,37 @@ window.filterGarage = function(city, id, btn) {
         <span class="garage-bh-label">Nhà BH:</span>
         ${g.bh.map(name => `<span class="garage-bh-tag">${name}</span>`).join('')}
       </div>
-    </div>`).join('') || '<p style="color:var(--gray-400);font-size:13px;padding:8px 0">Chưa có dữ liệu garage tại thành phố này</p>';
+    </div>`).join('');
+}
+
+window.filterGarage = function(city, id, btn) {
+  document.querySelectorAll(`#gf-${id} .garage-filter-btn`).forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  
+  // Re-trigger search to combine city filter and search text input
+  const searchVal = document.getElementById(`gsearch-${id}`).value;
+  searchGarage(id, searchVal);
+};
+
+window.searchGarage = function(id, query) {
+  const b = BRANDS[id];
+  const activeBtn = document.querySelector(`#gf-${id} .garage-filter-btn.on`);
+  const city = activeBtn ? activeBtn.getAttribute('data-city') : 'all';
+  
+  const q = query.toLowerCase().trim();
+  const list = b.garages.filter(g => {
+    // City filter
+    if (city !== 'all' && g.city !== city) return false;
+    
+    // Search query filter
+    if (!q) return true;
+    const cityLabel = getCityLabel(g.city).toLowerCase();
+    return g.name.toLowerCase().includes(q) || 
+           g.address.toLowerCase().includes(q) || 
+           cityLabel.includes(q);
+  });
+  
+  document.getElementById(`garage-grid-${id}`).innerHTML = renderGarageCards(list);
 };
 
 /* ── RENDER INSIGHT PANEL ── */
@@ -2261,7 +2309,52 @@ function demoLookup(type, arg) {
   el.innerHTML = text;
 }
 
+function enrichGaragesWithProvinces() {
+  const extraGarages = {
+    DN: [
+      { name: ' Đà Nẵng', type: 'official', address: '12-14 Nguyễn Hữu Thọ, Hải Châu, Đà Nẵng', bh: ['Liberty', 'PVI', 'Bảo Việt'], claims: 410, rating: 4.8, note: 'Đại lý chính hãng miền Trung. Quy trình bồi thường bảo hiểm nhanh chóng.' },
+      { name: ' Auto Service Sông Hàn', type: 'authorized', address: '228 Điện Biên Phủ, Thanh Khê, Đà Nẵng', bh: ['PVI', 'Bảo Việt'], claims: 280, rating: 4.6, note: 'Garage ủy quyền uy tín. Chuyên đồng sơn, sửa chữa phục hồi sau tai nạn.' }
+    ],
+    BD: [
+      { name: ' Bình Dương', type: 'official', address: 'Đại lộ Bình Dương, Thuận An, Bình Dương', bh: ['Liberty', 'PVI'], claims: 350, rating: 4.7, note: 'Chi nhánh 3S chính hãng lớn nhất Bình Dương. Garage đồng sơn hiện đại.' },
+      { name: ' Garage Trường An Bình Dương', type: 'authorized', address: 'Khu phố Đông Chiêu, Tân Đông Hiệp, Dĩ An, Bình Dương', bh: ['PVI', 'MIC'], claims: 210, rating: 4.5, note: 'Garage liên kết bảo hiểm lâu năm, hỗ trợ giám định bồi thường tại chỗ.' }
+    ],
+    HP: [
+      { name: ' Hải Phòng', type: 'official', address: 'Lê Hồng Phong, Ngô Quyền, Hải Phòng', bh: ['Liberty', 'Bảo Việt'], claims: 320, rating: 4.7, note: 'Đại lý chính hãng Hải Phòng. Cơ sở vật chất tiêu chuẩn 3S toàn cầu.' }
+    ],
+    CT: [
+      { name: ' Cần Thơ', type: 'official', address: 'Đường Quang Trung, Cái Răng, Cần Thơ', bh: ['PVI', 'Bảo Việt'], claims: 290, rating: 4.7, note: 'Đại lý chính hãng Cái Răng. Hỗ trợ cứu hộ 24/7 khu vực Tây Nam Bộ.' }
+    ]
+  };
+
+  for (const [brandId, b] of Object.entries(BRANDS)) {
+    if (!b.garages) b.garages = [];
+    if (b.garages.some(g => g.city === 'DN')) continue;
+    
+    const brandName = b.name;
+    for (const [cityCode, list] of Object.entries(extraGarages)) {
+      list.forEach(item => {
+        const enrichedItem = {
+          name: item.name.startsWith(' Garage') || item.name.startsWith(' Auto')
+            ? item.name.trim() 
+            : `${brandName}${item.name}`,
+          type: item.type,
+          city: cityCode,
+          address: item.address,
+          bh: [...item.bh],
+          claims: item.claims,
+          rating: item.rating,
+          note: item.note.replace('Chính hãng', `Chính hãng ${brandName}`).replace('ủy quyền', `ủy quyền ${brandName}`)
+        };
+        b.garages.push(enrichedItem);
+      });
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  enrichGaragesWithProvinces();
+  
   const pathParts = location.pathname.split('/').filter(Boolean);
   let id = null;
   let model = null;
