@@ -213,10 +213,43 @@
     const DESTINATIONS=window.ESIM_DESTINATIONS;
     const $=id=>document.getElementById(id);
 
+    function parseIntent(query){
+      const q=query.trim();
+      const dayMatch=q.match(/(\d+)\s*ng[aà]y/i);
+      const gbMatch=q.match(/(\d+)\s*gb/i);
+      const days=dayMatch?Number(dayMatch[1]):null;
+      const gb=gbMatch?Number(gbMatch[1]):null;
+      const countryQ=q.replace(/\d+\s*(ng[aà]y|gb)/gi,'').replace(/\bsim\b/gi,'').trim();
+      return{days,gb,countryQ};
+    }
+
+    function buildDestUrl(id,days,gb){
+      const p=new URLSearchParams({destination:id});
+      if(gb){p.set('mode','data');p.set('data',gb);}
+      else if(days){p.set('mode','days');p.set('days',days);}
+      return`esim/destination.html?${p}`;
+    }
+
     function renderDestinations(query=''){
-      const normalized=query.trim().toLocaleLowerCase('vi');
-      const list=DESTINATIONS.filter(item=>`${item.name} ${item.region}`.toLocaleLowerCase('vi').includes(normalized));
-      $('destinationList').innerHTML=list.map(item=>`<a class="destination" href="esim/destination.html?destination=${item.id}"><span class="flag">${item.flag}</span><strong>${item.name}</strong><small>${item.region}</small></a>`).join('')||'<p style="color:var(--muted);font-size:13px">Chưa tìm thấy điểm đến phù hợp.</p>';
+      const{days,gb,countryQ}=parseIntent(query);
+      const normalized=countryQ.toLocaleLowerCase('vi');
+      const list=normalized
+        ?DESTINATIONS.filter(item=>`${item.name} ${item.region}`.toLocaleLowerCase('vi').includes(normalized))
+        :DESTINATIONS;
+
+      if(!list.length){
+        $('destinationList').innerHTML='<p style="color:var(--muted);font-size:13px">Chưa tìm thấy điểm đến phù hợp.</p>';
+        return;
+      }
+
+      const paramHint=(days||gb)
+        ?`<p style="color:var(--momo);font-size:12px;margin:6px 0 4px">↳ Sẽ mở với ${gb?gb+'GB':days+' ngày'} đã chọn</p>`
+        :'';
+
+      $('destinationList').innerHTML=paramHint+list.map(item=>{
+        const url=buildDestUrl(item.id,days,gb);
+        return`<a class="destination" href="${url}"><span class="flag">${item.flag}</span><strong>${item.name}</strong><small>${item.region}</small></a>`;
+      }).join('');
     }
 
     $('destinationSearch').addEventListener('input',event=>renderDestinations(event.target.value));

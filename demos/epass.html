@@ -478,6 +478,84 @@
         </div>
       </div>
 
+      <!-- CALCULATOR 1b: Tính phí theo tuyến cụ thể -->
+      <div class="util-card" id="route-calc">
+        <div class="util-head">
+          <span class="util-kicker">TUYẾN ĐƯỜNG / CHUYẾN ĐI</span>
+          <h3>Cần nạp bao nhiêu cho chuyến này?</h3>
+          <p>Chọn tuyến, xem đúng từng trạm BOT và tổng phí ETC cần có trước khi lên đường.</p>
+        </div>
+
+        <!-- Route picker -->
+        <div style="margin-bottom:16px">
+          <span class="field-label">Tuyến phổ biến</span>
+          <div class="chips-row" style="margin-top:8px;flex-wrap:wrap" id="epRouteChips">
+            <button class="chip-btn active" onclick="epSelectRoute('hcm-dalat',this)">HCM → Đà Lạt</button>
+            <button class="chip-btn" onclick="epSelectRoute('hcm-vung-tau',this)">HCM → Vũng Tàu</button>
+            <button class="chip-btn" onclick="epSelectRoute('hcm-phan-thiet',this)">HCM → Phan Thiết</button>
+            <button class="chip-btn" onclick="epSelectRoute('hn-hai-phong',this)">HN → Hải Phòng</button>
+            <button class="chip-btn" onclick="epSelectRoute('hn-ha-long',this)">HN → Hạ Long</button>
+          </div>
+        </div>
+
+        <!-- Vehicle type -->
+        <div style="margin-bottom:20px">
+          <span class="field-label">Loại xe</span>
+          <div class="chips-row" style="margin-top:8px" id="epVehicleChips">
+            <button class="chip-btn active" onclick="epSelectVehicle('car',this)">Xe con</button>
+            <button class="chip-btn" onclick="epSelectVehicle('bus',this)">Xe khách</button>
+            <button class="chip-btn" onclick="epSelectVehicle('truck',this)">Xe tải</button>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="epRouteResult" style="display:none">
+
+          <!-- Route summary bar -->
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div>
+              <div id="epRouteName" style="font-size:15px;font-weight:800;color:#1a1a2e"></div>
+              <div id="epRouteMeta" style="font-size:12px;color:#667085;margin-top:2px"></div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-size:11px;color:#667085;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Tổng phí ETC</div>
+              <div id="epTotalFee" style="font-size:24px;font-weight:900;color:#af0171"></div>
+            </div>
+          </div>
+
+          <!-- Station list -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:11px;font-weight:700;color:#667085;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Trạm thu phí trên tuyến</div>
+            <div id="epStationList" style="display:flex;flex-direction:column;gap:6px"></div>
+          </div>
+
+          <!-- CTA nạp ePass -->
+          <div style="border-radius:12px;padding:16px;margin-bottom:12px;border:1.5px solid #e2e8f0">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Phí ETC cần có cho chuyến đi</div>
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px">
+              <div id="epTripTotal" style="font-size:36px;font-weight:900;color:#af0171;line-height:1"></div>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:10px;user-select:none">
+              <input type="checkbox" id="epRoundTrip" onchange="epToggleReturn()" style="width:16px;height:16px;accent-color:#af0171;cursor:pointer">
+              <span style="font-size:13px;color:#374151;font-weight:500">Có tuyến về</span>
+            </label>
+            <div id="epReturnWrap" style="display:none;margin-bottom:14px">
+              <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Tuyến về</div>
+              <div class="chips-row" style="flex-wrap:wrap" id="epReturnChips">
+                <button class="chip-btn active" onclick="epSelectReturn('hcm-dalat',this)">HCM → Đà Lạt</button>
+                <button class="chip-btn" onclick="epSelectReturn('hcm-vung-tau',this)">HCM → Vũng Tàu</button>
+                <button class="chip-btn" onclick="epSelectReturn('hcm-phan-thiet',this)">HCM → Phan Thiết</button>
+                <button class="chip-btn" onclick="epSelectReturn('hn-hai-phong',this)">HN → Hải Phòng</button>
+                <button class="chip-btn" onclick="epSelectReturn('hn-ha-long',this)">HN → Hạ Long</button>
+              </div>
+            </div>
+            <button id="epTopupBtn" style="width:100%;height:40px;border-radius:10px;border:none;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;background:#af0171;color:#fff;transition:background .15s"></button>
+          </div>
+
+          <a href="/tinh-phi-etc" style="display:block;text-align:center;font-size:12.5px;font-weight:700;color:#af0171;padding:8px">Xem thêm tuyến khác →</a>
+        </div>
+      </div>
+
       <!-- CALCULATOR 2: Thiết lập ngưỡng nạp tự động -->
       <div class="util-card">
         <div class="util-head">
@@ -762,9 +840,135 @@
       document.getElementById('topupInsight').innerHTML = msg;
     }
 
+    // ── ROUTE CALC (ePass section) ───────────────────────────────────────────────
+    const EP_ROUTES = {
+      'hcm-dalat': {
+        name: 'TP. Hồ Chí Minh → Đà Lạt', meta: 'QL20 · Cao tốc Dầu Giây · 308 km · 6-7 giờ',
+        stations: [
+          { name: 'Trạm BOT Dầu Giây', km: 'Km 1+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Túc Trưng', km: 'Km 63+000', fees: { car: 52000, bus: 80000, truck: 105000 } },
+          { name: 'Trạm BOT Định Quán', km: 'Km 109+000', fees: { car: 52000, bus: 80000, truck: 105000 } },
+          { name: 'Trạm BOT Madaguôi', km: 'Km 164+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Liên Khương', km: 'Km 257+000', fees: { car: 52000, bus: 80000, truck: 105000 } },
+        ],
+      },
+      'hcm-vung-tau': {
+        name: 'TP. Hồ Chí Minh → Vũng Tàu', meta: 'Cao tốc Biên Hòa - Vũng Tàu · 128 km · 2 giờ',
+        stations: [
+          { name: 'Trạm BOT Long Thành', km: 'Km 28+000', fees: { car: 44000, bus: 65000, truck: 90000 } },
+          { name: 'Trạm BOT Phú Mỹ', km: 'Km 68+000', fees: { car: 52000, bus: 80000, truck: 105000 } },
+          { name: 'Trạm BOT Ngã Tư Vũng Tàu', km: 'Km 114+000', fees: { car: 35000, bus: 55000, truck: 70000 } },
+        ],
+      },
+      'hcm-phan-thiet': {
+        name: 'TP. Hồ Chí Minh → Phan Thiết', meta: 'Cao tốc Dầu Giây - Phan Thiết · 192 km · 3-4 giờ',
+        stations: [
+          { name: 'Trạm BOT Dầu Giây', km: 'Km 1+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Xuân Lộc', km: 'Km 58+000', fees: { car: 52000, bus: 80000, truck: 105000 } },
+          { name: 'Trạm BOT Gia Lào', km: 'Km 138+000', fees: { car: 35000, bus: 55000, truck: 70000 } },
+          { name: 'Trạm BOT Phan Thiết', km: 'Km 183+000', fees: { car: 35000, bus: 55000, truck: 70000 } },
+        ],
+      },
+      'hn-hai-phong': {
+        name: 'Hà Nội → Hải Phòng', meta: 'Cao tốc Hà Nội - Hải Phòng · 120 km · 1.5 giờ',
+        stations: [
+          { name: 'Trạm BOT Phú Thụy', km: 'Km 12+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Quán Toan', km: 'Km 88+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Đình Vũ', km: 'Km 108+000', fees: { car: 35000, bus: 55000, truck: 70000 } },
+        ],
+      },
+      'hn-ha-long': {
+        name: 'Hà Nội → Hạ Long', meta: 'Cao tốc Hà Nội - Hải Phòng + QL18 · 175 km · 2.5 giờ',
+        stations: [
+          { name: 'Trạm BOT Phú Thụy', km: 'Km 12+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Quán Toan', km: 'Km 88+000', fees: { car: 45000, bus: 70000, truck: 90000 } },
+          { name: 'Trạm BOT Biểu Nghi', km: 'Km 120+000', fees: { car: 35000, bus: 55000, truck: 70000 } },
+          { name: 'Trạm BOT Đại Yên', km: 'Km 158+000', fees: { car: 35000, bus: 55000, truck: 70000 } },
+        ],
+      },
+    };
+
+    let epRoute = 'hcm-dalat';
+    let epReturnRoute = 'hcm-dalat';
+    let epVehicle = 'car';
+
+    function epToggleReturn() {
+      const on = document.getElementById('epRoundTrip').checked;
+      document.getElementById('epReturnWrap').style.display = on ? 'block' : 'none';
+      // sync return chips to current outbound route by default
+      if (on) epSyncReturnChips();
+      epRender();
+    }
+
+    function epSyncReturnChips() {
+      epReturnRoute = epRoute;
+      document.querySelectorAll('#epReturnChips .chip-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('onclick').includes(`'${epRoute}'`));
+      });
+    }
+
+    function epSelectReturn(id, el) {
+      epReturnRoute = id;
+      document.querySelectorAll('#epReturnChips .chip-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      epRender();
+    }
+
+    function epSelectRoute(id, el) {
+      epRoute = id;
+      document.querySelectorAll('#epRouteChips .chip-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      epRender();
+    }
+
+    function epSelectVehicle(v, el) {
+      epVehicle = v;
+      document.querySelectorAll('#epVehicleChips .chip-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      epRender();
+    }
+
+    function epRender() {
+      const r = EP_ROUTES[epRoute];
+      const total = r.stations.reduce((s, st) => s + st.fees[epVehicle], 0);
+      document.getElementById('epRouteName').textContent = r.name;
+      document.getElementById('epRouteMeta').textContent = r.meta + ' · ' + r.stations.length + ' trạm ETC';
+      document.getElementById('epTotalFee').textContent = fmt(total);
+
+      document.getElementById('epStationList').innerHTML = r.stations.map(st => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#1a1a2e">${st.name}</div>
+            <div style="font-size:11px;color:#94a3b8">${st.km}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:13.5px;font-weight:800;color:#1a1a2e">${fmt(st.fees[epVehicle])}đ</div>
+            <div style="font-size:10px;font-weight:700;color:#af0171">ETC/ePass</div>
+          </div>
+        </div>
+      `).join('');
+
+      const hasReturn = document.getElementById('epRoundTrip').checked;
+      let returnTotal = 0;
+      if (hasReturn) {
+        const ret = EP_ROUTES[epReturnRoute];
+        returnTotal = ret.stations.reduce((s, st) => s + st.fees[epVehicle], 0);
+      }
+      const tripTotal = total + returnTotal;
+
+      document.getElementById('epTripTotal').textContent = fmt(tripTotal);
+
+      const btn = document.getElementById('epTopupBtn');
+      btn.textContent = `Nạp ${fmt(tripTotal)}đ vào ePass`;
+      btn.onclick = () => alert(`Đã nạp ${fmt(tripTotal)}đ vào ePass thành công!`);
+
+      document.getElementById('epRouteResult').style.display = 'block';
+    }
+
     // ── INIT ─────────────────────────────────────────────────────────────────────
     calcToll();
     calcTopup();
+    epRender();
   </script>
 
 </body>

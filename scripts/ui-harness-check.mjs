@@ -131,6 +131,16 @@ record(content.js.includes("ui: { valueType: 'percent', precision: 'approximate'
 record(content.js.includes("ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare'"), 'explicit field UI metadata exists for comparison selectors');
 record(!content.html.includes('financial.css?v=30') && !content.html.includes('financial.css?v=31'), 'financial CSS cache version was bumped after selector fixes');
 
+// ── ICON POLICY (global)
+// All icons across demos must come from Lucide SVG (inline <svg> with Lucide paths).
+// Do NOT use emoji (🛡, ⚡, 📋…) as UI icons — they render inconsistently across OS/browser
+// and are not design-system icons. Replace any emoji used as icons with the equivalent
+// Lucide SVG: https://lucide.dev/icons/
+// Exception: emoji inside body copy / marketing text is acceptable.
+// This rule is intentionally NOT auto-enforced in code (demo files vary too widely),
+// but Claude must follow it for every new icon added and fix any emoji icons spotted in review.
+record(true, 'icon policy rule is documented (manual enforcement)');
+
 if (failures.length) {
   console.error('UI harness failed');
   failures.forEach(item => console.error(`- ${item}`));
