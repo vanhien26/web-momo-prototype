@@ -41,6 +41,13 @@ function applyRewrite(pathname) {
       if (pathname === base || pathname.startsWith(base + '/')) {
         return r.destination.replace('/:path*', '');
       }
+    } else if (r.source.includes(':')) {
+      // e.g. /hang-xe/:brand/:model
+      const pattern = r.source.replace(/:[a-zA-Z0-9_]+/g, '[^/]+');
+      const regex = new RegExp('^' + pattern + '$');
+      if (regex.test(pathname)) {
+        return r.destination;
+      }
     } else if (pathname === r.source) {
       return r.destination;
     }

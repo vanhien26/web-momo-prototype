@@ -558,7 +558,7 @@ const PROTOTYPES = [
         name: 'Model Car Detail',
         category: 'Child Page',
         src: 'demos/model-car-detail.html',
-        address: 'web-momo-prototype.vercel.app/model-car-detail',
+        address: 'web-momo-prototype.vercel.app/hang-xe/toyota/camry',
         description: 'Trang chi tiết xe mẫu: thông số kỹ thuật, chi phí vận hành (donut chart mobase palette), so sánh phiên bản & giá, xe cùng phân khúc. Demo: Toyota Camry 2.5Q 2026 (Sedan/SUV/Hybrid).',
       },
       {
