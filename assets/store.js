@@ -554,13 +554,14 @@ const PROTOTYPES = [
         description: 'Route-based ETC toll calculator: chọn tuyến (HCM→ĐL, HCM→PT, HN→HP…), phân loại xe, hiển thị từng trạm + phí, tổng ETC, so sánh với số dư ePass, CTA nạp tiền. Road visualization SVG theo tuyến.',
       },
       {
-        id: 'model-car-detail',
-        name: 'Model Car Detail',
+        id: 'trip-planner',
+        name: 'Chuẩn Bị Chuyến Đi A→B',
         category: 'Child Page',
-        src: 'demos/model-car-detail.html',
-        address: 'web-momo-prototype.vercel.app/hang-xe/toyota/camry',
-        description: 'Trang chi tiết xe mẫu: thông số kỹ thuật, chi phí vận hành (donut chart mobase palette), so sánh phiên bản & giá, xe cùng phân khúc. Demo: Toyota Camry 2.5Q 2026 (Sedan/SUV/Hybrid).',
+        src: 'demos/trip-planner.html',
+        address: 'web-momo-prototype.vercel.app/trip-planner',
+        description: 'Trip cost calculator: chọn tuyến (6 tuyến phổ biến HCM/HN), loại xe (xe máy / ô tô xăng / ô tô điện), tính chi phí nhiên liệu + phí ETC, checklist trước khi xuất phát, điểm dừng dọc đường. Nhận ?route= param từ vehicle-hub.',
       },
+
       {
         id: 'hang-xe',
         name: 'Hãng Xe · Chi tiết',
@@ -1784,15 +1785,15 @@ function buildProtoView(proto) {
         <button class="vp-btn" data-vp="tablet">T</button>
         <button class="vp-btn" data-vp="mobile">M</button>
       </div>
-      <a href="${proto.src}" target="_blank" rel="noopener" class="open-ext-btn">Mở tab ↗</a>
+      <a href="${proto.src}" class="open-ext-btn">Mở trang ↗</a>
     </div>
   </div>
 
   <div class="ws-mobile-cta">
     <div class="ws-mobile-cta-label">Live Demo</div>
     <div class="ws-mobile-cta-title">${proto.name}</div>
-    <div class="ws-mobile-cta-desc">Mở prototype trên tab mới để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
-    <a href="${proto.src}" target="_blank" rel="noopener" class="ws-mobile-cta-btn">Mở Demo ↗</a>
+    <div class="ws-mobile-cta-desc">Mở prototype để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
+    <a href="${proto.src}" class="ws-mobile-cta-btn">Mở Demo ↗</a>
   </div>
 
   <div class="ws-preview expanded">
@@ -1826,7 +1827,7 @@ function buildToolView(proto, tool, toolPath = [tool]) {
       <span class="ws-bc-sep">/</span>
       <span class="ws-bc-cur">${tool.name}</span>
     </div>
-    <a href="${src}" target="_blank" rel="noopener" class="open-ext-btn">Mở tab ↗</a>
+    <a href="${src}" class="open-ext-btn">Mở trang ↗</a>
   </div>
 
   <div class="ws-overview compact">
@@ -1843,8 +1844,8 @@ function buildToolView(proto, tool, toolPath = [tool]) {
   <div class="ws-mobile-cta">
     <div class="ws-mobile-cta-label">Live Demo</div>
     <div class="ws-mobile-cta-title">${tool.name}</div>
-    <div class="ws-mobile-cta-desc">Mở prototype trên tab mới để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
-    <a href="${src}" target="_blank" rel="noopener" class="ws-mobile-cta-btn">Mở Demo ↗</a>
+    <div class="ws-mobile-cta-desc">Mở prototype để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
+    <a href="${src}" class="ws-mobile-cta-btn">Mở Demo ↗</a>
   </div>
 
   <div class="ws-preview expanded">

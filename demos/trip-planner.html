@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tính chi phí chuyến đi - MoMo Vehicle Hub</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --pink-50:#FFF0F7; --pink-100:#FFD6EC; --pink-300:#F472B6; --pink-400:#EC4899;
+  --pink-500:#EB2F96; --pink-600:#DB2777;
+  --green-500:#22C55E; --blue-600:#2563EB; --amber-500:#F59E0B;
+  --gray-50:#F9FAFB; --gray-100:#F3F4F6; --gray-200:#E5E7EB; --gray-300:#D1D5DB;
+  --gray-400:#9CA3AF; --gray-500:#6B7280; --gray-600:#4B5563;
+  --gray-700:#374151; --gray-800:#1F2937; --gray-900:#111827;
+  --content: 920px;
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+}
+body { background: var(--gray-50); min-height: 100vh; }
+
+/* ── TOP BAR ── */
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 20px; height: 56px;
+  background: #fff; border-bottom: 1px solid var(--gray-100);
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-back {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--gray-600);
+  text-decoration: none; padding: 6px 10px; border-radius: 8px; transition: background .15s;
+}
+.topbar-back:hover { background: var(--gray-100); color: var(--gray-900); }
+.topbar-title { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.topbar-sep { color: var(--gray-300); margin: 0 2px; }
+
+/* ── ROUTE HEADER ── */
+.route-header {
+  background: #fff; border-bottom: 1px solid var(--gray-100);
+  padding: 16px 20px;
+}
+.route-header-inner {
+  max-width: var(--content); margin: 0 auto;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.route-display {
+  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;
+}
+.rd-from { font-size: 20px; font-weight: 900; color: var(--gray-900); }
+.rd-arrow { color: var(--gray-300); flex: none; }
+.rd-to { font-size: 20px; font-weight: 900; color: var(--pink-500); }
+.rd-km {
+  font-size: 12px; font-weight: 700; color: var(--gray-500);
+  background: var(--gray-100); padding: 4px 10px; border-radius: 20px; white-space: nowrap;
+}
+.edit-route-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--gray-600);
+  padding: 7px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px;
+  background: #fff; cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: border-color .15s;
+}
+.edit-route-btn:hover { border-color: var(--pink-300); color: var(--pink-600); }
+
+/* ── MAIN ── */
+.main { max-width: var(--content); margin: 0 auto; padding: 24px 20px 60px; }
+.calc-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+
+/* ── INPUT PANEL ── */
+.input-panel {
+  background: #fff; border: 1px solid var(--gray-100); border-radius: 16px; padding: 20px;
+  display: flex; flex-direction: column; gap: 16px; position: sticky; top: 76px;
+}
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: 10.5px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .04em; }
+.vpills { display: flex; gap: 8px; }
+.vpill {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 6px; border: 1.5px solid var(--gray-200); border-radius: 12px;
+  background: #fff; cursor: pointer; transition: all .15s;
+}
+.vpill:hover { border-color: var(--gray-300); }
+.vpill.on { border-color: var(--pink-500); background: var(--pink-50); }
+.vpill-icon { font-size: 20px; line-height: 1; }
+.vpill-name { font-size: 10px; font-weight: 700; color: var(--gray-600); white-space: nowrap; }
+.vpill.on .vpill-name { color: var(--pink-500); }
+.tp-select {
+  width: 100%; padding: 9px 12px; font-size: 12px; font-weight: 600;
+  border: 1.5px solid var(--gray-200); border-radius: 10px; background: #fff;
+  color: var(--gray-900); cursor: pointer; font-family: inherit;
+}
+.tp-select:focus { outline: none; border-color: var(--pink-400); }
+.disclaimer { font-size: 10px; color: var(--gray-400); line-height: 1.5; padding-top: 4px; border-top: 1px solid var(--gray-100); }
+
+/* ── RESULT PANEL ── */
+.result-panel { display: flex; flex-direction: column; gap: 14px; }
+
+/* Unknown route notice */
+.est-notice {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px;
+  font-size: 12px; color: #92400E; line-height: 1.5;
+}
+.est-notice svg { flex: none; margin-top: 1px; }
+
+.rcard {
+  background: #fff; border: 1px solid var(--gray-100); border-radius: 16px; overflow: hidden;
+}
+.rcard-head {
+  display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.rcard-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex: none;
+}
+.rcard-title { font-size: 13px; font-weight: 800; color: var(--gray-900); }
+.rcard-sub { font-size: 11px; color: var(--gray-400); font-weight: 600; margin-top: 1px; }
+.rcard-total { margin-left: auto; font-size: 22px; font-weight: 900; color: var(--green-500); }
+.rcard-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+.cost-row { display: flex; align-items: center; justify-content: space-between; }
+.cost-label { font-size: 12px; color: var(--gray-600); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.cost-label svg { flex: none; }
+.cost-val { font-size: 12px; font-weight: 800; color: var(--gray-900); }
+.cost-formula { font-size: 10px; color: var(--gray-400); padding-left: 18px; }
+.cost-sep { height: 1px; background: var(--gray-100); }
+.cost-total-row { display: flex; align-items: center; justify-content: space-between; padding-top: 2px; }
+.cost-total-label { font-size: 13px; font-weight: 700; color: var(--gray-700); }
+.cost-total-val { font-size: 17px; font-weight: 900; color: var(--green-500); }
+.roundtrip-note { font-size: 10.5px; color: var(--gray-400); }
+.momo-cta-row {
+  display: flex; gap: 8px; padding: 14px 20px;
+  background: var(--pink-50); border-top: 1px solid var(--pink-100);
+}
+.momo-cta {
+  flex: 1; padding: 10px; background: var(--pink-500); color: #fff;
+  font-size: 12px; font-weight: 800; border-radius: 10px; border: none;
+  cursor: pointer; text-align: center; text-decoration: none; display: block; transition: background .15s;
+}
+.momo-cta:hover { background: var(--pink-600); }
+.momo-cta.outline { background: #fff; color: var(--pink-500); border: 1.5px solid var(--pink-300); }
+.momo-cta.outline:hover { background: var(--pink-50); }
+
+.check-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+  border: 1px solid var(--gray-100); border-radius: 10px; cursor: pointer; transition: background .12s;
+}
+.check-item:hover { background: var(--gray-50); }
+.check-item.done { background: #F0FDF4; border-color: #bbf7d0; }
+.check-box {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--gray-300);
+  display: flex; align-items: center; justify-content: center; flex: none; margin-top: 1px;
+  transition: all .12s;
+}
+.check-item.done .check-box { background: var(--green-500); border-color: var(--green-500); }
+.check-info { flex: 1; min-width: 0; }
+.check-name { font-size: 12px; font-weight: 700; color: var(--gray-900); }
+.check-item.done .check-name { color: var(--gray-500); text-decoration: line-through; }
+.check-hint { font-size: 10.5px; color: var(--gray-400); margin-top: 2px; }
+.check-cta {
+  font-size: 11px; font-weight: 800; color: var(--pink-500); white-space: nowrap;
+  padding: 4px 8px; border-radius: 6px; text-decoration: none;
+  background: var(--pink-50); margin-top: 1px; flex: none;
+}
+.check-cta:hover { background: var(--pink-100); }
+
+.stop-item { display: flex; align-items: flex-start; gap: 10px; }
+.stop-km {
+  font-size: 10px; font-weight: 800; color: var(--gray-400); white-space: nowrap;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  padding: 3px 7px; border-radius: 5px; flex: none; margin-top: 2px;
+}
+.stop-name { font-size: 12px; font-weight: 700; color: var(--gray-900); }
+.stop-type { font-size: 10.5px; color: var(--gray-500); margin-top: 1px; }
+.stop-link { font-size: 11px; font-weight: 700; color: var(--pink-500); text-decoration: none; }
+.stop-link:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  .calc-layout { grid-template-columns: 1fr; }
+  .input-panel { position: static; }
+  .rd-from, .rd-to { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-back" href="/vehicle-hub">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Vehicle Hub
+  </a>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-title">Tính chi phí chuyến đi</span>
+</div>
+
+<div class="route-header">
+  <div class="route-header-inner">
+    <div class="route-display">
+      <span class="rd-from" id="rdFrom">—</span>
+      <svg class="rd-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <span class="rd-to" id="rdTo">—</span>
+      <span class="rd-km" id="rdKm"></span>
+    </div>
+    <a class="edit-route-btn" href="/vehicle-hub#chuyen-di">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Đổi tuyến
+    </a>
+  </div>
+</div>
+
+<div class="main">
+  <div id="estNotice" style="display:none; margin-bottom:14px">
+    <div class="est-notice">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Chi phí ước tính dựa trên khoảng cách đường chim bay × hệ số 1.35. Có thể lệch 10–20% so với thực tế tùy tuyến đường cụ thể.
+    </div>
+  </div>
+
+  <div class="calc-layout">
+    <div class="input-panel">
+      <div class="field">
+        <span class="field-label">Loại phương tiện</span>
+        <div class="vpills">
+          <button class="vpill" data-v="motorbike" onclick="selectVehicle('motorbike',this)">
+            <span class="vpill-icon">🛵</span><span class="vpill-name">Xe máy</span>
+          </button>
+          <button class="vpill on" data-v="car-gas" onclick="selectVehicle('car-gas',this)">
+            <span class="vpill-icon">🚗</span><span class="vpill-name">Ô tô xăng</span>
+          </button>
+          <button class="vpill" data-v="car-ev" onclick="selectVehicle('car-ev',this)">
+            <span class="vpill-icon">⚡</span><span class="vpill-name">Ô tô điện</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="field" id="modelRow">
+        <span class="field-label">Mức tiêu hao</span>
+        <select class="tp-select" id="modelSelect" onchange="updateCalc()">
+          <option value="8">Phổ thông (8L/100km)</option>
+          <option value="9">Cỡ lớn / SUV (9L/100km)</option>
+          <option value="10">7 chỗ / MPV (10L/100km)</option>
+          <option value="6.5">Hybrid (6.5L/100km)</option>
+          <option value="7">Tiết kiệm (7L/100km)</option>
+        </select>
+      </div>
+
+      <div class="field" id="evRow" style="display:none">
+        <span class="field-label">Tiêu hao điện</span>
+        <select class="tp-select" id="evSelect" onchange="updateCalc()">
+          <option value="15">VinFast VF5/VF6 (15kWh/100km)</option>
+          <option value="17">VinFast VF7/VF8 (17kWh/100km)</option>
+          <option value="20">VinFast VF9 (20kWh/100km)</option>
+          <option value="14">Hyundai IONIQ 6 (14kWh/100km)</option>
+          <option value="16">BYD Atto 3 (16kWh/100km)</option>
+        </select>
+      </div>
+
+      <p class="disclaimer">Giá xăng RON 95: 21.900đ/L · Giá điện V-Green: 3.858đ/kWh · Phí ETC ước tính theo tuyến cao tốc phổ biến.</p>
+    </div>
+
+    <div class="result-panel">
+      <!-- Chi phí -->
+      <div class="rcard">
+        <div class="rcard-head">
+          <div class="rcard-icon" style="background:#F0FDF4">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <div class="rcard-title">Chi phí ước tính</div>
+            <div class="rcard-sub">Khứ hồi × 2 nếu cần</div>
+          </div>
+          <div class="rcard-total" id="totalCost">—</div>
+        </div>
+        <div class="rcard-body" id="costRows"></div>
+        <div class="momo-cta-row">
+          <a class="momo-cta outline" href="/epass">Nạp ePass</a>
+          <a class="momo-cta" href="/vehicle-hub">Mở MoMo</a>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="rcard">
+        <div class="rcard-head">
+          <div class="rcard-icon" style="background:#EFF6FF">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div>
+            <div class="rcard-title">Trước khi xuất phát</div>
+            <div class="rcard-sub">Checklist thiết yếu</div>
+          </div>
+        </div>
+        <div class="rcard-body" id="checklist"></div>
+      </div>
+
+      <!-- Điểm dừng (chỉ show nếu có known route) -->
+      <div class="rcard" id="stopsCard" style="display:none">
+        <div class="rcard-head">
+          <div class="rcard-icon" style="background:#FFF7ED">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="rcard-title">Dọc đường nên ghé</div>
+            <div class="rcard-sub" id="stopsSub">Điểm dừng & cây xăng</div>
+          </div>
+        </div>
+        <div class="rcard-body" id="stopsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAS_PRICE = 21900;
+const EV_PRICE  = 3858;
+
+const CITIES = {
+  'TP. Hồ Chí Minh': { lat:10.78, lng:106.70 },
+  'Hà Nội':           { lat:21.03, lng:105.85 },
+  'Đà Nẵng':          { lat:16.07, lng:108.22 },
+  'Vũng Tàu':         { lat:10.35, lng:107.08 },
+  'Đà Lạt':           { lat:11.94, lng:108.44 },
+  'Phan Thiết':       { lat:10.93, lng:108.10 },
+  'Nha Trang':        { lat:12.25, lng:109.19 },
+  'Cần Thơ':          { lat:10.04, lng:105.79 },
+  'Hội An':           { lat:15.88, lng:108.32 },
+  'Huế':              { lat:16.46, lng:107.60 },
+  'Hải Phòng':        { lat:20.86, lng:106.69 },
+  'Ninh Bình':        { lat:20.25, lng:105.97 },
+  'Sầm Sơn':          { lat:19.74, lng:105.91 },
+  'Quy Nhơn':         { lat:13.78, lng:109.22 },
+  'Buôn Ma Thuột':    { lat:12.67, lng:108.05 },
+  'Pleiku':           { lat:13.98, lng:107.99 },
+  'Long Xuyên':       { lat:10.38, lng:105.43 },
+  'Rạch Giá':         { lat:10.01, lng:105.08 },
+  'Cà Mau':           { lat:9.18,  lng:105.15 },
+  'Mỹ Tho':           { lat:10.36, lng:106.36 },
+  'Hạ Long':          { lat:20.96, lng:107.08 },
+  'Lạng Sơn':         { lat:21.85, lng:106.76 },
+  'Thanh Hóa':        { lat:19.80, lng:105.78 },
+  'Vinh':             { lat:18.67, lng:105.68 },
+  'Đồng Hới':        { lat:17.48, lng:106.60 },
+};
+
+// Known routes with extra detail (stops, tolls)
+const KNOWN_ROUTES = {
+  'TP. Hồ Chí Minh|Vũng Tàu': {
+    km:126, tolls:{ motorbike:0, 'car-gas':66000, 'car-ev':66000 },
+    stops:[
+      { km:19, name:'Trạm xăng Petrolimex Long An', type:'⛽ Cây xăng', link:'/cay-xang' },
+      { km:63, name:'Trạm dừng nghỉ Long Thành', type:'☕ Nghỉ chân + ăn uống', link:null },
+      { km:98, name:'V-Green · Long Thành EV Hub', type:'⚡ Sạc nhanh 120kW', link:'/tram-sac', evOnly:true },
+    ], checklist:['epass','insurance','tire','water'],
+  },
+  'TP. Hồ Chí Minh|Đà Lạt': {
+    km:307, tolls:{ motorbike:0, 'car-gas':142000, 'car-ev':142000 },
+    stops:[
+      { km:75, name:'Trạm xăng Dầu Giây', type:'⛽ Cây xăng + tiện lợi', link:'/cay-xang' },
+      { km:160, name:'Bảo Lộc - Nghỉ chân', type:'☕ Quán ăn, cà phê', link:null },
+      { km:245, name:'V-Green · Đà Lạt City', type:'⚡ Sạc 60kW', link:'/tram-sac', evOnly:true },
+    ], checklist:['epass','insurance','tire','water','medicine'],
+  },
+  'TP. Hồ Chí Minh|Phan Thiết': {
+    km:198, tolls:{ motorbike:0, 'car-gas':98000, 'car-ev':98000 },
+    stops:[
+      { km:45, name:'Trạm nghỉ Long Thành', type:'⛽ Xăng + ăn uống', link:'/cay-xang' },
+      { km:130, name:'Trạm dừng Bình Thuận', type:'☕ Nghỉ chân', link:null },
+    ], checklist:['epass','insurance','tire','water'],
+  },
+  'Hà Nội|Hải Phòng': {
+    km:105, tolls:{ motorbike:0, 'car-gas':88000, 'car-ev':88000 },
+    stops:[
+      { km:52, name:'Trạm nghỉ Km52 - Hải Dương', type:'☕ Nghỉ chân + xăng', link:'/cay-xang' },
+      { km:95, name:'V-Green · Hải Phòng Central', type:'⚡ Sạc 120kW', link:'/tram-sac', evOnly:true },
+    ], checklist:['epass','insurance','tire'],
+  },
+  'Hà Nội|Ninh Bình': {
+    km:93, tolls:{ motorbike:0, 'car-gas':56000, 'car-ev':56000 },
+    stops:[
+      { km:46, name:'Trạm nghỉ Phủ Lý', type:'☕ Nghỉ chân + ăn uống', link:null },
+    ], checklist:['epass','insurance','tire','water'],
+  },
+  'Hà Nội|Sầm Sơn': {
+    km:163, tolls:{ motorbike:0, 'car-gas':76000, 'car-ev':76000 },
+    stops:[
+      { km:80, name:'Trạm nghỉ Thanh Hóa', type:'⛽ Xăng + tiện lợi', link:'/cay-xang' },
+    ], checklist:['epass','insurance','tire','water','medicine'],
+  },
+};
+
+const CHECKLIST_ITEMS = {
+  epass:    { name:'ePass / ETC đủ tiền', hint:'Kiểm tra số dư trước, tránh dừng trạm', cta:'Nạp ePass', link:'/epass' },
+  insurance:{ name:'Bảo hiểm xe còn hạn', hint:'TNDS bắt buộc, kiểm tra ngày hết hạn', cta:'Xem bảo hiểm', link:'/bao-hiem-o-to' },
+  tire:     { name:'Lốp xe & lốp dự phòng', hint:'Kiểm tra áp suất, không quên lốp dự phòng', cta:null, link:null },
+  water:    { name:'Nước uống & đồ ăn nhẹ', hint:'Đặc biệt cần thiết cho chặng trên 200km', cta:null, link:null },
+  medicine: { name:'Thuốc say xe & sơ cứu', hint:'Tuyến đường đồi núi có nhiều khúc cua', cta:null, link:null },
+};
+
+const DEFAULT_CHECKLIST_SHORT = ['insurance','tire'];
+const DEFAULT_CHECKLIST_MID   = ['epass','insurance','tire','water'];
+const DEFAULT_CHECKLIST_LONG  = ['epass','insurance','tire','water','medicine'];
+
+const S = { from:'', to:'', vehicle:'car-gas', km:0 };
+
+function haversineKm(lat1,lng1,lat2,lng2) {
+  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function estimateTolls(km, vehicle) {
+  if (vehicle === 'motorbike') return 0;
+  if (km < 50) return 0;
+  if (km < 150) return Math.round(km * 0.55) * 1000;
+  if (km < 400) return Math.round(km * 0.45) * 1000;
+  return Math.round(km * 0.4) * 1000;
+}
+
+function selectVehicle(v, btn) {
+  S.vehicle = v;
+  document.querySelectorAll('.vpill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const mRow = document.getElementById('modelRow');
+  const eRow = document.getElementById('evRow');
+  if(v === 'motorbike') { mRow.style.display = 'none'; eRow.style.display = 'none'; }
+  else if(v === 'car-gas') { mRow.style.display = 'flex'; eRow.style.display = 'none'; }
+  else { mRow.style.display = 'none'; eRow.style.display = 'flex'; }
+  updateCalc();
+}
+
+function updateCalc() {
+  const cons   = parseFloat(document.getElementById('modelSelect').value) || 8;
+  const evCons = parseFloat(document.getElementById('evSelect').value) || 15;
+  const km = S.km;
+
+  let fuelCost = 0, fuelLabel = '';
+  if(S.vehicle === 'motorbike') {
+    fuelCost = Math.round(km * 2.5 / 100 * GAS_PRICE);
+    fuelLabel = `${km}km × 2.5L/100km × ${GAS_PRICE.toLocaleString('vi-VN')}đ`;
+  } else if(S.vehicle === 'car-gas') {
+    fuelCost = Math.round(km * cons / 100 * GAS_PRICE);
+    fuelLabel = `${km}km × ${cons}L/100km × ${GAS_PRICE.toLocaleString('vi-VN')}đ`;
+  } else {
+    fuelCost = Math.round(km * evCons / 100 * EV_PRICE);
+    fuelLabel = `${km}km × ${evCons}kWh/100km × ${EV_PRICE.toLocaleString('vi-VN')}đ/kWh`;
+  }
+
+  // Known route has exact tolls, otherwise estimate
+  const knownKey = `${S.from}|${S.to}`;
+  const revKey   = `${S.to}|${S.from}`;
+  const known    = KNOWN_ROUTES[knownKey] || KNOWN_ROUTES[revKey] || null;
+  const tolls    = known ? (known.tolls[S.vehicle] || 0) : estimateTolls(km, S.vehicle);
+  const total    = fuelCost + tolls;
+
+  document.getElementById('totalCost').textContent = total.toLocaleString('vi-VN') + 'đ';
+
+  const fuelIcon = S.vehicle === 'car-ev'
+    ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`
+    : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V10l7-8 7 8v12H3z"/></svg>`;
+
+  const tollNote = known ? '' : ' <em style="font-size:10px;color:var(--gray-400)">(ước tính)</em>';
+  document.getElementById('costRows').innerHTML = `
+    <div class="cost-row">
+      <span class="cost-label">${fuelIcon} ${S.vehicle === 'car-ev' ? 'Chi phí sạc điện' : 'Chi phí nhiên liệu'}</span>
+      <span class="cost-val">${fuelCost.toLocaleString('vi-VN')}đ</span>
+    </div>
+    <div class="cost-formula">${fuelLabel}</div>
+    ${tolls > 0
+      ? `<div class="cost-row"><span class="cost-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Phí ETC${tollNote}</span><span class="cost-val">${tolls.toLocaleString('vi-VN')}đ</span></div>`
+      : `<div class="cost-row"><span class="cost-label" style="color:var(--gray-400)">Phí ETC — không áp dụng</span><span class="cost-val" style="color:var(--gray-400)">Miễn phí</span></div>`
+    }
+    <div class="cost-sep"></div>
+    <div class="cost-total-row">
+      <span class="cost-total-label">Tổng một chiều</span>
+      <span class="cost-total-val">${total.toLocaleString('vi-VN')}đ</span>
+    </div>
+    <div class="roundtrip-note">Khứ hồi ≈ ${(total*2).toLocaleString('vi-VN')}đ · Chưa tính phí đỗ xe</div>
+  `;
+
+  // Checklist
+  const skipEpass = S.vehicle === 'motorbike';
+  let clKeys = known ? known.checklist : (km < 100 ? DEFAULT_CHECKLIST_SHORT : km < 300 ? DEFAULT_CHECKLIST_MID : DEFAULT_CHECKLIST_LONG);
+  document.getElementById('checklist').innerHTML = clKeys
+    .filter(k => !(skipEpass && k === 'epass'))
+    .map(k => {
+      const it = CHECKLIST_ITEMS[k];
+      return `<div class="check-item" onclick="this.classList.toggle('done')">
+        <div class="check-box"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="check-info"><div class="check-name">${it.name}</div><div class="check-hint">${it.hint}</div></div>
+        ${it.cta ? `<a class="check-cta" href="${it.link}" onclick="event.stopPropagation()">${it.cta}</a>` : ''}
+      </div>`;
+    }).join('');
+
+  // Stops — only for known routes
+  const stopsCard = document.getElementById('stopsCard');
+  if (known && known.stops) {
+    const isEv = S.vehicle === 'car-ev';
+    const stops = known.stops.filter(s => !s.evOnly || isEv);
+    document.getElementById('stopsSub').textContent = isEv ? 'Điểm sạc + nghỉ chân' : 'Điểm dừng & cây xăng';
+    document.getElementById('stopsList').innerHTML = stops.map(s => `
+      <div class="stop-item">
+        <span class="stop-km">Km ${s.km}</span>
+        <div><div class="stop-name">${s.name}</div><div class="stop-type">${s.type}${s.link ? ` · <a class="stop-link" href="${s.link}">Xem →</a>` : ''}</div></div>
+      </div>`).join('');
+    stopsCard.style.display = '';
+  } else {
+    stopsCard.style.display = 'none';
+  }
+}
+
+// Init from URL params
+(function init() {
+  const p = new URLSearchParams(location.search);
+  const fromCity = p.get('from') || '';
+  const toCity   = p.get('to')   || '';
+  const vehicle  = p.get('vehicle') || 'car-gas';
+
+  S.from = fromCity;
+  S.to   = toCity;
+  S.vehicle = vehicle;
+
+  document.getElementById('rdFrom').textContent = fromCity || '?';
+  document.getElementById('rdTo').textContent   = toCity   || '?';
+
+  // Set vehicle pill
+  document.querySelectorAll('.vpill').forEach(b => b.classList.remove('on'));
+  const vBtn = document.querySelector(`.vpill[data-v="${vehicle}"]`);
+  if (vBtn) vBtn.classList.add('on');
+  const mRow = document.getElementById('modelRow');
+  const eRow = document.getElementById('evRow');
+  if(vehicle === 'motorbike') { mRow.style.display = 'none'; eRow.style.display = 'none'; }
+  else if(vehicle === 'car-ev') { mRow.style.display = 'none'; eRow.style.display = 'flex'; }
+
+  // Compute km
+  const knownKey = `${fromCity}|${toCity}`;
+  const revKey   = `${toCity}|${fromCity}`;
+  let km = 0;
+  let isEstimate = false;
+
+  if (KNOWN_ROUTES[knownKey]) {
+    km = KNOWN_ROUTES[knownKey].km;
+  } else if (KNOWN_ROUTES[revKey]) {
+    km = KNOWN_ROUTES[revKey].km;
+  } else {
+    // Haversine estimate
+    const a = CITIES[fromCity], b = CITIES[toCity];
+    if (a && b) {
+      km = Math.round(haversineKm(a.lat, a.lng, b.lat, b.lng) * 1.35);
+      isEstimate = true;
+    }
+  }
+
+  S.km = km;
+  document.getElementById('rdKm').textContent = km ? `${km} km` : '';
+  document.getElementById('estNotice').style.display = isEstimate ? 'block' : 'none';
+
+  updateCalc();
+})();
+</script>
+</body>
+</html>

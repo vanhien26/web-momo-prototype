@@ -128,7 +128,10 @@
     .fchip:hover{border-color:var(--ev-green);color:var(--ev-green)}
     .fchip.on{background:var(--ev-green);border-color:var(--ev-green);color:#fff}
     .fchip svg{flex:none}
+    .fchip.avail-chip{border-color:var(--ev-green);color:var(--ev-green);font-weight:800}
+    .fchip.avail-chip.on{background:var(--ev-green);color:#fff}
     .fsep{width:1px;height:20px;background:var(--gray-200);flex:none;margin:0 2px}
+    .s-hours-row{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);font-weight:600;margin-top:6px;padding-top:6px;border-top:1px solid var(--gray-100)}
 
     /* ── LAYOUT */
     .split{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden}
@@ -235,6 +238,12 @@
     .momo-cta:hover{background:#c41f85}
     .momo-cta-logo{width:24px;height:24px;border-radius:6px;overflow:hidden;background:#fff;display:grid;place-items:center;flex:none}
     .momo-cta-logo img{width:18px;height:18px;object-fit:contain}
+    .dir-cta{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;border:1.5px solid var(--ev-green);color:var(--ev-green);border-radius:10px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s}
+    .dir-cta:hover{background:var(--ev-green-soft)}
+    .save-cta{display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;border:1.5px solid var(--gray-200);color:var(--gray-600);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s}
+    .save-cta:hover{background:var(--gray-50);border-color:var(--gray-300)}
+    .save-cta.saved{border-color:var(--pink-500);color:var(--pink-500)}
+    .cost-savings-row{margin-top:7px;padding:7px 12px;background:#fff;border-radius:8px;border:1px solid #86efac;align-items:center;justify-content:space-between}
 
     /* ── MAP */
     .map-pane{position:relative;overflow:hidden}
@@ -377,6 +386,16 @@
       </div>
       <div class="detail-scroll" id="detailContent"></div>
       <div class="dt-cta">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <button class="dir-cta" onclick="handleDir()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            Chỉ đường
+          </button>
+          <button class="save-cta" onclick="handleSave(this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            Lưu
+          </button>
+        </div>
         <button class="momo-cta" onclick="handlePay()">
           <span class="momo-cta-logo"><img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo"></span>
           Thanh toán qua MoMo
@@ -511,14 +530,58 @@ const STATIONS = [
     pricePerKwh:3560, hours:'07:00 - 22:00',
     amenities:['wifi','restroom','shopping'], rating:4.4, reviews:16,
   },
+  {
+    id:'s9', name:'V-Green · Aeon Mall Tân Phú',
+    network:'vgreen', address:'30 Bờ Bao Tân Thắng, Tân Phú',
+    dist:8.1, lat:10.7939, lng:106.6286,
+    ports:[
+      { type:'CCS2', kw:120, avail:0, total:4 },
+      { type:'Type 2 AC', kw:22, avail:0, total:4 },
+    ],
+    pricePerKwh:3858, hours:'09:00 - 22:00',
+    amenities:['wifi','cafe','restroom','shopping'], rating:4.0, reviews:9,
+  },
+  {
+    id:'s10', name:'EVME · Sunrise City',
+    network:'evme', address:'27 Nguyễn Hữu Thọ, Q.7, TP.HCM',
+    dist:5.2, lat:10.7312, lng:106.7012,
+    ports:[
+      { type:'CCS2', kw:60,  avail:1, total:4 },
+      { type:'Type 2 AC', kw:11, avail:0, total:2 },
+    ],
+    pricePerKwh:4200, hours:'10:00 - 22:00',
+    amenities:['wifi','restroom','shopping'], rating:3.8, reviews:7,
+  },
+  {
+    id:'s11', name:'Eon Electric · Gigamall Thủ Đức',
+    network:'eon', address:'240A Phạm Văn Đồng, Thủ Đức',
+    dist:9.4, lat:10.8472, lng:106.7298,
+    ports:[
+      { type:'CCS2', kw:120, avail:0, total:2 },
+    ],
+    pricePerKwh:4000, hours:'09:00 - 22:00',
+    amenities:['wifi','cafe','restroom','shopping'], rating:4.2, reviews:5,
+    offline: true,
+  },
+  {
+    id:'s12', name:'EVN ChargeV · Parkson Flemington',
+    network:'evn', address:'184 Lê Đại Hành, Q.11, TP.HCM',
+    dist:3.6, lat:10.7711, lng:106.6656,
+    ports:[
+      { type:'Type 2 AC', kw:22, avail:2, total:4 },
+    ],
+    pricePerKwh:3560, hours:'10:00 - 21:30',
+    amenities:['wifi','restroom'], rating:4.1, reviews:11,
+  },
 ];
 
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
-const S = { connector:'all', speed:'all', network:'all', selected:null };
+const S = { connector:'all', speed:'all', network:'all', avail:'all', selected:null };
 
 function stationStatus(st) {
+  if(st.offline) return 'offline';
   const avail = st.ports.reduce((a,p)=>a+p.avail,0);
   if(avail === 0) return 'full';
   if(avail === 1) return 'busy';
@@ -567,7 +630,13 @@ const NETWORK_FILTERS = [
 
 function renderFilters() {
   const bar = document.getElementById('filterBar');
+  const availOn = S.avail === 'ok';
   bar.innerHTML = `
+    <button class="fchip avail-chip${availOn?' on':''}" onclick="toggleAvail()">
+      <svg width="9" height="9" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="${availOn?'#fff':'#16A34A'}"/></svg>
+      Còn cổng trống
+    </button>
+    <div class="fsep"></div>
     ${CONNECTOR_FILTERS.map(f=>`
       <button class="fchip${S.connector===f.id?' on':''}" onclick="setConnector('${f.id}')">${f.label}</button>
     `).join('')}
@@ -582,6 +651,7 @@ function renderFilters() {
   `;
 }
 
+function toggleAvail(){ S.avail = S.avail==='ok'?'all':'ok'; S.selected=null; closeDetail(); renderFilters(); renderList(); fitAll(); }
 function setConnector(id){ S.connector=id; S.selected=null; closeDetail(); renderFilters(); renderList(); fitAll(); }
 function setSpeed(id)    { S.speed=id;     S.selected=null; closeDetail(); renderFilters(); renderList(); fitAll(); }
 function setNetwork(id)  { S.network=id;   S.selected=null; closeDetail(); renderFilters(); renderList(); fitAll(); }
@@ -591,6 +661,9 @@ function setNetwork(id)  { S.network=id;   S.selected=null; closeDetail(); rende
 // ─────────────────────────────────────────────
 function filtered() {
   let list = STATIONS;
+  if(S.avail === 'ok') {
+    list = list.filter(st=>stationStatus(st)==='ok');
+  }
   if(S.connector !== 'all') {
     list = list.filter(st=>st.ports.some(p=>p.type===S.connector));
   }
@@ -674,7 +747,14 @@ function renderList() {
           <span class="avail-text ${st2}">${availLabel}</span>
           <span style="font-size:10px;color:var(--muted)"> / ${total} cổng</span>
         </div>
-        <div class="s-price">${(st.pricePerKwh).toLocaleString('vi-VN')}<strong>đ/kWh</strong></div>
+        <div style="display:flex;align-items:center;gap:8px;flex:none">
+          <span style="font-size:10px;color:var(--muted);font-weight:600">⭐ ${st.rating}</span>
+          <div class="s-price">${(st.pricePerKwh).toLocaleString('vi-VN')}<strong>đ/kWh</strong></div>
+        </div>
+      </div>
+      <div class="s-hours-row">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ${st.hours}
       </div>
     </div>`;
   }).join('');
@@ -784,6 +864,10 @@ function selectStation(id) {
         <span class="cost-result-label">Chi phí dự kiến</span>
         <span class="cost-result-val" id="costResult">-</span>
       </div>
+      <div id="costSavings" class="cost-savings-row" style="display:none">
+        <span style="font-size:10.5px;font-weight:700;color:var(--gray-600)">Tiết kiệm so với xăng</span>
+        <span id="savingsVal" style="font-size:12px;font-weight:900;color:var(--ev-green);flex:none"></span>
+      </div>
       <div class="cost-note" id="costNote">Chưa tính phí dừng quá giờ. Giá áp dụng từ 19/3/2024.</div>
     </div>
 
@@ -839,15 +923,21 @@ function setCarModel(){
   if(id) calcCost(id);
 }
 
+const GAS_PRICE_PER_LITER = 24700;
+const GAS_L_PER_100KM = 8;
+const EV_KWH_PER_100KM = 15;
+
 function calcCost(stId){
   const st = STATIONS.find(s=>s.id===stId);
   if(!st) return;
   const now = parseFloat(document.getElementById('battNow')?.value)||0;
   const target = parseFloat(document.getElementById('battTarget')?.value)||80;
   const cap = parseFloat(document.getElementById('battCap')?.value)||42;
+  const savingsEl = document.getElementById('costSavings');
   if(target<=now){
     document.getElementById('costResult').textContent='--';
     document.getElementById('costNote').textContent='Pin đích phải lớn hơn pin hiện tại';
+    if(savingsEl) savingsEl.style.display='none';
     return;
   }
   const kwNeeded = cap * (target - now) / 100;
@@ -856,10 +946,34 @@ function calcCost(stId){
   document.getElementById('costResult').textContent = cost.toLocaleString('vi-VN') + 'đ';
   document.getElementById('costNote').textContent =
     `≈ ${kwNeeded.toFixed(1)} kWh · khoảng ${time < 60 ? time + ' phút' : Math.round(time/60*10)/10 + ' giờ'} (cổng ${stationMaxKw(st)}kW). Chưa tính phí dừng quá giờ.`;
+  // savings vs gas
+  const km = kwNeeded / EV_KWH_PER_100KM * 100;
+  const gasCost = Math.round(km / 100 * GAS_L_PER_100KM * GAS_PRICE_PER_LITER);
+  const savings = gasCost - cost;
+  if(savingsEl && savings > 0){
+    savingsEl.style.display='flex';
+    document.getElementById('savingsVal').textContent = savings.toLocaleString('vi-VN') + 'đ';
+  } else if(savingsEl) {
+    savingsEl.style.display='none';
+  }
 }
 
 function handlePay(){
   alert('Chuyển sang luồng thanh toán MoMo...');
+}
+
+function handleDir(){
+  const st = STATIONS.find(s=>s.id===S.selected);
+  if(!st) return;
+  alert(`Mở Google Maps chỉ đường đến:\n${st.name}\n${st.address}`);
+}
+
+function handleSave(btn){
+  btn.classList.toggle('saved');
+  const saved = btn.classList.contains('saved');
+  btn.innerHTML = saved
+    ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Đã lưu`
+    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Lưu`;
 }
 
 // ─────────────────────────────────────────────
