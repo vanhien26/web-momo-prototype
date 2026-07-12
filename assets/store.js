@@ -545,6 +545,14 @@ const PROTOTYPES = [
         address: 'web-momo-prototype.vercel.app/tinh-phi-etc',
         description: 'Route-based ETC toll calculator: chọn tuyến (HCM→ĐL, HCM→PT, HN→HP…), phân loại xe, hiển thị từng trạm + phí, tổng ETC, so sánh với số dư ePass, CTA nạp tiền. Road visualization SVG theo tuyến.',
       },
+      {
+        id: 'model-car-detail',
+        name: 'Model Car Detail',
+        category: 'Child Page',
+        src: 'demos/model-car-detail.html',
+        address: 'web-momo-prototype.vercel.app/model-car-detail',
+        description: 'Trang chi tiết xe mẫu: thông số kỹ thuật, chi phí vận hành (donut chart mobase palette), so sánh phiên bản & giá, xe cùng phân khúc. Demo: Toyota Camry 2.5Q 2026 (Sedan/SUV/Hybrid).',
+      },
     ],
   },
   {
