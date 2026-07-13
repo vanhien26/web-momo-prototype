@@ -361,9 +361,9 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .garage-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-lg);padding:18px 20px;transition:border-color .2s,box-shadow .2s,transform .2s}
 .garage-card:hover{border-color:var(--gray-300);box-shadow:var(--shadow-s);transform:translateY(-1px)}
 .garage-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
-.garage-type-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;flex-shrink:0}
-.garage-type-badge.official{background:#EFF6FF;color:#1d4ed8}
-.garage-type-badge.authorized{background:var(--green-50);color:#166534}
+.garage-card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.garage-book-btn{display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:var(--pink-600);background:var(--pink-50);border:1.5px solid rgba(235,47,150,.2);border-radius:7px;padding:5px 12px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:.12s}
+.garage-book-btn:hover{background:var(--pink-500);color:#fff;border-color:var(--pink-500)}
 .garage-name{font-size:14px;font-weight:800;color:var(--gray-900);line-height:1.3;flex:1}
 .garage-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .garage-city{font-size:11px;font-weight:700;color:var(--gray-500);display:flex;align-items:center;gap:3px}
@@ -1430,24 +1430,28 @@ function renderGarageCards(list) {
       <p>Không tìm thấy garage nào phù hợp với từ khóa tìm kiếm của bạn.</p>
     </div>`;
   }
-  return list.map(g => `
+  return list.map(g => {
+    const slug = g.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    return `
     <div class="garage-card">
       <div class="garage-card-top">
         <div class="garage-name">${g.name}</div>
-        <span class="garage-type-badge ${g.type}">${g.type === 'official' ? '🏢 Chính hãng' : '✅ Ủy quyền'}</span>
+        <span class="garage-rating">★ ${g.rating}</span>
       </div>
       <div class="garage-meta">
-        <span class="garage-city">📍 ${getCityLabel(g.city)}</span>
+        <span class="garage-city"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${getCityLabel(g.city)}</span>
         <span class="garage-address">${g.address}</span>
-        <span class="garage-rating">★ ${g.rating}</span>
-        <span class="garage-claims"><span class="garage-claims-dot"></span>${g.claims.toLocaleString('vi')} lượt xử lý qua MoMo</span>
       </div>
       <div class="garage-note">${g.note}</div>
-      <div class="garage-bh-row">
-        <span class="garage-bh-label">Nhà BH:</span>
-        ${g.bh.map(name => `<span class="garage-bh-tag">${name}</span>`).join('')}
+      <div class="garage-card-footer">
+        <div class="garage-bh-row">
+          <span class="garage-bh-label">Nhà BH:</span>
+          ${g.bh.map(name => `<span class="garage-bh-tag">${name}</span>`).join('')}
+        </div>
+        <a class="garage-book-btn" href="/dat-lich-bao-duong/${slug}">Đặt lịch →</a>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 window.filterGarage = function(city, id, btn) {
