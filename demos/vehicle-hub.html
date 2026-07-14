@@ -148,7 +148,7 @@ body {
   margin-bottom: 10px;
 }
 .mega-item {
-  display: block;
+  display: flex; align-items: center; gap: 9px;
   padding: 7px 0;
   font-size: 15px; font-weight: 500;
   color: rgba(255,255,255,.85);
@@ -156,7 +156,9 @@ body {
   transition: color .12s;
   white-space: nowrap;
 }
+.mega-item svg { flex-shrink: 0; opacity: .7; transition: opacity .12s; }
 .mega-item:hover { color: #fff; }
+.mega-item:hover svg { opacity: 1; }
 
 .mega-footer {
   margin-top: 24px; padding-top: 20px;
@@ -1507,14 +1509,14 @@ body {
             <div class="mega-cols">
               <div class="mega-col">
                 <div class="mega-col-label">Nhiên liệu</div>
-                <a class="mega-item" href="/gia-xang">Giá xăng dầu hôm nay</a>
-                <a class="mega-item" href="/cay-xang">Tìm cây xăng gần đây</a>
-                <a class="mega-item" href="/tram-sac">Trạm sạc xe điện</a>
+                <a class="mega-item" href="/gia-xang" data-micon="Fuel">Giá xăng dầu hôm nay</a>
+                <a class="mega-item" href="/cay-xang" data-micon="MapPin">Tìm cây xăng gần đây</a>
+                <a class="mega-item" href="/tram-sac" data-micon="Zap">Trạm sạc xe điện</a>
               </div>
               <div class="mega-col">
                 <div class="mega-col-label">Hành trình</div>
-                <a class="mega-item" href="/trip-planner">Tính chi phí chuyến đi</a>
-                <a class="mega-item" href="/tinh-phi-etc">Tính phí ETC theo tuyến</a>
+                <a class="mega-item" href="/trip-planner" data-micon="Route">Tính chi phí chuyến đi</a>
+                <a class="mega-item" href="/tinh-phi-etc" data-micon="Milestone">Tính phí ETC theo tuyến</a>
               </div>
             </div>
           </div>
@@ -1533,8 +1535,8 @@ body {
             <div class="mega-cols">
               <div class="mega-col">
                 <div class="mega-col-label">Ô tô</div>
-                <a class="mega-item" href="/bao-hiem-o-to">Bảo hiểm TNDS bắt buộc</a>
-                <a class="mega-item" href="/bao-hiem-o-to">Bảo hiểm thân vỏ</a>
+                <a class="mega-item" href="/bao-hiem-o-to" data-micon="ShieldCheck">Bảo hiểm TNDS bắt buộc</a>
+                <a class="mega-item" href="/bao-hiem-o-to" data-micon="Shield">Bảo hiểm thân vỏ</a>
               </div>
  
             </div>
@@ -1554,13 +1556,13 @@ body {
             <div class="mega-cols">
               <div class="mega-col">
                 <div class="mega-col-label">Pháp lý</div>
-                <a class="mega-item" href="/phat-nguoi">Tra phạt nguội</a>
-                <a class="mega-item" href="/dang-kiem">Kiểm tra đăng kiểm</a>
+                <a class="mega-item" href="/phat-nguoi" data-micon="ShieldAlert">Tra phạt nguội</a>
+                <a class="mega-item" href="/dang-kiem" data-micon="ClipboardList">Kiểm tra đăng kiểm</a>
               </div>
               <div class="mega-col">
                 <div class="mega-col-label">Bảo dưỡng</div>
-                <a class="mega-item" href="/bao-duong-xe">Lịch bảo dưỡng xe</a>
-                <a class="mega-item" href="/vehicle-hub#cuu-ho">Cứu hộ khẩn cấp</a>
+                <a class="mega-item" href="/bao-duong-xe" data-micon="Wrench">Lịch bảo dưỡng xe</a>
+                <a class="mega-item" href="/vehicle-hub#cuu-ho" data-micon="Truck">Cứu hộ khẩn cấp</a>
               </div>
             </div>
           </div>
@@ -1579,14 +1581,14 @@ body {
             <div class="mega-cols">
               <div class="mega-col">
                 <div class="mega-col-label">Hồ sơ & Chi phí</div>
-                <a class="mega-item" href="/vehicle-hub#ho-so-xe">Hồ sơ phương tiện</a>
-                <a class="mega-item" href="/vehicle-hub#chi-phi-xe">Chi phí nuôi xe / năm</a>
-                <a class="mega-item" href="/hang-xe">Nhãn xe & Dòng xe</a>
+                <a class="mega-item" href="/vehicle-hub#ho-so-xe" data-micon="Car">Hồ sơ phương tiện</a>
+                <a class="mega-item" href="/vehicle-hub#chi-phi-xe" data-micon="Calculator">Chi phí nuôi xe / năm</a>
+                <a class="mega-item" href="/hang-xe" data-micon="Tag">Nhãn xe & Dòng xe</a>
               </div>
               <div class="mega-col">
                 <div class="mega-col-label">Tiện ích</div>
-                <a class="mega-item" href="/epass">ePass & Tự động nạp</a>
-                <a class="mega-item" href="/bai-do-xe">Tìm bãi đỗ xe</a>
+                <a class="mega-item" href="/epass" data-micon="CreditCard">ePass & Tự động nạp</a>
+                <a class="mega-item" href="/bai-do-xe" data-micon="SquareParking">Tìm bãi đỗ xe</a>
               </div>
             </div>
           </div>
@@ -3263,6 +3265,11 @@ window.addEventListener('load', () => {
   set('vp-icon-motorbike', 'Bike', 14, 2);
   set('vp-icon-car-gas', 'Car', 14, 2);
   set('vp-icon-car-ev', 'Zap', 14, 2);
+  // mega-menu icons
+  document.querySelectorAll('.mega-item[data-micon]').forEach(el => {
+    const svg = licon(el.dataset.micon, 15, 1.8);
+    el.insertAdjacentHTML('afterbegin', svg);
+  });
 });
 </script>
 </body>
