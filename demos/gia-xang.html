@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Giá Xăng Dầu Hôm Nay 06/07/2026 - RON 95, E5, Diesel | MoMo</title>
+<title>Giá Xăng Dầu Hôm Nay 10/07/2026 - RON 95, E5, Diesel | MoMo</title>
 <meta name="description" content="Bảng giá xăng dầu hôm nay theo Vùng 1, Vùng 2: RON 95-III, RON 95-II, E5 RON 92, dầu Diesel, dầu hỏa. Lịch sử 10 kỳ điều hành, biểu đồ xu hướng 90 ngày và công cụ tính tiền đổ xăng.">
 <link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
 <style>
@@ -165,6 +165,32 @@ h1.page-title {
 .stn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .stn-dist { font-size: 12px; font-weight: 700; color: var(--gray-600); }
 .stn-nav { font-size: 11px; font-weight: 700; color: var(--pink-500); }
+.stn-addr { font-size: 11.5px; color: var(--gray-400); margin-top: 3px; line-height: 1.4; }
+/* Empty state */
+.stn-empty-state {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--white); border: 1.5px dashed var(--gray-200);
+  border-radius: var(--r-lg); padding: 20px 24px;
+}
+.stn-empty-icon {
+  width: 48px; height: 48px; border-radius: 14px; background: var(--gray-100);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-400); flex-shrink: 0;
+}
+.stn-empty-text { flex: 1; min-width: 0; }
+.stn-empty-title { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.stn-empty-sub { font-size: 12.5px; color: var(--gray-500); margin-top: 3px; line-height: 1.45; }
+.stn-locate-btn {
+  display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+  background: var(--pink-500); color: #fff; border: none; border-radius: 24px;
+  padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: background .15s; white-space: nowrap;
+}
+.stn-locate-btn:hover { background: var(--pink-600, #be185d); }
+@media(max-width:640px) {
+  .stn-empty-state { flex-wrap: wrap; }
+  .stn-locate-btn { width: 100%; justify-content: center; }
+}
 @media(max-width:860px) { .stations-row { grid-template-columns: 1fr 1fr; } }
 @media(max-width:560px) { .stations-row { grid-template-columns: 1fr; } }
 
@@ -575,9 +601,9 @@ h1.page-title {
 <div class="crumbs"><a href="/vehicle-hub">Xe & Giao Thông</a> / <strong>Giá xăng dầu hôm nay</strong></div>
 
 <header class="page-head">
-  <div class="page-eyebrow"><span class="live-dot"></span>Kỳ điều hành 26/06/2026 · 15:00 &nbsp;·&nbsp; Kỳ tiếp theo: Thứ Năm 10/07/2026 (còn 4 ngày)</div>
-  <h1 class="page-title">Giá xăng dầu hôm nay 06/07/2026</h1>
-  <p class="page-sub">Giá bán lẻ theo công bố của <strong>Bộ Công Thương - Bộ Tài chính</strong>, áp dụng từ 15:00 ngày 26/06/2026. RON 95 <strong>giảm kỳ thứ 3 liên tiếp</strong>, dầu Diesel tăng nhẹ do giá thế giới.</p>
+  <div class="page-eyebrow"><span class="live-dot"></span>Kỳ điều hành 10/07/2026 · 15:00 &nbsp;·&nbsp; Kỳ tiếp theo: Thứ Năm 17/07/2026 (còn 3 ngày)</div>
+  <h1 class="page-title">Giá xăng dầu hôm nay 14/07/2026</h1>
+  <p class="page-sub">Giá bán lẻ theo công bố của <strong>Bộ Công Thương - Bộ Tài chính</strong>, áp dụng từ 15:00 ngày 10/07/2026. RON 95 <strong>giảm kỳ thứ 4 liên tiếp</strong>, dầu Diesel ổn định.</p>
 </header>
 
 <div class="page-wrap">
@@ -661,7 +687,6 @@ h1.page-title {
             <h3>Tính tiền đổ xăng</h3>
             <p>Nhập số lít hoặc số tiền để biết chính xác chi phí theo giá hôm nay.</p>
           </div>
-          <span class="intent-chip">Exploratory intent</span>
         </div>
         <div class="calculator-layout">
           <div class="input-panel">
@@ -724,49 +749,66 @@ h1.page-title {
     <div class="stations-head">
       <div>
         <div class="stations-eyebrow">Cây xăng đối tác</div>
-        <div class="stations-title">Gần bạn nhất</div>
+        <div class="stations-title" id="stn-title">Gần bạn nhất</div>
       </div>
-      <a class="stations-all" href="/cay-xang">Xem tất cả cây xăng →</a>
+      <a class="stations-all" href="/cay-xang">Xem tất cả →</a>
     </div>
-    <div class="stations-row">
-      <div class="stn-card" onclick="toast('Chỉ đường tới Petrolimex 101...')">
+
+    <!-- State A: chưa có vị trí -->
+    <div id="stn-empty" class="stn-empty-state">
+      <div class="stn-empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+      </div>
+      <div class="stn-empty-text">
+        <div class="stn-empty-title">Tìm cây xăng gần bạn</div>
+        <div class="stn-empty-sub">1.200+ điểm Petrolimex, PV Oil trên toàn quốc - thanh toán MoMo, tích điểm hạng MoXe.</div>
+      </div>
+      <button class="stn-locate-btn" onclick="detectLocation()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+        Dùng vị trí của tôi
+      </button>
+    </div>
+
+    <!-- State B: đã có vị trí - hiển thị danh sách -->
+    <div id="stn-list" class="stations-row" style="display:none">
+      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Petrolimex 101')">
         <div class="stn-logo" style="background:#E8232A">PL</div>
         <div class="stn-info">
           <div class="stn-name">Petrolimex 101</div>
-          <div class="stn-addr">101 Nguyễn Thị Thập, Q.7</div>
+          <div class="stn-addr">101 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM</div>
         </div>
         <div class="stn-right">
           <span class="stn-dist">0.4 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
-      <div class="stn-card" onclick="toast('Chỉ đường tới PV Oil Lê Văn Lương...')">
+      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới PV Oil Lê Văn Lương')">
         <div class="stn-logo" style="background:#006DB8">PV</div>
         <div class="stn-info">
           <div class="stn-name">PV Oil Lê Văn Lương</div>
-          <div class="stn-addr">288 Lê Văn Lương, Q.7</div>
+          <div class="stn-addr">288 Lê Văn Lương, Phường Tân Quy, Quận 7, TP.HCM</div>
         </div>
         <div class="stn-right">
           <span class="stn-dist">1.1 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
-      <div class="stn-card" onclick="toast('Chỉ đường tới Petrolimex HTP...')">
+      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Petrolimex Huỳnh Tấn Phát')">
         <div class="stn-logo" style="background:#E8232A">PL</div>
         <div class="stn-info">
           <div class="stn-name">Petrolimex Huỳnh Tấn Phát</div>
-          <div class="stn-addr">500 Huỳnh Tấn Phát, Q.7</div>
+          <div class="stn-addr">500 Huỳnh Tấn Phát, Phường Bình Thuận, Quận 7, TP.HCM</div>
         </div>
         <div class="stn-right">
           <span class="stn-dist">2.3 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
-      <div class="stn-card" onclick="toast('Chỉ đường tới Shell Nguyễn Hữu Thọ...')">
+      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Shell Nguyễn Hữu Thọ')">
         <div class="stn-logo" style="background:#FBCE07;color:#d00">SH</div>
         <div class="stn-info">
           <div class="stn-name">Shell Nguyễn Hữu Thọ</div>
-          <div class="stn-addr">1200 Nguyễn Hữu Thọ, Q.7</div>
+          <div class="stn-addr">1200 Nguyễn Hữu Thọ, Phường Phước Kiển, Huyện Nhà Bè, TP.HCM</div>
         </div>
         <div class="stn-right">
           <span class="stn-dist">3.1 km</span>
@@ -991,6 +1033,16 @@ h1.page-title {
   }
 
   let toastTimer;
+  function detectLocation() {
+    const btn = document.querySelector('.stn-locate-btn');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Đang xác định...';
+    btn.disabled = true;
+    setTimeout(() => {
+      document.getElementById('stn-empty').style.display = 'none';
+      document.getElementById('stn-list').style.display = 'grid';
+      document.getElementById('stn-title').textContent = 'Gần bạn nhất · Quận 7, TP.HCM';
+    }, 1200);
+  }
   function toast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
