@@ -274,10 +274,16 @@ input { font: inherit; }
   text-transform: uppercase;
 }
 .station-info { flex: 1; min-width: 0; }
+.station-name-row {
+  display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; min-width: 0;
+}
 .station-name {
   font-size: 13px; font-weight: 700; color: var(--gray-900);
-  line-height: 1.3; margin-bottom: 3px;
+  line-height: 1.3; flex: 1; min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.station-rating {
+  font-size: 11px; font-weight: 700; color: #d97706; flex-shrink: 0;
 }
 .station-addr {
   font-size: 11px; color: var(--gray-500); line-height: 1.4;
@@ -1011,7 +1017,10 @@ function renderList() {
       <div class="station-card${s.id === activeId ? ' is-active' : ''}" id="card-${s.id}" onclick="selectStation(${s.id})">
         <div class="station-brand-badge" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">${b.short}</div>
         <div class="station-info">
-          <div class="station-name">${s.name}</div>
+          <div class="station-name-row">
+            <span class="station-name">${s.name}</span>
+            <span class="station-rating">★ ${s.rating}</span>
+          </div>
           <div class="station-addr">${s.addr}</div>
           <div class="station-meta">
             <span class="badge badge-dist"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${s.dist} km</span>
@@ -1038,7 +1047,10 @@ function renderList() {
       <div class="station-card${g.id === activeId ? ' is-active' : ''}" id="card-${g.id}" onclick="selectStation(${g.id})">
         <div class="station-brand-badge" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">${b.short}</div>
         <div class="station-info">
-          <div class="station-name">${g.name}</div>
+          <div class="station-name-row">
+            <span class="station-name">${g.name}</span>
+            <span class="station-rating">★ ${g.rating}</span>
+          </div>
           <div class="station-addr">${g.addr}</div>
           <div class="station-meta">
             <span class="badge badge-dist"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${g.dist} km</span>
@@ -1050,7 +1062,6 @@ function renderList() {
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               ${g.hours}
             </div>
-            <div class="fuel-pill" style="color:var(--gray-500)">★ ${g.rating}</div>
           </div>
         </div>
       </div>`;
