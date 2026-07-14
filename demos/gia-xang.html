@@ -145,8 +145,9 @@ h1.page-title {
 }
 .stations-all:hover { text-decoration: underline; }
 .stations-row {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
 }
+.stations-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
 .stn-card {
   background: var(--white); border-radius: var(--r-lg);
   border: 1px solid var(--gray-100);
@@ -181,17 +182,17 @@ h1.page-title {
 .stn-empty-title { font-size: 14px; font-weight: 700; color: var(--gray-900); }
 .stn-empty-sub { font-size: 12.5px; color: var(--gray-500); margin-top: 3px; line-height: 1.45; }
 .stn-locate-btn {
-  display: flex; align-items: center; gap: 7px; flex-shrink: 0;
-  background: var(--pink-500); color: #fff; border: none; border-radius: 24px;
-  padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
-  transition: background .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  background: var(--white); color: var(--pink-500); border: 1.5px solid var(--pink-200,#fbcfe8); border-radius: 24px;
+  padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
 }
-.stn-locate-btn:hover { background: var(--pink-600, #be185d); }
+.stn-locate-btn.located { background: var(--green-50); color: var(--green-600,#16a34a); border-color: var(--green-200,#bbf7d0); }
+.stn-locate-btn:hover { background: var(--pink-50); }
 @media(max-width:640px) {
   .stn-empty-state { flex-wrap: wrap; }
   .stn-locate-btn { width: 100%; justify-content: center; }
 }
-@media(max-width:860px) { .stations-row { grid-template-columns: 1fr 1fr; } }
 @media(max-width:560px) { .stations-row { grid-template-columns: 1fr; } }
 
 .card {
@@ -747,28 +748,20 @@ h1.page-title {
   <div class="stations-section">
     <div class="stations-head">
       <div>
-        <div class="stations-title" id="stn-title">Gần bạn nhất</div>
+        <div class="stations-title" id="stn-title">Cây xăng đối tác</div>
+        <div id="stn-sub" class="stations-sub">1.200+ điểm Petrolimex, PV Oil toàn quốc - thanh toán MoMo, tích điểm MoXe</div>
       </div>
-      <a class="stations-all" href="/cay-xang">Xem tất cả →</a>
+      <div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
+        <button id="stn-locate-btn" class="stn-locate-btn" onclick="detectLocation()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          Vị trí của tôi
+        </button>
+        <a class="stations-all" href="/cay-xang">Xem tất cả →</a>
+      </div>
     </div>
 
-    <!-- State A: chưa có vị trí -->
-    <div id="stn-empty" class="stn-empty-state">
-      <div class="stn-empty-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-      </div>
-      <div class="stn-empty-text">
-        <div class="stn-empty-title">Tìm cây xăng gần bạn</div>
-        <div class="stn-empty-sub">1.200+ điểm Petrolimex, PV Oil trên toàn quốc - thanh toán MoMo, tích điểm hạng MoXe.</div>
-      </div>
-      <button class="stn-locate-btn" onclick="detectLocation()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-        Dùng vị trí của tôi
-      </button>
-    </div>
-
-    <!-- State B: đã có vị trí - hiển thị danh sách -->
-    <div id="stn-list" class="stations-row" style="display:none">
+    <!-- Luôn hiển thị - khoảng cách ẩn khi chưa detect -->
+    <div id="stn-list" class="stations-row">
       <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Petrolimex 101')">
         <div class="stn-logo" style="background:#E8232A">PL</div>
         <div class="stn-info">
@@ -776,7 +769,7 @@ h1.page-title {
           <div class="stn-addr">101 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM</div>
         </div>
         <div class="stn-right">
-          <span class="stn-dist">0.4 km</span>
+          <span class="stn-dist stn-dist-val" style="display:none">0.4 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
@@ -787,7 +780,7 @@ h1.page-title {
           <div class="stn-addr">288 Lê Văn Lương, Phường Tân Quy, Quận 7, TP.HCM</div>
         </div>
         <div class="stn-right">
-          <span class="stn-dist">1.1 km</span>
+          <span class="stn-dist stn-dist-val" style="display:none">1.1 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
@@ -798,7 +791,7 @@ h1.page-title {
           <div class="stn-addr">500 Huỳnh Tấn Phát, Phường Bình Thuận, Quận 7, TP.HCM</div>
         </div>
         <div class="stn-right">
-          <span class="stn-dist">2.3 km</span>
+          <span class="stn-dist stn-dist-val" style="display:none">2.3 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
@@ -809,7 +802,7 @@ h1.page-title {
           <div class="stn-addr">1200 Nguyễn Hữu Thọ, Phường Phước Kiển, Huyện Nhà Bè, TP.HCM</div>
         </div>
         <div class="stn-right">
-          <span class="stn-dist">3.1 km</span>
+          <span class="stn-dist stn-dist-val" style="display:none">3.1 km</span>
           <span class="stn-nav">Chỉ đường →</span>
         </div>
       </div>
@@ -1031,13 +1024,16 @@ h1.page-title {
 
   let toastTimer;
   function detectLocation() {
-    const btn = document.querySelector('.stn-locate-btn');
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Đang xác định...';
+    const btn = document.getElementById('stn-locate-btn');
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Đang xác định...';
     btn.disabled = true;
     setTimeout(() => {
-      document.getElementById('stn-empty').style.display = 'none';
-      document.getElementById('stn-list').style.display = 'grid';
-      document.getElementById('stn-title').textContent = 'Gần bạn nhất · Quận 7, TP.HCM';
+      document.getElementById('stn-title').textContent = 'Gần bạn nhất';
+      document.getElementById('stn-sub').textContent = 'Quận 7, TP.HCM · Sắp xếp theo khoảng cách';
+      document.querySelectorAll('.stn-dist-val').forEach(el => el.style.display = '');
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg> Quận 7';
+      btn.classList.add('located');
+      btn.disabled = false;
     }, 1200);
   }
   function toast(msg) {
