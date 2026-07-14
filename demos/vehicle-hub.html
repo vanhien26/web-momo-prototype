@@ -1124,68 +1124,72 @@ body {
 @media (max-width: 540px) { .tp-route-grid { grid-template-columns: 1fr; } }
 
 /* ── TRIP SEARCH WIDGET ──────────────────── */
+/* ── TRIP PLANNER WIDGET (1-row search bar) ── */
 .tp-widget {
-  max-width: 560px; margin: 0 auto;
-  background: #fff; border: 1px solid var(--gray-100); border-radius: 20px;
-  padding: 24px; display: flex; flex-direction: column; gap: 20px;
-  box-shadow: 0 2px 20px rgba(0,0,0,.05);
+  background: #fff; border: 1px solid var(--gray-100); border-radius: 16px;
+  display: flex; align-items: stretch;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  overflow: visible; position: relative;
 }
-.tp-fields {
-  display: flex; flex-direction: column; gap: 10px; position: relative;
+.tp-cell {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  padding: 14px 18px; position: relative; min-width: 0;
 }
-.tp-city-wrap { position: relative; }
+.tp-cell + .tp-cell { border-left: 1px solid var(--gray-100); }
+.tp-cell-vehicle { flex: 0 0 auto; }
 .tp-city-label {
   font-size: 10px; font-weight: 800; color: var(--gray-400); text-transform: uppercase;
-  letter-spacing: .06em; margin-bottom: 5px; display: block;
+  letter-spacing: .06em; margin-bottom: 4px; display: block;
 }
 .tp-city-input {
-  width: 100%; padding: 11px 14px 11px 38px;
-  border: 1.5px solid var(--gray-200); border-radius: 12px;
-  font-size: 14px; font-weight: 600; color: var(--gray-900);
-  background: var(--gray-50); outline: none; transition: border-color .15s, background .15s;
-  font-family: inherit;
+  width: 100%; border: none; outline: none; background: transparent;
+  font-size: 14px; font-weight: 600; color: var(--gray-900); font-family: inherit;
+  padding: 0 0 0 22px;
 }
-.tp-city-input:focus { border-color: var(--pink-400); background: #fff; }
 .tp-city-input::placeholder { color: var(--gray-400); font-weight: 500; }
 .tp-city-icon {
-  position: absolute; left: 12px; bottom: 11px; color: var(--gray-400); pointer-events: none;
+  position: absolute; left: 18px; bottom: 16px; color: var(--gray-400); pointer-events: none;
 }
 .tp-swap-btn {
-  position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
-  width: 32px; height: 32px; border-radius: 50%;
+  position: absolute; right: -16px; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; border-radius: 50%;
   border: 1.5px solid var(--gray-200); background: #fff;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--gray-500); transition: all .15s; z-index: 2;
+  cursor: pointer; color: var(--gray-500); transition: all .15s; z-index: 10;
+  flex-shrink: 0;
 }
 .tp-swap-btn:hover { border-color: var(--pink-400); color: var(--pink-500); }
 .tp-autocomplete {
-  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
   background: #fff; border: 1.5px solid var(--gray-200); border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.1); z-index: 50; overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.1); z-index: 200; overflow: hidden;
   display: none;
 }
 .tp-autocomplete.open { display: block; }
 .tp-ac-item {
   padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--gray-800);
-  cursor: pointer; display: flex; align-items: center; gap: 8px;
-  transition: background .1s;
+  cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background .1s;
 }
 .tp-ac-item:hover, .tp-ac-item.focused { background: var(--pink-50); color: var(--pink-600); }
 .tp-ac-region { font-size: 10px; font-weight: 600; color: var(--gray-400); margin-left: auto; }
-.tp-vpills-row { display: flex; gap: 8px; }
+/* vehicle select cell */
+.tp-vpills-row { display: flex; gap: 4px; align-items: center; }
 .tp-vpill2 {
-  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
-  padding: 10px 8px; border: 1.5px solid var(--gray-200); border-radius: 12px;
-  background: #fff; cursor: pointer; font-size: 12px; font-weight: 700;
-  color: var(--gray-600); transition: all .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+  height: 34px; padding: 0 11px; border-radius: 8px;
+  border: none; background: var(--gray-100);
+  cursor: pointer; font-size: 12px; font-weight: 700;
+  color: var(--gray-500); transition: all .15s; white-space: nowrap; font-family: inherit;
 }
-.tp-vpill2:hover { border-color: var(--gray-300); }
-.tp-vpill2.on { border-color: var(--pink-500); background: var(--pink-50); color: var(--pink-600); }
-.tp-vpill2 .vp-icon { font-size: 18px; line-height: 1; }
+.tp-vpill2:hover { background: var(--gray-200); color: var(--gray-700); }
+.tp-vpill2.on { background: var(--gray-900); color: #fff; }
+.tp-vpill2 .vp-icon { font-size: 14px; line-height: 1; }
+/* go button */
 .tp-go-btn {
-  width: 100%; padding: 13px; background: var(--pink-500); color: #fff;
-  font-size: 14px; font-weight: 800; border: none; border-radius: 12px;
-  cursor: pointer; transition: background .15s; font-family: inherit;
+  flex-shrink: 0; margin: 8px; padding: 0 24px;
+  background: var(--pink-500); color: #fff;
+  font-size: 14px; font-weight: 800; border: none; border-radius: 10px;
+  cursor: pointer; transition: background .15s; font-family: inherit; white-space: nowrap;
 }
 .tp-go-btn:hover { background: var(--pink-600); }
 .tp-go-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
@@ -1739,40 +1743,41 @@ body {
       </div>
 
       <div class="tp-widget">
-        <!-- Từ / Đến -->
-        <div class="tp-fields">
-          <div class="tp-city-wrap">
-            <span class="tp-city-label">Điểm xuất phát</span>
-            <svg class="tp-city-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.4-8 14-8 14S4 15.4 4 10a8 8 0 0 1 8-8z"/></svg>
-            <input class="tp-city-input" id="tpFrom" placeholder="VD: TP. Hồ Chí Minh" autocomplete="off"
-              oninput="showAC('tpFrom','acFrom')" onfocus="showAC('tpFrom','acFrom')" onblur="hideAC('acFrom')">
-            <div class="tp-autocomplete" id="acFrom"></div>
-          </div>
-
+        <!-- Điểm đi -->
+        <div class="tp-cell" style="position:relative">
+          <span class="tp-city-label">Điểm xuất phát</span>
+          <svg class="tp-city-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.4-8 14-8 14S4 15.4 4 10a8 8 0 0 1 8-8z"/></svg>
+          <input class="tp-city-input" id="tpFrom" placeholder="VD: TP. Hồ Chí Minh" autocomplete="off"
+            oninput="showAC('tpFrom','acFrom')" onfocus="showAC('tpFrom','acFrom')" onblur="hideAC('acFrom')">
+          <div class="tp-autocomplete" id="acFrom"></div>
           <button class="tp-swap-btn" onclick="swapCities()" title="Đổi chiều">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
           </button>
+        </div>
 
-          <div class="tp-city-wrap">
-            <span class="tp-city-label">Điểm đến</span>
-            <svg class="tp-city-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-            <input class="tp-city-input" id="tpTo" placeholder="VD: Đà Lạt, Vũng Tàu, Hải Phòng..." autocomplete="off"
-              oninput="showAC('tpTo','acTo')" onfocus="showAC('tpTo','acTo')" onblur="hideAC('acTo')">
-            <div class="tp-autocomplete" id="acTo"></div>
-          </div>
+        <!-- Điểm đến -->
+        <div class="tp-cell" style="position:relative">
+          <span class="tp-city-label">Điểm đến</span>
+          <svg class="tp-city-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          <input class="tp-city-input" id="tpTo" placeholder="VD: Đà Lạt, Vũng Tàu, Hải Phòng..." autocomplete="off"
+            oninput="showAC('tpTo','acTo')" onfocus="showAC('tpTo','acTo')" onblur="hideAC('acTo')">
+          <div class="tp-autocomplete" id="acTo"></div>
         </div>
 
         <!-- Phương tiện -->
-        <div class="tp-vpills-row">
-          <button class="tp-vpill2" data-v="motorbike" onclick="selectVP(this)">
-            <span class="vp-icon">🛵</span> Xe máy
-          </button>
-          <button class="tp-vpill2 on" data-v="car-gas" onclick="selectVP(this)">
-            <span class="vp-icon">🚗</span> Ô tô xăng
-          </button>
-          <button class="tp-vpill2" data-v="car-ev" onclick="selectVP(this)">
-            <span class="vp-icon">⚡</span> Ô tô điện
-          </button>
+        <div class="tp-cell tp-cell-vehicle">
+          <span class="tp-city-label">Phương tiện</span>
+          <div class="tp-vpills-row">
+            <button class="tp-vpill2" data-v="motorbike" onclick="selectVP(this)">
+              <span class="vp-icon">🛵</span> Xe máy
+            </button>
+            <button class="tp-vpill2 on" data-v="car-gas" onclick="selectVP(this)">
+              <span class="vp-icon">🚗</span> Ô tô xăng
+            </button>
+            <button class="tp-vpill2" data-v="car-ev" onclick="selectVP(this)">
+              <span class="vp-icon">⚡</span> Ô tô điện
+            </button>
+          </div>
         </div>
 
         <button class="tp-go-btn" id="tpGoBtn" onclick="goTrip()" disabled>
