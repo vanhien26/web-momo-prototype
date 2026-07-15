@@ -112,7 +112,6 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/esim-du-lich',
     tools: [
       {id:'destination-detail',name:'Destination Detail',category:'Child Page',description:'Một template trang con dùng query parameter để render quốc gia hoặc khu vực đã chọn.',jtbd:'Chọn gói, kiểm tra thiết bị và hiểu cách kích hoạt tại điểm đến',src:'demos/esim/destination.html?destination=thailand',address:'web-momo-prototype.vercel.app/esim/destination?destination=thailand'},
-      {id:'dia-diem-du-lich',name:'Địa Điểm Du Lịch',category:'Hub Page',description:'Trang tổng hợp địa điểm du lịch Việt Nam và quốc tế bằng bộ icon landmark monoline tím, có search và filter theo nhóm điểm đến.',jtbd:'Duyệt nhanh điểm đến phù hợp cho chuyến đi trong nước hoặc nước ngoài',src:'demos/dia-diem-du-lich.html',address:'web-momo-prototype.vercel.app/dia-diem-du-lich'},
     ],
   },
   {
@@ -540,10 +539,18 @@ const PROTOTYPES = [
       {
         id: 'dang-kiem',
         name: 'Đặt Lịch Đăng Kiểm',
-        category: 'Child Page',
+        category: 'Platform',
         src: 'demos/dang-kiem.html',
         address: 'web-momo-prototype.vercel.app/dang-kiem',
         description: '4-step booking wizard: nhập thông tin xe → arc countdown tính hạn/chu kỳ → chọn trung tâm đăng kiểm (Leaflet map) → chọn ngày giờ → thanh toán lệ phí qua MoMo.',
+      },
+      {
+        id: 'tra-cuu-dang-kiem',
+        name: 'Tra Cứu Đăng Kiểm',
+        category: 'Platform',
+        src: 'demos/tra-cuu-dang-kiem.html',
+        address: 'web-momo-prototype.vercel.app/tra-cuu-dang-kiem',
+        description: 'Section widget tra cứu hạn đăng kiểm: chọn loại xe, nhập năm SX + hạn hiện tại → arc countdown tính ngày còn lại, chu kỳ, hạn kế tiếp và lệ phí. Self-contained, embeddable trong vehicle-hub.',
       },
       {
         id: 'tinh-phi-etc',
@@ -1075,7 +1082,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 

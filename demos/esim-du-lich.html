@@ -3,257 +3,644 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>eSIM Du Lịch | MoMo PLG Project</title>
-  <meta name="description" content="Prototype mua eSIM du lịch theo điểm đến, thời gian chuyến đi và thiết bị, dựa trên dữ liệu dịch vụ eSIM Du Lịch của MoMo.">
+  <title>eSIM Du Lịch Quốc Tế | Mua eSIM Trên MoMo</title>
+  <meta name="description" content="Mua eSIM du lịch quốc tế trên MoMo. Nhận QR ngay sau thanh toán, hỗ trợ 105+ quốc gia, tốc độ 4G/5G. Hạ cánh là có mạng.">
   <link rel="preconnect" href="https://homepage.momocdn.net">
   <style>
     @font-face{font-family:MoMoTrustSans;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
     @font-face{font-family:MoMoTrustSans;src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:600 900;font-display:swap}
     @font-face{font-family:MoMoTrustDisplay;src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400;font-display:swap}
+
     :root{
-      --momo:#a50064;--momo-2:#d82d8b;--pink:#fff0f7;--ink:#17131a;--muted:#716978;
-      --line:#e9e4e8;--soft:#f7f5f7;--green:#0c8c55;--green-bg:#eaf9f1;--amber:#a75b00;
-      --shadow:0 24px 70px rgba(37,19,32,.12);--radius:24px
+      --momo:#a50064;--momo-deep:#7d004b;--momo-light:#fff0f7;--momo-glow:rgba(165,0,100,.14);
+      --ink:#120A10;--muted:#6B6070;--line:#E8E2E7;--subtle:#F4F0F3;
+      --bg:#FAFAF8;--card:#FFFFFF;
+      --green:#0B7A4A;--green-bg:#EAF7F1;
+      --amber:#92500A;--amber-bg:#FFF4E5;
+      --hero:#0D0810;
+      --sh-sm:0 2px 8px rgba(18,10,16,.07);--sh-md:0 8px 28px rgba(18,10,16,.11);--sh-lg:0 24px 60px rgba(18,10,16,.16);
+      --r:20px
     }
-    *{box-sizing:border-box}
+    *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{margin:0;background:#fff;color:var(--ink);font-family:MoMoTrustSans,system-ui,sans-serif}
-    button,input,select{font:inherit}
-    button,a{touch-action:manipulation}
-    a{color:inherit}
-    .shell{width:min(1180px,calc(100% - 40px));margin:auto}
-    .topbar{height:68px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50}
-    .topbar-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:flex;align-items:center;gap:13px;text-decoration:none}
-    .brand img{width:42px;height:42px;border-radius:13px}
-    .brand-copy strong{display:block;font-size:16px}.brand-copy small{color:var(--muted);font-size:12px}
-    .top-actions{display:flex;align-items:center;gap:10px}
-    .back-link{text-decoration:none;color:var(--muted);font-size:13px;font-weight:700}
-    .button{border:0;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:.2s}
-    .button:hover{transform:translateY(-1px)}
-    .button.primary{background:var(--momo);color:#fff;box-shadow:0 10px 28px rgba(165,0,100,.22)}
-    .button.secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}
-    .button.full{width:100%}
+    body{background:var(--bg);color:var(--ink);font-family:MoMoTrustSans,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    h1,h2,h3,h4{font-family:MoMoTrustDisplay,MoMoTrustSans,sans-serif}
+    button,input,select{font:inherit;color:inherit}
+    a{color:inherit;text-decoration:none}
+    .w{width:min(1160px,calc(100% - 40px));margin:auto}
 
-    .hero{position:relative;min-height:470px;overflow:hidden;background:#211820;color:#fff}
-    .hero picture,.hero picture img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-    .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(19,10,16,.92) 0%,rgba(26,13,22,.72) 43%,rgba(17,10,15,.08) 78%)}
-    .hero-content{position:relative;z-index:2;min-height:470px;display:flex;align-items:center}
-    .hero-copy{width:min(600px,70%);padding:68px 0}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800}
-    .eyebrow i{width:7px;height:7px;border-radius:50%;background:#ff5bb8;box-shadow:0 0 0 5px rgba(255,91,184,.13)}
-    h1,h2,h3{font-family:MoMoTrustDisplay,MoMoTrustSans,sans-serif;margin:0}
-    h1{font-size:clamp(44px,6vw,72px);line-height:.98;letter-spacing:-2px;margin:22px 0 18px}
-    .hero-copy p{font-size:18px;line-height:1.6;color:rgba(255,255,255,.78);max-width:570px;margin:0}
-    .trust-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-    .trust-pill{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);border-radius:15px;padding:11px 13px;font-size:13px;font-weight:700}
+    /* ── TOPBAR ── */
+    .topbar{height:64px;background:rgba(13,8,16,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:100}
+    .topbar-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{width:36px;height:36px;border-radius:10px}
+    .brand-name{font-size:14px;font-weight:800;color:#fff;display:block}
+    .brand-tag{font-size:10px;color:rgba(255,255,255,.38);display:block;margin-top:1px}
+    .nav-links{display:flex;align-items:center;gap:6px}
+    .btn{border:0;border-radius:999px;padding:10px 18px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.18s;font-size:13px;line-height:1}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--momo);color:#fff;box-shadow:0 6px 20px var(--momo-glow)}
+    .btn-ghost-light{background:rgba(255,255,255,.07);color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.12)}
+    .btn-ghost-light:hover{background:rgba(255,255,255,.12);color:#fff}
+    .btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+    .btn-full{width:100%;justify-content:center}
+    .back-link{color:rgba(255,255,255,.38);font-size:12px;font-weight:700}
 
-    .planner-wrap{position:relative;z-index:10;margin-top:-46px;padding-bottom:54px}
-    .planner{background:#fff;border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);overflow:hidden}
-    .planner-main{padding:30px}.summary{background:linear-gradient(180deg,#fff8fc,#fff);border-left:1px solid var(--line);padding:30px;display:flex;flex-direction:column;gap:20px}
-    .section-kicker{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--momo);font-weight:900}
-    .planner h2{font-size:32px;line-height:1.1;margin-top:7px}
-    .planner-sub{color:var(--muted);font-size:14px;line-height:1.55;margin:8px 0 22px}
-    .step-label{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:900;margin:24px 0 12px}
-    .step-label span{width:26px;height:26px;border-radius:9px;background:var(--pink);color:var(--momo);display:grid;place-items:center;font-size:12px}
-    .search{position:relative}.search input{width:100%;border:1.5px solid var(--line);border-radius:15px;padding:14px 16px 14px 43px;outline:0;background:#fff}.search input:focus{border-color:var(--momo);box-shadow:0 0 0 4px rgba(165,0,100,.08)}
-    .search:before{content:"⌕";position:absolute;left:16px;top:9px;font-size:24px;color:var(--muted)}
-    .destinations{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:11px}
-    .destination{border:1.5px solid var(--line);border-radius:16px;padding:12px;background:#fff;color:inherit;cursor:pointer;text-align:left;text-decoration:none;transition:.18s;min-height:82px}
-    .destination:hover{border-color:#cf9abb}.destination.active{border-color:var(--momo);background:var(--pink);box-shadow:0 0 0 3px rgba(165,0,100,.07)}
-    .destination .flag{font-size:24px}.destination strong{display:block;margin-top:6px;font-size:13px}.destination small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
-    .trip-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .field{display:flex;flex-direction:column;gap:7px}.field label{font-size:11px;color:var(--muted);font-weight:800}.field select,.field input{height:48px;border:1.5px solid var(--line);border-radius:14px;padding:0 14px;background:#fff;color:var(--ink);outline:0}
-    .field select:focus,.field input:focus{border-color:var(--momo)}
-    .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .plan{position:relative;border:1.5px solid var(--line);border-radius:18px;padding:15px;background:#fff;cursor:pointer;text-align:left;transition:.18s}
-    .plan:hover{border-color:#cf9abb}.plan.active{border-color:var(--momo);background:var(--pink);box-shadow:0 0 0 3px rgba(165,0,100,.07)}
-    .plan-badge{display:inline-block;border-radius:999px;background:var(--green-bg);color:var(--green);font-size:9px;font-weight:900;padding:4px 7px;margin-bottom:9px}
-    .plan-data{font-size:20px;font-weight:900}.plan-meta{color:var(--muted);font-size:11px;margin:5px 0 12px}.plan-price{color:var(--momo);font-size:17px;font-weight:900}.plan small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
-    .compatibility{border:1px solid var(--line);background:var(--soft);border-radius:18px;padding:16px}
-    .compat-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.compat-head strong{font-size:13px}.compat-head span{font-size:11px;color:var(--muted)}
-    .compat-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:12px}.compat-controls select{height:42px;border:1px solid var(--line);border-radius:11px;padding:0 10px;background:#fff}.compat-controls button{border:0;border-radius:11px;background:#17131a;color:#fff;padding:0 14px;font-weight:800;cursor:pointer}
-    .compat-result{display:none;margin-top:11px;padding:10px 12px;border-radius:11px;background:var(--green-bg);color:var(--green);font-size:12px;font-weight:800}.compat-result.show{display:block}
-    .summary-title{font-size:20px}.summary-route{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border:1px solid var(--line);border-radius:16px}.summary-route .flag{font-size:30px}.summary-route strong{display:block}.summary-route small{color:var(--muted)}
-    .summary-list{display:flex;flex-direction:column;gap:12px}.summary-row{display:flex;justify-content:space-between;gap:16px;font-size:13px}.summary-row span{color:var(--muted)}.summary-row strong{text-align:right}
-    .total{border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;align-items:end}.total span{color:var(--muted);font-size:12px}.total strong{font-size:26px;color:var(--momo)}
-    .assurance{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:11px;line-height:1.45}.assurance b{color:var(--green);font-size:15px}
+    /* ── HERO ── */
+    .hero{background:var(--hero);padding:76px 0 0;position:relative;overflow:hidden;min-height:480px}
+    .hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% -5%,rgba(165,0,100,.22) 0%,transparent 70%);pointer-events:none}
+    .hero-inner{position:relative;z-index:2;text-align:center}
+    .hero-kicker{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.45);font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:22px}
+    .kicker-dot{width:6px;height:6px;border-radius:50%;background:#ff5bb8;box-shadow:0 0 0 4px rgba(255,91,184,.18)}
+    .hero h1{font-size:clamp(50px,7.5vw,92px);line-height:.95;letter-spacing:-3px;color:#fff;margin-bottom:20px}
+    .hero h1 .accent{background:linear-gradient(135deg,#f060b0,#a50064);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-sub{color:rgba(255,255,255,.5);font-size:16px;line-height:1.65;max-width:480px;margin:0 auto 36px}
 
-    .section{padding:78px 0}.section.soft{background:var(--soft)}
-    .section-head{text-align:center;max-width:720px;margin:0 auto 36px}.section-head h2{font-size:clamp(34px,5vw,52px);line-height:1.02}.section-head p{color:var(--muted);line-height:1.65;margin:14px 0 0}
-    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.step{border:1px solid var(--line);border-radius:22px;padding:22px;background:#fff}.step-num{font-size:11px;color:var(--momo);font-weight:900}.step-icon{width:48px;height:48px;border-radius:15px;background:var(--pink);display:grid;place-items:center;font-size:24px;margin:18px 0}.step h3{font-size:19px}.step p{color:var(--muted);font-size:13px;line-height:1.6;margin:9px 0 0}
-    .value-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.value-visual{min-height:410px;border-radius:26px;overflow:hidden;position:relative;background:#20151e}.value-visual img{width:100%;height:100%;object-fit:cover}.value-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(22,10,18,.8),transparent 65%)}.value-visual-copy{position:absolute;z-index:2;left:26px;right:26px;bottom:26px;color:#fff}.value-visual-copy h3{font-size:30px}.value-visual-copy p{color:rgba(255,255,255,.75);line-height:1.5}
-    .value-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.value-card{border:1px solid var(--line);border-radius:20px;padding:20px;background:#fff}.value-card span{font-size:25px}.value-card h3{font-size:17px;margin-top:14px}.value-card p{font-size:12px;line-height:1.55;color:var(--muted);margin:7px 0 0}
-    .faq{max-width:820px;margin:auto;display:flex;flex-direction:column;gap:10px}.faq details{border:1px solid var(--line);border-radius:17px;background:#fff;padding:0 18px}.faq summary{cursor:pointer;font-weight:800;padding:18px 36px 18px 0;position:relative;list-style:none}.faq summary:after{content:"+";position:absolute;right:2px;top:14px;font-size:24px;color:var(--momo)}.faq details[open] summary:after{content:"−"}.faq p{color:var(--muted);line-height:1.65;font-size:13px;margin:0;padding:0 0 18px}
-    .source-note{background:#17131a;color:#fff;padding:24px 0}.source-inner{display:flex;justify-content:space-between;gap:24px;align-items:center}.source-inner p{margin:0;color:rgba(255,255,255,.62);font-size:12px;line-height:1.6;max-width:780px}.source-inner strong{color:#fff}
-    .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);opacity:0;background:#17131a;color:#fff;border-radius:999px;padding:12px 18px;font-size:12px;font-weight:800;z-index:100;transition:.25s}.toast.show{transform:translate(-50%,0);opacity:1}
+    /* ── SEARCH ── */
+    .search-wrap{max-width:660px;margin:0 auto;position:relative}
+    .search-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.11);border-radius:16px;padding:16px 16px 16px 50px;color:#fff;font-size:16px;font-weight:600;outline:none;transition:.2s}
+    .search-input::placeholder{color:rgba(255,255,255,.3)}
+    .search-input:focus{border-color:rgba(165,0,100,.55);background:rgba(255,255,255,.1);box-shadow:0 0 0 4px rgba(165,0,100,.1)}
+    .search-ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.35);pointer-events:none;display:flex}
 
+    /* ── QUICK PICKS ── */
+    .quick-picks{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:14px 0 44px}
+    .qpick{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:8px 13px;color:rgba(255,255,255,.65);font-size:12px;font-weight:700;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:6px}
+    .qpick:hover{background:rgba(165,0,100,.18);border-color:rgba(165,0,100,.4);color:#fff}
+    .qpick.active{background:rgba(165,0,100,.22);border-color:rgba(165,0,100,.55);color:#fff}
+
+    /* ── PLAN PANEL ── */
+    .plan-panel{display:none;background:#fff;border-top:3px solid var(--momo)}
+    .plan-panel.open{display:block}
+    .pp-inner{padding:44px 0 36px}
+    .pp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:28px}
+    .pp-dest-flag{font-size:40px;display:block;margin-bottom:10px}
+    .pp-dest-name{font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1}
+    .pp-dest-network{color:var(--muted);font-size:12px;margin-top:5px}
+    .pp-dest-intro{color:var(--muted);font-size:14px;line-height:1.65;max-width:540px;margin-top:10px}
+    .pp-dest-pills{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .pp-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:var(--green-bg);padding:5px 10px;border-radius:999px}
+    .pp-pill svg{flex-shrink:0}
+    .pp-back{flex-shrink:0;white-space:nowrap}
+
+    /* plan list — row layout */
+    .plans-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+    .plan-row{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:12px 16px;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;cursor:pointer;transition:.18s;background:#fff}
+    .plan-row:hover{border-color:#cf9abb;background:#fdf8fb}
+    .plan-row.sel{border-color:var(--momo);background:var(--momo-light);box-shadow:0 0 0 3px var(--momo-glow)}
+    .plan-tag{display:inline-block;font-size:9px;font-weight:900;padding:3px 7px;border-radius:999px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+    .t-hot{background:var(--amber-bg);color:var(--amber)}
+    .t-pop{background:#E8F0FE;color:#1346A8}
+    .t-val{background:var(--green-bg);color:var(--green)}
+    .t-dat{background:#F3E8FF;color:#6B21A8}
+    .t-lng{background:#E0F0FF;color:#004F99}
+    .plan-spec{display:flex;align-items:baseline;gap:6px}
+    .plan-data{font-size:16px;font-weight:900;color:var(--ink)}
+    .plan-spec-sep{color:var(--line);font-weight:300}
+    .plan-days{font-size:14px;font-weight:700;color:var(--ink)}
+    .plan-network{font-size:11px;color:var(--muted)}
+    .plan-badge{font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:2px 7px;border-radius:999px;white-space:nowrap}
+    .plan-price-col{text-align:right}
+    .plan-price{font-size:17px;font-weight:900;color:var(--momo);white-space:nowrap}
+    .plan-orig{font-size:10px;color:var(--muted);text-decoration:line-through;text-align:right}
+    .plan-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:grid;place-items:center;transition:.15s}
+    .plan-row.sel .plan-radio{border-color:var(--momo);background:var(--momo)}
+    .plan-radio-dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transition:.15s}
+    .plan-row.sel .plan-radio-dot{opacity:1}
+
+    .pp-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:4px;margin-bottom:20px}
+    .pp-note{font-size:12px;color:var(--muted);line-height:1.6;max-width:540px}
+    .pp-cta{flex-shrink:0;padding:14px 28px;font-size:14px}
+
+    /* ── COMPAT ── */
+    .compat-box{background:var(--subtle);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+    .compat-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;margin-bottom:13px}
+    .compat-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+    .compat-sel{height:42px;border:1.5px solid var(--line);border-radius:11px;padding:0 12px;background:#fff;font-size:13px;outline:none}
+    .compat-sel:focus{border-color:var(--momo)}
+    .compat-btn{height:42px;border:0;border-radius:11px;background:var(--ink);color:#fff;padding:0 16px;font-weight:800;font-size:13px;cursor:pointer}
+    .compat-result{margin-top:10px;padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;display:none}
+    .compat-ok{display:block;background:var(--green-bg);color:var(--green)}
+    .compat-warn{display:block;background:var(--amber-bg);color:var(--amber)}
+
+    /* ── PROOF STRIP ── */
+    .proof-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0;background:#fff}
+    .proof-row{display:flex;align-items:center;justify-content:center;gap:36px}
+    .proof-item{text-align:center}
+    .proof-num{font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1}
+    .proof-lbl{font-size:11px;color:var(--muted);margin-top:3px}
+    .proof-sep{width:1px;height:34px;background:var(--line)}
+
+    /* ── SECTIONS ── */
+    .sec{padding:72px 0}
+    .sec-white{background:#fff}
+    .sec-top{margin-bottom:40px}
+    .sec-top.center{text-align:center}
+    .sec-top.center .sec-sub{margin:0 auto}
+    .kicker{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--momo);font-weight:900;margin-bottom:8px}
+    .sec-h{font-size:clamp(28px,4.2vw,42px);line-height:1.04;letter-spacing:-1px;margin-bottom:10px}
+    .sec-sub{color:var(--muted);font-size:14px;line-height:1.75;max-width:560px}
+
+    /* ── STEPS ── */
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .step-card{border:1px solid var(--line);border-radius:var(--r);padding:22px;background:#fff}
+    .step-n{font-size:10px;color:var(--momo);font-weight:900;letter-spacing:1px;margin-bottom:14px}
+    .step-icon{width:46px;height:46px;border-radius:13px;background:var(--momo-light);display:grid;place-items:center;margin-bottom:14px;color:var(--momo)}
+    .step-title{font-size:17px;font-weight:800;margin-bottom:7px}
+    .step-desc{color:var(--muted);font-size:13px;line-height:1.65}
+
+    /* ── VALUE GRID ── */
+    .val-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}
+    .val-img{border-radius:24px;overflow:hidden;aspect-ratio:4/3;background:#1a0d18;position:relative}
+    .val-img img{width:100%;height:100%;object-fit:cover;opacity:.82}
+    .val-cap{position:absolute;bottom:0;left:0;right:0;padding:22px 24px;background:linear-gradient(0deg,rgba(13,8,16,.9),transparent)}
+    .val-cap h3{color:#fff;font-size:22px;line-height:1.1}
+    .val-cap p{color:rgba(255,255,255,.65);font-size:12px;margin-top:6px;line-height:1.55}
+    .val-cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .val-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fff}
+    .val-icon{width:38px;height:38px;border-radius:11px;background:var(--momo-light);display:grid;place-items:center;color:var(--momo);margin-bottom:13px}
+    .val-title{font-size:15px;font-weight:800;margin-bottom:6px}
+    .val-desc{color:var(--muted);font-size:12px;line-height:1.65}
+
+    /* ── REVIEW ── */
+    .review-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:30px;max-width:740px;margin:36px auto 0;box-shadow:var(--sh-sm)}
+    .review-stars{color:#F59E0B;font-size:14px;letter-spacing:2px;margin-bottom:14px}
+    .review-text{font-size:15px;line-height:1.75;color:var(--ink)}
+    .review-author{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+    .review-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#e040a0,#a50064);display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0}
+    .review-name{font-weight:800;font-size:13px}
+    .review-meta{color:var(--muted);font-size:11px;margin-top:2px}
+
+    /* ── FAQ ── */
+    .faq{max-width:760px;margin:36px auto 0;display:flex;flex-direction:column;gap:7px}
+    .faq details{border:1px solid var(--line);border-radius:15px;background:#fff;overflow:hidden}
+    .faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;cursor:pointer;font-weight:800;font-size:14px;list-style:none;user-select:none}
+    .faq summary::-webkit-details-marker{display:none}
+    .faq-tog{width:22px;height:22px;border-radius:7px;background:var(--subtle);display:grid;place-items:center;flex-shrink:0;color:var(--momo);font-size:17px;line-height:1;transition:.15s}
+    details[open] .faq-tog{background:var(--momo);color:#fff}
+    .faq-a{padding:0 18px 16px;color:var(--muted);font-size:13px;line-height:1.75}
+
+    /* ── CTA BAND ── */
+    .cta-band{background:var(--hero);padding:70px 0;text-align:center;position:relative;overflow:hidden}
+    .cta-band:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 50% 110%,rgba(165,0,100,.22),transparent);pointer-events:none}
+    .cta-band h2{color:#fff;font-size:clamp(30px,4.5vw,50px);letter-spacing:-1.5px;line-height:1;margin-bottom:12px;position:relative}
+    .cta-band p{color:rgba(255,255,255,.48);font-size:14px;margin-bottom:28px;position:relative}
+    .cta-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;position:relative}
+
+    /* ── FOOTER ── */
+    .foot{background:#080508;padding:16px 0}
+    .foot-inner{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .foot-inner p{margin:0;color:rgba(255,255,255,.32);font-size:11px;line-height:1.6;max-width:680px}
+
+    /* ── RESPONSIVE ── */
     @media(max-width:900px){
-      .planner{grid-template-columns:1fr}.summary{border-left:0;border-top:1px solid var(--line)}
-      .destinations{grid-template-columns:repeat(3,1fr)}.plans{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.value-grid{grid-template-columns:1fr}
+      .steps{grid-template-columns:1fr 1fr}
+      .plan-row{grid-template-columns:auto 1fr auto auto}
+      .val-layout{grid-template-columns:1fr}
+      .proof-row{gap:20px}
+      .compat-row{grid-template-columns:1fr 1fr}
+      .compat-btn{grid-column:span 2}
+      .pp-actions{flex-direction:column;align-items:flex-start}
+      .pp-cta{width:100%;text-align:center;padding:14px}
     }
     @media(max-width:620px){
-      .shell{width:min(100% - 28px,1180px)}.topbar{height:60px}.brand img{width:36px;height:36px}.brand-copy small,.back-link{display:none}.top-actions .button{padding:10px 13px;font-size:12px}
-      .hero{min-height:455px}.hero picture img{object-position:82% center}.hero:after{background:linear-gradient(0deg,rgba(19,10,16,.98) 0%,rgba(19,10,16,.72) 52%,rgba(19,10,16,.24) 100%)}.hero-content{align-items:flex-end;min-height:455px}.hero-copy{width:100%;padding:48px 0}.hero-copy p{font-size:15px}.trust-row{gap:7px}.trust-pill{font-size:11px;padding:9px 10px}
-      .planner-wrap{margin-top:0;padding:0}.planner{border-radius:0;border-left:0;border-right:0;box-shadow:none}.planner-main,.summary{padding:24px 18px}.planner h2{font-size:28px}
-      .destinations{display:flex;overflow-x:auto;margin-right:-18px;padding-right:18px;scroll-snap-type:x mandatory}.destination{min-width:128px;scroll-snap-align:start}.trip-grid,.compat-controls{grid-template-columns:1fr}.plans{display:flex;overflow-x:auto;margin-right:-18px;padding:3px 18px 3px 3px;scroll-snap-type:x mandatory}.plan{min-width:210px;scroll-snap-align:start}
-      .section{padding:58px 0}.steps,.value-cards{grid-template-columns:1fr}.section-head{text-align:left}.value-visual{min-height:340px}.source-inner{align-items:flex-start;flex-direction:column}
+      .w{width:calc(100% - 28px)}
+      .topbar .btn-ghost-light,.back-link{display:none}
+      .hero{padding:56px 0 0;min-height:0}
+      .hero h1{letter-spacing:-2px}
+      .quick-picks{gap:5px}
+      .steps{grid-template-columns:1fr}
+      .val-cards{grid-template-columns:1fr}
+      .plan-row{grid-template-columns:auto 1fr auto auto}
+      .proof-row{flex-wrap:wrap;gap:14px}
+      .proof-sep{display:none}
+      .pp-top{flex-direction:column;gap:12px}
+      .cta-btns{flex-direction:column;align-items:center}
+      .foot-inner{flex-direction:column;align-items:flex-start;gap:10px}
+      .compat-row{grid-template-columns:1fr}
+      .compat-btn{grid-column:1}
     }
+    @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="shell topbar-inner">
-      <a class="brand" href="../lab.html">
-        <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
-        <span class="brand-copy"><strong>eSIM Du Lịch</strong><small>PLG Project Prototype</small></span>
-      </a>
-      <div class="top-actions">
-        <a class="back-link" href="../lab.html">← Prototype Lab</a>
-        <a class="button primary" href="#planner">Chọn gói eSIM</a>
+
+<header class="topbar">
+  <div class="w topbar-inner">
+    <a class="brand" href="../lab.html">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo">
+      <span>
+        <span class="brand-name">eSIM Du Lịch</span>
+        <span class="brand-tag">MoMo · 105+ quốc gia</span>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a class="back-link" href="../lab.html">← Lab</a>
+      <button class="btn btn-ghost-light" onclick="focusSearch()">Tìm gói eSIM</button>
+      <button class="btn btn-primary">Mở trong MoMo</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="w hero-inner">
+      <div class="hero-kicker">
+        <span class="kicker-dot"></span>
+        Mua ngay · Nhận QR trong phút · Hạ cánh là có mạng
+      </div>
+      <h1>Tìm eSIM cho<br><span class="accent">chuyến đi</span> của bạn</h1>
+      <p class="hero-sub">Chọn quốc gia, thanh toán trên MoMo, nhận QR eSIM ngay. Không cần SIM vật lý, không cần ra sân bay.</p>
+
+      <div class="search-wrap">
+        <span class="search-ic">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input class="search-input" id="heroSearch" type="search" placeholder="Bạn đang đi đâu? Nhật Bản, Hàn Quốc, Thái Lan..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="quick-picks" id="quickPicks"></div>
+    </div>
+  </section>
+
+  <!-- ══ PLAN PANEL ══ -->
+  <section class="plan-panel" id="planPanel">
+    <div class="w pp-inner">
+      <div class="pp-top">
+        <div>
+          <span class="pp-dest-flag" id="ppFlag"></span>
+          <div class="pp-dest-name" id="ppName"></div>
+          <div class="pp-dest-network" id="ppNetwork"></div>
+          <div class="pp-dest-intro" id="ppIntro"></div>
+          <div class="pp-dest-pills" id="ppPills"></div>
+        </div>
+        <button class="btn btn-outline pp-back" onclick="clearDest()" style="font-size:13px">✕ Đổi điểm đến</button>
+      </div>
+
+      <div class="plans-list" id="plansGrid"></div>
+
+      <div class="pp-actions">
+        <p class="pp-note">Gói được chọn sẽ mở trong ứng dụng MoMo. Nhận QR qua email trong 1–5 phút sau thanh toán. Thanh toán bằng Ví MoMo, ngân hàng liên kết hoặc thẻ.</p>
+        <button class="btn btn-primary pp-cta" onclick="goMomo()">Mua ngay trong MoMo →</button>
+      </div>
+
+      <div class="compat-box">
+        <div class="compat-head">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Kiểm tra thiết bị có hỗ trợ eSIM không
+        </div>
+        <div class="compat-row">
+          <select class="compat-sel" id="cBrand"><option value="">Hãng máy</option><option>Apple</option><option>Samsung</option><option>Google</option><option>Huawei</option><option>Xiaomi</option><option>OPPO</option><option>Vivo</option></select>
+          <select class="compat-sel" id="cModel"><option value="">Dòng máy</option></select>
+          <button class="compat-btn" onclick="checkCompat()">Kiểm tra</button>
+        </div>
+        <div class="compat-result" id="cResult"></div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <section class="hero">
-      <picture>
-        <source media="(max-width:620px)" srcset="https://homepage.momocdn.net/img/780x321_mobile-260408103944.jpg">
-        <img src="https://homepage.momocdn.net/img/1920x640_desktop-260408103921.jpg" alt="eSIM du lịch quốc tế trên MoMo">
-      </picture>
-      <div class="shell hero-content">
-        <div class="hero-copy">
-          <span class="eyebrow"><i></i> Internet toàn cầu trong vài phút</span>
-          <h1>Hạ cánh là có mạng</h1>
-          <p>Chọn điểm đến, số ngày đi và gói data phù hợp. Nhận QR eSIM sau khi thanh toán, cài trước chuyến đi và kết nối khi đến nơi.</p>
-          <div class="trust-row">
-            <span class="trust-pill">200+ quốc gia</span>
-            <span class="trust-pill">300K+ lượt mua</span>
-            <span class="trust-pill">4G/5G tốc độ cao</span>
-            <span class="trust-pill">Hỗ trợ 24/7</span>
+  <!-- ══ PROOF STRIP ══ -->
+  <div class="proof-strip">
+    <div class="w proof-row">
+      <div class="proof-item"><div class="proof-num">300K+</div><div class="proof-lbl">lượt mua eSIM</div></div>
+      <div class="proof-sep"></div>
+      <div class="proof-item"><div class="proof-num">4.8<span style="font-size:14px">★</span></div><div class="proof-lbl">đánh giá trung bình</div></div>
+      <div class="proof-sep"></div>
+      <div class="proof-item"><div class="proof-num">105+</div><div class="proof-lbl">quốc gia & vùng lãnh thổ</div></div>
+      <div class="proof-sep"></div>
+      <div class="proof-item"><div class="proof-num">4G/5G</div><div class="proof-lbl">tốc độ cao tại điểm đến</div></div>
+      <div class="proof-sep"></div>
+      <div class="proof-item"><div class="proof-num">24/7</div><div class="proof-lbl">hỗ trợ trong chuyến đi</div></div>
+    </div>
+  </div>
+
+  <!-- ══ HOW IT WORKS ══ -->
+  <section class="sec sec-white">
+    <div class="w">
+      <div class="sec-top center">
+        <div class="kicker">Chỉ 4 bước</div>
+        <h2 class="sec-h">Từ MoMo đến mạng tại điểm đến</h2>
+        <p class="sec-sub">Flow được thiết kế để bạn mua trước, cài đúng lúc, và bật khi cần — không lo sự cố kỹ thuật.</p>
+      </div>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-n">BƯỚC 01</div>
+          <div class="step-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          </div>
+          <div class="step-title">Chọn điểm đến</div>
+          <p class="step-desc">Tìm quốc gia hoặc khu vực, chọn gói data phù hợp với số ngày hành trình.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-n">BƯỚC 02</div>
+          <div class="step-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+          </div>
+          <div class="step-title">Thanh toán trên MoMo</div>
+          <p class="step-desc">Hoàn tất bằng Ví MoMo, ngân hàng liên kết hoặc thẻ. Voucher được áp tự động.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-n">BƯỚC 03</div>
+          <div class="step-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+          </div>
+          <div class="step-title">Cài eSIM bằng QR</div>
+          <p class="step-desc">Nhận QR qua email trong 1–5 phút. Cài khi còn Wi-Fi ổn định — trước khi lên máy bay.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-n">BƯỚC 04</div>
+          <div class="step-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2c-.5.1-.9.5-.8 1l.3 1.5c.1.5.5.9 1 .8L8 8.5l-1 4.5 1.5 1.5 4.5-1-.5 5.7c-.1.5.3.9.8 1l1.5.3c.5.1.9-.3 1-.8z"/></svg>
+          </div>
+          <div class="step-title">Bật khi hạ cánh</div>
+          <p class="step-desc">Chọn eSIM du lịch cho dữ liệu di động và bật data roaming. Có mạng ngay tại điểm đến.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ VALUE ══ -->
+  <section class="sec">
+    <div class="w val-layout">
+      <div class="val-img">
+        <img src="https://homepage.momocdn.net/img/esimdulich-251229160646.png" alt="eSIM du lịch MoMo">
+        <div class="val-cap">
+          <h3>Một eSIM, trọn hành trình</h3>
+          <p>Không tháo SIM chính, không mất liên lạc, không cần tìm quầy SIM ở sân bay.</p>
+        </div>
+      </div>
+      <div class="val-cards">
+        <div class="val-card">
+          <div class="val-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="val-title">Nhận QR ngay</div>
+          <p class="val-desc">QR eSIM gửi qua email ngay sau thanh toán. Không cần chờ SIM vật lý hay giao hàng.</p>
+        </div>
+        <div class="val-card">
+          <div class="val-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>
+          </div>
+          <div class="val-title">Mạng địa phương</div>
+          <p class="val-desc">Kết nối nhà mạng uy tín tại điểm đến. Tốc độ 4G/5G tùy khu vực và gói chọn.</p>
+        </div>
+        <div class="val-card">
+          <div class="val-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          </div>
+          <div class="val-title">Giữ SIM chính</div>
+          <p class="val-desc">Vẫn nhận cuộc gọi và dùng Zalo, iMessage quen thuộc trong suốt chuyến đi.</p>
+        </div>
+        <div class="val-card">
+          <div class="val-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+          </div>
+          <div class="val-title">Hỗ trợ 24/7</div>
+          <p class="val-desc">Hướng dẫn kích hoạt theo đúng dòng máy và kênh hỗ trợ khi đang ở nước ngoài.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ REVIEW ══ -->
+  <section class="sec sec-white">
+    <div class="w">
+      <div class="sec-top center">
+        <div class="kicker">Người dùng nói gì</div>
+        <h2 class="sec-h">Trải nghiệm thực tế</h2>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Mình hài lòng khi mua qua MoMo vì mọi thứ đều tiện và rõ ràng. Từ lúc chọn dịch vụ đến lúc thanh toán diễn ra rất nhanh, không phải nhập nhiều thông tin hay thao tác phức tạp. Sau khi thanh toán có thông báo ngay nên mình biết chắc giao dịch đã thành công. MoMo thường có ưu đãi hoặc hoàn tiền, nên cùng một sản phẩm nhưng mua qua đây thấy tiết kiệm hơn. Với mình, mua qua MoMo là nhanh, tiện và ít rủi ro."</p>
+        <div class="review-author">
+          <div class="review-av">L</div>
+          <div>
+            <div class="review-name">Lan Anh T.</div>
+            <div class="review-meta">Chuyên viên · 35 tuổi · Đã mua eSIM Nhật Bản · Tháng 3/2025</div>
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="planner-wrap" id="planner">
-      <div class="shell planner">
-        <div class="planner-main">
-          <div class="section-kicker">Trip planner</div>
-          <h2>Chọn điểm đến của bạn</h2>
-          <p class="planner-sub">Mỗi quốc gia hoặc khu vực mở một trang riêng với gói data, network, compatibility và hướng dẫn kích hoạt phù hợp.</p>
-
-          <div class="step-label"><span>1</span> Bạn sẽ đi đâu?</div>
-          <div class="search"><input id="destinationSearch" type="search" placeholder="Tìm quốc gia hoặc khu vực" autocomplete="off"></div>
-          <div class="destinations" id="destinationList"></div>
-
-        </div>
-
-        <aside class="summary">
-          <div><div class="section-kicker">Destination pages</div><h3 class="summary-title">Mỗi khu vực, một trang riêng</h3></div>
-          <div class="assurance"><b>✓</b><span>URL và metadata riêng theo quốc gia hoặc khu vực.</span></div>
-          <div class="assurance"><b>✓</b><span>Gói data được đề xuất theo số ngày hoặc dung lượng chuyến đi.</span></div>
-          <div class="assurance"><b>✓</b><span>Compatibility gate trước CTA checkout.</span></div>
-          <div class="assurance"><b>✓</b><span>FAQ và hướng dẫn kích hoạt theo context điểm đến.</span></div>
-          <a class="button primary full" href="esim/destination.html?destination=thailand">Mở trang Thái Lan mẫu</a>
-        </aside>
-      </div>
-    </section>
-
-    <section class="section soft">
-      <div class="shell">
-        <div class="section-head"><div class="section-kicker">Activation journey</div><h2>Mua trước, kích hoạt đúng lúc</h2><p>Flow tách rõ “cài eSIM” và “bật data roaming” để giảm lỗi kích hoạt khi user đã ra nước ngoài.</p></div>
-        <div class="steps">
-          <article class="step"><div class="step-num">BƯỚC 01</div><div class="step-icon">🌏</div><h3>Chọn điểm đến</h3><p>Chọn quốc gia hoặc khu vực, số ngày đi và lượng data phù hợp.</p></article>
-          <article class="step"><div class="step-num">BƯỚC 02</div><div class="step-icon">💳</div><h3>Thanh toán trên MoMo</h3><p>Kiểm tra lại thông tin nhận eSIM và hoàn tất thanh toán bằng nguồn tiền phù hợp.</p></article>
-          <article class="step"><div class="step-num">BƯỚC 03</div><div class="step-icon">▦</div><h3>Cài bằng QR</h3><p>Nhận QR qua email trong 1 đến 5 phút. Cài eSIM khi còn kết nối Wi-Fi ổn định.</p></article>
-          <article class="step"><div class="step-num">BƯỚC 04</div><div class="step-icon">✈</div><h3>Bật khi hạ cánh</h3><p>Chọn eSIM du lịch cho dữ liệu di động và bật data roaming tại điểm đến.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="shell value-grid">
-        <div class="value-visual">
-          <img src="https://homepage.momocdn.net/img/esimdulich-251229160646.png" alt="Hướng dẫn sử dụng eSIM du lịch">
-          <div class="value-visual-copy"><h3>Một eSIM, trọn hành trình</h3><p>Không tháo SIM chính, không chờ giao hàng, vẫn giữ ứng dụng và số liên lạc quen thuộc.</p></div>
-        </div>
-        <div class="value-cards">
-          <article class="value-card"><span>⚡</span><h3>Nhận nhanh</h3><p>QR eSIM được gửi sau khi thanh toán thành công, không cần chờ SIM vật lý.</p></article>
-          <article class="value-card"><span>📶</span><h3>Mạng địa phương</h3><p>Kết nối với nhà mạng tại điểm đến, hỗ trợ tốc độ 4G/5G tùy khu vực.</p></article>
-          <article class="value-card"><span>📱</span><h3>Giữ SIM chính</h3><p>Tiếp tục dùng số điện thoại và các ứng dụng liên lạc quen thuộc trong chuyến đi.</p></article>
-          <article class="value-card"><span>🛟</span><h3>Hỗ trợ 24/7</h3><p>Có hướng dẫn xử lý khi không nhận QR, không cài được hoặc có sóng nhưng chưa vào mạng.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section soft">
-      <div class="shell">
-        <div class="section-head"><div class="section-kicker">FAQ theo hành trình</div><h2>Cần biết trước khi bay</h2></div>
-        <div class="faq">
-          <details open><summary>Nên cài và kích hoạt eSIM khi nào?</summary><p>Nên cài eSIM trước chuyến đi khi có Wi-Fi ổn định. Chỉ bật eSIM cho dữ liệu di động và data roaming khi đã đến quốc gia sử dụng để tránh tính thời hạn quá sớm, tùy chính sách của từng gói.</p></details>
-          <details><summary>Làm sao biết điện thoại hỗ trợ eSIM?</summary><p>Kiểm tra model cụ thể trước khi mua. Các dòng phổ biến gồm iPhone từ XS trở lên, nhiều dòng Samsung Galaxy cao cấp, Google Pixel từ thế hệ 3 và một số thiết bị Huawei. Phiên bản theo thị trường có thể khác nhau.</p></details>
-          <details><summary>Tôi không nhận được email QR thì làm gì?</summary><p>Kiểm tra email đã nhập, thư rác và trạng thái giao dịch. Nếu thanh toán thành công nhưng chưa nhận được QR, liên hệ kênh hỗ trợ MoMo để kiểm tra đơn hàng.</p></details>
-          <details><summary>eSIM du lịch có gọi thoại được không?</summary><p>Phần lớn gói trong prototype được mô tả là data-only. User vẫn có thể gọi qua các ứng dụng Internet. Thông tin thoại và SMS cần đọc theo điều kiện của từng gói thực tế.</p></details>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="source-note">
-    <div class="shell source-inner">
-      <p><strong>Data contract cho Dev:</strong> destination, coverage, network, plan data, validity, price, device compatibility, activation policy và order status. Nội dung dịch vụ lấy từ MoMo; giá và inventory trong prototype là mock, cần thay bằng plan feed production.</p>
-      <a class="button secondary" href="https://www.momo.vn/esim-du-lich" target="_blank" rel="noreferrer">Xem nguồn MoMo</a>
     </div>
-  </footer>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </section>
 
-  <script src="../assets/esim-data.js?v=2"></script>
-  <script>
-    const DESTINATIONS=window.ESIM_DESTINATIONS;
-    const $=id=>document.getElementById(id);
+  <!-- ══ FAQ ══ -->
+  <section class="sec">
+    <div class="w">
+      <div class="sec-top center">
+        <div class="kicker">FAQ</div>
+        <h2 class="sec-h">Cần biết trước khi bay</h2>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>Nên cài và kích hoạt eSIM khi nào?<span class="faq-tog">+</span></summary>
+          <p class="faq-a">Cài eSIM trước chuyến đi khi còn Wi-Fi ổn định. Chỉ bật eSIM cho dữ liệu di động và data roaming khi đã đến quốc gia sử dụng — để tránh tính thời hạn quá sớm. MoMo sẽ nhắc bạn qua thông báo đúng thời điểm.</p>
+        </details>
+        <details>
+          <summary>Làm sao biết điện thoại hỗ trợ eSIM?<span class="faq-tog">+</span></summary>
+          <p class="faq-a">Dùng công cụ kiểm tra phía trên sau khi chọn điểm đến. Phổ biến nhất: iPhone từ XS trở lên, Samsung Galaxy S21+, Google Pixel từ thế hệ 3. Phiên bản theo thị trường có thể khác — thiết bị mua tại Việt Nam thường hỗ trợ đầy đủ.</p>
+        </details>
+        <details>
+          <summary>Không nhận được QR qua email thì làm gì?<span class="faq-tog">+</span></summary>
+          <p class="faq-a">Kiểm tra email đã nhập và thư rác. Nếu thanh toán thành công nhưng chưa nhận QR sau 10 phút, liên hệ kênh hỗ trợ MoMo ngay trong app. Đội hỗ trợ trực tiếp 24/7 để xử lý.</p>
+        </details>
+        <details>
+          <summary>eSIM du lịch có gọi thoại được không?<span class="faq-tog">+</span></summary>
+          <p class="faq-a">Phần lớn gói là data-only. Bạn vẫn gọi được qua Zalo, WhatsApp, FaceTime qua data. SIM chính vẫn giữ nguyên để nhận cuộc gọi thường nếu cần.</p>
+        </details>
+        <details>
+          <summary>Có thể dùng hotspot chia sẻ mạng không?<span class="faq-tog">+</span></summary>
+          <p class="faq-a">Tùy gói. Các gói có tính năng hotspot sẽ được ghi rõ trong phần mô tả gói khi chọn điểm đến. Khi chọn gói, xem phần "tính năng" để biết gói đó có hỗ trợ hotspot hay không.</p>
+        </details>
+      </div>
+    </div>
+  </section>
 
-    function parseIntent(query){
-      const q=query.trim();
-      const dayMatch=q.match(/(\d+)\s*ng[aà]y/i);
-      const gbMatch=q.match(/(\d+)\s*gb/i);
-      const days=dayMatch?Number(dayMatch[1]):null;
-      const gb=gbMatch?Number(gbMatch[1]):null;
-      const countryQ=q.replace(/\d+\s*(ng[aà]y|gb)/gi,'').replace(/\bsim\b/gi,'').trim();
-      return{days,gb,countryQ};
+  <!-- ══ CTA BAND ══ -->
+  <section class="cta-band">
+    <div class="w">
+      <h2>Sẵn sàng cho<br>chuyến đi tiếp theo?</h2>
+      <p>Chọn điểm đến, thanh toán trong MoMo, nhận QR trong vài phút.</p>
+      <div class="cta-btns">
+        <button class="btn btn-primary" style="padding:14px 28px;font-size:14px" onclick="focusSearch()">Tìm gói eSIM ngay</button>
+        <a class="btn" style="background:rgba(255,255,255,.09);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:14px 28px;font-size:14px" href="https://www.momo.vn/esim-du-lich" target="_blank" rel="noreferrer">Xem trên momo.vn ↗</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="w foot-inner">
+    <p><strong style="color:rgba(255,255,255,.55)">Data contract:</strong> destination, network, plan data, validity, price, device compatibility, activation policy, order status. Giá và inventory là mock — cần plan feed từ production trước khi ship.</p>
+    <a class="btn" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1);padding:9px 15px;font-size:11px;flex-shrink:0" href="https://www.momo.vn/esim-du-lich" target="_blank" rel="noreferrer">momo.vn ↗</a>
+  </div>
+</footer>
+
+<script src="../assets/esim-data.js?v=2"></script>
+<script>
+  const DESTS = window.ESIM_DESTINATIONS || [];
+  const TOP = ['japan','korea','thailand','singapore','china','taiwan'];
+  let activePlanId = null;
+
+  // ── Quick picks
+  const topDests = TOP.map(id => DESTS.find(d => d.id === id)).filter(Boolean);
+  document.getElementById('quickPicks').innerHTML = topDests.map(d =>
+    `<button class="qpick" data-id="${d.id}" onclick="selectDest('${d.id}')">${d.flag} ${d.name}</button>`
+  ).join('');
+
+  // ── Search
+  let searchTimer;
+  document.getElementById('heroSearch').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    const q = e.target.value.trim();
+    if (!q) return;
+    searchTimer = setTimeout(() => {
+      const ql = q.toLocaleLowerCase('vi');
+      const match = DESTS.find(d =>
+        `${d.name} ${d.slug||''} ${d.region}`.toLocaleLowerCase('vi').includes(ql)
+      );
+      if (match) selectDest(match.id);
+    }, 250);
+  });
+
+  function focusSearch() {
+    document.getElementById('heroSearch').focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Plan tag → CSS class
+  const TAG_CLASS = {
+    'Bán chạy': 't-hot',
+    'Phổ biến': 't-pop',
+    'Tiết kiệm': 't-val',
+    'Nhiều data': 't-dat',
+    'Dài ngày': 't-lng'
+  };
+
+  // ── Lucide check SVG (inline, tiny)
+  const CHECK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  function selectDest(id) {
+    const d = DESTS.find(x => x.id === id);
+    if (!d) return;
+
+    // Active state
+    document.querySelectorAll('.qpick').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    document.getElementById('heroSearch').value = d.name;
+
+    // Populate
+    document.getElementById('ppFlag').textContent = d.flag;
+    document.getElementById('ppName').textContent = d.name;
+    document.getElementById('ppNetwork').textContent = `Mạng: ${d.network}`;
+    document.getElementById('ppIntro').textContent = d.intro || '';
+    document.getElementById('ppPills').innerHTML = [
+      `<span class="pp-pill">${CHECK} Đề xuất: ${d.socialTip || '~1.5GB/ngày'}</span>`,
+      `<span class="pp-pill">${CHECK} 4G/5G tại ${(d.hero || d.name).split(',')[0]}</span>`,
+      `<span class="pp-pill">${CHECK} Nhận QR trong 1–5 phút</span>`
+    ].join('');
+
+    // Render plans
+    const plans = d.plans || [];
+    document.getElementById('plansGrid').innerHTML = plans.map((p, i) => {
+      const tc = TAG_CLASS[p.tag] || 't-pop';
+      const net = d.network.split('/')[0].trim();
+      return `
+        <div class="plan-row${i === 0 ? ' sel' : ''}" id="pc-${p.id}" onclick="selPlan('${p.id}')">
+          <span class="plan-tag ${tc}">${p.tag}</span>
+          <div>
+            <div class="plan-spec">
+              <span class="plan-data">${p.data}</span>
+              <span class="plan-spec-sep">·</span>
+              <span class="plan-days">${p.days} ngày</span>
+            </div>
+            <div class="plan-network">${net}</div>
+          </div>
+          ${p.type === 'unlimited' ? `<span class="plan-badge">Không giới hạn tốc độ</span>` : `<span></span>`}
+          <div class="plan-price-col">
+            <div class="plan-price">${Math.round(p.price / 1000)}K</div>
+            <div class="plan-orig">${p.originalPrice ? Math.round(p.originalPrice / 1000) + 'K -' + p.discount + '%' : ''}</div>
+          </div>
+          <div class="plan-radio"><div class="plan-radio-dot"></div></div>
+        </div>`;
+    }).join('');
+
+    activePlanId = plans[0]?.id || null;
+
+    // Show & scroll
+    const panel = document.getElementById('planPanel');
+    panel.classList.add('open');
+    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+
+    // Reset compat
+    document.getElementById('cResult').className = 'compat-result';
+    document.getElementById('cBrand').value = '';
+    document.getElementById('cModel').innerHTML = '<option value="">Dòng máy</option>';
+  }
+
+  function selPlan(id) {
+    activePlanId = id;
+    document.querySelectorAll('.plan-row').forEach(c => c.classList.remove('sel'));
+    document.getElementById('pc-' + id)?.classList.add('sel');
+  }
+
+  function clearDest() {
+    document.getElementById('planPanel').classList.remove('open');
+    document.getElementById('heroSearch').value = '';
+    document.querySelectorAll('.qpick').forEach(b => b.classList.remove('active'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => document.getElementById('heroSearch').focus(), 400);
+  }
+
+  function goMomo() {
+    // Production: deeplink momo://esim?plan=activePlanId
+    const name = document.getElementById('ppName').textContent;
+    alert(`Prototype: mở MoMo → eSIM Du Lịch → ${name}\nPlan ID: ${activePlanId || '(chưa chọn)'}`);
+  }
+
+  // ── Compat check
+  const MODELS = {
+    Apple: ['iPhone XS / XS Max / XR', 'iPhone 11 / 11 Pro / 11 Pro Max', 'iPhone SE (2020 / 2022)', 'iPhone 12 series', 'iPhone 13 series', 'iPhone 14 series', 'iPhone 15 series', 'iPhone 16 series'],
+    Samsung: ['Galaxy S21 / S21+ / S21 Ultra', 'Galaxy S22 / S23 / S24 series', 'Galaxy Z Fold / Z Flip series', 'Galaxy Note 20 Ultra'],
+    Google: ['Pixel 3 / 3a', 'Pixel 4 / 4a / 4a 5G / 5', 'Pixel 6 / 7 / 8 / 9 series'],
+    Huawei: ['P40 Pro (hạn chế — tùy thị trường)', 'Mate 40 Pro (hạn chế — tùy thị trường)'],
+    Xiaomi: ['Mi 12 Pro (một số thị trường)', 'Xiaomi 13 / 14 series (một số thị trường)'],
+    OPPO: ['Find X5 Pro (một số thị trường)', 'Find X6 Pro (một số thị trường)'],
+    Vivo: ['X90 Pro+ (một số thị trường)']
+  };
+
+  document.getElementById('cBrand').addEventListener('change', e => {
+    const ms = MODELS[e.target.value] || [];
+    document.getElementById('cModel').innerHTML = '<option value="">Dòng máy</option>' + ms.map(m => `<option>${m}</option>`).join('');
+    document.getElementById('cResult').className = 'compat-result';
+  });
+
+  function checkCompat() {
+    const model = document.getElementById('cModel').value;
+    const res = document.getElementById('cResult');
+    if (!model) {
+      res.className = 'compat-result compat-warn';
+      res.textContent = 'Vui lòng chọn dòng máy để kiểm tra.';
+      return;
     }
-
-    function buildDestUrl(id,days,gb){
-      const p=new URLSearchParams({destination:id});
-      if(gb){p.set('mode','data');p.set('data',gb);}
-      else if(days){p.set('mode','days');p.set('days',days);}
-      return`esim/destination.html?${p}`;
+    const limited = model.includes('hạn chế') || model.includes('một số thị trường');
+    if (limited) {
+      res.className = 'compat-result compat-warn';
+      res.textContent = '⚠ Thiết bị này hỗ trợ eSIM tùy phiên bản thị trường. Vào Settings → General → About để xác nhận trước khi mua.';
+    } else {
+      res.className = 'compat-result compat-ok';
+      res.textContent = `✓ ${model} hỗ trợ eSIM. Bạn có thể mua và cài đặt bình thường.`;
     }
+  }
 
-    function renderDestinations(query=''){
-      const{days,gb,countryQ}=parseIntent(query);
-      const normalized=countryQ.toLocaleLowerCase('vi');
-      const list=normalized
-        ?DESTINATIONS.filter(item=>`${item.name} ${item.region}`.toLocaleLowerCase('vi').includes(normalized))
-        :DESTINATIONS;
-
-      if(!list.length){
-        $('destinationList').innerHTML='<p style="color:var(--muted);font-size:13px">Chưa tìm thấy điểm đến phù hợp.</p>';
-        return;
-      }
-
-      const paramHint=(days||gb)
-        ?`<p style="color:var(--momo);font-size:12px;margin:6px 0 4px">↳ Sẽ mở với ${gb?gb+'GB':days+' ngày'} đã chọn</p>`
-        :'';
-
-      $('destinationList').innerHTML=paramHint+list.map(item=>{
-        const url=buildDestUrl(item.id,days,gb);
-        return`<a class="destination" href="${url}"><span class="flag">${item.flag}</span><strong>${item.name}</strong><small>${item.region}</small></a>`;
-      }).join('');
-    }
-
-    $('destinationSearch').addEventListener('input',event=>renderDestinations(event.target.value));
-    renderDestinations();
-  </script>
+  // ── FAQ toggle icon
+  document.querySelectorAll('.faq details').forEach(d => {
+    d.addEventListener('toggle', () => {
+      d.querySelector('.faq-tog').textContent = d.open ? '−' : '+';
+    });
+  });
+</script>
 </body>
 </html>
