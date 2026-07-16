@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cây Xăng Gần Đây - Tìm Trạm Xăng Dầu 24/7 | MoMo</title>
+<title>Tìm Garage & Xưởng Sửa Xe Gần Đây | MoMo</title>
 <meta name="description" content="Tìm cây xăng gần bạn: Petrolimex, Shell, BP, Idemitsu, PVOIL. Xem giờ mở cửa, giá xăng từng trạm và thanh toán qua MoMo hoàn tiền Ví Trả Sau 10%.">
 <link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -738,18 +738,18 @@ input { font: inherit; }
     <div class="breadcrumb">
       <a href="/vehicle-hub">Xe &amp; Giao Thông</a>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-      <span>Cây xăng gần bạn</span>
+      <span>Garage gần bạn</span>
     </div>
-    <h1 class="page-title">Cây xăng gần bạn</h1>
-    <p class="page-desc">Tìm trạm xăng đối tác Petrolimex &amp; PVOIL gần nhất - xem giá hôm nay, giờ mở cửa và chỉ đường.</p>
+    <h1 class="page-title">Garage &amp; Xưởng sửa xe gần bạn</h1>
+    <p class="page-desc">Tìm Honda Head, Yamaha Town, VinFast Service và garage uy tín gần nhất - xem dịch vụ, giờ mở cửa và đặt lịch qua MoMo.</p>
     <div class="page-stats">
       <div class="page-stat">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        <span>Cập nhật <strong>hôm nay</strong></span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span><strong>Honda · Yamaha · VinFast</strong> đối tác</span>
       </div>
       <div class="page-stat">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-        <span><strong>Petrolimex &amp; PVOIL</strong> đối tác</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span>Xem <strong>giờ mở cửa</strong> từng nơi</span>
       </div>
     </div>
   </div>
@@ -905,7 +905,7 @@ const STATIONS = [
 const FUEL_LABELS = { ron95: 'RON 95-III', ron92: 'E5 RON 92', diesel: 'Diesel' };
 
 // ── STATE ────────────────────────────────────────────────────────────────────
-let activeType = 'station';
+let activeType = 'garage';
 let activeFilter = 'all';
 let activeId = null;
 let markerMap = {};
@@ -964,12 +964,12 @@ function fuelPrice(s, fuel) {
 }
 
 function filtered() {
-  let list = [...STATIONS];
+  let list = [...GARAGES];
 
-  if      (activeFilter === 'ron95')   list = list.filter(s => s.fuels.includes('ron95'));
-  else if (activeFilter === 'diesel')  list = list.filter(s => s.fuels.includes('diesel'));
-  else if (activeFilter === 'open24')  list = list.filter(s => s.open24);
-  else if (activeFilter === 'carwash') list = list.filter(s => s.services.includes('carwash'));
+  if      (activeFilter === 'motorbike') list = list.filter(g => g.vehicles.includes('motorbike'));
+  else if (activeFilter === 'car')       list = list.filter(g => g.vehicles.includes('car'));
+  else if (activeFilter === 'oil')       list = list.filter(g => g.services.includes('oil'));
+  else if (activeFilter === 'wash')      list = list.filter(g => g.services.includes('wash'));
 
   if (travelActive) {
     const r = travelRadius();
@@ -987,30 +987,35 @@ function filtered() {
 function renderList() {
   const list = filtered();
   const el = document.getElementById('stationList');
-  document.getElementById('listCount').textContent = list.length + ' cây xăng';
-  document.getElementById('mapCount').textContent = list.length + ' trạm';
+  document.getElementById('listCount').textContent = list.length + ' garage';
+  document.getElementById('mapCount').textContent = list.length + ' địa điểm';
 
-  el.innerHTML = list.map(s => {
-    const b = BRANDS[s.brand];
-    const ron95price = fuelPrice(s, 'ron95');
+  el.innerHTML = list.map(g => {
+    const b = GARAGE_BRANDS[g.brand];
+    const vehicleTag = g.vehicles.includes('car') && g.vehicles.includes('motorbike')
+      ? '<span class="badge badge-svc">Xe máy + Ô tô</span>'
+      : g.vehicles.includes('car')
+        ? '<span class="badge badge-svc">Ô tô</span>'
+        : '<span class="badge badge-svc">Xe máy</span>';
     return `
-    <div class="station-card${s.id === activeId ? ' is-active' : ''}" id="card-${s.id}" onclick="selectStation(${s.id})">
+    <div class="station-card${g.id === activeId ? ' is-active' : ''}" id="card-${g.id}" onclick="selectStation(${g.id})">
       <div class="station-brand-badge" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">${b.short}</div>
       <div class="station-info">
         <div class="station-name-row">
-          <span class="station-name">${s.name}</span>
-          <span class="station-rating">★ ${s.rating}</span>
+          <span class="station-name">${g.name}</span>
+          <span class="station-rating">★ ${g.rating}</span>
         </div>
-        <div class="station-addr">${s.addr}</div>
+        <div class="station-addr">${g.addr}</div>
         <div class="station-meta">
-          <span class="badge badge-dist"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${s.dist} km</span>
-          <span class="badge ${s.open24 ? 'badge-open' : 'badge-closed'}">${s.open24 ? '● Mở 24/7' : '○ Đóng cửa'}</span>
-          ${s.services.includes('carwash') ? `<span class="badge badge-svc">Rửa xe</span>` : ''}
-          ${s.services.includes('shop') ? `<span class="badge badge-svc">Shop</span>` : ''}
+          <span class="badge badge-dist"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${g.dist} km</span>
+          ${vehicleTag}
+          ${g.services.slice(0,2).map(sv => `<span class="badge badge-svc">${SVC_LABELS[sv]||sv}</span>`).join('')}
         </div>
         <div class="station-price-row">
-          <div class="fuel-pill">RON 95 <strong>${fmtPrice(ron95price)}/lít</strong></div>
-          ${s.fuels.includes('diesel') ? `<div class="fuel-pill">· Diesel <strong>${fmtPrice(fuelPrice(s,'diesel'))}/lít</strong></div>` : ''}
+          <div class="fuel-pill" style="color:var(--gray-600)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            ${g.hours}
+          </div>
         </div>
       </div>
     </div>`;
@@ -1025,10 +1030,10 @@ function renderMarkers() {
 
   list.forEach(s => {
     const isActive = s.id === activeId;
-    const b = BRANDS[s.brand];
-    const pinHtml = `<div class="pin${isActive ? ' active' : ''}">
+    const b = GARAGE_BRANDS[s.brand];
+    const pinHtml = `<div class="pin pin-garage${isActive ? ' active' : ''}">
       <div class="pin-icon" style="background:${b.color}">${b.short.slice(0,1)}</div>
-      ${fmtPrice(fuelPrice(s,'ron95')).replace('đ','')}
+      ${b.short}
     </div>`;
     const icon = L.divIcon({ html: pinHtml, className: '', iconSize: [null,null], iconAnchor: [0,0] });
     const marker = L.marker([s.lat, s.lng], { icon }).addTo(markerCluster);
@@ -1043,7 +1048,7 @@ function selectStation(id) {
   activeId = id;
   renderList();
   renderMarkers();
-  const s = STATIONS.find(x => x.id === id);
+  const s = GARAGES.find(x => x.id === id);
   if (!s) return;
   map.setView([s.lat, s.lng], 15, { animate: true });
   showDetail(s);
@@ -1061,24 +1066,28 @@ function closeDetail() {
 }
 
 function showDetail(s) {
-  const b = BRANDS[s.brand];
+  const b = GARAGE_BRANDS[s.brand];
 
   const mainContent = `
     <div class="detail-section">
-      <div class="detail-section-title">Giá nhiên liệu hôm nay</div>
+      <div class="detail-section-title">Dịch vụ</div>
       <div class="detail-fuel-grid">
-        ${s.fuels.map(f => `
+        ${s.services.map(sv => `
           <div class="detail-fuel-item">
-            <div class="detail-fuel-type">${FUEL_LABELS[f]}</div>
-            <div class="detail-fuel-price">${fmtPrice(fuelPrice(s, f))}<span class="detail-fuel-unit">/lít</span></div>
+            <div class="detail-fuel-type">${SVC_LABELS[sv] || sv}</div>
+            <div class="detail-fuel-price" style="font-size:12px;color:var(--green-500)">Có dịch vụ</div>
           </div>`).join('')}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Loại xe phục vụ</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${s.vehicles.map(v => `<span class="badge badge-svc" style="padding:6px 12px;font-size:12px">${SVC_LABELS[v]||v}</span>`).join('')}
       </div>
     </div>
   `;
 
-  const openStatus = (s.open24
-        ? '<span class="badge badge-open">● Mở 24/7</span>'
-        : '<span class="badge badge-closed">○ Mở 6:00 - 22:00</span>');
+  const openStatus = `<span class="badge badge-open">${s.hours}</span>`;
 
   document.getElementById('detailContent').innerHTML = `
     <div class="detail-info-block">
@@ -1095,7 +1104,7 @@ function showDetail(s) {
       </div>
       <div class="detail-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span class="detail-hours-inline">${s.open24 ? 'Mở cửa 24/7 - Tất cả ngày trong tuần' : 'Mở cửa 6:00 - 22:00 hằng ngày'}</span>
+        <span class="detail-hours-inline">${s.hours} hằng ngày</span>
       </div>
     </div>
     <div class="detail-hero" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">
@@ -1107,7 +1116,7 @@ function showDetail(s) {
         </div>
         <div class="momo-overlay-text">
           <strong>${b.name}</strong>
-          Đổ xăng không cần tiền mặt
+          Đặt dịch vụ, thanh toán qua ví
         </div>
       </div>
     </div>
@@ -1149,19 +1158,16 @@ function sortStations() { renderList(); renderMarkers(); }
 function renderFilterChips() {
   document.getElementById('filterBar').innerHTML = `
     <button class="filter-chip active" onclick="setFilter('all',this)">Tất cả</button>
-    <button class="filter-chip" onclick="setFilter('ron95',this)">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.4 5M17 13l1.4 5M9 18a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
-      Xăng RON 95
+    <button class="filter-chip" onclick="setFilter('motorbike',this)">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-4l2-5h8l3 5h2a2 2 0 0 1 0 4h-1"/><path d="M9 8l2 4"/></svg>
+      Xe máy
     </button>
-    <button class="filter-chip" onclick="setFilter('diesel',this)">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
-      Dầu Diesel
+    <button class="filter-chip" onclick="setFilter('car',this)">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M16 7l-2-4H10L8 7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      Ô tô
     </button>
-    <button class="filter-chip" onclick="setFilter('open24',this)">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      Mở 24/7
-    </button>
-    <button class="filter-chip" onclick="setFilter('carwash',this)">Rửa xe</button>`;
+    <button class="filter-chip" onclick="setFilter('oil',this)">Thay dầu</button>
+    <button class="filter-chip" onclick="setFilter('wash',this)">Rửa xe</button>`;
 }
 
 // ── TRAVEL AREA ───────────────────────────────────────────────────────────────

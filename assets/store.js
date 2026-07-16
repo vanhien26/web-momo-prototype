@@ -518,7 +518,15 @@ const PROTOTYPES = [
         category: 'Child Page',
         src: 'demos/cay-xang.html',
         address: 'web-momo-prototype.vercel.app/cay-xang',
-        description: 'Spoke finder: split layout list + Leaflet map, 18 trạm xăng mẫu TP.HCM, filter theo thương hiệu/open24/MoMo, detail panel giá từng trạm + W2A.',
+        description: 'Spoke finder: split layout list + Leaflet map, 15 trạm xăng Petrolimex & PVOIL TP.HCM, filter theo loại xăng/open24/rửa xe, detail panel giá từng trạm + W2A.',
+      },
+      {
+        id: 'garage',
+        name: 'Garage & Xưởng Sửa Xe',
+        category: 'Child Page',
+        src: 'demos/garage.html',
+        address: 'web-momo-prototype.vercel.app/garage',
+        description: 'Spoke finder: split layout list + Leaflet map, 12 garage Honda/Yamaha/VinFast TP.HCM, filter theo loại xe/dịch vụ, detail panel dịch vụ + đặt lịch qua MoMo.',
       },
       {
         id: 'bai-do-xe',
