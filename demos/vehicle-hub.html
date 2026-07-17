@@ -3390,15 +3390,15 @@ window.addEventListener('load', () => {
     const m = DK_MOCK[raw] || { expiry:'2027-03-15', center:'Trạm 50-02V Bình Thạnh', type:'Ô tô con', cycle: 2 };
     const exp = new Date(m.expiry), now = new Date();
     const days = Math.round((exp - now) / 86400000);
-    let sc, si;
-    if (days < 0)       { sc='expired'; si='✕ Đã hết hạn ' + Math.abs(days) + ' ngày'; }
-    else if (days < 30) { sc='warning'; si='⚠ Còn ' + days + ' ngày'; }
-    else                { sc='ok';      si='✓ Còn hạn ' + days + ' ngày'; }
+    let sc, siIcon, siText;
+    if (days < 0)       { sc='expired'; siIcon=licon('XCircle',14,2);    siText='Đã hết hạn ' + Math.abs(days) + ' ngày'; }
+    else if (days < 30) { sc='warning'; siIcon=licon('AlertTriangle',14,2); siText='Còn ' + days + ' ngày'; }
+    else                { sc='ok';      siIcon=licon('CheckCircle2',14,2);  siText='Còn hạn ' + days + ' ngày'; }
     const plate = document.getElementById('dkPlate').value.toUpperCase();
     document.getElementById('dkResult').innerHTML = `
       <div class="dk-result">
         <div class="dk-result-plate">${plate}</div>
-        <div class="dk-result-status ${sc}">${si}</div>
+        <div class="dk-result-status ${sc}">${siIcon}${siText}</div>
         <div class="dk-result-details">
           <strong>Hết hạn:</strong> ${exp.toLocaleDateString('vi-VN')} &nbsp;·&nbsp;
           <strong>Lần đăng kiểm:</strong> Lần ${m.cycle}<br>
@@ -3407,7 +3407,7 @@ window.addEventListener('load', () => {
         </div>
         <div class="dk-result-actions">
           <button class="dk-remind-btn" onclick="toast('Đã đặt nhắc hạn đăng kiểm - thông báo trước 45, 30 và 7 ngày')">
-            <i data-lucide="bell" width="14" height="14"></i>
+            ${licon('Bell',14,2)}
             Đặt nhắc
           </button>
           <a class="dk-detail-link" href="/dang-kiem">Xem lịch sử đăng kiểm →</a>
