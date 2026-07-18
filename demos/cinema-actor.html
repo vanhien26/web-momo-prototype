@@ -59,7 +59,7 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .person-bio{font-size:14px;color:var(--gray-600);line-height:1.65;max-width:640px;margin-bottom:18px}
 .person-stats{display:flex;gap:24px;flex-wrap:wrap}
 .pstat{text-align:center}
-.pstat-num{font-size:22px;font-weight:900;color:var(--gray-900);display:block}
+.pstat-num{font-size:32px;font-weight:900;color:var(--gray-900);display:block;letter-spacing:-.02em;line-height:1}
 .pstat-lbl{font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 
 /* KNOWN FOR */
@@ -89,7 +89,7 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
   .person-meta{gap:6px;margin-bottom:8px;font-size:12px}
   .person-bio{font-size:13px;margin-bottom:12px;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
   .person-stats{gap:12px;flex-wrap:nowrap}
-  .pstat-num{font-size:18px}
+  .pstat-num{font-size:26px}
   .pstat-lbl{font-size:9px;word-break:keep-all}
 }
 .hero-tab:hover:not(.on){color:var(--gray-700)}
@@ -190,6 +190,7 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
   .breadcrumb-bar{display:none}
 }
 </style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -660,14 +661,20 @@ const ACTORS = {
   },
 };
 
+function icon(name, size=16) {
+  const key = name.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('');
+  if (!window.lucide || !lucide[key]) return '';
+  return lucide.createElement(lucide[key], {width:size,height:size,'stroke-width':2,style:'display:inline-block;vertical-align:middle;flex-shrink:0'}).outerHTML;
+}
+
 const slug = location.pathname.replace(/\/$/, '').split('/').pop();
 const person = ACTORS[slug] || ACTORS['tran-thanh'];
 let activeTab = 'now';
 
 function init(){
   const typeLabel = person.type==='director' ? 'Đạo diễn' : person.type==='both' ? 'Diễn viên & Đạo diễn' : 'Diễn viên';
-  const typeIcon = person.type==='director' ? '🎬' : '🌟';
-  document.querySelector('.person-type-badge').innerHTML = `${typeIcon} ${typeLabel}`;
+  const typeIconName = person.type==='director' ? 'clapperboard' : 'star';
+  document.querySelector('.person-type-badge').innerHTML = `${icon(typeIconName,12)} ${typeLabel}`;
   document.getElementById('pageTitle').textContent = `${person.name} - ${typeLabel} - MoMo Cinema`;
   document.getElementById('bcName').textContent = person.name;
   document.getElementById('personName').textContent = person.name;
@@ -686,12 +693,12 @@ function init(){
   }
 
   document.getElementById('personMeta').innerHTML = [
-    `<span>🌍 ${person.nationality}</span>`,
-    `<span>🎂 Sinh ${person.born}</span>`,
-    `<span>🎬 Hoạt động: ${person.years}</span>`,
+    `<span>${icon('globe',13)} ${person.nationality}</span>`,
+    `<span>${icon('cake',13)} Sinh ${person.born}</span>`,
+    `<span>${icon('film',13)} Hoạt động: ${person.years}</span>`,
   ].join('');
 
-  document.getElementById('personStats').innerHTML = person.stats.map(s=>`
+  document.getElementById('personStats').innerHTML = person.stats.slice(0,2).map(s=>`
     <div class="pstat">
       <span class="pstat-num">${s.num}</span>
       <span class="pstat-lbl">${s.lbl}</span>
@@ -817,6 +824,7 @@ let toastTimer;
 function toast(msg){ const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
 
 init();
+if (window.lucide) lucide.createIcons();
 </script>
 <nav class="mobile-bnav"><a class="mbn-item" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item on" href="/cinema/actors"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
 </body>
