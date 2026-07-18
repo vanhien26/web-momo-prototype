@@ -250,7 +250,6 @@ body::after{
       </div>
     </div>
 
-    <div class="filter-bar" id="genreFilterBar"></div>
     <div class="month-strip" id="monthNav"></div>
   </div>
 </div>
@@ -310,73 +309,137 @@ body::after{
 <script>
 function icon(n,s=16){const k=n.split('-').map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join('');if(!window.lucide||!lucide[k])return'';return lucide.createElement(lucide[k],{width:s,height:s,'stroke-width':2,style:'display:inline-block;vertical-align:middle;flex-shrink:0'}).outerHTML}
 
-const FILMS_SOON=[
-  {id:'nghi-he',title:'Nghỉ Hè Sợ Nghỉ Hưu',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',genre:'Hài · Tình cảm',origin:'Việt',age:'P',date:'25/07/2026',month:'7',want:'12.4k',presale:true,desc:'Bộ phim hài gia đình về thế hệ Gen Z và bố mẹ thế hệ 6x.'},
-  {id:'tham-tu-kien-2',title:'Thám Tử Kiên 2',img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',genre:'Hành động · Bí ẩn',origin:'Việt',age:'T16',date:'01/08/2026',month:'8',want:'42.8k',presale:true,desc:'Phần 2 của siêu phẩm phim Việt.'},
-  {id:'giai-cuu',title:'Giải Cứu',img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',genre:'Hành động',origin:'Quốc tế',age:'T13',date:'08/08/2026',month:'8',want:'18.6k',presale:false},
-  {id:'nguoi-duoc-chon',title:'Người Được Chọn',img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',genre:'Tình cảm · Tâm lý',origin:'Việt',age:'T16',date:'15/08/2026',month:'8',want:'21.3k',presale:false},
-  {id:'ho-linh',title:'Hộ Linh Tráng Sĩ',img:'https://cinema.momocdn.net/convert-webp/img/111912674224647662-68d60b7c5de8f974282049.jpg?size=M',genre:'Hành động · Phiêu lưu',origin:'Quốc tế',age:'T13',date:'22/08/2026',month:'8',want:'15.2k',presale:false},
-  {id:'avatar-5',title:'Avatar 5',img:'https://cinema.momocdn.net/convert-webp/img/111912809723526329-61d7ef9c698ea169910803.jpg?size=M',genre:'Khoa học viễn tưởng',origin:'Quốc tế',age:'P',date:'01/09/2026',month:'9',want:'38.5k',presale:false},
-  {id:'trai-buon-nguoi',title:'Trại Buôn Người',img:'https://cinema.momocdn.net/convert-webp/img/111912581189099439-685135c5a1420912750051.jpg?size=M',genre:'Hành động · Tội phạm',origin:'Việt',age:'C18',date:'12/09/2026',month:'9',want:'24.7k',presale:false},
-  {id:'spiderman-4',title:'Spider-Man 4',img:'https://image.tmdb.org/t/p/w500/lwqKqiBsGVBtQBZF9ZTunthBCyI.jpg',genre:'Siêu anh hùng',origin:'Quốc tế',age:'T13',date:'19/09/2026',month:'9',want:'55.2k',presale:false},
-];
+/* ── TMDB CONFIG ─────────────────────────────────────────────
+   Để dùng API thật: điền API_KEY và bật USE_REAL_API = true
+   Endpoint: /movie/upcoming?language=vi-VN&region=VN
+──────────────────────────────────────────────────────────── */
+const TMDB = {
+  API_KEY: '',
+  USE_REAL_API: false,
+  BASE: 'https://api.themoviedb.org/3',
+  IMG: 'https://image.tmdb.org/t/p/w500',
+  GENRE_MAP: {
+    28:'Hành động', 12:'Phiêu lưu', 16:'Hoạt hình', 35:'Hài',
+    80:'Tội phạm', 18:'Kịch tính', 10751:'Gia đình', 14:'Kỳ ảo',
+    27:'Kinh dị', 9648:'Bí ẩn', 10749:'Tình cảm',
+    878:'Khoa học viễn tưởng', 53:'Giật gân', 10402:'Âm nhạc',
+  },
+};
 
-let notified=new Set();
-let activeGenreFilter='Tất cả';
-let activeMonth='all';
+/* Mock /movie/upcoming — cấu trúc y hệt TMDB response
+   _date: ngày chiếu VN (dd/MM/yyyy)
+   _month: tháng (string) để group
+   _presale: mở bán trước
+   _age: phân loại độ tuổi VN
+   _want: số người muốn xem (mock want count)
+   _featured: true = hiện ở banner nổi bật
+*/
+const TMDB_MOCK_UPCOMING = {
+  page: 1, total_pages: 2, total_results: 14,
+  results: [
+    { id:900001, title:'Nghỉ Hè Sợ Nghỉ Hưu', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM', genre_ids:[35,10749,10751], vote_count:12400, popularity:820, release_date:'2026-07-25', runtime:105, _date:'25/07/2026', _month:'7', _presale:true, _age:'P', _want:'12.4k' },
+    { id:900002, title:'Thám Tử Kiên 2', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M', genre_ids:[28,9648,80], vote_count:42800, popularity:3200, release_date:'2026-08-01', runtime:115, _date:'01/08/2026', _month:'8', _presale:true, _age:'T16', _want:'42.8k', _featured:true },
+    { id:900003, title:'Giải Cứu', original_title:'Rescue', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M', genre_ids:[28,53], vote_count:18600, popularity:1540, release_date:'2026-08-08', runtime:112, _date:'08/08/2026', _month:'8', _presale:false, _age:'T13', _want:'18.6k' },
+    { id:900004, title:'Người Được Chọn', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M', genre_ids:[10749,18], vote_count:21300, popularity:1120, release_date:'2026-08-15', runtime:113, _date:'15/08/2026', _month:'8', _presale:false, _age:'T16', _want:'21.3k' },
+    { id:900005, title:'Hộ Linh Tráng Sĩ', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/111912674224647662-68d60b7c5de8f974282049.jpg?size=M', genre_ids:[28,12,14], vote_count:15200, popularity:980, release_date:'2026-08-22', runtime:120, _date:'22/08/2026', _month:'8', _presale:false, _age:'T13', _want:'15.2k' },
+    { id:900006, title:'Deadpool & Wolverine 2', original_title:'Deadpool & Wolverine 2', poster_path:'/kttl7vGnFLqkRHVAfP7ql0FGDNM.jpg', genre_ids:[28,35,878], vote_count:31500, popularity:2640, release_date:'2026-08-29', runtime:127, _date:'29/08/2026', _month:'8', _presale:false, _age:'C18', _want:'31.5k' },
+    { id:900007, title:'Avatar 5', original_title:'Avatar 5', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/111912809723526329-61d7ef9c698ea169910803.jpg?size=M', genre_ids:[878,12,28], vote_count:38500, popularity:2900, release_date:'2026-09-01', runtime:155, _date:'01/09/2026', _month:'9', _presale:false, _age:'P', _want:'38.5k' },
+    { id:900008, title:'Trại Buôn Người', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/111912581189099439-685135c5a1420912750051.jpg?size=M', genre_ids:[28,80,18], vote_count:24700, popularity:1350, release_date:'2026-09-12', runtime:118, _date:'12/09/2026', _month:'9', _presale:false, _age:'C18', _want:'24.7k' },
+    { id:900009, title:'Spider-Man 4', original_title:'Spider-Man 4', poster_path:'/6ClJipfKPf3Is3wCyZBm10Krphn.jpg', genre_ids:[28,12,878], vote_count:55200, popularity:4100, release_date:'2026-09-19', runtime:130, _date:'19/09/2026', _month:'9', _presale:false, _age:'T13', _want:'55.2k' },
+    { id:900010, title:'Thám Tử Kiên 3', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M', genre_ids:[28,9648], vote_count:19800, popularity:1680, release_date:'2026-09-26', runtime:null, _date:'Q4/2026', _month:'9', _presale:false, _age:'TBD', _want:'19.8k' },
+    { id:900011, title:'Wicked: Part 2', original_title:'Wicked: Part 2', poster_path:'/yDHYTfA3R0jFYba16jBB1ef8oIt.jpg', genre_ids:[10402,10749,14], vote_count:28400, popularity:2100, release_date:'2026-10-10', runtime:140, _date:'10/10/2026', _month:'10', _presale:false, _age:'P', _want:'28.4k' },
+    { id:900012, title:'Black Panther 3', original_title:'Black Panther 3', poster_path:'/vGW8ZjCFGAl9F3XaCoSCrL46c5I.jpg', genre_ids:[28,12,878], vote_count:33600, popularity:2750, release_date:'2026-10-24', runtime:null, _date:'24/10/2026', _month:'10', _presale:false, _age:'T13', _want:'33.6k' },
+    { id:900013, title:'Avengers: Doomsday', original_title:'Avengers: Doomsday', poster_path:'/57h8oLqFBvWrQEjPKbqGE9plsNe.jpg', genre_ids:[28,12,878], vote_count:62100, popularity:4800, release_date:'2026-11-06', runtime:null, _date:'06/11/2026', _month:'11', _presale:false, _age:'T13', _want:'62.1k' },
+    { id:900014, title:'The Batman 2', original_title:'The Batman Part II', poster_path:'/74xTEgt7R36Fpooo50r9T25onhq.jpg', genre_ids:[28,80,9648], vote_count:44700, popularity:3500, release_date:'2026-12-04', runtime:null, _date:'04/12/2026', _month:'12', _presale:false, _age:'T16', _want:'44.7k' },
+  ]
+};
 
-const GENRE_FILTERS=['Tất cả','Phim Việt','Bom tấn','Hành động','Tình cảm','Hài'];
+function fmtCount(n){if(n>=1000)return(n/1000).toFixed(1).replace('.0','')+'k';return String(n)}
 
-function renderGenreFilters(){
-  document.getElementById('genreFilterBar').innerHTML=GENRE_FILTERS.map(g=>`
-    <button class="ftab${activeGenreFilter===g?' on':''}" onclick="filterGenre('${g}')">${g}</button>`).join('');
+function transformTMDB(results) {
+  return results.map(m => {
+    const genres = (m.genre_ids||[]).map(id=>TMDB.GENRE_MAP[id]).filter(Boolean);
+    const rd = new Date(m.release_date);
+    const month = String(rd.getMonth()+1);
+    return {
+      id: String(m.id),
+      title: m.title,
+      img: m._img || (m.poster_path ? TMDB.IMG + m.poster_path : ''),
+      age: m._age || 'P',
+      genre: genres.slice(0,2).join(' · ') || 'Điện ảnh',
+      dur: m.runtime ? `${m.runtime} phút` : 'TBA',
+      want: m._want || fmtCount(m.vote_count),
+      date: m._date || rd.toLocaleDateString('vi-VN'),
+      month: m._month || month,
+      presale: m._presale || false,
+      featured: m._featured || false,
+      popularity: m.popularity,
+    };
+  });
 }
 
-function filterGenre(g){activeGenreFilter=g;renderGenreFilters();renderSections()}
+async function loadMovies() {
+  if (TMDB.USE_REAL_API && TMDB.API_KEY) {
+    try {
+      const res = await fetch(`${TMDB.BASE}/movie/upcoming?api_key=${TMDB.API_KEY}&language=vi-VN&region=VN&page=1`);
+      const json = await res.json();
+      return transformTMDB(json.results || []);
+    } catch(e) { console.warn('TMDB fetch failed', e); }
+  }
+  return transformTMDB(TMDB_MOCK_UPCOMING.results);
+}
 
-function getMonths(){const m={};FILMS_SOON.forEach(f=>{m[f.month]=(m[f.month]||0)+1;});return m}
+let FILMS_SOON = [];
+let notified = new Set();
+let activeMonth = 'all';
+
+const MONTH_LABELS = {
+  '7':'Tháng 7 · 2026','8':'Tháng 8 · 2026','9':'Tháng 9 · 2026',
+  '10':'Tháng 10 · 2026','11':'Tháng 11 · 2026','12':'Tháng 12 · 2026',
+};
+const MONTH_SHORT = {
+  '7':'Tháng 7','8':'Tháng 8','9':'Tháng 9',
+  '10':'Tháng 10','11':'Tháng 11','12':'Tháng 12',
+};
+
+function getMonths(){
+  const m={};
+  FILMS_SOON.forEach(f=>{m[f.month]=(m[f.month]||0)+1;});
+  return m;
+}
 
 function renderMonthNav(){
-  const months=getMonths();
-  const labels={'7':'Tháng 7','8':'Tháng 8','9':'Tháng 9'};
-  let html=`<button class="month-tab${activeMonth==='all'?' on':''}" onclick="setMonth('all',this)">Tất cả <span class="month-count">${FILMS_SOON.length}</span></button>`;
-  Object.keys(months).sort().forEach(m=>{
-    html+=`<button class="month-tab${activeMonth===m?' on':''}" onclick="setMonth('${m}',this)">${labels[m]||'T'+m}/2026 <span class="month-count">${months[m]}</span></button>`;
+  const months = getMonths();
+  let html = `<button class="month-tab${activeMonth==='all'?' on':''}" onclick="setMonth('all',this)">Tất cả <span class="month-count">${FILMS_SOON.length}</span></button>`;
+  Object.keys(months).sort((a,b)=>+a-+b).forEach(m=>{
+    html += `<button class="month-tab${activeMonth===m?' on':''}" onclick="setMonth('${m}',this)">${MONTH_SHORT[m]||'T'+m} <span class="month-count">${months[m]}</span></button>`;
   });
-  document.getElementById('monthNav').innerHTML=html;
+  document.getElementById('monthNav').innerHTML = html;
 }
 
-function setMonth(m,el){
-  activeMonth=m;
+function setMonth(m, el){
+  activeMonth = m;
   document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
   renderSections();
 }
 
 function renderSections(){
-  let films=[...FILMS_SOON];
-  if(activeGenreFilter!=='Tất cả'){
-    if(activeGenreFilter==='Phim Việt')films=films.filter(f=>f.origin==='Việt');
-    else if(activeGenreFilter==='Bom tấn')films=films.filter(f=>parseFloat(f.want)>=20);
-    else films=films.filter(f=>f.genre.includes(activeGenreFilter));
-  }
-  if(activeMonth!=='all')films=films.filter(f=>f.month===activeMonth);
+  let films = activeMonth === 'all' ? [...FILMS_SOON] : FILMS_SOON.filter(f=>f.month===activeMonth);
+  document.getElementById('filmCount').textContent = films.length;
 
-  document.getElementById('filmCount').textContent=films.length;
+  const byMonth = {};
+  films.forEach(f=>{ if(!byMonth[f.month]) byMonth[f.month]=[]; byMonth[f.month].push(f); });
 
-  const byMonth={};
-  films.forEach(f=>{if(!byMonth[f.month])byMonth[f.month]=[];byMonth[f.month].push(f);});
-  const monthLabels={'7':'Tháng 7 · 2026','8':'Tháng 8 · 2026','9':'Tháng 9 · 2026'};
-
-  let html='';
+  let html = '';
   if(!films.length){
-    html=`<div class="empty"><div class="empty-icon">🎬</div>Không có phim phù hợp bộ lọc này</div>`;
-  }else{
-    Object.keys(byMonth).sort().forEach(m=>{
-      const mf=byMonth[m];
-      html+=`<div class="month-section">
+    html = `<div class="empty"><div class="empty-icon">🎬</div>Không có phim trong tháng này</div>`;
+  } else {
+    Object.keys(byMonth).sort((a,b)=>+a-+b).forEach(m=>{
+      const mf = byMonth[m];
+      html += `<div class="month-section">
         <div class="month-hd">
-          <div class="month-hd-title">${monthLabels[m]||'Tháng '+m}</div>
+          <div class="month-hd-title">${MONTH_LABELS[m]||'Tháng '+m}</div>
           <div class="month-hd-line"></div>
           <div class="month-hd-count">${mf.length} phim</div>
         </div>
@@ -384,51 +447,50 @@ function renderSections(){
       </div>`;
     });
   }
-  document.getElementById('filmSections').innerHTML=html;
+  document.getElementById('filmSections').innerHTML = html;
 }
 
 function filmCard(f){
-  const isN=notified.has(f.id);
-  return`<div class="cs-card" onclick="showToast('${f.title} - ${f.date}')">
+  return `<div class="cs-card" onclick="showToast('${f.title.replace(/'/g,"\\'")} · ${f.date}')">
     <div class="cs-poster">
       <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-100)'">
       <div class="cs-age">${f.age}</div>
-      ${f.presale?`<div class="cs-presale">Presale</div>`:''}
+      ${f.presale ? `<div class="cs-presale">Presale</div>` : ''}
       <div class="cs-date-badge"><div class="cs-date-text">🎬 ${f.date}</div></div>
     </div>
     <div class="cs-body">
       <div class="cs-title">${f.title}</div>
-      <div class="cs-genre">${f.genre}</div>
+      <div class="cs-genre">${f.genre}${f.dur !== 'TBA' ? ' · '+f.dur : ''}</div>
       <div class="cs-want">♥ <strong>${f.want}</strong> muốn xem</div>
     </div>
   </div>`;
 }
 
 function toggleNotifyAll(){
-  const btn=document.getElementById('notifyAllBtn');
-  if(notified.size===FILMS_SOON.length){
+  const btn = document.getElementById('notifyAllBtn');
+  if(notified.size === FILMS_SOON.length){
     notified.clear();
     btn.classList.remove('on');
-    btn.textContent='Theo dõi tất cả';
-  }else{
+    btn.textContent = 'Theo dõi tất cả';
+  } else {
     FILMS_SOON.forEach(f=>notified.add(f.id));
     btn.classList.add('on');
-    btn.textContent='✓ Đang theo dõi tất cả';
+    btn.textContent = '✓ Đang theo dõi tất cả';
     showToast('Đăng ký theo dõi tất cả phim sắp chiếu!');
   }
-  document.getElementById('notifyCount').textContent=notified.size;
+  document.getElementById('notifyCount').textContent = notified.size;
 }
 
 function renderCountdown(){
-  const target=new Date('2026-08-01T00:00:00');
-  const now=new Date();
-  const diff=Math.max(0,target-now);
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor((diff%86400000)/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
-  const el=document.getElementById('cdUnits');
-  if(el)el.innerHTML=[['Ngày',d],['Giờ',h],['Phút',m],['Giây',s]].map(([lbl,val])=>`
+  const target = new Date('2026-08-01T00:00:00');
+  const now = new Date();
+  const diff = Math.max(0, target - now);
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  const el = document.getElementById('cdUnits');
+  if(el) el.innerHTML = [['Ngày',d],['Giờ',h],['Phút',m],['Giây',s]].map(([lbl,val])=>`
     <div class="cd-unit">
       <div class="cd-num">${String(val).padStart(2,'0')}</div>
       <div class="cd-unit-label">${lbl}</div>
@@ -436,25 +498,28 @@ function renderCountdown(){
 }
 
 function setTodayLabel(){
-  const now=new Date();
-  document.getElementById('todayLabel').textContent=now.toLocaleDateString('vi-VN',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('todayLabel').textContent =
+    new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'numeric',month:'long'});
 }
 
 let toastTimer;
 function showToast(msg){
-  const el=document.getElementById('toastEl');
-  el.textContent=msg;el.classList.add('show');
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),2000);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2000);
 }
 
-renderGenreFilters();
-renderMonthNav();
-renderSections();
-renderCountdown();
-setInterval(renderCountdown,1000);
-setTodayLabel();
-if(window.lucide)lucide.createIcons();
+async function init(){
+  FILMS_SOON = await loadMovies();
+  renderMonthNav();
+  renderSections();
+  renderCountdown();
+  setInterval(renderCountdown, 1000);
+  setTodayLabel();
+  if(window.lucide) lucide.createIcons();
+}
+init();
 </script>
 </body>
 </html>
