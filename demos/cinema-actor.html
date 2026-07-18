@@ -78,6 +78,20 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .hero-tabs{display:flex;gap:0;margin-top:20px;border-top:1px solid var(--gray-100)}
 .hero-tab{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-400);background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;padding:13px 20px;transition:.15s;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
 .hero-tab.on{color:var(--pink-500);border-bottom-color:var(--pink-500)}
+.hero-tabs::-webkit-scrollbar{display:none}
+@media(max-width:768px){
+  .hero-tab{flex:1;padding:13px 8px;font-size:12px;justify-content:center;text-align:center}
+  .hero{padding:20px 16px 0}
+  .hero-inner{flex-direction:row;gap:16px;align-items:flex-start}
+  .person-avatar{width:80px;height:80px;font-size:24px;flex-shrink:0}
+  .person-name{font-size:20px}
+  .person-known-as{font-size:12px;margin-bottom:6px}
+  .person-meta{gap:6px;margin-bottom:8px;font-size:12px}
+  .person-bio{font-size:13px;margin-bottom:12px;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .person-stats{gap:12px;flex-wrap:nowrap}
+  .pstat-num{font-size:18px}
+  .pstat-lbl{font-size:9px;word-break:keep-all}
+}
 .hero-tab:hover:not(.on){color:var(--gray-700)}
 .tab-count{font-size:10px;background:var(--gray-100);color:var(--gray-500);border-radius:10px;padding:1px 6px;font-weight:700}
 .hero-tab.on .tab-count{background:var(--pink-50);color:var(--pink-500)}
@@ -156,26 +170,48 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .footer{background:var(--gray-900);color:var(--gray-400);font-size:12px;padding:20px;text-align:center;margin-top:48px}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:var(--r-xl);opacity:0;pointer-events:none;transition:.25s;white-space:nowrap;z-index:9999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MOBILE BOTTOM NAV */
+.mobile-bnav{display:none}
+@media(max-width:768px){
+  .mobile-bnav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:#fff;border-top:1px solid var(--gray-200);
+    padding:6px 0 env(safe-area-inset-bottom,8px);
+    z-index:200;box-shadow:0 -1px 8px rgba(0,0,0,.08)
+  }
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+    text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0;
+    transition:.15s}
+  .mbn-item.on{color:var(--pink-500)}
+  .mbn-item svg{display:block}
+  body{padding-bottom:72px}
+  .nav-lab-link{display:none!important}
+  .breadcrumb-bar{display:none}
+}
 </style>
 </head>
 <body>
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a class="nav-lab-link" href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
     <a class="nav-logo" href="/cinema">
-      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="MoMo" height="28" style="display:block">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28" style="display:block">
+      <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block;vertical-align:middle"></span>
+      <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span></span>
     </a>
     <div class="nav-links">
-      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link on" onclick="window.location.href='/cinema/actors'">Diễn viên</button>
       <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
-      <button class="nav-link" onclick="toast('Tính năng đang cập nhật')">Ưu đãi</button>
+      <button class="nav-link" onclick="toast('Ưu đãi')">Ưu đãi</button>
       <button class="nav-link" onclick="toast('Vé của tôi')">Vé của tôi</button>
     </div>
     <div class="nav-right">
-      <div class="nav-search" style="display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 14px;flex:1;max-width:260px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..." style="background:none;border:none;outline:none;color:var(--gray-900);font-size:13px;width:100%"></div>
-      <button class="nav-city" onclick="toast('Chọn thành phố')">📍 Hồ Chí Minh</button>
-      <button class="nav-login">Đăng nhập</button>
+      <div class="nav-search" style="display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 14px;flex:1;max-width:260px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..." style="background:none;border:none;outline:none;color:var(--gray-900);font-size:13px;width:100%"></div>
     </div>
   </div>
 </nav>
@@ -210,7 +246,7 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
     </div>
   </div>
 
-  <div class="hero-tabs" style="max-width:1100px;margin:0 auto;display:flex;overflow-x:auto">
+  <div class="hero-tabs" style="max-width:1100px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none">
     <button class="hero-tab on" onclick="showTab('now',this)">Đang chiếu <span class="tab-count" id="countNow"></span></button>
     <button class="hero-tab" onclick="showTab('soon',this)">Sắp chiếu <span class="tab-count" id="countSoon"></span></button>
     <button class="hero-tab" onclick="showTab('past',this)">Đã chiếu <span class="tab-count" id="countPast"></span></button>
@@ -343,7 +379,7 @@ const ACTORS = {
     ],
   },
   'ryan-reynolds': {
-    name: 'Ryan Reynolds', knownAs: 'Biệt danh: Deadpool guy', initials: 'RR', color: '#991b1b',
+    name: 'Ryan Reynolds', knownAs: 'Biệt danh: Deadpool guy', initials: 'RR', color: '#991b1b', type:'actor',
     nationality: '🇨🇦 Canada', born: '23/10/1976', years: '1991 - nay',
     bio: 'Ryan Reynolds là diễn viên, nhà sản xuất và doanh nhân người Canada. Nổi tiếng với vai Deadpool trong Vũ trụ Marvel và phong cách hài hước đặc trưng. Anh còn là đồng sở hữu thương hiệu rượu Aviation Gin và CLB bóng đá Wrexham AFC.',
     stats: [{num:'40+',lbl:'Phim'},{num:'5.9 tỷ',lbl:'USD doanh thu'},{num:'2',lbl:'Hãng sản xuất'}],
@@ -371,6 +407,257 @@ const ACTORS = {
       {id:'free-guy',title:'Free Guy',role:'Vai: Guy',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.1',age:'T13',dur:'115 phút',genre:'Hành động - Hài',img:'https://image.tmdb.org/t/p/w500/xmbU4JTUm89LcHGe9dYVDLWGnEu.jpg',tags:['2D']},
     ],
   },
+  'ngo-thanh-van': {
+    name: 'Ngô Thanh Vân', knownAs: 'Biệt danh: Ngô Đả Nữ', initials: 'NV', color: '#0e7490', type:'actor',
+    nationality: '🇻🇳 Việt Nam', born: '26/02/1979', years: '2002 - nay',
+    bio: 'Ngô Thanh Vân là diễn viên hành động và nhà sản xuất phim hàng đầu Việt Nam. Bộ phim Hai Phượng (2019) do cô sản xuất và đóng chính được Netflix mua bản quyền phát hành toàn cầu - kỳ tích hiếm có của điện ảnh Việt.',
+    stats: [{num:'25+',lbl:'Phim'},{num:'4',lbl:'Giải thưởng'},{num:'1',lbl:'Phim Netflix global'}],
+    awards: ['🏆 Nữ diễn viên xuất sắc - ASEAN IFF 2019','🌟 Best Action Actress - Busan 2018','🌟 Ngôi sao Xanh 2021'],
+    score: 4.7, reviewCount: 2134,
+    ratingBreakdown: [72, 18, 6, 3, 1],
+    reviews: [
+      {user:'Minh Tuấn', initials:'MT', color:'#0e7490', rating:5, date:'2 ngày trước', film:'Cơn Thịnh Nộ', text:'Ngô Thanh Vân là diễn viên hành động nữ hiếm hoi của Việt Nam thực sự đáng tin cậy trong cảnh chiến đấu. Mỗi đòn đánh đều có trọng lượng thật sự.', likes:245},
+      {user:'Lan Hương', initials:'LH', color:'#be185d', rating:5, date:'1 tuần trước', film:'Hai Phượng', text:'Hai Phượng là bước ngoặt của điện ảnh hành động Việt. Netflix mua phim là sự công nhận xứng đáng cho nỗ lực của cô ấy.', likes:189},
+    ],
+    knownFor: [
+      {title:'Hai Phượng',img:'https://image.tmdb.org/t/p/w300/6wNRCjP3Q0mjcGCVN8pGnN7mC7K.jpg'},
+      {title:'Star Wars: The Last Jedi',img:'https://image.tmdb.org/t/p/w300/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg'},
+    ],
+    now: [{id:'con-thinh-no',title:'Cơn Thịnh Nộ',role:'Vai: Phụng',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.0',age:'T16',dur:'105 phút',genre:'Hành động - Tội phạm',img:'https://image.tmdb.org/t/p/w500/6wNRCjP3Q0mjcGCVN8pGnN7mC7K.jpg',tags:['2D']}],
+    soon: [],
+    past: [{id:'hai-phuong',title:'Hai Phượng',role:'Vai: Hai Phượng',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.3',age:'T16',dur:'98 phút',genre:'Hành động',img:'https://image.tmdb.org/t/p/w500/6wNRCjP3Q0mjcGCVN8pGnN7mC7K.jpg',tags:['2D']}],
+  },
+  'thu-trang': {
+    name: 'Thu Trang', knownAs: '', initials: 'TT', color: '#9d174d', type:'both',
+    nationality: '🇻🇳 Việt Nam', born: '17/08/1984', years: '2003 - nay',
+    bio: 'Thu Trang là danh hài, diễn viên và nhà sản xuất phim người Việt Nam. Loạt phim hài Chị Mười Ba do cô sản xuất và đóng chính là thương hiệu phim hài thành công nhất Việt Nam hiện nay, với mỗi phần đều đạt trên 100 tỷ đồng doanh thu.',
+    stats: [{num:'20+',lbl:'Phim'},{num:'5',lbl:'Giải hài xuất sắc'},{num:'100+ tỷ',lbl:'VNĐ doanh thu mỗi phần'}],
+    awards: ['🏆 Danh hài xuất sắc HTV 2019','🌟 Ngôi sao Xanh 2020','🌟 HTV Awards 2022'],
+    score: 4.5, reviewCount: 1876,
+    ratingBreakdown: [62, 24, 10, 3, 1],
+    reviews: [
+      {user:'Bích Ngọc', initials:'BN', color:'#9d174d', rating:5, date:'3 ngày trước', film:'Tung Hoành Tứ Hải', text:'Thu Trang và Tiến Luật là cặp đôi hài hước nhất màn ảnh Việt. Mỗi cảnh quay chung đều bật ra năng lượng cực kỳ tự nhiên.', likes:167},
+    ],
+    knownFor: [
+      {title:'Chị Mười Ba',img:'https://image.tmdb.org/t/p/w300/wcahBISlczoYqcakatu2uyX8kGQ.jpg'},
+    ],
+    now: [{id:'tung-hoanh-tu-hai',title:'Tung Hoành Tứ Hải',role:'Vai: Tứ Hải',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.5',age:'T13',dur:'100 phút',genre:'Hài - Hành động',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',tags:['2D']}],
+    soon: [],
+    past: [{id:'chi-muoi-ba',title:'Chị Mười Ba',role:'Vai: chính kiêm đạo diễn',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.9',age:'T13',dur:'95 phút',genre:'Hài',img:'https://image.tmdb.org/t/p/w500/wcahBISlczoYqcakatu2uyX8kGQ.jpg',tags:['2D']}],
+  },
+  'le-giang': {
+    name: 'Lê Giang', knownAs: '', initials: 'LG', color: '#7c3aed', type:'actor',
+    nationality: '🇻🇳 Việt Nam', born: '12/03/1971', years: '1999 - nay',
+    bio: 'Lê Giang là danh hài kỳ cựu với hơn 25 năm hoạt động trong làng giải trí Việt Nam. Cô được yêu mến nhờ phong cách hài duyên dáng và gần gũi, thường đóng các vai người mẹ hoặc nhân vật hài trong phim gia đình.',
+    stats: [{num:'30+',lbl:'Phim'},{num:'25+',lbl:'Năm hoạt động'},{num:'5',lbl:'Giải thưởng'}],
+    awards: ['🌟 Danh hài xuất sắc HTV 2015','🌟 HTV Awards 2018','🌟 Ngôi sao Xanh 2016'],
+    score: 4.4, reviewCount: 987,
+    ratingBreakdown: [58, 27, 10, 4, 1],
+    reviews: [
+      {user:'Hồng Vân', initials:'HV', color:'#7c3aed', rating:5, date:'1 tuần trước', film:'Ngày Con Sống Lại', text:'Lê Giang diễn vai người mẹ cảm xúc lắm, vừa hài vừa chạm. Bà ấy là kho báu của điện ảnh Việt mà nhiều người chưa nhận ra đủ.', likes:134},
+    ],
+    knownFor: [],
+    now: [{id:'ngay-con-song-lai',title:'Ngày Con Sống Lại',role:'Vai: Bà Năm',charType:'support',charTypeLabel:'Nhân vật phụ',momoScore:'7.6',age:'T13',dur:'112 phút',genre:'Gia đình - Hài',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',tags:['2D']}],
+    soon: [],
+    past: [],
+  },
+  'miu-le': {
+    name: 'Miu Lê', knownAs: 'Tên thật: Lê Minh Như', initials: 'ML', color: '#be185d', type:'actor',
+    nationality: '🇻🇳 Việt Nam', born: '31/10/1992', years: '2013 - nay',
+    bio: 'Miu Lê là ca sĩ kiêm diễn viên người Việt Nam, nổi tiếng với bản hit Em Gái Mưa và bộ phim Tháng Năm Rực Rỡ (2018). Cô là một trong những gương mặt đa năng của showbiz Việt, thành công song hành ở cả hai lĩnh vực âm nhạc và điện ảnh.',
+    stats: [{num:'12',lbl:'Phim'},{num:'500M+',lbl:'Lượt nghe nhạc'},{num:'3',lbl:'Giải thưởng'}],
+    awards: ['🌟 Album của năm - Zing Music Awards 2017','🌟 Nữ diễn viên mới xuất sắc 2018','🌟 HTV Awards 2019'],
+    score: 4.5, reviewCount: 1234,
+    ratingBreakdown: [61, 25, 10, 3, 1],
+    reviews: [
+      {user:'Thanh Thảo', initials:'TT', color:'#be185d', rating:5, date:'2 ngày trước', film:'Mẹ Ơi, Về Nhà', text:'Miu Lê diễn cảnh khóc cực hay - không gượng gạo chút nào. Phim gia đình mà có cô ấy thì chắc chắn sẽ cảm xúc.', likes:145},
+    ],
+    knownFor: [
+      {title:'Tháng Năm Rực Rỡ',img:'https://image.tmdb.org/t/p/w300/wcahBISlczoYqcakatu2uyX8kGQ.jpg'},
+    ],
+    now: [{id:'me-oi-ve-nha',title:'Mẹ Ơi, Về Nhà',role:'Vai: Hoa',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'7.8',age:'P',dur:'100 phút',genre:'Gia đình',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',tags:['2D']}],
+    soon: [],
+    past: [{id:'thang-nam-ruc-ro',title:'Tháng Năm Rực Rỡ',role:'Vai: Châu',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.2',age:'T13',dur:'112 phút',genre:'Tình cảm - Âm nhạc',img:'https://image.tmdb.org/t/p/w500/wcahBISlczoYqcakatu2uyX8kGQ.jpg',tags:['2D']}],
+  },
+  'linh-dan-phuong': {
+    name: 'Linh Đan Phương', knownAs: '', initials: 'LP', color: '#6d28d9', type:'actor',
+    nationality: '🇻🇳 Việt Nam', born: '15/07/1977', years: '1989 - nay',
+    bio: 'Linh Đan Phương là Nghệ sĩ ưu tú với hơn 35 năm cống hiến cho điện ảnh Việt Nam. Cô gắn liền với vai Diễm trong bộ phim truyền hình kinh điển Đất Phương Nam - một trong những vai diễn mang tính biểu tượng nhất lịch sử phim Việt.',
+    stats: [{num:'50+',lbl:'Phim'},{num:'35+',lbl:'Năm hoạt động'},{num:'NSƯT',lbl:'Danh hiệu nhà nước'}],
+    awards: ['🏆 Nghệ sĩ ưu tú - Nhà nước VN','🌟 Nữ diễn viên xuất sắc LHP 2005','🌟 HTV Awards 2012'],
+    score: 4.6, reviewCount: 756,
+    ratingBreakdown: [65, 22, 9, 3, 1],
+    reviews: [
+      {user:'Ngọc Mai', initials:'NM', color:'#6d28d9', rating:5, date:'1 tuần trước', film:'Trường Hè, 2001', text:'NSƯT Linh Đan Phương là tài năng thực thụ của điện ảnh Việt. Xem bà diễn là thấy sự khác biệt giữa diễn xuất thật và diễn xuất được luyện qua năm tháng.', likes:98},
+    ],
+    knownFor: [],
+    now: [{id:'truong-he-2001',title:'Trường Hè, 2001',role:'Vai: Bà giáo Hạnh',charType:'support',charTypeLabel:'Nhân vật phụ',momoScore:'7.9',age:'T13',dur:'118 phút',genre:'Tâm lý - Ký ức',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',tags:['2D']}],
+    soon: [],
+    past: [],
+  },
+  'tim-robinson': {
+    name: 'Tim Robinson', knownAs: '', initials: 'TR', color: '#374151', type:'actor',
+    nationality: '🇺🇸 Hoa Kỳ', born: '19/08/1981', years: '2006 - nay',
+    bio: 'Tim Robinson là diễn viên hài và biên kịch người Mỹ xuất thân từ Saturday Night Live. Nổi tiếng với sketch comedy I Think You Should Leave trên Netflix, anh đang dần chuyển sang phim điện ảnh với các dự án animation lớn.',
+    stats: [{num:'15+',lbl:'Phim & Series'},{num:'3',lbl:'Mùa ITYSL'},{num:'1',lbl:'Emmy đề cử'}],
+    awards: ['🌟 Critics Choice Comedy 2022','🌟 WGA Award 2020','🌟 Webby Award Comedy 2021'],
+    score: 4.3, reviewCount: 567,
+    ratingBreakdown: [55, 28, 12, 4, 1],
+    reviews: [
+      {user:'Hoài Nam', initials:'HN', color:'#374151', rating:4, date:'3 ngày trước', film:'Minions & Quái Vật', text:'Tim Robinson lồng tiếng nhân vật Gru rất hợp, mang lại sự hài hước kỳ quặc đặc trưng mà phim Minions cần. Bất ngờ với casting này.', likes:78},
+    ],
+    knownFor: [],
+    now: [{id:'minions-quai-vat',title:'Minions & Quái Vật',role:'Vai: Gru (lồng tiếng)',charType:'voice',charTypeLabel:'Lồng tiếng',momoScore:'7.4',age:'P',dur:'95 phút',genre:'Hoạt hình - Hài',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',tags:['2D','3D']}],
+    soon: [],
+    past: [],
+  },
+  'auli-i-cravalho': {
+    name: "Auli'i Cravalho", knownAs: '', initials: 'AC', color: '#0369a1', type:'actor',
+    nationality: '🇺🇸 Hoa Kỳ', born: '22/11/2000', years: '2016 - nay',
+    bio: "Auli'i Cravalho là diễn viên người Hawaii được Disney chọn ở tuổi 14 để lồng tiếng nhân vật Moana - trở thành diễn viên lồng tiếng người Hawaii gốc đầu tiên đóng vai chính trong phim hoạt hình Disney. Cô tiếp tục vai diễn này trong phần live-action 2024.",
+    stats: [{num:'10+',lbl:'Phim & Series'},{num:'1',lbl:'Grammy đề cử'},{num:'2',lbl:'Teen Choice Award'}],
+    awards: ['🌟 Teen Choice Award 2017','🌟 Saturn Award New Media 2018','🌟 NAACP Image Award 2025'],
+    score: 4.7, reviewCount: 892,
+    ratingBreakdown: [68, 21, 8, 2, 1],
+    reviews: [
+      {user:'Diễm Châu', initials:'DC', color:'#0369a1', rating:5, date:'1 ngày trước', film:'Hành Trình Của Moana', text:"Giọng của Auli'i Cravalho là Moana. Không cần giải thích thêm - chỉ cần nghe How Far I'll Go và bạn sẽ hiểu tại sao không ai khác có thể đóng vai này.", likes:234},
+    ],
+    knownFor: [
+      {title:'Moana',img:'https://image.tmdb.org/t/p/w300/4NiJL7eWqnxQE7bE8oF8RzLULMM.jpg'},
+    ],
+    now: [{id:'hanh-trinh-cua-moana',title:'Hành Trình Của Moana',role:"Vai: Moana (lồng tiếng)",charType:'voice',charTypeLabel:'Lồng tiếng',momoScore:'8.3',age:'P',dur:'105 phút',genre:'Hoạt hình - Phiêu lưu',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',tags:['2D','3D']}],
+    soon: [],
+    past: [{id:'moana',title:'Moana (2016)',role:'Vai: Moana (lồng tiếng)',charType:'main',charTypeLabel:'Nhân vật chính',momoScore:'8.8',age:'P',dur:'107 phút',genre:'Hoạt hình',img:'https://image.tmdb.org/t/p/w500/4NiJL7eWqnxQE7bE8oF8RzLULMM.jpg',tags:['2D']}],
+  },
+  'ly-hai': {
+    name: 'Lý Hải', knownAs: '', initials: 'LH', color: '#1e40af', type:'director',
+    nationality: '🇻🇳 Việt Nam', born: '28/03/1974', years: '2010 - nay',
+    bio: 'Lý Hải là đạo diễn và nhà sản xuất phim hài hành động người Việt Nam đứng sau loạt phim Lật Mặt. Mỗi phần trong loạt phim này đều phá kỷ lục doanh thu phim Việt khi ra mắt, đưa anh trở thành đạo diễn có doanh thu cao nhất lịch sử điện ảnh Việt Nam.',
+    stats: [{num:'8',lbl:'Phim đạo diễn'},{num:'#1',lbl:'Doanh thu VN'},{num:'500+ tỷ',lbl:'VNĐ tổng doanh thu'}],
+    awards: ['🏆 Phim Việt doanh thu cao nhất 2022','🏆 Phim Việt doanh thu cao nhất 2023','🌟 Nhà sản xuất xuất sắc HTV 2021'],
+    score: 4.5, reviewCount: 1456,
+    ratingBreakdown: [60, 25, 11, 3, 1],
+    reviews: [
+      {user:'Duy Khánh', initials:'DK', color:'#1e40af', rating:5, date:'5 ngày trước', film:'Lật Mặt 7', text:'Lý Hải biết rõ khán giả của mình muốn gì và không bao giờ thất hứa. Phim Tết của anh là truyền thống không thể thiếu với nhiều gia đình Việt.', likes:223},
+      {user:'Thu Hiền', initials:'TH', color:'#be185d', rating:4, date:'2 tuần trước', film:'Lật Mặt 6', text:'Công thức làm phim của Lý Hải đã rất vững chắc. Mỗi phần đều có thêm yếu tố mới nhưng giữ được cảm giác quen thuộc mà khán giả yêu thích.', likes:156},
+    ],
+    knownFor: [],
+    now: [],
+    soon: [{id:'lat-mat-8',title:'Lật Mặt 8',role:'Đạo diễn & Nhà sản xuất',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.0',age:'T13',dur:'110 phút',genre:'Hài - Hành động',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',tags:['2D']}],
+    past: [{id:'lat-mat-7',title:'Lật Mặt 7: Một Điều Ước',role:'Đạo diễn',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.1',age:'T13',dur:'118 phút',genre:'Hài - Gia đình',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',tags:['2D']}],
+  },
+  'victor-vu': {
+    name: 'Victor Vũ', knownAs: '', initials: 'VV', color: '#064e3b', type:'director',
+    nationality: '🇻🇳 Việt Nam', born: '01/01/1979', years: '2009 - nay',
+    bio: 'Victor Vũ là đạo diễn và biên kịch người Mỹ gốc Việt, nổi tiếng với Thiên Mệnh Anh Hùng, Trúng Số và Mắt Biếc. Anh là một trong số ít đạo diễn Việt có phong cách thị giác đặc trưng - hình ảnh tinh tế, nhịp kể chuyện chậm và chiều sâu cảm xúc.',
+    stats: [{num:'10',lbl:'Phim dài'},{num:'3',lbl:'Giải LHP quốc tế'},{num:'Mắt Biếc',lbl:'Phim tiêu biểu'}],
+    awards: ['🏆 Đạo diễn xuất sắc - LHP VN 2020','🌟 Best Director - ASEAN IFF 2018','🌟 Ngôi sao Xanh 2020'],
+    score: 4.7, reviewCount: 987,
+    ratingBreakdown: [70, 20, 7, 2, 1],
+    reviews: [
+      {user:'Phương Anh', initials:'PA', color:'#064e3b', rating:5, date:'3 ngày trước', film:'Mắt Biếc', text:'Mắt Biếc của Victor Vũ là bộ phim Việt đẹp nhất tôi từng xem. Từng khung hình như một bức tranh - phong cách của anh ấy không ai có thể copy được.', likes:312},
+    ],
+    knownFor: [
+      {title:'Mắt Biếc',img:'https://image.tmdb.org/t/p/w300/pxkavJJuM5zArEGtzvmOLoiICVh.jpg'},
+    ],
+    now: [],
+    soon: [],
+    past: [{id:'mat-biec',title:'Mắt Biếc',role:'Đạo diễn',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.9',age:'P',dur:'118 phút',genre:'Tình cảm',img:'https://image.tmdb.org/t/p/w500/pxkavJJuM5zArEGtzvmOLoiICVh.jpg',tags:['2D']}],
+  },
+  'james-cameron': {
+    name: 'James Cameron', knownAs: '', initials: 'JC', color: '#1e3a5f', type:'director',
+    nationality: '🇨🇦 Canada', born: '16/08/1954', years: '1982 - nay',
+    bio: 'James Cameron là đạo diễn người Canada nổi tiếng với Titanic và Avatar - hai bộ phim từng giữ kỷ lục doanh thu toàn cầu cao nhất mọi thời đại. Ông là tiên phong trong việc ứng dụng công nghệ 3D và CGI vào điện ảnh đại chúng.',
+    stats: [{num:'12',lbl:'Phim dài'},{num:'3',lbl:'Oscar đạo diễn'},{num:'2 lần #1',lbl:'Doanh thu toàn cầu'}],
+    awards: ['🏆 Oscar Đạo diễn - Titanic 1998','🏆 Oscar Phim hay nhất - Titanic','🌟 DGA Award 2010 - Avatar'],
+    score: 4.9, reviewCount: 12450,
+    ratingBreakdown: [85, 10, 3, 1, 1],
+    reviews: [
+      {user:'Anh Tuấn', initials:'AT', color:'#1e3a5f', rating:5, date:'1 ngày trước', film:'Avatar 3', text:'James Cameron không làm phim - ông ấy tạo ra những trải nghiệm điện ảnh. Avatar 3 tiếp tục chứng minh không ai trên thế giới build thế giới phim như ông ấy.', likes:789},
+      {user:'Khánh Linh', initials:'KL', color:'#be185d', rating:5, date:'3 ngày trước', film:'Avatar: The Way of Water', text:'Chờ 13 năm nhưng xứng đáng. Cameron chứng minh kỹ thuật đỉnh cao không phải để khoe - mà để kể một câu chuyện cảm xúc thực sự.', likes:534},
+    ],
+    knownFor: [
+      {title:'Titanic',img:'https://image.tmdb.org/t/p/w300/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg'},
+      {title:'Avatar',img:'https://image.tmdb.org/t/p/w300/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg'},
+    ],
+    now: [],
+    soon: [{id:'avatar-3',title:'Avatar 3: Fire and Ash',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'9.1',age:'T13',dur:'180 phút',genre:'Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg',tags:['IMAX','3D']}],
+    past: [
+      {id:'avatar-2',title:'Avatar: The Way of Water',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.7',age:'T13',dur:'192 phút',genre:'Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',tags:['IMAX','3D']},
+      {id:'titanic',title:'Titanic',role:'Đạo diễn & Biên kịch & Sản xuất',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'9.5',age:'T13',dur:'194 phút',genre:'Tình cảm - Thảm họa',img:'https://image.tmdb.org/t/p/w500/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg',tags:['2D']},
+    ],
+  },
+  'christopher-nolan': {
+    name: 'Christopher Nolan', knownAs: '', initials: 'CN', color: '#1c1917', type:'director',
+    photo: 'https://image.tmdb.org/t/p/w300/xuAIuYSmsUzKlUMBFGVZaWsY3DZ.jpg',
+    nationality: '🇬🇧 Anh - 🇺🇸 Hoa Kỳ', born: '30/07/1970', years: '1998 - nay',
+    bio: 'Christopher Nolan là đạo diễn người Anh-Mỹ, tác giả của The Dark Knight trilogy, Inception, Interstellar và Oppenheimer. Ông là người mang phong cách tự sự phi tuyến tính vào dòng phim bom tấn đại chúng, đồng thời là người bảo vệ kiên định của điện ảnh chiếu rạp.',
+    stats: [{num:'13',lbl:'Phim dài'},{num:'1',lbl:'Oscar đạo diễn'},{num:'6 tỷ+',lbl:'USD doanh thu'}],
+    awards: ['🏆 Oscar Đạo diễn - Oppenheimer 2024','🏆 Oscar Phim hay nhất - Oppenheimer','🌟 BAFTA 2024'],
+    score: 4.9, reviewCount: 15678,
+    ratingBreakdown: [87, 9, 3, 1, 0],
+    reviews: [
+      {user:'Minh Khoa', initials:'MK', color:'#1c1917', rating:5, date:'2 ngày trước', film:'Oppenheimer', text:'Oppenheimer không chỉ là phim về bom nguyên tử - đó là bộ phim về lương tâm con người. Nolan đã làm được điều không tưởng: biến vật lý lý thuyết thành drama cảm xúc nhất năm.', likes:1245},
+      {user:'Thái Bình', initials:'TB', color:'#374151', rating:5, date:'1 tuần trước', film:'Tenet', text:'Inception mở ra, Tenet đẩy giới hạn xa hơn. Nolan là đạo diễn duy nhất làm tôi phải xem phim 3 lần mới hiểu hết - và đó là điểm cộng, không phải trừ.', likes:678},
+    ],
+    knownFor: [
+      {title:'The Odyssey',img:'https://image.tmdb.org/t/p/w300/7876PK6gosE13Uq1B6nRxf7AJLT.jpg'},
+      {title:'Oppenheimer',img:'https://image.tmdb.org/t/p/w300/ixLH2iM9at8BbuLr5wQWnCfwhJO.jpg'},
+      {title:'The Dark Knight',img:'https://image.tmdb.org/t/p/w300/7EfSqviKvXwbiGhUjHyUBGVdoiW.jpg'},
+      {title:'Inception',img:'https://image.tmdb.org/t/p/w300/eBtqGWtR5KUiNl6OXHLR3ri6nVm.jpg'},
+      {title:'Interstellar',img:'https://image.tmdb.org/t/p/w300/if4TI9LbqNIrzkoOgWjX5PZYDYe.jpg'},
+    ],
+    now: [
+      {id:'the-odyssey-24848',title:'The Odyssey',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'9.7',age:'T16',dur:'180 phút',genre:'Sử thi - Phiêu lưu - Kỳ ảo',img:'https://image.tmdb.org/t/p/w500/7876PK6gosE13Uq1B6nRxf7AJLT.jpg',tags:['IMAX','2D']},
+    ],
+    soon: [],
+    past: [
+      {id:'oppenheimer',title:'Oppenheimer',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'9.4',age:'T16',dur:'180 phút',genre:'Tiểu sử - Lịch sử',img:'https://image.tmdb.org/t/p/w500/ixLH2iM9at8BbuLr5wQWnCfwhJO.jpg',tags:['IMAX']},
+      {id:'tenet',title:'Tenet',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.4',age:'T13',dur:'150 phút',genre:'Hành động - Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/kjMSOw223FtsdMzEOCUvTnyDPFY.jpg',tags:['IMAX']},
+      {id:'dunkirk',title:'Dunkirk',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'7.5',age:'T13',dur:'106 phút',genre:'Chiến tranh - Lịch sử',img:'https://image.tmdb.org/t/p/w500/qRtqlnvcoWIL0Uma3HA15Ll84I6.jpg',tags:['IMAX']},
+      {id:'interstellar',title:'Interstellar',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.5',age:'P',dur:'169 phút',genre:'Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/if4TI9LbqNIrzkoOgWjX5PZYDYe.jpg',tags:['IMAX']},
+      {id:'the-dark-knight-rises',title:'The Dark Knight Rises',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'7.8',age:'T13',dur:'164 phút',genre:'Hành động - Siêu anh hùng',img:'https://image.tmdb.org/t/p/w500/5WFuvfiHRghbepz3I6zc1KeHIly.jpg',tags:['IMAX']},
+      {id:'inception',title:'Inception',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.4',age:'T13',dur:'148 phút',genre:'Hành động - Khoa học viễn tưởng',img:'https://image.tmdb.org/t/p/w500/eBtqGWtR5KUiNl6OXHLR3ri6nVm.jpg',tags:['IMAX']},
+      {id:'the-dark-knight',title:'The Dark Knight',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.5',age:'T13',dur:'152 phút',genre:'Hành động - Siêu anh hùng - Tội phạm',img:'https://image.tmdb.org/t/p/w500/7EfSqviKvXwbiGhUjHyUBGVdoiW.jpg',tags:['IMAX']},
+      {id:'the-prestige',title:'The Prestige',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.2',age:'T13',dur:'130 phút',genre:'Bí ẩn - Kịch tính',img:'https://image.tmdb.org/t/p/w500/Ag2B2KHKQPukjH7WutmgnnSNurZ.jpg',tags:['2D']},
+    ],
+  },
+  'tran-thanh-huy': {
+    name: 'Trần Thanh Huy', knownAs: '', initials: 'TH', color: '#7f1d1d', type:'director',
+    nationality: '🇻🇳 Việt Nam', born: '1988', years: '2019 - nay',
+    bio: 'Trần Thanh Huy là đạo diễn trẻ người Việt Nam nổi lên với bộ phim đầu tay Ròm (2019), giành giải tại Liên hoan phim Quốc tế Busan và được mua phân phối quốc tế. Anh đại diện cho thế hệ đạo diễn Việt mới mang phong cách điện ảnh độc lập vào dòng chính.',
+    stats: [{num:'2',lbl:'Phim dài'},{num:'3',lbl:'Giải quốc tế'},{num:'Ròm',lbl:'Phim tiêu biểu'}],
+    awards: ['🏆 New Currents Award - Busan IFF 2019','🏆 Phim hay nhất - HIFF 2020','🌟 Đạo diễn trẻ tài năng - LHP VN 2021'],
+    score: 4.6, reviewCount: 678,
+    ratingBreakdown: [63, 24, 10, 2, 1],
+    reviews: [
+      {user:'Quốc Toản', initials:'QT', color:'#7f1d1d', rating:5, date:'1 tuần trước', film:'Ròm', text:'Ròm của Trần Thanh Huy là bộ phim Việt đầu tiên khiến tôi nghĩ: đây là điện ảnh thật sự, không phải chỉ là giải trí. Phong cách gần với Wong Kar-wai hơn là phim Tết.', likes:189},
+    ],
+    knownFor: [],
+    now: [],
+    soon: [],
+    past: [{id:'rom',title:'Ròm',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.6',age:'T16',dur:'93 phút',genre:'Xã hội - Indie',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',tags:['2D']}],
+  },
+  'bong-joon-ho': {
+    name: 'Bong Joon-ho', knownAs: '', initials: 'BJ', color: '#3b0764', type:'director',
+    nationality: '🇰🇷 Hàn Quốc', born: '14/09/1969', years: '2000 - nay',
+    bio: 'Bong Joon-ho là đạo diễn người Hàn Quốc đầu tiên giành Oscar Phim hay nhất với Parasite (2020) - và cũng là phim nước ngoài đầu tiên trong lịch sử Oscar đạt danh hiệu này. Tác giả của Memories of Murder, The Host, Snowpiercer và Mickey 17.',
+    stats: [{num:'8',lbl:'Phim dài'},{num:'4',lbl:'Oscar'},{num:'1',lbl:'Palm d\'Or'}],
+    awards: ['🏆 Oscar Đạo diễn - Parasite 2020','🏆 Oscar Phim hay nhất - Parasite','🏆 Palme d\'Or - Cannes 2019'],
+    score: 4.9, reviewCount: 18934,
+    ratingBreakdown: [89, 8, 2, 1, 0],
+    reviews: [
+      {user:'Nhật Minh', initials:'NM', color:'#3b0764', rating:5, date:'3 ngày trước', film:'Mickey 17', text:'Sau Parasite, Mickey 17 chứng minh Bong Joon-ho làm phim Hollywood mà không đánh mất bản sắc. Ông vẫn là ông - châm biếm, bất ngờ và không thể đoán trước.', likes:1567},
+      {user:'Thùy Trang', initials:'TT', color:'#be185d', rating:5, date:'5 ngày trước', film:'Parasite', text:'Parasite là bộ phim hoàn hảo nhất tôi từng xem. Không có một cảnh thừa, không có một chi tiết ngẫu nhiên - mọi thứ đều có mục đích và payoff xứng đáng.', likes:2341},
+    ],
+    knownFor: [
+      {title:'Parasite',img:'https://image.tmdb.org/t/p/w300/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg'},
+      {title:'Mickey 17',img:'https://image.tmdb.org/t/p/w300/edY6CxhHGLFQ0UGU7FdaEaXfNly.jpg'},
+    ],
+    now: [{id:'mickey-17',title:'Mickey 17',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'8.6',age:'T13',dur:'137 phút',genre:'Khoa học viễn tưởng - Châm biếm',img:'https://image.tmdb.org/t/p/w500/edY6CxhHGLFQ0UGU7FdaEaXfNly.jpg',tags:['2D']}],
+    soon: [],
+    past: [{id:'parasite',title:'Parasite',role:'Đạo diễn & Biên kịch',charType:'main',charTypeLabel:'Đạo diễn',momoScore:'9.6',age:'C18',dur:'132 phút',genre:'Tâm lý - Chính kịch',img:'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',tags:['2D']}],
+  },
 };
 
 const slug = location.pathname.replace(/\/$/, '').split('/').pop();
@@ -378,7 +665,10 @@ const person = ACTORS[slug] || ACTORS['tran-thanh'];
 let activeTab = 'now';
 
 function init(){
-  document.getElementById('pageTitle').textContent = `${person.name} - Diễn viên - MoMo Cinema`;
+  const typeLabel = person.type==='director' ? 'Đạo diễn' : person.type==='both' ? 'Diễn viên & Đạo diễn' : 'Diễn viên';
+  const typeIcon = person.type==='director' ? '🎬' : '🌟';
+  document.querySelector('.person-type-badge').innerHTML = `${typeIcon} ${typeLabel}`;
+  document.getElementById('pageTitle').textContent = `${person.name} - ${typeLabel} - MoMo Cinema`;
   document.getElementById('bcName').textContent = person.name;
   document.getElementById('personName').textContent = person.name;
   document.getElementById('personBio').textContent = person.bio;
@@ -387,8 +677,13 @@ function init(){
   if(person.knownAs){ kaEl.textContent = person.knownAs; } else { kaEl.style.display='none'; }
 
   const av = document.getElementById('personAvatar');
-  av.textContent = person.initials;
-  av.style.setProperty('--person-color', person.color);
+  if(person.photo){
+    av.innerHTML = `<img src="${person.photo}" alt="${person.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    av.style.background = 'var(--gray-200)';
+  } else {
+    av.textContent = person.initials;
+    av.style.setProperty('--person-color', person.color);
+  }
 
   document.getElementById('personMeta').innerHTML = [
     `<span>🌍 ${person.nationality}</span>`,
@@ -523,5 +818,6 @@ function toast(msg){ const el=document.getElementById('toastEl'); el.textContent
 
 init();
 </script>
+<nav class="mobile-bnav"><a class="mbn-item" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item on" href="/cinema/actors"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
 </body>
 </html>

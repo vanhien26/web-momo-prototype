@@ -1403,6 +1403,30 @@
       if(typeof selectTool === 'function') selectTool(id, {updateHash:true, detail:true});
     }
 
+    // Embed mode: hide header + catalog chrome when ?embed=1
+    const isEmbed = new URLSearchParams(location.search).get('embed') === '1';
+    if(isEmbed){
+      const hdr = document.querySelector('.site-header');
+      if(hdr) hdr.style.display = 'none';
+      document.body.style.background = 'transparent';
+      document.body.style.paddingTop = '0';
+      document.body.classList.add('embed');
+
+      // postMessage auto-resize: broadcast scroll height to parent on any layout change
+      let _rTimer;
+      function notifyHeight(){
+        clearTimeout(_rTimer);
+        _rTimer = setTimeout(() => {
+          const h = document.documentElement.scrollHeight;
+          window.parent.postMessage({ type: 'momo-widget-resize', height: h }, '*');
+        }, 60);
+      }
+      window.addEventListener('load', notifyHeight);
+      window.addEventListener('resize', notifyHeight);
+      // MutationObserver to catch dynamic render updates (field changes → re-render)
+      new MutationObserver(notifyHeight).observe(document.body, { childList: true, subtree: true, attributes: false, characterData: false });
+    }
+
     // Init: show catalog if no hash
     function init(){
       pillsEl.addEventListener('click', e => {

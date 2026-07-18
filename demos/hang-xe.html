@@ -341,8 +341,9 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 @media(max-width:640px){
   .oc-km-row{flex-wrap:wrap}
   .oc-km-val{min-width:auto;font-size:18px}
-  .oc-row{flex-wrap:wrap;gap:10px}
+  .oc-row{flex-wrap:wrap;gap:6px 10px}
   .oc-row-right{width:100%;justify-content:space-between;margin-left:0;padding-left:42px}
+  .oc-row-hint{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .cost-tiles{grid-template-columns:repeat(2,1fr)}
 }
 
@@ -467,7 +468,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 /* ── MODEL DETAIL PAGE ── */
 .md-hero{position:relative;background:linear-gradient(150deg,var(--mobase-ink) 0%,#111C33 55%,var(--mobase-ink-2) 100%);overflow:hidden;padding:44px 0 36px;color:#fff}
 .md-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(560px 300px at 78% 30%,var(--brand,#2563EB) 0%,transparent 68%);opacity:.28;pointer-events:none}
-.md-hero-ghost{position:absolute;right:-10px;top:6px;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-size:clamp(80px,14vw,150px);font-weight:900;letter-spacing:-4px;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.09);white-space:nowrap;pointer-events:none;user-select:none;line-height:1}
+.md-hero-ghost{position:absolute;left:0;right:0;text-align:center;top:18px;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-size:clamp(96px,22vw,240px);font-weight:900;letter-spacing:-6px;color:rgba(255,255,255,.04);-webkit-text-stroke:1.5px rgba(255,255,255,.13);white-space:nowrap;pointer-events:none;user-select:none;line-height:1;overflow:hidden}
 .md-hero-inner{position:relative;display:flex;align-items:center;gap:32px}
 .md-hero-img{width:320px;flex-shrink:0;position:relative;animation:mdDriveIn .8s cubic-bezier(.2,.8,.2,1) both .1s}
 .md-hero-img svg{width:100%;max-height:150px;filter:drop-shadow(0 18px 22px rgba(0,0,0,.35))}
@@ -480,7 +481,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .md-hero-title{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-size:clamp(34px,5vw,52px);font-weight:900;line-height:1.05;letter-spacing:-1px;color:#fff;margin-bottom:8px}
 .md-hero-desc{font-size:14px;color:rgba(255,255,255,.66);margin-bottom:14px;line-height:1.55;max-width:440px}
 .md-hero-pills{display:flex;gap:8px;flex-wrap:wrap}
-.md-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:999px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(4px)}
+.md-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:999px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(4px);white-space:nowrap;flex-shrink:0}
 .md-hero-stats{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:34px;padding-top:18px;border-top:1px solid rgba(255,255,255,.14)}
 .md-stat{padding:0 20px;border-left:1px solid rgba(255,255,255,.12)}
 .md-stat:first-child{padding-left:0;border-left:none}
@@ -586,10 +587,22 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .util-fuel-delta.up{color:#B91C1C}
 
 @media(max-width:640px){
-  .md-hero-inner{flex-direction:column-reverse;gap:20px;align-items:stretch}
-  .md-hero-img{width:82%;margin:0 auto}
-  .md-hero-stats{grid-template-columns:1fr 1fr;gap:14px 0}
+  .md-hero{padding:0}
+  /* visual zone: ghost text + xe side-by-side, full bleed */
+  .md-hero-ghost{position:absolute;left:0;right:0;text-align:center;top:16px;font-size:clamp(56px,16vw,120px);letter-spacing:-2px;transform:none;z-index:0}
+  .md-hero-inner{flex-direction:column;gap:0;align-items:stretch}
+  /* top visual strip — car pushed to right, ghost bleeds left */
+  .md-hero-img{order:-1;width:58%;flex-shrink:0;margin:0;margin-left:auto;display:flex;justify-content:flex-end;align-items:flex-end;height:160px;padding:0 16px 16px 0;position:relative;z-index:1}
+  .md-hero-img svg{width:100%;max-height:130px}
+  .md-hero-road{display:none}
+  /* dark info panel below visual strip */
+  .md-hero-meta{order:0;flex:none;padding:16px 20px 20px;background:none;border-top:1px solid rgba(255,255,255,.12);position:relative;z-index:2}
+  .md-hero-pills{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .md-hero-title{font-size:clamp(28px,8vw,40px);margin-bottom:4px}
+  .md-hero-desc{font-size:13px;margin-bottom:10px}
+  .md-hero-stats{grid-template-columns:1fr 1fr;gap:14px 0;padding:18px 20px 20px}
   .md-stat:nth-child(3){padding-left:0;border-left:none}
+  .md-stat-label{font-size:9px;letter-spacing:.5px;white-space:nowrap}
   .md-subnav-inner{padding:0 12px}
   .variant-grid{grid-template-columns:1fr}
   .svc-interval-grid{grid-template-columns:1fr}
@@ -616,6 +629,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 /* ── EMPTY ── */
 .empty{padding:60px 20px;text-align:center;color:var(--gray-400)}
 .empty p{font-size:15px}
+.nav-menu-btn{display:none}
 
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
@@ -640,6 +654,134 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   .logo-icon{width:28px;height:28px}
   .nav-links{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;padding:0 4px;margin-left:0}
   .nav-link{font-size:12.5px;padding:6px 10px}
+}
+
+/* ══════════════════════════════════════
+   MOBILE UI — 768px
+══════════════════════════════════════ */
+@media(max-width:768px){
+  /* ── NAV ── */
+  .nav-inner{height:48px;padding:0 12px;gap:8px}
+  .nav-links{display:none}
+  .mega{display:none}
+  .nav-sep{display:none}
+  .nav-back span{display:none}
+  .logo-text{font-size:13px}
+  .logo-icon{width:28px;height:28px}
+  .nav-menu-btn{display:flex!important;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid var(--gray-200);border-radius:9px;background:#fff;color:var(--gray-700);margin-left:auto;flex-shrink:0;cursor:pointer}
+
+  /* ── NAV SIDEBAR ── */
+  .nav-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:800;backdrop-filter:blur(2px)}
+  .nav-sidebar-overlay.open{display:block}
+  .nav-sidebar{position:fixed;top:0;right:0;width:280px;height:100dvh;background:#fff;z-index:900;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+  .nav-sidebar.open{transform:translateX(0)}
+  .nav-sidebar-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--gray-100);flex:none}
+  .nav-sidebar-logo{font-size:13px;font-weight:800;color:var(--gray-900)}
+  .nav-sidebar-logo em{color:var(--pink-500);font-style:normal}
+  .nav-sidebar-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--gray-200);background:#fff;display:grid;place-items:center;color:var(--gray-500);cursor:pointer}
+  .nav-sidebar-body{flex:1;padding:8px 0 24px;overflow-y:auto}
+  .nav-sidebar-section{padding:12px 16px 4px}
+  .nav-sidebar-section-label{font-size:10.5px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .nav-sidebar-link{display:flex;align-items:center;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--gray-700);text-decoration:none;transition:.12s;gap:8px}
+  .nav-sidebar-link:hover{background:var(--gray-50);color:var(--gray-900)}
+  .nav-sidebar-divider{height:1px;background:var(--gray-100);margin:8px 16px}
+
+  /* ── WRAP ── */
+  .wrap{padding:0 16px}
+
+  /* ── LISTING HERO ── */
+  .listing-hero{padding:20px 0 16px;border-bottom:none}
+  .listing-title{font-size:26px;margin-bottom:8px}
+  .listing-desc{font-size:13.5px;line-height:1.6}
+  .listing-eyebrow{display:none}
+
+  /* ── FILTER BAR ── */
+  .filter-bar{padding:12px 0 4px;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+  .filter-bar::-webkit-scrollbar{display:none}
+  .filter-btn{flex:none;font-size:12px;padding:6px 14px}
+
+  /* ── TYPE SECTION - horizontal scroll ── */
+  .type-section{margin:16px 0 0}
+  .type-section-title{font-size:11px;margin-bottom:10px}
+  .type-grid{display:flex;overflow-x:auto;scrollbar-width:none;gap:8px;grid-template-columns:unset;margin:0 -16px;padding:0 16px 12px}
+  .type-grid::-webkit-scrollbar{display:none}
+  .type-card{flex:none;width:76px;padding:10px 6px 8px;border-radius:12px}
+  .type-card-svg{width:52px;height:28px}
+  .type-card-label{font-size:11px}
+
+  /* ── BRAND GRID ── */
+  .brand-grid{gap:10px;margin-bottom:32px}
+  .brand-card{padding:14px}
+  .brand-card-name{font-size:15px;margin-bottom:2px}
+  .brand-card-origin{font-size:10.5px;margin-bottom:8px}
+  .brand-mark{margin-bottom:10px}
+  .brand-card-desc{font-size:11px;line-height:1.5;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .brand-card-bottom{margin-top:10px;padding-top:10px}
+  .brand-tags{margin-bottom:8px}
+  .tag{font-size:9.5px;padding:2px 7px}
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb-bar{top:48px;font-size:11.5px;padding:8px 0;display:none}
+
+  /* ── DETAIL HERO ── */
+  .detail-hero{padding:16px 0 14px;border-bottom:none}
+  .detail-hero-inner{flex-direction:row;align-items:center;gap:14px}
+  .detail-brand-mark{width:52px!important;height:52px!important;font-size:16px!important;border-radius:14px!important}
+  .detail-hero-meta{flex:1;min-width:0}
+  .detail-eyebrow{display:none}
+  .detail-title{font-size:24px;margin-bottom:3px}
+  .detail-tagline{font-size:12.5px;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .type-pills{margin-bottom:0;gap:5px}
+  .type-pill{font-size:10px;padding:4px 9px}
+
+  /* ── SCORE PILLS - horizontal scroll ── */
+  .score-pills{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:12px -16px 0;padding:0 16px 12px;gap:7px}
+  .score-pills::-webkit-scrollbar{display:none}
+  .score-pill{flex:none;white-space:nowrap}
+
+  /* ── QUICK NAV - horizontal scroll ── */
+  .quick-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:8px 16px 4px;gap:6px;display:flex}
+  .quick-nav::-webkit-scrollbar{display:none}
+  .quick-pill{flex:none;font-size:12px;padding:6px 13px}
+
+  /* ── MODEL GRID - horizontal scroll ── */
+  .model-grid{display:flex;overflow-x:auto;scrollbar-width:none;gap:12px;grid-template-columns:unset;margin:0 -16px;padding:0 16px 12px}
+  .model-grid::-webkit-scrollbar{display:none}
+  .model-card{flex:none;width:148px}
+  .model-card-featured{grid-column:unset;width:180px}
+  .model-card-featured .model-img{height:110px}
+  .model-img{height:80px}
+  .model-name{font-size:13px}
+
+  /* ── INSIGHT PANEL ── */
+  .insight-body{grid-template-columns:1fr}
+  .insight-main{border-right:none;border-bottom:1px solid rgba(15,23,42,.08)}
+  .insight-monthly-val{font-size:32px}
+  .insight-city-val{font-size:24px}
+
+  /* ── SERVICES STRIP ── */
+  .services-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .svc-card{padding:10px 12px}
+  .svc-name{font-size:12px}
+  .svc-hint{font-size:10.5px}
+  .svc-icon{font-size:18px}
+
+  /* ── SECTIONS ── */
+  .d-section{margin-bottom:28px}
+  .section-h{font-size:18px}
+  .detail-body{padding:16px 0}
+  .brand-desc-band{padding:14px 0 16px}
+
+  /* ── NEWS ── */
+  .news-card{flex:0 0 240px}
+
+  /* ── OC WIDGET ── */
+  .oc-km-val{font-size:16px;min-width:90px}
+  .oc-row{padding:12px 16px}
+  .oc-total{padding:16px 16px}
+
+  /* ── MAINT ROW ── */
+  .maint-row{padding:10px 12px}
 }
 </style>
 </head>
@@ -746,8 +888,55 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
           </div>
         </div>
       </div>
-    </div></div>
+    </div>
+    <button class="nav-menu-btn" onclick="openNavSidebar()" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
 </nav>
+
+<!-- MOBILE NAV SIDEBAR -->
+<div class="nav-sidebar-overlay" id="navOverlay" onclick="closeNavSidebar()"></div>
+<div class="nav-sidebar" id="navSidebar">
+  <div class="nav-sidebar-top">
+    <span class="nav-sidebar-logo">Tiện Ích <em>Giao Thông</em></span>
+    <button class="nav-sidebar-close" onclick="closeNavSidebar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-sidebar-body">
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Di chuyển</div>
+      <a class="nav-sidebar-link" href="/gia-xang">Giá xăng dầu hôm nay</a>
+      <a class="nav-sidebar-link" href="/cay-xang">Tìm cây xăng gần đây</a>
+      <a class="nav-sidebar-link" href="/tram-sac">Trạm sạc xe điện</a>
+      <a class="nav-sidebar-link" href="/tinh-phi-etc">Tính phí ETC theo tuyến</a>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Bảo hiểm</div>
+      <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm TNDS bắt buộc</a>
+      <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm thân vỏ</a>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Pháp lý &amp; Bảo dưỡng</div>
+      <a class="nav-sidebar-link" href="/phat-nguoi">Tra phạt nguội</a>
+      <a class="nav-sidebar-link" href="/dang-kiem">Kiểm tra đăng kiểm</a>
+      <a class="nav-sidebar-link" href="/bao-duong-xe">Lịch bảo dưỡng xe</a>
+      <a class="nav-sidebar-link" href="/vehicle-hub#cuu-ho">Cứu hộ khẩn cấp</a>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Xe của tôi</div>
+      <a class="nav-sidebar-link" href="/vehicle-hub#ho-so-xe">Hồ sơ phương tiện</a>
+      <a class="nav-sidebar-link" href="/vehicle-hub#chi-phi-xe">Chi phí nuôi xe / năm</a>
+      <a class="nav-sidebar-link" href="/hang-xe">Nhãn xe &amp; Dòng xe</a>
+      <a class="nav-sidebar-link" href="/epass">ePass &amp; Tự động nạp</a>
+      <a class="nav-sidebar-link" href="/bai-do-xe">Tìm bãi đỗ xe</a>
+    </div>
+  </div>
+</div>
 
 <!-- MAIN -->
 <main id="app"></main>
@@ -1354,6 +1543,25 @@ function renderListing() {
   document.getElementById('page-title').textContent = 'Hãng Xe - Tiện Ích Giao Thông MoMo';
   let currentFilter = 'all';
 
+  function brandCardHTML(id) {
+    const b = BRANDS[id];
+    return `<a class="brand-card" href="/hang-xe/${id}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        ${brandMark(id,40,40,10,13)}
+        <div>
+          <div class="brand-card-name">${b.name}</div>
+          <div class="brand-card-origin">${b.origin}</div>
+        </div>
+      </div>
+      <div class="brand-tags">${b.fuels.slice(0,2).map(fuelTag).join('')}${b.popular?'<span class="tag tag-popular">Phổ biến</span>':''}</div>
+      <div class="brand-card-desc">${b.tagline}</div>
+      <div class="brand-card-bottom">
+        <span class="brand-card-top-model">Model <strong>${b.models[0].name}</strong></span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </a>`;
+  }
+
   function cards(filter) {
     return BRAND_LIST.filter(id => {
       const b = BRANDS[id];
@@ -1361,23 +1569,14 @@ function renderListing() {
       if (filter === 'electric') return b.fuels.includes('điện');
       if (filter === 'luxury') return !b.popular;
       return true;
-    }).map(id => {
-      const b = BRANDS[id];
-      const topModel = b.models[0];
-      return `<a class="brand-card" href="/hang-xe/${id}">
-        ${brandMark(id,48,48,12,14)}
-        <div class="brand-card-name">${b.name}</div>
-        <div class="brand-card-origin">${b.origin}</div>
-      </a>`;
-    }).join('');
+    }).map(brandCardHTML).join('');
   }
 
   document.getElementById('app').innerHTML = `
     <div class="listing-hero">
       <div class="wrap">
-        <div class="listing-eyebrow">Hãng xe</div>
         <h1 class="listing-title">Dịch vụ MoMo cho <em>hãng xe của bạn</em></h1>
-        <p class="listing-desc">Chọn hãng xe để xem model chủ lực, loại xe, và chi phí sử dụng theo từng dòng xe. Nội dung được ưu tiên theo nhu cầu thực tế của chủ xe.</p>
+        <p class="listing-desc">Chọn hãng xe để xem model chủ lực, loại xe, và chi phí sử dụng theo từng dòng xe.</p>
       </div>
     </div>
     <div class="wrap">
@@ -1411,15 +1610,7 @@ window.applyFilter = function(f, btn) {
     if (f==='luxury') return !b.popular;
     return true;
   });
-  document.getElementById('brand-grid').innerHTML = list.map(id => {
-    const b = BRANDS[id];
-    const topModel = b.models[0];
-    return `<a class="brand-card" href="/hang-xe/${id}">
-      ${brandMark(id,48,48,12,14)}
-      <div class="brand-card-name">${b.name}</div>
-      <div class="brand-card-origin">${b.origin}</div>
-    </a>`;
-  }).join('') || '<div class="empty"><p>Không tìm thấy hãng xe phù hợp</p></div>';
+  document.getElementById('brand-grid').innerHTML = list.map(brandCardHTML).join('') || '<div class="empty"><p>Không tìm thấy hãng xe phù hợp</p></div>';
 };
 
 window.filterByType = function(typeId, btn) {
@@ -1507,7 +1698,6 @@ function renderGarageCards(list) {
         <span class="garage-city"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${getCityLabel(g.city)}</span>
         <span class="garage-address">${g.address}</span>
       </div>
-      <div class="garage-note">${g.note}</div>
       <div class="garage-card-footer">
         <div class="garage-bh-row">
           <span class="garage-bh-label">Nhà BH:</span>
@@ -1645,7 +1835,6 @@ function renderDetail(id) {
       <div class="detail-hero-inner">
         ${brandMark(id,80,80,20,22)}
         <div class="detail-hero-meta">
-          <div class="detail-eyebrow">Hãng xe · ${b.origin}</div>
           <h1 class="detail-title">${b.name}</h1>
           <p class="detail-tagline">${b.tagline}</p>
           <div class="type-pills">
@@ -2166,6 +2355,9 @@ function renderModelDetail(brandId, modelSlug) {
 
   const typeLabel = modelTypeLabel(m);
   const mTotal = m.monthly ? m.monthly.bh + m.monthly.fuel + m.monthly.reg + m.monthly.maint : 0;
+  const fuelLabel = m.type==='ev'?'Điện':(m.type==='hybrid'?'Xăng/Điện':(m.variants&&m.variants[0].fuel)||'Xăng');
+  const _seatsM = m.desc&&m.desc.match(/(\d+)\s*chỗ/);
+  const seatsLabel = m.variants?`${m.variants[0].seats} chỗ`:(_seatsM?`${_seatsM[1]} chỗ`:(m.type==='truck'?'2-5 chỗ':m.type==='mpv'?'7 chỗ':'5 chỗ'));
   const hero = `<div class="md-hero" style="--brand:${b.color}">
     <div class="md-hero-ghost">${m.name.toUpperCase()}</div>
     <div class="wrap">
@@ -2179,8 +2371,8 @@ function renderModelDetail(brandId, modelSlug) {
           <p class="md-hero-desc">${m.desc}</p>
           <div class="md-hero-pills">
             <span class="md-pill">${typeLabel}</span>
-            ${m.variants?`<span class="md-pill">${m.variants[0].seats} chỗ</span>`:''}
-            ${m.variants?`<span class="md-pill">${m.variants[0].fuel}</span>`:''}
+            <span class="md-pill">${seatsLabel}</span>
+            <span class="md-pill">${fuelLabel}</span>
           </div>
         </div>
         <div class="md-hero-img">
@@ -2189,10 +2381,10 @@ function renderModelDetail(brandId, modelSlug) {
         </div>
       </div>
       <div class="md-hero-stats">
-        ${m.variants?`<div class="md-stat"><div class="md-stat-label">Giá niêm yết</div><div class="md-stat-val">${fmtPrice(m.variants[0].price)} - ${fmtPrice(m.variants[m.variants.length-1].price)} <span>triệu</span></div></div>`:''}
+        ${m.variants?`<div class="md-stat"><div class="md-stat-label">Giá niêm yết</div><div class="md-stat-val">${fmtPrice(m.variants[0].price)}–${fmtPrice(m.variants[m.variants.length-1].price)} <span>triệu</span></div></div>`:`<div class="md-stat"><div class="md-stat-label">Loại xe</div><div class="md-stat-val" style="font-size:17px;letter-spacing:0">${typeLabel}</div></div>`}
         ${mTotal?`<div class="md-stat"><div class="md-stat-label">Thực chi / tháng</div><div class="md-stat-val">~${(mTotal/1000).toFixed(1).replace('.',',')}tr <span>đồng</span></div></div>`:''}
-        ${m.variants?`<div class="md-stat"><div class="md-stat-label">Phiên bản</div><div class="md-stat-val">${m.variants.length} <span>bản</span></div></div>`:''}
-        ${m.variants?`<div class="md-stat"><div class="md-stat-label">Nhiên liệu</div><div class="md-stat-val">${m.variants[0].fuel}</div></div>`:''}
+        ${m.monthly?`<div class="md-stat"><div class="md-stat-label">Bảo hiểm / tháng</div><div class="md-stat-val">~${(m.monthly.bh/1000).toFixed(1).replace('.',',')}tr <span>đồng</span></div></div>`:''}
+        <div class="md-stat"><div class="md-stat-label">Nhiên liệu</div><div class="md-stat-val" style="font-size:17px;letter-spacing:0">${fuelLabel}</div></div>
       </div>
     </div>
   </div>
@@ -2837,6 +3029,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === document.getElementById('bk-overlay')) closeBookingModal();
   });
 });
+
+window.openNavSidebar = function() {
+  document.getElementById('navSidebar').classList.add('open');
+  document.getElementById('navOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.closeNavSidebar = function() {
+  document.getElementById('navSidebar').classList.remove('open');
+  document.getElementById('navOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
 </script>
 
 <!-- BOOKING MODAL -->

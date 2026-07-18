@@ -176,16 +176,43 @@ body {
 }
 .mega-tag:hover { background: rgba(255,255,255,.18); }
 
+/* ── HAMBURGER SIDEBAR NAV ─────────────── */
+.nav-menu-btn{display:none;margin-left:auto;width:36px;height:36px;border-radius:8px;background:none;border:none;color:var(--gray-700);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,color .15s}
+.nav-menu-btn:hover{background:var(--gray-100)}
+.nav-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.nav-sidebar-overlay.open{display:block}
+.nav-sidebar{position:fixed;top:0;right:0;bottom:0;width:300px;background:#1a2535;z-index:1001;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.nav-sidebar.open{transform:translateX(0)}
+.nav-sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.nav-sidebar-logo{font-size:15px;font-weight:800;color:#fff}
+.nav-sidebar-logo em{color:var(--pink-500);font-style:normal}
+.nav-sidebar-close{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:none;display:grid;place-items:center;color:rgba(255,255,255,.8);cursor:pointer;transition:background .15s,color .15s}
+.nav-sidebar-close:hover{background:rgba(255,255,255,.18);color:#fff}
+.nav-sidebar-body{flex:1;overflow-y:auto;padding:8px 0 32px}
+.nav-sidebar-body::-webkit-scrollbar{width:3px}
+.nav-sidebar-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px}
+.nav-sidebar-section{margin-bottom:2px}
+.nav-sidebar-group{display:flex;align-items:center;gap:6px;padding:12px 20px;font-size:13px;font-weight:700;color:rgba(255,255,255,.6);cursor:pointer;user-select:none;transition:color .15s,background .15s}
+.nav-sidebar-group:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-sidebar-group svg{flex:none;transition:transform .2s;margin-left:auto;color:rgba(255,255,255,.3)}
+.nav-sidebar-group.expanded{color:#fff}
+.nav-sidebar-group.expanded svg{transform:rotate(180deg);color:rgba(255,255,255,.5)}
+.nav-sidebar-links{display:none;padding:0 0 6px}
+.nav-sidebar-links.open{display:block}
+.nav-sidebar-col-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:.07em;text-transform:uppercase;padding:10px 20px 4px}
+.nav-sidebar-link{display:block;padding:9px 20px;font-size:14px;font-weight:500;color:rgba(255,255,255,.75);text-decoration:none;transition:color .12s,background .12s}
+.nav-sidebar-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-sidebar-divider{height:1px;background:rgba(255,255,255,.07);margin:4px 0}
+
 @media(max-width: 768px) {
   .nav-inner { height: 48px; padding: 0 10px; gap: 8px; }
   .nav-back span { display: none; }
   .nav-sep { display: none; }
-  .logo-text { display: none; }
+  .logo-text { font-size: 13px; }
   .logo-icon { width: 28px; height: 28px; }
-  .nav-links { overflow-x: auto; scrollbar-width: none; }
-  .nav-links::-webkit-scrollbar { display: none; }
-  .nav-trigger { height: 48px; padding: 0 10px; font-size: 12px; }
+  .nav-links { display: none; }
   .mega { display: none; }
+  .nav-menu-btn { display: flex; }
 }
 
 /* ── HERO: VEHICLE HUB ───────────────────── */
@@ -470,6 +497,11 @@ body {
 .brand-strip-wrap{background:var(--white);border-bottom:1px solid var(--gray-200)}
 .brand-strip-inner{max-width:var(--content);margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:20px}
 .brand-strip-label{font-size:11px;font-weight:700;color:var(--gray-400);white-space:nowrap;text-transform:uppercase;letter-spacing:.6px;flex-shrink:0}
+@media(max-width:768px){
+  .brand-strip-inner{flex-direction:column;align-items:flex-start;gap:10px;padding:12px 16px}
+  .brand-strip-label{font-size:10px}
+  .brand-strip-scroll{width:100%}
+}
 .brand-strip-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px}
 .brand-strip-scroll::-webkit-scrollbar{display:none}
 .brand-chip{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 14px;border-radius:var(--r-lg);border:1.5px solid var(--gray-200);background:var(--white);text-decoration:none;flex-shrink:0;transition:all .15s;cursor:pointer}
@@ -516,6 +548,9 @@ body {
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
+@media(max-width: 860px) { .fc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 480px) { .fc-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+@media(max-width: 340px) { .fc-grid { grid-template-columns: 1fr; } }
 
 /* Card flip container */
 .fc-card {
@@ -550,22 +585,18 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 .fc-front-icon {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -60%);
-  color: rgba(255,255,255,.9);
-  filter: drop-shadow(0 6px 20px rgba(0,0,0,.3));
+  position: absolute; bottom: -8px; right: -8px;
+  color: rgba(255,255,255,.12);
   pointer-events: none;
 }
 .fc-back-icon-wrap { margin-bottom: 12px; color: var(--gray-500); }
 .fc-arrow-btn {
-  position: absolute; top: 16px; right: 16px;
-  width: 36px; height: 36px; border-radius: 50%;
-  background: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.35);
-  color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 14px; right: 14px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  color: #fff; font-size: 13px; display: flex; align-items: center; justify-content: center;
   transition: background .15s; cursor: pointer; z-index: 2;
-  backdrop-filter: blur(4px);
 }
-.fc-arrow-btn:hover { background: rgba(255,255,255,.32); }
 .fc-front-content { position: relative; z-index: 1; }
 .fc-front-title {
   font-size: 20px; font-weight: 900; color: #fff; line-height: 1.2;
@@ -610,6 +641,21 @@ body {
   transition: background .15s; font-family: inherit;
 }
 .fc-back-cta:hover { background: var(--pink-600); }
+
+/* fc-card mobile: override aspect-ratio AFTER base to avoid cascade conflict */
+@media(max-width: 480px) {
+  .fc-card { aspect-ratio: auto; min-height: 300px; }
+  .fc-inner { min-height: 300px; }
+  .fc-back { overflow-y: auto; }
+  .fc-front { padding: 14px; }
+  .fc-front-title { font-size: 15px; }
+  .fc-front-desc { font-size: 11px; }
+  .fc-back { padding: 16px; }
+  .fc-back-title { font-size: 14px; }
+  .fc-back-desc { font-size: 11.5px; line-height: 1.5; }
+  .fc-back-cta { padding: 9px; font-size: 12px; margin-top: 12px; }
+  .fc-back-icon-wrap { margin-bottom: 8px; }
+}
 
 /* utility cards grid */
 .util-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -1477,6 +1523,14 @@ body {
   .tp-layout { grid-template-columns: 1fr; }
   .tp-quick-routes { gap: 6px; }
 }
+@media(max-width:768px){
+  .tp-widget { flex-direction: column; border-radius: 14px; }
+  .tp-cell + .tp-cell { border-left: none; border-top: 1px solid var(--gray-100); }
+  .tp-cell-vehicle { flex: 0 0 auto; }
+  .tp-swap-btn { display: none; }
+  .tp-go-btn { margin: 8px; border-radius: 10px; padding: 14px; font-size: 15px; }
+  .tp-vpills-row { flex-wrap: wrap; gap: 6px; }
+}
 @media(max-width:480px){
   .tp-vehicle-pills { gap: 6px; }
   .tp-vpill { padding: 8px 4px; }
@@ -1632,14 +1686,93 @@ body {
       </div>
 
     </div><!-- /nav-links -->
+
+    <!-- Hamburger button (mobile only) -->
+    <button class="nav-menu-btn" onclick="openNavSidebar()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile sidebar nav -->
+<div class="nav-sidebar-overlay" id="navSidebarOverlay" onclick="closeNavSidebar()"></div>
+<div class="nav-sidebar" id="navSidebar">
+  <div class="nav-sidebar-header">
+    <span class="nav-sidebar-logo">Tiện Ích <em>Giao Thông</em></span>
+    <button class="nav-sidebar-close" onclick="closeNavSidebar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-sidebar-body">
+    <!-- Di chuyển (expanded by default) -->
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group expanded" onclick="toggleSidebarSection(this)">
+        Di chuyển
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links open">
+        <div class="nav-sidebar-col-label">Nhiên liệu</div>
+        <a class="nav-sidebar-link" href="/gia-xang" onclick="closeNavSidebar()">Giá xăng dầu hôm nay</a>
+        <a class="nav-sidebar-link" href="/cay-xang" onclick="closeNavSidebar()">Tìm cây xăng gần đây</a>
+        <a class="nav-sidebar-link" href="/tram-sac" onclick="closeNavSidebar()">Trạm sạc xe điện</a>
+        <div class="nav-sidebar-divider"></div>
+        <div class="nav-sidebar-col-label">Hành trình</div>
+        <a class="nav-sidebar-link" href="/trip-planner" onclick="closeNavSidebar()">Tính chi phí chuyến đi</a>
+        <a class="nav-sidebar-link" href="/tinh-phi-etc" onclick="closeNavSidebar()">Tính phí ETC theo tuyến</a>
+      </div>
+    </div>
+    <!-- Bảo hiểm -->
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
+        Bảo hiểm
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links">
+        <div class="nav-sidebar-col-label">Ô tô</div>
+        <a class="nav-sidebar-link" href="/bao-hiem-o-to" onclick="closeNavSidebar()">Bảo hiểm TNDS bắt buộc</a>
+        <a class="nav-sidebar-link" href="/bao-hiem-o-to" onclick="closeNavSidebar()">Bảo hiểm thân vỏ</a>
+      </div>
+    </div>
+    <!-- Pháp lý & Bảo dưỡng -->
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
+        Pháp lý &amp; Bảo dưỡng
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links">
+        <div class="nav-sidebar-col-label">Pháp lý</div>
+        <a class="nav-sidebar-link" href="/phat-nguoi" onclick="closeNavSidebar()">Tra phạt nguội</a>
+        <a class="nav-sidebar-link" href="/dang-kiem" onclick="closeNavSidebar()">Kiểm tra đăng kiểm</a>
+        <div class="nav-sidebar-divider"></div>
+        <div class="nav-sidebar-col-label">Bảo dưỡng</div>
+        <a class="nav-sidebar-link" href="/bao-duong-xe" onclick="closeNavSidebar()">Lịch bảo dưỡng xe</a>
+        <a class="nav-sidebar-link" href="/vehicle-hub#cuu-ho" onclick="closeNavSidebar()">Cứu hộ khẩn cấp</a>
+      </div>
+    </div>
+    <!-- Xe của tôi -->
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
+        Xe của tôi
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links">
+        <div class="nav-sidebar-col-label">Hồ sơ &amp; Chi phí</div>
+        <a class="nav-sidebar-link" href="/vehicle-hub#ho-so-xe" onclick="closeNavSidebar()">Hồ sơ phương tiện</a>
+        <a class="nav-sidebar-link" href="/vehicle-hub#chi-phi-xe" onclick="closeNavSidebar()">Chi phí nuôi xe / năm</a>
+        <a class="nav-sidebar-link" href="/hang-xe" onclick="closeNavSidebar()">Nhãn xe &amp; Dòng xe</a>
+        <div class="nav-sidebar-divider"></div>
+        <div class="nav-sidebar-col-label">Tiện ích</div>
+        <a class="nav-sidebar-link" href="/epass" onclick="closeNavSidebar()">ePass &amp; Tự động nạp</a>
+        <a class="nav-sidebar-link" href="/bai-do-xe" onclick="closeNavSidebar()">Tìm bãi đỗ xe</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- HERO: VEHICLE HUB — biển số là điểm vào trung tâm -->
 <section class="hero" id="vehicle-hub">
   <div class="hero-inner">
     <div class="hero-content">
-      <div class="hero-eyebrow">MoMo · <span>Chăm sóc phương tiện</span></div>
       <h1 class="hero-title">Chạy xe an toàn,<br><em>đúng luật, đúng chi phí.</em></h1>
       <p class="hero-desc">Pháp lý bắt buộc, chuẩn bị hành trình, chi phí vận hành - MoMo lo trọn vòng đời của người có xe.</p>
       <div class="hero-service-pills">
@@ -1964,7 +2097,6 @@ body {
   <section class="section" id="dang-kiem">
     <div class="section-head">
       <div>
-        <p class="section-eyebrow">Đăng kiểm xe</p>
         <h2 class="section-title">Kiểm tra hạn đăng kiểm</h2>
         <p class="section-desc">Tra cứu hạn kiểm định kỹ thuật theo biển số - miễn phí, không CAPTCHA, kết quả ngay lập tức.</p>
       </div>
@@ -3424,6 +3556,23 @@ window.addEventListener('load', () => {
     el.insertAdjacentHTML('afterbegin', svg);
   });
 });
+
+/* ── NAV SIDEBAR (mobile) ── */
+function openNavSidebar() {
+  document.getElementById('navSidebar').classList.add('open');
+  document.getElementById('navSidebarOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeNavSidebar() {
+  document.getElementById('navSidebar').classList.remove('open');
+  document.getElementById('navSidebarOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function toggleSidebarSection(el) {
+  el.classList.toggle('expanded');
+  el.nextElementSibling.classList.toggle('open');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSidebar(); });
 </script>
 </body>
 </html>

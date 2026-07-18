@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phim Đang Chiếu - Lịch Chiếu Hôm Nay | MoMo Cinema</title>
+<meta name="description" content="Xem danh sách phim đang chiếu tại rạp hôm nay. Lịch chiếu CGV, Lotte, BHD, Galaxy cập nhật liên tục. Đặt vé nhanh, giảm đến 50% qua MoMo.">
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('/assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+
+/* MOBILE BOTTOM NAV */
+.mobile-bnav{display:none}
+@media(max-width:768px){
+  .mobile-bnav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:#fff;border-top:1px solid var(--gray-200);
+    padding:6px 0 env(safe-area-inset-bottom,8px);
+    z-index:200;box-shadow:0 -1px 8px rgba(0,0,0,.08)
+  }
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+    text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0;
+    transition:.15s}
+  .mbn-item.on{color:var(--pink-500)}
+  .mbn-item svg{display:block}
+  body{padding-bottom:72px}
+  .nav-lab-link{display:none!important}
+  .breadcrumb-bar{display:none}
+  .breadcrumb{display:none}
+}
+</style>
+<style>
+:root {
+  --bg:#F7F5FA; --white:#FFFFFF;
+  --pink-500:#EB2F96; --pink-600:#C22181; --pink-400:#F472B6;
+  --pink-50:#FFF0F8; --pink-100:#FFD6EE; --pink-200:rgba(235,47,150,.25);
+  --gray-900:#1C171A; --gray-700:#3D3040; --gray-600:#5C5060;
+  --gray-500:#7A6E7F; --gray-400:#A09AA5; --gray-300:#C8C3CC;
+  --gray-200:#E5E0E9; --gray-100:#F0EBF4; --gray-50:#F7F3FA;
+  --amber-500:#D97706; --amber-50:#FFFBEB;
+  --green-500:#16A34A; --green-50:#F0FDF4;
+  --blue-50:#EFF6FF; --blue-500:#2563EB;
+  --purple-50:#F5F3FF; --purple-500:#7C3AED;
+  --red-500:#DC2626;
+  --shadow-s:0 1px 3px rgba(28,23,26,.08),0 1px 2px rgba(28,23,26,.06);
+  --shadow-m:0 4px 12px rgba(28,23,26,.1),0 2px 4px rgba(28,23,26,.06);
+  --shadow-l:0 8px 28px rgba(28,23,26,.14),0 4px 8px rgba(28,23,26,.06);
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+  --content:1240px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--gray-900);min-height:100vh}
+
+/* NAV */
+.site-nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--gray-200);box-shadow:var(--shadow-s)}
+.nav-inner{max-width:var(--content);margin:0 auto;height:60px;padding:0 20px;display:flex;align-items:center;gap:24px}
+.nav-links{display:flex;gap:2px}
+.nav-link{font-size:13px;font-weight:600;color:var(--gray-500);background:none;border:none;cursor:pointer;padding:7px 14px;border-radius:var(--r-sm);transition:all .15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{background:var(--pink-50);color:var(--pink-500)}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:8px 14px;flex:1;max-width:260px}
+.nav-search input{background:none;border:none;outline:none;color:var(--gray-900);font-family:'MoMoTrustSans',inherit;font-size:13px;width:100%}
+.nav-search input::placeholder{color:var(--gray-400)}
+.nav-city{font-size:13px;font-weight:600;color:var(--gray-700);display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 14px;cursor:pointer;transition:all .15s}
+.nav-city:hover{border-color:var(--gray-300)}
+.nav-login{font-size:13px;font-weight:700;color:#fff;background:var(--pink-500);border:none;border-radius:var(--r-sm);padding:8px 18px;cursor:pointer;transition:all .15s}
+.nav-login:hover{background:var(--pink-600)}
+@media(max-width:768px){.nav-links,.nav-search{display:none}}
+
+/* PAGE HEADER */
+.page-header{background:var(--white);border-bottom:1px solid var(--gray-200)}
+.page-header-inner{max-width:var(--content);margin:0 auto;padding:20px 20px 0}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-400);margin-bottom:14px}
+.breadcrumb a{color:var(--gray-400);text-decoration:none}
+.breadcrumb a:hover{color:var(--pink-500)}
+.breadcrumb span{color:var(--gray-300)}
+.ph-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ph-left h1{font-size:clamp(22px,3vw,30px);font-weight:900;color:var(--gray-900);letter-spacing:-.02em;margin-bottom:4px}
+.ph-meta{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap}
+.ph-count{font-weight:700;color:var(--gray-900)}
+.ph-live{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green-500)}
+.ph-live-dot{width:6px;height:6px;background:var(--green-500);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ph-sort{display:flex;align-items:center;gap:6px}
+.sort-label{font-size:12px;color:var(--gray-500);font-weight:600}
+.sort-btn{font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:700;color:var(--gray-600);background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:var(--r-sm);padding:6px 14px;cursor:pointer;transition:all .15s}
+.sort-btn:hover{border-color:var(--pink-200);color:var(--pink-500)}
+.sort-btn.on{background:var(--pink-50);border-color:var(--pink-500);color:var(--pink-500)}
+
+/* FILTER TABS */
+.filter-wrap{border-top:1px solid var(--gray-100);padding:14px 0 0;margin-top:16px}
+.filter-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center;margin-bottom:10px}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-label{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;white-space:nowrap}
+.filter-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.filter-scroll::-webkit-scrollbar{display:none}
+.ftab{flex-shrink:0;font-family:'MoMoTrustSans',inherit;font-size:13px;font-weight:600;color:var(--gray-500);background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:7px 16px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.ftab:hover{border-color:var(--pink-200);color:var(--pink-500)}
+.ftab.on{background:var(--pink-50);color:var(--pink-500);border-color:var(--pink-500)}
+.fformat{flex-shrink:0;font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:800;color:var(--gray-500);background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-sm);padding:5px 12px;cursor:pointer;transition:all .15s;white-space:nowrap;letter-spacing:.02em}
+.fformat:hover{border-color:var(--pink-200);color:var(--pink-500)}
+.fformat.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.fformat[data-fmt="IMAX"].on{background:#1A73E8;border-color:#1A73E8}
+.fformat[data-fmt="4DX"].on{background:#E3001B;border-color:#E3001B}
+
+/* DATE STRIP */
+.date-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;padding:14px 0}
+.date-strip::-webkit-scrollbar{display:none}
+.date-pill{flex-shrink:0;font-family:'MoMoTrustSans',inherit;cursor:pointer;transition:all .15s;border:1.5px solid var(--gray-200);border-radius:var(--r-xl);background:var(--white);padding:8px 14px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:56px}
+.date-pill:hover{border-color:var(--pink-200)}
+.date-pill.on{background:var(--pink-500);border-color:var(--pink-500)}
+.date-pill-day{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em}
+.date-pill.on .date-pill-day{color:rgba(255,255,255,.8)}
+.date-pill-num{font-size:16px;font-weight:900;color:var(--gray-900);line-height:1}
+.date-pill.on .date-pill-num{color:#fff}
+.date-pill-today .date-pill-day{color:var(--pink-500)}
+.date-pill.on.date-pill-today .date-pill-day{color:rgba(255,255,255,.8)}
+
+/* MAIN LAYOUT */
+.page-wrap{max-width:var(--content);margin:0 auto;padding:24px 20px 80px;display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+@media(max-width:900px){.page-wrap{grid-template-columns:1fr}}
+
+/* FILM GRID */
+.film-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px}
+@media(min-width:640px){.film-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.film-grid{grid-template-columns:repeat(4,1fr)}}
+.film-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;box-shadow:var(--shadow-s)}
+.film-card:hover{border-color:var(--pink-200);transform:translateY(-3px);box-shadow:var(--shadow-m)}
+.film-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--gray-100)}
+.film-poster img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.film-card:hover .film-poster img{transform:scale(1.04)}
+.poster-age{position:absolute;top:8px;left:8px;z-index:2;font-size:10px;font-weight:800;color:var(--white);background:rgba(0,0,0,.6);border-radius:4px;padding:2px 7px;letter-spacing:.04em}
+.poster-rating{position:absolute;top:8px;right:8px;z-index:2;display:flex;align-items:center;gap:3px;font-size:11px;font-weight:800;color:#fff;background:rgba(245,158,11,.9);border-radius:4px;padding:2px 8px}
+.poster-badge{position:absolute;bottom:8px;left:8px;z-index:3;font-size:10px;font-weight:800;padding:3px 10px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase}
+.badge-hot{background:var(--pink-500);color:#fff}
+.badge-new{background:var(--green-500);color:#fff}
+.badge-last{background:var(--amber-500);color:#fff}
+.poster-play{position:absolute;bottom:8px;right:8px;z-index:3;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);backdrop-filter:blur(4px);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-s)}
+.poster-play:hover{background:var(--pink-500)}
+.poster-play svg{margin-left:2px}
+.poster-play:hover svg path{fill:#fff}
+.film-info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.film-title{font-size:14px;font-weight:700;color:var(--gray-900);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:1px}
+.film-meta{font-size:11px;color:var(--gray-400)}
+.film-social{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.film-want{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-500);font-weight:600;flex-shrink:0}
+.stub-btn{font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.stub-btn:hover{background:var(--pink-600)}
+.film-score{display:flex;gap:6px;margin:6px 0 4px}
+.sc-col{flex:1}
+.sc-lbl{font-size:9px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;display:flex;justify-content:space-between}
+.sc-lbl span{font-weight:800}
+.sc-lbl span.c{color:#7C3AED}
+.sc-lbl span.a{color:var(--amber-500)}
+.sc-lbl span.b{color:var(--pink-500)}
+.sc-bar-bg{height:4px;background:var(--gray-100);border-radius:2px;overflow:hidden}
+.sc-bar-fill{height:100%;border-radius:2px;transition:width .6s ease}
+.sc-bar-fill.c{background:#7C3AED}
+.sc-bar-fill.a{background:var(--amber-500)}
+.sc-bar-fill.b{background:var(--pink-500)}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:20px}
+@media(max-width:900px){.sidebar{display:none}}
+.side-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow-s)}
+.side-title{font-size:13px;font-weight:800;color:var(--gray-900);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.side-more{font-family:'MoMoTrustSans',inherit;font-size:11px;font-weight:700;color:var(--pink-500);background:none;border:none;cursor:pointer}
+
+/* BOX OFFICE SIDEBAR */
+.bo-item-sm{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:all .15s}
+.bo-item-sm:last-child{border-bottom:none;padding-bottom:0}
+.bo-item-sm:hover .bo-name-sm{color:var(--pink-500)}
+.bo-rank-sm{font-size:14px;font-weight:900;color:var(--gray-300);width:20px;text-align:center;flex-shrink:0}
+.bo-rank-sm.r1{color:var(--amber-500)}
+.bo-rank-sm.r2{color:var(--gray-500)}
+.bo-rank-sm.r3{color:#CD7F32}
+.bo-poster-sm{width:36px;height:52px;border-radius:6px;overflow:hidden;background:var(--gray-100);flex-shrink:0}
+.bo-poster-sm img{width:100%;height:100%;object-fit:cover;display:block}
+.bo-info-sm{flex:1;min-width:0}
+.bo-name-sm{font-size:12px;font-weight:700;color:var(--gray-900);line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .15s}
+.bo-rev-sm{font-size:11px;font-weight:700;color:var(--amber-500)}
+
+/* GENRE MAP SIDEBAR */
+.genre-grid-sm{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.genre-chip-sm{font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:700;color:var(--gray-700);background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--r-sm);padding:9px 10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.genre-chip-sm:hover{border-color:var(--pink-200);color:var(--pink-500);background:var(--pink-50)}
+.genre-chip-sm.on{border-color:var(--pink-500);color:var(--pink-500);background:var(--pink-50)}
+.genre-count{font-size:10px;font-weight:700;background:var(--gray-200);color:var(--gray-500);border-radius:4px;padding:1px 6px;margin-left:auto}
+.genre-chip-sm.on .genre-count{background:var(--pink-100);color:var(--pink-500)}
+
+/* PROMO SIDEBAR */
+.promo-sm{background:linear-gradient(135deg,var(--pink-50),var(--purple-50));border:1.5px solid var(--pink-100);border-radius:var(--r-md);padding:14px;cursor:pointer;transition:all .2s}
+.promo-sm:hover{border-color:var(--pink-500);box-shadow:var(--shadow-s)}
+.promo-sm-tag{font-size:10px;font-weight:700;color:var(--pink-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.promo-sm-title{font-size:14px;font-weight:800;color:var(--gray-900);margin-bottom:4px}
+.promo-sm-note{font-size:11px;color:var(--gray-500)}
+.promo-sm-arrow{text-align:right;color:var(--pink-500);font-size:20px;margin-top:4px}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px 20px;color:var(--gray-400);font-size:14px;grid-column:1/-1}
+.empty-icon{font-size:36px;margin-bottom:12px}
+
+/* SEO TEXT */
+.seo-text{font-size:12px;color:var(--gray-400);line-height:1.7;margin-top:32px;padding-top:24px;border-top:1px solid var(--gray-200)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1C171A;color:rgba(255,255,255,.9);font-size:13px;font-weight:600;border-radius:var(--r-md);padding:12px 20px;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;box-shadow:var(--shadow-l)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* LOAD MORE */
+.load-more-wrap{text-align:center;margin-top:24px;grid-column:1/-1}
+.btn-load{font-family:'MoMoTrustSans',inherit;font-size:14px;font-weight:700;color:var(--pink-500);background:var(--white);border:1.5px solid var(--pink-500);border-radius:var(--r-sm);padding:12px 32px;cursor:pointer;transition:all .2s}
+.btn-load:hover{background:var(--pink-50)}
+</style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-lab-link" href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a href="/cinema" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28" style="display:block">
+      
+      <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block;vertical-align:middle"></span>
+      <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span></span>
+    </a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link on" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/actors'">Diễn viên</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="showToast('Ưu đãi')">Ưu đãi</button>
+      <button class="nav-link" onclick="showToast('Vé của tôi')">Vé của tôi</button>
+    </div>
+    <div class="nav-search">
+      <i data-lucide="search" width="14" height="14" stroke-width="2" style="flex-shrink:0"></i>
+      <input type="text" placeholder="Tìm phim, rạp, thể loại...">
+    </div>
+    <div class="nav-right"></div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="/cinema">Phim</a>
+      <span>›</span>
+      <strong style="color:var(--gray-700)">Đang chiếu</strong>
+    </div>
+    <div class="ph-top">
+      <div class="ph-left">
+        <h1>Phim đang chiếu</h1>
+        <div class="ph-meta">
+          <span><span class="ph-count" id="filmCount">26</span> phim đang chiếu</span>
+          <div class="ph-live"><div class="ph-live-dot"></div><i data-lucide="zap" width="11" height="11" stroke-width="2.5" style="color:var(--green-500)"></i> Cập nhật liên tục</div>
+          <span id="todayLabel"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-wrap">
+      <div class="filter-row">
+        <span class="filter-label">Thể loại</span>
+        <div class="filter-scroll" id="genreTabs"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Format</span>
+        <div class="filter-scroll" id="formatTabs"></div>
+      </div>
+    </div>
+    <div class="date-strip" id="dateStrip"></div>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <div>
+    <div class="film-grid" id="filmGrid"></div>
+    <div class="load-more-wrap"><button class="btn-load" onclick="showToast('Đang tải thêm...')">Xem thêm phim</button></div>
+    <div class="seo-text">
+      <p>Phim đang chiếu tại rạp cập nhật hàng ngày - bao gồm tất cả phim từ CGV Cinemas, Lotte Cinema, BHD Star, Galaxy Cinema, Beta Cinemas, Cinestar, Mega GS và Dcine. Đặt vé nhanh qua MoMo, thanh toán trong 30 giây, nhận vé điện tử - quét QR tại rạp, không cần in giấy.</p>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="side-card">
+      <div class="side-title">
+        🏆 Doanh thu phòng vé
+        <button class="side-more" onclick="showToast('Xem bảng xếp hạng đầy đủ')">Tất cả →</button>
+      </div>
+      <div id="boList"></div>
+    </div>
+    <div class="side-card">
+      <div class="side-title">Khám phá theo thể loại</div>
+      <div class="genre-grid-sm" id="genreGrid"></div>
+    </div>
+    <div class="promo-sm" onclick="showToast('Xem tất cả ưu đãi')">
+      <div class="promo-sm-tag">Ưu đãi hôm nay</div>
+      <div class="promo-sm-title">Mua 2 vé, hoàn tiền 30,000đ</div>
+      <div class="promo-sm-note">Áp dụng T2 - T6 · Còn 3 ngày</div>
+      <div class="promo-sm-arrow">›</div>
+    </div>
+    <div class="side-card" style="background:linear-gradient(135deg,#09090F 0%,#1a1a2e 100%);border-color:#333">
+      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Sắp ra rạp</div>
+      <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Thám Tử Kiên 2</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:14px">Hành động · Bí ẩn · 01/08/2026</div>
+      <button onclick="window.location.href='/cinema/sap-chieu'" style="font-family:'MoMoTrustSans',inherit;font-size:12px;font-weight:700;background:var(--pink-500);color:#fff;border:none;border-radius:var(--r-sm);padding:9px 16px;cursor:pointer;width:100%;transition:all .15s" onmouseover="this.style.background='var(--pink-600)'" onmouseout="this.style.background='var(--pink-500)'">Xem phim sắp chiếu →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+function icon(name, size=16, extra='') {
+  const key = name.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('');
+  if (!window.lucide || !lucide[key]) return '';
+  return lucide.createElement(lucide[key], {width:size,height:size,'stroke-width':2,style:`display:inline-block;vertical-align:middle;flex-shrink:0${extra?';'+extra:''}`}).outerHTML;
+}
+
+/* ── TMDB CONFIG ─────────────────────────────────────────────
+   Để sử dụng API thật: điền API_KEY và bật USE_REAL_API = true
+   Để dùng mock (offline): giữ nguyên USE_REAL_API = false
+──────────────────────────────────────────────────────────── */
+const TMDB = {
+  API_KEY: '',                                   // ← điền key tại đây
+  USE_REAL_API: false,                           // ← bật true khi có key
+  BASE: 'https://api.themoviedb.org/3',
+  IMG: 'https://image.tmdb.org/t/p/w500',
+  GENRE_MAP: {
+    28:'Hành động', 12:'Phiêu lưu', 16:'Hoạt hình', 35:'Hài',
+    80:'Tội phạm', 18:'Kịch tính', 10751:'Gia đình', 14:'Kỳ ảo',
+    36:'Lịch sử', 27:'Kinh dị', 9648:'Bí ẩn', 10749:'Tình cảm',
+    878:'Khoa học viễn tưởng', 53:'Giật gân', 10752:'Chiến tranh'
+  },
+};
+
+/* Mock data — cấu trúc y hệt TMDB /movie/now_playing response */
+const TMDB_MOCK = {
+  page: 1, total_pages: 2, total_results: 27,
+  results: [
+    { id:10515, title:'Hành Trình Của Moana', original_title:'Moana 2', poster_path:'/lwqKqiBsGVBtQBZF9ZTunthBCyI.jpg', genre_ids:[16,10751,12], vote_average:9.6, vote_count:31200, popularity:2210, release_date:'2024-11-27', runtime:107, _badge:'hot', _box:22.1, _age:'P', _formats:['2D','3D'], _trailer:'' },
+    { id:1241982, title:'Toy Story 5', original_title:'Toy Story 5', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM', genre_ids:[16,10751,35], vote_average:9.2, vote_count:24800, popularity:1840, release_date:'2025-06-19', runtime:100, _badge:'hot', _box:18.4, _age:'P', _formats:['2D','3D'], _trailer:'SzMjhBuPx8Q' },
+    { id:1233069, title:'Siêu Quậy Marsupilami', original_title:'Marsupilami - Le Film', poster_path:'/jlbCaCevS4YHASzW5wVnevbrSy8.jpg', genre_ids:[16,35,10751], vote_average:9.6, vote_count:19400, popularity:960, release_date:'2025-07-02', runtime:98, _badge:'new', _box:11.7, _age:'P', _formats:['2D','3D'], _trailer:'' },
+    { id:1233070, title:'Doraemon Movie 45: Nobita Và Lâu Đài Dưới Đáy Biển', original_title:'Doraemon', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM', genre_ids:[16,10751,12], vote_average:9.0, vote_count:21500, popularity:1050, release_date:'2025-05-30', runtime:104, _badge:'hot', _box:15.1, _age:'P', _formats:['2D','3D','4DX'], _trailer:'G9FGgwCQ22w' },
+    { id:1233071, title:'Minions & Quái Vật', original_title:'Minions & Monsters', poster_path:'/amfpWj77Z8x5O76G2EhjquJqzoi.jpg', genre_ids:[16,35,10751], vote_average:9.2, vote_count:22300, popularity:1320, release_date:'2025-07-04', runtime:96, _badge:'new', _box:16.8, _age:'P', _formats:['2D','3D'], _trailer:'' },
+    { id:1233072, title:'Bạch Xà: Một Kiếp Nhân Gian', original_title:'White Snake 3', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM', genre_ids:[16,14,10749], vote_average:9.7, vote_count:18900, popularity:870, release_date:'2025-06-06', runtime:120, _badge:'hot', _box:7.2, _age:'T13', _formats:['2D','3D'], _trailer:'CdGC7RGgXis' },
+    { id:1233073, title:'Phim Điện Ảnh Lớp Học Ám Sát', original_title:'Assassination Classroom', poster_path:'/zJH7MCwS9c8NJ5gPWI0jtZfJul1.jpg', genre_ids:[16,28,18], vote_average:9.4, vote_count:17900, popularity:760, release_date:'2025-07-11', runtime:105, _badge:'new', _box:8.3, _age:'T16', _formats:['2D'], _trailer:'' },
+    { id:1119544, title:'Supergirl', original_title:'Supergirl: Woman of Tomorrow', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM', genre_ids:[28,12,878], vote_average:7.7, vote_count:18200, popularity:1540, release_date:'2025-06-26', runtime:130, _badge:'new', _box:12.7, _age:'T13', _formats:['2D','3D','IMAX'], _trailer:'wJO_vIDZn1Y' },
+    { id:1233074, title:'Cơn Thịnh Nộ', original_title:'Wrath', poster_path:'/pomewNtFVHcox6UIOaNLQLHTaae.jpg', genre_ids:[28,80,53], vote_average:9.5, vote_count:20100, popularity:1410, release_date:'2025-06-13', runtime:122, _badge:'hot', _box:14.2, _age:'T16', _formats:['2D','3D'], _trailer:'' },
+    { id:1233075, title:'Tung Hoành Tứ Hải', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM', genre_ids:[28,35,80], vote_average:9.1, vote_count:14300, popularity:920, release_date:'2025-06-20', runtime:118, _badge:'hot', _box:9.6, _age:'T16', _formats:['2D','3D','4DX'], _trailer:'kJQP7kiw5Fk' },
+    { id:1233076, title:'Ngày Con Sống Lại', original_title:'', poster_path:'/cFOnIqPNyVqmU1ZtXSsaztCebul.jpg', genre_ids:[28,27,53], vote_average:8.9, vote_count:16500, popularity:800, release_date:'2025-07-04', runtime:115, _badge:'hot', _box:9.4, _age:'T13', _formats:['2D','3D'], _trailer:'' },
+    { id:1233077, title:'Đồng Dao Ma Quái', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM', genre_ids:[27,53,18], vote_average:9.1, vote_count:12400, popularity:680, release_date:'2025-06-06', runtime:108, _badge:'hot', _box:10.3, _age:'C18', _formats:['2D','3D'], _trailer:'' },
+    { id:1233078, title:'Lầu Chú Hỏa', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM', genre_ids:[27,9648,18], vote_average:8.5, vote_count:9400, popularity:510, release_date:'2025-05-23', runtime:105, _badge:'last', _box:8.1, _age:'T16', _formats:['2D','3D'], _trailer:'' },
+    { id:1233079, title:'Ám Ảnh', original_title:'', poster_path:'/15qLAM3QM8DoPL9Fps4JOTdqWqt.jpg', genre_ids:[27,53], vote_average:8.9, vote_count:10700, popularity:440, release_date:'2025-07-11', runtime:103, _badge:'new', _box:7.6, _age:'C18', _formats:['2D'], _trailer:'' },
+    { id:1233080, title:'Colony: Bầy Xác Sống', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM', genre_ids:[27,878,28], vote_average:9.4, vote_count:6100, popularity:390, release_date:'2025-06-13', runtime:112, _badge:null, _box:5.3, _age:'C18', _formats:['2D'], _trailer:'' },
+    { id:1233081, title:'Ma Nữ Oán Tình', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM', genre_ids:[27,53], vote_average:7.8, vote_count:8300, popularity:360, release_date:'2025-07-04', runtime:97, _badge:'new', _box:6.1, _age:'C18', _formats:['2D'], _trailer:'' },
+    { id:1233082, title:'Mẹ Ơi, Về Nhà', original_title:'', poster_path:'/pxkavJJuM5zArEGtzvmOLoiICVh.jpg', genre_ids:[10749,18,10751], vote_average:9.0, vote_count:13600, popularity:590, release_date:'2025-07-04', runtime:113, _badge:'new', _box:6.7, _age:'T16', _formats:['2D'], _trailer:'' },
+    { id:1233083, title:'Mesdames Thanh Sắc', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM', genre_ids:[10749,18,28], vote_average:8.0, vote_count:7200, popularity:420, release_date:'2025-06-27', runtime:110, _badge:null, _box:4.5, _age:'C18', _formats:['2D'], _trailer:'JGwWNGJdvx8' },
+    { id:1233084, title:'Liêu Trai Lan Nhược Tự', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM', genre_ids:[10749,14,9648], vote_average:9.2, vote_count:11700, popularity:460, release_date:'2025-06-06', runtime:108, _badge:null, _box:3.9, _age:'T16', _formats:['2D'], _trailer:'' },
+    { id:1233085, title:'Minh Hôn Trong Lồng Bướm', original_title:'', poster_path:'/tNPpKmGOCtoJkJwfrZR160saVrb.jpg', genre_ids:[10749,18], vote_average:7.4, vote_count:8100, popularity:320, release_date:'2025-06-13', runtime:102, _badge:null, _box:3.2, _age:'P', _formats:['2D'], _trailer:'' },
+    { id:1233086, title:'Trường Hè, 2001', original_title:'', poster_path:'/wcahBISlczoYqcakatu2uyX8kGQ.jpg', genre_ids:[10749,18,35], vote_average:8.8, vote_count:9800, popularity:380, release_date:'2025-06-27', runtime:118, _badge:null, _box:5.1, _age:'C18', _formats:['2D'], _trailer:'' },
+    { id:1233087, title:'Quỷ Bắt Hồn', original_title:'', poster_path:'/uTbHM4YL9wC4ofK0mO9FGW2Etro.jpg', genre_ids:[27,53], vote_average:7.3, vote_count:5200, popularity:290, release_date:'2025-06-06', runtime:93, _badge:null, _box:2.9, _age:'T16', _formats:['2D'], _trailer:'' },
+    { id:1233088, title:'Ma Lu', original_title:'', poster_path:null, _img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM', genre_ids:[27,53], vote_average:3.5, vote_count:5800, popularity:260, release_date:'2025-05-30', runtime:95, _badge:null, _box:2.8, _age:'T16', _formats:['2D'], _trailer:'' },
+    { id:1233089, title:'Backrooms: Thực Thể Quỷ Quyệt', original_title:'', poster_path:'/7uabN7xF4209cDUdBuMvkVcpkN2.jpg', genre_ids:[27,878], vote_average:7.1, vote_count:5400, popularity:240, release_date:'2025-06-20', runtime:100, _badge:null, _box:3.8, _age:'C18', _formats:['2D'], _trailer:'' },
+    { id:1233090, title:'Leviticus: Bóng Quỷ', original_title:'', poster_path:'/zoLyQOEMlm49lGghB6QegctLnoG.jpg', genre_ids:[27,53], vote_average:7.1, vote_count:4900, popularity:220, release_date:'2025-06-13', runtime:96, _badge:null, _box:3.1, _age:'C18', _formats:['2D'], _trailer:'' },
+    { id:1233091, title:'Linh Miêu Báo Thù', original_title:'', poster_path:'/1FL9j66LdFbxdS6TFdHtmt6mC1S.jpg', genre_ids:[27,28], vote_average:2.1, vote_count:3100, popularity:190, release_date:'2025-06-06', runtime:91, _badge:null, _box:1.4, _age:'T16', _formats:['2D'], _trailer:'' },
+    { id:1233092, title:'Đền La Sát', original_title:'', poster_path:'/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg', genre_ids:[27,53,18], vote_average:4.4, vote_count:4200, popularity:210, release_date:'2025-05-30', runtime:99, _badge:null, _box:2.2, _age:'C18', _formats:['2D'], _trailer:'' },
+  ]
+};
+
+function fmtCount(n) {
+  if (n >= 1000) return (n/1000).toFixed(1).replace('.0','')+'k';
+  return String(n);
+}
+
+function transformTMDB(results) {
+  return results.map(m => {
+    const genres = (m.genre_ids||[]).map(id=>TMDB.GENRE_MAP[id]).filter(Boolean);
+    return {
+      id: String(m.id),
+      title: m.title,
+      img: m._img || (m.poster_path ? TMDB.IMG + m.poster_path : ''),
+      age: m._age || 'P',
+      rating: Math.round(m.vote_average * 10) / 10,
+      genre: genres.slice(0,2).join(' · ') || 'Điện ảnh',
+      tag: genres[0] || 'Điện ảnh',
+      dur: m.runtime ? `${m.runtime} phút` : '—',
+      want: fmtCount(m.vote_count),
+      badge: m._badge || (m.popularity > 1200 ? 'hot' : null),
+      box: m._box || null,
+      trailer: m._trailer || '',
+      formats: m._formats || ['2D'],
+      isNew: m._badge === 'new',
+    };
+  });
+}
+
+async function loadMovies() {
+  if (TMDB.USE_REAL_API && TMDB.API_KEY) {
+    try {
+      const url = `${TMDB.BASE}/movie/now_playing?api_key=${TMDB.API_KEY}&language=vi-VN&region=VN&page=1`;
+      const res = await fetch(url);
+      const json = await res.json();
+      return transformTMDB(json.results || []);
+    } catch(e) {
+      console.warn('TMDB fetch failed, falling back to mock', e);
+    }
+  }
+  return transformTMDB(TMDB_MOCK.results);
+}
+
+const GENRES = ['Tất cả','Hành động','Hoạt hình','Tình cảm','Kinh dị','Hài'];
+const FORMATS = ['Tất cả','2D','3D','IMAX','4DX'];
+const GENRE_ICONS = {'Hành động':'⚔️','Hoạt hình':'🎨','Tình cảm':'💕','Kinh dị':'👻','Hài':'😂','Tất cả':'🎬'};
+
+let FILMS = [];
+let GENRE_COUNTS = {};
+
+/* FILMS legacy array removed — data now comes from loadMovies() */
+/* Legacy static array removed — data loaded via loadMovies() + TMDB_MOCK */
+
+let activeGenre = 'Tất cả';
+let activeFormat = 'Tất cả';
+let activeSort = 'popular';
+let activeDate = 0;
+
+function buildDateDays() {
+  const VN_DAYS = ['CN','T2','T3','T4','T5','T6','T7'];
+  const base = new Date();
+  return Array.from({length:7},(_,i)=>{
+    const d = new Date(base); d.setDate(base.getDate()+i);
+    return { offset:i, dayLabel:i===0?'Hôm nay':i===1?'Ngày mai':VN_DAYS[d.getDay()], date:d.getDate() };
+  });
+}
+
+function renderDateStrip() {
+  const el = document.getElementById('dateStrip');
+  const days = buildDateDays();
+  el.innerHTML = days.map(d=>`
+    <button class="date-pill${activeDate===d.offset?' on':''}${d.offset===0?' date-pill-today':''}" onclick="setDate(${d.offset})">
+      <span class="date-pill-day">${d.dayLabel}</span>
+      <span class="date-pill-num">${d.date}</span>
+    </button>`).join('');
+}
+
+function setDate(offset) { activeDate=offset; renderDateStrip(); renderFilmGrid(); }
+function setSort(s, el) {
+  activeSort = s;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderFilmGrid();
+}
+function filterGenre(g) { activeGenre=g; renderGenreTabs(); renderGenreGrid(); renderFilmGrid(); }
+function filterFormat(f) { activeFormat=f; renderFormatTabs(); renderFilmGrid(); }
+
+function renderGenreTabs() {
+  document.getElementById('genreTabs').innerHTML = GENRES.map(g=>`
+    <button class="ftab${g===activeGenre?' on':''}" onclick="filterGenre('${g}')">${g}</button>`).join('');
+}
+
+function renderFormatTabs() {
+  document.getElementById('formatTabs').innerHTML = FORMATS.map(f=>`
+    <button class="fformat${f===activeFormat?' on':''}" data-fmt="${f}" onclick="filterFormat('${f}')">${f}</button>`).join('');
+}
+
+function parseWant(s) {
+  if (typeof s === 'number') return s;
+  const n = parseFloat(s);
+  return String(s).includes('k') ? n * 1000 : n;
+}
+function sortFilms(list) {
+  if (activeSort==='rating') return [...list].sort((a,b)=>b.rating-a.rating);
+  if (activeSort==='revenue') return [...list].sort((a,b)=>b.box-a.box);
+  if (activeSort==='new') return [...list].filter(f=>f.isNew).concat([...list].filter(f=>!f.isNew));
+  return [...list].sort((a,b)=>parseWant(b.want)-parseWant(a.want));
+}
+
+function renderFilmGrid() {
+  const el = document.getElementById('filmGrid');
+  let list = activeGenre==='Tất cả' ? FILMS : FILMS.filter(f=>f.genre===activeGenre);
+  if (activeFormat!=='Tất cả') list = list.filter(f=>f.formats.includes(activeFormat));
+  list = sortFilms(list);
+  document.getElementById('filmCount').textContent = list.length;
+  if (!list.length) {
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🎬</div>Không có phim phù hợp với bộ lọc này</div>`;
+    return;
+  }
+  el.innerHTML = list.map(f => {
+    const badge = f.badge ? `<div class="poster-badge badge-${f.badge}">${f.badge==='hot'?'🔥 Hot':f.badge==='new'?'Mới':'Ngày cuối'}</div>` : '';
+    const play = f.trailer ? `<button class="poster-play" onclick="event.stopPropagation();showToast('Đang mở trailer...')" aria-label="Xem trailer">${icon('play',12,'color:var(--pink-500);margin-left:2px')}</button>` : '';
+    const momoScore = Math.round((f.scoreC + f.scoreA*1.2 + f.scoreB*0.8)/3);
+    return `<div class="film-card" onclick="window.location.href='/cinema/supergirl-24851'">
+      <div class="film-poster">
+        <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'">
+        <div class="poster-age">${f.age}</div>
+        <div class="poster-rating">★ ${f.rating}</div>
+        ${badge}${play}
+      </div>
+      <div class="film-info">
+        <div class="film-title">${f.title}</div>
+        <div class="film-meta">${f.dur} · ${f.genre}</div>
+        <div class="film-social">
+          <div class="film-want">${icon('heart',11,'fill:var(--pink-500);stroke:var(--pink-500)')}<strong>${f.want}</strong></div>
+          <button class="stub-btn" onclick="event.stopPropagation();window.location.href='/cinema/supergirl-24851'">Đặt vé</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBoxOffice() {
+  const ranked = [...FILMS].sort((a,b)=>b.box-a.box).slice(0,8);
+  document.getElementById('boList').innerHTML = ranked.map((f,i)=>`
+    <div class="bo-item-sm" onclick="window.location.href='/cinema/supergirl-24851'">
+      <div class="bo-rank-sm ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
+      <div class="bo-poster-sm"><img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'"></div>
+      <div class="bo-info-sm">
+        <div class="bo-name-sm">${f.title}</div>
+        <div class="bo-rev-sm">${f.box} tỷ</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGenreGrid() {
+  const genres = ['Hành động','Hoạt hình','Tình cảm','Kinh dị'];
+  document.getElementById('genreGrid').innerHTML = genres.map(g=>`
+    <button class="genre-chip-sm${activeGenre===g?' on':''}" onclick="filterGenre('${g}')">
+      ${GENRE_ICONS[g]} ${g}
+      <span class="genre-count">${GENRE_COUNTS[g]||0}</span>
+    </button>`).join('');
+}
+
+function setTodayLabel() {
+  const now = new Date();
+  const opts = { weekday:'long', day:'numeric', month:'long' };
+  document.getElementById('todayLabel').textContent = now.toLocaleDateString('vi-VN', opts);
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2000);
+}
+
+async function init() {
+  FILMS = await loadMovies();
+  FILMS.forEach(f => { GENRE_COUNTS[f.genre] = (GENRE_COUNTS[f.genre]||0)+1; });
+  renderDateStrip();
+  renderGenreTabs();
+  renderFormatTabs();
+  renderFilmGrid();
+  renderBoxOffice();
+  renderGenreGrid();
+  setTodayLabel();
+  if (window.lucide) lucide.createIcons();
+}
+init();
+</script>
+<nav class="mobile-bnav"><a class="mbn-item" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item on" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item" href="/cinema/actors"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
+</body>
+</html>

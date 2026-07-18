@@ -221,6 +221,25 @@ a{color:inherit;text-decoration:none}
 @media(max-width:960px){.info-grid{grid-template-columns:1fr}.map-card{position:static}}
 @media(max-width:768px){.hero-inner{grid-template-columns:1fr}.hero-cta-col{padding-top:0;flex-direction:row}.hs-num{font-size:18px}.theater-name{font-size:32px}.hero-stats{display:grid;grid-template-columns:repeat(4,1fr)}}
 @media(max-width:560px){.hero-stats{grid-template-columns:repeat(2,1fr)}.hs+.hs{border-left:0}.hs:nth-child(odd){border-right:1px solid rgba(255,255,255,.08)}.hs:nth-child(1),.hs:nth-child(2){border-bottom:1px solid rgba(255,255,255,.08)}}
+
+/* MOBILE BOTTOM NAV */
+.mobile-bnav{display:none}
+@media(max-width:768px){
+  .mobile-bnav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:#fff;border-top:1px solid var(--gray-200);
+    padding:6px 0 env(safe-area-inset-bottom,8px);
+    z-index:200;box-shadow:0 -1px 8px rgba(0,0,0,.08)
+  }
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+    text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0;
+    transition:.15s}
+  .mbn-item.on{color:var(--pink-500)}
+  .mbn-item svg{display:block}
+  body{padding-bottom:72px}
+  .nav-lab-link{display:none!important}
+  .breadcrumb-bar{display:none}
+}
 </style>
 </head>
 <body>
@@ -228,27 +247,26 @@ a{color:inherit;text-decoration:none}
 <!-- NAV -->
 <nav class="site-nav">
   <div class="nav-inner">
-    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a class="nav-lab-link" href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
     <a class="nav-logo" href="/cinema">
-      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="MoMo" height="28" style="display:block">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28" style="display:block">
+      <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block;vertical-align:middle"></span>
+      <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span></span>
     </a>
     <div class="nav-links">
       <button class="nav-link" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/actors'">Diễn viên</button>
       <button class="nav-link on" onclick="window.location.href='/cinema/cgv'">Rạp</button>
-      <button class="nav-link" onclick="toast('Ưu đãi hôm nay')">Ưu đãi</button>
+      <button class="nav-link" onclick="toast('Ưu đãi')">Ưu đãi</button>
       <button class="nav-link" onclick="toast('Vé của tôi')">Vé của tôi</button>
     </div>
     <div class="nav-search">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" placeholder="Tìm phim, rạp, thể loại...">
     </div>
-    <div class="nav-right">
-      <button class="nav-city" onclick="toast('Chọn thành phố')">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span>Hồ Chí Minh</span>
-      </button>
-      <button class="nav-login">Đăng nhập</button>
-    </div>
+    <div class="nav-right"></div>
   </div>
 </nav>
 <div class="breadcrumb-bar">
@@ -718,5 +736,6 @@ function injectSchema(){
 init();
 injectSchema();
 </script>
+<nav class="mobile-bnav"><a class="mbn-item" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item" href="/cinema/actors"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item on" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
 </body>
 </html>

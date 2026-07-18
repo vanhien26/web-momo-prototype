@@ -54,10 +54,10 @@ body {
   font-size: 14px;
   color: var(--gray-900);
   background: var(--bg);
-  height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; border: none; }
@@ -99,16 +99,43 @@ input { font: inherit; }
 .mega-col-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.04em;margin-bottom:10px}
 .mega-item{display:block;padding:7px 0;font-size:15px;font-weight:500;color:rgba(255,255,255,.85);text-decoration:none;transition:color .12s;white-space:nowrap}
 .mega-item:hover{color:#fff}
-@media(max-width:768px){
+/* Nav hamburger button */
+.nav-menu-btn{display:none;margin-left:auto;width:36px;height:36px;border-radius:8px;background:none;border:none;color:var(--gray-700);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,color .15s}
+.nav-menu-btn:hover{background:var(--gray-100)}
+/* Nav sidebar */
+.nav-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.nav-sidebar-overlay.open{display:block}
+.nav-sidebar{position:fixed;top:0;right:0;bottom:0;width:300px;background:#1a2535;z-index:1001;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.nav-sidebar.open{transform:translateX(0)}
+.nav-sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.nav-sidebar-logo{font-size:15px;font-weight:800;color:#fff}
+.nav-sidebar-logo em{color:var(--pink-500);font-style:normal}
+.nav-sidebar-close{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:none;display:grid;place-items:center;color:rgba(255,255,255,.8);cursor:pointer;transition:background .15s,color .15s}
+.nav-sidebar-close:hover{background:rgba(255,255,255,.18);color:#fff}
+.nav-sidebar-body{flex:1;overflow-y:auto;padding:8px 0 32px}
+.nav-sidebar-body::-webkit-scrollbar{width:3px}
+.nav-sidebar-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px}
+.nav-sidebar-section{margin-bottom:2px}
+.nav-sidebar-group{display:flex;align-items:center;gap:6px;padding:12px 20px;font-size:13px;font-weight:700;color:rgba(255,255,255,.6);cursor:pointer;user-select:none;transition:color .15s,background .15s;border-radius:0}
+.nav-sidebar-group:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-sidebar-group svg{flex:none;transition:transform .2s;margin-left:auto;color:rgba(255,255,255,.3)}
+.nav-sidebar-group.expanded{color:#fff}
+.nav-sidebar-group.expanded svg{transform:rotate(180deg);color:rgba(255,255,255,.5)}
+.nav-sidebar-links{display:none;padding:0 0 6px}
+.nav-sidebar-links.open{display:block}
+.nav-sidebar-col-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:.07em;text-transform:uppercase;padding:10px 20px 4px}
+.nav-sidebar-link{display:block;padding:9px 20px;font-size:14px;font-weight:500;color:rgba(255,255,255,.75);text-decoration:none;transition:color .12s,background .12s}
+.nav-sidebar-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-sidebar-divider{height:1px;background:rgba(255,255,255,.07);margin:4px 0}
+@media(max-width:800px){
   .nav-inner{height:48px;padding:0 10px;gap:8px}
   .nav-back span{display:none}
   .nav-sep{display:none}
-  .logo-text{display:none}
+  .logo-text{font-size:13px}
   .logo-icon{width:28px;height:28px}
-  .nav-links{overflow-x:auto;scrollbar-width:none}
-  .nav-links::-webkit-scrollbar{display:none}
-  .nav-trigger{height:48px;padding:0 10px;font-size:12px}
+  .nav-links{display:none}
   .mega{display:none}
+  .nav-menu-btn{display:flex}
 }
 
 /* ── BREADCRUMB + HERO ── */
@@ -200,23 +227,17 @@ input { font: inherit; }
 
 /* ── SPLIT LAYOUT ── */
 .split {
-  display: grid;
-  grid-template-columns: 380px 0px 1fr;
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1);
-}
-.split.detail-open {
-  grid-template-columns: 290px 340px 1fr;
 }
 
 /* ── LIST PANE ── */
 .list-pane {
-  overflow-y: auto;
-  border-right: 1px solid var(--gray-200);
+  order: 1;
+  overflow-y: visible;
   background: var(--bg);
-  min-height: 0;
+  border-top: 1px solid var(--gray-200);
 }
 .list-pane::-webkit-scrollbar { width: 4px; }
 .list-pane::-webkit-scrollbar-track { background: transparent; }
@@ -314,14 +335,19 @@ input { font: inherit; }
 
 /* ── MAP PANE ── */
 .map-pane {
+  order: -1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 0;
   position: relative;
+  height: 260px;
+  flex-shrink: 0;
+  isolation: isolate;
 }
 #map {
-  width: 100%; flex: 1; min-height: 0;
+  width: 100%;
+  height: 100%;
+  flex: 1;
   background: #e9eef3;
 }
 .leaflet-container { font-family: 'MoMoTrustSans', sans-serif; }
@@ -431,14 +457,37 @@ input { font: inherit; }
   100% { transform: scale(2.4); opacity: 0; }
 }
 
+/* Detail drag handle */
+.detail-drag-handle {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px 0 2px;
+}
+.detail-drag-handle::before {
+  content: '';
+  width: 36px; height: 4px;
+  background: var(--gray-300); border-radius: 99px;
+}
+
 /* Detail column (side panel) */
 .detail-panel {
-  min-width: 0; min-height: 0;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  width: 100%; height: 80vh;
   background: var(--white);
-  border-right: 1px solid var(--gray-200);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-top: 1px solid var(--gray-200);
   display: flex; flex-direction: column;
   overflow: hidden;
+  transform: translateY(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  z-index: 300;
+  box-shadow: 0 -8px 32px rgba(28,23,26,.15);
 }
+.detail-panel.open { transform: translateY(0); }
+
+/* Card strip */
+.card-strip { display: none; }
 .detail-topbar {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 12px; border-bottom: 1px solid var(--gray-200); flex-shrink: 0;
@@ -604,37 +653,133 @@ input { font: inherit; }
 .travel-area-active .travel-slider::-moz-range-thumb { background: var(--pink-500); }
 .travel-area-active .travel-mode-btn.active { color: var(--pink-500); }
 
-/* ── MOBILE ── */
+/* ── MOBILE: Groupon-style fullscreen map + swipe cards ── */
 @media (max-width: 800px) {
-  .split {
-    grid-template-columns: 1fr;
-    height: auto;
-  }
+  body { overflow: hidden; height: 100dvh; }
+  .nav-links { display: none; }
+  .page-top { display: none; }
+  .split { display: block; flex: none; }
+  .list-pane { display: none; }
   .map-pane {
-    height: 55vw; min-height: 240px; max-height: 340px;
+    position: fixed;
+    top: 48px; left: 0; right: 0; bottom: 0;
+    height: auto; order: unset; flex-shrink: unset;
+    z-index: 1; isolation: isolate;
   }
+  #map { height: 100%; }
+  .travel-bar { display: none; }
+  .filter-bar {
+    position: fixed;
+    top: 48px; left: 0; right: 0;
+    z-index: 50;
+    background: linear-gradient(to bottom, rgba(255,255,255,.92) 70%, transparent 100%);
+    border: 0; box-shadow: none;
+  }
+  .filter-bar-row { padding: 10px 16px 14px; }
+  .filter-chip {
+    box-shadow: 0 2px 8px rgba(28,23,26,.18), 0 0 0 1px rgba(28,23,26,.05);
+    background: rgba(255,255,255,.96);
+    padding: 9px 16px; min-height: 40px;
+  }
+  .filter-chip.active {
+    background: var(--gray-900); border-color: var(--gray-900);
+    box-shadow: 0 2px 10px rgba(28,23,26,.35);
+  }
+  .map-badge { top: 70px; left: 14px; padding: 6px 12px; font-size: 10px; }
+  .map-ctrl { top: 70px; right: 14px; gap: 5px; }
+  .map-ctrl-btn { width: 36px; height: 36px; }
+
+  /* Card strip */
+  .card-strip {
+    display: block;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 20;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    pointer-events: none;
+  }
+  .card-strip-track {
+    display: flex; gap: 10px;
+    padding: 12px 26px 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    pointer-events: auto;
+  }
+  .card-strip-track::-webkit-scrollbar { display: none; }
+  .swipe-card {
+    min-width: calc(100vw - 72px); max-width: 340px;
+    scroll-snap-align: center; flex-shrink: 0;
+    background: #fff; border-radius: 18px;
+    box-shadow: 0 6px 28px rgba(28,23,26,.18), 0 1px 4px rgba(28,23,26,.08);
+    padding: 14px 16px; border: 2px solid transparent;
+    cursor: pointer; transition: border-color .18s, box-shadow .18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .swipe-card.is-active {
+    border-color: var(--pink-500);
+    box-shadow: 0 6px 28px rgba(235,47,150,.22), 0 0 0 4px rgba(235,47,150,.1);
+  }
+  .swipe-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .swipe-badge {
+    width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+    display: grid; place-items: center;
+    font-size: 10px; font-weight: 900; color: #fff; letter-spacing: .02em;
+  }
+  .swipe-info { flex: 1; min-width: 0; }
+  .swipe-name {
+    font-size: 13px; font-weight: 700; color: var(--gray-900);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
+  }
+  .swipe-meta { font-size: 11px; color: var(--gray-500); display: flex; align-items: center; gap: 5px; }
+  .swipe-rating { font-size: 12px; font-weight: 700; color: #d97706; flex-shrink: 0; }
+  .swipe-services { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .swipe-tags { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
+  .swipe-tag {
+    font-size: 10px; font-weight: 600; color: var(--gray-600);
+    background: var(--gray-100); border-radius: 999px;
+    padding: 3px 8px;
+  }
+  .swipe-cta {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--gray-900); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 10px 14px; font-size: 12px; font-weight: 700;
+    cursor: pointer; flex-shrink: 0; font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .detail-drag-handle { display: flex; }
+}
+
+/* ── DESKTOP ── */
+@media (min-width: 801px) {
+  body { height: 100vh; overflow: hidden; }
+  .filter-bar { position: static; }
+  .split {
+    display: grid;
+    grid-template-columns: 380px 0px 1fr;
+    flex: 1; min-height: 0; overflow: hidden;
+    transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1);
+  }
+  .split.detail-open { grid-template-columns: 290px 340px 1fr; }
+  .map-pane {
+    order: 3; height: auto; flex-shrink: 1; min-height: 0;
+    isolation: isolate;
+  }
+  #map { height: auto; flex: 1; min-height: 0; }
   .list-pane {
-    overflow-y: visible; border-right: 0;
-    border-top: 1px solid var(--gray-200);
+    order: 1; overflow-y: auto; border-right: 1px solid var(--gray-200);
+    border-top: 0; min-height: 0;
   }
   .detail-panel {
-    position: fixed; top: auto; bottom: 0; right: 0; left: 0;
-    width: 100%; height: 70vh;
-    border-radius: var(--r-lg) var(--r-lg) 0 0;
-    border-top: 1px solid var(--gray-200);
-    border-left: 0;
-    transform: translateY(100%); transition: transform .25s cubic-bezier(.4,0,.2,1);
-    right: auto;
+    order: 2; position: static; transform: none !important;
+    transition: none; border-radius: 0; border-top: 0;
+    border-right: 1px solid var(--gray-200); box-shadow: none;
+    height: auto; width: auto; min-width: 0; min-height: 0; z-index: auto;
   }
-  .detail-panel.open { transform: translateY(0); right: auto; }
-  .nav-links { display: none; }
-  .nav-back span { display: none; }
-  .page-stats { gap: 6px; }
-}
-@media (max-width: 560px) {
-  .nav-inner { padding: 0 16px; }
-  .page-top-inner { padding: 14px 16px 16px; }
-  .filter-bar-inner { padding: 10px 16px; }
+  .detail-drag-handle { display: none; }
+  .nav-back span { display: inline; }
+  .nav-sep { display: flex; }
 }
 </style>
 </head>
@@ -654,7 +799,10 @@ input { font: inherit; }
         <span class="logo-text">Tiện Ích <em>Giao Thông</em></span>
       </a>
     </div>
-        <div class="nav-links">
+        <button class="nav-menu-btn" onclick="openNavSidebar()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+    <div class="nav-links">
       <!-- 1. Di chuyển -->
       <div class="nav-item">
         <button class="nav-trigger">Di chuyển <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -732,6 +880,77 @@ input { font: inherit; }
     </div></div>
 </nav>
 
+<!-- NAV SIDEBAR -->
+<div class="nav-sidebar-overlay" id="navSidebarOverlay" onclick="closeNavSidebar()"></div>
+<div class="nav-sidebar" id="navSidebar">
+  <div class="nav-sidebar-header">
+    <span class="nav-sidebar-logo">Tiện Ích <em>Giao Thông</em></span>
+    <button class="nav-sidebar-close" onclick="closeNavSidebar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-sidebar-body">
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group expanded" onclick="toggleSidebarSection(this)">
+        Di chuyển
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links open">
+        <div class="nav-sidebar-col-label">Nhiên liệu</div>
+        <a class="nav-sidebar-link" href="/gia-xang">Giá xăng dầu hôm nay</a>
+        <a class="nav-sidebar-link" href="/cay-xang">Tìm cây xăng gần đây</a>
+        <a class="nav-sidebar-link" href="/tram-sac">Trạm sạc xe điện</a>
+        <div class="nav-sidebar-col-label">Hành trình</div>
+        <a class="nav-sidebar-link" href="/trip-planner">Tính chi phí chuyến đi</a>
+        <a class="nav-sidebar-link" href="/tinh-phi-etc">Tính phí ETC theo tuyến</a>
+      </div>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
+        Bảo hiểm
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links">
+        <div class="nav-sidebar-col-label">Ô tô</div>
+        <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm TNDS bắt buộc</a>
+        <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm thân vỏ</a>
+      </div>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
+        Pháp lý &amp; Bảo dưỡng
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links">
+        <div class="nav-sidebar-col-label">Pháp lý</div>
+        <a class="nav-sidebar-link" href="/phat-nguoi">Tra phạt nguội</a>
+        <a class="nav-sidebar-link" href="/dang-kiem">Kiểm tra đăng kiểm</a>
+        <div class="nav-sidebar-col-label">Bảo dưỡng</div>
+        <a class="nav-sidebar-link" href="/bao-duong-xe">Lịch bảo dưỡng xe</a>
+        <a class="nav-sidebar-link" href="/vehicle-hub#cuu-ho">Cứu hộ khẩn cấp</a>
+      </div>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
+        Xe của tôi
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-sidebar-links">
+        <div class="nav-sidebar-col-label">Hồ sơ &amp; Chi phí</div>
+        <a class="nav-sidebar-link" href="/vehicle-hub#ho-so-xe">Hồ sơ phương tiện</a>
+        <a class="nav-sidebar-link" href="/vehicle-hub#chi-phi-xe">Chi phí nuôi xe / năm</a>
+        <a class="nav-sidebar-link" href="/hang-xe">Nhãn xe &amp; Dòng xe</a>
+        <div class="nav-sidebar-col-label">Tiện ích</div>
+        <a class="nav-sidebar-link" href="/epass">ePass &amp; Tự động nạp</a>
+        <a class="nav-sidebar-link" href="/bai-do-xe">Tìm bãi đỗ xe</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HERO -->
 <div class="page-top">
   <div class="page-top-inner">
@@ -776,6 +995,7 @@ input { font: inherit; }
 
   <!-- DETAIL COLUMN -->
   <div class="detail-panel" id="detailPanel">
+    <div class="detail-drag-handle"></div>
     <div class="detail-topbar">
       <button class="detail-back" onclick="closeDetail()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -839,6 +1059,10 @@ input { font: inherit; }
 
 </div>
 
+
+<div class="card-strip" id="cardStrip">
+  <div class="card-strip-track" id="cardStripTrack"></div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -973,10 +1197,76 @@ function filtered() {
   return list;
 }
 
+// ── CARD STRIP ────────────────────────────────────────────────────────────────
+function renderCardStrip() {
+  const track = document.getElementById('cardStripTrack');
+  if (!track) return;
+  const list = filtered();
+  track.innerHTML = list.map(g => {
+    const b = GARAGE_BRANDS[g.brand];
+    const isActive = g.id === activeId;
+    const vehicleLabel = g.vehicles.includes('car') && g.vehicles.includes('motorbike') ? 'Xe máy + Ô tô'
+      : g.vehicles.includes('car') ? 'Ô tô' : 'Xe máy';
+    const topSvcs = g.services.slice(0, 2).map(sv => `<span class="swipe-tag">${SVC_LABELS[sv]||sv}</span>`).join('');
+    return `
+    <div class="swipe-card${isActive ? ' is-active' : ''}" id="swipe-${g.id}" data-id="${g.id}" onclick="selectStation(${g.id})">
+      <div class="swipe-card-top">
+        <div class="swipe-badge" style="background:linear-gradient(135deg,${b.color} 0%,${b.dark} 100%)">${b.short}</div>
+        <div class="swipe-info">
+          <div class="swipe-name">${g.name}</div>
+          <div class="swipe-meta">${g.dist} km · ${vehicleLabel}</div>
+        </div>
+        <div class="swipe-rating">★ ${g.rating}</div>
+      </div>
+      <div class="swipe-services">
+        <div class="swipe-tags">${topSvcs}</div>
+        <button class="swipe-cta" onclick="event.stopPropagation();selectStation(${g.id})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          Chi tiết
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+  setupCardSnap(list);
+}
+
+let _snapTimer;
+function setupCardSnap(list) {
+  const track = document.getElementById('cardStripTrack');
+  if (!track || track._snapBound) return;
+  track._snapBound = true;
+  track.addEventListener('scroll', () => {
+    clearTimeout(_snapTimer);
+    _snapTimer = setTimeout(() => {
+      const cards = track.querySelectorAll('.swipe-card');
+      const center = track.scrollLeft + track.clientWidth / 2;
+      let closest = null, minDist = Infinity;
+      cards.forEach(c => {
+        const d = Math.abs((c.offsetLeft + c.offsetWidth / 2) - center);
+        if (d < minDist) { minDist = d; closest = c; }
+      });
+      if (!closest) return;
+      const id = parseInt(closest.dataset.id);
+      if (id === activeId) return;
+      activeId = id;
+      const g = list.find(x => x.id === id);
+      if (g) map.setView([g.lat, g.lng], 15, { animate: true, duration: 0.4 });
+      renderMarkers();
+      cards.forEach(c => c.classList.toggle('is-active', parseInt(c.dataset.id) === id));
+    }, 100);
+  }, { passive: true });
+}
+
+function scrollCardTo(id) {
+  const card = document.getElementById('swipe-' + id);
+  if (card) card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+}
+
 // ── RENDER LIST ──────────────────────────────────────────────────────────────
 function renderList() {
   const list = filtered();
   const el = document.getElementById('stationList');
+  renderCardStrip();
   document.getElementById('listCount').textContent = list.length + ' garage';
   document.getElementById('mapCount').textContent = list.length + ' địa điểm';
 
@@ -1045,12 +1335,14 @@ function selectStation(id) {
   setTimeout(() => {
     const card = document.getElementById('card-' + id);
     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    scrollCardTo(id);
   }, 50);
 }
 
 function closeDetail() {
   activeId = null;
   document.querySelector('.split').classList.remove('detail-open');
+  document.getElementById('detailPanel').classList.remove('open');
   renderList();
   renderMarkers();
 }
@@ -1131,6 +1423,7 @@ function showDetail(s) {
     </div>
   `;
   document.querySelector('.split').classList.add('detail-open');
+  document.getElementById('detailPanel').classList.add('open');
 }
 
 // ── FILTER & SORT ─────────────────────────────────────────────────────────────
@@ -1242,10 +1535,26 @@ function locateMe() {
   });
 }
 
+// ── NAV SIDEBAR ───────────────────────────────────────────────────────────────
+function openNavSidebar() {
+  document.getElementById('navSidebar').classList.add('open');
+  document.getElementById('navSidebarOverlay').classList.add('open');
+}
+function closeNavSidebar() {
+  document.getElementById('navSidebar').classList.remove('open');
+  document.getElementById('navSidebarOverlay').classList.remove('open');
+}
+function toggleSidebarSection(el) {
+  el.classList.toggle('expanded');
+  el.nextElementSibling.classList.toggle('open');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSidebar(); });
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 renderFilterChips();
 renderList();
 renderMarkers();
+renderCardStrip();
 </script>
 </body>
 </html>
