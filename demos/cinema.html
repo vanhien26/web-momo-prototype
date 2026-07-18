@@ -16,7 +16,7 @@
 @media(max-width:768px){
   .mobile-bnav{
     display:flex;position:fixed;bottom:0;left:0;right:0;
-    background:#fff;border-top:1px solid var(--gray-200);
+    background:var(--white);border-top:1px solid var(--gray-200);
     padding:6px 0 env(safe-area-inset-bottom,8px);
     z-index:200;box-shadow:0 -1px 8px rgba(0,0,0,.08)
   }
@@ -34,35 +34,35 @@
 </style>
 <style>
 :root {
-  --bg:        #F7F5FA;
-  --white:     #FFFFFF;
+  --bg:        #0B0912;
+  --white:     #17131F;
   --pink-500:  #EB2F96;
   --pink-600:  #C22181;
   --pink-400:  #F472B6;
-  --pink-50:   #FFF0F8;
-  --pink-100:  #FFD6EE;
-  --pink-200:  rgba(235,47,150,.25);
-  --gray-900:  #1C171A;
-  --gray-700:  #3D3040;
-  --gray-600:  #5C5060;
-  --gray-500:  #7A6E7F;
-  --gray-400:  #A09AA5;
-  --gray-300:  #C8C3CC;
-  --gray-200:  #E5E0E9;
-  --gray-100:  #F0EBF4;
-  --gray-50:   #F7F3FA;
-  --amber-500: #D97706;
-  --amber-50:  #FFFBEB;
-  --green-500: #16A34A;
-  --green-50:  #F0FDF4;
-  --blue-50:   #EFF6FF;
-  --blue-500:  #2563EB;
-  --purple-50: #F5F3FF;
-  --purple-500:#7C3AED;
-  --red-500:   #DC2626;
-  --shadow-s:  0 1px 3px rgba(28,23,26,.08), 0 1px 2px rgba(28,23,26,.06);
-  --shadow-m:  0 4px 12px rgba(28,23,26,.1), 0 2px 4px rgba(28,23,26,.06);
-  --shadow-l:  0 8px 28px rgba(28,23,26,.14), 0 4px 8px rgba(28,23,26,.06);
+  --pink-50:   rgba(235,47,150,.12);
+  --pink-100:  rgba(235,47,150,.2);
+  --pink-200:  rgba(235,47,150,.3);
+  --gray-900:  #EDE8F2;
+  --gray-700:  #C4BBCF;
+  --gray-600:  #9D93A8;
+  --gray-500:  #786E82;
+  --gray-400:  #554D5E;
+  --gray-300:  #3A3342;
+  --gray-200:  rgba(255,255,255,.1);
+  --gray-100:  rgba(255,255,255,.06);
+  --gray-50:   rgba(255,255,255,.03);
+  --amber-500: #F59E0B;
+  --amber-50:  rgba(245,158,11,.12);
+  --green-500: #22c55e;
+  --green-50:  rgba(34,197,94,.12);
+  --blue-50:   rgba(37,99,235,.12);
+  --blue-500:  #3B82F6;
+  --purple-50: rgba(124,58,237,.12);
+  --purple-500:#A78BFA;
+  --red-500:   #F87171;
+  --shadow-s:  0 1px 4px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-m:  0 4px 16px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-l:  0 8px 32px rgba(0,0,0,.6), 0 4px 12px rgba(0,0,0,.4);
   --r-sm:      8px;
   --r-md:      12px;
   --r-lg:      16px;
@@ -74,13 +74,33 @@ html { background: var(--bg); }
 body {
   font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg); color: var(--gray-900); min-height: 100vh;
+  position: relative;
+}
+/* Cinematic ambient glow */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(139,92,246,.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 15% 60%, rgba(235,47,150,.07) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 85% 75%, rgba(59,130,246,.06) 0%, transparent 50%);
+}
+/* Film grain overlay */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+  opacity: 1;
 }
 
 /* ── NAV ─────────────────────────────────── */
 .site-nav {
   position: sticky; top: 0; z-index: 200;
-  background: var(--white); border-bottom: 1px solid var(--gray-200);
-  box-shadow: var(--shadow-s);
+  background: rgba(11,9,18,.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 1px 0 rgba(255,255,255,.04), var(--shadow-m);
 }
 .nav-inner {
   max-width: var(--content); margin: 0 auto;
@@ -127,8 +147,13 @@ body {
 
 /* ── HERO ─────────────────────────────────── */
 .hero {
-  background: #09090F;
+  background: transparent;
   position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px; z-index: 2;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
 }
 .hero::before {
   content: ''; position: absolute; inset: 0;
@@ -182,7 +207,7 @@ body {
 @media(max-width:900px){ .hero-inner { grid-template-columns: 1fr; } .hero-posters { display: none; } }
 
 /* ── BOX OFFICE ──────────────────────────── */
-.bo-strip { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 16px 0; }
+.bo-strip { background: rgba(255,255,255,.03); border-bottom: 1px solid rgba(255,255,255,.07); padding: 16px 0; }
 .bo-inner { max-width: var(--content); margin: 0 auto; padding: 0 20px; }
 .bo-hd {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
@@ -221,7 +246,7 @@ body {
 .bo-rev { font-size: 10px; font-weight: 800; text-align: center; margin-top: 2px; }
 
 /* ── CONTENT ─────────────────────────────── */
-.page-wrap { max-width: var(--content); margin: 0 auto; padding: 28px 20px 80px; }
+.page-wrap { max-width: var(--content); margin: 0 auto; padding: 28px 20px 80px; position: relative; z-index: 1; }
 
 /* ── SECTION TABS ────────────────────────── */
 .section-tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--gray-200); }
@@ -244,7 +269,7 @@ body {
 .date-strip::-webkit-scrollbar { display: none; }
 .date-pill {
   flex-shrink: 0; font-family: 'MoMoTrustSans', inherit; cursor: pointer; transition: all .15s;
-  border: 1.5px solid var(--gray-200); border-radius: var(--r-xl); background: var(--white);
+  border: 1px solid rgba(255,255,255,.1); border-radius: var(--r-xl); background: rgba(255,255,255,.06);
   padding: 8px 14px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 56px;
 }
 .date-pill:hover { border-color: var(--pink-200); }
@@ -302,12 +327,13 @@ body {
 @media(min-width:1024px){ .film-grid { grid-auto-columns: 158px; gap: 12px 14px; } }
 
 .film-card {
-  background: var(--white); border: 1px solid var(--gray-200);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
   border-radius: var(--r-lg); overflow: hidden;
   cursor: pointer; transition: all .2s; display: flex; flex-direction: column;
   box-shadow: var(--shadow-s);
+  backdrop-filter: blur(4px);
 }
-.film-card:hover { border-color: var(--pink-200); transform: translateY(-2px); box-shadow: var(--shadow-m); }
+.film-card:hover { border-color: rgba(235,47,150,.5); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(235,47,150,.2); }
 
 .film-poster { position: relative; aspect-ratio: 2/3; overflow: hidden; background: var(--gray-100); }
 .film-poster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
@@ -375,10 +401,10 @@ body {
 
 .cs-card {
   cursor: pointer; border-radius: var(--r-md); overflow: hidden;
-  border: 1px solid var(--gray-200); background: var(--white);
+  border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.06);
   transition: all .2s; box-shadow: var(--shadow-s);
 }
-.cs-card:hover { border-color: var(--pink-200); transform: translateY(-3px); box-shadow: var(--shadow-m); }
+.cs-card:hover { border-color: rgba(235,47,150,.4); transform: translateY(-3px); box-shadow: var(--shadow-m); }
 .cs-poster { position: relative; aspect-ratio: 2/3; overflow: hidden; background: var(--gray-100); }
 .cs-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cs-date {
@@ -449,17 +475,17 @@ body {
 .cinema-header { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .cinema-logo {
   width: 40px; height: 40px; border-radius: var(--r-sm); overflow: hidden;
-  background: #fff; border: 1px solid var(--gray-200); flex-shrink: 0;
+  background: rgba(255,255,255,.95); border: 1px solid var(--gray-200); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   font-size: 10px; font-weight: 900; color: var(--gray-500);
 }
 .cinema-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 .cinema-logo.logo-cinestar { background: #1A1A2E; }
 .cinema-logo.logo-beta { background: #003366; color: #fff; }
-.cinema-logo.logo-cgv { background: #fff; }
-.cinema-logo.logo-lotte { background: #fff; }
-.cinema-logo.logo-bhd { background: #fff; }
-.cinema-logo.logo-galaxy { background: #fff; }
+.cinema-logo.logo-cgv { background: rgba(255,255,255,.95); }
+.cinema-logo.logo-lotte { background: rgba(255,255,255,.95); }
+.cinema-logo.logo-bhd { background: rgba(255,255,255,.95); }
+.cinema-logo.logo-galaxy { background: rgba(255,255,255,.95); }
 .cinema-info { flex: 1; }
 .cinema-name { font-size: 13px; font-weight: 700; color: var(--gray-900); }
 .cinema-addr { font-size: 11px; color: var(--gray-400); }
@@ -523,20 +549,40 @@ body {
 .sc-bar-fill.b { background:var(--pink-500); }
 
 /* ── PRESALE TICKER ──────────────────────── */
-.presale-strip { background:linear-gradient(90deg,var(--pink-50),var(--purple-50)); border-bottom:1px solid var(--pink-100); padding:9px 0; overflow:hidden; }
-.presale-inner { max-width:var(--content); margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:12px; }
-.presale-live { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:var(--pink-500); flex-shrink:0; white-space:nowrap; }
-.presale-live-dot { width:6px; height:6px; background:var(--pink-500); border-radius:50%; animation:pulse 1.2s infinite; }
-.presale-scroll { display:flex; gap:16px; overflow-x:auto; scrollbar-width:none; flex:1; }
+/* ── PRESALE TOPBAR (inside nav) ─────────── */
+.presale-strip {
+  border-top: 1px solid var(--pink-100);
+  background: var(--pink-50);
+  padding: 0;
+}
+.presale-inner {
+  max-width: var(--content); margin: 0 auto; padding: 0 20px;
+  display: flex; align-items: center; gap: 12px; height: 34px;
+}
+.presale-live { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:800; color:var(--pink-500); flex-shrink:0; white-space:nowrap; letter-spacing:.02em; }
+.presale-live-dot { width:6px; height:6px; background:var(--pink-500); border-radius:50%; flex-shrink:0; animation:pulse 1.2s infinite; }
+.presale-scroll { display:flex; gap:0; overflow-x:auto; scrollbar-width:none; flex:1; align-items:center; }
 .presale-scroll::-webkit-scrollbar { display:none; }
-.presale-item { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.presale-rank { font-size:11px; font-weight:900; color:var(--gray-300); width:14px; }
+.presale-item {
+  display:flex; align-items:center; gap:7px; flex-shrink:0;
+  padding: 0 14px 0 0; cursor: pointer;
+}
+.presale-item:hover .presale-name { color: var(--pink-500); }
+.presale-rank { font-size:11px; font-weight:900; color:var(--gray-300); min-width:12px; text-align:center; }
 .presale-rank.r1 { color:var(--amber-500); }
 .presale-rank.r2 { color:var(--gray-400); }
 .presale-rank.r3 { color:#CD7F32; }
-.presale-name { font-size:12px; font-weight:700; color:var(--gray-900); white-space:nowrap; }
-.presale-badge { font-size:10px; font-weight:800; color:var(--pink-500); background:var(--pink-50); border:1px solid var(--pink-100); border-radius:var(--r-xl); padding:2px 8px; white-space:nowrap; }
-.presale-sep { color:var(--gray-200); font-size:14px; }
+.presale-name { font-size:12px; font-weight:700; color:var(--gray-800,#2D2230); white-space:nowrap; transition:color .15s; }
+.presale-badge {
+  font-size:10px; font-weight:800; color:var(--pink-500);
+  background: var(--white); border:1px solid var(--pink-200);
+  border-radius:var(--r-xl); padding:1px 7px; white-space:nowrap;
+}
+.presale-deal {
+  font-size:10px; font-weight:700; color:#fff;
+  background: var(--pink-500); border-radius:var(--r-xl); padding:1px 7px; white-space:nowrap;
+}
+.presale-sep { color:var(--pink-200); font-size:12px; padding-right:14px; flex-shrink:0; }
 
 /* ── SOCIAL CTA ──────────────────────────── */
 .film-social { display:flex; align-items:center; justify-content:space-between; margin-top:6px; }
@@ -602,8 +648,8 @@ body {
 
 /* ── DAILY MISSIONS ──────────────────────── */
 .missions-card {
-  background: linear-gradient(135deg, var(--amber-50) 0%, var(--pink-50) 100%);
-  border: 1.5px solid #FDE68A; border-radius: var(--r-lg);
+  background: linear-gradient(135deg, rgba(245,158,11,.12) 0%, rgba(235,47,150,.1) 100%);
+  border: 1px solid rgba(245,158,11,.25); border-radius: var(--r-lg);
   padding: 18px 20px; margin-bottom: 24px;
 }
 .missions-hd { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -680,6 +726,7 @@ body {
     </div>
     <div class="nav-right"></div>
   </div>
+  <div class="presale-strip" id="presaleStrip"></div>
 </nav>
 
 <section class="hero">
@@ -703,7 +750,6 @@ body {
 </section>
 
 <div class="bo-strip" id="boStrip"></div>
-<div class="presale-strip" id="presaleStrip"></div>
 
 <div class="page-wrap">
 
@@ -782,6 +828,13 @@ body {
 </div>
 
 <div class="toast" id="toastEl"></div>
+
+<!-- Deal bottom sheet -->
+<div id="dealOverlay" onclick="closeDealSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900"></div>
+<div id="dealSheet" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1E1829;border-radius:20px 20px 0 0;z-index:901;padding:0 0 env(safe-area-inset-bottom,16px);max-width:600px;margin:0 auto;box-shadow:0 -4px 48px rgba(0,0,0,.7);border-top:1px solid rgba(255,255,255,.1);transition:transform .3s;transform:translateY(100%)">
+  <div style="width:40px;height:4px;background:var(--gray-200);border-radius:2px;margin:12px auto 0"></div>
+  <div id="dealSheetContent" style="padding:16px 20px 20px"></div>
+</div>
 
 <div class="trailer-overlay" id="trailerOverlay" onclick="handleOverlayClick(event)">
   <div class="trailer-box">
@@ -1108,7 +1161,7 @@ function renderFilmGrid() {
       </div>
       <div class="film-info">
         <div class="film-title">${f.title}</div>
-        <button class="stub-btn" onclick="event.stopPropagation();openFilm('${f.title}')">Đặt vé</button>
+        <button class="stub-btn" onclick="event.stopPropagation();openDealSheet('${f.title.replace(/'/g,"&#39;")}','${f.img}')">Đặt vé</button>
       </div>
     </div>`;
   }).join('');
@@ -1187,24 +1240,65 @@ function renderCinemas() {
   if (!el.innerHTML.trim()) el.innerHTML = `<div style="padding:32px 0;text-align:center;color:var(--gray-400);font-size:14px">Không có suất ${activeFormat} tại các rạp gần bạn</div>`;
 }
 
+const FILM_DEAL_TAGS = ['Hoàn 30k','Combo -20%','Giảm 15k','Tặng xu','2 vé 1 combo'];
 function renderPresale() {
   const el = document.getElementById('presaleStrip');
   const ranked = [...FILMS_NOW]
-    .map(f=>({ title:f.title, presale:(FILM_SCORES[f.title]||{presale:100}).presale }))
+    .map(f=>({ title:f.title, img:f.img, presale:(FILM_SCORES[f.title]||{presale:100}).presale }))
     .sort((a,b)=>b.presale-a.presale).slice(0,6);
   el.innerHTML = `<div class="presale-inner">
     <div class="presale-live"><div class="presale-live-dot"></div>Đặt vé trước</div>
-    <div class="presale-scroll">${ranked.map((f,i)=>`
-      <div class="presale-item">
-        <div class="presale-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
+    <div class="presale-scroll">${ranked.map((f,i)=>{
+      const dealTag = FILM_DEAL_TAGS[i % FILM_DEAL_TAGS.length];
+      const rCls = i===0?'r1':i===1?'r2':i===2?'r3':'';
+      return `<div class="presale-item" onclick="openDealSheet('${f.title.replace(/'/g,"&#39;")}','${f.img}')">
+        <div class="presale-rank ${rCls}">${i+1}</div>
         <div class="presale-name">${f.title}</div>
         <div class="presale-badge">${f.presale.toLocaleString('vi')} vé/2h</div>
-      </div>${i<ranked.length-1?'<div class="presale-sep">·</div>':''}
-    `).join('')}</div>
+        <div class="presale-deal">🎁 ${dealTag}</div>
+      </div>${i<ranked.length-1?'<div class="presale-sep">·</div>':''}`;
+    }).join('')}</div>
   </div>`;
-  // Animate counter for top film
   let count = ranked[0].presale - 12;
   setInterval(()=>{ count+=Math.floor(Math.random()*3)+1; const badge=el.querySelector('.presale-badge'); if(badge) badge.textContent=count.toLocaleString('vi')+' vé/2h'; }, 4000);
+}
+
+const DEALS = [
+  { icon:'💳', title:'Hoàn tiền 30.000đ', desc:'Thanh toán qua Ví MoMo, hoàn tự động sau 24h' },
+  { icon:'🍿', title:'Combo bắp nước -20%', desc:'Mua 2 vé trở lên, áp dụng tại tất cả rạp CGV, Lotte, BHD' },
+  { icon:'🎟️', title:'Vé đôi Thứ 2-6 giảm 15k', desc:'Áp dụng suất trước 17h, không áp dụng dịp lễ' },
+  { icon:'⭐', title:'Tặng 500 Xu MoMo', desc:'Tích xu mỗi lần đặt, đổi vé xem phim miễn phí' },
+];
+function openDealSheet(title, img) {
+  const sheet = document.getElementById('dealSheet');
+  const overlay = document.getElementById('dealOverlay');
+  document.getElementById('dealSheetContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <img src="${img}" alt="${title}" style="width:44px;height:62px;object-fit:cover;border-radius:6px;flex-shrink:0;background:var(--gray-100)">
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#EDE8F2;line-height:1.3">${title}</div>
+        <div style="font-size:11px;color:var(--pink-500);font-weight:700;margin-top:3px">🎁 Ưu đãi khi đặt vé hôm nay</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      ${DEALS.map(d=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:rgba(235,47,150,.1);border-radius:12px;border:1px solid rgba(235,47,150,.2)">
+        <span style="font-size:20px;flex-shrink:0;line-height:1">${d.icon}</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#EDE8F2">${d.title}</div>
+          <div style="font-size:11px;color:#786E82;margin-top:2px">${d.desc}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <button onclick="closeDealSheet();toast('Đang mở trang đặt vé...')" style="width:100%;background:var(--pink-500);color:#fff;border:none;border-radius:12px;padding:14px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">Đặt vé ngay →</button>
+  `;
+  overlay.style.display = 'block';
+  sheet.style.display = 'block';
+  requestAnimationFrame(()=>{ sheet.style.transform = 'translateY(0)'; });
+}
+function closeDealSheet() {
+  const sheet = document.getElementById('dealSheet');
+  sheet.style.transform = 'translateY(100%)';
+  setTimeout(()=>{ sheet.style.display='none'; document.getElementById('dealOverlay').style.display='none'; }, 300);
 }
 
 function inviteGroup(title) {
