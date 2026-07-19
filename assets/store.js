@@ -347,6 +347,18 @@ const PROTOTYPES = [
         address: 'web-momo-prototype.vercel.app/cinema/actor/tran-thanh',
       },
       {
+        id: 'cinema-person',
+        name: 'Person Detail (TMDB prototype)',
+        category: 'Actor Listing',
+        ownerGroup: 'Cell Team',
+        maturity: 'Detail Page',
+        description: 'Trang chi tiết diễn viên/đạo diễn — map đầy đủ TMDB API fields (biography, credits, images). Robert Pattinson làm demo subject.',
+        jtbd: 'Xem profile diễn viên, filmography và ảnh trước khi chọn phim',
+        northStar: 'Film card click → Film detail → Đặt vé',
+        src: 'demos/cinema-person.html',
+        address: 'web-momo-prototype.vercel.app/demos/cinema-person.html',
+      },
+      {
         id: 'cinema-actors',
         name: 'Listing Diễn viên',
         category: 'Actor Listing',
@@ -1193,7 +1205,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-series', 'cinema-genres-detail', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-series', 'cinema-genres-detail', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['momo-service-icons', 'worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 
