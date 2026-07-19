@@ -364,7 +364,7 @@ const PROTOTYPES = [
       },
       {
         id: 'cinema-genre',
-        name: 'Thể loại phim',
+        name: 'Thể loại phim (legacy)',
         category: 'Genre Page',
         ownerGroup: 'Cell Team',
         maturity: 'Category Page',
@@ -377,6 +377,19 @@ const PROTOTYPES = [
         gate: 'Format filter usage, tab switch rate, Related genre click, film card CTR.',
         src: 'demos/cinema-genre.html',
         address: 'web-momo-prototype.vercel.app/cinema/genre/kinh-di',
+      },
+      {
+        id: 'cinema-genres-detail',
+        name: 'Thể loại - Detail',
+        category: 'Platform',
+        ownerGroup: 'Cell Team',
+        maturity: 'Category Page',
+        description: 'Trang phim theo thể loại (/cinema/genres/:slug) — header genre, filter format + sort, tabs Đang chiếu / Sắp chiếu / Tất cả, film grid + MoMo Score, Related genres.',
+        jtbd: 'Browse phim trong thể loại yêu thích, lọc format và chọn suất chiếu',
+        northStar: 'Film card click → ticket purchase',
+        loop: 'Genres index → Genre detail → Filter → Film card → Film detail → Đặt vé',
+        src: 'demos/cinema-genres-detail.html',
+        address: 'web-momo-prototype.vercel.app/cinema/genres/kinh-di',
       },
       {
         id: 'cinema-now-showing',
@@ -1180,7 +1193,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-series', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-series', 'cinema-genres-detail', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['momo-service-icons', 'worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 
