@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TV Series - Xem Phim Bộ | MoMo Cinema</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 700;font-display:swap}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink-500:#EB2F96;--pink-50:#FFF0F6;--pink-200:#FFADD2;
+  --gray-900:#1C171A;--gray-700:#3D3540;--gray-500:#6B6573;
+  --gray-400:#9E9AA3;--gray-300:#C4C0C9;--gray-200:#E8E4ED;
+  --gray-100:#F5F3F8;--white:#fff;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+  --shadow-s:0 1px 4px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.04);
+  --shadow-m:0 4px 16px rgba(0,0,0,.1),0 1px 4px rgba(0,0,0,.06);
+  --content:1100px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'MoMoTrustSans',-apple-system,sans-serif;background:var(--gray-100);color:var(--gray-900);min-height:100vh;font-size:15px;line-height:1.5}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+a{text-decoration:none;color:inherit}
+
+/* NAV */
+.site-nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-200)}
+.nav-inner{max-width:var(--content);margin:0 auto;height:60px;padding:0 20px;display:flex;align-items:center;gap:24px}
+.nav-links{display:flex;gap:2px}
+.nav-link{font-size:13px;font-weight:600;color:var(--gray-500);background:none;border:none;cursor:pointer;padding:7px 14px;border-radius:var(--r-sm);transition:all .15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-700)}
+.nav-link.on{background:var(--pink-50);color:var(--pink-500)}
+.nav-sp{flex:1}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:8px 14px;max-width:240px;flex:1}
+.nav-search input{background:none;border:none;outline:none;color:var(--gray-900);font-family:'MoMoTrustSans',inherit;font-size:13px;width:100%}
+.nav-search input::placeholder{color:var(--gray-400)}
+@media(max-width:768px){.nav-links,.nav-search{display:none}}
+
+/* PAGE HEADER */
+.page-hd{background:#fff;border-bottom:1px solid var(--gray-200)}
+.page-hd-inner{max-width:var(--content);margin:0 auto;padding:28px 20px 0}
+.page-hd-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px}
+.page-hd-title{font-size:24px;font-weight:800;letter-spacing:-.3px;color:var(--gray-900);display:flex;align-items:center;gap:8px}
+.page-hd-count{font-size:14px;font-weight:500;color:var(--gray-400)}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:8px;padding-bottom:0;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-group{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.filter-label{font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.filter-chips{display:flex;gap:5px;flex-wrap:nowrap}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--gray-200);background:#fff;color:var(--gray-500);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--pink-200);color:var(--pink-500)}
+.chip.on{background:var(--pink-50);border-color:var(--pink-500);color:var(--pink-500)}
+.filter-divider{width:1px;height:20px;background:var(--gray-200);flex-shrink:0;margin:0 4px}
+
+.sort-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding-bottom:16px}
+.sort-label{font-size:12px;color:var(--gray-400);font-weight:600}
+.sort-chips{display:flex;gap:4px}
+.sort-chip{font-size:12px;font-weight:600;padding:4px 11px;border-radius:20px;border:1px solid var(--gray-200);background:#fff;color:var(--gray-500);cursor:pointer;transition:all .15s}
+.sort-chip:hover{border-color:var(--gray-300);color:var(--gray-700)}
+.sort-chip.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.result-count{margin-left:auto;font-size:13px;color:var(--gray-400)}
+
+/* GRID */
+.page-body{max-width:var(--content);margin:0 auto;padding:24px 20px 60px}
+.series-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:16px}
+@media(min-width:640px){.series-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:900px){.series-grid{grid-template-columns:repeat(5,1fr)}}
+@media(min-width:1100px){.series-grid{grid-template-columns:repeat(6,1fr)}}
+
+/* SERIES CARD */
+.sc{background:#fff;border-radius:var(--r-lg);overflow:hidden;cursor:pointer;border:1px solid var(--gray-200);transition:all .2s;box-shadow:var(--shadow-s)}
+.sc:hover{border-color:var(--pink-200);box-shadow:var(--shadow-m);transform:translateY(-2px)}
+.sc-poster{position:relative;aspect-ratio:2/3;background:var(--gray-100);overflow:hidden}
+.sc-poster img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.sc:hover .sc-poster img{transform:scale(1.04)}
+.sc-status{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.2px}
+.sc-status.airing{background:rgba(34,197,94,.9);color:#fff}
+.sc-status.ended{background:rgba(0,0,0,.55);color:rgba(255,255,255,.8)}
+.sc-status.upcoming{background:rgba(245,197,24,.92);color:#000}
+.sc-platforms{position:absolute;bottom:8px;left:8px;display:flex;gap:4px}
+.plat-dot{width:20px;height:20px;border-radius:5px;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.sc-body{padding:10px 12px 12px}
+.sc-title{font-size:13px;font-weight:700;color:var(--gray-900);margin-bottom:3px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sc-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-400);margin-bottom:6px}
+.sc-dot{width:3px;height:3px;border-radius:50%;background:var(--gray-300)}
+.sc-score{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--gray-600)}
+.sc-score svg{color:#F5C518}
+.sc-genres{display:flex;gap:4px;flex-wrap:wrap}
+.sc-genre{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--gray-100);color:var(--gray-500);font-weight:600}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:80px 20px;color:var(--gray-400)}
+.empty-icon{margin:0 auto 16px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--gray-100);border-radius:50%}
+.empty h3{font-size:16px;font-weight:700;color:var(--gray-600);margin-bottom:6px}
+.empty p{font-size:14px}
+
+/* MOBILE BOTTOM NAV */
+.mobile-bnav{display:none}
+@media(max-width:768px){
+  .mobile-bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-200);padding:6px 0 env(safe-area-inset-bottom,8px);z-index:200}
+  .mobile-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;font-size:10px;font-weight:600;color:var(--gray-400);cursor:pointer;transition:color .15s}
+  .mobile-bnav-item.on{color:var(--pink-500)}
+  body{padding-bottom:72px}
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-lab-link" href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
+    <a href="/cinema" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28" style="display:block">
+      <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block"></span>
+      <span style="display:flex;align-items:center;gap:5px">
+        <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0">
+        <span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span>
+      </span>
+    </a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="window.location.href='/cinema'">Phim</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/actors'">Diễn viên</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link on">TV Series</button>
+    </div>
+    <div class="nav-sp"></div>
+    <div class="nav-search">
+      <i data-lucide="search" width="14" height="14" stroke-width="2" style="flex-shrink:0;color:var(--gray-400)"></i>
+      <input type="text" placeholder="Tìm series..." oninput="onSearch(this.value)">
+    </div>
+  </div>
+</nav>
+
+<div class="page-hd">
+  <div class="page-hd-inner">
+    <div class="page-hd-top">
+      <div class="page-hd-title">
+        <i data-lucide="tv-2" width="22" height="22" stroke-width="2" style="color:var(--pink-500)"></i>
+        TV Series
+      </div>
+      <span class="page-hd-count" id="result-count"></span>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Thể loại</span>
+        <div class="filter-chips" id="genre-chips"></div>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">Nền tảng</span>
+        <div class="filter-chips" id="platform-chips"></div>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">Trạng thái</span>
+        <div class="filter-chips" id="status-chips"></div>
+      </div>
+    </div>
+
+    <div class="sort-row">
+      <span class="sort-label">Sắp xếp:</span>
+      <div class="sort-chips" id="sort-chips"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  <div class="series-grid" id="series-grid"></div>
+</div>
+
+<nav class="mobile-bnav">
+  <div class="mobile-bnav-item" onclick="window.location.href='/cinema'">
+    <i data-lucide="film" width="20" height="20" stroke-width="2"></i>Phim
+  </div>
+  <div class="mobile-bnav-item" onclick="window.location.href='/cinema/dang-chieu'">
+    <i data-lucide="play-circle" width="20" height="20" stroke-width="2"></i>Đang chiếu
+  </div>
+  <div class="mobile-bnav-item" onclick="window.location.href='/cinema/sap-chieu'">
+    <i data-lucide="calendar" width="20" height="20" stroke-width="2"></i>Sắp chiếu
+  </div>
+  <div class="mobile-bnav-item on">
+    <i data-lucide="tv-2" width="20" height="20" stroke-width="2"></i>Series
+  </div>
+  <div class="mobile-bnav-item" onclick="window.location.href='/cinema/cgv'">
+    <i data-lucide="map-pin" width="20" height="20" stroke-width="2"></i>Rạp
+  </div>
+</nav>
+
+<script>
+const SERIES = [
+  {
+    id: 100088, slug: 'the-last-of-us',
+    title: 'The Last of Us', orig: 'The Last of Us',
+    poster: 'https://image.tmdb.org/t/p/w342/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',
+    year: 2023, seasons: 2, status: 'airing',
+    score: 8.6, genres: ['Kịch tính','Kinh dị','Khoa học viễn tưởng'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'HBO',
+  },
+  {
+    id: 94997, slug: 'house-of-the-dragon',
+    title: 'House of the Dragon', orig: 'House of the Dragon',
+    poster: 'https://image.tmdb.org/t/p/w342/z2yahl2uefxDCl0nogcRBstwruJ.jpg',
+    year: 2022, seasons: 2, status: 'airing',
+    score: 8.4, genres: ['Hành động','Kịch tính','Giả tưởng'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'HBO',
+  },
+  {
+    id: 95403, slug: 'the-bear',
+    title: 'The Bear', orig: 'The Bear',
+    poster: 'https://image.tmdb.org/t/p/w342/sHFlbKS3WLqMnp9t2ghADIJFnuQ.jpg',
+    year: 2022, seasons: 3, status: 'airing',
+    score: 8.6, genres: ['Hài kịch','Kịch tính'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'FX',
+  },
+  {
+    id: 66732, slug: 'stranger-things',
+    title: 'Stranger Things', orig: 'Stranger Things',
+    poster: 'https://image.tmdb.org/t/p/w342/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',
+    year: 2016, seasons: 5, status: 'upcoming',
+    score: 8.7, genres: ['Kịch tính','Kinh dị','Khoa học viễn tưởng'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'Netflix',
+  },
+  {
+    id: 93405, slug: 'squid-game',
+    title: 'Squid Game', orig: '오징어 게임',
+    poster: 'https://image.tmdb.org/t/p/w342/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg',
+    year: 2021, seasons: 2, status: 'airing',
+    score: 8.0, genres: ['Hành động','Kịch tính','Kinh dị'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'Netflix',
+  },
+  {
+    id: 99966, slug: 'severance',
+    title: 'Severance', orig: 'Severance',
+    poster: 'https://image.tmdb.org/t/p/w342/hLxMFT4hBXMzUm0b7pBVOnBkMde.jpg',
+    year: 2022, seasons: 2, status: 'airing',
+    score: 8.7, genres: ['Kịch tính','Khoa học viễn tưởng','Bí ẩn'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'Apple TV+',
+  },
+  {
+    id: 1396, slug: 'breaking-bad',
+    title: 'Breaking Bad', orig: 'Breaking Bad',
+    poster: 'https://image.tmdb.org/t/p/w342/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
+    year: 2008, seasons: 5, status: 'ended',
+    score: 9.5, genres: ['Tội phạm','Kịch tính','Hồi hộp'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'AMC',
+  },
+  {
+    id: 93644, slug: 'the-white-lotus',
+    title: 'The White Lotus', orig: 'The White Lotus',
+    poster: 'https://image.tmdb.org/t/p/w342/bkQyDR57UZT9oP6xmGlpFMhP2H4.jpg',
+    year: 2021, seasons: 3, status: 'ended',
+    score: 7.9, genres: ['Hài kịch','Kịch tính','Bí ẩn'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'HBO',
+  },
+  {
+    id: 82856, slug: 'the-mandalorian',
+    title: 'The Mandalorian', orig: 'The Mandalorian',
+    poster: 'https://image.tmdb.org/t/p/w342/sWgBv7LV2PRoQgkxwlibdGXKz1S.jpg',
+    year: 2019, seasons: 3, status: 'ended',
+    score: 8.5, genres: ['Hành động','Phiêu lưu','Khoa học viễn tưởng'],
+    platforms: [{ id:'vieon', label:'Vie', color:'#0065BD', tc:'#fff' }],
+    network: 'Disney+',
+  },
+  {
+    id: 63174, slug: 'succession',
+    title: 'Succession', orig: 'Succession',
+    poster: 'https://image.tmdb.org/t/p/w342/7HW47XbkNQ5fiwQFYGWdw9gs144.jpg',
+    year: 2018, seasons: 4, status: 'ended',
+    score: 8.9, genres: ['Kịch tính','Hài kịch'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'HBO',
+  },
+  {
+    id: 65495, slug: 'the-crown',
+    title: 'The Crown', orig: 'The Crown',
+    poster: 'https://image.tmdb.org/t/p/w342/roO4dPCNV0UTQxmyFGGUqe8ekEV.jpg',
+    year: 2016, seasons: 6, status: 'ended',
+    score: 8.2, genres: ['Kịch tính','Lịch sử'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'Netflix',
+  },
+  {
+    id: 71912, slug: 'the-witcher',
+    title: 'The Witcher', orig: 'The Witcher',
+    poster: 'https://image.tmdb.org/t/p/w342/7vjaCdMw15FEbXyLQTVa04URsPm.jpg',
+    year: 2019, seasons: 3, status: 'ended',
+    score: 8.1, genres: ['Hành động','Phiêu lưu','Giả tưởng'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'Netflix',
+  },
+  {
+    id: 87108, slug: 'chernobyl',
+    title: 'Chernobyl', orig: 'Chernobyl',
+    poster: 'https://image.tmdb.org/t/p/w342/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg',
+    year: 2019, seasons: 1, status: 'ended',
+    score: 9.4, genres: ['Kịch tính','Lịch sử','Hồi hộp'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'HBO',
+  },
+  {
+    id: 71446, slug: 'money-heist',
+    title: 'Money Heist', orig: 'La Casa de Papel',
+    poster: 'https://image.tmdb.org/t/p/w342/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg',
+    year: 2017, seasons: 5, status: 'ended',
+    score: 8.3, genres: ['Tội phạm','Kịch tính','Hồi hộp'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'Netflix',
+  },
+  {
+    id: 83867, slug: 'andor',
+    title: 'Andor', orig: 'Andor',
+    poster: 'https://image.tmdb.org/t/p/w342/59SVNwLfoMnZPPB6ukW6dlPxAdI.jpg',
+    year: 2022, seasons: 2, status: 'ended',
+    score: 8.5, genres: ['Hành động','Phiêu lưu','Khoa học viễn tưởng'],
+    platforms: [{ id:'vieon', label:'Vie', color:'#0065BD', tc:'#fff' }],
+    network: 'Disney+',
+  },
+  {
+    id: 130392, slug: 'the-diplomat',
+    title: 'The Diplomat', orig: 'The Diplomat',
+    poster: 'https://image.tmdb.org/t/p/w342/2meX1nMdScFOoV4370jsMVMnbHl.jpg',
+    year: 2023, seasons: 2, status: 'airing',
+    score: 7.9, genres: ['Kịch tính','Hài kịch'],
+    platforms: [{ id:'netflix', label:'N', color:'#141414', tc:'#E50914' }],
+    network: 'Netflix',
+  },
+  {
+    id: 202555, slug: 'the-pitt',
+    title: 'The Pitt', orig: 'The Pitt',
+    poster: 'https://image.tmdb.org/t/p/w342/fcFVGHEFmGRNtPdmbhFiPHMVJbx.jpg',
+    year: 2025, seasons: 1, status: 'airing',
+    score: 8.8, genres: ['Kịch tính'],
+    platforms: [{ id:'fptplay', label:'FPT', color:'#E5001C', tc:'#fff' }],
+    network: 'HBO',
+  },
+  {
+    id: 228155, slug: 'daredevil-born-again',
+    title: 'Daredevil: Born Again', orig: 'Daredevil: Born Again',
+    poster: 'https://image.tmdb.org/t/p/w342/cdqLnri3NEGcmfnqwk2TSIYtddg.jpg',
+    year: 2025, seasons: 1, status: 'upcoming',
+    score: 8.3, genres: ['Hành động','Tội phạm','Kịch tính'],
+    platforms: [{ id:'vieon', label:'Vie', color:'#0065BD', tc:'#fff' }],
+    network: 'Disney+',
+  },
+];
+
+const ALL_GENRES = [...new Set(SERIES.flatMap(s => s.genres))].sort();
+const ALL_PLATFORMS = [
+  { id: 'fptplay', label: 'FPT Play', color: '#E5001C', tc: '#fff', lbl: 'FPT' },
+  { id: 'netflix', label: 'Netflix',  color: '#141414', tc: '#E50914', lbl: 'N' },
+  { id: 'vieon',   label: 'VieON',    color: '#0065BD', tc: '#fff', lbl: 'Vie' },
+];
+const STATUS_OPTIONS = [
+  { id: 'airing',   label: 'Đang chiếu' },
+  { id: 'upcoming', label: 'Sắp ra mắt' },
+  { id: 'ended',    label: 'Đã kết thúc' },
+];
+const SORT_OPTIONS = [
+  { id: 'score',  label: 'Điểm cao nhất' },
+  { id: 'newest', label: 'Mới nhất' },
+  { id: 'az',     label: 'A–Z' },
+];
+
+const state = {
+  genres: [],
+  platforms: [],
+  statuses: [],
+  sort: 'score',
+  query: '',
+};
+
+function toggleFilter(key, val) {
+  const arr = state[key];
+  const idx = arr.indexOf(val);
+  if (idx === -1) arr.push(val); else arr.splice(idx, 1);
+  renderChips();
+  renderGrid();
+}
+function setSort(val) {
+  state.sort = val;
+  renderChips();
+  renderGrid();
+}
+function onSearch(v) {
+  state.query = v.toLowerCase().trim();
+  renderGrid();
+}
+
+function renderChips() {
+  document.getElementById('genre-chips').innerHTML = ALL_GENRES.map(g => `
+    <button class="chip ${state.genres.includes(g) ? 'on' : ''}" onclick="toggleFilter('genres','${g}')">${g}</button>
+  `).join('');
+
+  document.getElementById('platform-chips').innerHTML = ALL_PLATFORMS.map(p => `
+    <button class="chip ${state.platforms.includes(p.id) ? 'on' : ''}" onclick="toggleFilter('platforms','${p.id}')">
+      <span style="width:10px;height:10px;border-radius:3px;background:${p.color};flex-shrink:0;display:inline-block"></span>
+      ${p.label}
+    </button>
+  `).join('');
+
+  document.getElementById('status-chips').innerHTML = STATUS_OPTIONS.map(s => `
+    <button class="chip ${state.statuses.includes(s.id) ? 'on' : ''}" onclick="toggleFilter('statuses','${s.id}')">${s.label}</button>
+  `).join('');
+
+  document.getElementById('sort-chips').innerHTML = SORT_OPTIONS.map(s => `
+    <button class="sort-chip ${state.sort === s.id ? 'on' : ''}" onclick="setSort('${s.id}')">${s.label}</button>
+  `).join('');
+}
+
+function filterData() {
+  let data = [...SERIES];
+  if (state.genres.length)    data = data.filter(s => state.genres.some(g => s.genres.includes(g)));
+  if (state.platforms.length) data = data.filter(s => s.platforms.some(p => state.platforms.includes(p.id)));
+  if (state.statuses.length)  data = data.filter(s => state.statuses.includes(s.status));
+  if (state.query)            data = data.filter(s => s.title.toLowerCase().includes(state.query) || s.orig.toLowerCase().includes(state.query));
+  if (state.sort === 'score')  data.sort((a,b) => b.score - a.score);
+  if (state.sort === 'newest') data.sort((a,b) => b.year - a.year);
+  if (state.sort === 'az')     data.sort((a,b) => a.title.localeCompare(b.title));
+  return data;
+}
+
+const STATUS_LABEL = { airing: 'Đang chiếu', ended: 'Đã kết thúc', upcoming: 'Sắp ra mắt' };
+
+function renderGrid() {
+  const data = filterData();
+  document.getElementById('result-count').textContent = `${data.length} series`;
+
+  if (!data.length) {
+    document.getElementById('series-grid').innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+        <div class="empty-icon"><i data-lucide="search-x" width="22" height="22" stroke-width="1.75"></i></div>
+        <h3>Không tìm thấy kết quả</h3>
+        <p>Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+      </div>`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    return;
+  }
+
+  document.getElementById('series-grid').innerHTML = data.map(s => `
+    <div class="sc" onclick="goSeries(${s.id},'${s.slug}')">
+      <div class="sc-poster">
+        <img src="${s.poster}" alt="${s.title}" onerror="this.style.background='var(--gray-200)';this.style.display='none'">
+        <span class="sc-status ${s.status}">${STATUS_LABEL[s.status]}</span>
+        <div class="sc-platforms">
+          ${s.platforms.map(p => `<div class="plat-dot" style="background:${p.color};color:${p.tc}">${p.label}</div>`).join('')}
+        </div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-title">${s.title}</div>
+        <div class="sc-meta">
+          <span>${s.year}</span>
+          <span class="sc-dot"></span>
+          <span>${s.seasons} mùa</span>
+          <span class="sc-dot"></span>
+          <span class="sc-score">
+            <i data-lucide="star" width="10" height="10" stroke-width="2" fill="currentColor"></i>
+            ${s.score.toFixed(1)}
+          </span>
+        </div>
+        <div class="sc-genres">${s.genres.slice(0,2).map(g => `<span class="sc-genre">${g}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function goSeries(id, slug) {
+  window.location.href = `/cinema/series/${slug}-${id}`;
+}
+
+renderChips();
+renderGrid();
+if (typeof lucide !== 'undefined') lucide.createIcons();
+</script>
+</body>
+</html>

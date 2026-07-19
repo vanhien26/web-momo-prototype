@@ -131,6 +131,32 @@ record(content.js.includes("ui: { valueType: 'percent', precision: 'approximate'
 record(content.js.includes("ui: { valueType: 'enum', precision: 'exact', decisionMode: 'compare'"), 'explicit field UI metadata exists for comparison selectors');
 record(!content.html.includes('financial.css?v=30') && !content.html.includes('financial.css?v=31'), 'financial CSS cache version was bumped after selector fixes');
 
+// ── CINEMA HEADER SYNC POLICY
+// Cinema homepage nav (demos/cinema.html) is the source of truth for header nav items.
+// All cinema sub-pages must mirror the same nav items — no extra items, no missing items.
+// Current canonical nav items (as of 2026-07): Phim · Đang chiếu · Sắp chiếu · Diễn viên · Rạp · TV Series
+// Removed: "Ưu đãi" and "Vé của tôi" — do NOT re-add to any cinema page nav.
+// When adding or removing a nav item from cinema.html, update ALL sub-pages:
+//   cinema-actor, cinema-actors, cinema-chain, cinema-coming-soon, cinema-director,
+//   cinema-film-detail, cinema-genre, cinema-genres, cinema-now-showing, cinema-theater,
+//   cinema-series (dark-theme nav uses different pattern — verify separately).
+// This check catches "Ưu đãi" or "Vé của tôi" re-appearing as nav-link buttons.
+const cinemaSubPages = [
+  'demos/cinema-actor.html','demos/cinema-actors.html','demos/cinema-chain.html',
+  'demos/cinema-coming-soon.html','demos/cinema-director.html','demos/cinema-film-detail.html',
+  'demos/cinema-genre.html','demos/cinema-genres.html','demos/cinema-now-showing.html',
+  'demos/cinema-theater.html',
+];
+for (const subPage of cinemaSubPages) {
+  try {
+    const src = read(subPage);
+    record(!(/class="nav-link"[^>]*>Ưu đãi/.test(src)), `${subPage}: no stale "Ưu đãi" nav-link`);
+    record(!(/class="nav-link"[^>]*>Vé của tôi/.test(src)), `${subPage}: no stale "Vé của tôi" nav-link`);
+    record(/class="nav-link"[^>]*>TV Series/.test(src), `${subPage}: has "TV Series" nav-link`);
+    record(!/cinema\/series\/the-last-of-us/.test(src), `${subPage}: TV Series nav-link points to /cinema/series hub, not detail page`);
+  } catch {}
+}
+
 // ── ICON POLICY (global)
 // All icons across demos must come from Lucide SVG (inline <svg> with Lucide paths).
 // Do NOT use emoji (🛡, ⚡, 📋…) as UI icons — they render inconsistently across OS/browser
