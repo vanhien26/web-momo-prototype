@@ -171,10 +171,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   .hmv-info-row{display:flex;gap:12px;padding:14px 14px 0;align-items:flex-start}
   .hmv-poster{width:80px;flex-shrink:0;border-radius:8px;aspect-ratio:2/3;object-fit:cover;display:block;box-shadow:0 4px 16px rgba(0,0,0,.5)}
   .hmv-right{flex:1;min-width:0}
-  .hmv-genres{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+  .hmv-genres{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+  .hmv-tagline{font-size:12px;font-style:italic;color:var(--dim);margin-bottom:8px;line-height:1.4}
   .hmv-genre-pill{font-size:11px;padding:3px 9px;border-radius:20px;
     background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--dim)}
-  .hmv-overview{font-size:14px;line-height:1.55;color:var(--text);opacity:.88}
+  .hmv-overview{font-size:13px;line-height:1.55;color:var(--text);opacity:.88}
+  .hmv-expand-btn{background:none;border:none;color:var(--pink);font-size:12px;font-weight:600;padding:2px 0;cursor:pointer;font-family:inherit;display:block;margin-top:4px}
   /* rating row */
   .hmv-rating-row{padding:14px 14px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .hmv-momo-score{display:flex;align-items:center;gap:5px}
@@ -1267,7 +1269,9 @@ function renderHero(s) {
       <img class="hmv-poster" src="${tImg(s.poster_path,'w154')}" alt="${s.name}" onerror="this.style.display='none'">
       <div class="hmv-right">
         <div class="hmv-genres">${s.genres.map(g=>`<span class="hmv-genre-pill">${g.name}</span>`).join('')}</div>
-        <div class="hmv-overview">${(s.overview||'').slice(0,200)}${(s.overview||'').length>200?'…':''}</div>
+        ${s.tagline ? `<div class="hmv-tagline">"${s.tagline}"</div>` : ''}
+        <div class="hmv-overview" id="hmv-overview-text">${(s.overview||'').length>180 ? (s.overview||'').slice(0,180)+'…' : (s.overview||'')}</div>
+        ${(s.overview||'').length>180 ? `<button class="hmv-expand-btn" onclick="toggleHmvOverview(this,'${encodeURIComponent(s.overview||'')}')">Xem thêm</button>` : ''}
       </div>
     </div>
     <div class="hmv-rating-row">
@@ -1479,6 +1483,19 @@ function switchSeason(n) {
 /* ── ACTIONS ── */
 function watchNow()  { jumpTo('plat-sec'); }
 function playEp(n,s) { alert(`S${s}E${n} — Chuyển đến nền tảng xem ${S?.name || FALLBACK_SERIES.name}`); }
+function toggleHmvOverview(btn, encoded) {
+  const el = document.getElementById('hmv-overview-text');
+  const full = decodeURIComponent(encoded);
+  if (btn.dataset.expanded === '1') {
+    el.textContent = full.slice(0,180) + '…';
+    btn.textContent = 'Xem thêm';
+    btn.dataset.expanded = '0';
+  } else {
+    el.textContent = full;
+    btn.textContent = 'Thu gọn';
+    btn.dataset.expanded = '1';
+  }
+}
 function openTrailer(){ document.getElementById('modal').classList.add('open'); }
 function closeTrailer(){ document.getElementById('modal').classList.remove('open'); }
 function buyOTT(id)      { alert(`Mở MoMo → Mua gói ${id.toUpperCase()}`); }
