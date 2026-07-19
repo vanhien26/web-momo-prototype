@@ -810,7 +810,7 @@ a.crew-item:hover .crew-avatar{border-color:var(--pink-300)}
 <div class="trailer-overlay" id="trailerOverlay" onclick="if(event.target===this)closeTrailer()">
   <div class="trailer-box">
     <div class="trailer-header">
-      <span style="font-size:14px;font-weight:700;color:var(--gray-900)">Supergirl: Woman of Tomorrow</span>
+      <span style="font-size:14px;font-weight:700;color:var(--gray-900)" id="trailerFilmTitle">Supergirl: Woman of Tomorrow</span>
       <button class="trailer-close" onclick="closeTrailer()"><i data-lucide="x" width="18" height="18" stroke-width="2.5"></i></button>
     </div>
     <div class="trailer-iframe-wrap"><iframe id="trailerFrame" allow="autoplay;encrypted-media" allowfullscreen></iframe></div>
@@ -1003,6 +1003,39 @@ const FILM_DB={
   },
 };
 
+const FILM_REVIEWS={
+  'moana-25005':[
+    ['NL','#0e7490','Ngọc Lan','12/07/2026 · CGV Aeon Tân Phú','★★★★★','Đưa 2 bé đi xem mà cả nhà đều mê. Phần nhạc mới hay không kém phần đầu, cảnh biển đẹp rụng rời. Bé nhà mình về hát theo suốt cả tuần. Đặt vé qua MoMo được hoàn tiền nữa, quá hời!',312],
+    ['TK','#92400e','Tuấn Kiệt','10/07/2026 · Lotte Cinema Gò Vấp','★★★★★','Maui vẫn là nhân vật gánh còm toàn bộ phần hài. Kịch bản lần này sâu hơn, có mấy đoạn cảm động thật sự. Xem bản lồng tiếng Việt rất tự nhiên, không bị gượng.',198],
+    ['HP','#166534','Hồng Phúc','08/07/2026 · Galaxy Nguyễn Du','★★★★☆','Hình ảnh 10 điểm, nhạc 9 điểm. Trừ 1 sao vì đoạn giữa hơi dài dòng với người lớn, nhưng trẻ con thì vẫn dán mắt vào màn hình từ đầu tới cuối.',87],
+  ],
+  'minions-monster-25001':[
+    ['BA','#F59E0B','Bảo Anh','11/07/2026 · CGV Landmark 81','★★★★★','Cười không nhặt được mồm từ phút thứ 5. Con quái vật dễ thương xỉu, các bé Minions vẫn lầy lội như mọi khi. Phim gia đình quốc dân mùa hè này!',276],
+    ['DH','#374151','Đức Huy','09/07/2026 · Beta Quang Trung','★★★★☆','Hài nhiều, nội dung nhẹ nhàng dễ xem. Người lớn đi kèm trẻ con sẽ thấy vài chỗ hơi trẻ con, nhưng tổng thể vẫn rất giải trí. Giá vé Beta rẻ + hoàn tiền MoMo là combo tiết kiệm.',134],
+    ['MT','#be185d','Minh Thư','07/07/2026 · BHD Star Phạm Hùng','★★★★★','Đi xem với hội bạn thân mà cười muốn nội thương. Khúc Minions nhận nuôi quái vật là đỉnh cao hài hước. Rất đáng vé!',92],
+  ],
+  'colony-25002':[
+    ['VT','#14532D','Việt Thắng','10/07/2026 · CGV Vincom Đồng Khởi','★★★★★','Zombie có tổ chức, biết phối hợp săn mồi — ý tưởng quá mới so với dòng phim xác sống truyền thống. Nhịp phim dồn dập, 112 phút trôi vèo. Fan kinh dị sinh tồn nhất định phải xem.',167],
+    ['QA','#7f1d1d','Quỳnh Anh','08/07/2026 · Lotte Cinema Nam Sài Gòn','★★★★☆','Không khí trạm nghiên cứu cô lập làm rất tới, âm thanh rạp nghe mà nổi da gà. Trừ điểm nhẹ vì twist cuối đoán được trước. Vẫn là phim kinh dị đáng tiền nhất tháng.',103],
+    ['HN','#374151','Hoàng Nam','05/07/2026 · Cinestar Quốc Thanh','★★★★★','Xem suất khuya mà về không dám tắt đèn. Bầy đàn di chuyển như một cơ thể sống, ám ảnh thật sự. Đặt vé MoMo 30 giây là xong, tiện.',71],
+  ],
+  'am-anh-25003':[
+    ['TL','#1C1917','Thùy Linh','09/07/2026 · CGV Crescent Mall','★★★★★','Phương Anh Đào diễn quá đạt, ánh mắt thôi đã thấy ám ảnh. Phim kinh dị Việt mà tâm lý sâu, không hù dọa rẻ tiền. Twist cuối lạnh sống lưng.',221],
+    ['PD','#7f1d1d','Phú Đạt','07/07/2026 · Galaxy Kinh Dương Vương','★★★★☆','Không khí căn nhà cũ làm tốt, tiếng động được dùng rất tiết chế nên mỗi lần vang lên là giật mình thật. Đoạn hồi tưởng hơi dài nhưng cần thiết cho twist.',89],
+    ['KV','#be185d','Khánh Vy','04/07/2026 · BHD Star 3/2','★★★★★','Lâu lắm mới có phim kinh dị Việt làm mình khóc. Nỗi đau mất người thân được kể qua lăng kính kinh dị rất nhân văn. Nên xem!',64],
+  ],
+  'backrooms-25004':[
+    ['GB','#1C1917','Gia Bảo','08/07/2026 · CGV Sư Vạn Hạnh','★★★★☆','Fan lore Backrooms sẽ rất sướng — level 0 lên phim đúng chuẩn: tường vàng úa, đèn huỳnh quang ù ù, cảm giác ngộp đúng chất liminal space. Found footage hơi rung nhưng hợp concept.',118],
+    ['NH','#374151','Như Huỳnh','06/07/2026 · Lotte Cinema Cộng Hòa','★★★☆☆','Không khí tốt, jumpscare vừa phải. Điểm trừ là cốt truyện mỏng, nhân vật quyết định thiếu logic vài chỗ. Hợp xem cùng nhóm bạn cho vui.',54],
+    ['TP','#7c2d92','Thanh Phong','03/07/2026 · Beta Trần Quang Khải','★★★★☆','Thực thể xuất hiện ít nhưng mỗi lần xuất hiện là nín thở. Âm thanh vòm của rạp nâng trải nghiệm lên nhiều. Đáng thử với ai thích kinh dị lạ.',47],
+  ],
+  'leviticus-25006':[
+    ['DK','#374151','Duy Khang','07/07/2026 · CGV Pearl Plaza','★★★★☆','Ethan Hawke gánh phim. Không khí nhà thờ hẻo lánh u ám đặc quánh, 40 trang nhật ký trừ tà là chi tiết đắt giá. Hồi kết hơi vội nhưng tổng thể vẫn cuốn.',96],
+    ['YN','#7f1d1d','Yến Nhi','05/07/2026 · Galaxy Tân Bình','★★★☆☆','Phim nghiêng về kinh dị tâm linh chậm rãi, ai quen jumpscare dồn dập có thể thấy chậm. Bù lại quay đẹp và ám ảnh kéo dài sau khi xem.',41],
+    ['CT','#1C1917','Công Tuấn','02/07/2026 · Cinestar Hai Bà Trưng','★★★★☆','Đêm thứ 41 là một trong những trường đoạn trừ tà căng nhất mình từng xem ở rạp. Kịch bản chắc tay, không lạm dụng máu me.',38],
+  ],
+};
+
 function applyFilm(){
   const slug=location.pathname.split('/').filter(Boolean).pop();
   const f=FILM_DB[slug];
@@ -1033,6 +1066,15 @@ function applyFilm(){
   const big=document.querySelector('.rating-big-num'); if(big) big.textContent=f.rating;
   const bigCount=document.querySelector('.rating-big-count'); if(bigCount) bigCount.textContent=f.votes;
   document.querySelector(`.side-film-item[href$="${slug}"]`)?.remove();
+  document.getElementById('trailerFilmTitle').textContent=f.title;
+  const reviews=FILM_REVIEWS[slug];
+  if(reviews){
+    document.querySelectorAll('.review-card').forEach(el=>el.remove());
+    const loadMore=document.querySelector('.reviews-load-more');
+    loadMore.textContent=`Xem thêm ${f.votes.replace(' đánh giá','')} đánh giá`;
+    loadMore.insertAdjacentHTML('beforebegin',reviews.map(([ini,bg,name,meta,stars,text,likes])=>
+      `<div class="review-card"><div class="review-head"><div class="review-av" style="background:${bg}">${ini}</div><div class="review-user-info"><div class="review-username">${name}</div><div class="review-meta">${meta}</div></div></div><div class="review-stars-row"><span class="review-stars">${stars}</span><span class="review-verified">Đã xem phim</span></div><div class="review-text">${text}</div><div class="review-foot"><button class="review-like" onclick="this.textContent='👍 Hữu ích (${likes+1})'">👍 Hữu ích (${likes})</button><button class="review-report">Báo cáo</button></div></div>`).join(''));
+  }
   CURRENT_FILM.title=f.title; CURRENT_FILM.img=f.poster; CURRENT_FILM.age=f.age; CURRENT_FILM.dur=f.dur;
 }
 applyFilm();
@@ -1237,9 +1279,9 @@ function renderConfirmStep(body){
   const fnbLines=Object.entries(state.fnb).filter(([id,qty])=>qty>0).map(([id,qty])=>{const it=FNB.find(f=>f.id===id);return it&&it.price?`<div class="confirm-detail-row"><span class="key">${it.name} × ${qty}</span><span class="val">${(it.price*qty).toLocaleString('vi')}đ</span></div>`:null;}).filter(Boolean).join('');
   body.innerHTML=`<div class="confirm-card">
     <div class="confirm-poster-strip">
-      <div class="confirm-poster"><img src="https://cinema.momocdn.net/convert-webp/img/154902082106207596-PosterSUPERGIRLcompressed.jpg?size=M" alt="Supergirl"></div>
+      <div class="confirm-poster"><img src="${CURRENT_FILM.img}" alt="${CURRENT_FILM.title}"></div>
       <div>
-        <div class="confirm-film-title">Supergirl: Woman of Tomorrow</div>
+        <div class="confirm-film-title">${CURRENT_FILM.title}</div>
         <div class="confirm-row"><span class="confirm-icon">${icon('clapperboard',14)}</span>${state.cinemaName}</div>
         <div class="confirm-row"><span class="confirm-icon">${icon('clock',14)}</span>${state.showtime} · ${state.format}</div>
         <div class="confirm-row"><span class="confirm-icon">${icon('armchair',14)}</span>${state.seats.join(', ')}</div>
@@ -1281,8 +1323,8 @@ function renderTicketStep(body){
       <div class="ticket-header-sub">Vé đã lưu trong MoMo · ${new Date().toLocaleDateString('vi-VN')}</div>
     </div>
     <div class="ticket-film-strip">
-      <div class="ticket-poster"><img src="https://cinema.momocdn.net/convert-webp/img/154902082106207596-PosterSUPERGIRLcompressed.jpg?size=M" alt="Supergirl"></div>
-      <div><div class="ticket-film-name">Supergirl: Woman of Tomorrow</div><div class="ticket-cinema-name">${state.cinemaName}</div></div>
+      <div class="ticket-poster"><img src="${CURRENT_FILM.img}" alt="${CURRENT_FILM.title}"></div>
+      <div><div class="ticket-film-name">${CURRENT_FILM.title}</div><div class="ticket-cinema-name">${state.cinemaName}</div></div>
     </div>
     <div class="perf-divider"><div class="perf-circle"></div><div class="perf-line"></div><div class="perf-circle"></div></div>
     <div class="ticket-grid">
