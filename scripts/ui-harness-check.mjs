@@ -134,7 +134,7 @@ record(!content.html.includes('financial.css?v=30') && !content.html.includes('f
 // ── CINEMA HEADER SYNC POLICY
 // Cinema homepage nav (demos/cinema.html) is the source of truth for header nav items.
 // All cinema sub-pages must mirror the same nav items — no extra items, no missing items.
-// Current canonical nav items (as of 2026-07): Phim · Đang chiếu · Sắp chiếu · Diễn viên · Rạp · TV Series
+// Current canonical nav items (as of 2026-07): Phim · Đang chiếu · Sắp chiếu · Diễn viên · Rạp · Thể loại · TV Series
 // Removed: "Ưu đãi" and "Vé của tôi" — do NOT re-add to any cinema page nav.
 // When adding or removing a nav item from cinema.html, update ALL sub-pages:
 //   cinema-actor, cinema-actors, cinema-chain, cinema-coming-soon, cinema-director,
@@ -152,6 +152,7 @@ for (const subPage of cinemaSubPages) {
     const src = read(subPage);
     record(!(/class="nav-link"[^>]*>Ưu đãi/.test(src)), `${subPage}: no stale "Ưu đãi" nav-link`);
     record(!(/class="nav-link"[^>]*>Vé của tôi/.test(src)), `${subPage}: no stale "Vé của tôi" nav-link`);
+    record(/class="nav-link"[^>]*>Thể loại/.test(src), `${subPage}: has "Thể loại" nav-link`);
     record(/class="nav-link"[^>]*>TV Series/.test(src), `${subPage}: has "TV Series" nav-link`);
     record(!/cinema\/series\/the-last-of-us/.test(src), `${subPage}: TV Series nav-link points to /cinema/series hub, not detail page`);
   } catch {}
