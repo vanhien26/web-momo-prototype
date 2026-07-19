@@ -147,8 +147,11 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;bac
 .chip:hover{border-color:var(--pink-200);color:var(--pink-500)}
 .chip.on{background:var(--pink-50);border-color:var(--pink-500);color:var(--pink-500)}
 
+/* STICKY SHOWTIME HEADER */
+.showtime-sticky{position:sticky;top:60px;z-index:80;background:var(--white);padding:12px 0 4px;margin-bottom:4px;border-bottom:1px solid var(--gray-100);box-shadow:0 2px 8px rgba(28,23,26,.06)}
+
 /* CHAIN FILTER PILLS */
-.chain-logo-pills{display:flex;flex-wrap:nowrap;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.chain-logo-pills{display:flex;flex-wrap:nowrap;gap:8px;margin-bottom:0;overflow-x:auto;scrollbar-width:none}
 .chain-logo-pills::-webkit-scrollbar{display:none}
 .chain-logo-pill{width:48px;height:48px;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:var(--white);cursor:pointer;transition:all .15s;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .chain-logo-pill:hover{border-color:var(--pink-200);box-shadow:var(--shadow-s)}
@@ -602,8 +605,10 @@ a.crew-item:hover .crew-avatar{border-color:var(--pink-300)}
     <!-- ── MAIN COLUMN ── -->
     <div class="main-col">
       <div id="panelShowtimes">
-        <div class="date-strip" id="dateStrip"></div>
-        <div class="chain-logo-pills" id="chainFilter"></div>
+        <div class="showtime-sticky">
+          <div class="date-strip" id="dateStrip"></div>
+          <div class="chain-logo-pills" id="chainFilter"></div>
+        </div>
         <div id="cinemaGroups"></div>
       </div>
 
@@ -899,6 +904,22 @@ const CINEMAS = [
     formats:[
       { fmt:'2D Phụ đề', tag:'2d', price:58000, times:[{t:'09:30',avail:95},{t:'13:00',avail:80},{t:'16:30',avail:55},{t:'20:00',avail:70}] },
     ]},
+  { id:'dcine', name:'Dcine Vạn Hạnh Mall', addr:'11 Sư Vạn Hạnh, Q10', dist:'3.1km', chain:'dcine', label:'DCINE', minPrice:62000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:62000, times:[{t:'10:30',avail:88},{t:'14:00',avail:65},{t:'17:30',avail:48,few:true},{t:'21:00',avail:92}] },
+    ]},
+  { id:'cinemax', name:'Cinemax Hai Bà Trưng', addr:'275 Nguyễn Trọng Tuyển, Q.Tân Bình', dist:'4.7km', chain:'cinemax', label:'CINEMAX', minPrice:60000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:60000, times:[{t:'09:15',avail:100},{t:'12:30',avail:78},{t:'15:45',avail:50,few:true},{t:'19:15',avail:85}] },
+    ]},
+  { id:'rio', name:'Rio Cinemas Phú Mỹ Hưng', addr:'Phú Mỹ Hưng, Q7', dist:'6.3km', chain:'rio', label:'RIO', minPrice:65000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:65000, times:[{t:'10:00',avail:90},{t:'13:30',avail:72},{t:'17:00',avail:55},{t:'20:30',avail:80}] },
+    ]},
+  { id:'ncc', name:'Trung tâm chiếu phim Quốc gia', addr:'87 Láng Hạ, Đống Đa, Hà Nội', dist:'--', chain:'ncc', label:'NCC', minPrice:60000,
+    formats:[
+      { fmt:'2D Phụ đề', tag:'2d', price:60000, times:[{t:'10:00',avail:95},{t:'14:00',avail:70},{t:'18:00',avail:60},{t:'20:30',avail:85}] },
+    ]},
 ];
 
 // Group invite state
@@ -932,13 +953,17 @@ function renderDates(){
 function pickDate(i){ state.activeDate=i; renderDates(); renderCinemas(); }
 
 const CHAIN_LOGO={
-  cgv:    'https://homepage.momocdn.net/cinema/momo-amazone-s3-api-240829164527-638605467276820522.png',
-  lotte:  'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170617-637584231772974269.png',
-  bhd:    'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170453-637584230934981809.png',
-  galaxy: 'https://homepage.momocdn.net/cinema/momo-upload-api-211123095138-637732578984425272.png',
-  beta:   'https://homepage.momocdn.net/cinema/momo-upload-api-210813104719-637644484394328824.png',
+  cgv:     'https://homepage.momocdn.net/cinema/momo-amazone-s3-api-240829164527-638605467276820522.png',
+  lotte:   'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170617-637584231772974269.png',
+  bhd:     'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170453-637584230934981809.png',
+  galaxy:  'https://homepage.momocdn.net/cinema/momo-upload-api-211123095138-637732578984425272.png',
+  beta:    'https://homepage.momocdn.net/cinema/momo-upload-api-210813104719-637644484394328824.png',
   cinestar:'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170530-637584231309495829.png',
-  megags: 'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170511-637584231119272266.png',
+  megags:  'https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170511-637584231119272266.png',
+  dcine:   'https://img.mservice.io/momo_app_v2/new_version/img/THAO.MAI/DcineLogo.png',
+  cinemax: 'https://homepage.momocdn.net/cinema/momo-upload-api-221108100132-638034984925107129.png',
+  rio:     'https://homepage.momocdn.net/img/momo-amazone-s3-api-250505103419-638820380597920724.png',
+  ncc:     'https://homepage.momocdn.net/cinema/ncclogo-260325100933.png',
 };
 function cinemaLogoHtml(chain,label){
   const src=CHAIN_LOGO[chain];
