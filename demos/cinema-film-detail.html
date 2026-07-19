@@ -149,6 +149,13 @@ body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;bac
 
 /* STICKY SHOWTIME HEADER */
 .showtime-sticky{position:sticky;top:60px;z-index:80;background:var(--white);padding:12px 0 4px;margin-bottom:4px;border-bottom:1px solid var(--gray-100);box-shadow:0 2px 8px rgba(28,23,26,.06)}
+/* ENDED STATE */
+.ended-state{text-align:center;padding:48px 24px;color:var(--gray-500)}
+.ended-icon{font-size:40px;margin-bottom:12px;opacity:.5}
+.ended-title{font-size:15px;font-weight:800;color:var(--gray-700);margin-bottom:6px}
+.ended-sub{font-size:13px;color:var(--gray-400);margin-bottom:20px;line-height:1.6}
+.btn-see-more{font-family:'MoMoTrustSans',inherit;font-size:13px;font-weight:700;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-200);border-radius:var(--r-sm);padding:10px 20px;cursor:pointer;transition:all .15s}
+.btn-see-more:hover{background:var(--pink-100)}
 
 /* CHAIN FILTER PILLS */
 .chain-logo-pills{display:flex;flex-wrap:nowrap;gap:8px;margin-bottom:0;overflow-x:auto;scrollbar-width:none}
@@ -976,6 +983,7 @@ const CURRENT_FILM={
   title:'Supergirl: Woman of Tomorrow',
   img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png',
   age:'T13', dur:'130 phút',
+  ended: false, // true = phim đã kết thúc lịch chiếu
 };
 
 function renderChainFilter(){
@@ -1291,7 +1299,23 @@ document.getElementById('bookingSheet').addEventListener('click',e=>{ if(e.targe
 lucide.createIcons();
 
 /* INIT */
-renderDates(); renderChainFilter(); renderCinemas();
+if(CURRENT_FILM.ended){
+  // Hero CTA
+  const heroActions=document.querySelector('.hero-actions');
+  if(heroActions) heroActions.innerHTML=`<a class="btn-book-hero" href="/cinema/dang-chieu" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px"><i data-lucide="film" width="15" height="15" stroke-width="2"></i> Xem phim đang chiếu</a><button class="btn-trailer" onclick="openTrailer('wJO_vIDZn1Y')"><i data-lucide="play" width="14" height="14" stroke-width="2.5"></i> Trailer</button>`;
+  // Hide presale ticker
+  const ticker=document.getElementById('presaleTicker');
+  if(ticker) ticker.style.display='none';
+  // Replace showtime panel with ended state
+  const panel=document.getElementById('panelShowtimes');
+  if(panel) panel.innerHTML=`<div class="ended-state"><div class="ended-icon">🎬</div><div class="ended-title">Phim đã kết thúc lịch chiếu</div><div class="ended-sub">Supergirl: Woman of Tomorrow không còn được chiếu<br>tại các rạp. Khám phá phim đang chiếu ngay hôm nay.</div><a href="/cinema/dang-chieu" class="btn-see-more">Xem phim đang chiếu →</a></div>`;
+  // Hide sticky bar on mobile too
+  const sticky=document.getElementById('stickyCta');
+  if(sticky) sticky.style.display='none';
+  lucide.createIcons();
+} else {
+  renderDates(); renderChainFilter(); renderCinemas();
+}
 </script>
 <nav class="mobile-bnav"><a class="mbn-item on" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item" href="/cinema/actors"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
 </body>
