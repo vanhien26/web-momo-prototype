@@ -239,6 +239,22 @@ const PROTOTYPES = [
         address: 'web-momo-prototype.vercel.app/cinema/supergirl-24851',
       },
       {
+        id: 'cinema-series',
+        name: 'Series Detail',
+        category: 'Series Page',
+        ownerGroup: 'Cell Team',
+        maturity: 'Detail Page',
+        description: 'Trang phim bộ/series (e.g. /cinema/series/the-last-of-us) — hero backdrop, TMDB sync dữ liệu series, season tabs, episode list với still thumbnails, streaming platform CTA + MoMo payment; không dùng điểm MoMo.',
+        jtbd: 'Xem thông tin series, chọn season/tập và được dẫn đến nền tảng streaming với ưu đãi MoMo',
+        northStar: 'Platform subscription via MoMo',
+        loop: 'Series detail → Season select → Episode → Platform CTA → MoMo Pay',
+        hypothesis: 'Series page với TMDB data + streaming CTA tạo funnel mới từ organic traffic đến subscription payment qua MoMo.',
+        value: 'Mở rộng MoMo Cinema từ theatrical sang streaming — capture user đang tìm kiếm series để tạo thêm payment moment.',
+        gate: 'Episode click-through rate, platform CTA CTR, MoMo subscription conversion.',
+        src: 'demos/cinema-series.html',
+        address: 'web-momo-prototype.vercel.app/cinema/series/the-last-of-us-100088',
+      },
+      {
         id: 'cinema-chain',
         name: 'Trang Hệ Thống Rạp',
         category: 'Chain Page',
@@ -1148,7 +1164,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['momo-service-icons', 'worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 

@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cinema Series | MoMo Cinema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08070E;--surf:#0F0D1C;--surf2:#16131F;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --text:#F0EDF8;--dim:rgba(240,237,248,.6);--faint:rgba(240,237,248,.3);
+  --pink:#EB2F96;--pink-dim:rgba(235,47,150,.12);--pink-border:rgba(235,47,150,.3);
+  --gold:#F5C518;--green:#22C55E;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;
+  --nav:60px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Be Vietnam Pro',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+/* grain + ambient */
+body::after{content:'';position:fixed;inset:0;opacity:.045;pointer-events:none;z-index:500;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 30% 5%,rgba(100,40,220,.18) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 85%,rgba(235,47,150,.1) 0%,transparent 55%)}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav);z-index:100;
+  background:rgba(8,7,14,.88);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:8px}
+.nav-back{display:flex;align-items:center;gap:5px;color:var(--dim);font-size:14px;
+  text-decoration:none;padding:6px 10px;border-radius:var(--r-sm);transition:all .15s}
+.nav-back:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.nav-badge{display:flex;align-items:center;gap:5px;
+  background:var(--pink-dim);border:1px solid var(--pink-border);
+  color:#f472b6;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;letter-spacing:.3px}
+.nav-divider{color:var(--faint);font-size:18px;margin:0 2px}
+.nav-sp{flex:1}
+.nav-act{display:flex;align-items:center;gap:8px}
+.nbtn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r-md);
+  font-size:13px;font-weight:600;transition:all .15s;font-family:inherit;cursor:pointer}
+.nbtn-ghost{background:rgba(255,255,255,.07);color:var(--dim);border:1px solid var(--border)}
+.nbtn-ghost:hover{color:var(--text);background:rgba(255,255,255,.12)}
+.nbtn-primary{background:var(--pink);color:#fff;box-shadow:0 0 18px rgba(235,47,150,.28)}
+.nbtn-primary:hover{background:#d42889}
+
+/* HERO */
+.hero{position:relative;padding-top:var(--nav);min-height:520px;
+  display:flex;flex-direction:column;justify-content:flex-end}
+/* hero-bg: CSS ambient when no backdrop; replaced by real TMDB backdrop when API connected */
+.hero-bg{position:absolute;inset:0}
+.hero-bg.has-backdrop{overflow:hidden}
+.hero-bg.has-backdrop img{width:100%;height:100%;object-fit:cover;object-position:center 30%;
+  transform:scale(1.08);filter:blur(20px) brightness(.8) saturate(1.3)}
+.hero-bg::after{content:'';position:absolute;inset:0;background:
+  linear-gradient(to bottom,rgba(8,7,14,.1) 0%,rgba(8,7,14,0) 15%,rgba(8,7,14,.65) 65%,rgba(8,7,14,1) 100%),
+  linear-gradient(to right,rgba(8,7,14,.88) 0%,rgba(8,7,14,.42) 45%,transparent 100%)}
+.hero-inner{position:relative;z-index:2;padding:40px 20px 32px;
+  max-width:1100px;width:100%;margin:0 auto;
+  display:flex;align-items:flex-end;gap:24px}
+.poster-stack{position:relative;flex-shrink:0;width:168px;display:none}
+@media(min-width:560px){.poster-stack{display:block}}
+@media(min-width:900px){.poster-stack{width:198px}.hero{min-height:600px}}
+.hero-poster{position:relative;z-index:1;border-radius:var(--r-md);overflow:hidden;
+  box-shadow:0 10px 34px rgba(0,0,0,.75);margin-top:0;margin-left:0}
+.hero-poster img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.hero-meta{flex:1;min-width:0}
+.hero-type-tag{display:inline-flex;align-items:center;gap:5px;
+  background:var(--pink-dim);border:1px solid var(--pink-border);
+  color:#f472b6;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+.hero-title{font-size:clamp(22px,5vw,42px);font-weight:800;line-height:1.1;
+  letter-spacing:-.5px;margin-bottom:4px}
+.hero-orig{font-size:13px;color:var(--dim);margin-bottom:12px;font-style:italic}
+.hero-info{display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;
+  color:var(--dim);font-size:13px;margin-bottom:12px}
+.dot{color:var(--faint)}
+.age-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:var(--text);font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px}
+/* info row */
+.hero-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
+@media(min-width:640px){.hero-facts{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.fact-card{border:1px solid var(--border);background:rgba(255,255,255,.03);border-radius:14px;padding:10px 12px;min-height:56px}
+.fact-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-bottom:4px}
+.fact-value{display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.25}
+.ratings-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}
+.ratings-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);flex-shrink:0}
+.ext-scores{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ext-item{display:flex;align-items:center;gap:5px}
+.badge{font-size:10px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.2px}
+.badge-imdb{background:#F5C518;color:#000}
+.badge-rt{background:#FA320A;color:#fff}
+.badge-meta{background:#005F6B;color:#fff}
+.badge-tmdb{background:#0D253F;color:#01B4E4;border:1px solid #01B4E4}
+.ext-val{font-size:13px;font-weight:600;color:var(--text)}
+
+.genres{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.g-pill{background:rgba(255,255,255,.08);border:1px solid var(--border);
+  color:var(--dim);font-size:12px;padding:3px 10px;border-radius:20px}
+
+.ctas{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn-watch{display:flex;align-items:center;gap:8px;background:#fff;color:#000;
+  font-size:14px;font-weight:700;padding:11px 22px;border-radius:var(--r-md);
+  border:none;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-watch:hover{background:#e5e5e5}
+.btn-trailer{display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.12);color:var(--text);font-size:14px;font-weight:600;
+  padding:11px 18px;border-radius:var(--r-md);border:1px solid rgba(255,255,255,.2);
+  cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-trailer:hover{background:rgba(255,255,255,.2)}
+.btn-save{display:flex;align-items:center;gap:6px;background:transparent;
+  color:var(--dim);font-size:14px;font-weight:500;padding:11px 14px;
+  border-radius:var(--r-md);border:1px solid var(--border);
+  cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-save:hover{color:var(--text);border-color:var(--border2)}
+.btn-save.saved{color:var(--pink);border-color:var(--pink-border);background:var(--pink-dim)}
+
+.hero-flow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.flow-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
+  border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--dim);font-size:12px;font-weight:600}
+.flow-chip strong{color:var(--text)}
+
+.mobile-actions{display:none}
+@media(max-width:560px){
+  .mobile-actions{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:sticky;bottom:10px;
+    z-index:120;margin-top:16px;padding:10px;background:rgba(8,7,14,.72);
+    backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:18px
+  }
+  .mobile-actions .mini-btn{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    min-height:60px;border-radius:14px;padding:10px 8px;border:1px solid var(--border);
+    background:rgba(255,255,255,.04);color:var(--text);font-size:11px;font-weight:700
+  }
+  .mobile-actions .mini-btn.primary{background:var(--pink);border-color:transparent}
+  .mobile-actions .mini-btn svg{display:block}
+}
+
+/* MAIN */
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1}
+.divider{height:1px;background:var(--border);margin:32px 0}
+
+.about{padding:24px 0 0}
+.tagline{font-size:15px;font-style:italic;color:var(--dim);margin-bottom:8px}
+.overview{font-size:14px;color:var(--dim);line-height:1.75;max-width:680px}
+.about,.sec-head,.ott-intro{scroll-margin-top:84px}
+
+/* SEASON SECTION */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+  flex-wrap:wrap;gap:10px}
+.sec-title{font-size:16px;font-weight:700}
+
+.season-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.s-tab{display:flex;flex-direction:column;align-items:flex-start;gap:1px;
+  padding:8px 16px;border-radius:var(--r-md);border:1px solid var(--border);
+  background:transparent;color:var(--dim);cursor:pointer;font-family:inherit;
+  transition:all .15s;min-width:90px}
+.s-tab:hover{border-color:var(--border2);color:var(--text)}
+.s-tab.on{background:var(--pink-dim);border-color:var(--pink-border);color:var(--text)}
+.s-tab-name{font-size:13px;font-weight:600}
+.s-tab-meta{font-size:11px;color:var(--faint)}
+.s-tab.on .s-tab-meta{color:rgba(235,47,150,.7)}
+
+/* EPISODE LIST */
+.ep-list{display:flex;flex-direction:column;gap:2px}
+.ep{display:flex;align-items:flex-start;gap:14px;padding:13px 10px;
+  border-radius:var(--r-md);border:1px solid transparent;
+  cursor:pointer;transition:all .15s;text-align:left;width:100%;font-family:inherit;
+  background:transparent}
+.ep:hover{background:rgba(255,255,255,.04);border-color:var(--border)}
+.ep.ep-latest{border-color:var(--pink-border);background:rgba(235,47,150,.05)}
+.ep:disabled{cursor:default}
+.ep:disabled:hover{background:transparent;border-color:transparent}
+.ep-num{flex-shrink:0;font-size:14px;font-weight:600;color:var(--faint);
+  min-width:22px;padding-top:2px;text-align:right}
+.ep-thumb{flex-shrink:0;width:110px;aspect-ratio:16/9;border-radius:var(--r-sm);
+  overflow:hidden;background:var(--surf2);position:relative}
+@media(min-width:480px){.ep-thumb{width:136px}}
+@media(min-width:768px){.ep-thumb{width:160px}}
+.ep-thumb img{width:100%;height:100%;object-fit:cover}
+.ep-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--faint)}
+.ep-play-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;background:rgba(0,0,0,.4)}
+.ep:hover .ep-play-ov{opacity:1}
+.play-circle{width:32px;height:32px;background:rgba(255,255,255,.9);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#000}
+.ep-info{flex:1;min-width:0}
+.ep-title-row{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+.ep-title{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.ep-rt{font-size:12px;color:var(--faint);flex-shrink:0}
+.ep-date{font-size:12px;color:var(--faint);margin-bottom:4px}
+.ep-ov{font-size:13px;color:var(--dim);line-height:1.55;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.ep-soon{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;
+  color:var(--gold);background:rgba(245,166,35,.1);padding:2px 8px;border-radius:20px;margin-top:4px}
+
+/* OTT PLATFORM SECTION */
+.ott-intro{font-size:13px;color:var(--dim);margin-bottom:16px;max-width:560px}
+.ott-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){.ott-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.ott-grid{grid-template-columns:1fr 1fr 1fr}}
+
+.ott-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:18px;display:flex;flex-direction:column;gap:14px;transition:border-color .15s}
+.ott-card:hover{border-color:var(--border2)}
+.ott-card.na{opacity:.5}
+
+.ott-head{display:flex;align-items:center;gap:12px}
+.ott-logo{width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;flex-shrink:0;letter-spacing:-.3px}
+.ott-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.ott-avail{display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px}
+.ott-avail.yes{background:rgba(34,197,94,.1);color:#4ADE80;border:1px solid rgba(34,197,94,.2)}
+.ott-avail.no{background:rgba(255,255,255,.06);color:var(--faint)}
+
+.ott-content-tag{font-size:11px;color:var(--dim);margin-top:2px}
+
+.ott-packages{display:flex;flex-direction:column;gap:6px}
+.pkg-row{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border);
+  background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s}
+.pkg-row:hover{border-color:var(--border2);background:rgba(255,255,255,.06)}
+.pkg-row.featured{border-color:var(--pink-border);background:var(--pink-dim)}
+.pkg-name{font-size:12px;font-weight:600;color:var(--text)}
+.pkg-price{font-size:13px;font-weight:700;color:var(--text)}
+.pkg-price-sub{font-size:10px;color:var(--faint);margin-left:2px}
+.pkg-save{font-size:10px;font-weight:600;color:var(--pink);
+  background:rgba(235,47,150,.1);border:1px solid rgba(235,47,150,.2);
+  padding:1px 5px;border-radius:20px;margin-left:4px}
+
+.ott-cta{display:flex;align-items:center;gap:8px}
+.btn-ott-buy{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--pink);color:#fff;font-size:13px;font-weight:600;
+  padding:9px 14px;border-radius:var(--r-md);border:none;
+  cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-ott-buy:hover{background:#d42889}
+.btn-ott-buy.ghost{background:rgba(255,255,255,.07);color:var(--dim);border:1px solid var(--border)}
+.btn-ott-buy.ghost:hover{color:var(--text);background:rgba(255,255,255,.12)}
+
+/* MoMo benefit banner */
+.momo-benefit{background:var(--pink-dim);border:1px solid var(--pink-border);
+  border-radius:var(--r-lg);padding:18px 20px;margin-top:16px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.momo-benefit-icon{width:44px;height:44px;border-radius:11px;overflow:hidden;flex-shrink:0}
+.momo-benefit-icon img{width:100%;height:100%}
+.momo-benefit-body{flex:1;min-width:180px}
+.momo-benefit-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.momo-perks{display:flex;flex-wrap:wrap;gap:6px}
+.perk-chip{display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  color:var(--text);font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
+.btn-momo-all{display:flex;align-items:center;gap:5px;
+  background:var(--pink);color:#fff;font-size:13px;font-weight:600;
+  padding:9px 16px;border-radius:var(--r-md);border:none;
+  cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.btn-momo-all:hover{background:#d42889}
+
+/* CAST */
+.cast-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.cast-row::-webkit-scrollbar{display:none}
+.cast-card{flex-shrink:0;width:88px;cursor:pointer}
+.cast-av{width:88px;height:88px;border-radius:50%;overflow:hidden;background:var(--surf2);margin-bottom:7px}
+.cast-av img{width:100%;height:100%;object-fit:cover}
+.cast-init{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:700;color:var(--faint)}
+.cast-name{font-size:12px;font-weight:600;text-align:center;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.cast-role{font-size:11px;color:var(--faint);text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* GALLERY */
+.section-note{font-size:12px;color:var(--faint);margin-top:-6px;margin-bottom:14px}
+.photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:640px){.photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:980px){.photo-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.photo-card{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:var(--surf2);cursor:pointer;border:1px solid var(--border);transition:transform .15s,border-color .15s}
+.photo-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.photo-card img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-cap{position:absolute;left:0;right:0;bottom:0;padding:18px 10px 8px;font-size:11px;font-weight:600;color:#fff;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.55) 100%)}
+
+/* SIMILAR */
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+@media(min-width:560px){.sim-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
+.sim-card{cursor:pointer;transition:transform .15s}
+.sim-card:hover{transform:scale(1.03)}
+.sim-poster{aspect-ratio:2/3;border-radius:var(--r-md);overflow:hidden;background:var(--surf2);margin-bottom:7px}
+.sim-poster img{width:100%;height:100%;object-fit:cover}
+.sim-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.sim-year{font-size:11px;color:var(--faint)}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.modal.open{opacity:1;pointer-events:auto}
+.modal-box{background:var(--surf);border-radius:var(--r-xl);padding:24px;
+  max-width:600px;width:90%;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;
+  border-radius:50%;background:rgba(255,255,255,.1);border:none;color:var(--text);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.modal-close:hover{background:rgba(255,255,255,.18)}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:16px;padding-right:36px}
+.trailer-ph{aspect-ratio:16/9;background:#000;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+  color:var(--dim);font-size:14px}
+
+@media(max-width:560px){
+  .hero-inner{flex-direction:column;align-items:flex-start}
+  .ctas{width:100%}
+  .btn-watch,.btn-trailer{flex:1;justify-content:center}
+  .momo-pay{flex-direction:column;text-align:center}
+  .momo-pay-text{text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/cinema" class="nav-back">
+    <i data-lucide="chevron-left" style="width:16px;height:16px"></i>
+    Cinema
+  </a>
+  <span class="nav-divider">/</span>
+  <span class="nav-badge"><i data-lucide="tv-2" style="width:10px;height:10px"></i> Series</span>
+  <div class="nav-sp"></div>
+  <div class="nav-act">
+    <button class="nbtn nbtn-ghost" onclick="openTrailer()">
+      <i data-lucide="play" style="width:13px;height:13px"></i> Trailer
+    </button>
+    <button class="nbtn nbtn-primary" onclick="watchNow()">
+      <i data-lucide="play-circle" style="width:13px;height:13px"></i> Xem ngay
+    </button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="poster-stack">
+      <div class="hero-poster">
+        <img id="poster-img" src="" alt="" onerror="this.parentElement.style.display='none'">
+      </div>
+    </div>
+    <div class="hero-meta" id="hero-meta"></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="about" id="about-block"></div>
+  <div class="divider"></div>
+
+  <div id="season-sec">
+    <div class="sec-head">
+      <h2 class="sec-title">Tập phim</h2>
+      <div class="season-tabs" id="season-tabs"></div>
+    </div>
+    <div class="ep-list" id="ep-list"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div id="plat-sec">
+    <h2 class="sec-title" style="margin-bottom:6px">Xem ở đâu · Mua gói OTT</h2>
+    <div id="plat-content"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div id="cast-sec">
+    <h2 class="sec-title" style="margin-bottom:14px">Diễn viên</h2>
+    <div class="cast-row" id="cast-row"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div id="photo-sec">
+    <h2 class="sec-title" style="margin-bottom:6px">Ảnh phim</h2>
+    <div class="section-note">Ảnh hậu trường, poster và backdrop lấy từ TMDB cho đúng series đang mở.</div>
+    <div class="photo-grid" id="photo-grid"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div id="sim-sec">
+    <h2 class="sec-title" style="margin-bottom:14px">Có thể bạn thích</h2>
+    <div class="sim-grid" id="sim-grid"></div>
+  </div>
+</div>
+
+<div class="mobile-actions" aria-label="Hành động nhanh">
+  <button class="mini-btn primary" onclick="openTrailer()">
+    <i data-lucide="play-circle" style="width:14px;height:14px"></i>
+    Trailer
+  </button>
+  <button class="mini-btn" onclick="jumpTo('season-sec')">
+    <i data-lucide="layers-3" style="width:14px;height:14px"></i>
+    Tập phim
+  </button>
+  <button class="mini-btn" onclick="jumpTo('plat-sec')">
+    <i data-lucide="monitor-play" style="width:14px;height:14px"></i>
+    Xem ở đâu
+  </button>
+</div>
+
+<!-- TRAILER MODAL -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeTrailer()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeTrailer()">
+      <i data-lucide="x" style="width:15px;height:15px"></i>
+    </button>
+    <div class="modal-title" id="modal-title">Trailer</div>
+    <div class="trailer-ph">
+      <i data-lucide="play-circle" style="width:44px;height:44px;color:rgba(255,255,255,.25)"></i>
+      <span>Trailer sẽ phát tại đây</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── TMDB CONFIG ── */
+const TMDB = {
+  KEY: (() => {
+    try {
+      const qp = new URLSearchParams(location.search);
+      return qp.get('tmdb_token') || qp.get('tmdb_key') || localStorage.getItem('tmdb_access_token') || '';
+    } catch (e) {
+      return '';
+    }
+  })(),
+  USE_REAL: true,
+  BASE: 'https://api.themoviedb.org/3',
+  IMG: 'https://image.tmdb.org/t/p',
+};
+const tImg = (p, s = 'w500') => p ? `${TMDB.IMG}/${s}${p}` : '';
+
+const TMDB_GENRES = {
+  16: 'Hoạt hình',
+  18: 'Kịch tính',
+  27: 'Kinh dị',
+  35: 'Hài',
+  36: 'Lịch sử',
+  37: 'Viễn Tây',
+  53: 'Giật gân',
+  80: 'Tội phạm',
+  99: 'Tài liệu',
+  878: 'Khoa học viễn tưởng',
+  9648: 'Bí ẩn',
+  10751: 'Gia đình',
+  10759: 'Hành động & Phiêu lưu',
+  10762: 'Thiếu nhi',
+  10765: 'Khoa học viễn tưởng & Kỳ ảo',
+  10766: 'Opera',
+  10767: 'Talk Show',
+  10768: 'Chiến tranh & Chính trị',
+  10770: 'Phim truyền hình',
+};
+
+function tmdbHeaders() {
+  return {
+    Authorization: `Bearer ${TMDB.KEY}`,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+}
+
+function buildUrl(path, params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') qs.set(key, value);
+  });
+  return `${TMDB.BASE}${path}${qs.toString() ? `?${qs.toString()}` : ''}`;
+}
+
+async function tmdbFetch(path, params = {}) {
+  const res = await fetch(buildUrl(path, params), { headers: tmdbHeaders() });
+  if (!res.ok) throw new Error(`TMDB ${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+function cloneSeries(seed) {
+  if (!seed) return null;
+  return JSON.parse(JSON.stringify(seed));
+}
+
+function normalizeGenres(list) {
+  return (list || []).map(g => ({ id: g.id, name: g.name || TMDB_GENRES[g.id] || `Genre ${g.id}` }));
+}
+
+function getSeriesRoute() {
+  const parts = location.pathname.split('/').filter(Boolean);
+  const idx = parts.indexOf('series');
+  const tail = idx >= 0 ? parts.slice(idx + 1).join('/') : '';
+  const slug = tail.replace(/\/+$/, '');
+  const match = slug.match(/^(.*?)-(\d+)$/);
+  if (match) return { slug: match[1], id: Number(match[2]) };
+  return { slug: slug || 'the-last-of-us', id: null };
+}
+
+const SERIES_ROUTE = getSeriesRoute();
+
+async function resolveSeriesId(route) {
+  if (route.id) return route.id;
+  if (!(TMDB.USE_REAL && TMDB.KEY)) return FALLBACK_SERIES.id;
+
+  try {
+    const data = await tmdbFetch('/search/tv', {
+      query: route.slug.replace(/-/g, ' '),
+      language: 'vi-VN',
+      page: 1,
+      include_adult: 'false',
+    });
+    return data.results?.[0]?.id || FALLBACK_SERIES.id;
+  } catch (e) {
+    console.warn('TMDB series search failed', e);
+    return FALLBACK_SERIES.id;
+  }
+}
+
+/* ── MOCK DATA (shaped like TMDB /tv/:id) ── */
+const FALLBACK_SERIES = {
+  id: 100088,
+  name: 'The Last of Us',
+  original_name: 'The Last of Us',
+  tagline: "When you're lost in the darkness, look for the light.",
+  overview: '20 năm sau khi nền văn minh hiện đại sụp đổ, Joel — một kẻ buôn lậu cứng rắn — được giao nhiệm vụ đưa Ellie, cô bé 14 tuổi có khả năng miễn dịch kỳ lạ, ra khỏi vùng kiểm soát quân sự hà khắc. Chuyến đi ngắn ban đầu trở thành cuộc hành trình xuyên Mỹ đầy nguy hiểm, và cả hai phải dựa vào nhau để tồn tại.',
+  poster_path: '/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',
+  backdrop_path: null, // TMDB hash uncertain — poster used as blurred backdrop
+  first_air_date: '2023-01-15',
+  last_air_date: '2025-05-25',
+  number_of_seasons: 2,
+  number_of_episodes: 16,
+  status: 'Returning Series',
+  vote_average: 8.558,
+  vote_count: 10244,
+  content_ratings_display: 'TV-MA · C18',
+  genres: [
+    { id: 10759, name: 'Hành động & Phiêu lưu' },
+    { id: 18,    name: 'Kịch tính' },
+    { id: 27,    name: 'Kinh dị' },
+    { id: 10765, name: 'Khoa học viễn tưởng' },
+  ],
+  networks: [{ id: 49, name: 'HBO' }],
+  ext_scores: {
+    imdb: '8.7/10',
+    rt:   '96%',
+    meta: '84',
+    tmdb: '85%',
+  },
+  seasons: [
+    { season_number: 1, name: 'Season 1', episode_count: 9, air_date: '2023-01-15' },
+    { season_number: 2, name: 'Season 2', episode_count: 7, air_date: '2025-04-13' },
+  ],
+  cast: [
+    { id: 56322,   name: 'Pedro Pascal',    char: 'Joel Miller',    img: '/b3B9PzM2GBG9WgNTJLNlN68KK1q.jpg' },
+    { id: 2267640, name: 'Bella Ramsey',    char: 'Ellie Williams', img: '/hkOITRNHFBHm1QzZJIVEU4iE5rB.jpg' },
+    { id: 1262984, name: 'Gabriel Luna',    char: 'Tommy Miller',   img: '/mwF6GpFUROfVU0yGODHPvpJKERS.jpg' },
+    { id: 1893516, name: 'Anna Torv',       char: 'Tess',           img: '/f3iWS9JFY4oXIrI0E3mHNz1AGHI.jpg' },
+    { id: 2229617, name: 'Nico Parker',     char: 'Sarah',          img: null },
+    { id: 1478383, name: 'Storm Reid',      char: 'Riley Abel',     img: null },
+    { id: 3172082, name: 'Keivonn Woodard', char: 'Sam',            img: null },
+    { id: 56323,   name: 'Jeffrey Pierce',  char: 'Perry',          img: null },
+  ],
+  similar: [
+    { id: 1396,   name: 'Breaking Bad',       poster: '/ggFHVNu6YYI5L9pCfOacjizRGt.jpg', year: '2008' },
+    { id: 60735,  name: 'The Walking Dead',    poster: '/n7PhlMpK6WMNEHkuGfNVAGIQsrA.jpg', year: '2010' },
+    { id: 130392, name: 'The Diplomat',        poster: '/2meX1nMdScFOoV4370jsMVMnbHl.jpg', year: '2023' },
+    { id: 66732,  name: 'Stranger Things',     poster: '/49WJfeN0moxb9IPfGn8AIqMGskD.jpg', year: '2016' },
+    { id: 94997,  name: 'House of the Dragon', poster: '/z2yahl2uefxDCl0nogcRBstwruJ.jpg', year: '2022' },
+    { id: 95403,  name: 'The Bear',            poster: '/sHFlbKS3WLqMnp9t2ghADIJFnuQ.jpg', year: '2022' },
+  ],
+};
+
+/* ── MOCK SEASON DATA (TMDB /tv/:id/season/:n shape) ── */
+const FALLBACK_SEASONS = {
+  1: { episodes: [
+    { n:1, name:"When You're Lost in the Darkness",  date:'2023-01-15', rt:81, still:'/mXzXmjuVBo9DRWJSfN7KO3h7EMV.jpg', ov:'Joel và Tess nhận nhiệm vụ đưa Ellie qua ranh giới trong vành đai kiểm dịch Boston. Câu chuyện về sự sụp đổ của thế giới cũ dần hé lộ.' },
+    { n:2, name:'Infected',                          date:'2023-01-22', rt:57, still:'/cxIVHDzSHiKxMmzEMibvkIiQSZH.jpg', ov:'Nhóm phải băng qua khu vực bị nhiễm Cordyceps. Joel đối mặt với quyết định không thể quay đầu khi sự thật về Tess được hé lộ.' },
+    { n:3, name:'Long, Long Time',                   date:'2023-01-29', rt:76, still:'/lZuLSzX3tqUANWYb5MHfcGG18Ah.jpg', ov:'Câu chuyện của Bill và Frank — hai người đàn ông xây dựng cuộc sống và tình yêu giữa tận thế. Một trong những tập được đánh giá cao nhất mùa 1.' },
+    { n:4, name:'Please Hold to My Hand',            date:'2023-02-05', rt:49, still:'/dxs4EKMKkRrMSWJBDI2O6vlaCHY.jpg', ov:'Joel và Ellie rời vùng đất quen thuộc, tìm đường đến Kansas City. Khoảng cách và sự nghi ngờ giữa hai người dần thay bằng sự thấu hiểu.' },
+    { n:5, name:'Endure and Survive',                date:'2023-02-10', rt:59, still:'/pAQMXkVkBaGqDokRLDYFPxOxdvb.jpg', ov:'Henry và Sam gia nhập nhóm trong cuộc tháo chạy khỏi Kansas City. Mối đe dọa từ bên trong và bên ngoài leo thang đến đỉnh điểm bi thảm.' },
+    { n:6, name:'Kin',                               date:'2023-02-19', rt:54, still:'/nZ4JFWkrLSAGl4OwOwDyYc49mVB.jpg', ov:'Joel và Ellie đến Wyoming, gặp lại Tommy trong cộng đồng Jackson. Nhưng quá khứ và nỗi sợ không bao giờ rời xa Joel.' },
+    { n:7, name:'Left Behind',                       date:'2023-02-24', rt:51, still:'/aKJ8E7s6PjFN9pkSVT1NQIN7Skv.jpg', ov:'Flashback về đêm cuối trong trung tâm thương mại bỏ hoang — Riley và Ellie chia sẻ những giờ phút bình yên ngắn ngủi trước khi mọi thứ thay đổi.' },
+    { n:8, name:'When We Are in Need',               date:'2023-03-03', rt:49, still:'/pHMEVNyX0TwHFsRl9JFjxUJMcXd.jpg', ov:'Ellie một mình bảo vệ Joel đang bị thương trong khi đối mặt với kẻ thù tàn bạo nhất từ trước đến nay. Sự dũng cảm và bạo lực đan xen.' },
+    { n:9, name:'Look for the Light',                date:'2023-03-12', rt:43, still:'/vJuHm8iukB4MKIO42vx7FBL0Km4.jpg', ov:'Hành trình đến Fireflies đặt Joel trước lựa chọn không thể có đáp án đúng. Cái kết của mùa 1 sẽ ám ảnh người xem mãi mãi.' },
+  ]},
+  2: { episodes: [
+    { n:1, name:'Future Days',                 date:'2025-04-13', rt:57, still:'/dxMDLuEWuVyxnE5gJC4lp6aDqIJ.jpg', ov:'5 năm sau, Ellie và Joel đang cố xây dựng cuộc sống tại Jackson. Nhưng vết thương cũ và mối nguy hiểm mới đang âm thầm hội tụ.' },
+    { n:2, name:'Through the Valley',          date:'2025-04-20', rt:62, still:'/wA9xsHKGWRXtbzFwQPvjuyvWpCN.jpg', ov:'Một sự kiện chấn động kéo Ellie ra khỏi Jackson và đẩy cô vào cuộc truy tìm đầy thù hận không có điểm quay lại.' },
+    { n:3, name:'The Path',                    date:'2025-04-27', rt:47, still:'/7K1JXs0LMmJBMBNjzXEA3AMEaOh.jpg', ov:'Ellie tiếp tục hành trình đến Seattle — thành phố bị chia cắt giữa WLF và Seraphites. Kẻ thù và đồng minh cũ đan xen khó lường.' },
+    { n:4, name:'Day One',                     date:'2025-05-04', rt:51, still:'/sG2HMjJHJ0o1eNhNQgNfBsO5LoH.jpg', ov:'Ellie và Dina khám phá Seattle ngày đầu tiên. Thành phố bị chia cắt bởi hai thế lực đều cực kỳ nguy hiểm theo những cách khác nhau.' },
+    { n:5, name:'Measure Twice, Cut Once',     date:'2025-05-11', rt:48, still:'/fJsW0I0kaCxjzrJWJPYarXkJFVk.jpg', ov:'Đêm im lặng nhất trong hành trình, nhưng cũng ẩn chứa nhiều bí ẩn nhất. Ellie và Dina đối mặt với nỗi sợ từ trong ra ngoài.' },
+    { n:6, name:'The Price',                   date:'2025-05-18', rt:49, still:'/nG58C4eNMGLhHNQXZFyxVFQ5n5S.jpg', ov:'Ellie tìm thấy manh mối quan trọng nhưng giá phải trả có thể là thứ cô không bao giờ muốn đánh đổi.' },
+    { n:7, name:'The Last of Us',              date:'2025-05-25', rt:53, still:'/oGythgqe70e9ufkjPaqN1FMlqh0.jpg', ov:'Tập kết mùa 2. Ellie đối mặt với lựa chọn cuối cùng khi mọi con đường đều hội tụ về một điểm không thể tránh khỏi.' },
+  ]},
+};
+
+/* ── OTT PARTNER CONFIG (MoMo-controlled, keyed by TMDB provider_id or native key) ── */
+const MOMO_OTT_PARTNERS = {
+  8: {  // Netflix — TMDB provider_id 8
+    id: 'netflix', name: 'Netflix', color: '#141414', tc: '#E50914', lbl: 'N',
+    packages: [
+      { name: 'Tiêu chuẩn',    price: 180000, period: 'tháng', featured: false },
+      { name: 'Tiêu chuẩn 4K', price: 260000, period: 'tháng', featured: true, save: 'Phổ biến nhất' },
+    ],
+  },
+  native_fptplay: {  // FPT Play — not in TMDB/JustWatch VN
+    id: 'fptplay', name: 'FPT Play', color: '#E5001C', tc: '#fff', lbl: 'FPT',
+    packages: [
+      { name: 'FPT Play Basic', price: 75000,   period: 'tháng', featured: false },
+      { name: 'FPT Play PLUS',  price: 149000,  period: 'tháng', featured: true, save: 'HBO + Sport' },
+      { name: 'FPT Play PLUS',  price: 1190000, period: 'năm',   featured: false, save: 'Tiết kiệm 34%' },
+    ],
+  },
+  native_vieon: {  // VieON — not in TMDB/JustWatch VN
+    id: 'vieon', name: 'VieON', color: '#0065BD', tc: '#fff', lbl: 'Vie',
+    packages: [
+      { name: 'VieON+',     price: 59000,  period: 'tháng', featured: false },
+      { name: 'VieON+ Năm', price: 499000, period: 'năm',   featured: true, save: 'Tiết kiệm 30%' },
+    ],
+  },
+};
+
+/* Mock shaped like TMDB GET /tv/{id}/watch/providers?watch_region=VN */
+const MOCK_WATCH_PROVIDERS = {
+  100088: {  // The Last of Us — HBO show, NOT on Netflix VN
+    results: { VN: { flatrate: [] } },
+  },
+};
+
+/* MoMo native partner availability — per series, per platform key */
+const MOCK_NATIVE_AVAILABILITY = {
+  100088: {  // The Last of Us
+    native_fptplay: { avail: true,  content: 'S1 + S2 đầy đủ · Phụ đề Việt · HBO' },
+    native_vieon:   { avail: false, content: '' },
+  },
+};
+
+/* ── LOAD WATCH PROVIDERS ── */
+async function loadWatchProviders(seriesId) {
+  let tmdbFlatrate = [];
+
+  if (TMDB.USE_REAL && TMDB.KEY) {
+    try {
+      const data = await tmdbFetch(`/tv/${seriesId}/watch/providers`, { watch_region: 'VN' });
+      tmdbFlatrate = data.results?.VN?.flatrate || [];
+    } catch (e) { console.warn('Watch providers fetch failed', e); }
+  } else {
+    tmdbFlatrate = MOCK_WATCH_PROVIDERS[seriesId]?.results?.VN?.flatrate || [];
+  }
+
+  const nativeData = MOCK_NATIVE_AVAILABILITY[seriesId] || {};
+  const platforms = [];
+
+  // TMDB-confirmed providers → match to MoMo partners
+  for (const p of tmdbFlatrate) {
+    const partner = MOMO_OTT_PARTNERS[p.provider_id];
+    if (partner) platforms.push({ ...partner, avail: true, content: 'Có sẵn · Phụ đề Việt', source: 'tmdb' });
+  }
+
+  // Native MoMo partners (FPT Play, VieON)
+  for (const [key, avData] of Object.entries(nativeData)) {
+    const partner = MOMO_OTT_PARTNERS[key];
+    if (partner) platforms.push({ ...partner, avail: avData.avail, content: avData.content, source: 'native' });
+  }
+
+  // Available platforms first
+  platforms.sort((a, b) => (b.avail ? 1 : 0) - (a.avail ? 1 : 0));
+  return platforms;
+}
+
+function normalizeProviders(results, seriesId = SERIES_ROUTE.id || FALLBACK_SERIES.id) {
+  const flatrate = results?.VN?.flatrate || [];
+  const platforms = [];
+
+  for (const p of flatrate) {
+    const partner = MOMO_OTT_PARTNERS[p.provider_id];
+    if (partner) platforms.push({ ...partner, avail: true, content: 'Có sẵn · Phụ đề Việt', source: 'tmdb' });
+  }
+
+  const nativeData = MOCK_NATIVE_AVAILABILITY[seriesId] || {};
+  for (const [key, avData] of Object.entries(nativeData)) {
+    const partner = MOMO_OTT_PARTNERS[key];
+    if (partner) platforms.push({ ...partner, avail: avData.avail, content: avData.content, source: 'native' });
+  }
+
+  platforms.sort((a, b) => (b.avail ? 1 : 0) - (a.avail ? 1 : 0));
+  return platforms;
+}
+
+function normalizeSeasonDetail(detail) {
+  return {
+    episodes: (detail?.episodes || []).map(ep => ({
+      n: ep.episode_number,
+      name: ep.name || `Episode ${ep.episode_number}`,
+      date: ep.air_date || '',
+      rt: Math.round((ep.vote_average || 0) * 10),
+      still: ep.still_path || '',
+      ov: ep.overview || 'Chưa có mô tả từ TMDB.',
+    })),
+  };
+}
+
+function pickBackdropPath(details, images) {
+  const backdropCandidates = [
+    details?.backdrop_path,
+    images?.backdrops?.find(b => b.file_path)?.file_path,
+  ].filter(Boolean);
+  return backdropCandidates[0] || null;
+}
+
+function pickGalleryImages(images) {
+  const seen = new Set();
+  const source = [
+    ...(images?.backdrops || []).slice(0, 6).map(img => ({
+      path: img.file_path,
+      label: 'Backdrop',
+      ratio: '16/9',
+    })),
+    ...(images?.posters || []).slice(0, 4).map(img => ({
+      path: img.file_path,
+      label: 'Poster',
+      ratio: '2/3',
+    })),
+  ];
+
+  return source.filter(item => {
+    if (!item.path || seen.has(item.path)) return false;
+    seen.add(item.path);
+    return true;
+  });
+}
+
+const seasonCache = {};
+
+async function loadSeason(seriesId, seasonNum) {
+  if (seasonCache[seasonNum]) return seasonCache[seasonNum];
+  if (!(TMDB.USE_REAL && TMDB.KEY)) return cloneSeries(FALLBACK_SEASONS[seasonNum] || null);
+
+  try {
+    const data = await tmdbFetch(`/tv/${seriesId}/season/${seasonNum}`, { language: 'vi-VN' });
+    const normalized = normalizeSeasonDetail(data);
+    seasonCache[seasonNum] = normalized;
+    return normalized;
+  } catch (e) {
+    console.warn(`TMDB season ${seasonNum} fetch failed`, e);
+    return cloneSeries(FALLBACK_SEASONS[seasonNum] || null);
+  }
+}
+
+async function loadSeriesMeta(seriesId) {
+  if (!(TMDB.USE_REAL && TMDB.KEY)) return cloneSeries(FALLBACK_SERIES);
+
+  try {
+    const [details, aggregateCredits, similar, providers, seasonTwo, images] = await Promise.all([
+      tmdbFetch(`/tv/${seriesId}`, {
+        language: 'vi-VN',
+        append_to_response: 'content_ratings,external_ids',
+      }),
+      tmdbFetch(`/tv/${seriesId}/aggregate_credits`, { language: 'vi-VN' }),
+      tmdbFetch(`/tv/${seriesId}/similar`, { language: 'vi-VN', page: 1 }),
+      tmdbFetch(`/tv/${seriesId}/watch/providers`, { watch_region: 'VN' }),
+      tmdbFetch(`/tv/${seriesId}/season/2`, { language: 'vi-VN' }).catch(() => null),
+      tmdbFetch(`/tv/${seriesId}/images`, { include_image_language: 'en,null' }).catch(() => null),
+    ]);
+
+    const vnRating = details.content_ratings?.results?.find(r => r.iso_3166_1 === 'VN')?.rating
+      || details.content_ratings?.results?.find(r => r.iso_3166_1 === 'US')?.rating
+      || FALLBACK_SERIES.content_ratings_display;
+
+    const cast = (aggregateCredits.cast || []).slice(0, 12).map(p => ({
+      id: p.id,
+      name: p.name,
+      char: (p.roles && p.roles[0] && p.roles[0].character) || p.character || '',
+      img: p.profile_path,
+    }));
+
+    const seasons = (details.seasons || []).filter(s => s.season_number > 0).map(s => ({
+      season_number: s.season_number,
+      name: s.name || `Season ${s.season_number}`,
+      episode_count: s.episode_count || 0,
+      air_date: s.air_date || '',
+    }));
+
+    if (seasonTwo && seasonTwo.season_number === 2) {
+      seasonCache[2] = normalizeSeasonDetail(seasonTwo);
+    }
+
+    return {
+      ...cloneSeries(FALLBACK_SERIES),
+      id: details.id || seriesId,
+      name: details.name || details.original_name || FALLBACK_SERIES.name,
+      original_name: details.original_name || details.name || FALLBACK_SERIES.original_name,
+      tagline: details.tagline || FALLBACK_SERIES.tagline,
+      overview: details.overview || FALLBACK_SERIES.overview,
+      poster_path: details.poster_path || FALLBACK_SERIES.poster_path,
+      backdrop_path: pickBackdropPath(details, images) || FALLBACK_SERIES.backdrop_path,
+      hero_backdrop_path: pickBackdropPath(details, images) || FALLBACK_SERIES.backdrop_path,
+      first_air_date: details.first_air_date || FALLBACK_SERIES.first_air_date,
+      last_air_date: details.last_air_date || FALLBACK_SERIES.last_air_date,
+      number_of_seasons: details.number_of_seasons || seasons.length || FALLBACK_SERIES.number_of_seasons,
+      number_of_episodes: details.number_of_episodes || FALLBACK_SERIES.number_of_episodes,
+      status: details.status || FALLBACK_SERIES.status,
+      vote_average: details.vote_average || FALLBACK_SERIES.vote_average,
+      vote_count: details.vote_count || FALLBACK_SERIES.vote_count,
+      content_ratings_display: vnRating ? `TV-${vnRating}` : FALLBACK_SERIES.content_ratings_display,
+      genres: normalizeGenres(details.genres || FALLBACK_SERIES.genres),
+      networks: (details.networks || FALLBACK_SERIES.networks).map(n => ({ id: n.id, name: n.name })),
+      ext_scores: {
+        ...FALLBACK_SERIES.ext_scores,
+        tmdb: `${Math.round((details.vote_average || FALLBACK_SERIES.vote_average) * 10)}%`,
+      },
+      seasons,
+      cast: cast.length ? cast : FALLBACK_SERIES.cast,
+      similar: (similar.results || []).slice(0, 6).map(item => ({
+        id: item.id,
+        name: item.name,
+        poster: item.poster_path,
+        year: (item.first_air_date || '').slice(0, 4) || '',
+      })).filter(item => item.poster),
+      gallery: pickGalleryImages(images),
+      platforms: normalizeProviders(providers.results || {}, seriesId),
+    };
+  } catch (e) {
+    console.warn('TMDB series fetch failed', e);
+    return cloneSeries(FALLBACK_SERIES);
+  }
+}
+
+/* ── STATE ── */
+let S = null;         // series data
+let activeSeason = 2;
+let saved = false;
+
+/* ── HELPERS ── */
+const fDate = s => s ? new Date(s).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+const fYear = s => s ? s.slice(0,4) : '';
+const fRT = m => { if(!m) return ''; const h=Math.floor(m/60),mn=m%60; return h ? `${h}g${mn?mn+'p':''}` : `${mn}p`; };
+const aired = d => !d || new Date(d) <= new Date();
+
+function icon(name, sz = 16) {
+  if (typeof lucide === 'undefined') return '';
+  const el = lucide.createElement(lucide.icons[name] || lucide.icons['film']);
+  el.setAttribute('width', sz); el.setAttribute('height', sz);
+  return el.outerHTML;
+}
+
+/* ── RENDER HERO ── */
+function renderHero(s) {
+  const heroBg = document.getElementById('hero-bg');
+  if (s.backdrop_path) {
+    // Real TMDB backdrop (16:9 image) when available
+    heroBg.classList.add('has-backdrop');
+    heroBg.innerHTML = `<img src="${tImg(s.backdrop_path,'original')}" alt="">`;
+  } else {
+    // CSS gradient backdrop — palette pulled from series color identity
+    // TLOU: burnt amber / ash teal / near-black
+    heroBg.style.background = [
+      'radial-gradient(ellipse 110% 70% at 65% 15%, rgba(120,68,22,.58) 0%, transparent 55%)',
+      'radial-gradient(ellipse 70% 55% at 15% 75%, rgba(28,72,58,.38) 0%, transparent 55%)',
+      'radial-gradient(ellipse 50% 40% at 85% 80%, rgba(80,40,10,.25) 0%, transparent 50%)',
+      'linear-gradient(160deg, #1C0F04 0%, #080810 60%, #060A0D 100%)',
+    ].join(',');
+  }
+  const pi = document.getElementById('poster-img');
+  pi.src = tImg(s.poster_path, 'w342');
+  pi.alt = s.name;
+
+  const yr0 = fYear(s.first_air_date);
+  const yr1 = s.status === 'Ended' ? fYear(s.last_air_date) : 'nay';
+  const factItems = [
+    { label: 'Phát hành', value: yr0 ? yr0 : 'N/A' },
+    { label: 'Mùa / Tập', value: `${s.number_of_seasons} / ${s.number_of_episodes}` },
+    { label: 'Network', value: (s.networks && s.networks[0] && s.networks[0].name) || 'N/A' },
+    { label: 'Rating', value: s.content_ratings_display || 'N/A' },
+  ];
+  const chips = [
+    `TMDB ${Math.round((s.vote_average || 0) * 10)}%`,
+    s.ext_scores?.imdb ? `IMDb ${s.ext_scores.imdb}` : null,
+    s.ext_scores?.rt ? `RT ${s.ext_scores.rt}` : null,
+  ].filter(Boolean);
+
+  document.getElementById('hero-meta').innerHTML = `
+    <div class="hero-type-tag">${icon('tv-2',11)} Phim bộ</div>
+    <h1 class="hero-title">${s.name}</h1>
+    ${s.original_name !== s.name ? `<div class="hero-orig">${s.original_name}</div>` : ''}
+    <div class="hero-info">
+      <span>${yr0}–${yr1}</span><span class="dot">·</span>
+      <span>${s.number_of_seasons} mùa · ${s.number_of_episodes} tập</span><span class="dot">·</span>
+      <span class="age-badge">${s.content_ratings_display}</span><span class="dot">·</span>
+    </div>
+    <div class="hero-facts">
+      ${factItems.map(f => `<div class="fact-card"><span class="fact-label">${f.label}</span><span class="fact-value">${f.value}</span></div>`).join('')}
+    </div>
+    <div class="ratings-row">
+      <div class="ratings-label">Đánh giá tham khảo</div>
+      <div class="ext-scores">
+        <div class="ext-item"><span class="badge badge-imdb">IMDb</span><span class="ext-val">${s.ext_scores.imdb}</span></div>
+        <div class="ext-item"><span class="badge badge-rt">RT</span><span class="ext-val">${s.ext_scores.rt}</span></div>
+        <div class="ext-item"><span class="badge badge-meta">Meta</span><span class="ext-val">${s.ext_scores.meta}</span></div>
+        <div class="ext-item"><span class="badge badge-tmdb">TMDB</span><span class="ext-val">${s.ext_scores.tmdb}</span></div>
+      </div>
+    </div>
+    <div class="hero-flow">
+      ${chips.map((chip, idx) => `<span class="flow-chip"><strong>${idx + 1}</strong> ${chip}</span>`).join('')}
+    </div>
+    <div class="genres">${s.genres.map(g => `<span class="g-pill">${g.name}</span>`).join('')}</div>
+    <div class="ctas">
+      <button class="btn-watch" onclick="watchNow()">${icon('play',16)} Xem ngay</button>
+      <button class="btn-trailer" onclick="openTrailer()">${icon('play-circle',15)} Trailer</button>
+      <button class="btn-save" id="save-btn" onclick="toggleSave()">${icon('bookmark',15)} Lưu</button>
+    </div>
+  `;
+
+  document.title = `${s.name} | MoMo Cinema`;
+  document.getElementById('modal-title').textContent = `${s.name} — Official Trailer`;
+}
+
+/* ── RENDER ABOUT ── */
+function renderAbout(s) {
+  document.getElementById('about-block').innerHTML = `
+    ${s.tagline ? `<p class="tagline">"${s.tagline}"</p>` : ''}
+    <p class="overview">${s.overview}</p>
+  `;
+}
+
+/* ── RENDER SEASON TABS ── */
+function renderTabs(s) {
+  document.getElementById('season-tabs').innerHTML = s.seasons.map(ss => `
+    <button class="s-tab ${ss.season_number === activeSeason ? 'on' : ''}"
+            onclick="switchSeason(${ss.season_number})">
+      <span class="s-tab-name">${ss.name}</span>
+      <span class="s-tab-meta">${ss.episode_count} tập · ${fYear(ss.air_date)}</span>
+    </button>
+  `).join('');
+}
+
+/* ── RENDER EPISODES ── */
+async function renderEps(seasonNum) {
+  const list = document.getElementById('ep-list');
+  list.innerHTML = '<div style="padding:12px 0;color:var(--faint)">Đang đồng bộ tập phim từ TMDB...</div>';
+  const data = await loadSeason(S.id, seasonNum);
+  if (!data) {
+    list.innerHTML = '<div style="padding:12px 0;color:var(--faint)">Chưa có dữ liệu tập từ TMDB.</div>';
+    return;
+  }
+
+  list.innerHTML = data.episodes.map((ep, i) => {
+    const isAired = aired(ep.date);
+    const stillUrl = ep.still ? tImg(ep.still, 'w300') : '';
+    const isLatest = seasonNum === activeSeason && i === 0;
+
+    return `
+      <button class="ep ${isLatest ? 'ep-latest' : ''}"
+              ${isAired ? `onclick="playEp(${ep.n},${seasonNum})"` : 'disabled'}
+              style="${!isAired ? 'cursor:default' : ''}">
+        <span class="ep-num">${ep.n}</span>
+        <div class="ep-thumb">
+          ${stillUrl
+            ? `<img src="${stillUrl}" alt="E${ep.n}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+               <div class="ep-ph" style="display:none">${icon('film',18)}</div>`
+            : `<div class="ep-ph">${icon('film',18)}</div>`}
+          ${isAired ? `<div class="ep-play-ov"><div class="play-circle">${icon('play',13)}</div></div>` : ''}
+        </div>
+        <div class="ep-info">
+          <div class="ep-title-row">
+            <span class="ep-title">${ep.name}</span>
+            <span class="ep-rt">${fRT(ep.rt)}</span>
+          </div>
+          <div class="ep-date">${fDate(ep.date)}</div>
+          ${isAired
+            ? `<p class="ep-ov">${ep.ov}</p>`
+            : `<div class="ep-soon">${icon('clock',10)} Sắp ra mắt</div>`}
+        </div>
+      </button>
+    `;
+  }).join('');
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+/* ── RENDER PLATFORMS ── */
+function renderPlatforms(platforms) {
+  const fmtPrice = n => n.toLocaleString('vi') + 'đ';
+  const availCount = platforms.filter(p => p.avail).length;
+
+  const cards = platforms.map(p => `
+    <div class="ott-card ${p.avail ? '' : 'na'}">
+      <div class="ott-head">
+        <div class="ott-logo" style="background:${p.color};color:${p.tc};font-size:${p.lbl.length > 2 ? '11px' : '15px'}">${p.lbl}</div>
+        <div>
+          <div class="ott-title">${p.name}</div>
+          <span class="ott-avail ${p.avail ? 'yes' : 'no'}">
+            ${p.avail ? (icon('check',10) + ' Có phim này') : (icon('x',10) + ' Không có sẵn')}
+          </span>
+        </div>
+      </div>
+
+      ${p.avail ? `
+        <div class="ott-content-tag">${icon('film',11)} ${p.content}</div>
+
+        <div class="ott-packages">
+          ${p.packages.map(pkg => `
+            <div class="pkg-row ${pkg.featured ? 'featured' : ''}" onclick="buyPkg('${p.id}','${pkg.name}')">
+              <div>
+                <div class="pkg-name">${pkg.name}${pkg.save ? `<span class="pkg-save">${pkg.save}</span>` : ''}</div>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:3px">
+                <span class="pkg-price">${fmtPrice(pkg.price)}</span>
+                <span class="pkg-price-sub">/${pkg.period}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="ott-cta">
+          <button class="btn-ott-buy" onclick="buyOTT('${p.id}')">
+            ${icon('shopping-cart',13)} Mua qua MoMo
+          </button>
+          <button class="btn-ott-buy ghost" onclick="previewOTT('${p.id}')">
+            ${icon('play',13)}
+          </button>
+        </div>
+      ` : `<div style="font-size:12px;color:var(--faint);padding:8px 0">Phim chưa có trên nền tảng này tại Việt Nam</div>`}
+    </div>
+  `).join('');
+
+  const introText = availCount > 0
+    ? `"${S.name}" hiện có trên ${availCount} nền tảng tại Việt Nam. Chọn gói phù hợp và thanh toán qua MoMo nếu muốn chốt nhanh.`
+    : `"${S.name}" chưa có trên các nền tảng OTT MoMo hợp tác. Quay lại sau để cập nhật.`;
+
+  document.getElementById('plat-content').innerHTML = `
+    <p class="ott-intro">${introText}</p>
+    <div class="ott-grid">${cards}</div>
+    ${availCount > 0 ? `
+    <div class="momo-benefit">
+      <div class="momo-benefit-icon">
+        <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240920155100-638624442609290301.png" alt="MoMo">
+      </div>
+      <div class="momo-benefit-body">
+        <div class="momo-benefit-title">Thanh toán qua MoMo</div>
+        <div class="momo-perks">
+          <span class="perk-chip">${icon('gift',11)} 1 tháng miễn phí lần đầu</span>
+          <span class="perk-chip">${icon('percent',11)} Hoàn xu / ưu đãi gói</span>
+          <span class="perk-chip">${icon('zap',11)} Gia hạn tự động</span>
+          <span class="perk-chip">${icon('tag',11)} Gói gia đình giảm 20%</span>
+        </div>
+      </div>
+      <button class="btn-momo-all" onclick="viewAllOTT()">
+        ${icon('grid',13)} Xem tất cả gói OTT
+      </button>
+    </div>` : ''}
+  `;
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+/* ── RENDER CAST ── */
+function renderCast(s) {
+  document.getElementById('cast-row').innerHTML = s.cast.map(p => {
+    const url = p.img ? tImg(p.img, 'w185') : '';
+    return `
+      <div class="cast-card" onclick="goActor(${p.id},'${p.name}')">
+        <div class="cast-av">
+          ${url
+            ? `<img src="${url}" alt="${p.name}" onerror="this.outerHTML='<div class=cast-init>${p.name[0]}</div>'">`
+            : `<div class="cast-init">${p.name[0]}</div>`}
+        </div>
+        <div class="cast-name" title="${p.name}">${p.name}</div>
+        <div class="cast-role" title="${p.char}">${p.char}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderGallery(s) {
+  document.getElementById('photo-grid').innerHTML = (s.gallery || []).map((img, idx) => `
+    <div class="photo-card" onclick="openPhoto('${img.path}')">
+      <img src="${tImg(img.path,'w780')}" alt="${s.name} ${img.label} ${idx + 1}" onerror="this.style.display='none'">
+      <div class="photo-cap">${img.label}</div>
+    </div>
+  `).join('');
+}
+
+/* ── RENDER SIMILAR ── */
+function renderSimilar(s) {
+  document.getElementById('sim-grid').innerHTML = s.similar.map(item => `
+    <div class="sim-card" onclick="goSeries(${item.id},'${item.name}')">
+      <div class="sim-poster">
+        <img src="${tImg(item.poster,'w342')}" alt="${item.name}" onerror="this.style.display='none'">
+      </div>
+      <div class="sim-name">${item.name}</div>
+      <div class="sim-year">${item.year}</div>
+    </div>
+  `).join('');
+}
+
+/* ── SEASON SWITCH ── */
+function switchSeason(n) {
+  activeSeason = n;
+  renderTabs(S);
+  void renderEps(n);
+}
+
+/* ── ACTIONS ── */
+function watchNow()  { alert(`Mở nền tảng OTT để xem ${S?.name || FALLBACK_SERIES.name}`); }
+function playEp(n,s) { alert(`S${s}E${n} — Chuyển đến nền tảng xem ${S?.name || FALLBACK_SERIES.name}`); }
+function openTrailer(){ document.getElementById('modal').classList.add('open'); }
+function closeTrailer(){ document.getElementById('modal').classList.remove('open'); }
+function buyOTT(id)      { alert(`Mở MoMo → Mua gói ${id.toUpperCase()}`); }
+function buyPkg(id, pkg) { alert(`Mua "${pkg}" trên ${id.toUpperCase()} qua MoMo`); }
+function previewOTT(id)  { alert(`Xem thử trên ${id.toUpperCase()}`); }
+function viewAllOTT()    { alert('Chuyển đến trang OTT Hub của MoMo'); }
+function goActor(id,name){ window.location.href = `/cinema/actor/${name.toLowerCase().replace(/\s+/g,'-')}-${id}`; }
+function goSeries(id,name){ window.location.href = `/cinema/series/${name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${id}`; }
+function jumpTo(id){ document.getElementById(id)?.scrollIntoView({behavior:'smooth', block:'start'}); }
+function openPhoto(path){ window.open(tImg(path, 'original'), '_blank', 'noopener,noreferrer'); }
+
+function toggleSave() {
+  saved = !saved;
+  const btn = document.getElementById('save-btn');
+  btn.className = 'btn-save' + (saved ? ' saved' : '');
+  btn.innerHTML = icon('bookmark',15) + (saved ? ' Đã lưu' : ' Lưu');
+}
+
+/* ── INIT ── */
+async function init() {
+  const seriesId = await resolveSeriesId(SERIES_ROUTE);
+  S = await loadSeriesMeta(seriesId);
+  const seasonNums = (S.seasons || []).map(s => s.season_number).filter(Boolean);
+  activeSeason = seasonNums.length ? Math.max(...seasonNums) : 1;
+  renderHero(S);
+  renderAbout(S);
+  renderTabs(S);
+  renderCast(S);
+  renderSimilar(S);
+  renderPlatforms(S.platforms || await loadWatchProviders(S.id));
+  await renderEps(activeSeason);
+  renderGallery(S);
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTrailer(); });
+init();
+</script>
+</body>
+</html>
