@@ -105,29 +105,26 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .ff-pill{font-family:inherit;font-size:12px;font-weight:700;color:var(--gray-600);background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:5px 14px;cursor:pointer;transition:.15s}
 .ff-pill:hover{border-color:var(--pink-500);color:var(--pink-500)}
 .ff-pill.on{background:var(--pink-50);border-color:var(--pink-500);color:var(--pink-500)}
-.film-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px}
-.film-card{background:#fff;border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-s);cursor:pointer;transition:transform .18s,box-shadow .18s}
-.film-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-m)}
-.film-poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:var(--gray-200)}
-.film-poster-fb{width:100%;aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;background:var(--gray-100);font-size:32px}
-.film-body{padding:10px}
-.film-title{font-size:12px;font-weight:800;color:var(--gray-900);line-height:1.3;margin-bottom:4px}
-.film-year{font-size:11px;color:var(--gray-500)}
-.film-role{font-size:11px;color:var(--pink-500);font-weight:700;margin-top:3px;display:flex;align-items:center;gap:3px}
-.film-score{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--gray-600);font-weight:700;margin-top:4px}
-.score-dot{width:6px;height:6px;border-radius:50%;background:var(--gray-300);display:inline-block}
+.film-list{display:flex;flex-direction:column;gap:12px}
+.film-card{background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-s);cursor:pointer;transition:box-shadow .18s;display:flex;gap:0}
+.film-card:hover{box-shadow:var(--shadow-m)}
+.film-poster-wrap{flex-shrink:0;width:90px;position:relative}
+.film-poster{width:90px;height:135px;object-fit:cover;display:block}
+.film-poster-fb{width:90px;height:135px;display:flex;align-items:center;justify-content:center;background:var(--gray-100);font-size:28px;flex-shrink:0}
+.film-now-badge{position:absolute;top:7px;left:7px;font-size:9px;font-weight:800;background:var(--pink-500);color:#fff;padding:2px 6px;border-radius:4px;line-height:1.4}
+.film-body{padding:14px 16px;display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.film-title{font-size:14px;font-weight:800;color:var(--gray-900);line-height:1.3}
+.film-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.film-year{font-size:12px;color:var(--gray-500);font-weight:600}
+.film-role{font-size:12px;color:var(--pink-500);font-weight:700;display:flex;align-items:center;gap:4px}
+.film-score{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-700);font-weight:700}
+.score-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-300);display:inline-block;flex-shrink:0}
 .score-dot.high{background:#22c55e}
 .score-dot.med{background:#f59e0b}
 .score-dot.low{background:#ef4444}
-
-/* PHOTOS */
-.photos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.photo-item{border-radius:var(--r-md);overflow:hidden;cursor:pointer;position:relative;group:hover}
-.photo-item img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;transition:transform .2s}
-.photo-item:hover img{transform:scale(1.04)}
-.photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.5) 0%,transparent 50%);opacity:0;transition:.2s;display:flex;align-items:flex-end;padding:10px}
-.photo-item:hover .photo-overlay{opacity:1}
-.photo-res{font-size:10px;color:rgba(255,255,255,.8);font-weight:700}
+.film-overview{font-size:12px;line-height:1.6;color:var(--gray-600);margin-top:2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.film-genres{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.film-genre-tag{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);border-radius:4px;padding:2px 7px}
 
 /* FIELD ANNOTATIONS */
 .field-note{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--gray-400);margin-left:6px;font-family:monospace}
@@ -264,9 +261,6 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
     <button class="tab-btn" id="tab-films" onclick="switchTab('films')">
       <i data-lucide="clapperboard" width="14" height="14" stroke-width="2"></i> Filmography <span class="tab-count">47</span>
     </button>
-    <button class="tab-btn" id="tab-photos" onclick="switchTab('photos')">
-      <i data-lucide="image" width="14" height="14" stroke-width="2"></i> Ảnh <span class="tab-count">12</span>
-    </button>
   </div>
 
   <!-- TAB: BIO -->
@@ -331,23 +325,11 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
   <div class="tab-panel" id="panel-films">
     <div class="film-filters">
       <span class="ff-label">Vai:</span>
-      <button class="ff-pill on" onclick="filterFilms('all',this)">Tất cả (47)</button>
-      <button class="ff-pill" onclick="filterFilms('actor',this)">Diễn viên (43)</button>
-      <button class="ff-pill" onclick="filterFilms('director',this)">Đạo diễn / Sản xuất (4)</button>
+      <button class="ff-pill on" onclick="filterFilms('all',this)">Tất cả (14)</button>
+      <button class="ff-pill" onclick="filterFilms('actor',this)">Diễn viên (12)</button>
+      <button class="ff-pill" onclick="filterFilms('crew',this)">Đạo diễn / Sản xuất (2)</button>
     </div>
-    <div class="film-grid" id="filmGrid"></div>
-  </div>
-
-  <!-- TAB: PHOTOS -->
-  <div class="tab-panel" id="panel-photos">
-    <div class="sec-hd">
-      <div class="sec-title">
-        <i data-lucide="image" width="16" height="16" stroke-width="2"></i> Ảnh chân dung
-        <span class="api-tag images">/person/{id}/images</span>
-      </div>
-      <span style="font-size:12px;color:var(--gray-400)">profiles[] — 12 ảnh</span>
-    </div>
-    <div class="photos-grid" id="photosGrid"></div>
+    <div class="film-list" id="filmGrid"></div>
   </div>
 
 </div>
@@ -370,45 +352,54 @@ const PERSON = {
   profile_path: "/6StfF5y4A6mCFMVFJHV9JvTguvt.jpg",
 };
 
-// Source: GET /person/11288/movie_credits
+// Source: GET /person/11288/movie_credits + /movie/{id} (overview, genres)
 const MOVIE_CREDITS = {
   cast: [
-    { id:414906, title:"The Batman",         character:"Bruce Wayne / Batman", release_date:"2022-03-01", vote_average:7.8, poster_path:"/74xTEgt7R36Fpooo50r9T25onhq.jpg", dept:"actor" },
-    { id:458576, title:"Mickey 17",          character:"Mickey Barnes",        release_date:"2025-02-28", vote_average:7.1, poster_path:"/cFqWPJBBEbBqWDhzCDZm4GLMQST.jpg", dept:"actor" },
-    { id:503919, title:"The Lighthouse",     character:"Ephraim Winslow",      release_date:"2019-10-18", vote_average:7.4, poster_path:"/3ziEMjVQNEq5b6hJGFApfc7y3Vg.jpg", dept:"actor" },
-    { id:524434, title:"Tenet",              character:"Neil",                 release_date:"2020-08-22", vote_average:7.3, poster_path:"/k68nPLbIST6NP96JmTxmZijplayW.jpg", dept:"actor" },
-    { id:399055, title:"Good Time",          character:"Connie Nikas",         release_date:"2017-08-11", vote_average:7.1, poster_path:"/5aVFnR1PCIBe1O5lmfYzXBzBNhX.jpg", dept:"actor" },
-    { id:773,   title:"Harry Potter và Chiếc Cốc Lửa", character:"Cedric Diggory", release_date:"2005-11-18", vote_average:7.7, poster_path:"/fECBqgcqi7oMI3JK2SwcMqRTQd4.jpg", dept:"actor" },
-    { id:296098, title:"The Rover",          character:"Rey",                  release_date:"2014-06-13", vote_average:6.7, poster_path:"/zzfmjDkG1SBZJJJMoL0IYOH4dXK.jpg", dept:"actor" },
-    { id:259316, title:"Cosmopolis",         character:"Eric Packer",          release_date:"2012-05-25", vote_average:5.7, poster_path:"/6R7PNL82QbCaerNh3r4HWP0Qupk.jpg", dept:"actor" },
-    { id:674324, title:"The Batman II",      character:"Bruce Wayne / Batman", release_date:"2026-10-02", vote_average:null, poster_path:null, dept:"actor" },
-    { id:511, title:"Twilight",              character:"Edward Cullen",        release_date:"2008-11-21", vote_average:6.9, poster_path:"/fvbdxkSq4dpnjbhyTIkBJOuBkCx.jpg", dept:"actor" },
-    { id:72545, title:"Water for Elephants", character:"Jacob Jankowski",      release_date:"2011-04-22", vote_average:7.1, poster_path:"/j7mXqA4VWuHQq3xVGWqMJGnkRIp.jpg", dept:"actor" },
-    { id:38027, title:"Remember Me",         character:"Tyler Hawkins",        release_date:"2010-03-12", vote_average:7.3, poster_path:"/uD3bGbBHy0ERlHFOGKLLWr3FDIV.jpg", dept:"actor" },
+    { id:674324, title:"The Batman II",      character:"Bruce Wayne / Batman", release_date:"2026-10-02", vote_average:null, poster_path:null, nowPlaying:false,
+      overview:"Phần tiếp theo của The Batman (2022). Bruce Wayne tiếp tục cuộc chiến chống tội phạm tại Gotham với bộ giáp mới và những kẻ thù nguy hiểm hơn.",
+      genres:["Hành động","Siêu anh hùng","Tội phạm"] },
+    { id:458576, title:"Mickey 17",          character:"Mickey Barnes",        release_date:"2025-02-28", vote_average:7.1, poster_path:"/cFqWPJBBEbBqWDhzCDZm4GLMQST.jpg", nowPlaying:true,
+      overview:"Mickey 17 là một nhân viên dùng một lần được tạo ra để thực hiện những nhiệm vụ tự sát trên hành tinh băng giá Niflheim. Khi phiên bản thứ 17 của anh sống sót sau chuyến đi tưởng như chết chóc, anh phải đối mặt với bản sao số 18 của chính mình.",
+      genres:["Khoa học viễn tưởng","Phiêu lưu","Hài"] },
+    { id:414906, title:"The Batman",         character:"Bruce Wayne / Batman", release_date:"2022-03-01", vote_average:7.8, poster_path:"/74xTEgt7R36Fpooo50r9T25onhq.jpg", nowPlaying:false,
+      overview:"Khi Kẻ Đố Bí ẩn bắt đầu ám sát các chính khách và để lại manh mối cho The Batman, người bảo vệ bóng tối của Gotham phải đi sâu vào thế giới tội phạm để lật tẩy sự thối nát đã ăn sâu vào thành phố.",
+      genres:["Hành động","Tội phạm","Siêu anh hùng"] },
+    { id:524434, title:"Tenet",              character:"Neil",                 release_date:"2020-08-22", vote_average:7.3, poster_path:"/k68nPLbIST6NP96JmTxmZijplayW.jpg", nowPlaying:false,
+      overview:"Một điệp viên CIA được tuyển mộ vào một tổ chức bí mật mang tên Tenet. Sử dụng công nghệ đảo ngược thời gian, anh phải ngăn chặn Thế chiến III.",
+      genres:["Hành động","Khoa học viễn tưởng","Gián điệp"] },
+    { id:503919, title:"The Lighthouse",     character:"Ephraim Winslow",      release_date:"2019-10-18", vote_average:7.4, poster_path:"/3ziEMjVQNEq5b6hJGFApfc7y3Vg.jpg", nowPlaying:false,
+      overview:"Hai người gác hải đăng cố gắng duy trì sự tỉnh táo trong khi mắc kẹt trên một hòn đảo hẻo lánh ở New England vào những năm 1890. Bí ẩn của ngọn hải đăng dần dần ăn mòn tâm trí họ.",
+      genres:["Kinh dị","Tâm lý","Drama"] },
+    { id:399055, title:"Good Time",          character:"Connie Nikas",         release_date:"2017-08-11", vote_average:7.1, poster_path:"/5aVFnR1PCIBe1O5lmfYzXBzBNhX.jpg", nowPlaying:false,
+      overview:"Sau khi em trai bị bắt, Connie Nikas lao vào một đêm hỗn loạn ở New York để kiếm đủ tiền bảo lãnh. Hành trình tuyệt vọng đẩy anh vào ngày càng nhiều rắc rối.",
+      genres:["Tội phạm","Hành động","Tâm lý"] },
+    { id:296098, title:"The Rover",          character:"Rey",                  release_date:"2014-06-13", vote_average:6.7, poster_path:"/zzfmjDkG1SBZJJJMoL0IYOH4dXK.jpg", nowPlaying:false,
+      overview:"Trong một thế giới hậu tận thế ở Australia 10 năm sau khi xã hội sụp đổ, một người đàn ông lạnh lùng truy đuổi nhóm cướp đã lấy chiếc xe của anh.",
+      genres:["Hành động","Drama","Hậu tận thế"] },
+    { id:72545, title:"Water for Elephants", character:"Jacob Jankowski",      release_date:"2011-04-22", vote_average:7.1, poster_path:"/j7mXqA4VWuHQq3xVGWqMJGnkRIp.jpg", nowPlaying:false,
+      overview:"Một sinh viên thú y bỏ học giữa chừng gia nhập đoàn xiếc rong ruổi trong thời kỳ Đại khủng hoảng. Anh yêu người vợ của ông chủ đoàn xiếc tàn nhẫn.",
+      genres:["Tình cảm","Drama","Lịch sử"] },
+    { id:38027, title:"Remember Me",         character:"Tyler Hawkins",        release_date:"2010-03-12", vote_average:7.3, poster_path:"/uD3bGbBHy0ERlHFOGKLLWr3FDIV.jpg", nowPlaying:false,
+      overview:"Tyler Hawkins, một thanh niên nổi loạn ở New York, tình cờ gặp Ally Craig — con gái của người thám tử đã bắt anh. Câu chuyện tình yêu của họ bị bao phủ bởi những vết thương quá khứ.",
+      genres:["Tình cảm","Drama"] },
+    { id:259316, title:"Cosmopolis",         character:"Eric Packer",          release_date:"2012-05-25", vote_average:5.7, poster_path:"/6R7PNL82QbCaerNh3r4HWP0Qupk.jpg", nowPlaying:false,
+      overview:"Một tỷ phú trẻ lên xe limousine cắt qua Manhattan để cắt tóc, trong khi đế chế tài chính của anh đang sụp đổ và một kẻ ám sát đang trên đường tìm đến.",
+      genres:["Drama","Tâm lý","Khoa học viễn tưởng"] },
+    { id:511,   title:"Twilight",            character:"Edward Cullen",        release_date:"2008-11-21", vote_average:6.9, poster_path:"/fvbdxkSq4dpnjbhyTIkBJOuBkCx.jpg", nowPlaying:false,
+      overview:"Bella Swan chuyển đến thị trấn nhỏ Forks và phải lòng Edward Cullen — một chàng trai bí ẩn hóa ra là ma cà rồng. Tình yêu của họ vượt qua ranh giới giữa con người và thế giới siêu nhiên.",
+      genres:["Tình cảm","Kinh dị","Giả tưởng"] },
+    { id:773,   title:"Harry Potter và Chiếc Cốc Lửa", character:"Cedric Diggory", release_date:"2005-11-18", vote_average:7.7, poster_path:"/fECBqgcqi7oMI3JK2SwcMqRTQd4.jpg", nowPlaying:false,
+      overview:"Harry Potter tham gia Giải đấu Triwizard đầy nguy hiểm với ba thử thách khắc nghiệt. Phần này đánh dấu sự trở lại của Voldemort và cái chết bi thảm của Cedric Diggory.",
+      genres:["Giả tưởng","Phiêu lưu","Gia đình"] },
   ],
   crew: [
-    { id:999901, title:"Iris",       job:"Executive Producer", release_date:"2021-01-15", vote_average:null, poster_path:null, dept:"crew" },
-    { id:999902, title:"Life",       job:"Producer",           release_date:"2015-09-10", vote_average:6.1, poster_path:null, dept:"crew" },
+    { id:999901, title:"Iris",  job:"Executive Producer", release_date:"2021-01-15", vote_average:null, poster_path:null, nowPlaying:false,
+      overview:"Phim tài liệu ngắn về hành trình của một nhiếp ảnh gia thời trang huyền thoại.",
+      genres:["Tài liệu"] },
+    { id:999902, title:"Life",  job:"Producer",           release_date:"2015-09-10", vote_average:6.1, poster_path:null, nowPlaying:false,
+      overview:"James Dean, ngôi sao điện ảnh đang lên, và nhiếp ảnh gia Dennis Stock cùng nhau thực hiện chuyến đi xuyên nước Mỹ trước khi Dean qua đời.",
+      genres:["Drama","Lịch sử","Tiểu sử"] },
   ],
-};
-
-// Source: GET /person/11288/images
-// profile_path thực tế cần API key để lấy — dùng placeholder ổn định cho prototype
-const IMAGES = {
-  profiles: [
-    { url:"https://picsum.photos/seed/rp1/300/450", width:2000, height:3000, vote_average:5.312 },
-    { url:"https://picsum.photos/seed/rp2/300/450", width:1641, height:2460, vote_average:5.246 },
-    { url:"https://picsum.photos/seed/rp3/300/450", width:2000, height:3000, vote_average:5.198 },
-    { url:"https://picsum.photos/seed/rp4/300/450", width:1382, height:2048, vote_average:5.172 },
-    { url:"https://picsum.photos/seed/rp5/300/450", width:1080, height:1620, vote_average:5.11  },
-    { url:"https://picsum.photos/seed/rp6/300/450", width:1382, height:2048, vote_average:5.08  },
-    { url:"https://picsum.photos/seed/rp7/300/450", width:2000, height:3000, vote_average:5.046 },
-    { url:"https://picsum.photos/seed/rp8/300/450", width:1641, height:2460, vote_average:5.012 },
-    { url:"https://picsum.photos/seed/rp9/300/450", width:2000, height:3000, vote_average:4.98  },
-    { url:"https://picsum.photos/seed/rp10/300/450",width:1382, height:2048, vote_average:4.96  },
-    { url:"https://picsum.photos/seed/rp11/300/450",width:1080, height:1620, vote_average:4.94  },
-    { url:"https://picsum.photos/seed/rp12/300/450",width:1382, height:2048, vote_average:4.92  },
-  ]
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -466,42 +457,33 @@ function renderFilms() {
     const roleLabel = f.dept === 'crew' ? f.job : f.character;
     const roleIcon = f.dept === 'crew' ? 'megaphone' : 'user';
     const sc = f.vote_average;
-    const poster = f.poster_path
-      ? `<img class="film-poster" src="https://image.tmdb.org/t/p/w185${f.poster_path}" alt="${f.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-      : '';
+    const posterImg = f.poster_path
+      ? `<img class="film-poster" src="https://image.tmdb.org/t/p/w185${f.poster_path}" alt="${f.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="film-poster-fb" style="display:none">🎬</div>`
+      : `<div class="film-poster-fb">🎬</div>`;
+    const genres = (f.genres||[]).map(g=>`<span class="film-genre-tag">${g}</span>`).join('');
     return `
     <div class="film-card">
-      ${poster}
-      <div class="film-poster-fb" style="${f.poster_path ? 'display:none' : ''}">🎬</div>
+      <div class="film-poster-wrap">
+        ${posterImg}
+        ${f.nowPlaying ? `<div class="film-now-badge">Đang chiếu</div>` : ''}
+      </div>
       <div class="film-body">
         <div class="film-title">${f.title}</div>
-        <div class="film-year">${year}</div>
-        <div class="film-role">
-          <i data-lucide="${roleIcon}" width="10" height="10" stroke-width="2"></i>
-          ${roleLabel}
+        <div class="film-meta">
+          <span class="film-year">${year}</span>
+          ${sc ? `<span class="film-score"><span class="score-dot ${scoreClass(sc)}"></span>${sc.toFixed(1)}</span>` : ''}
+          <span class="film-role"><i data-lucide="${roleIcon}" width="11" height="11" stroke-width="2"></i>${roleLabel}</span>
         </div>
-        ${sc ? `<div class="film-score"><span class="score-dot ${scoreClass(sc)}"></span>${sc.toFixed(1)}</div>` : ''}
+        ${f.overview ? `<div class="film-overview">${f.overview}</div>` : ''}
+        ${genres ? `<div class="film-genres">${genres}</div>` : ''}
       </div>
     </div>`;
   }).join('');
   lucide.createIcons();
 }
 
-// ─── PHOTOS ──────────────────────────────────────────────────────────────────
-function renderPhotos() {
-  document.getElementById('photosGrid').innerHTML = IMAGES.profiles.map((p,i) => `
-    <div class="photo-item">
-      <img src="${p.url}" alt="Photo ${i+1}">
-      <div class="photo-overlay">
-        <span class="photo-res">${p.width}×${p.height}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderFilms();
-renderPhotos();
 lucide.createIcons();
 </script>
 </body>
