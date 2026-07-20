@@ -845,17 +845,17 @@ body::after {
       </div>
       <div class="nearby-date-strip" id="nearbyDateStrip"></div>
       <div class="chain-logos">
-        <div class="chain-logo-pill on" title="CGV Cinemas"><img src="https://homepage.momocdn.net/cinema/momo-amazone-s3-api-240829164527-638605467276820522.png" alt="CGV"></div>
-        <div class="chain-logo-pill" title="Lotte Cinema"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170617-637584231772974269.png" alt="Lotte"></div>
-        <div class="chain-logo-pill" title="BHD Star"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170453-637584230934981809.png" alt="BHD Star"></div>
-        <div class="chain-logo-pill" title="Galaxy Cinema"><img src="https://homepage.momocdn.net/cinema/momo-upload-api-211123095138-637732578984425272.png" alt="Galaxy"></div>
-        <div class="chain-logo-pill" title="Beta Cinemas"><img src="https://homepage.momocdn.net/cinema/momo-upload-api-210813104719-637644484394328824.png" alt="Beta"></div>
-        <div class="chain-logo-pill" title="Cinestar"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170530-637584231309495829.png" alt="Cinestar"></div>
-        <div class="chain-logo-pill" title="Mega GS"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170511-637584231119272266.png" alt="Mega GS"></div>
-        <div class="chain-logo-pill" title="DCine+"><img src="https://img.mservice.io/momo_app_v2/new_version/img/THAO.MAI/DcineLogo.png" alt="DCine+"></div>
-        <div class="chain-logo-pill" title="Cinemax"><img src="https://homepage.momocdn.net/cinema/momo-upload-api-221108100132-638034984925107129.png" alt="Cinemax"></div>
-        <div class="chain-logo-pill" title="Rio Cinemas"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-250505103419-638820380597920724.png" alt="Rio"></div>
-        <div class="chain-logo-pill" title="Trung tâm chiếu phim QG"><img src="https://homepage.momocdn.net/cinema/ncclogo-260325100933.png" alt="NCC"></div>
+        <div class="chain-logo-pill" data-chain="cgv"     title="CGV Cinemas"          onclick="filterChain('cgv')"><img src="https://homepage.momocdn.net/cinema/momo-amazone-s3-api-240829164527-638605467276820522.png" alt="CGV"></div>
+        <div class="chain-logo-pill" data-chain="lotte"   title="Lotte Cinema"          onclick="filterChain('lotte')"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170617-637584231772974269.png" alt="Lotte"></div>
+        <div class="chain-logo-pill" data-chain="bhd"     title="BHD Star"              onclick="filterChain('bhd')"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170453-637584230934981809.png" alt="BHD Star"></div>
+        <div class="chain-logo-pill" data-chain="galaxy"  title="Galaxy Cinema"         onclick="filterChain('galaxy')"><img src="https://homepage.momocdn.net/cinema/momo-upload-api-211123095138-637732578984425272.png" alt="Galaxy"></div>
+        <div class="chain-logo-pill" data-chain="beta"    title="Beta Cinemas"          onclick="filterChain('beta')"><img src="https://homepage.momocdn.net/cinema/momo-upload-api-210813104719-637644484394328824.png" alt="Beta"></div>
+        <div class="chain-logo-pill" data-chain="cinestar" title="Cinestar"             onclick="filterChain('cinestar')"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170530-637584231309495829.png" alt="Cinestar"></div>
+        <div class="chain-logo-pill" data-chain="megags"  title="Mega GS"               onclick="filterChain('megags')"><img src="https://homepage.momocdn.net/blogscontents/momo-upload-api-210604170511-637584231119272266.png" alt="Mega GS"></div>
+        <div class="chain-logo-pill" data-chain="dcine"   title="DCine+"                onclick="filterChain('dcine')"><img src="https://img.mservice.io/momo_app_v2/new_version/img/THAO.MAI/DcineLogo.png" alt="DCine+"></div>
+        <div class="chain-logo-pill" data-chain="cinemax" title="Cinemax"               onclick="filterChain('cinemax')"><img src="https://homepage.momocdn.net/cinema/momo-upload-api-221108100132-638034984925107129.png" alt="Cinemax"></div>
+        <div class="chain-logo-pill" data-chain="rio"     title="Rio Cinemas"           onclick="filterChain('rio')"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-250505103419-638820380597920724.png" alt="Rio"></div>
+        <div class="chain-logo-pill" data-chain="ncc"     title="Trung tâm chiếu phim QG" onclick="filterChain('ncc')"><img src="https://homepage.momocdn.net/cinema/ncclogo-260325100933.png" alt="NCC"></div>
       </div>
       <div class="cinema-2col">
         <div class="cinema-sidebar" id="cinemaSidebar"></div>
@@ -1267,6 +1267,16 @@ function cinemaLogoHtml(chain, label) {
   return `<div class="cinema-logo logo-${chain}">${label}</div>`;
 }
 let selectedCinemaIdx = 0;
+let activeChain = null;
+
+function filterChain(chain) {
+  activeChain = (activeChain === chain) ? null : chain; // toggle
+  selectedCinemaIdx = 0;
+  document.querySelectorAll('.chain-logo-pill').forEach(el => {
+    el.classList.toggle('on', !activeChain || el.dataset.chain === activeChain);
+  });
+  renderCinemas();
+}
 
 function getFilteredShows(c) {
   return c.shows.map(s => {
@@ -1279,7 +1289,9 @@ function getFilteredShows(c) {
 }
 
 function renderCinemas() {
-  const validCinemas = CINEMAS.map((c,i) => ({c,i,shows:getFilteredShows(c)})).filter(x=>x.shows.length);
+  const validCinemas = CINEMAS
+    .map((c,i) => ({c,i,shows:getFilteredShows(c)}))
+    .filter(x => x.shows.length && (!activeChain || x.c.chain === activeChain));
 
   // Sidebar
   document.getElementById('cinemaSidebar').innerHTML = validCinemas.length
