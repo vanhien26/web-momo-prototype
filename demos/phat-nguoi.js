@@ -464,3 +464,24 @@
   vSelect.addEventListener('change', renderResult);
   buildOptions(currentVehicle);
 })();
+
+// Prefix chips — location detail
+(function () {
+  const chips = document.querySelectorAll('.prefix-chip');
+  if (!chips.length) return;
+  const input = document.querySelector('[data-plate-input]');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      if (input) {
+        const prefix = chip.dataset.prefix;
+        const cur = input.value.toUpperCase();
+        // Nếu input rỗng hoặc bắt đầu bằng prefix khác → thay prefix
+        const hasOtherPrefix = cur.length >= 2 && !cur.startsWith(prefix);
+        input.value = hasOtherPrefix ? prefix + cur.slice(prefix.length) : prefix;
+        input.focus();
+      }
+    });
+  });
+})();
