@@ -482,6 +482,26 @@ body::after {
 .box-title { font-size: 14px; font-weight: 800; color: var(--gray-900); }
 .sec-more-sm { font-family: 'MoMoTrustSans', inherit; font-size: 12px; font-weight: 600; color: var(--pink-500); background: none; border: none; cursor: pointer; }
 
+/* ── CINEMA 2-COL LAYOUT ─────────────────── */
+.cinema-2col { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: 420px; }
+.cinema-sidebar { border-right: 1px solid var(--gray-200); overflow-y: auto; max-height: 560px; scrollbar-width: thin; scrollbar-color: var(--gray-200) transparent; }
+.cinema-sidebar::-webkit-scrollbar { width: 4px; }
+.cinema-sidebar::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+.cinema-sidebar-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--gray-100); transition: background .12s; }
+.cinema-sidebar-item:last-child { border-bottom: none; }
+.cinema-sidebar-item:hover { background: var(--gray-100); }
+.cinema-sidebar-item.active { background: var(--pink-50); border-right: 2.5px solid var(--pink-500); }
+.cinema-sidebar-item.active .cinema-name { color: var(--pink-500); }
+.cinema-detail { padding: 0 20px 16px; overflow-y: auto; max-height: 560px; }
+.cinema-detail-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 10px; border-bottom: 1px solid var(--gray-100); margin-bottom: 4px; }
+.cinema-detail-name { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.cinema-detail-addr { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+.cinema-detail-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.cinema-detail-btn { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: var(--r-sm); border: 1px solid var(--gray-200); background: none; color: var(--gray-600); cursor: pointer; font-family: inherit; transition: all .12s; }
+.cinema-detail-btn:hover { border-color: var(--pink-300); color: var(--pink-500); }
+.cinema-detail-btn.primary { background: var(--pink-500); color: #fff; border-color: var(--pink-500); }
+.cinema-detail-btn.primary:hover { background: var(--pink-600); border-color: var(--pink-600); }
+/* legacy - keep for compat */
 .cinema-item { padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
 .cinema-item:last-child { border-bottom: none; padding-bottom: 0; }
 .cinema-header { display: flex; align-items: center; gap: 10px; cursor: pointer; }
@@ -837,7 +857,10 @@ body::after {
         <div class="chain-logo-pill" title="Rio Cinemas"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-250505103419-638820380597920724.png" alt="Rio"></div>
         <div class="chain-logo-pill" title="Trung tâm chiếu phim QG"><img src="https://homepage.momocdn.net/cinema/ncclogo-260325100933.png" alt="NCC"></div>
       </div>
-      <div id="cinemaList"></div>
+      <div class="cinema-2col">
+        <div class="cinema-sidebar" id="cinemaSidebar"></div>
+        <div class="cinema-detail" id="cinemaDetail"></div>
+      </div>
     </div>
   </div>
 
@@ -1243,54 +1266,89 @@ function cinemaLogoHtml(chain, label) {
   if (src) return `<div class="cinema-logo logo-${chain}"><img src="${src}" alt="${label}" onerror="this.parentElement.textContent='${label}'"></div>`;
   return `<div class="cinema-logo logo-${chain}">${label}</div>`;
 }
+let selectedCinemaIdx = 0;
+
+function getFilteredShows(c) {
+  return c.shows.map(s => {
+    const formats = s.formats.filter(fg => {
+      const fmtKey = fg.tag==='2d'?'2D':fg.tag==='3d'?'3D':fg.tag==='imax'?'IMAX':'4DX';
+      return activeFormat === 'Tất cả' || fmtKey === activeFormat;
+    });
+    return formats.length ? {...s, formats} : null;
+  }).filter(Boolean);
+}
+
 function renderCinemas() {
-  const el = document.getElementById('cinemaList');
-  el.innerHTML = CINEMAS.map(c=>{
-    const filteredShows = c.shows.map(s=>{
-      const formats = s.formats.map(fg=>{
-        const fmtKey = fg.tag === '2d' ? '2D' : fg.tag === '3d' ? '3D' : fg.tag === 'imax' ? 'IMAX' : '4DX';
-        if (activeFormat !== 'Tất cả' && fmtKey !== activeFormat) return null;
-        return fg;
-      }).filter(Boolean);
-      return formats.length ? { ...s, formats } : null;
-    }).filter(Boolean);
-    if (!filteredShows.length) return '';
-    const showsHtml = filteredShows.map(s=>{
-      const img = FILM_IMG[s.film] || '';
-      const fmtGroups = s.formats.map(fg=>`
-        <div class="show-format-group">
-          <div class="show-format-label">
-            <span class="fmt-tag fmt-${fg.tag}">${fg.fmt}</span>
-            <span class="show-format-price">${fg.price.toLocaleString('vi')}đ/ghế</span>
-          </div>
-          <div class="show-times-row">${fg.times.map(t=>`
-            <button class="show-time-btn${t.few?' few':''}${t.sold?' sold':''}" onclick="event.stopPropagation();${t.sold?`toast('Suất này đã hết vé')`:`toast('${s.film} · ${t.t} · ${fg.fmt}')`}">
-              ${t.t}
-            </button>`).join('')}
-          </div>
-        </div>`).join('');
-      return `<div class="show-row">
-        <div class="show-film-hd">
-          <div class="show-film-poster"><img src="${img}" alt="${s.film}" onerror="this.style.background='var(--gray-200)'"></div>
-          <div class="show-film-meta">
-            <div class="show-film-title">${s.film}</div>
-            <div class="show-film-sub">${s.age} · ${s.dur}</div>
-            ${fmtGroups}
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-    return `<div class="cinema-item">
-      <div class="cinema-header" onclick="toast('Mở ${c.name}')">
+  const validCinemas = CINEMAS.map((c,i) => ({c,i,shows:getFilteredShows(c)})).filter(x=>x.shows.length);
+
+  // Sidebar
+  document.getElementById('cinemaSidebar').innerHTML = validCinemas.length
+    ? validCinemas.map(({c,i,shows}) => `
+      <div class="cinema-sidebar-item${i===selectedCinemaIdx?' active':''}" onclick="selectCinema(${i})">
         ${cinemaLogoHtml(c.chain, c.label)}
-        <div class="cinema-info"><div class="cinema-name">${c.name}</div><div class="cinema-addr">${c.addr}</div></div>
-        <div class="cinema-dist-badge">${c.dist}</div>
+        <div class="cinema-info" style="min-width:0">
+          <div class="cinema-name" style="font-size:12px;font-weight:700;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+          <div class="cinema-addr" style="font-size:10px;color:var(--gray-400)">${c.dist} · ${shows.length} phim</div>
+        </div>
+      </div>`).join('')
+    : `<div style="padding:24px 14px;color:var(--gray-400);font-size:13px">Không có rạp phù hợp</div>`;
+
+  // Detail panel — default to selectedCinemaIdx or first valid
+  const target = validCinemas.find(x=>x.i===selectedCinemaIdx) || validCinemas[0];
+  if (target) { selectedCinemaIdx = target.i; renderCinemaDetail(target.c, target.shows); }
+  else document.getElementById('cinemaDetail').innerHTML = `<div style="padding:32px 20px;color:var(--gray-400);font-size:14px;text-align:center">Không có suất chiếu phù hợp</div>`;
+}
+
+function selectCinema(idx) {
+  selectedCinemaIdx = idx;
+  document.querySelectorAll('.cinema-sidebar-item').forEach((el,i) => {
+    const cinema = CINEMAS[parseInt(el.getAttribute('data-idx')||i)];
+    el.classList.toggle('active', parseInt(el.getAttribute('data-idx')||i) === idx);
+  });
+  renderCinemas();
+}
+
+function renderCinemaDetail(c, shows) {
+  const showsHtml = shows.map(s => {
+    const img = FILM_IMG[s.film] || '';
+    const fmtGroups = s.formats.map(fg => `
+      <div class="show-format-group">
+        <div class="show-format-label">
+          <span class="fmt-tag fmt-${fg.tag}">${fg.fmt}</span>
+          <span class="show-format-price">${fg.price.toLocaleString('vi')}đ/ghế</span>
+        </div>
+        <div class="show-times-row">${fg.times.map(t=>`
+          <button class="show-time-btn${t.few?' few':''}${t.sold?' sold':''}" onclick="event.stopPropagation();${t.sold?`toast('Suất này đã hết vé')`:`toast('${s.film} · ${t.t} · ${fg.fmt}')`}">
+            ${t.t}
+          </button>`).join('')}
+        </div>
+      </div>`).join('');
+    return `<div class="show-row">
+      <div class="show-film-hd">
+        <div class="show-film-poster"><img src="${img}" alt="${s.film}" onerror="this.style.background='var(--gray-200)'"></div>
+        <div class="show-film-meta">
+          <div class="show-film-title">${s.film}</div>
+          <div class="show-film-sub">${s.age} · ${s.dur}</div>
+          ${fmtGroups}
+        </div>
       </div>
-      ${showsHtml}
-      <div class="cinema-footer"><span class="cinema-stat"><strong>${c.totalFilms} phim</strong> đang chiếu</span><button class="cinema-cta" onclick="toast('Xem tất cả suất')">Xem tất cả →</button></div>
     </div>`;
   }).join('');
-  if (!el.innerHTML.trim()) el.innerHTML = `<div style="padding:32px 0;text-align:center;color:var(--gray-400);font-size:14px">Không có suất ${activeFormat} tại các rạp gần bạn</div>`;
+
+  document.getElementById('cinemaDetail').innerHTML = `
+    <div class="cinema-detail-hd">
+      <div>
+        <div class="cinema-detail-name">${c.name}</div>
+        <div class="cinema-detail-addr">${c.addr}</div>
+      </div>
+      <div class="cinema-detail-actions">
+        <button class="cinema-detail-btn" onclick="toast('Mở bản đồ ${c.name}')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:3px"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Chỉ đường
+        </button>
+        <button class="cinema-detail-btn primary" onclick="toast('Xem tất cả suất ${c.name}')">Tất cả phim →</button>
+      </div>
+    </div>
+    ${showsHtml}`;
 }
 
 const FILM_DEAL_TAGS = ['Hoàn 30k','Combo -20%','Giảm 15k','Tặng xu','2 vé 1 combo'];
