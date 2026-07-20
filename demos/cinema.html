@@ -605,6 +605,29 @@ body::after {
 /* ── SEO TEXT ────────────────────────────── */
 .seo-text { border-top: 1px solid var(--gray-200); padding-top: 24px; font-size: 12px; color: var(--gray-400); line-height: 1.7; }
 
+/* ── TV SERIES SECTION ───────────────────── */
+.series-section { padding: 32px 0 8px; }
+.series-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+.series-scroll::-webkit-scrollbar { display: none; }
+.series-card { flex-shrink: 0; width: 160px; cursor: pointer; border-radius: var(--r-md); overflow: hidden; background: var(--white); border: 1px solid var(--gray-200); transition: transform .18s, box-shadow .18s; }
+.series-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-m); }
+.series-card-poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+.series-card-body { padding: 8px 10px 10px; }
+.series-card-title { font-size: 12px; font-weight: 700; color: var(--gray-900); line-height: 1.3; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.series-card-meta { font-size: 10px; color: var(--gray-400); display: flex; align-items: center; gap: 4px; }
+.series-card-rating { color: var(--gold); font-weight: 700; }
+.series-platform-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: var(--gray-100); color: var(--gray-500); }
+
+/* ── GENRE GRID SECTION ──────────────────── */
+.genre-section { padding: 28px 0 32px; }
+.genre-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media(max-width: 640px) { .genre-grid { grid-template-columns: repeat(3, 1fr); } }
+.genre-tile { position: relative; aspect-ratio: 16/9; border-radius: var(--r-md); overflow: hidden; cursor: pointer; display: flex; align-items: flex-end; text-decoration: none; }
+.genre-tile-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform .3s; filter: brightness(.6) saturate(1.1); }
+.genre-tile:hover .genre-tile-bg { transform: scale(1.06); filter: brightness(.75) saturate(1.2); }
+.genre-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(28,23,26,.85) 0%, transparent 55%); }
+.genre-tile-label { position: relative; z-index: 1; padding: 8px 10px; font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -.1px; }
+
 /* ── SECTION HEADER ──────────────────────── */
 .sec-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .sec-title { font-size: 18px; font-weight: 800; color: var(--gray-900); }
@@ -816,6 +839,24 @@ body::after {
       </div>
       <div id="cinemaList"></div>
     </div>
+  </div>
+
+  <!-- TV SERIES -->
+  <div class="series-section">
+    <div class="sec-hd">
+      <span class="sec-title">TV Series nổi bật</span>
+      <button class="sec-more" onclick="location.href='/cinema/series'">Xem tất cả →</button>
+    </div>
+    <div class="series-scroll" id="seriesRow"></div>
+  </div>
+
+  <!-- GENRE GRID -->
+  <div class="genre-section">
+    <div class="sec-hd">
+      <span class="sec-title">Khám phá theo thể loại</span>
+      <button class="sec-more" onclick="location.href='/cinema/genres'">Tất cả thể loại →</button>
+    </div>
+    <div class="genre-grid" id="genreGrid"></div>
   </div>
 
   <div class="seo-text">
@@ -1422,7 +1463,55 @@ function detectLocation() {
 let toastTimer;
 function toast(msg) { const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
 
-renderHeroPosters(); renderBoxOffice(); renderNearbyDateStrip(); renderGenreTabs(); renderFilmGrid(); renderComingSoon(); renderCinemas(); renderMissions();
+/* ── TV SERIES ROW ── */
+const FEATURED_SERIES = [
+  { title:'The Last of Us', slug:'the-last-of-us', poster:'https://image.tmdb.org/t/p/w342/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg', rating:'8.6', seasons:2, platform:'Max' },
+  { title:'Breaking Bad',   slug:'breaking-bad',   poster:'https://image.tmdb.org/t/p/w342/3xnWaLQjelJDDF7LT1WBo6f4BRe.jpg', rating:'9.5', seasons:5, platform:'Netflix' },
+  { title:'House of the Dragon', slug:'house-of-the-dragon', poster:'https://image.tmdb.org/t/p/w342/t9XkeE7HzOsdQcDDDapDYh8Rrmt.jpg', rating:'8.4', seasons:2, platform:'Max' },
+  { title:'Stranger Things', slug:'stranger-things', poster:'https://image.tmdb.org/t/p/w342/49WJfeN0moxb9IPfGn8AIqMGskD.jpg', rating:'8.7', seasons:4, platform:'Netflix' },
+  { title:'Squid Game',     slug:'squid-game',     poster:'https://image.tmdb.org/t/p/w342/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg', rating:'8.0', seasons:2, platform:'Netflix' },
+  { title:'Succession',     slug:'succession',     poster:'https://image.tmdb.org/t/p/w342/e2X6MRwOCEtcBfWXTNLxMWXM1gI.jpg', rating:'8.9', seasons:4, platform:'Max' },
+  { title:'Chernobyl',      slug:'chernobyl',      poster:'https://image.tmdb.org/t/p/w342/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg', rating:'9.4', seasons:1, platform:'Max' },
+];
+function renderSeriesRow() {
+  document.getElementById('seriesRow').innerHTML = FEATURED_SERIES.map(s => `
+    <div class="series-card" onclick="location.href='/cinema/series/${s.slug}'">
+      <img class="series-card-poster" src="${s.poster}" alt="${s.title}" loading="lazy" onerror="this.style.background='var(--gray-100)'">
+      <div class="series-card-body">
+        <div class="series-card-title">${s.title}</div>
+        <div class="series-card-meta">
+          <span class="series-card-rating">★ ${s.rating}</span>
+          <span>·</span>
+          <span>${s.seasons} mùa</span>
+          <span>·</span>
+          <span class="series-platform-badge">${s.platform}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── GENRE GRID ── */
+const GENRE_TILES = [
+  { label:'Hành động',  bg:'https://image.tmdb.org/t/p/w780/xvk4SFoZcwzPgDMB0P0hEkSrUwJ.jpg' },
+  { label:'Kinh dị',    bg:'https://image.tmdb.org/t/p/w780/5YZbUmjbMa3ClvSW1Wj3D6XGkVA.jpg' },
+  { label:'Tình cảm',   bg:'https://image.tmdb.org/t/p/w780/tNPpKmGOCtoJkJwfrZR160saVrb.jpg' },
+  { label:'Hoạt hình',  bg:'https://image.tmdb.org/t/p/w780/lwqKqiBsGVBtQBZF9ZTunthBCyI.jpg' },
+  { label:'Hài hước',   bg:'https://image.tmdb.org/t/p/w780/amfpWj77Z8x5O76G2EhjquJqzoi.jpg' },
+  { label:'Tâm lý',     bg:'https://image.tmdb.org/t/p/w780/wcahBISlczoYqcakatu2uyX8kGQ.jpg' },
+  { label:'Khoa học viễn tưởng', bg:'https://image.tmdb.org/t/p/w780/3qZ09UE7lN6AtorfXFRYpEtSY93.jpg' },
+  { label:'Phiêu lưu',  bg:'https://image.tmdb.org/t/p/w780/jlbCaCevS4YHASzW5wVnevbrSy8.jpg' },
+];
+function renderGenreGrid() {
+  document.getElementById('genreGrid').innerHTML = GENRE_TILES.map(g => `
+    <div class="genre-tile" onclick="location.href='/cinema/genres?g=${encodeURIComponent(g.label)}'">
+      <div class="genre-tile-bg" style="background-image:url('${g.bg}')"></div>
+      <span class="genre-tile-label">${g.label}</span>
+    </div>`).join('');
+}
+
+renderHeroPosters(); renderBoxOffice(); renderNearbyDateStrip(); renderGenreTabs(); renderFilmGrid(); renderComingSoon(); renderCinemas();
+renderSeriesRow(); renderGenreGrid();
+try { renderMissions(); } catch(e) {}
 lucide.createIcons();
 
 // Drag-to-scroll for film grid
