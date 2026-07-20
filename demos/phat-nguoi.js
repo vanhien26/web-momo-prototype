@@ -57,6 +57,13 @@
       arrow: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>`,
       momo: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
       phone: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>`,
+      inspect: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><polyline points="8 11 10 13 14 9"/></svg>`,
+      shield: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
+      car: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></svg>`,
+      wrench: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+      card: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`,
+      fuel: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg>`,
+      parking: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>`,
     };
     return icons[name] || '';
   }
@@ -83,6 +90,74 @@
           <a class="vr-guide-link" href="${v.article.url}">${v.article.title} ${iconSvg('arrow')}</a>
         </div>
       </div>`;
+  }
+
+  // ── CROSS-SELL theo trạng thái kết quả ─────────────────────────────────────
+  // 2 case: 'has-violation' (chuỗi nghĩa vụ pháp lý) / 'clean' (giữ chân bằng hồ sơ xe)
+  function renderCrossSell(state) {
+    // Mỗi item phải giải quyết 1 job của người vừa tra phạt nguội - không phải directory dịch vụ.
+    // Job có vi phạm: "xử lý xong nghĩa vụ để xe hợp lệ lưu thông".
+    // Job sạch: "duy trì trạng thái sạch, không phải lo lần sau".
+    const ALL = {
+      nopphat:  { href: 'phat-nguoi-nop-qua-momo.html', icon: 'momo', name: 'Nộp phạt online', hint: 'Không cần đến kho bạc' },
+      giaidap:  { href: 'phat-nguoi-giai-dap.html', icon: 'article', name: 'Mức phạt & khiếu nại', hint: 'Hiểu lỗi trước khi nộp' },
+      dangkiem: { href: '/dang-kiem', icon: 'inspect', name: 'Đăng kiểm', hint: 'Vi phạm chưa nộp sẽ bị chặn' },
+      tnds:     { href: '/bao-hiem-o-to', icon: 'shield', name: 'Bảo hiểm TNDS', hint: 'Bắt buộc khi đăng kiểm' },
+      hoso:     { href: '/vehicle-hub#ho-so-xe', icon: 'car', name: 'Hồ sơ xe', hint: 'Tự quét vi phạm hàng tuần' },
+      baoduong: { href: '/bao-duong-xe', icon: 'wrench', name: 'Bảo dưỡng xe', hint: 'Đèn hỏng, lốp mòn cũng bị phạt' },
+      cuuho:    { href: '/vehicle-hub/cuu-ho', icon: 'phone', name: 'Cứu hộ 24/7', hint: 'Lưu sẵn trước chuyến đi xa' },
+      epass:    { href: '/epass', icon: 'card', name: 'Nạp ePass', hint: 'Tự động nạp, không lo dừng trạm' },
+    };
+    // Cả 2 case đều show đủ bộ dịch vụ Vehicle hub, chỉ khác thứ tự ưu tiên theo job
+    const order = state === 'has-violation'
+      ? ['dangkiem', 'tnds', 'hoso', 'baoduong', 'cuuho', 'epass']
+      : ['hoso', 'dangkiem', 'tnds', 'baoduong', 'cuuho', 'epass'];
+    return `
+      <div class="pn-xsell" data-xsell="${state}">
+        <span class="vr-sub-badge">Dịch vụ dành cho xe bạn</span>
+        <div class="pn-xsell-grid">
+          ${order.map(k => { const c = ALL[k]; return `
+            <a class="pn-xsell-card" href="${c.href}" data-xsell-item="${k}">
+              <span class="pn-xsell-icon">${iconSvg(c.icon)}</span>
+              <span class="pn-xsell-body">
+                <strong>${c.name}</strong>
+                <span class="pn-xsell-desc">${c.hint}</span>
+              </span>
+            </a>`; }).join('')}
+        </div>
+      </div>`;
+  }
+
+  function renderCleanSection(plate, vehicle) {
+    const vLabel = vehicleLabels[vehicle] || 'Ô tô';
+    const section = document.getElementById('violationResultSection');
+    const inner = document.getElementById('violationResultInner');
+    if (!section || !inner) return;
+
+    inner.innerHTML = `
+      <div class="vr-header">
+        <div class="vr-header-left">
+          <span class="vr-plate">${plate}</span>
+          <span class="vr-vehicle-tag">${vLabel}</span>
+        </div>
+        <span class="vr-status-badge is-clean">
+          Không có vi phạm chờ xử lý
+        </span>
+      </div>
+
+      <div class="vr-clean-card">
+        ${iconSvg('shield')}
+        <div>
+          <strong>Chưa thấy vi phạm trong dữ liệu mô phỏng</strong>
+          <p>Dữ liệu có thể cần thời gian xác minh và đồng bộ. Nên kiểm tra lại định kỳ, đặc biệt sau chuyến đi dài hoặc trước kỳ đăng kiểm.</p>
+        </div>
+      </div>
+
+      ${renderCrossSell('clean')}
+    `;
+
+    section.classList.add('is-open');
+    section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function renderViolationSection(data, vehicle) {
@@ -145,6 +220,8 @@
           ${iconSvg('phone')} Xem chi tiết trên App
         </button>
       </div>
+
+      ${renderCrossSell('has-violation')}
     `;
 
     section.classList.add('is-open');
@@ -182,13 +259,9 @@
         result.innerHTML = '';
         renderViolationSection(mockData, vehicle);
       } else {
-        // Hide result section if previously shown
-        const section = document.getElementById('violationResultSection');
-        if (section) section.classList.remove('is-open');
-
-        result.className = 'lookup-result is-visible';
-        result.innerHTML = `<strong>Chưa thấy vi phạm trong dữ liệu mô phỏng</strong><p>${plate} · ${vehicleLabels[vehicle]}. Hãy kiểm tra lại định kỳ vì dữ liệu có thể cần thời gian xác minh.</p>`;
-        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        result.className = '';
+        result.innerHTML = '';
+        renderCleanSection(plate, vehicle);
       }
     });
   });
@@ -209,4 +282,185 @@
       if (count) count.textContent = `${visible} địa phương`;
     });
   }
+})();
+
+// Trust counter animation
+(function () {
+  const counters = document.querySelectorAll('[data-counter]');
+  if (!counters.length) return;
+
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.counter, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const startTime = performance.now();
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const value = Math.round(easeOut(progress) * target);
+      el.textContent = value.toLocaleString('vi-VN') + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  counters.forEach(el => observer.observe(el));
+})();
+
+// ── Penalty Calculator ──
+(function () {
+  const VIOLATIONS = [
+    { id: 'speed-1020', label: 'Vượt tốc độ 10–20 km/h', group: 'Tốc độ',
+      data: { oto: { fine:[3e6,5e6], suspend:0 }, xemay: { fine:[400e3,600e3], suspend:0 }, xedien: { fine:[400e3,600e3], suspend:0 } } },
+    { id: 'speed-2035', label: 'Vượt tốc độ 20–35 km/h', group: 'Tốc độ',
+      data: { oto: { fine:[5e6,8e6], suspend:[1,3] }, xemay: { fine:[1e6,3e6], suspend:[1,3] }, xedien: { fine:[1e6,3e6], suspend:[1,3] } } },
+    { id: 'speed-35plus', label: 'Vượt tốc độ trên 35 km/h', group: 'Tốc độ',
+      data: { oto: { fine:[10e6,12e6], suspend:[2,4] }, xemay: { fine:[4e6,6e6], suspend:[2,4] }, xedien: { fine:[4e6,6e6], suspend:[2,4] } } },
+    { id: 'red-light', label: 'Vượt đèn đỏ / tín hiệu giao thông', group: 'Đèn tín hiệu',
+      data: { oto: { fine:[4e6,6e6], suspend:[1,3] }, xemay: { fine:[4e6,6e6], suspend:[1,3] }, xedien: { fine:[4e6,6e6], suspend:[1,3] } } },
+    { id: 'alcohol-1', label: 'Nồng độ cồn mức 1 (< 0,25 mg/L)', group: 'Nồng độ cồn',
+      data: { oto: { fine:[6e6,8e6], suspend:[10,12] }, xemay: { fine:[2e6,3e6], suspend:[10,12] }, xedien: { fine:[2e6,3e6], suspend:[10,12] } } },
+    { id: 'alcohol-2', label: 'Nồng độ cồn mức 2 (0,25–0,4 mg/L)', group: 'Nồng độ cồn',
+      data: { oto: { fine:[16e6,18e6], suspend:[16,18] }, xemay: { fine:[4e6,5e6], suspend:[16,18] }, xedien: { fine:[4e6,5e6], suspend:[16,18] } } },
+    { id: 'alcohol-3', label: 'Nồng độ cồn mức 3 (> 0,4 mg/L)', group: 'Nồng độ cồn',
+      data: { oto: { fine:[30e6,40e6], suspend:[22,24] }, xemay: { fine:[6e6,8e6], suspend:[22,24] }, xedien: { fine:[6e6,8e6], suspend:[22,24] } } },
+    { id: 'wrong-way', label: 'Chạy ngược chiều / vào đường cấm', group: 'Làn đường',
+      data: { oto: { fine:[16e6,18e6], suspend:[1,3] }, xemay: { fine:[4e6,5e6], suspend:[1,3] }, xedien: { fine:[4e6,5e6], suspend:[1,3] } } },
+    { id: 'lane-vio', label: 'Lấn làn / không đúng phần đường', group: 'Làn đường',
+      data: { oto: { fine:[300e3,400e3], suspend:0 }, xemay: { fine:[100e3,200e3], suspend:0 }, xedien: { fine:[100e3,200e3], suspend:0 } } },
+    { id: 'phone', label: 'Dùng điện thoại khi lái xe', group: 'Phân tâm',
+      data: { oto: { fine:[1e6,2e6], suspend:0 }, xemay: { fine:[800e3,1e6], suspend:0 }, xedien: { fine:[800e3,1e6], suspend:0 } } },
+    { id: 'no-helmet', label: 'Không đội mũ bảo hiểm', group: 'Trang bị', only:['xemay','xedien'],
+      data: { xemay: { fine:[400e3,600e3], suspend:0 }, xedien: { fine:[400e3,600e3], suspend:0 } } },
+    { id: 'no-license', label: 'Không có GPLX / GPLX hết hạn', group: 'Giấy tờ', only:['oto','xemay'],
+      data: { oto: { fine:[4e6,6e6], suspend:0 }, xemay: { fine:[1e6,2e6], suspend:0 } } },
+    { id: 'no-insurance', label: 'Không có bảo hiểm TNDS', group: 'Giấy tờ',
+      data: { oto: { fine:[400e3,600e3], suspend:0 }, xemay: { fine:[100e3,200e3], suspend:0 }, xedien: { fine:[100e3,200e3], suspend:0 } } },
+  ];
+
+  const vSelect = document.getElementById('pcViolation');
+  const result  = document.getElementById('pcResult');
+  const pills   = document.querySelectorAll('#pcVehiclePills .pc-vpill');
+  if (!vSelect || !result) return;
+
+  let currentVehicle = 'xemay';
+
+  function fmtMoney(n) {
+    return n.toLocaleString('vi-VN') + ' đ';
+  }
+
+  function severity(fine, vehicle) {
+    const mid = (fine[0] + fine[1]) / 2;
+    if (vehicle === 'oto') {
+      if (mid < 2e6)  return { cls: 'sev-low',    label: 'Nhẹ' };
+      if (mid < 8e6)  return { cls: 'sev-mid',    label: 'Trung bình' };
+      if (mid < 18e6) return { cls: 'sev-high',   label: 'Nặng' };
+      return                  { cls: 'sev-severe', label: 'Rất nặng' };
+    } else {
+      if (mid < 500e3) return { cls: 'sev-low',    label: 'Nhẹ' };
+      if (mid < 2e6)   return { cls: 'sev-mid',    label: 'Trung bình' };
+      if (mid < 5e6)   return { cls: 'sev-high',   label: 'Nặng' };
+      return                   { cls: 'sev-severe', label: 'Rất nặng' };
+    }
+  }
+
+  function buildOptions(vehicle) {
+    const groups = {};
+    VIOLATIONS.forEach(v => {
+      if (v.only && !v.only.includes(vehicle)) return;
+      if (!v.data[vehicle]) return;
+      if (!groups[v.group]) groups[v.group] = [];
+      groups[v.group].push(v);
+    });
+    vSelect.innerHTML = '<option value="">-- Chọn lỗi vi phạm --</option>';
+    Object.entries(groups).forEach(([g, items]) => {
+      const og = document.createElement('optgroup');
+      og.label = g;
+      items.forEach(v => {
+        const o = document.createElement('option');
+        o.value = v.id;
+        o.textContent = v.label;
+        og.appendChild(o);
+      });
+      vSelect.appendChild(og);
+    });
+    renderResult();
+  }
+
+  function renderResult() {
+    const vid = vSelect.value;
+    if (!vid) {
+      result.innerHTML = `<div class="pc-placeholder"><i data-lucide="calculator" width="28" height="28"></i><p>Chọn loại xe và lỗi vi phạm<br>để xem ước tính</p></div>`;
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+    const vio = VIOLATIONS.find(v => v.id === vid);
+    if (!vio) return;
+    const d = vio.data[currentVehicle];
+    const sv = severity(d.fine, currentVehicle);
+    const fineMid = Math.round((d.fine[0] + d.fine[1]) / 2);
+    const isAlcohol = vid.startsWith('alcohol');
+    const isSuspended = d.suspend !== 0;
+
+    // Processing fees
+    const feeHoSo   = isSuspended ? 200000 : 0;
+    const feeTest   = isAlcohol   ? 200000 : 0;
+    const feeTravel = 200000;
+    const totalEst  = fineMid + feeHoSo + feeTest + feeTravel;
+
+    const suspendText = d.suspend === 0
+      ? `<span class="is-clear">Không bị tước</span>`
+      : `<span class="is-alert">${d.suspend[0]}–${d.suspend[1]} tháng</span>`;
+
+    result.innerHTML = `
+      <div class="pc-result-inner">
+        <span class="pc-severity ${sv.cls}">${sv.label}</span>
+        <div class="pc-metrics">
+          <div class="pc-metric">
+            <div class="pc-metric-label">Mức phạt</div>
+            <div class="pc-metric-val is-alert">${fmtMoney(d.fine[0])}</div>
+            <div class="pc-metric-sub">đến ${fmtMoney(d.fine[1])}</div>
+          </div>
+          <div class="pc-metric">
+            <div class="pc-metric-label">Tước GPLX</div>
+            <div class="pc-metric-val">${suspendText}</div>
+            ${isSuspended ? `<div class="pc-metric-sub">tính từ ngày có quyết định</div>` : ''}
+          </div>
+        </div>
+        <div class="pc-breakdown">
+          <div class="pc-breakdown-title">Ước tính tổng chi phí xử lý</div>
+          <div class="pc-breakdown-row"><span>Tiền phạt (trung bình)</span><span>${fmtMoney(fineMid)}</span></div>
+          ${feeHoSo   ? `<div class="pc-breakdown-row is-muted"><span>Phí hồ sơ cấp lại GPLX</span><span>${fmtMoney(feeHoSo)}</span></div>` : ''}
+          ${feeTest   ? `<div class="pc-breakdown-row is-muted"><span>Phí xét nghiệm nồng độ cồn</span><span>${fmtMoney(feeTest)}</span></div>` : ''}
+          <div class="pc-breakdown-row is-muted"><span>Chi phí đi lại xử lý (ước tính)</span><span>${fmtMoney(feeTravel)}</span></div>
+          <div class="pc-breakdown-row is-total"><span>Tổng ước tính</span><span>${fmtMoney(totalEst)}</span></div>
+        </div>
+        <p class="pc-ref">Căn cứ: Nghị định 100/2019/NĐ-CP, sửa đổi bởi 123/2021/NĐ-CP. Mức phạt có thể thay đổi theo thời điểm và tình tiết cụ thể. <a href="phat-nguoi-giai-dap.html">Xem giải đáp thêm →</a></p>
+      </div>`;
+  }
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('is-active'));
+      pill.classList.add('is-active');
+      currentVehicle = pill.dataset.v;
+      buildOptions(currentVehicle);
+    });
+  });
+
+  vSelect.addEventListener('change', renderResult);
+  buildOptions(currentVehicle);
 })();

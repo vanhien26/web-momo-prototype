@@ -524,3 +524,39 @@ UI cũ là layout tự chế (dark header, filter bar riêng, dark map, card acc
 
 ### Lessons
 - Khi repo đã có template pattern được đặt tên (Listing Merchant Page), mọi trang cùng bản chất "liệt kê merchant theo điều kiện" nên clone khung template rồi chỉ đổi dataset + ngữ nghĩa badge, không tự chế layout mới.
+
+## Cứu Hộ Khẩn Cấp — trang riêng tách từ vehicle-hub — 2026-07-20
+
+**ID:** `cuu-ho` | **Category:** Platform (child page của vehicle-hub, không vào lab sidebar) | **File:** `demos/cuu-ho.html`
+
+### Brief
+Tách section `#cuu-ho` trong vehicle-hub.html thành trang đầy đủ tại `/vehicle-hub/cuu-ho`: hero khẩn cấp + live tracking mock, flow 3 bước, 2 đối tác (Zuttoride + cứu hộ ô tô mock), 6 tình huống kèm chi phí tham khảo, coverage strip, FAQ accordion.
+
+### Decisions made
+- Clone shared nav "Tiện Ích Giao Thông" từ dang-kiem.html (mega menu, không gas strip) để nhất quán vehicle hub.
+- Không thêm entry store.js — pattern child page giống bai-do-xe/dang-kiem, link từ hub.
+- URL dạng nested `/vehicle-hub/cuu-ho` (khác các child page khác dạng flat) theo yêu cầu user.
+- Đổi toàn bộ link `/vehicle-hub#cuu-ho` → `/vehicle-hub/cuu-ho` trên 15 file demos; section trong hub giữ nguyên + thêm "Xem chi tiết →".
+- Hero right là live rescue tracking card (timeline 4 trạng thái) thay vì hình minh họa — bán được value "theo dõi thời gian thực".
+
+### Issues gặp phải
+- Devserver phải restart để nạp rewrite mới từ vercel.json (đã biết từ memory Widget Flow Pattern).
+
+### Lessons
+- Nested route `/vehicle-hub/:sub` hoạt động bình thường qua rewrite tĩnh, không cần pattern `:path*`.
+
+## Định giá xe cũ (model page) + Cross-sell Phạt Nguội — 2026-07-20
+
+**Files:** `demos/hang-xe.html` | `demos/phat-nguoi.js` + `demos/phat-nguoi.css`
+
+### Brief
+(1) Section "Định giá xe cũ" trên trang model detail (Fortuner đầu tiên): chọn năm SX + bin km → khoảng giá thị trường, curve khấu hao 8 năm, so sánh % giữ giá với phân khúc, CTA bảo hiểm thân vỏ tính phí theo giá trị vừa định (~1.5%/năm). (2) Cross-sell theo trạng thái kết quả tra phạt nguội: có vi phạm → đăng kiểm (vi phạm chặn đăng kiểm) + TNDS; không vi phạm → bật quét hàng tuần qua hồ sơ xe + nhắc hạn.
+
+### Decisions made
+- Valuation là module data-driven: chỉ render khi model có field `valuation` - thêm model mới chỉ cần thêm data, không sửa code.
+- Control theo Money Lab rules: năm SX (8 option rời rạc) = native select, km = 4 bin pills; không dùng slider cho năm.
+- Cross-sell phạt nguội có `data-xsell` + `data-xsell-item` attributes sẵn cho GA4 tracking sau này.
+- Không đưa sản phẩm lifestyle (trip planner, cây xăng) vào cross-sell phạt nguội - sai intent.
+
+### Lessons
+- Section trong model page dùng scroll-reveal (class `rv`) - screenshot verify phải scroll để trigger IntersectionObserver.

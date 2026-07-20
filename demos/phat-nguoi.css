@@ -176,6 +176,49 @@ h1 {
   display: block;
 }
 
+/* Trust strip */
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: var(--pn-primary);
+  border-radius: 20px;
+  margin: -24px 0 0;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+.trust-strip-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 16px;
+  text-align: center;
+  gap: 3px;
+  position: relative;
+}
+.trust-strip-item + .trust-strip-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: rgba(255,255,255,.18);
+}
+.trust-strip-num {
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.trust-strip-label {
+  font-size: 11px;
+  color: rgba(255,255,255,.72);
+  font-weight: 500;
+}
+
 .section { padding: 42px 0; }
 .section-white { background: #fff; }
 .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-bottom: 20px; }
@@ -295,7 +338,7 @@ h1 {
   overflow: hidden;
   transition: max-height .45s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.vr-section.is-open { max-height: 1200px; }
+.vr-section.is-open { max-height: 2200px; }
 
 .vr-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -468,3 +511,177 @@ h1 {
   transition: background .15s, border-color .15s;
 }
 .vr-btn-secondary:hover { background: var(--pn-canvas); border-color: #ccc; }
+
+/* ── CROSS-SELL theo trạng thái kết quả ── */
+.pn-xsell { margin-top: 20px; }
+.lookup-result .pn-xsell { margin-top: 16px; }
+.pn-xsell > .vr-sub-badge { margin-bottom: 10px; }
+.pn-xsell-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pn-xsell-card {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 14px; border-radius: 14px;
+  background: var(--pn-white); border: 1.5px solid var(--pn-line);
+  text-decoration: none; color: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.pn-xsell-card:hover { border-color: var(--pn-primary); box-shadow: var(--pn-shadow); }
+.pn-xsell-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: var(--pn-primary-soft); color: var(--pn-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.pn-xsell-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.pn-xsell-tag {
+  align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .04em;
+  color: var(--pn-primary); background: var(--pn-primary-soft);
+  padding: 2px 8px; border-radius: 99px;
+}
+.pn-xsell-body strong { font-size: 13px; font-weight: 800; color: var(--pn-ink); white-space: nowrap; }
+.pn-xsell-desc { font-size: 11.5px; color: var(--pn-muted); line-height: 1.4; }
+.pn-xsell-arrow { color: var(--pn-muted); flex-shrink: 0; }
+@media (max-width: 900px) {
+  .pn-xsell-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .pn-xsell-grid { grid-template-columns: 1fr; }
+}
+
+/* Cross-sell trong cột lookup hẹp: 2 cột, ẩn hint cho gọn */
+.lookup-result .pn-xsell-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+.lookup-result .pn-xsell-card { padding: 10px 12px; gap: 9px; }
+.lookup-result .pn-xsell-icon { width: 30px; height: 30px; border-radius: 8px; }
+.lookup-result .pn-xsell-desc { display: none; }
+.lookup-result .pn-xsell-body strong { font-size: 12.5px; white-space: normal; }
+
+/* Lucide icons trong vehicle toggle */
+[data-vehicle] { display: inline-flex; align-items: center; gap: 6px; }
+[data-vehicle] svg { flex-shrink: 0; }
+
+/* ── CLEAN RESULT (không vi phạm) ── */
+.vr-status-badge.is-clean { background: var(--pn-green-soft); color: var(--pn-green); }
+.vr-clean-card {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--pn-green-soft); border: 1.5px solid rgba(8, 122, 85, .18);
+  border-radius: 14px; padding: 16px 18px; margin-bottom: 16px;
+  color: var(--pn-green);
+}
+.vr-clean-card svg { flex-shrink: 0; margin-top: 2px; width: 20px; height: 20px; }
+.vr-clean-card strong { display: block; font-size: 14px; font-weight: 800; color: var(--pn-ink); margin-bottom: 3px; }
+.vr-clean-card p { margin: 0; font-size: 12.5px; color: var(--pn-muted); line-height: 1.55; }
+
+/* ── Penalty Calculator ── */
+.pc-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.pc-inputs {
+  display: flex; flex-direction: column; gap: 16px;
+  background: #fff;
+  border: 1px solid var(--pn-line);
+  border-radius: 16px;
+  padding: 20px;
+}
+.pc-label {
+  display: block;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--pn-muted);
+  margin-bottom: 8px;
+}
+.pc-vehicle-pills {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.pc-vpill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 14px;
+  border: 1.5px solid var(--pn-line);
+  border-radius: 99px;
+  background: #fff;
+  font-size: 12.5px; font-weight: 600; color: var(--pn-ink);
+  cursor: pointer; transition: all .15s;
+}
+.pc-vpill:hover { border-color: var(--pn-primary); color: var(--pn-primary); }
+.pc-vpill.is-active { border-color: var(--pn-primary); background: var(--pn-primary-soft); color: var(--pn-primary); }
+.pc-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--pn-line);
+  border-radius: 10px;
+  font-size: 13px; color: var(--pn-ink);
+  background: #fff;
+  cursor: pointer;
+  appearance: auto;
+}
+.pc-select:focus { outline: none; border-color: var(--pn-primary); }
+
+/* Result panel */
+.pc-result {
+  background: #fff;
+  border: 1px solid var(--pn-line);
+  border-radius: 16px;
+  min-height: 220px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.pc-placeholder {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: var(--pn-muted);
+  padding: 40px;
+  text-align: center;
+}
+.pc-placeholder svg { opacity: .35; }
+.pc-placeholder p { margin: 0; font-size: 13px; line-height: 1.6; }
+
+/* Result content */
+.pc-result-inner { width: 100%; padding: 24px; }
+.pc-severity {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 11px; border-radius: 99px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  margin-bottom: 16px;
+}
+.pc-severity.sev-low    { background: #e8f5e9; color: #2e7d32; }
+.pc-severity.sev-mid    { background: #fff8e1; color: #f57f17; }
+.pc-severity.sev-high   { background: #fce4ec; color: #c62828; }
+.pc-severity.sev-severe { background: #4a0000; color: #fff; }
+.pc-severity::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: block; }
+
+.pc-metrics {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-bottom: 20px;
+}
+.pc-metric {
+  background: var(--pn-bg);
+  border-radius: 12px; padding: 14px 16px;
+}
+.pc-metric-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--pn-muted); margin-bottom: 4px; }
+.pc-metric-val { font-size: 18px; font-weight: 800; color: var(--pn-ink); letter-spacing: -.02em; line-height: 1.2; }
+.pc-metric-val.is-alert { color: var(--pn-red); }
+.pc-metric-val.is-clear { color: var(--pn-green); }
+.pc-metric-sub { font-size: 10.5px; color: var(--pn-muted); margin-top: 2px; }
+
+.pc-breakdown {
+  border-top: 1px solid var(--pn-line);
+  padding-top: 16px;
+}
+.pc-breakdown-title { font-size: 11px; font-weight: 700; color: var(--pn-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; }
+.pc-breakdown-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12.5px; color: var(--pn-ink); padding: 3px 0;
+}
+.pc-breakdown-row.is-muted { color: var(--pn-muted); }
+.pc-breakdown-row.is-total {
+  font-weight: 800; font-size: 14px;
+  border-top: 1px solid var(--pn-line);
+  margin-top: 6px; padding-top: 10px;
+}
+.pc-breakdown-row.is-total span:last-child { color: var(--pn-primary); }
+.pc-ref { font-size: 10.5px; color: var(--pn-muted); margin-top: 14px; line-height: 1.55; }
+.pc-ref a { color: var(--pn-primary); }
+
+@media (max-width: 720px) {
+  .pc-layout { grid-template-columns: 1fr; }
+  .pc-result { min-height: 180px; }
+  .pc-metrics { grid-template-columns: 1fr 1fr; }
+}

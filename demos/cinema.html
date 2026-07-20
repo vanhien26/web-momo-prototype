@@ -626,6 +626,11 @@ body::after {
 .seo-text { border-top: 1px solid var(--gray-200); padding-top: 24px; font-size: 12px; color: var(--gray-400); line-height: 1.7; }
 
 /* ── TV SERIES SECTION ───────────────────── */
+.bo-delta { font-size: 10px; font-weight: 700; margin-left: 4px; letter-spacing: 0; }
+.bo-delta.up { color: #10B981; }
+.bo-delta.down { color: #EF4444; }
+.bo-delta.same { color: var(--gray-400); font-weight: 500; }
+
 .series-section { padding: 32px 0 8px; }
 .series-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
 .series-scroll::-webkit-scrollbar { display: none; }
@@ -771,7 +776,7 @@ body::after {
       <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
       <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
       <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/actors'">Diễn viên</button>
+      <button class="nav-link" onclick="window.location.href='/cinema/person'">Diễn viên</button>
       <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
       <button class="nav-link" onclick="window.location.href='/cinema/genres'">Thể loại</button>
       <button class="nav-link" onclick="window.location.href='/cinema/series'">TV Series</button>
@@ -1185,6 +1190,14 @@ function renderHeroPosters() {
   el.innerHTML = picks.map(f=>`<div class="hero-poster-item" onclick="toast('${f.title}')"><img src="${f.img}" alt="${f.title}" onerror="this.style.background='var(--gray-200)'"></div>`).join('');
 }
 
+function boDelta(title, rank) {
+  if (rank === 0) return 0; // phim dẫn đầu giữ hạng
+  let h = 0;
+  for (let i = 0; i < title.length; i++) h = (h * 31 + title.charCodeAt(i)) & 0xffff;
+  const d = (h % 7) - 3; // -3..+3
+  return Math.min(d, rank); // không thể tăng quá số hạng phía trên
+}
+
 function renderBoxOffice() {
   const el = document.getElementById('boStrip');
   const ranked = [...FILMS_NOW].sort((a,b)=>parseFloat(b.box)-parseFloat(a.box)).slice(0,10);
@@ -1199,12 +1212,18 @@ function renderBoxOffice() {
       const pct = Math.round(parseFloat(f.box)/maxRev*100);
       const rc = RC[i] || 'var(--gray-300)';
       const rCls = i<3 ? ` r${i+1}` : '';
+      const delta = boDelta(f.title, i);
+      const dHtml = delta > 0
+        ? `<span class="bo-delta up">▲ ${delta}</span>`
+        : delta < 0
+          ? `<span class="bo-delta down">▼ ${-delta}</span>`
+          : `<span class="bo-delta same">—</span>`;
       return `<div class="bo-item" onclick="openFilm('${f.title}')">
         <div class="bo-rank-num${rCls}">${i+1}</div>
         <div class="bo-poster"><img src="${f.img}" alt="${f.title}" onerror="this.style.background='var(--gray-200)'"></div>
         <div class="bo-rev-bar-wrap"><div class="bo-rev-bar" style="width:${pct}%;background:${rc}"></div></div>
         <div class="bo-name">${f.title}</div>
-        <div class="bo-rev" style="color:${rc}">${f.box}</div>
+        <div class="bo-rev" style="color:${rc}">${f.box} ${dHtml}</div>
       </div>`;
     }).join('')}</div>
   </div>`;
@@ -1594,6 +1613,6 @@ lucide.createIcons();
   el.addEventListener('mousemove', e=>{ if(!isDown)return; e.preventDefault(); const x=e.pageX-el.offsetLeft; el.scrollLeft=scrollL-(x-startX); });
 })();
 </script>
-<nav class="mobile-bnav"><a class="mbn-item on" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item" href="/cinema/actors"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
+<nav class="mobile-bnav"><a class="mbn-item on" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item" href="/cinema/person"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
 </body>
 </html>
