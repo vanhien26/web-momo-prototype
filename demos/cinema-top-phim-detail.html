@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Top Phim - MoMo Cinema</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#EB2F96;--pink-50:#fdf2f8;
+  --gold:#f59e0b;
+  --gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-500:#6b7280;
+  --gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;
+  --white:#fff;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;
+  --shadow-s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+}
+body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--gray-50);color:var(--gray-900);min-height:100vh}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:20px}
+.nav-links{display:flex;gap:2px}
+.nav-link{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-600);background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:var(--r-sm);transition:.15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{color:var(--pink)}
+.nav-search-wrap{margin-left:auto;background:var(--gray-100);border-radius:20px;padding:7px 14px;display:flex;align-items:center;gap:8px}
+.nav-search-wrap input{background:none;border:none;outline:none;font-size:13px;font-family:inherit;color:var(--gray-900);width:160px}
+@media(max-width:768px){.nav-links,.nav-search-wrap{display:none}}
+
+/* BREADCRUMB */
+.breadcrumb{max-width:1100px;margin:0 auto;padding:14px 20px 0;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-400);font-weight:600}
+.breadcrumb a{color:var(--gray-400);text-decoration:none}.breadcrumb a:hover{color:var(--pink)}
+.breadcrumb-sep{color:var(--gray-300)}
+
+/* HERO */
+.hero{background:var(--white);border-bottom:1px solid var(--gray-200);padding:20px 20px 24px}
+.hero-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px}
+.hero-flag{font-size:44px;line-height:1;flex-shrink:0}
+.hero-text{}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--pink);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.hero-title{font-size:26px;font-weight:900;color:var(--gray-900);margin-bottom:4px;line-height:1.2}
+.hero-sub{font-size:13px;color:var(--gray-500);line-height:1.6}
+
+/* TOOLBAR */
+.toolbar{max-width:1100px;margin:0 auto;padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.filter-group{display:flex;align-items:center;gap:6px}
+.filter-label{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.pill{font-family:inherit;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;border:1.5px solid var(--gray-200);background:var(--white);color:var(--gray-600);cursor:pointer;transition:.15s;white-space:nowrap}
+.pill:hover{border-color:var(--gray-300);background:var(--gray-50)}
+.pill.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.sort-group{display:flex;align-items:center;gap:6px}
+.sort-btn{font-family:inherit;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;border:1.5px solid var(--gray-200);background:var(--white);color:var(--gray-600);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px}
+.sort-btn.on{border-color:var(--pink);color:var(--pink);background:var(--pink-50)}
+.sort-btn:hover:not(.on){background:var(--gray-50)}
+
+/* TABLE */
+.table-wrap{max-width:1100px;margin:16px auto 0;padding:0 20px 56px}
+.rank-table{width:100%;border-collapse:separate;border-spacing:0}
+.rank-table thead th{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;border-bottom:2px solid var(--gray-200);text-align:left;white-space:nowrap;background:var(--white);position:sticky;top:56px;z-index:5}
+.rank-table thead th:first-child{padding-left:16px}
+.rank-table tbody tr{background:var(--white);border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .12s}
+.rank-table tbody tr:hover td{background:var(--gray-50)}
+.rank-table tbody tr:last-child td{border-bottom:none}
+
+/* Cols */
+.col-rank{width:52px;padding:14px 0 14px 16px;text-align:center}
+.col-poster{width:56px;padding:10px 10px 10px 4px}
+.col-title{padding:12px 12px}
+.film-desc{font-size:12px;color:var(--gray-500);line-height:1.5;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:420px}
+.col-genre{width:180px;padding:14px 12px}
+.col-year{width:64px;padding:14px 12px;text-align:center}
+.col-dur{width:80px;padding:14px 12px;text-align:center}
+.col-score{width:80px;padding:14px 12px;text-align:right}
+.col-action{width:90px;padding:14px 16px 14px 8px;text-align:right}
+
+.rank-num{font-size:16px;font-weight:900;color:var(--gray-300)}
+.rank-medal{font-size:18px;line-height:1}
+
+.poster-wrap{position:relative;width:40px}
+.poster-thumb{width:40px;height:56px;object-fit:cover;border-radius:6px;background:var(--gray-200);display:block}
+.poster-init{width:40px;height:56px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;letter-spacing:-1px;position:absolute;inset:0}
+.age-dot{position:absolute;bottom:2px;right:-4px;font-size:8px;font-weight:900;padding:1px 4px;border-radius:3px;color:#fff;line-height:1.4}
+.age-dot.p{background:#16a34a}.age-dot.t13{background:#ca8a04}.age-dot.t16{background:#ea580c}.age-dot.c18{background:#dc2626}
+
+.film-name{font-size:14px;font-weight:800;color:var(--gray-900);margin-bottom:3px;line-height:1.3}
+.film-type{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;color:#fff;display:inline-flex}
+.film-type.film{background:var(--pink)}.film-type.series{background:#6366f1}
+.film-status{font-size:11px;font-weight:700;margin-left:6px}
+.film-status.now{color:var(--pink)}.film-status.soon{color:#6366f1}.film-status.past{color:var(--gray-400)}.film-status.ongoing{color:#16a34a}
+
+.genre-tags{display:flex;gap:4px;flex-wrap:wrap}
+.gtag{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);border-radius:5px;padding:2px 7px}
+
+.score-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:14px;font-weight:900;color:var(--gray-800)}
+.meta-text{font-size:12px;color:var(--gray-400);font-weight:600}
+
+.btn-row{font-family:inherit;font-size:11px;font-weight:800;padding:5px 12px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.btn-row.pink{color:#fff;background:var(--pink)}.btn-row.pink:hover{background:#c9178c}
+.btn-row.gray{color:var(--gray-400);background:var(--gray-100);cursor:default}
+.btn-row.indigo{color:#6366f1;background:#eef2ff}
+
+/* Pager */
+.pager{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:8px}
+.pager-info{font-size:12px;color:var(--gray-400)}
+.pager-btns{display:flex;align-items:center;gap:6px}
+.pg-btn{font-family:inherit;font-size:13px;font-weight:700;padding:6px 14px;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px}
+.pg-btn:hover:not(:disabled){background:var(--gray-100)}.pg-btn:disabled{opacity:.3;cursor:default}
+.pg-nums{display:flex;gap:4px}
+.pg-n{font-family:inherit;font-size:13px;font-weight:700;width:34px;height:34px;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+.pg-n:hover{background:var(--gray-100)}.pg-n.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+
+.empty-state{padding:60px 0;text-align:center;color:var(--gray-400)}
+
+@media(max-width:768px){
+  .col-genre,.col-dur,.col-year{display:none}
+  body{padding-bottom:72px}
+  .hero-flag{font-size:36px}
+  .hero-title{font-size:20px}
+}
+.mobile-bnav{display:none}
+@media(max-width:768px){
+  .mobile-bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-200);padding:6px 0 env(safe-area-inset-bottom,8px);z-index:200}
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0}
+  .mbn-item.on{color:var(--pink)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;padding:4px 8px;border-radius:var(--r-sm);transition:.15s" onmouseover="this.style.background='var(--gray-100)'" onmouseout="this.style.background=''">← Lab</a>
+    <a href="/cinema" style="display:flex;align-items:center;gap:6px;text-decoration:none;flex-shrink:0;margin-left:4px">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28">
+      <span style="width:1px;height:18px;background:var(--gray-200);display:inline-block;margin:0 2px"></span>
+      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22">
+      <span style="font-size:14px;font-weight:800;color:var(--pink)">Cinema</span>
+    </a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link" onclick="location.href='/cinema/person'">Diễn viên</button>
+      <button class="nav-link" onclick="location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link on" onclick="location.href='/cinema/top-phim'">Top phim</button>
+      <button class="nav-link" onclick="location.href='/cinema/genres'">Thể loại</button>
+      <button class="nav-link" onclick="location.href='/cinema/series'">TV Series</button>
+    </div>
+    <div class="nav-search-wrap">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Tìm phim, rạp, thể loại...">
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="/cinema/top-phim">Top Phim</a>
+  <span class="breadcrumb-sep">›</span>
+  <span id="bcCurrent">...</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-flag" id="heroFlag">🏆</div>
+    <div class="hero-text">
+      <div class="hero-eyebrow"><i data-lucide="trophy" width="13" height="13"></i> Bảng xếp hạng</div>
+      <h1 class="hero-title" id="heroTitle">Top Phim</h1>
+      <p class="hero-sub" id="heroSub">Xếp hạng theo điểm đánh giá từ cộng đồng</p>
+    </div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="filter-group">
+    <span class="filter-label">Loại</span>
+    <button class="pill on" onclick="setFilter('all',this)">Tất cả</button>
+    <button class="pill" onclick="setFilter('film',this)">Phim lẻ</button>
+    <button class="pill" onclick="setFilter('series',this)">Phim bộ</button>
+  </div>
+  <div class="sort-group">
+    <button class="sort-btn on" onclick="setSort('score',this)"><i data-lucide="star" width="12" height="12"></i>Điểm cao nhất</button>
+    <button class="sort-btn" onclick="setSort('year',this)"><i data-lucide="calendar" width="12" height="12"></i>Mới nhất</button>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table class="rank-table" id="rankTable">
+    <thead>
+      <tr>
+        <th class="col-rank">#</th>
+        <th class="col-poster"></th>
+        <th class="col-title">Tên phim</th>
+        <th class="col-genre">Thể loại</th>
+        <th class="col-year">Năm</th>
+        <th class="col-dur">Thời lượng</th>
+        <th class="col-score"><svg width="11" height="11" viewBox="0 0 24 24" fill="var(--gold)" stroke="none" style="display:inline;vertical-align:middle;margin-right:2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Điểm</th>
+        <th class="col-action"></th>
+      </tr>
+    </thead>
+    <tbody id="rankBody"></tbody>
+  </table>
+  <div id="rankPager"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const COLLECTIONS = {
+  // Quốc gia
+  'my':          {icon:'🇺🇸', name:'Top Phim Mỹ',           desc:'Phim & Series Hollywood đỉnh cao nhất mọi thời đại', filter:{country:'us'}},
+  'han-quoc':    {icon:'🇰🇷', name:'Top Phim Hàn Quốc',     desc:'K-Drama và K-Movie được yêu thích nhất toàn cầu',   filter:{country:'kr'}},
+  'nhat-ban':    {icon:'🇯🇵', name:'Top Phim Nhật Bản',     desc:'Anime và điện ảnh Nhật Bản xuất sắc nhất',          filter:{country:'jp'}},
+  'viet-nam':    {icon:'🇻🇳', name:'Top Phim Việt Nam',     desc:'Phim Việt được cộng đồng đánh giá cao nhất',        filter:{country:'vn'}},
+  'anh':         {icon:'🇬🇧', name:'Top Phim Anh',          desc:'BBC & British cinema đỉnh cao',                     filter:{country:'gb'}},
+  'phap':        {icon:'🇫🇷', name:'Top Phim Pháp',         desc:'Điện ảnh Pháp & Arthouse',                         filter:{country:'fr'}},
+  'trung-quoc':  {icon:'🇨🇳', name:'Top Phim Trung Quốc',  desc:'Bom tấn Hoa ngữ và phim cổ trang đình đám',        filter:{country:'cn'}},
+  'duc':         {icon:'🇩🇪', name:'Top Phim Đức',          desc:'Series và điện ảnh Đức xuất sắc',                  filter:{country:'de'}},
+  'thai-lan':    {icon:'🇹🇭', name:'Top Phim Thái Lan',     desc:'Y2K, Tình cảm & Thriller Thái Lan',                filter:{country:'th'}},
+  'an-do':       {icon:'🇮🇳', name:'Top Phim Ấn Độ',       desc:'Bollywood, Tollywood & OTT originals',              filter:{country:'in'}},
+  'tay-ban-nha': {icon:'🇪🇸', name:'Top Phim Tây Ban Nha', desc:'Heist, Teen drama & Arthouse Tây Ban Nha',          filter:{country:'es'}},
+  'brazil':      {icon:'🇧🇷', name:'Top Phim Brazil',       desc:'Crime, Favela & điện ảnh Latin mãnh liệt',         filter:{country:'br'}},
+  'y':           {icon:'🇮🇹', name:'Top Phim Ý',            desc:'Mafia, tình yêu & điện ảnh Ý kinh điển',           filter:{country:'it'}},
+  'dan-mach':    {icon:'🇩🇰', name:'Top Phim Đan Mạch',     desc:'Nordic Noir & chính trị Scandinavia',              filter:{country:'dk'}},
+  'tho-nhi-ky':  {icon:'🇹🇷', name:'Top Phim Thổ Nhĩ Kỳ',  desc:'Sử thi Ottoman & dizi Thổ đình đám',              filter:{country:'tr'}},
+  'argentina':   {icon:'🇦🇷', name:'Top Phim Argentina',    desc:'Hài đen, Crime & điện ảnh Latin sắc bén',         filter:{country:'ar'}},
+  'thuy-dien':   {icon:'🇸🇪', name:'Top Phim Thụy Điển',    desc:'Scandinavian crime & Nordic drama',                filter:{country:'se'}},
+  'mexico':      {icon:'🇲🇽', name:'Top Phim Mexico',       desc:'Cartel drama, Arthouse & điện ảnh Mexico',        filter:{country:'mx'}},
+  // Thể loại
+  'hanh-dong':   {icon:'⚡', name:'Top Phim Hành Động',    desc:'Rượt đuổi, chiến đấu, kịch tính tới cùng',         filter:{genre:'Hành động'}},
+  'kinh-di':     {icon:'👻', name:'Top Phim Kinh Dị',      desc:'Nỗi sợ, bí ẩn, ám ảnh không thể quên',            filter:{genre:'Kinh dị'}},
+  'tinh-cam':    {icon:'❤️', name:'Top Phim Tình Cảm',     desc:'Câu chuyện tình yêu đẹp nhất màn ảnh',             filter:{genre:'Tình cảm'}},
+  'hoat-hinh':   {icon:'🎨', name:'Top Phim Hoạt Hình',    desc:'Animation Ghibli, Pixar & Anime đỉnh cao',         filter:{genre:'Hoạt hình'}},
+  'khoa-hoc':    {icon:'🚀', name:'Top Phim Sci-Fi',       desc:'Vũ trụ, tương lai, khoa học viễn tưởng',           filter:{genre:'Khoa học viễn tưởng'}},
+  'toi-pham':    {icon:'🔍', name:'Top Phim Tội Phạm',     desc:'Thriller, Crime Drama & Neo-noir',                 filter:{genre:'Tội phạm'}},
+  'hai-huoc':    {icon:'😂', name:'Top Phim Hài',          desc:'Cười thỏa thích cùng những bộ phim hài hay nhất',  filter:{genre:'Hài kịch'}},
+  'tam-ly':      {icon:'🧠', name:'Top Phim Tâm Lý',       desc:'Sâu sắc, đa chiều, đánh thẳng vào cảm xúc',       filter:{genre:'Tâm lý'}},
+  // Đặc biệt
+  'series-chau-a':{icon:'🌏', name:'Top TV Series Châu Á',  desc:'K-Drama, Anime, C-Drama & series châu Á đỉnh nhất', filter:{continent:'asia'}},
+  'series':      {icon:'📺', name:'Top TV Series',         desc:'Những bộ series ăn khách nhất mọi thời đại',       filter:{type:'series'}},
+  'phim-le':     {icon:'🎬', name:'Top Phim Lẻ',           desc:'Chỉ phim điện ảnh, không phải series',             filter:{type:'film'}},
+  'co-dien':     {icon:'🏆', name:'Top Phim Kinh Điển',    desc:'Kiệt tác trước năm 2000 bất tử theo thời gian',    filter:{before:2000}},
+  'moi-nhat':    {icon:'✨', name:'Top Phim Mới Nhất',     desc:'Phim ra mắt từ năm 2023 trở đi',                   filter:{from:2023}},
+  'chien-tranh': {icon:'⚔️', name:'Top Phim Chiến Tranh', desc:'Lịch sử, bi tráng và những anh hùng thầm lặng',    filter:{genre:'Chiến tranh'}},
+  'gia-dinh':    {icon:'👨‍👩‍👧', name:'Top Phim Gia Đình',   desc:'Phù hợp mọi lứa tuổi, xem cùng gia đình',         filter:{genre:'Gia đình'}},
+};
+
+const FILMS_RAW = [
+  {id:'breaking-bad',type:'series',title:'Con Đường Tội Lỗi',country:'us',genres:['Tội phạm','Kịch tính'],year:2008,dur:'5 mùa',age:'C18',score:9.5,status:'past',img:'https://image.tmdb.org/t/p/w185/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',desc:'Walter White - giáo viên hóa học bình thường bị ung thư phổi - quyết định nấu ma túy để lo cho gia đình. Hành trình biến đổi từ người tốt thành kẻ ác được khắc họa sắc nét qua 5 mùa phim, với diễn xuất huyền thoại của Bryan Cranston. Breaking Bad được xem là series truyền hình xuất sắc nhất mọi thời đại, kết hợp hoàn hảo giữa drama gia đình, thriller tội phạm và phân tích nhân vật chiều sâu hiếm có.'},
+  {id:'chernobyl',type:'series',title:'Thảm Họa Chernobyl',country:'us',genres:['Lịch sử','Kịch tính'],year:2019,dur:'1 mùa',age:'C18',score:9.4,status:'past',img:'https://image.tmdb.org/t/p/w185/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg',desc:'Tái dựng thảm họa hạt nhân tồi tệ nhất lịch sử nhân loại năm 1986 tại Liên Xô. Series 5 tập khắc họa chân thực quá trình đối phó khủng hoảng, sự che giấu thông tin của chính phủ và cái giá khổng lồ mà con người phải trả. Được xem là miniseries hay nhất mọi thời đại trên IMDb - gây ám ảnh bởi sự trung thực đến lạnh người và màn trình diễn đỉnh cao của toàn bộ dàn diễn viên.'},
+  {id:'the-shawshank-redemption',type:'film',title:'Nhà Tù Shawshank',country:'us',genres:['Kịch tính','Tội phạm'],year:1994,dur:'142 phút',age:'C18',score:9.3,status:'past',img:'https://image.tmdb.org/t/p/w185/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',desc:'Andy Dufresne - chủ ngân hàng bị kết án oan - tìm cách giữ vững hy vọng và nhân phẩm trong nhà tù Shawshank khắc nghiệt. Tình bạn giữa anh và Red trở thành linh hồn của bộ phim. Nhà Tù Shawshank là bản tụng ca về hy vọng và tự do, đứng đầu danh sách IMDb Top 250 suốt nhiều thập kỷ và là phim điện ảnh được yêu thích nhất mọi thời đại của nhân loại.'},
+  {id:'the-godfather',type:'film',title:'Bố Già (The Godfather)',country:'us',genres:['Tội phạm','Kịch tính'],year:1972,dur:'175 phút',age:'C18',score:9.2,status:'past',img:'https://image.tmdb.org/t/p/w185/3bhkrj58Vtu7enYsLegHQDbe3Fs.jpg',desc:'Câu chuyện về gia đình Corleone - triều đại mafia quyền lực nhất nước Mỹ. Khi trùm cuối Vito Corleone bị ám sát hụt, con trai út Michael buộc phải bước vào thế giới tội phạm và dần trở thành Bố Già mới. Kiệt tác của Francis Ford Coppola về quyền lực, gia đình và đạo đức, với màn hóa thân không thể quên của Marlon Brando và Al Pacino. Phim hay nhất lịch sử điện ảnh thế giới.'},
+  {id:'arcane',type:'series',title:'Arcane',country:'us',genres:['Hoạt hình','Hành động'],year:2021,dur:'2 mùa',age:'T16',score:9.0,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg',desc:'Lấy bối cảnh thế giới League of Legends, Arcane kể câu chuyện về hai chị em Jinx và Vi - từ những đứa trẻ đường phố thành hai kẻ thù đối lập. Animation với chất lượng hình ảnh chưa từng có trong lịch sử phim hoạt hình, kết hợp kịch bản sâu sắc về giai cấp, khoa học và bản sắc. Arcane giành giải Emmy và được coi là anime series xuất sắc nhất từ trước đến nay.'},
+  {id:'the-dark-knight',type:'film',title:'Kỵ Sĩ Bóng Đêm',country:'us',genres:['Hành động','Tội phạm'],year:2008,dur:'152 phút',age:'T13',score:9.0,status:'past',img:'https://image.tmdb.org/t/p/w185/qJ2tW6WMUDux911r6m7haRef0WH.jpg',desc:'Batman đối đầu với Joker - kẻ phản diện hỗn loạn muốn chứng minh rằng bất kỳ ai cũng có thể trở thành ác nhân. Christopher Nolan biến phim siêu anh hùng thành tác phẩm nghiêm túc về đạo đức và công lý. Heath Ledger để lại vai diễn Joker huyền thoại - biểu diễn xuất sắc nhất trong lịch sử phim siêu anh hùng - giành Oscar sau khi qua đời. Kiệt tác không thể vượt qua.'},
+  {id:'inception',type:'film',title:'Khởi Nguồn',country:'us',genres:['Hành động','Khoa học viễn tưởng'],year:2010,dur:'148 phút',age:'T13',score:8.8,status:'past',img:'https://image.tmdb.org/t/p/w185/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',desc:'Dom Cobb là tên trộm chuyên xâm nhập vào giấc mơ để đánh cắp bí mật từ tiềm thức. Nhiệm vụ lần này không phải đánh cắp mà là cài ý tưởng - Inception. Christopher Nolan xây dựng thế giới với những quy tắc logic phức tạp về giấc mơ lồng trong giấc mơ, tạo ra phim sci-fi trí tuệ nhất thập kỷ. Kết thúc mở vẫn là chủ đề tranh luận sôi nổi sau hơn 14 năm.'},
+  {id:'dune-2',type:'film',title:'Hành Tinh Cát 2',country:'us',genres:['Khoa học viễn tưởng','Phiêu lưu'],year:2024,dur:'166 phút',age:'T13',score:8.8,status:'past',img:'https://image.tmdb.org/t/p/w185/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',desc:'Tiếp nối câu chuyện Paul Atreides trên hành tinh cát Arrakis, phần 2 đẩy tất cả lên tầm cao mới. Denis Villeneuve xây dựng sử thi vĩ đại về chính trị, tôn giáo và thực dân hóa với những cảnh quay hoành tráng chưa từng có. Zendaya và Timothée Chalamet có chemistry bùng nổ. Dune 2 là bộ phim màn ảnh rộng xuất sắc nhất thập kỷ 2020 - bắt buộc phải xem trên màn hình lớn.'},
+  {id:'interstellar',type:'film',title:'Hành Trình Vũ Trụ',country:'us',genres:['Khoa học viễn tưởng','Kịch tính'],year:2014,dur:'169 phút',age:'T13',score:8.7,status:'past',img:'https://image.tmdb.org/t/p/w185/gEU2QniE6E77NI6lCU6MxlNBvIe.jpg',desc:'Khi Trái Đất đang chết dần vì nạn đói, cựu phi hành gia Cooper tham gia sứ mệnh cuối cùng - đi qua lỗ sâu đục để tìm hành tinh mới. Interstellar là cuộc hành trình cảm xúc về tình cha con và sự hy sinh, được khoa học vật lý hỗ trợ nghiêm túc qua tư vấn từ nhà vật lý Kip Thorne. Nhạc phim của Hans Zimmer được xem là xuất sắc nhất trong toàn bộ sự nghiệp của ông.'},
+  {id:'stranger-things',type:'series',title:'Stranger Things',country:'us',genres:['Kinh dị','Khoa học viễn tưởng'],year:2016,dur:'4 mùa',age:'T16',score:8.7,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',desc:'Bốn đứa trẻ ở thị trấn nhỏ Hawkins phát hiện "Upside Down" - thế giới song song tối tăm - khi người bạn Will Byers mất tích bí ẩn. Gặp cô bé có năng lực đặc biệt Eleven, nhóm bạn đối mặt với những quái vật từ thế giới khác. Stranger Things là tình thư gửi đến thập niên 80 với vibe hoài niệm và tinh thần phiêu lưu kiểu Spielberg, đồng thời là series Netflix khai phá kỷ nguyên streaming đỉnh cao.'},
+  {id:'blue-eye-samurai',type:'series',title:'Samurai Mắt Xanh',country:'us',genres:['Hoạt hình','Hành động'],year:2023,dur:'2 mùa',age:'C18',score:8.7,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/j3Z3XA3TRBPQi6JqxuWFAVqQM3b.jpg',desc:'Câu chuyện về một samurai lai - con lai duy nhất ở Nhật Bản thế kỷ 17 - trong cuộc hành trình trả thù tàn khốc để tìm cha mình. Animation kết hợp phong cách anime và phim Nhật cổ điển, gây choáng ngợp bởi cảnh hành động đẹp mê hồn và câu chuyện về bản sắc, định kiến xã hội. Netflix gây bất ngờ toàn cầu với series trưởng thành và nghệ thuật này.'},
+  {id:'top-gun-maverick',type:'film',title:'Top Gun: Maverick',country:'us',genres:['Hành động','Kịch tính'],year:2022,dur:'130 phút',age:'T13',score:8.7,status:'past',img:'https://image.tmdb.org/t/p/w185/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',desc:'Ba mươi năm sau Top Gun nguyên bản, Maverick vẫn là phi công nổi loạn từ chối thăng cấp để được tiếp tục bay. Khi được giao huấn luyện nhóm phi công trẻ cho sứ mệnh gần như tự sát, anh phải đối mặt với Rooster - con trai người bạn quá cố Goose. Phim gây sốt toàn cầu với cảnh bay thực tế ấn tượng và câu chuyện cảm động về tình phụ tử và sự chuộc lỗi.'},
+  {id:'knives-out',type:'film',title:'Sắc Bén',country:'us',genres:['Bí ẩn','Hài kịch'],year:2019,dur:'131 phút',age:'T13',score:8.7,status:'past',img:'https://image.tmdb.org/t/p/w185/pThyQovXQrw2m0s9x82twj48Jq4.jpg',desc:'Nhà văn trinh thám Harlan Thrombey chết bí ẩn sau bữa tiệc sinh nhật 85 tuổi. Thám tử lập dị Benoit Blanc được thuê ẩn danh để điều tra. Điều thú vị là khán giả đã biết thủ phạm từ đầu - nhưng câu đố thực sự phức tạp hơn nhiều. Rian Johnson xây dựng whodunit hiện đại sắc bén và hài hước, với Daniel Craig và Ana de Armas tỏa sáng rực rỡ.'},
+  {id:'avengers-endgame',type:'film',title:'Avengers: Hồi Kết',country:'us',genres:['Hành động','Phiêu lưu'],year:2019,dur:'181 phút',age:'T13',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/or06FN3Dka5tukK1e9sl16pB3iy.jpg',desc:'Sau thất bại ở Infinity War, những Avengers còn sống tìm cách đảo ngược hành động của Thanos qua hành trình du hành thời gian. Trận chiến cuối cùng quy tụ hơn 50 nhân vật Marvel tạo nên cảnh chiến đấu hoành tráng nhất lịch sử điện ảnh. Endgame là cái kết xứng đáng cho hơn 10 năm xây dựng MCU, với những khoảnh khắc "I am Iron Man" đi vào huyền thoại.'},
+  // KR
+  {id:'vincenzo',type:'series',title:'Vincenzo',country:'kr',genres:['Tội phạm','Hài kịch'],year:2021,dur:'1 mùa',age:'T16',score:8.8,status:'past',img:'https://image.tmdb.org/t/p/w185/6PGLYJzLBgFXPq3kVWBfZ6GVZTT.jpg',desc:'Vincenzo Cassano - luật sư gốc Ý gốc Hàn - trở về Seoul và đụng độ tập đoàn Babel tham nhũng hung ác. Song Joong-ki biến hóa hoàn toàn với vai phản diện có lương tâm: tàn nhẫn với kẻ xấu, nhân nghĩa với người thường. Vincenzo kết hợp hài đen và mafia drama theo công thức chưa ai thử - vừa hài không dừng được vừa căng thẳng đến nghẹt thở. Hiện tượng của năm 2021.'},
+  {id:'signal',type:'series',title:'Signal',country:'kr',genres:['Tội phạm','Bí ẩn'],year:2016,dur:'1 mùa',age:'T16',score:8.9,status:'past',img:'https://image.tmdb.org/t/p/w185/3TBL9eTzFdKTjh0GJ2lzEkH1aJY.jpg',desc:'Cảnh sát Park Hae-young năm 2015 vô tình liên lạc được với thám tử Lee Jae-han năm 1989 qua bộ đàm huyền bí. Cả hai hợp tác qua thời gian để giải quyết những vụ án lạnh chưa được làm sáng tỏ. Signal là đỉnh cao của crime thriller Hàn - cốt truyện tinh vi, cảm xúc chân thực và khai thác thời gian du hành theo cách thông minh nhất từng có trên màn ảnh nhỏ.'},
+  {id:'my-mister',type:'series',title:'My Mister (Naui Ajeossi)',country:'kr',genres:['Kịch tính','Tình cảm'],year:2018,dur:'1 mùa',age:'T16',score:9.0,status:'past',img:'https://image.tmdb.org/t/p/w185/qVjkiHDKxDYFk47DwgXp5N1xf1y.jpg',desc:'IU đóng vai cô gái trẻ chai lì sau những tổn thương chồng chất, tình cờ chứng kiến cuộc đời nhàm chán nhưng tử tế của một người đàn ông trung niên. Không phải tình yêu - đây là câu chuyện về sự chữa lành giữa hai người cùng mang vết thương. My Mister được coi là K-drama hay nhất mọi thời đại bởi sự tinh tế cảm xúc không phim nào chạm đến được.'},
+  {id:'attorney-woo',type:'series',title:'Extraordinary Attorney Woo',country:'kr',genres:['Kịch tính','Hài kịch'],year:2022,dur:'1 mùa',age:'T13',score:8.6,status:'past',img:'https://image.tmdb.org/t/p/w185/mxVaFdPL5pBPxfCLi4TuyRe9ZFX.jpg',desc:'Woo Young-woo - luật sư thiên tài mắc chứng tự kỷ - bắt đầu sự nghiệp tại công ty luật lớn nhất Hàn Quốc. Cô giải quyết những vụ án phức tạp theo cách phi thường, trong khi học cách điều hướng thế giới xã hội xa lạ với mình. Park Eun-bin mang đến màn trình diễn xuất thần, series trở thành hiện tượng toàn cầu với thông điệp nhân văn về sự đa dạng và chấp nhận.'},
+  {id:'mask-girl',type:'series',title:'Mask Girl',country:'kr',genres:['Bí ẩn','Hồi hộp'],year:2023,dur:'1 mùa',age:'C18',score:7.9,status:'past',img:'https://image.tmdb.org/t/p/w185/oTybSHjJEqBWMmBuB8HYqT4JQHJ.jpg',desc:'Kim Mo-mi - nhân viên văn phòng mặc cảm ngoại hình - ban đêm trở thành streamer đeo mặt nạ. Cuộc sống bí mật dần kéo cô vào vòng xoáy tội ác không thoát ra được. Mask Girl kể câu chuyện từ nhiều góc nhìn khác nhau - nạn nhân, kẻ thủ ác, người chứng kiến - để phân tích sâu về nhan sắc, internet và bạo lực trong xã hội hiện đại Hàn Quốc.'},
+  {id:'crash-landing',type:'series',title:'Hạ Cánh Nơi Anh',country:'kr',genres:['Tình cảm','Hài kịch'],year:2019,dur:'2 mùa',age:'T13',score:8.7,status:'past',img:'https://image.tmdb.org/t/p/w185/3bXFjGDzFlVMlGdkxBsS2ouvBf8.jpg',desc:'Chaebol Yoon Se-ri bị lốc xoáy cuốn sang Triều Tiên và gặp đại úy quân đội Ri Jeong-hyuk. Đây là tình yêu không thể nhưng đẹp đến nghẹt thở - vượt qua biên giới quốc gia, giai cấp và ý thức hệ. Hyun Bin và Son Ye-jin (sau này thực sự kết hôn) có chemistry huyền thoại. Series K-Drama được xem nhiều nhất lịch sử Netflix Hàn Quốc với bức tranh nhân văn về cuộc sống hai miền.'},
+  {id:'moving',type:'series',title:'Moving',country:'kr',genres:['Hành động','Bí ẩn'],year:2023,dur:'1 mùa',age:'T16',score:8.7,status:'past',img:'https://image.tmdb.org/t/p/w185/ggukGkwOVOLMbNb7fPJABMYj8pX.jpg',desc:'Ba học sinh trung học - con cái của những siêu anh hùng bị chính phủ ép giấu năng lực - phải đối mặt với mối đe dọa từ kẻ thù năm xưa. Phim superhero Hàn Quốc đầu tiên với quy mô sản xuất 320 tỷ won, kết hợp hành động mãn nhãn và câu chuyện gia đình cảm động. Gây chấn động khi ra mắt trên Disney+ với những pha hành động được choreograph xuất sắc chưa từng thấy.'},
+  {id:'parasite',type:'film',title:'Ký Sinh Trùng',country:'kr',genres:['Tâm lý','Hài kịch','Kịch tính'],year:2019,dur:'132 phút',age:'T16',score:8.5,status:'past',img:'https://image.tmdb.org/t/p/w185/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',desc:'Gia đình Ki-taek nghèo khó lần lượt thâm nhập vào gia đình Park giàu có thông qua sự lừa dối khéo léo. Bong Joon-ho xây dựng phim về bất bình đẳng giai cấp với cấu trúc đầy bất ngờ - đột ngột chuyển từ hài đen sang kinh dị xã hội rùng rợn. Parasite trở thành phim không nói tiếng Anh đầu tiên giành Oscar Phim hay nhất, phá vỡ "rào cản phụ đề" của Hollywood mãi mãi.'},
+  {id:'the-glory',type:'series',title:'Vinh Quang Trong Thù Hận',country:'kr',genres:['Kịch tính','Bí ẩn'],year:2022,dur:'2 mùa',age:'T16',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/jbpVyeI9ThFHDFMFyVuUMFPlnpH.jpg',desc:'Moon Dong-eun sống sót qua những năm bị bạo lực học đường tàn khốc để dành cả thập kỷ chuẩn bị kế hoạch trả thù hoàn hảo. Song Hye-kyo biến hóa hoàn toàn với vai diễn lạnh lùng nhất sự nghiệp - người phụ nữ đã chết trong tâm hồn, chỉ còn lại ý chí phục thù. The Glory là bản cáo trạng xã hội Hàn Quốc về đặc quyền và bạo lực học đường, được thực thi với sự tàn nhẫn đẹp đến mê hồn.'},
+  {id:'squid-game',type:'series',title:'Trò Chơi Con Mực',country:'kr',genres:['Hồi hộp','Khoa học viễn tưởng'],year:2021,dur:'2 mùa',age:'C18',score:8.0,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg',desc:'456 người đang chìm trong nợ nần tham gia trò chơi sinh tử với phần thưởng 45.6 tỷ won - kẻ thua sẽ chết. Những trò chơi trẻ em vô tư bỗng trở thành ác mộng đẫm máu. Squid Game trở thành hiện tượng văn hóa chưa từng có - series đầu tiên không nói tiếng Anh phá vỡ mọi kỷ lục Netflix và châm ngòi thảo luận toàn cầu về chủ nghĩa tư bản và bất bình đẳng.'},
+  {id:'all-of-us-are-dead',type:'series',title:'Tất Cả Chúng Ta Đều Chết',country:'kr',genres:['Kinh dị','Hành động'],year:2022,dur:'1 mùa',age:'C18',score:7.9,status:'past',img:'https://image.tmdb.org/t/p/w185/6TFbinNnqoKqnA23J0kV1iKxEzQ.jpg',desc:'Virus zombie bùng phát trong trường học, nhóm học sinh bị mắc kẹt phải tự tìm cách sống sót. Series zombie khác biệt khi tập trung vào mối quan hệ giữa những người trẻ - tình bạn, tình yêu học đường và sự trưởng thành cưỡng bức khi đối mặt với cái chết. Cũng là bình luận sắc bén về hệ thống giáo dục và sự bất lực của người lớn trước khủng hoảng.'},
+  // JP
+  {id:'fullmetal-alchemist',type:'series',title:'Fullmetal Alchemist: Brotherhood',country:'jp',genres:['Hành động','Phiêu lưu'],year:2009,dur:'1 mùa',age:'T16',score:9.1,status:'past',img:'https://image.tmdb.org/t/p/w185/5ZFUEOULaVml7GEcVr9DjIogNb.jpg',desc:'Hai anh em Edward và Alphonse Elric mất thân xác sau khi cố hồi sinh mẹ bằng thuật giả kim cấm. Hành trình tìm Đá Triết Gia để lấy lại cơ thể dần tiết lộ âm mưu chính phủ đen tối hơn bất cứ điều gì họ tưởng. FMA Brotherhood là anime được đánh giá cao nhất mọi thời đại trên MyAnimeList - cân bằng hoàn hảo giữa hành động, cảm xúc, triết học và cốt truyện không một lỗ hổng nào.'},
+  {id:'demon-slayer',type:'series',title:'Demon Slayer (Kimetsu no Yaiba)',country:'jp',genres:['Hành động','Phiêu lưu'],year:2019,dur:'4 mùa',age:'T16',score:8.7,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/xUfRZu2mi8jH6SzQEZmPzIeRcfy.jpg',desc:'Tanjiro Kamado trở thành thợ diệt quỷ sau khi gia đình bị tàn sát và em gái Nezuko bị biến thành quỷ. Hành trình vừa cứu em vừa trả thù Muzan - cha đẻ của tất cả quỷ dữ. Ufotable tạo ra những tập phim có chất lượng hình ảnh ngang ngửa phim điện ảnh, với trận chiến Rengoku vs Akaza trong Mugen Train trở thành khoảnh khắc anime lịch sử được thảo luận toàn cầu.'},
+  {id:'death-note',type:'series',title:'Death Note',country:'jp',genres:['Bí ẩn','Hồi hộp'],year:2006,dur:'1 mùa',age:'T16',score:9.0,status:'past',img:'https://image.tmdb.org/t/p/w185/g3gzMBcrFdsW3RuXjXzL6k5dsXH.jpg',desc:'Light Yagami - học sinh thiên tài - nhặt được cuốn sổ có thể giết bất kỳ ai chỉ bằng cách viết tên vào. Anh quyết định dùng nó để tiêu diệt tội phạm và trở thành thần thánh của thế giới mới. Cuộc đấu trí giữa Light và thám tử thiên tài L là một trong những duel trí tuệ hấp dẫn nhất lịch sử anime - định nghĩa lại thể loại psychological thriller trong thế giới hoạt hình.'},
+  {id:'jujutsu-kaisen',type:'series',title:'Jujutsu Kaisen',country:'jp',genres:['Hành động','Phiêu lưu'],year:2020,dur:'3 mùa',age:'T16',score:8.8,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/lHu1wtNaczFLHFW9a4Wlmn2CXhL.jpg',desc:'Yuji Itadori nuốt ngón tay của vương chú nguyền độc Ryomen Sukuna để cứu bạn bè và trở thành vật chứa cho kẻ mạnh nhất thế giới nguyền thuật. Jujutsu Kaisen thế hệ Big 3 mới của shounen - hành động điên cuồng, nhân vật đa chiều và sẵn sàng giết chết nhân vật chính phụ mà không báo trước. MAPPA tạo ra những tập phim như trailer điện ảnh.'},
+  {id:'attack-on-titan',type:'series',title:'Đại Chiến Titan',country:'jp',genres:['Hành động','Phiêu lưu'],year:2013,dur:'4 mùa',age:'T16',score:9.0,status:'past',img:'https://image.tmdb.org/t/p/w185/hTP1DtLGFamjfu8WqjnuQkPaM.jpg',desc:'Nhân loại sống trong những bức tường khổng lồ để thoát khỏi Titan - người khổng lồ ăn thịt người. Eren Yeager, sau khi mất mẹ, thề trả thù và gia nhập Binh đoàn Trinh sát. Đại Chiến Titan là hành trình từ phim về sự sống còn đến triết học về tự do và bản năng con người. Kết thúc gây tranh cãi nhất lịch sử anime nhưng cũng là tác phẩm sâu sắc và bi tráng nhất thế hệ shonen.'},
+  {id:'spirited-away',type:'film',title:'Vùng Đất Linh Hồn',country:'jp',genres:['Hoạt hình','Phiêu lưu','Gia đình'],year:2001,dur:'125 phút',age:'P',score:8.6,status:'past',img:'https://image.tmdb.org/t/p/w185/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg',desc:'Cô bé Chihiro bị kéo vào thế giới thần linh khi bố mẹ bị biến thành lợn. Để cứu gia đình, cô phải làm việc tại nhà tắm của phù thủy Yubaba và dần học cách trưởng thành trong thế giới kỳ lạ này. Hayao Miyazaki tạo ra kiệt tác hoạt hình có chiều sâu như truyện cổ tích nhưng phức tạp như tiểu thuyết triết học. Giành Oscar Hoạt hình xuất sắc nhất 2003 - bộ phim hoạt hình vĩ đại nhất lịch sử.'},
+  {id:'grave-of-fireflies',type:'film',title:'Mộ Đom Đóm',country:'jp',genres:['Hoạt hình','Kịch tính','Chiến tranh'],year:1988,dur:'89 phút',age:'P',score:8.5,status:'past',img:'https://image.tmdb.org/t/p/w185/qG3RYlIVpTiclBhFNo7TUOyOJpf.jpg',desc:'Bối cảnh Nhật Bản những ngày cuối Thế chiến II, Seita và em gái Setsuko phải tự lo cho nhau sau khi mất mẹ. Một trong những bộ phim buồn nhất lịch sử điện ảnh - không hoa mỹ, không anh hùng, chỉ là hiện thực tàn nhẫn của chiến tranh qua đôi mắt trẻ thơ. Isao Takahata tạo ra tác phẩm về sự bất lực và phẩm giá con người khi hệ thống xã hội sụp đổ hoàn toàn.'},
+  {id:'your-name',type:'film',title:'Tên Cậu Là Gì',country:'jp',genres:['Hoạt hình','Tình cảm'],year:2016,dur:'106 phút',age:'P',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/q719jXXEzOoYaps6babgKnONONX.jpg',desc:'Mitsuha - cô gái ở thị trấn núi - và Taki - chàng trai Tokyo - bỗng nhiên hoán đổi thân xác trong giấc ngủ. Khi họ bắt đầu thích nhau và muốn gặp mặt, một bí ẩn khủng khiếp được tiết lộ. Makoto Shinkai tạo ra anime lãng mạn xuất sắc nhất thập kỷ với hình ảnh đẹp đến phi thực và câu chuyện về sự kết nối tâm hồn vượt không gian-thời gian. Phá kỷ lục phòng vé toàn cầu cho anime.'},
+  {id:'princess-mononoke',type:'film',title:'Công Chúa Mononoke',country:'jp',genres:['Hoạt hình','Phiêu lưu'],year:1997,dur:'134 phút',age:'T13',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/4OiKVnh88BDbEIkIoMVOQjHJhFj.jpg',desc:'Chiến tranh giữa loài người khai thác rừng và những vị thần rừng già đang cận kề. Ashitaka - chàng trai bị nguyền rủa - bị kẹt giữa hai phía. Miyazaki không đứng về phía nào - đây là phim hiếm hoi trong đó con người và thiên nhiên đều có lý, đều đau khổ. Công Chúa Mononoke là thiên sử thi về môi trường và thỏa hiệp, tác phẩm có chiều sâu triết học đỉnh cao nhất của Studio Ghibli.'},
+  {id:'howls-moving-castle',type:'film',title:'Lâu Đài Di Động',country:'jp',genres:['Hoạt hình','Tình cảm','Phiêu lưu'],year:2004,dur:'119 phút',age:'P',score:8.2,status:'past',img:'https://image.tmdb.org/t/p/w185/NPQBCOGMjHfMbOCCPnIGknLqBv.jpg',desc:'Cô thợ may Sophie bị phù thủy biến thành bà lão 90 tuổi và tìm đến lâu đài di động của pháp sư Howl để phá giải lời nguyền. Câu chuyện tình yêu kỳ lạ nhất của Miyazaki - không về ngoại hình mà về tâm hồn - cũng là phép ẩn dụ về chiến tranh. Với nhạc phim của Joe Hisaishi và hình ảnh lộng lẫy nhất trong các tác phẩm Ghibli, phim đạt 1 tỷ USD toàn cầu.'},
+  // VN
+  {id:'ve-nha-di-con',type:'series',title:'Về Nhà Đi Con',country:'vn',genres:['Kịch tính','Gia đình'],year:2019,dur:'1 mùa',age:'T13',score:8.2,status:'past',img:'https://image.tmdb.org/t/p/w185/9nGBSPkpSoZ1qNM2p5HuMAF4mYz.jpg',desc:'Ông Sơn - người cha đơn thân - nuôi ba cô con gái trưởng thành với ba tính cách, ba số phận và ba vấn đề khác nhau. Series gia đình Việt Nam chân thực nhất từ trước đến nay: không giàu có không sang trọng, chỉ là những mâu thuẫn và yêu thương trong nhà bình thường. "Về nhà đi con" trở thành câu nói đi vào lòng hàng triệu người, đặc biệt với những ai sống xa nhà.'},
+  {id:'thuong-ngay-nang-ve',type:'series',title:'Thương Ngày Nắng Về',country:'vn',genres:['Kịch tính','Tình cảm'],year:2022,dur:'2 mùa',age:'T13',score:8.0,status:'past',img:'https://image.tmdb.org/t/p/w185/aZqpLxqsJJPcW8EE2J7VdT8ZhHk.jpg',desc:'Khánh Vân - cô gái lớn lên không có tình thương của mẹ - phải chăm sóc em nhỏ trong khi tìm kiếm câu trả lời cho những bí ẩn về gia đình mình. Series khai thác chủ đề toxic family và trauma thế hệ theo cách trưởng thành hiếm thấy trên truyền hình Việt. Được xem là series drama Việt Nam tốt nhất thập kỷ 2020, tạo sóng thảo luận về bạo lực gia đình và sức mạnh người phụ nữ.'},
+  {id:'nha-ba-nu',type:'film',title:'Nhà Bà Nữ',country:'vn',genres:['Hài kịch','Gia đình'],year:2023,dur:'129 phút',age:'T13',score:8.6,status:'past',img:'https://image.tmdb.org/t/p/w185/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',desc:'Ba người con trưởng thành của bà Nữ - mỗi người một tính cách - phải cùng nhau sống trong ngôi nhà nhỏ đang xuống cấp. Phim hài gia đình Việt Nam đột phá với kịch bản thật, diễn xuất tự nhiên và những chi tiết đời thường khiến khán giả như đang nhìn vào nhà mình. Nhà Bà Nữ tạo nên hiện tượng phòng vé với doanh thu 475 tỷ đồng - kỷ lục phim Việt tại thời điểm ra mắt.'},
+  {id:'mat-biec',type:'film',title:'Mắt Biếc',country:'vn',genres:['Tình cảm','Kịch tính'],year:2019,dur:'115 phút',age:'P',score:8.5,status:'past',img:'https://image.tmdb.org/t/p/w185/wcahBISlczoYqcakatu2uyX8kGQ.jpg',desc:'Ngạn yêu Hà Lan từ thuở ấu thơ nhưng mãi không dám nói, để rồi cô bước vào cuộc hôn nhân khác. Chuyển thể từ tiểu thuyết của Nguyễn Nhật Ánh, đưa khán giả về miền Trung thập niên 80-90 với phong cảnh làng quê đẹp như tranh. Mắt Biếc không chỉ là chuyện tình buồn mà là tác phẩm về sự nuối tiếc - ta có thể yêu một người suốt đời mà không bao giờ thực sự sở hữu họ.'},
+  {id:'bo-gia',type:'film',title:'Bố Già',country:'vn',genres:['Hài kịch','Kịch tính','Gia đình'],year:2021,dur:'120 phút',age:'P',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',desc:'Ông Ba (Trấn Thành) - người cha phố thị xưa nay không quan tâm chuyện con cái - đột ngột phải đối mặt với bi kịch gia đình. Phim khai thác khoảng cách thế hệ và sự giao tiếp sai lầm giữa cha mẹ và con trong bối cảnh Sài Gòn đương đại. Bố Già là cú đấm cảm xúc bất ngờ dưới lớp vỏ phim hài - không ai nghĩ mình sẽ khóc nhiều đến vậy. Phá kỷ lục 420 tỷ đồng tuần đầu ra mắt.'},
+  {id:'dong-dao-ma-quai',type:'film',title:'Đồng Dao Ma Quái',country:'vn',genres:['Kinh dị'],year:2025,dur:'108 phút',age:'C18',score:7.9,status:'now',img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',desc:'Dựa trên truyền thuyết về "Đồng Dao" - những bài hát trẻ em kỳ lạ tiên đoán điều không may. Phim kinh dị Việt Nam khai thác văn hóa dân gian bản địa với bầu không khí ám ảnh hoàn toàn khác biệt phim ngoại. Đồng Dao Ma Quái gây tranh luận sôi nổi về cách làm phim kinh dị thuần Việt và chứng minh khán giả sẵn sàng cho những nội dung điện ảnh trưởng thành và tối tăm hơn.'},
+  {id:'hai-phuong',type:'film',title:'Hai Phượng',country:'vn',genres:['Hành động'],year:2019,dur:'98 phút',age:'T16',score:7.8,status:'past',img:'https://image.tmdb.org/t/p/w185/ylKQCblNYxF7c6N5R3IJHS9u6WQ.jpg',desc:'Hai Phượng - cựu sát thủ đang sống cuộc đời bình thường - khi con gái bị bọn buôn người bắt cóc, một mình đến Sài Gòn giải cứu. Ngô Thanh Vân tạo ra nhân vật nữ anh hùng hành động đầu tiên trong điện ảnh Việt, với những pha chiến đấu mãn nhãn do chính cô thực hiện không có thế thân. Phim đạt 200 tỷ đồng và được đề cử Oscar phim quốc tế - dấu mốc lịch sử của điện ảnh Việt.'},
+  {id:'em-va-trinh',type:'film',title:'Em Và Trịnh',country:'vn',genres:['Tình cảm','Âm nhạc'],year:2022,dur:'130 phút',age:'P',score:7.5,status:'past',img:'https://image.tmdb.org/t/p/w185/bOGkgRGdhrBYJSLpXaxhXVstddV.jpg',desc:'Hành trình âm nhạc và những mối tình của nhạc sĩ Trịnh Công Sơn - người được mệnh danh "Bob Dylan của Việt Nam". Bộ phim tái dựng bầu không khí Sài Gòn thập niên 60-70 với những ca khúc bất hủ sống động trở lại. Em Và Trịnh là tribute đẹp đẽ dành cho di sản âm nhạc Trịnh Công Sơn, với phần âm nhạc do Hà Anh Tuấn và nhiều giọng ca đỉnh cao thể hiện là điểm sáng không thể phủ nhận.'},
+  // CN
+  {id:'bad-kids',type:'series',title:'The Bad Kids (Ẩn Bí Của Góc Tối)',country:'cn',genres:['Bí ẩn','Tâm lý'],year:2020,dur:'1 mùa',age:'T16',score:9.0,status:'past',img:'https://image.tmdb.org/t/p/w185/thKsqLmJOHLMZbP1iNfLqh1arD8.jpg',desc:'Ba đứa trẻ vô tình quay được cảnh một người đàn ông đẩy bố mẹ vợ xuống núi. Từ đây bắt đầu cuộc đàm phán tâm lý không hồi kết giữa trẻ em và người lớn - ai đang thao túng ai, ai thực sự nguy hiểm hơn. The Bad Kids là masterpiece thể loại psychological thriller Trung Quốc, dẫn đầu Douban trong nhiều năm và được so sánh với những series Hàn Quốc hay nhất.'},
+  {id:'nirvana-in-fire',type:'series',title:'Nirvana in Fire (Lang Nha Bảng)',country:'cn',genres:['Lịch sử','Kịch tính'],year:2015,dur:'1 mùa',age:'T13',score:9.0,status:'past',img:'https://image.tmdb.org/t/p/w185/hI3FzuODDFmHGfwSNvVPPJGx95t.jpg',desc:'Mei Changsu - mưu sĩ thiên tài - trở về kinh đô với thân phận ẩn giấu để thanh oan cho cha và 70.000 binh sĩ bị hại oan năm xưa. Cốt truyện cung đấu Trung Hoa phức tạp nhất từng được viết: từng bước cờ đều tính trước hàng chục nước, nhân vật không bao giờ hành xử ngu ngốc chỉ để phục vụ drama. Được gọi là "cổ trang đỉnh nhất" trong lịch sử phim Hoa ngữ.'},
+  {id:'joy-of-life',type:'series',title:'Joy of Life (Khánh Dư Niên)',country:'cn',genres:['Lịch sử','Hành động'],year:2019,dur:'2 mùa',age:'T13',score:8.7,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/yFRJPKF84kU4CPobF3s1vEpFYmx.jpg',desc:'Fan Xian - chàng trai hiện đại đầu thai vào thế giới cổ đại với kiến thức hiện đại - dần khám phá bí ẩn về nguồn gốc thực sự của mình. Khánh Dư Niên kết hợp xuyên việt, cung đấu và hành động theo công thức cực kỳ mãn nhãn. Mùa 2 ra mắt năm 2024 sau 5 năm chờ đợi và lập tức phá mọi kỷ lục streaming Trung Quốc, lập kỷ lục 100 triệu lượt xem trong 24 giờ.'},
+  {id:'wandering-earth',type:'film',title:'Địa Cầu Lưu Lạc',country:'cn',genres:['Khoa học viễn tưởng','Hành động'],year:2019,dur:'125 phút',age:'T13',score:7.9,status:'past',img:'https://image.tmdb.org/t/p/w185/aqB7lLr9JmxOWIrUMSNNdQkPaM.jpg',desc:'Mặt trời đang hấp hối, nhân loại xây 10.000 động cơ khổng lồ để di chuyển Trái Đất sang hệ mặt trời khác. Khi Trái Đất nguy cơ va chạm với sao Mộc, những anh hùng bình thường phải cứu thế giới. Địa Cầu Lưu Lạc là cú đột phá của phim sci-fi Trung Quốc ra tầm thế giới, bác bỏ quan điểm phim Tàu chỉ là võ hiệp và chứng minh điện ảnh Trung Quốc có thể làm bom tấn toàn cầu.'},
+  {id:'tung-hoanh',type:'film',title:'Tung Hoành Tứ Hải',country:'cn',genres:['Hành động','Giang hồ'],year:2025,dur:'126 phút',age:'T16',score:7.8,status:'now',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',desc:'Câu chuyện về những tay giang hồ thời hiện đại trong thế giới ngầm Hồng Kông - những mối quan hệ phức tạp giữa tình nghĩa và lợi ích, giữa anh em và đối thủ. Kế thừa dòng phim hành động giang hồ kinh điển của điện ảnh Hoa ngữ với phong cách hiện đại và nhịp phim nhanh, hấp dẫn. Phần hành động được dàn dựng công phu, kết hợp võ thuật truyền thống và choreography đương đại.'},
+  {id:'ne-zha',type:'film',title:'Na Tra: Ma Đồng Giáng Thế',country:'cn',genres:['Hoạt hình','Hành động'],year:2019,dur:'110 phút',age:'P',score:7.6,status:'past',img:'https://image.tmdb.org/t/p/w185/qs48P8UMeB0WJmqZpAqXPJQbsNI.jpg',desc:'Na Tra vốn được tiên tri là yêu quái nhưng cậu chống lại định mệnh để bảo vệ dân làng. Phim hoạt hình Trung Quốc kết hợp mỹ học hiện đại và mythology Đạo giáo cổ điển, tạo ra nhân vật Na Tra hoàn toàn mới mẻ. Phá vỡ mọi kỷ lục phòng vé Trung Quốc, trở thành phim hoạt hình ăn khách nhất lịch sử nước này và khai sinh vũ trụ thần thoại Trung Hoa hiện đại.'},
+  // DE
+  {id:'dark',type:'series',title:'Dark',country:'de',genres:['Khoa học viễn tưởng','Bí ẩn'],year:2017,dur:'3 mùa',age:'T16',score:8.8,status:'past',img:'https://image.tmdb.org/t/p/w185/apbrbWs8M9lyOpJYU5IrNDTBhCl.jpg',desc:'Bốn gia đình tại thị trấn Winden bị cuốn vào vòng xoáy thời gian - lỗ hổng nối 1953, 1986 và 2019. Những bí mật xuyên thế hệ dần được hé lộ qua cấu trúc phi tuyến tính cực kỳ phức tạp. Dark là series đòi hỏi tập trung cao độ nhưng phần thưởng là một trong những câu chuyện xuất sắc nhất lịch sử truyền hình. Tối tăm hơn, thông minh hơn và sâu sắc hơn Stranger Things rất nhiều.'},
+  {id:'das-boot',type:'film',title:'Con Tàu Ngầm',country:'de',genres:['Chiến tranh','Kịch tính'],year:1981,dur:'149 phút',age:'T16',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/qy6tBbFGkl1FGbRkxBUqbJWbdDt.jpg',desc:'Năm 1941, tàu ngầm U-96 của Đức thực hiện nhiệm vụ chiến đấu trong Đại Tây Dương. Không phải phim về anh hùng và chiến thắng - mà về sự sợ hãi, chờ đợi và cái chết trong không gian chật hẹp dưới đáy biển. Das Boot là kiệt tác phim chiến tranh phản chiến, đặt góc nhìn bên phía kẻ thua để kể câu chuyện nhân văn nhất về sự vô nghĩa của bạo lực.'},
+  {id:'babylon-berlin',type:'series',title:'Babylon Berlin',country:'de',genres:['Lịch sử','Tội phạm'],year:2017,dur:'4 mùa',age:'C18',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/fypydCipcWDKDTTCoPucBsdGYzK.jpg',desc:'Đức 1929 - nền Cộng hòa Weimar đang sụp đổ, lạm phát khủng khiếp và bóng tối Nazi đang ẩn hiện. Thám tử Gereon Rath đến Berlin và bị cuốn vào mạng lưới âm mưu chính trị-tội phạm phức tạp. Series đắt tiền nhất lịch sử truyền hình Đức tái hiện Berlin thập niên 20 với độ chính xác lịch sử choáng ngợp, kết hợp noir trinh thám và drama xã hội trong bối cảnh trước thềm Thế chiến II.'},
+  // GB
+  {id:'peaky-blinders',type:'series',title:'Peaky Blinders',country:'gb',genres:['Tội phạm','Kịch tính'],year:2013,dur:'6 mùa',age:'C18',score:8.8,status:'past',img:'https://image.tmdb.org/t/p/w185/vUUqzWa2LnHIVqkaKVlVGkPaQca.jpg',desc:'Tommy Shelby và băng đảng Peaky Blinders từ Birmingham phát triển từ nhóm địa phương thành đế chế tội phạm ảnh hưởng đến chính trị Anh quốc. Cillian Murphy hóa thân thành Tommy - một trong những nhân vật phức tạp và hấp dẫn nhất lịch sử truyền hình. Bối cảnh Anh hậu Thế chiến I được khắc họa với trang phục, âm nhạc rock-cổ điển kết hợp và bầu không khí tối tăm đặc trưng không thể nhầm lẫn.'},
+  {id:'1917',type:'film',title:'1917',country:'gb',genres:['Chiến tranh','Kịch tính'],year:2019,dur:'119 phút',age:'T16',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/iZf0KyrE25z1sage4SYFLCCrMi9.jpg',desc:'Hai lính trẻ Anh được giao nhiệm vụ vượt qua vùng đất của quân Đức để chuyển mệnh lệnh hủy tấn công - nếu không 1,600 đồng đội sẽ chết trong bẫy. Sam Mendes thực hiện một kỳ tích kỹ thuật vĩ đại - quay toàn bộ phim trong một cú máy liên tục về mặt hình thức. Khán giả trải nghiệm thời gian thực của cuộc chiến, không có khoảng cắt để thở.'},
+  {id:'black-mirror',type:'series',title:'Black Mirror',country:'gb',genres:['Khoa học viễn tưởng','Kịch tính'],year:2011,dur:'6 mùa',age:'C18',score:8.2,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/7PRddO7z7mcPi21nZTCMGShAyy1.jpg',desc:'Mỗi tập là câu chuyện độc lập về tương lai không xa - khi công nghệ khuếch đại những điểm yếu tệ nhất của con người. Từ mạng xã hội điểm số công dân, đến ký ức tải lên cloud, đến thực tại ảo sau khi chết - Charlie Brooker xây dựng những kịch bản đen tối đến mức khán giả không biết sợ hay thấy mình trong đó. Series sci-fi quan trọng nhất thời đại số.'},
+  {id:'dunkirk',type:'film',title:'Dunkirk',country:'gb',genres:['Chiến tranh','Hành động'],year:2017,dur:'106 phút',age:'T13',score:7.9,status:'past',img:'https://image.tmdb.org/t/p/w185/ebSnOF3E3glL7y48A4RPHM4UxXK.jpg',desc:'Năm 1940, 400.000 lính Đồng minh bị bao vây tại bờ biển Dunkirk. Nolan kể câu chuyện sơ tán theo ba góc nhìn - đất, biển, không - với ba mốc thời gian hội tụ về cùng một điểm. Không súng máu chảy kiểu Hollywood - chỉ là sự sợ hãi và ý chí sống sót. Dunkirk là phim chiến tranh khác biệt hoàn toàn, nhập vai đến mức khán giả tưởng mình đang ở đó.'},
+  // FR
+  {id:'leon',type:'film',title:'Léon: The Professional',country:'fr',genres:['Hành động','Tội phạm'],year:1994,dur:'110 phút',age:'C18',score:8.5,status:'past',img:'https://image.tmdb.org/t/p/w185/fYtHxTxP4oNTM7XLbs9rcC73m9I.jpg',desc:'Léon là sát thủ chuyên nghiệp đơn độc. Mathilda 12 tuổi chứng kiến gia đình bị thảm sát và nương tựa vào anh. Từ đây hình thành mối quan hệ phức tạp và xúc động giữa sát thủ lạnh lùng và cô bé mồ côi - vừa như cha con, vừa là sự cứu rỗi lẫn nhau. Luc Besson tạo ra kiệt tác neo-noir với Jean Reno và Natalie Portman 12 tuổi, đặt nền móng cho cả thể loại "action with heart".'},
+  {id:'amelie',type:'film',title:'Amélie',country:'fr',genres:['Tình cảm','Hài kịch'],year:2001,dur:'122 phút',age:'T13',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/nEBrBBnSjQcnuDl0HnKLCpMjb0F.jpg',desc:'Amélie Poulain thích quan sát cuộc sống người khác hơn là tham gia vào nó - cô quyết định trở thành thiên thần hộ mệnh bí mật, sắp xếp hạnh phúc cho mọi người xung quanh trong khi bỏ lỡ hạnh phúc chính mình. Jean-Pierre Jeunet tạo ra bộ phim với mỹ học độc đáo nhất điện ảnh Pháp - màu sắc bão mãn như tranh, hài hước như cổ tích và ấm áp như buổi chiều Paris.'},
+  {id:'lupin',type:'series',title:'Lupin',country:'fr',genres:['Tội phạm','Hành động'],year:2021,dur:'3 mùa',age:'T13',score:7.5,status:'past',img:'https://image.tmdb.org/t/p/w185/sgxawbFB5Vi5OkPWQLNfl3dvkNJ.jpg',desc:'Assane Diop sử dụng nghệ thuật của Arsène Lupin để trả thù gia đình tư sản đã hủy hoại cha mình - một người hầu bị kết án oan. Omar Sy mang đến sự hấp dẫn hiếm có: thông minh, duyên dáng và đầy cảm xúc. Series Pháp đầu tiên lọt top 10 Netflix toàn cầu và giới thiệu điện ảnh Pháp đến hàng triệu khán giả quốc tế qua heist thriller nhẹ nhàng nhưng gay cấn.'},
+  // TH
+  {id:'girl-from-nowhere',type:'series',title:'Girl From Nowhere',country:'th',genres:['Hồi hộp','Bí ẩn'],year:2018,dur:'2 mùa',age:'C18',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/iY2VbFujQRdHkRtOxUaXK3VQ3Tp.jpg',desc:'Nanno - cô gái bí ẩn không ai biết xuất xứ - xuất hiện tại những ngôi trường khác nhau và phơi bày sự đạo đức giả, tham nhũng và bạo lực ẩn giấu bên trong. Mỗi tập là một câu chuyện kinh dị xã hội độc lập, lấy bối cảnh học đường nhưng ám chỉ thẳng vào những vấn đề của người lớn. Series Thái Lan đen tối và sắc sảo nhất - Nanno trở thành biểu tượng công lý lạnh lùng của Netflix Đông Nam Á.'},
+  {id:'hormones',type:'series',title:'Hormones',country:'th',genres:['Kịch tính','Tình cảm'],year:2013,dur:'3 mùa',age:'T16',score:8.1,status:'past',img:'https://image.tmdb.org/t/p/w185/pFyKMZA5xkSgL40b8mOFh4uWNQN.jpg',desc:'Nhóm học sinh trung học tại Bangkok đối mặt với vấn đề tuổi dậy thì thực sự - tình dục, ma túy, áp lực gia đình và danh tính - được trình bày không kiểm duyệt, không phán xét. Hormones thay đổi hoàn toàn cách làm phim thanh thiếu niên tại Thái Lan, dám nói thẳng những điều xã hội né tránh. Người trẻ coi đây là series hiểu mình nhất từ trước đến nay.'},
+  {id:'bad-genius',type:'film',title:'Thiên Tài Bất Hảo',country:'th',genres:['Hồi hộp','Tội phạm'],year:2017,dur:'130 phút',age:'T13',score:7.6,status:'past',img:'https://image.tmdb.org/t/p/w185/hZ3APUQ6OQaTXgLNHRmIa8BKqFy.jpg',desc:'Lynn - học sinh thiên tài nghèo - bị cuốn vào đường dây gian lận thi cử quy mô quốc tế, từ chép phao leo thang đến bán đáp án kỳ thi STIC quốc tế. Thiên Tài Bất Hảo kết hợp thriller học đường với heist movie theo cách chưa ai nghĩ đến - những cảnh thi cử căng thẳng như cướp ngân hàng. Phim xuất sắc nhất điện ảnh Thái hiện đại, được mua bản quyền làm lại tại nhiều quốc gia.'},
+  {id:'friend-zone',type:'film',title:'Friend Zone',country:'th',genres:['Tình cảm','Hài kịch'],year:2019,dur:'117 phút',age:'T13',score:7.1,status:'past',img:'https://image.tmdb.org/t/p/w185/vE3P7iYoOtnLGmwHGPzfXMkB0Jf.jpg',desc:'Palm và Ink là đôi bạn thân từ thuở nhỏ - anh yêu cô nhưng mãi không dám nói, chỉ là "bạn thân hoàn hảo" cho đến khi cô bắt đầu hẹn hò người khác. Phim tình cảm hài Thái Lan khai thác khái niệm "vùng bạn bè" - trạng thái khổ sở khi yêu mà không được yêu lại - một cách nhẹ nhàng và thật. Phim Thái đầu tiên đạt top 10 Netflix toàn cầu.'},
+  // IN
+  {id:'scam-1992',type:'series',title:'Scam 1992: The Harshad Mehta Story',country:'in',genres:['Tội phạm','Lịch sử'],year:2020,dur:'1 mùa',age:'T16',score:9.3,status:'past',img:'https://image.tmdb.org/t/p/w185/p1dFOEFpKDGBk3xDPcbQheFH7ST.jpg',desc:'Câu chuyện thực về Harshad Mehta - "Amitabh Bachchan của thị trường chứng khoán" - người đã thao túng thị trường Bombay Stock Exchange và gây ra vụ bê bối tài chính lớn nhất lịch sử Ấn Độ năm 1992. Pratik Gandhi mang đến màn trình diễn lịch sử, biến nhân vật phản diện thực ngoài đời trở thành huyền thoại thao túng đáng nể. Series được xem nhiều nhất trên SonyLIV, đỉnh rating của phim streaming Ấn Độ.'},
+  {id:'delhi-crime',type:'series',title:'Delhi Crime',country:'in',genres:['Tội phạm','Kịch tính'],year:2019,dur:'2 mùa',age:'C18',score:8.5,status:'past',img:'https://image.tmdb.org/t/p/w185/dNy3I7qlcvHEL3aQGpGa2S1MQAY.jpg',desc:'Tái dựng quá trình điều tra vụ cưỡng hiếp tập thể năm 2012 tại Delhi - vụ án làm chấn động Ấn Độ và toàn thế giới. Nữ thanh tra Vartika Singh dẫn dắt nhóm điều tra trong vòng vài ngày để bắt tội phạm trước khi dư luận bùng nổ. Delhi Crime giành Emmy Quốc tế cho series không nói tiếng Anh xuất sắc nhất 2020 - tác phẩm điều tra tội ác cảm xúc và chân thực nhất từ Ấn Độ.'},
+  {id:'panchayat',type:'series',title:'Panchayat',country:'in',genres:['Hài kịch','Kịch tính'],year:2020,dur:'3 mùa',age:'T13',score:8.8,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/efCpbAEFVQXaGFiO3N3uJz7SKtY.jpg',desc:'Abhishek Tripathi - cử nhân thành phố - buộc phải nhận công việc thư ký Hội đồng xã tại một ngôi làng hẻo lánh Bắc Ấn. Va chạm giữa tư duy đô thị và cuộc sống nông thôn chân thực tạo ra những tình huống vừa hài vừa sâu sắc. Panchayat là slice-of-life Ấn Độ nhẹ nhàng và ấm lòng nhất, được yêu mến vì sự trung thực và tôn trọng với cuộc sống bình thường mà không cần drama giả tạo.'},
+  {id:'rrr',type:'film',title:'RRR',country:'in',genres:['Hành động','Phiêu lưu'],year:2022,dur:'187 phút',age:'T16',score:7.8,status:'past',img:'https://image.tmdb.org/t/p/w185/nEkqpRMBO9p8E3cGiGQshBqCkVH.jpg',desc:'Năm 1920, thực dân Anh bắt cóc một đứa trẻ bộ lạc. Hai chiến binh huyền thoại - Alluri Sitarama Raju và Komaram Bheem - tìm cách giải cứu cô bé nhưng không biết mình đang đứng ở hai chiến tuyến đối lập. S.S. Rajamouli tạo ra siêu phẩm hành động Ấn Độ với quy mô chưa từng có, giành Oscar Nhạc phim hay nhất và là cú hích đưa điện ảnh Ấn Độ ra toàn cầu thế kỷ 21.'},
+  {id:'mirzapur',type:'series',title:'Mirzapur',country:'in',genres:['Tội phạm','Hành động'],year:2018,dur:'3 mùa',age:'C18',score:8.5,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/jG06UjJJN9mn5a7pLxpo9gQPSfh.jpg',desc:'Thành phố Mirzapur bị cai trị bởi trùm giang hồ Akhandanand Tripathi. Hai anh em Guddu và Bablu bị cuốn vào thế giới tội ác sau một biến cố và từng bước leo lên qua thứ bậc tàn bạo của thế giới ngầm. Series giang hồ Ấn Độ tàn nhẫn và không khoan nhượng như Game of Thrones gặp The Wire - khiến cả Ấn Độ nghiền ngẫm suốt nhiều năm liền.'},
+  {id:'3-idiots',type:'film',title:'3 Idiots',country:'in',genres:['Hài kịch','Kịch tính'],year:2009,dur:'170 phút',age:'P',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/66A9MqXZyHKf3FNVOhFsXcNThCW.jpg',desc:'Ba người bạn học kỹ thuật dám thách thức hệ thống giáo dục Ấn Độ - nơi điểm số quyết định giá trị con người. Rancho - thiên tài lập dị - truyền cảm hứng sống theo đam mê thay vì chạy theo kỳ vọng xã hội. Bộ phim hài-cảm xúc hoàn hảo nhất Bollywood, bán được 200 triệu vé tại Trung Quốc và đánh thẳng vào nỗi sợ thất bại của cả thế hệ trẻ toàn cầu.'},
+  {id:'sacred-games',type:'series',title:'Sacred Games',country:'in',genres:['Tội phạm','Bí ẩn'],year:2018,dur:'2 mùa',age:'C18',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/n6ikhGcF6qcxvjBRZn5bHPJqrVE.jpg',desc:'Cảnh sát Mumbai Sartaj Singh nhận cuộc điện thoại từ trùm tội phạm Ganesh Gaitonde tiên đoán thành phố sẽ bị hủy diệt trong 25 ngày. Netflix Ấn Độ đầu tiên gây chấn động toàn cầu với cốt truyện phi tuyến tính đan xen giữa hiện tại và quá khứ tội ác, tham nhũng và chính trị bẩn thỉu của Mumbai đương đại.'},
+  // ES
+  {id:'money-heist',type:'series',title:'Money Heist (La Casa de Papel)',country:'es',genres:['Tội phạm','Hành động'],year:2017,dur:'5 phần',age:'T16',score:8.2,status:'past',img:'https://image.tmdb.org/t/p/w185/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg',desc:'Giáo sư lên kế hoạch cướp Nhà Xưởng Mint quốc gia Tây Ban Nha - in tiền trực tiếp thay vì cướp ngân hàng. Nhóm tên cướp đặt theo tên thành phố dần trở thành biểu tượng kháng cự toàn cầu với bộ đồ đỏ và mặt nạ Salvador Dalí. Series Tây Ban Nha đầu tiên phá kỷ lục Netflix toàn cầu, biến "Bella Ciao" thành bài hát của một thế hệ phản kháng bất tuân.'},
+  {id:'elite',type:'series',title:'Elite',country:'es',genres:['Tội phạm','Kịch tính'],year:2018,dur:'8 mùa',age:'C18',score:7.4,status:'ongoing',img:'https://image.tmdb.org/t/p/w185/6XBGPBwmhL7oJdEhybYr7SsGJqe.jpg',desc:'Ba học sinh nghèo nhận học bổng vào Las Encinas - trường tư thục danh giá nhất Tây Ban Nha - và va chạm với giới thượng lưu. Mỗi mùa bắt đầu bằng một vụ giết người rồi giải ngược câu đố qua những bí mật, tình ái và phản bội. Elite là teen drama đen tối nhất châu Âu - nghiện ngập, gây tranh cãi nhưng không thể dừng xem.'},
+  // BR
+  {id:'city-of-god',type:'film',title:'Thành Phố Của Chúa',country:'br',genres:['Tội phạm','Kịch tính'],year:2002,dur:'130 phút',age:'C18',score:8.6,status:'past',img:'https://image.tmdb.org/t/p/w185/k7eYdWvhYQyRQoU2TB2A2Xu2grZ.jpg',desc:'Khu ổ chuột Cidade de Deus ở Rio - nơi Busca-Pé lớn lên giữa bạo lực và nghèo đói từ thập niên 60 đến 80. Câu chuyện về hai người bạn thơ ấu chọn hai con đường khác nhau - nhiếp ảnh gia và trùm tội phạm khét tiếng. Fernando Meirelles tạo ra kiệt tác Brazil với năng lượng điện ảnh sống động chưa từng có, được xếp top phim hay nhất mọi thời đại.'},
+  {id:'elite-squad',type:'film',title:'Biệt Đội Tinh Nhuệ (Tropa de Elite)',country:'br',genres:['Hành động','Tội phạm'],year:2007,dur:'115 phút',age:'C18',score:8.0,status:'past',img:'https://image.tmdb.org/t/p/w185/bUJr0HoRHhQWITZ9p0Jm2M5A1wB.jpg',desc:'Đội BOPE - lực lượng đặc biệt chống tội phạm Brazil - trong cuộc chiến không khoan nhượng với các băng nhóm tại Rio de Janeiro. José Padilha tạo ra phim chính trị xã hội táo bạo, không tô vẽ cả tội phạm lẫn cảnh sát, đặt câu hỏi về ranh giới giữa công lý và bạo lực nhà nước. Giành Gấu vàng Berlin - định hình điện ảnh Brazil đương đại.'},
+  // IT
+  {id:'gomorra',type:'series',title:'Gomorra',country:'it',genres:['Tội phạm','Kịch tính'],year:2014,dur:'5 mùa',age:'C18',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/bHUJ7BxZsS6MONIBJaBQdKmjMPj.jpg',desc:'Dựa trên cuốn sách điều tra về Camorra - mafia Naples. Series theo dõi nhiều nhân vật khác nhau bị cuốn vào thế giới ngầm, từ tên buôn ma túy đến ông trùm đang sụp đổ. Không có anh hùng - chỉ là bức tranh chân thực đến rùng rợn về vòng xoáy tội ác và sự bình thường hóa bạo lực trong xã hội. Được xem là The Wire của Ý và là series châu Âu xuất sắc nhất thập kỷ 2010.'},
+  {id:'my-brilliant-friend',type:'series',title:'My Brilliant Friend',country:'it',genres:['Kịch tính','Tình cảm'],year:2018,dur:'4 mùa',age:'T16',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/4aCqLKJMUrBaGvx8SrGG3bNIvxK.jpg',desc:'Elena và Lila - hai cô gái lớn lên trong khu phố nghèo Naples thập niên 50. Tình bạn phức tạp, đầy ghen tị và yêu thương kéo dài suốt cả cuộc đời. Chuyển thể từ bộ tứ tiểu thuyết của Elena Ferrante, tái hiện Naples với sự chân thực phi thường, khám phá cách giai cấp và giới tính định hình số phận phụ nữ qua từng thập kỷ lịch sử Ý hiện đại.'},
+  // DK
+  {id:'borgen',type:'series',title:'Borgen',country:'dk',genres:['Chính trị','Kịch tính'],year:2010,dur:'4 mùa',age:'T13',score:8.4,status:'past',img:'https://image.tmdb.org/t/p/w185/bSBdXj3QMW5v0Z0jjy0dKbSz8j0.jpg',desc:'Birgitte Nyborg trở thành nữ Thủ tướng đầu tiên của Đan Mạch sau một cuộc tranh cử bất ngờ. Bộ phim theo dõi hành trình giữ vững quyền lực và giá trị giữa những thỏa hiệp không thể tránh. Borgen là phim chính trị xuất sắc nhất thế giới - không chia phe tốt xấu, không anh hùng không phản diện, chỉ là những con người phức tạp đưa ra những lựa chọn khó khăn.'},
+  {id:'the-killing',type:'series',title:'The Killing (Forbrydelsen)',country:'dk',genres:['Tội phạm','Bí ẩn'],year:2007,dur:'3 mùa',age:'T16',score:8.3,status:'past',img:'https://image.tmdb.org/t/p/w185/oMIqjNUMvfFREFvQkQYSW7AMAVF.jpg',desc:'Nữ thám tử Sarah Lund điều tra vụ mưu sát cô bé thiếu niên tại Copenhagen - một vụ án dần mở ra mạng lưới dối trá trong chính trường và xã hội Đan Mạch. Nordic Noir thuần khiết nhất - chậm rãi, mưa ẩm và ám ảnh không dứt. The Killing định hình cả thể loại Scandinavian crime drama và truyền cảm hứng cho hàng chục series tội phạm châu Âu sau này.'},
+  // TR
+  {id:'ertugrul',type:'series',title:'Diriliş: Ertuğrul',country:'tr',genres:['Lịch sử','Hành động'],year:2014,dur:'5 mùa',age:'T13',score:8.1,status:'past',img:'https://image.tmdb.org/t/p/w185/bNBpzjCixPB6WaRcT0vWVnGmTIL.jpg',desc:'Câu chuyện về Ertuğrul Gazi - cha của Osman I, người sáng lập Đế quốc Ottoman. Bộ tộc Kayı nhỏ bé chiến đấu giữa ba mặt trận: Thập Tự Quân, Mông Cổ và các bộ tộc thù địch. Series lịch sử Thổ Nhĩ Kỳ với ngân sách khổng lồ tái hiện thế kỷ 13 hoành tráng như phim điện ảnh, trở thành hiện tượng toàn cầu đặc biệt tại các quốc gia Hồi giáo.'},
+  {id:'rise-of-empires',type:'series',title:'Rise of Empires: Ottoman',country:'tr',genres:['Lịch sử','Kịch tính'],year:2020,dur:'2 mùa',age:'T13',score:7.7,status:'past',img:'https://image.tmdb.org/t/p/w185/m7cMZkKkZl4RBK0jtKIaRD0rQbk.jpg',desc:'Series docudrama tái hiện cuộc chinh phạt Constantinople năm 1453 của Sultan Mehmed II - sự kiện chấm dứt Đế quốc Byzantine sau hơn 1.000 năm tồn tại. Kết hợp giữa phim tài liệu và drama lịch sử, Rise of Empires kể câu chuyện về một thiên tài quân sự 21 tuổi thay đổi lịch sử thế giới với một quyết định táo bạo duy nhất.'},
+  // AR
+  {id:'wild-tales',type:'film',title:'Wild Tales (Relatos Salvajes)',country:'ar',genres:['Hài kịch','Hồi hộp'],year:2014,dur:'122 phút',age:'T16',score:8.1,status:'past',img:'https://image.tmdb.org/t/p/w185/cAEoaXuRxPgMVkqKWuQnj0Rc3Ck.jpg',desc:'Sáu câu chuyện ngắn về những người bình thường đột ngột bùng nổ trong sự điên rồ - từ hai kẻ thù truyền kiếp gặp nhau trên chuyến bay đến đám cưới tan vỡ theo nghĩa đen. Damián Szifron tạo ra phim hài đen cực kỳ sắc sảo về bạo lực tiềm ẩn trong cuộc sống văn minh. Được đề cử Oscar và là phim Argentina đáng xem nhất thập kỷ 2010.'},
+  {id:'secret-eyes',type:'film',title:'Bí Mật Trong Đôi Mắt',country:'ar',genres:['Tội phạm','Tình cảm'],year:2009,dur:'129 phút',age:'T16',score:8.2,status:'past',img:'https://image.tmdb.org/t/p/w185/7CYuGzJGmAMBEBJPZuvgGa3XO2V.jpg',desc:'Thám tử về hưu Benjamin Espósito quyết tâm viết tiểu thuyết về vụ án ám ảnh 25 năm trước - cô gái trẻ bị sát hại, kẻ giết người thoát tội nhờ thế lực chính trị. Vừa là phim điều tra ly kỳ, vừa là câu chuyện tình yêu buồn và là tác phẩm về công lý không bao giờ nguội lạnh theo thời gian. Giành Oscar Phim nước ngoài xuất sắc nhất 2010.'},
+  // SE
+  {id:'girl-dragon-tattoo-se',type:'film',title:'Cô Gái Có Hình Xăm Rồng',country:'se',genres:['Tội phạm','Bí ẩn'],year:2009,dur:'152 phút',age:'C18',score:7.8,status:'past',img:'https://image.tmdb.org/t/p/w185/bjEKJVQzFlGBTM3lZjT5qDiB5Xz.jpg',desc:'Nhà báo Mikael Blomkvist hợp tác với hacker thiên tài Lisbeth Salander điều tra vụ mất tích 40 năm trong gia đình doanh nghiệp hào môn Thụy Điển. Noomi Rapace tạo ra nhân vật Lisbeth gai góc và đau đớn - một trong những nhân vật nữ ấn tượng nhất lịch sử điện ảnh châu Âu. Phiên bản gốc Thụy Điển tối tăm và trung thực hơn nhiều so với bản remake Hollywood.'},
+  {id:'wallander-se',type:'series',title:'Wallander (Thụy Điển)',country:'se',genres:['Tội phạm','Bí ẩn'],year:2005,dur:'3 mùa',age:'T16',score:8.0,status:'past',img:'https://image.tmdb.org/t/p/w185/5xBBlZxfSnBIJYITIWRfxGCiDmX.jpg',desc:'Thám tử Kurt Wallander - trầm cảm, cô đơn và nghiện rượu - điều tra những vụ án tàn nhẫn tại thị trấn Ystad yên tĩnh của Thụy Điển. Series được xem là tinh hoa của Nordic Noir - không hào nhoáng, không anh hùng, chỉ là một con người đang vỡ vụn trong khi cố giải quyết bí ẩn người khác. Krister Henriksson mang đến Wallander xuất sắc nhất trong lịch sử series này.'},
+  // MX
+  {id:'roma',type:'film',title:'Roma',country:'mx',genres:['Kịch tính','Gia đình'],year:2018,dur:'135 phút',age:'T16',score:7.7,status:'past',img:'https://image.tmdb.org/t/p/w185/dtlNiYBIiGemJJRHp33xeVb78S4.jpg',desc:'Cuộc sống của một gia đình trung lưu tại Thành phố Mexico năm 1970 và cô giúp việc người bản địa Cleo. Alfonso Cuarón kể câu chuyện bán tự truyện, quay trắng đen với từng chi tiết được chắt lọc kỹ lưỡng. Roma là bộ phim ít đối thoại nhưng nặng tình cảm nhất của Cuarón, giành ba Oscar và được nhiều nhà phê bình chọn là phim hay nhất thập kỷ 2010 của thế giới.'},
+  {id:'narcos-mexico',type:'series',title:'Narcos: Mexico',country:'mx',genres:['Tội phạm','Lịch sử'],year:2018,dur:'3 mùa',age:'C18',score:8.0,status:'past',img:'https://image.tmdb.org/t/p/w185/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg',desc:'Câu chuyện thực về sự trỗi dậy của cartel ma túy Mexico từ thập niên 80 - từ Miguel Ángel Félix Gallardo xây dựng đế chế đến sự phân mảnh thành những cartel hỗn loạn ngày nay. Hậu truyện của Narcos nhưng quy mô và độ phức tạp vượt xa bản gốc, tái hiện cuộc chiến ma túy như một bi kịch lịch sử không có anh hùng thực sự.'},
+];
+
+const STATUS_LABEL = {now:'Đang chiếu',soon:'Sắp chiếu',past:'Đã chiếu',ongoing:'Đang phát'};
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let collectionSlug = '';
+let collection = null;
+let typeFilter = 'all';
+let sortKey = 'score';
+let page = 1;
+const PAGE_SIZE = 15;
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+function init(){
+  // Detect slug from URL: /cinema/top-phim/<slug>
+  const parts = location.pathname.split('/').filter(Boolean);
+  collectionSlug = parts[parts.length - 1] || '';
+  collection = COLLECTIONS[collectionSlug];
+
+  if(!collection){
+    document.getElementById('heroTitle').textContent = 'Không tìm thấy';
+    return;
+  }
+
+  document.title = `${collection.name} - MoMo Cinema`;
+  document.getElementById('heroFlag').textContent = collection.icon;
+  document.getElementById('heroTitle').textContent = collection.name;
+  document.getElementById('heroSub').textContent = collection.desc;
+  document.getElementById('bcCurrent').textContent = collection.name;
+
+  render();
+  lucide.createIcons();
+}
+
+function setFilter(val, el){
+  typeFilter = val;
+  page = 1;
+  el.closest('.filter-group').querySelectorAll('.pill').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  render();
+}
+function setSort(val, el){
+  sortKey = val;
+  page = 1;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  render();
+}
+
+const ASIA_COUNTRIES = new Set(['kr','jp','cn','vn','th','in','tw','id','ph','sg','my','mm','kh','la','bn','bd','np','pk','lk']);
+
+function applyCollectionFilter(films, flt){
+  return films.filter(f=>{
+    if(flt.continent === 'asia' && f.type !== 'series') return false;
+    if(flt.continent === 'asia' && !ASIA_COUNTRIES.has(f.country)) return false;
+    if(flt.country && f.country !== flt.country) return false;
+    if(flt.genre   && !(f.genres||[]).includes(flt.genre)) return false;
+    if(flt.type    && f.type !== flt.type) return false;
+    if(flt.before  && (f.year||9999) >= flt.before) return false;
+    if(flt.from    && (f.year||0) < flt.from) return false;
+    return true;
+  });
+}
+
+function render(){
+  if(!collection) return;
+  let data = applyCollectionFilter(FILMS_RAW, collection.filter);
+  if(typeFilter !== 'all') data = data.filter(f=>f.type === typeFilter);
+  data.sort((a,b)=> sortKey==='score' ? b.score-a.score : b.year-a.year);
+
+  const total = data.length;
+  const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+  page = Math.min(page, totalPages);
+  const start = (page-1)*PAGE_SIZE;
+  const pageItems = data.slice(start, start+PAGE_SIZE);
+
+  if(!total){
+    document.getElementById('rankBody').innerHTML = `<tr><td colspan="8"><div class="empty-state">Không có kết quả</div></td></tr>`;
+    document.getElementById('rankPager').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('rankBody').innerHTML = pageItems.map((f,idx)=>{
+    const rank = start+idx+1;
+    const rankHtml = rank===1?`<div class="rank-medal">🥇</div>`:rank===2?`<div class="rank-medal">🥈</div>`:rank===3?`<div class="rank-medal">🥉</div>`:`<div class="rank-num">${rank}</div>`;
+    const ageCls = f.age.toLowerCase().replace(' ','');
+    const statusLabel = STATUS_LABEL[f.status]||'';
+    const statusCls = f.status;
+    let btnHtml = '';
+    if(f.status==='now') btnHtml=`<button class="btn-row pink" onclick="event.stopPropagation();location.href='/cinema/${f.id}'"><i data-lucide="ticket" width="11" height="11"></i>Đặt vé</button>`;
+    else if(f.status==='ongoing') btnHtml=`<button class="btn-row indigo" onclick="event.stopPropagation();location.href='/cinema/${f.id}'"><i data-lucide="play" width="11" height="11"></i>Xem ngay</button>`;
+
+    const POSTER_COLORS={'us':'#1d4ed8','kr':'#be123c','jp':'#9333ea','cn':'#b45309','vn':'#15803d','th':'#0e7490','gb':'#1d4ed8','fr':'#1d4ed8','de':'#374151','in':'#b45309','es':'#dc2626','br':'#15803d','it':'#15803d','dk':'#dc2626','tr':'#dc2626','ar':'#0e7490','se':'#1d4ed8','mx':'#15803d'};
+    const pbg = POSTER_COLORS[f.country]||'#374151';
+    const pinitial = f.title.charAt(0).toUpperCase();
+    return `<tr onclick="location.href='/cinema/${f.id}'">
+      <td class="col-rank">${rankHtml}</td>
+      <td class="col-poster">
+        <div class="poster-wrap" style="position:relative">
+          <div class="poster-init" style="background:${pbg}">${pinitial}</div>
+          <img class="poster-thumb" src="${f.img}" alt="${f.title}" loading="lazy" style="position:absolute;inset:0" onerror="this.onerror=null;this.style.opacity=0">
+          <span class="age-dot ${ageCls}">${f.age}</span>
+        </div>
+      </td>
+      <td class="col-title">
+        <div class="film-name">${f.title}</div>
+        ${f.desc?`<p class="film-desc">${f.desc}</p>`:''}
+      </td>
+      <td class="col-genre"><div class="genre-tags">${f.genres.slice(0,2).map(g=>`<span class="gtag">${g}</span>`).join('')}</div></td>
+      <td class="col-year"><span class="meta-text">${f.year}</span></td>
+      <td class="col-dur"><span class="meta-text">${f.dur}</span></td>
+      <td class="col-score"><div class="score-cell"><svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${f.score.toFixed(1)}</div></td>
+      <td class="col-action">${btnHtml}</td>
+    </tr>`;
+  }).join('');
+
+  // Pager
+  if(totalPages<=1){ document.getElementById('rankPager').innerHTML=''; }
+  else {
+    const maxVis=5; let pgS=Math.max(1,page-2),pgE=Math.min(totalPages,pgS+maxVis-1);
+    if(pgE-pgS<maxVis-1) pgS=Math.max(1,pgE-maxVis+1);
+    let nums='';
+    if(pgS>1) nums+=`<button class="pg-n" onclick="goPage(1)">1</button>${pgS>2?'<span style="padding:0 2px;color:var(--gray-300)">…</span>':''}`;
+    for(let i=pgS;i<=pgE;i++) nums+=`<button class="pg-n${i===page?' on':''}" onclick="goPage(${i})">${i}</button>`;
+    if(pgE<totalPages) nums+=`${pgE<totalPages-1?'<span style="padding:0 2px;color:var(--gray-300)">…</span>':''}<button class="pg-n" onclick="goPage(${totalPages})">${totalPages}</button>`;
+    document.getElementById('rankPager').innerHTML=`<div class="pager">
+      <span class="pager-info">${start+1}–${Math.min(start+PAGE_SIZE,total)} / ${total} phim</span>
+      <div class="pager-btns">
+        <button class="pg-btn" onclick="goPage(${page-1})" ${page===1?'disabled':''}><i data-lucide="chevron-left" width="14" height="14"></i> Trước</button>
+        <div class="pg-nums">${nums}</div>
+        <button class="pg-btn" onclick="goPage(${page+1})" ${page===totalPages?'disabled':''}>Sau <i data-lucide="chevron-right" width="14" height="14"></i></button>
+      </div>
+    </div>`;
+  }
+  lucide.createIcons();
+}
+
+function goPage(p){ page=p; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+init();
+</script>
+
+<nav class="mobile-bnav">
+  <a class="mbn-item" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg><span>Phim</span></a>
+  <a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a>
+  <a class="mbn-item on" href="/cinema/top-phim"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Top phim</span></a>
+  <a class="mbn-item" href="/cinema/person"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a>
+  <a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a>
+</nav>
+</body>
+</html>

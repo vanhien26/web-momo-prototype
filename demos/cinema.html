@@ -772,12 +772,11 @@ body::after {
       <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block;vertical-align:middle"></span>
       <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span></span>
     </a>
-    <div class="nav-links">
-      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
+    <div class="nav-links">      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
       <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
       <button class="nav-link" onclick="window.location.href='/cinema/person'">Diễn viên</button>
       <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="location.href='/cinema/top-phim'">Top phim</button>
       <button class="nav-link" onclick="window.location.href='/cinema/genres'">Thể loại</button>
       <button class="nav-link" onclick="window.location.href='/cinema/series'">TV Series</button>
     </div>
@@ -938,42 +937,41 @@ function icon(name, size=16) {
 const GENRES = ['Tất cả','Hành động','Hoạt hình','Tình cảm','Kinh dị','Hài'];
 const FORMATS = ['Tất cả','2D','3D','IMAX','4DX'];
 const FILMS_NOW = [
-  { title:'Toy Story 5',                        img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',        age:'P',   rating:'9.2', genre:'Hoạt hình', dur:'100 phút', tag:'Hoạt hình', want:'24.8k', badge:'hot',  times:['10:00','13:20','16:50','19:30'], box:'18.4 tỷ', trailer:'SzMjhBuPx8Q', formats:['2D','3D'] },
-  { title:'Hành Trình Của Moana',               img:'https://image.tmdb.org/t/p/w500/lwqKqiBsGVBtQBZF9ZTunthBCyI.jpg',                                  age:'P',   rating:'9.6', genre:'Hoạt hình', dur:'107 phút', tag:'Hoạt hình', want:'31.2k', badge:'hot',  times:['09:30','12:00','14:30','17:00','19:30'], box:'22.1 tỷ', trailer:'', formats:['2D','3D'] },
-  { title:'Siêu Quậy Marsupilami',              img:'https://image.tmdb.org/t/p/w500/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',                                  age:'P',   rating:'9.6', genre:'Hoạt hình', dur:'98 phút',  tag:'Hoạt hình', want:'19.4k', badge:'new',  times:['10:10','12:40','15:20','18:00'], box:'11.7 tỷ', trailer:'', formats:['2D','3D'] },
-  { title:'Doraemon Movie 45: Nobita Và Lâu Đài Dưới Đáy Biển', img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM', age:'P', rating:'9.0', genre:'Hoạt hình', dur:'104 phút', tag:'Hoạt hình', want:'21.5k', badge:'hot', times:['09:40','12:20','15:00','18:30'], box:'15.1 tỷ', trailer:'G9FGgwCQ22w', formats:['2D','3D','4DX'] },
-  { title:'Minions & Quái Vật',                 img:'https://image.tmdb.org/t/p/w500/amfpWj77Z8x5O76G2EhjquJqzoi.jpg',                                  age:'P',   rating:'9.2', genre:'Hoạt hình', dur:'96 phút',  tag:'Hoạt hình', want:'22.3k', badge:'new',  times:['09:00','11:30','14:00','16:30','19:00'], box:'16.8 tỷ', trailer:'', formats:['2D','3D'] },
-  { title:'Minh Hôn Trong Lồng Bướm',          img:'https://image.tmdb.org/t/p/w500/tNPpKmGOCtoJkJwfrZR160saVrb.jpg',                                  age:'P',   rating:'7.4', genre:'Tình cảm',  dur:'102 phút', tag:'Tình cảm',  want:'8.1k',  badge:null,   times:['11:00','14:20','17:50'], box:'3.2 tỷ', trailer:'', formats:['2D'] },
-  { title:'Supergirl',                          img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',                      age:'T13', rating:'7.7', genre:'Hành động', dur:'130 phút', tag:'Hành động', want:'18.2k', badge:'new',  times:['11:30','14:45','18:00','21:15'], box:'12.7 tỷ', trailer:'wJO_vIDZn1Y', formats:['2D','3D','IMAX'] },
-  { title:'Ngày Con Sống Lại',                  img:'https://image.tmdb.org/t/p/w500/cFOnIqPNyVqmU1ZtXSsaztCebul.jpg',                                  age:'T13', rating:'8.9', genre:'Hành động', dur:'115 phút', tag:'Hành động', want:'16.5k', badge:'hot',  times:['10:30','13:50','17:10','20:40'], box:'9.4 tỷ', trailer:'', formats:['2D','3D'] },
-  { title:'Phim Điện Ảnh - Lớp Học Ám Sát: Giờ Của Chúng Ta', img:'https://image.tmdb.org/t/p/w500/zJH7MCwS9c8NJ5gPWI0jtZfJul1.jpg', age:'T16', rating:'9.4', genre:'Hoạt hình', dur:'105 phút', tag:'Hoạt hình', want:'17.9k', badge:'new', times:['10:00','12:45','15:30','18:15','21:00'], box:'8.3 tỷ', trailer:'', formats:['2D'] },
-  { title:'Tung Hoành Tứ Hải',                  img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',          age:'T16', rating:'9.1', genre:'Hành động', dur:'118 phút', tag:'Hành động', want:'14.3k', badge:'hot',  times:['11:00','14:30','18:15','21:50'], box:'9.6 tỷ', trailer:'kJQP7kiw5Fk', formats:['2D','3D','4DX'] },
-  { title:'Cơn Thịnh Nộ',                       img:'https://image.tmdb.org/t/p/w500/pomewNtFVHcox6UIOaNLQLHTaae.jpg',                                   age:'T16', rating:'9.5', genre:'Hành động', dur:'122 phút', tag:'Hành động', want:'20.1k', badge:'hot',  times:['10:20','13:40','17:00','20:30'], box:'14.2 tỷ', trailer:'', formats:['2D','3D'] },
-  { title:'Liêu Trai Lan Nhược Tự',             img:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',         age:'T16', rating:'9.2', genre:'Tình cảm',  dur:'108 phút', tag:'Tình cảm',  want:'11.7k', badge:null,   times:['09:30','13:00','19:00'], box:'3.9 tỷ', trailer:'oHg5SJYRHA0', formats:['2D'] },
-  { title:'Mẹ Ơi, Về Nhà',                      img:'https://image.tmdb.org/t/p/w500/pxkavJJuM5zArEGtzvmOLoiICVh.jpg',                                   age:'T16', rating:'9.0', genre:'Tình cảm',  dur:'113 phút', tag:'Tình cảm',  want:'13.6k', badge:'new',  times:['10:50','14:10','17:30','20:50'], box:'6.7 tỷ', trailer:'', formats:['2D'] },
-  { title:'Trường Hè, 2001',                    img:'https://image.tmdb.org/t/p/w500/wcahBISlczoYqcakatu2uyX8kGQ.jpg',                                   age:'C18', rating:'8.8', genre:'Tình cảm',  dur:'118 phút', tag:'Tình cảm',  want:'9.8k',  badge:null,   times:['12:30','16:00','20:15'], box:'5.1 tỷ', trailer:'', formats:['2D'] },
-  { title:'Mesdames Thanh Sắc',                 img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',                    age:'C18', rating:'8.0', genre:'Tình cảm',  dur:'110 phút', tag:'Tình cảm',  want:'7.2k',  badge:null,   times:['10:20','14:00','17:40'], box:'4.5 tỷ', trailer:'JGwWNGJdvx8', formats:['2D'] },
-  { title:'Đồng Dao Ma Quái',                   img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',                     age:'C18', rating:'9.1', genre:'Kinh dị',   dur:'108 phút', tag:'Kinh dị',   want:'12.4k', badge:'hot',  times:['11:20','14:50','18:20','21:30'], box:'10.3 tỷ', trailer:'', formats:['2D','3D'] },
-  { title:'Ám Ảnh',                             img:'https://image.tmdb.org/t/p/w500/15qLAM3QM8DoPL9Fps4JOTdqWqt.jpg',                                   age:'C18', rating:'8.9', genre:'Kinh dị',   dur:'103 phút', tag:'Kinh dị',   want:'10.7k', badge:'new',  times:['12:00','15:30','19:00','21:45'], box:'7.6 tỷ', trailer:'', formats:['2D'] },
-  { title:'Colony: Bầy Xác Sống',               img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',                age:'C18', rating:'9.4', genre:'Kinh dị',   dur:'112 phút', tag:'Kinh dị',   want:'6.1k',  badge:null,   times:['10:50','15:10','20:30'], box:'5.3 tỷ', trailer:'nGMeh6Ve4YE', formats:['2D'] },
-  { title:'Ma Nữ Oán Tình',                     img:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM',                     age:'C18', rating:'7.8', genre:'Kinh dị',   dur:'97 phút',  tag:'Kinh dị',   want:'8.3k',  badge:'new',  times:['11:40','15:00','18:40','21:20'], box:'6.1 tỷ', trailer:'', formats:['2D'] },
-  { title:'Backrooms: Thực Thể Quỷ Quyệt',      img:'https://image.tmdb.org/t/p/w500/7uabN7xF4209cDUdBuMvkVcpkN2.jpg',                                   age:'C18', rating:'7.1', genre:'Kinh dị',   dur:'100 phút', tag:'Kinh dị',   want:'5.4k',  badge:null,   times:['13:00','17:20','21:00'], box:'3.8 tỷ', trailer:'', formats:['2D'] },
-  { title:'Leviticus: Bóng Quỷ',                img:'https://image.tmdb.org/t/p/w500/zoLyQOEMlm49lGghB6QegctLnoG.jpg',                                   age:'C18', rating:'7.1', genre:'Kinh dị',   dur:'96 phút',  tag:'Kinh dị',   want:'4.9k',  badge:null,   times:['12:20','16:40','21:10'], box:'3.1 tỷ', trailer:'', formats:['2D'] },
-  { title:'Lầu Chú Hỏa',                        img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',                     age:'T16', rating:'8.5', genre:'Kinh dị',   dur:'105 phút', tag:'Kinh dị',   want:'9.4k',  badge:'last', times:['12:00','17:20','21:40'], box:'8.1 tỷ', trailer:'dQw4w9WgXcQ', formats:['2D','3D'] },
-  { title:'Quỷ Bắt Hồn',                        img:'https://image.tmdb.org/t/p/w500/uTbHM4YL9wC4ofK0mO9FGW2Etro.jpg',                                   age:'T16', rating:'7.3', genre:'Kinh dị',   dur:'93 phút',  tag:'Kinh dị',   want:'5.2k',  badge:null,   times:['14:00','18:20','21:50'], box:'2.9 tỷ', trailer:'', formats:['2D'] },
-  { title:'Ma Lu',                              img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',                    age:'T16', rating:'3.5', genre:'Kinh dị',   dur:'95 phút',  tag:'Kinh dị',   want:'5.8k',  badge:null,   times:['12:30','16:00','20:00'], box:'2.8 tỷ', trailer:'fRh_vgS2dFE', formats:['2D'] },
-  { title:'Linh Miêu Báo Thù',                  img:'https://image.tmdb.org/t/p/w500/1FL9j66LdFbxdS6TFdHtmt6mC1S.jpg',                                   age:'T16', rating:'2.1', genre:'Kinh dị',   dur:'91 phút',  tag:'Kinh dị',   want:'3.1k',  badge:null,   times:['13:30','17:00','20:30'], box:'1.4 tỷ', trailer:'', formats:['2D'] },
-  { title:'Đền La Sát',                         img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',                                   age:'C18', rating:'4.4', genre:'Kinh dị',   dur:'99 phút',  tag:'Kinh dị',   want:'4.2k',  badge:null,   times:['14:20','18:50','22:00'], box:'2.2 tỷ', trailer:'', formats:['2D'] },
-  { title:'Bạch Xà: Một Kiếp Nhân Gian',        img:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',                 age:'T13', rating:'9.7', genre:'Hoạt hình', dur:'120 phút', tag:'Hoạt hình', want:'18.9k', badge:'hot',  times:['10:10','13:50','19:20'], box:'7.2 tỷ', trailer:'CdGC7RGgXis', formats:['2D','3D'] },
+  { title:'Spider-Man: Brand New Day',                        img:'https://image-fworker.momocdn.net/momo-external/80e991a3fd9003c6afc835f8775bd667a14ed0d7b604338b3b2c170d7c161ddc?size=M', age:'T13', rating:'9.1', genre:'Hành động', dur:'130 phút', tag:'Hành động', want:'38.4k', badge:'hot',  times:['10:00','12:30','15:00','17:30','20:00','22:30'], box:'28.4 tỷ', trailer:'', formats:['2D','3D','IMAX','4DX'] },
+  { title:'Toy Story 5',                                     img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',         age:'P',   rating:'9.2', genre:'Hoạt hình', dur:'100 phút', tag:'Hoạt hình', want:'24.8k', badge:'hot',  times:['10:00','13:20','16:50','19:30'],            box:'18.4 tỷ', trailer:'SzMjhBuPx8Q', formats:['2D','3D'] },
+  { title:'Hành Trình Của Moana',                            img:'https://image-fworker.momocdn.net/momo-external/23d1f6a008ffde1437ef09febba78608455a8a2d7d538cc983d880b79e9c4e52?size=M', age:'P',   rating:'9.6', genre:'Hoạt hình', dur:'107 phút', tag:'Hoạt hình', want:'31.2k', badge:'hot',  times:['09:30','12:00','14:30','17:00','19:30'],    box:'22.1 tỷ', trailer:'', formats:['2D','3D'] },
+  { title:'Doraemon Movie 45: Nobita Và Lâu Đài Dưới Đáy Biển', img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM', age:'P',   rating:'9.0', genre:'Hoạt hình', dur:'104 phút', tag:'Hoạt hình', want:'21.5k', badge:'hot',  times:['09:40','12:20','15:00','18:30'],            box:'15.1 tỷ', trailer:'G9FGgwCQ22w', formats:['2D','3D','4DX'] },
+  { title:'Detective Conan: Fallen Angel of the Highway',    img:'https://image-fworker.momocdn.net/momo-external/349e75d358913eae8598069eca7f60c1159a745abb0b328681b95212665094bd?size=M', age:'T13', rating:'8.8', genre:'Hoạt hình', dur:'112 phút', tag:'Hoạt hình', want:'19.7k', badge:'new',  times:['10:20','13:00','15:40','18:20','21:00'],    box:'14.3 tỷ', trailer:'', formats:['2D','3D'] },
+  { title:'Minions & Quái Vật',                              img:'https://image-fworker.momocdn.net/momo-external/5fc116d01edaafa90852777614981dd9d7e8dec1a00d158fe997533a6ae204c5?size=M', age:'P',   rating:'9.2', genre:'Hoạt hình', dur:'96 phút',  tag:'Hoạt hình', want:'22.3k', badge:'new',  times:['09:00','11:30','14:00','16:30','19:00'],    box:'16.8 tỷ', trailer:'', formats:['2D','3D'] },
+  { title:'The Odyssey',                                     img:'https://image-fworker.momocdn.net/momo-external/4a982e1fc6ae9c40f1e2b361877e1c9aa3f5b49480f5329ff5e5a0c21470d81e?size=M', age:'T16', rating:'8.4', genre:'Phiêu lưu', dur:'166 phút', tag:'Hành động', want:'16.2k', badge:'new',  times:['11:00','14:30','18:00','21:30'],            box:'12.7 tỷ', trailer:'', formats:['2D','3D','IMAX'] },
+  { title:'Protector',                                       img:'https://image-fworker.momocdn.net/momo-external/c54bf87f9c3bac1776375100b75410ff0750cb45117ac8d6efdf86debc72002d?size=M', age:'T16', rating:'7.9', genre:'Hành động', dur:'108 phút', tag:'Hành động', want:'8.7k',  badge:null,   times:['11:10','14:40','18:10','21:30'],            box:'6.3 tỷ', trailer:'', formats:['2D','3D'] },
+  { title:'Ngày Xửa Ngày Xưa 36: Hậu Duệ Mặt Trời',        img:'https://cinema.momocdn.net/convert-webp/img/35415256932515276-NXNX36.jpg?size=SM',                    age:'P',   rating:'7.5', genre:'Hài',      dur:'100 phút', tag:'Hài',       want:'12.1k', badge:null,   times:['10:00','12:40','15:20','18:00'],            box:'9.2 tỷ', trailer:'', formats:['2D'] },
+  { title:'Running Man Việt Nam 2026 - Chúa Tể Thời Gian',  img:'https://cinema.momocdn.net/convert-webp/img/35666559403550656-ruuningmanvn26.jpg?size=SM',             age:'P',   rating:'7.8', genre:'Hài',      dur:'110 phút', tag:'Hài',       want:'10.4k', badge:null,   times:['11:00','14:00','17:00','20:00'],            box:'7.8 tỷ', trailer:'', formats:['2D'] },
+  { title:'Mẹ Ơi, Về Nhà',                                  img:'https://image-fworker.momocdn.net/momo-external/97fe8f4c02de808ec96c54f05fbe54a1cdb7b9d99c00e5484f8b48309b784a16?size=M', age:'T16', rating:'9.0', genre:'Tình cảm',  dur:'113 phút', tag:'Tình cảm',  want:'13.6k', badge:'new',  times:['10:50','14:10','17:30','20:50'],            box:'6.7 tỷ', trailer:'', formats:['2D'] },
+  { title:'Thanh Âm Vượt Đại Dương',                        img:'https://image-fworker.momocdn.net/momo-external/cc8152677724186c4e038dccd9653a7a098e908de9e1f25104a2a77ea0cf751c?size=M', age:'T13', rating:'8.6', genre:'Tình cảm',  dur:'108 phút', tag:'Tình cảm',  want:'9.3k',  badge:null,   times:['11:20','14:50','18:20'],                    box:'5.1 tỷ', trailer:'', formats:['2D'] },
+  { title:'Cảm Ơn Người Đã Thức Cùng Tôi',                  img:'https://cinema.momocdn.net/convert-webp/img/70249216814417353-reruncondtct.jpg?size=SM',               age:'K',   rating:'8.9', genre:'Tình cảm',  dur:'105 phút', tag:'Tình cảm',  want:'7.6k',  badge:null,   times:['10:30','13:50','17:10'],                    box:'4.3 tỷ', trailer:'', formats:['2D'] },
+  { title:'Trường Hè, 2001',                                 img:'https://image-fworker.momocdn.net/momo-external/00da3be304b24b8bc4ec7cbd5921256945093d36e501328549115e39da75eda4?size=M', age:'C18', rating:'8.8', genre:'Tình cảm',  dur:'118 phút', tag:'Tình cảm',  want:'9.8k',  badge:null,   times:['12:30','16:00','20:15'],                    box:'5.1 tỷ', trailer:'', formats:['2D'] },
+  { title:'Mesdames Thanh Sắc',                              img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',                     age:'C18', rating:'8.0', genre:'Tình cảm',  dur:'110 phút', tag:'Tình cảm',  want:'7.2k',  badge:null,   times:['10:20','14:00','17:40'],                    box:'4.5 tỷ', trailer:'JGwWNGJdvx8', formats:['2D'] },
+  { title:'Đồng Dao Ma Quái',                                img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',                      age:'C18', rating:'9.1', genre:'Kinh dị',   dur:'108 phút', tag:'Kinh dị',   want:'12.4k', badge:'hot',  times:['11:20','14:50','18:20','21:30'],            box:'10.3 tỷ', trailer:'', formats:['2D','3D'] },
+  { title:'Ám Ảnh',                                         img:'https://image-fworker.momocdn.net/momo-external/17c1f4eaa52eeca2bb15a8ae25121b0256dbffb9f438266899803caf23a90d67?size=M', age:'C18', rating:'8.9', genre:'Kinh dị',   dur:'103 phút', tag:'Kinh dị',   want:'10.7k', badge:null,   times:['12:00','15:30','19:00','21:45'],            box:'7.6 tỷ', trailer:'', formats:['2D'] },
+  { title:'Colony: Bầy Xác Sống',                           img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',                  age:'C18', rating:'9.4', genre:'Kinh dị',   dur:'112 phút', tag:'Kinh dị',   want:'6.1k',  badge:null,   times:['10:50','15:10','20:30'],                    box:'5.3 tỷ', trailer:'nGMeh6Ve4YE', formats:['2D'] },
+  { title:'Ma Nữ Oán Tình',                                 img:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM',                       age:'C18', rating:'7.8', genre:'Kinh dị',   dur:'97 phút',  tag:'Kinh dị',   want:'8.3k',  badge:null,   times:['11:40','15:00','18:40','21:20'],            box:'6.1 tỷ', trailer:'', formats:['2D'] },
+  { title:'Backrooms: Thực Thể Quỷ Quyệt',                  img:'https://image-fworker.momocdn.net/momo-external/f25e9882f3f2ae527619ca767d546d773a0d577885358a36b4169d72bfc85786?size=M', age:'C18', rating:'7.1', genre:'Kinh dị',   dur:'100 phút', tag:'Kinh dị',   want:'5.4k',  badge:null,   times:['13:00','17:20','21:00'],                    box:'3.8 tỷ', trailer:'', formats:['2D'] },
+  { title:'Lầu Chú Hỏa',                                    img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',                       age:'T16', rating:'8.5', genre:'Kinh dị',   dur:'105 phút', tag:'Kinh dị',   want:'9.4k',  badge:'last', times:['12:00','17:20','21:40'],                    box:'8.1 tỷ', trailer:'dQw4w9WgXcQ', formats:['2D','3D'] },
+  { title:'Quỷ Bắt Hồn',                                    img:'https://image-fworker.momocdn.net/momo-external/727aee70358838dad7fc18ebd1998e33b715514b31c3cdec8ba38d4eeef444cf?size=M', age:'T16', rating:'7.3', genre:'Kinh dị',   dur:'93 phút',  tag:'Kinh dị',   want:'5.2k',  badge:null,   times:['14:00','18:20','21:50'],                    box:'2.9 tỷ', trailer:'', formats:['2D'] },
+  { title:'Kijsada Paradise',                                img:'https://cinema.momocdn.net/convert-webp/img/70226978613973888-cvtt.png?size=SM',                       age:'T16', rating:'7.6', genre:'Kinh dị',   dur:'98 phút',  tag:'Kinh dị',   want:'4.8k',  badge:null,   times:['13:30','17:50','21:20'],                    box:'3.2 tỷ', trailer:'', formats:['2D'] },
 ];
 const FILMS_SOON = [
-  { title:'Nghỉ Hè Sợ Nghỉ Hưu', img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM', genre:'Hài · Tình cảm', date:'25/07/2026' },
-  { title:'Thám Tử Kiên 2', img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M', genre:'Hành động · Bí ẩn', date:'01/08/2026' },
-  { title:'Giải Cứu', img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M', genre:'Hành động', date:'08/08/2026' },
-  { title:'Người Được Chọn', img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M', genre:'Tình cảm · Tâm lý', date:'15/08/2026' },
-  { title:'Hộ Linh Tráng Sĩ', img:'https://cinema.momocdn.net/convert-webp/img/111912674224647662-68d60b7c5de8f974282049.jpg?size=M', genre:'Hành động · Phiêu lưu', date:'22/08/2026' },
-  { title:'Avatar 5', img:'https://cinema.momocdn.net/convert-webp/img/111912809723526329-61d7ef9c698ea169910803.jpg?size=M', genre:'Khoa học viễn tưởng', date:'01/09/2026' },
-  { title:'Trại Buôn Người', img:'https://cinema.momocdn.net/convert-webp/img/111912581189099439-685135c5a1420912750051.jpg?size=M', genre:'Hành động · Tội phạm', date:'12/09/2026' },
+  { title:'Nghỉ Hè Sợ Nghỉ Hưu',                  img:'https://cinema.momocdn.net/convert-webp/img/70679811403674435-nhsnhof.jpg?size=SM',                                                  genre:'Hài · Tình cảm',                  date:'25/07/2026' },
+  { title:'Thám Tử Kiên 2: Lời Nguyền Hoàng Kim',  img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',                              genre:'Hành động · Bí ẩn',               date:'01/08/2026' },
+  { title:'Hoàng Hậu Cuối Cùng',                   img:'https://cinema.momocdn.net/convert-webp/img/27046961537001418-hhccot.png?size=SM',                                                   genre:'Kịch tính · Gia đình',            date:'08/08/2026' },
+  { title:'Người Được Chọn',                        img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',                            genre:'Tình cảm · Tâm lý',               date:'15/08/2026' },
+  { title:'Lên Hương',                              img:'https://cinema.momocdn.net/convert-webp/img/35672489440798735-lenhuongg.png?size=SM',                                                genre:'Hài · Hồi hộp',                   date:'22/08/2026' },
+  { title:'Hộ Linh Tráng Sĩ: Bí Ẩn Mộ Vua Đinh', img:'https://cinema.momocdn.net/convert-webp/img/77464158911663330-hlts2.jpg?size=SM',                                                   genre:'Hành động · Phiêu lưu',           date:'22/08/2026' },
+  { title:'Trại Buôn Người',                        img:'https://image-fworker.momocdn.net/momo-external/11fbf5279c0ac712d2458aa3459916aa82fb111f659d3a851734e9e971e06bf5?size=M',           genre:'Hành động · Tội phạm',            date:'05/09/2026' },
+  { title:'Dune: Part Three',                       img:'https://image-fworker.momocdn.net/momo-external/fc0eb80f7b11c27bb6eb0a3eb902e3c7f166ca6cd09b1c65e582eaff3887e29b?size=M',           genre:'Khoa học viễn tưởng · Phiêu lưu', date:'12/09/2026' },
+  { title:'Avengers: Doomsday',                     img:'https://image-fworker.momocdn.net/momo-external/93335f95e93e60bcdc7f2dd605403cce8e6fb69c79245ba593985a9e2214ae15?size=M',           genre:'Hành động · Khoa học viễn tưởng', date:'01/10/2026' },
+  { title:'Avatar 5',                               img:'https://cinema.momocdn.net/convert-webp/img/111912809723526329-61d7ef9c698ea169910803.jpg?size=M',                                  genre:'Khoa học viễn tưởng',             date:'01/01/2027' },
 ];
 const FILM_IMG = {
   'Toy Story 5':              'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',
@@ -1554,18 +1552,46 @@ function toast(msg) { const el=document.getElementById('toastEl'); el.textConten
 
 /* ── TV SERIES ROW ── */
 const FEATURED_SERIES = [
-  { title:'The Last of Us', slug:'the-last-of-us', poster:'https://image.tmdb.org/t/p/w342/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg', rating:'8.6', seasons:2, platform:'Max' },
-  { title:'Breaking Bad',   slug:'breaking-bad',   poster:'https://image.tmdb.org/t/p/w342/3xnWaLQjelJDDF7LT1WBo6f4BRe.jpg', rating:'9.5', seasons:5, platform:'Netflix' },
-  { title:'House of the Dragon', slug:'house-of-the-dragon', poster:'https://image.tmdb.org/t/p/w342/t9XkeE7HzOsdQcDDDapDYh8Rrmt.jpg', rating:'8.4', seasons:2, platform:'Max' },
-  { title:'Stranger Things', slug:'stranger-things', poster:'https://image.tmdb.org/t/p/w342/49WJfeN0moxb9IPfGn8AIqMGskD.jpg', rating:'8.7', seasons:4, platform:'Netflix' },
-  { title:'Squid Game',     slug:'squid-game',     poster:'https://image.tmdb.org/t/p/w342/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg', rating:'8.0', seasons:2, platform:'Netflix' },
-  { title:'Succession',     slug:'succession',     poster:'https://image.tmdb.org/t/p/w342/e2X6MRwOCEtcBfWXTNLxMWXM1gI.jpg', rating:'8.9', seasons:4, platform:'Max' },
-  { title:'Chernobyl',      slug:'chernobyl',      poster:'https://image.tmdb.org/t/p/w342/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg', rating:'9.4', seasons:1, platform:'Max' },
+  /* ── US ── */
+  { title:'The Last of Us S2',      slug:'the-last-of-us',        poster:'https://image.tmdb.org/t/p/w342/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg', rating:'9.1', seasons:2, platform:'Max',      country:'us', badge:'new' },
+  { title:'Andor S2',               slug:'andor',                  poster:'https://image.tmdb.org/t/p/w342/59SVNwLfoMnZPPB6ukW6dlPxAdI.jpg', rating:'9.3', seasons:2, platform:'Disney+',  country:'us', badge:'new' },
+  { title:'The White Lotus S3',     slug:'the-white-lotus',        poster:'https://image.tmdb.org/t/p/w342/sA2B59LmCbM8RKTLXHZLsCyXbgd.jpg', rating:'8.7', seasons:3, platform:'Max',      country:'us', badge:'hot' },
+  { title:'Severance S2',           slug:'severance',              poster:'https://image.tmdb.org/t/p/w342/sWoTf7PZSIZQ3VGfRhGO0bPOIBo.jpg', rating:'8.8', seasons:2, platform:'Apple TV+', country:'us', badge:'hot' },
+  { title:'The Bear S3',            slug:'the-bear',               poster:'https://image.tmdb.org/t/p/w342/sHm9vr3ddBCCOljB4KkJvGQkiJC.jpg', rating:'8.6', seasons:3, platform:'Hulu',      country:'us', badge:null },
+  { title:'House of the Dragon S2', slug:'house-of-the-dragon',    poster:'https://image.tmdb.org/t/p/w342/t9XkeE7HzOsdQcDDDapDYh8Rrmt.jpg', rating:'8.4', seasons:2, platform:'Max',      country:'us', badge:null },
+  { title:'Stranger Things S5',     slug:'stranger-things',        poster:'https://image.tmdb.org/t/p/w342/49WJfeN0moxb9IPfGn8AIqMGskD.jpg', rating:'8.7', seasons:5, platform:'Netflix',  country:'us', badge:'soon' },
+  { title:'Breaking Bad',           slug:'breaking-bad',           poster:'https://image.tmdb.org/t/p/w342/3xnWaLQjelJDDF7LT1WBo6f4BRe.jpg', rating:'9.5', seasons:5, platform:'Netflix',  country:'us', badge:null },
+  { title:'Succession',             slug:'succession',             poster:'https://image.tmdb.org/t/p/w342/e2X6MRwOCEtcBfWXTNLxMWXM1gI.jpg', rating:'8.9', seasons:4, platform:'Max',      country:'us', badge:null },
+  { title:'Chernobyl',              slug:'chernobyl',              poster:'https://image.tmdb.org/t/p/w342/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg', rating:'9.4', seasons:1, platform:'Max',      country:'us', badge:null },
+  /* ── KR ── */
+  { title:'Squid Game S2',          slug:'squid-game',             poster:'https://image.tmdb.org/t/p/w342/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg', rating:'8.0', seasons:2, platform:'Netflix',  country:'kr', badge:'hot' },
+  { title:'Queen of Tears',         slug:'queen-of-tears',         poster:'https://image.tmdb.org/t/p/w342/2XtIyUyAFVDjhGHBcKCW6PGzWV1.jpg', rating:'8.7', seasons:1, platform:'Netflix',  country:'kr', badge:'hot' },
+  { title:'Moving',                 slug:'moving',                 poster:'https://image.tmdb.org/t/p/w342/7bh6Uh5PqbqObmBBp9nRDzA9kYO.jpg', rating:'8.7', seasons:1, platform:'Disney+',  country:'kr', badge:null },
+  { title:'Lovely Runner',          slug:'lovely-runner',          poster:'https://image.tmdb.org/t/p/w342/3l3WCCJmN0fFqKECq8cHE2CqzMq.jpg', rating:'8.6', seasons:1, platform:'Netflix',  country:'kr', badge:null },
+  { title:'When the Phone Rings',   slug:'when-the-phone-rings',   poster:'https://image.tmdb.org/t/p/w342/qzqWJkuHQ4Q8q1gMz8uNZyZMaLz.jpg', rating:'8.3', seasons:1, platform:'Netflix',  country:'kr', badge:null },
+  { title:'The Glory',              slug:'the-glory',              poster:'https://image.tmdb.org/t/p/w342/oU39GYSEEeJJeqQJqBqElb0MCZH.jpg', rating:'8.5', seasons:1, platform:'Netflix',  country:'kr', badge:null },
+  { title:'Vincenzo',               slug:'vincenzo',               poster:'https://image.tmdb.org/t/p/w342/frVHoNqJGEG81pXW46IEKlWHXxd.jpg', rating:'8.8', seasons:1, platform:'Netflix',  country:'kr', badge:null },
+  { title:'Extraordinary Atty Woo', slug:'extraordinary-attorney-woo', poster:'https://image.tmdb.org/t/p/w342/1V8KxTHcGfknELsKpOeqoLe8FHN.jpg', rating:'8.8', seasons:1, platform:'Netflix', country:'kr', badge:null },
 ];
+const SERIES_COUNTRY_COLOR = { us:'#1d4ed8', kr:'#be123c', jp:'#9333ea', cn:'#b45309', uk:'#1d4ed8' };
 function renderSeriesRow() {
-  document.getElementById('seriesRow').innerHTML = FEATURED_SERIES.map(s => `
-    <div class="series-card" onclick="location.href='/cinema/series/${s.slug}'">
-      <img class="series-card-poster" src="${s.poster}" alt="${s.title}" loading="lazy" onerror="this.style.background='var(--gray-100)'">
+  const filterC = document.getElementById('seriesFilterBtns')?.querySelector('.active')?.dataset?.c || 'all';
+  const list = filterC === 'all' ? FEATURED_SERIES : FEATURED_SERIES.filter(s => s.country === filterC);
+  document.getElementById('seriesRow').innerHTML = list.map(s => {
+    const pbg = SERIES_COUNTRY_COLOR[s.country] || '#374151';
+    const init = s.title.charAt(0).toUpperCase();
+    const badgeHtml = s.badge === 'new' ? `<span style="position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;background:#16a34a;color:#fff;padding:2px 5px;border-radius:3px;line-height:1.4">MỚI</span>`
+      : s.badge === 'hot' ? `<span style="position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;background:#ef4444;color:#fff;padding:2px 5px;border-radius:3px;line-height:1.4">HOT</span>`
+      : s.badge === 'soon' ? `<span style="position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;background:#7c3aed;color:#fff;padding:2px 5px;border-radius:3px;line-height:1.4">SẮP RA</span>`
+      : '';
+    const flagMap = { us:'🇺🇸', kr:'🇰🇷', jp:'🇯🇵', cn:'🇨🇳', uk:'🇬🇧' };
+    return `<div class="series-card" onclick="location.href='/cinema/series/${s.slug}'">
+      <div style="position:relative;aspect-ratio:2/3;overflow:hidden;border-radius:var(--r-md) var(--r-md) 0 0">
+        <div style="width:100%;height:100%;background:${pbg};display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:rgba(255,255,255,0.3)">${init}</div>
+        <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" src="${s.poster}" alt="${s.title}" loading="lazy" onerror="this.onerror=null;this.style.opacity=0">
+        ${badgeHtml}
+        <span style="position:absolute;bottom:6px;right:6px;font-size:12px">${flagMap[s.country]||''}</span>
+      </div>
       <div class="series-card-body">
         <div class="series-card-title">${s.title}</div>
         <div class="series-card-meta">
@@ -1576,7 +1602,14 @@ function renderSeriesRow() {
           <span class="series-platform-badge">${s.platform}</span>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+
+function setSeriesFilter(btn, c) {
+  document.querySelectorAll('#seriesFilterBtns .genre-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSeriesRow();
 }
 
 /* ── GENRE GRID ── */

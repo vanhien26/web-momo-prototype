@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Top Phim - MoMo Cinema</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#EB2F96;--pink-50:#fdf2f8;
+  --gray-900:#111827;--gray-600:#4b5563;--gray-500:#6b7280;
+  --gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;
+  --white:#fff;--gold:#f59e0b;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;
+  --shadow-s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-m:0 4px 16px rgba(0,0,0,.1);
+}
+body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--gray-50);color:var(--gray-900);min-height:100vh}
+.nav{background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:20px}
+.nav-links{display:flex;gap:2px}
+.nav-link{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-600);background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:var(--r-sm);transition:.15s}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.on{color:var(--pink)}
+.nav-search-wrap{margin-left:auto;background:var(--gray-100);border-radius:20px;padding:7px 14px;display:flex;align-items:center;gap:8px}
+.nav-search-wrap input{background:none;border:none;outline:none;font-size:13px;font-family:inherit;color:var(--gray-900);width:160px}
+@media(max-width:768px){.nav-links,.nav-search-wrap{display:none}}
+
+.hero{background:var(--white);border-bottom:1px solid var(--gray-200);padding:28px 20px 24px}
+.hero-inner{max-width:1100px;margin:0 auto}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--pink);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.hero-title{font-size:28px;font-weight:900;margin-bottom:6px}
+.hero-sub{font-size:14px;color:var(--gray-500);line-height:1.6}
+
+.main{max-width:1100px;margin:0 auto;padding:28px 20px 56px;display:flex;flex-direction:column;gap:36px}
+.section-label{font-size:11px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px}
+.col-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+
+/* CARD */
+.col-card{background:var(--white);border-radius:var(--r-xl);box-shadow:var(--shadow-s);border:1px solid var(--gray-200);overflow:hidden;cursor:pointer;transition:box-shadow .18s,transform .15s;text-decoration:none;display:block;color:inherit}
+.col-card:hover{box-shadow:var(--shadow-m);transform:translateY(-2px)}
+.col-card-header{padding:16px 18px 12px;display:flex;align-items:center;gap:12px}
+.col-icon{font-size:30px;line-height:1;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-lg);background:var(--gray-50)}
+.col-icon.emoji{font-size:26px}
+.col-icon svg{flex-shrink:0}
+.col-meta{flex:1;min-width:0}
+.col-name{font-size:15px;font-weight:900;margin-bottom:2px}
+.col-sub{font-size:11px;color:var(--gray-500);font-weight:600;line-height:1.4}
+.col-arrow{color:var(--gray-400);flex-shrink:0;transition:.15s}
+.col-card:hover .col-arrow{color:var(--pink);transform:translateX(3px)}
+
+.col-posters{padding:0 18px 14px;display:flex;gap:4px}
+.col-poster-item{flex:1;position:relative;aspect-ratio:2/3;border-radius:var(--r-sm);overflow:hidden;background:var(--gray-100)}
+.col-poster-item img{width:100%;height:100%;object-fit:cover;display:block}
+.col-rank-badge{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;font-weight:900;padding:2px 5px;border-radius:4px}
+.col-score-badge{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.65);color:var(--gold);font-size:9px;font-weight:800;padding:2px 5px;border-radius:4px;display:flex;align-items:center;gap:2px}
+
+.col-footer{padding:10px 18px 14px;border-top:1px solid var(--gray-100)}
+.col-cta{font-size:12px;font-weight:800;color:var(--pink);display:flex;align-items:center;gap:4px}
+
+/* accent colors per section */
+.col-icon.indigo{background:#eef2ff;color:#6366f1}
+.col-icon.amber{background:#fef3c7;color:#d97706}
+.col-icon.green{background:#dcfce7;color:#16a34a}
+.col-icon.rose{background:#ffe4e6;color:#e11d48}
+.col-icon.purple{background:#f3e8ff;color:#9333ea}
+.col-icon.sky{background:#e0f2fe;color:#0284c7}
+
+@media(max-width:600px){.col-grid{grid-template-columns:1fr 1fr}body{padding-bottom:72px}}
+.mobile-bnav{display:none}
+@media(max-width:768px){
+  .mobile-bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-200);padding:6px 0 env(safe-area-inset-bottom,8px);z-index:200}
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0}
+  .mbn-item.on{color:var(--pink)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;padding:4px 8px;border-radius:var(--r-sm);transition:.15s" onmouseover="this.style.background='var(--gray-100)'" onmouseout="this.style.background=''">← Lab</a>
+    <a href="/cinema" style="display:flex;align-items:center;gap:6px;text-decoration:none;flex-shrink:0;margin-left:4px">
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28">
+      <span style="width:1px;height:18px;background:var(--gray-200);display:inline-block;margin:0 2px"></span>
+      <img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22">
+      <span style="font-size:14px;font-weight:800;color:var(--pink)">Cinema</span>
+    </a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link" onclick="location.href='/cinema/person'">Diễn viên</button>
+      <button class="nav-link" onclick="location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link on" onclick="location.href='/cinema/top-phim'">Top phim</button>
+      <button class="nav-link" onclick="location.href='/cinema/genres'">Thể loại</button>
+      <button class="nav-link" onclick="location.href='/cinema/series'">TV Series</button>
+    </div>
+    <div class="nav-search-wrap">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Tìm phim, rạp, thể loại...">
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><i data-lucide="trophy" width="13" height="13"></i> Bảng xếp hạng</div>
+    <h1 class="hero-title">Top Phim</h1>
+    <p class="hero-sub">Khám phá bảng xếp hạng phim theo quốc gia, thể loại và nhiều tiêu chí khác</p>
+  </div>
+</div>
+
+<div class="main" id="main"></div>
+
+<script>
+// ── FILM DATA (dùng để render top 3 preview) ─────────────────────────────
+const FILMS = [
+  // US
+  {id:'breaking-bad',title:'Con Đường Tội Lỗi',country:'us',genres:['Tội phạm','Kịch tính'],type:'series',score:9.5,img:'https://image.tmdb.org/t/p/w185/ggFHVNu6YYI5L9pCfOacjizRGt.jpg'},
+  {id:'chernobyl',title:'Thảm Họa Chernobyl',country:'us',genres:['Lịch sử','Kịch tính'],type:'series',score:9.4,img:'https://image.tmdb.org/t/p/w185/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg'},
+  {id:'shawshank',title:'Nhà Tù Shawshank',country:'us',genres:['Kịch tính','Tội phạm'],type:'film',score:9.3,img:'https://image.tmdb.org/t/p/w185/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg'},
+  {id:'the-godfather',title:'Bố Già',country:'us',genres:['Tội phạm','Kịch tính'],type:'film',score:9.2,img:'https://image.tmdb.org/t/p/w185/3bhkrj58Vtu7enYsLegHQDbe3Fs.jpg'},
+  {id:'arcane',title:'Arcane',country:'us',genres:['Hoạt hình','Hành động'],type:'series',score:9.0,img:'https://image.tmdb.org/t/p/w185/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg'},
+  {id:'dark-knight',title:'Kỵ Sĩ Bóng Đêm',country:'us',genres:['Hành động','Tội phạm'],type:'film',score:9.0,year:2008,img:'https://image.tmdb.org/t/p/w185/qJ2tW6WMUDux911r6m7haRef0WH.jpg'},
+  {id:'inception',title:'Khởi Nguồn',country:'us',genres:['Hành động','Khoa học viễn tưởng'],type:'film',score:8.8,year:2010,img:'https://image.tmdb.org/t/p/w185/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg'},
+  {id:'dune-2',title:'Hành Tinh Cát 2',country:'us',genres:['Khoa học viễn tưởng','Hành động'],type:'film',score:8.8,year:2024,img:'https://image.tmdb.org/t/p/w185/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg'},
+  {id:'interstellar',title:'Hành Trình Vũ Trụ',country:'us',genres:['Khoa học viễn tưởng','Kịch tính'],type:'film',score:8.7,year:2014,img:'https://image.tmdb.org/t/p/w185/gEU2QniE6E77NI6lCU6MxlNBvIe.jpg'},
+  {id:'stranger-things',title:'Stranger Things',country:'us',genres:['Kinh dị','Khoa học viễn tưởng'],type:'series',score:8.7,img:'https://image.tmdb.org/t/p/w185/49WJfeN0moxb9IPfGn8AIqMGskD.jpg'},
+  {id:'blue-eye-samurai',title:'Samurai Mắt Xanh',country:'us',genres:['Hoạt hình','Hành động'],type:'series',score:8.7,img:'https://image.tmdb.org/t/p/w185/j3Z3XA3TRBPQi6JqxuWFAVqQM3b.jpg'},
+  {id:'top-gun',title:'Top Gun: Maverick',country:'us',genres:['Hành động','Kịch tính'],type:'film',score:8.7,year:2022,img:'https://image.tmdb.org/t/p/w185/62HCnUTziyWcpDaBO2i1DX17ljH.jpg'},
+  {id:'avengers',title:'Avengers: Hồi Kết',country:'us',genres:['Hành động','Phiêu lưu'],type:'film',score:8.4,year:2019,img:'https://image.tmdb.org/t/p/w185/or06FN3Dka5tukK1e9sl16pB3iy.jpg'},
+  {id:'get-out',title:'Thoát Ra',country:'us',genres:['Kinh dị','Hồi hộp'],type:'film',score:7.7,img:'https://image.tmdb.org/t/p/w185/tFXcEccSQMVl9dQ3rosBPzpRbdT.jpg'},
+  {id:'hereditary',title:'Di Truyền',country:'us',genres:['Kinh dị'],type:'film',score:7.3,img:'https://image.tmdb.org/t/p/w185/p3MxSHMTpuWLPZpL7gZN7hbQ3pi.jpg'},
+  // KR
+  {id:'vincenzo',title:'Vincenzo',country:'kr',genres:['Tội phạm','Hài kịch'],type:'series',score:8.8,img:'https://image.tmdb.org/t/p/w185/6PGLYJzLBgFXPq3kVWBfZ6GVZTT.jpg'},
+  {id:'signal',title:'Signal',country:'kr',genres:['Tội phạm','Bí ẩn'],type:'series',score:8.9,img:'https://image.tmdb.org/t/p/w185/3TBL9eTzFdKTjh0GJ2lzEkH1aJY.jpg'},
+  {id:'my-mister',title:'My Mister',country:'kr',genres:['Kịch tính','Tình cảm'],type:'series',score:9.0,img:'https://image.tmdb.org/t/p/w185/qVjkiHDKxDYFk47DwgXp5N1xf1y.jpg'},
+  {id:'attorney-woo',title:'Extraordinary Attorney Woo',country:'kr',genres:['Kịch tính','Hài kịch'],type:'series',score:8.6,img:'https://image.tmdb.org/t/p/w185/mxVaFdPL5pBPxfCLi4TuyRe9ZFX.jpg'},
+  {id:'mask-girl',title:'Mask Girl',country:'kr',genres:['Bí ẩn','Hồi hộp'],type:'series',score:7.9,img:'https://image.tmdb.org/t/p/w185/oTybSHjJEqBWMmBuB8HYqT4JQHJ.jpg'},
+  {id:'crash-landing',title:'Hạ Cánh Nơi Anh',country:'kr',genres:['Tình cảm','Hài kịch'],type:'series',score:8.7,img:'https://image.tmdb.org/t/p/w185/3bXFjGDzFlVMlGdkxBsS2ouvBf8.jpg'},
+  {id:'moving',title:'Moving',country:'kr',genres:['Hành động','Bí ẩn'],type:'series',score:8.7,img:'https://image.tmdb.org/t/p/w185/ggukGkwOVOLMbNb7fPJABMYj8pX.jpg'},
+  {id:'parasite',title:'Ký Sinh Trùng',country:'kr',genres:['Tâm lý','Kịch tính'],type:'film',score:8.5,year:2019,img:'https://image.tmdb.org/t/p/w185/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg'},
+  {id:'the-glory',title:'Vinh Quang Trong Thù Hận',country:'kr',genres:['Kịch tính','Bí ẩn'],type:'series',score:8.3,img:'https://image.tmdb.org/t/p/w185/jbpVyeI9ThFHDFMFyVuUMFPlnpH.jpg'},
+  {id:'squid-game',title:'Trò Chơi Con Mực',country:'kr',genres:['Hồi hộp','Kịch tính'],type:'series',score:8.0,img:'https://image.tmdb.org/t/p/w185/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg'},
+  {id:'all-dead',title:'Tất Cả Chúng Ta Đều Chết',country:'kr',genres:['Kinh dị','Hành động'],type:'series',score:7.9,img:'https://image.tmdb.org/t/p/w185/6TFbinNnqoKqnA23J0kV1iKxEzQ.jpg'},
+  // JP
+  {id:'fullmetal-alchemist',title:'Fullmetal Alchemist: Brotherhood',country:'jp',genres:['Hành động','Phiêu lưu'],type:'series',score:9.1,img:'https://image.tmdb.org/t/p/w185/5ZFUEOULaVml7GEcVr9DjIogNb.jpg'},
+  {id:'demon-slayer',title:'Demon Slayer',country:'jp',genres:['Hành động','Phiêu lưu'],type:'series',score:8.7,img:'https://image.tmdb.org/t/p/w185/xUfRZu2mi8jH6SzQEZmPzIeRcfy.jpg'},
+  {id:'death-note',title:'Death Note',country:'jp',genres:['Bí ẩn','Hồi hộp'],type:'series',score:9.0,img:'https://image.tmdb.org/t/p/w185/g3gzMBcrFdsW3RuXjXzL6k5dsXH.jpg'},
+  {id:'jujutsu-kaisen',title:'Jujutsu Kaisen',country:'jp',genres:['Hành động','Phiêu lưu'],type:'series',score:8.8,img:'https://image.tmdb.org/t/p/w185/lHu1wtNaczFLHFW9a4Wlmn2CXhL.jpg'},
+  {id:'attack-titan',title:'Đại Chiến Titan',country:'jp',genres:['Hành động','Phiêu lưu'],type:'series',score:9.0,img:'https://image.tmdb.org/t/p/w185/hTP1DtLGFamjfu8WqjnuQdP1n4i.jpg'},
+  {id:'spirited-away',title:'Vùng Đất Linh Hồn',country:'jp',genres:['Hoạt hình','Phiêu lưu'],type:'film',score:8.6,year:2001,img:'https://image.tmdb.org/t/p/w185/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg'},
+  {id:'grave-fireflies',title:'Mộ Đom Đóm',country:'jp',genres:['Hoạt hình','Kịch tính'],type:'film',score:8.5,year:1988,img:'https://image.tmdb.org/t/p/w185/qG3RYlIVpTiclBhFNo7TUOyOJpf.jpg'},
+  {id:'your-name',title:'Tên Cậu Là Gì',country:'jp',genres:['Hoạt hình','Tình cảm'],type:'film',score:8.4,year:2016,img:'https://image.tmdb.org/t/p/w185/q719jXXEzOoYaps6babgKnONONX.jpg'},
+  {id:'mononoke',title:'Công Chúa Mononoke',country:'jp',genres:['Hoạt hình','Phiêu lưu'],type:'film',score:8.4,year:1997,img:'https://image.tmdb.org/t/p/w185/4OiKVnh88BDbEIkIoMVOQjHJhFj.jpg'},
+  {id:'howl',title:'Lâu Đài Di Động',country:'jp',genres:['Hoạt hình','Tình cảm'],type:'film',score:8.2,year:2004,img:'https://image.tmdb.org/t/p/w185/NPQBCOGMjHfMbOCCPnIGknLqBv.jpg'},
+  // VN
+  {id:'ve-nha-di-con',title:'Về Nhà Đi Con',country:'vn',genres:['Kịch tính','Gia đình'],type:'series',score:8.2,img:'https://image.tmdb.org/t/p/w185/9nGBSPkpSoZ1qNM2p5HuMAF4mYz.jpg'},
+  {id:'thuong-ngay-nang-ve',title:'Thương Ngày Nắng Về',country:'vn',genres:['Kịch tính','Tình cảm'],type:'series',score:8.0,img:'https://image.tmdb.org/t/p/w185/aZqpLxqsJJPcW8EE2J7VdT8ZhHk.jpg'},
+  {id:'nha-ba-nu',title:'Nhà Bà Nữ',country:'vn',genres:['Hài kịch','Gia đình'],type:'film',score:8.6,year:2023,img:'https://image.tmdb.org/t/p/w185/jlbCaCevS4YHASzW5wVnevbrSy8.jpg'},
+  {id:'mat-biec',title:'Mắt Biếc',country:'vn',genres:['Tình cảm','Kịch tính'],type:'film',score:8.5,year:2019,img:'https://image.tmdb.org/t/p/w185/wcahBISlczoYqcakatu2uyX8kGQ.jpg'},
+  {id:'bo-gia',title:'Bố Già',country:'vn',genres:['Hài kịch','Gia đình'],type:'film',score:8.3,year:2021,img:'https://image.tmdb.org/t/p/w185/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg'},
+  {id:'dong-dao',title:'Đồng Dao Ma Quái',country:'vn',genres:['Kinh dị'],type:'film',score:7.9,year:2025,img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM'},
+  {id:'hai-phuong',title:'Hai Phượng',country:'vn',genres:['Hành động'],type:'film',score:7.8,year:2019,img:'https://image.tmdb.org/t/p/w185/ylKQCblNYxF7c6N5R3IJHS9u6WQ.jpg'},
+  {id:'em-va-trinh',title:'Em Và Trịnh',country:'vn',genres:['Tình cảm','Âm nhạc'],type:'film',score:7.5,year:2022,img:'https://image.tmdb.org/t/p/w185/bOGkgRGdhrBYJSLpXaxhXVstddV.jpg'},
+  // DE
+  {id:'dark',title:'Dark',country:'de',genres:['Khoa học viễn tưởng','Bí ẩn'],type:'series',score:8.8,img:'https://image.tmdb.org/t/p/w185/apbrbWs8M9lyOpJYU5IrNDTBhCl.jpg'},
+  {id:'das-boot',title:'Con Tàu Ngầm',country:'de',genres:['Chiến tranh','Kịch tính'],type:'film',score:8.4,year:1981,img:'https://image.tmdb.org/t/p/w185/qy6tBbFGkl1FGbRkxBUqbJWbdDt.jpg'},
+  {id:'babylon-berlin',title:'Babylon Berlin',country:'de',genres:['Lịch sử','Tội phạm'],type:'series',score:8.3,img:'https://image.tmdb.org/t/p/w185/fypydCipcWDKDTTCoPucBsdGYzK.jpg'},
+  // CN
+  {id:'bad-kids',title:'The Bad Kids',country:'cn',genres:['Bí ẩn','Tâm lý'],type:'series',score:9.0,img:'https://image.tmdb.org/t/p/w185/thKsqLmJOHLMZbP1iNfLqh1arD8.jpg'},
+  {id:'nirvana-in-fire',title:'Nirvana in Fire',country:'cn',genres:['Lịch sử','Kịch tính'],type:'series',score:9.0,img:'https://image.tmdb.org/t/p/w185/hI3FzuODDFmHGfwSNvVPPJGx95t.jpg'},
+  {id:'joy-of-life',title:'Joy of Life (Khánh Dư Niên)',country:'cn',genres:['Lịch sử','Hành động'],type:'series',score:8.7,img:'https://image.tmdb.org/t/p/w185/yFRJPKF84kU4CPobF3s1vEpFYmx.jpg'},
+  {id:'wandering-earth',title:'Địa Cầu Lưu Lạc',country:'cn',genres:['Khoa học viễn tưởng','Hành động'],type:'film',score:7.9,year:2019,img:'https://image.tmdb.org/t/p/w185/aqB7lLr9JmxOWIrUMSNNdQkPaM.jpg'},
+  {id:'tung-hoanh',title:'Tung Hoành Tứ Hải',country:'cn',genres:['Hành động','Giang hồ'],type:'film',score:7.8,year:2025,img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM'},
+  {id:'ne-zha',title:'Na Tra: Ma Đồng Giáng Thế',country:'cn',genres:['Hoạt hình','Hành động'],type:'film',score:7.6,year:2019,img:'https://image.tmdb.org/t/p/w185/qs48P8UMeB0WJmqZpAqXPJQbsNI.jpg'},
+  // GB
+  {id:'peaky-blinders',title:'Peaky Blinders',country:'gb',genres:['Tội phạm','Kịch tính'],type:'series',score:8.8,img:'https://image.tmdb.org/t/p/w185/vUUqzWa2LnHIVqkaKVlVGkPaQca.jpg'},
+  {id:'black-mirror',title:'Black Mirror',country:'gb',genres:['Khoa học viễn tưởng','Kịch tính'],type:'series',score:8.2,img:'https://image.tmdb.org/t/p/w185/7PRddO7z7mcPi21nZTCMGShAyy1.jpg'},
+  {id:'1917',title:'1917',country:'gb',genres:['Chiến tranh','Kịch tính'],type:'film',score:8.3,year:2019,img:'https://image.tmdb.org/t/p/w185/iZf0KyrE25z1sage4SYFLCCrMi9.jpg'},
+  {id:'dunkirk',title:'Dunkirk',country:'gb',genres:['Chiến tranh','Hành động'],type:'film',score:7.9,year:2017,img:'https://image.tmdb.org/t/p/w185/ebSnOF3E3glL7y48A4RPHM4UxXK.jpg'},
+  // FR
+  {id:'lupin',title:'Lupin',country:'fr',genres:['Tội phạm','Hành động'],type:'series',score:7.5,img:'https://image.tmdb.org/t/p/w185/sgxawbFB5Vi5OkPWQLNfl3dvkNJ.jpg'},
+  {id:'amelie',title:'Amélie',country:'fr',genres:['Tình cảm','Hài kịch'],type:'film',score:8.3,year:2001,img:'https://image.tmdb.org/t/p/w185/nEBrBBnSjQcnuDl0HnKLCpMjb0F.jpg'},
+  {id:'leon',title:'Léon: The Professional',country:'fr',genres:['Hành động','Tội phạm'],type:'film',score:8.5,year:1994,img:'https://image.tmdb.org/t/p/w185/fYtHxTxP4oNTM7XLbs9rcC73m9I.jpg'},
+  // TH
+  {id:'girl-from-nowhere',title:'Girl From Nowhere',country:'th',genres:['Hồi hộp','Bí ẩn'],type:'series',score:8.3,img:'https://image.tmdb.org/t/p/w185/iY2VbFujQRdHkRtOxUaXK3VQ3Tp.jpg'},
+  {id:'hormones',title:'Hormones',country:'th',genres:['Kịch tính','Tình cảm'],type:'series',score:8.1,img:'https://image.tmdb.org/t/p/w185/pFyKMZA5xkSgL40b8mOFh4uWNQN.jpg'},
+  {id:'bad-genius',title:'Thiên Tài Bất Hảo',country:'th',genres:['Hồi hộp','Tội phạm'],type:'film',score:7.6,year:2017,img:'https://image.tmdb.org/t/p/w185/hZ3APUQ6OQaTXgLNHRmIa8BKqFy.jpg'},
+  {id:'friend-zone',title:'Friend Zone',country:'th',genres:['Tình cảm','Hài kịch'],type:'film',score:7.1,year:2019,img:'https://image.tmdb.org/t/p/w185/vE3P7iYoOtnLGmwHGPzfXMkB0Jf.jpg'},
+  // IN
+  {id:'scam-1992',title:'Scam 1992',country:'in',genres:['Tội phạm','Lịch sử'],type:'series',score:9.3,img:'https://image.tmdb.org/t/p/w185/p1dFOEFpKDGBk3xDPcbQheFH7ST.jpg'},
+  {id:'panchayat',title:'Panchayat',country:'in',genres:['Hài kịch','Kịch tính'],type:'series',score:8.8,img:'https://image.tmdb.org/t/p/w185/efCpbAEFVQXaGFiO3N3uJz7SKtY.jpg'},
+  {id:'delhi-crime',title:'Delhi Crime',country:'in',genres:['Tội phạm','Kịch tính'],type:'series',score:8.5,img:'https://image.tmdb.org/t/p/w185/dNy3I7qlcvHEL3aQGpGa2S1MQAY.jpg'},
+  {id:'mirzapur',title:'Mirzapur',country:'in',genres:['Tội phạm','Hành động'],type:'series',score:8.5,img:'https://image.tmdb.org/t/p/w185/jG06UjJJN9mn5a7pLxpo9gQPSfh.jpg'},
+  {id:'3-idiots',title:'3 Idiots',country:'in',genres:['Hài kịch','Kịch tính'],type:'film',score:8.4,year:2009,img:'https://image.tmdb.org/t/p/w185/66A9MqXZyHKf3FNVOhFsXcNThCW.jpg'},
+  {id:'sacred-games',title:'Sacred Games',country:'in',genres:['Tội phạm','Bí ẩn'],type:'series',score:8.3,img:'https://image.tmdb.org/t/p/w185/n6ikhGcF6qcxvjBRZn5bHPJqrVE.jpg'},
+  {id:'rrr',title:'RRR',country:'in',genres:['Hành động','Phiêu lưu'],type:'film',score:7.8,year:2022,img:'https://image.tmdb.org/t/p/w185/nEkqpRMBO9p8E3cGiGQshBqCkVH.jpg'},
+  // ES
+  {id:'money-heist',title:'Money Heist',country:'es',genres:['Tội phạm','Hành động'],type:'series',score:8.2,img:'https://image.tmdb.org/t/p/w185/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg'},
+  {id:'elite',title:'Elite',country:'es',genres:['Tội phạm','Kịch tính'],type:'series',score:7.4,img:'https://image.tmdb.org/t/p/w185/6XBGPBwmhL7oJdEhybYr7SsGJqe.jpg'},
+  // BR
+  {id:'city-of-god',title:'Thành Phố Của Chúa',country:'br',genres:['Tội phạm','Kịch tính'],type:'film',score:8.6,year:2002,img:'https://image.tmdb.org/t/p/w185/k7eYdWvhYQyRQoU2TB2A2Xu2grZ.jpg'},
+  {id:'elite-squad',title:'Biệt Đội Tinh Nhuệ',country:'br',genres:['Hành động','Tội phạm'],type:'film',score:8.0,year:2007,img:'https://image.tmdb.org/t/p/w185/bUJr0HoRHhQWITZ9p0Jm2M5A1wB.jpg'},
+  // IT
+  {id:'gomorra',title:'Gomorra',country:'it',genres:['Tội phạm','Kịch tính'],type:'series',score:8.4,img:'https://image.tmdb.org/t/p/w185/bHUJ7BxZsS6MONIBJaBQdKmjMPj.jpg'},
+  {id:'my-brilliant-friend',title:'My Brilliant Friend',country:'it',genres:['Kịch tính','Tình cảm'],type:'series',score:8.4,img:'https://image.tmdb.org/t/p/w185/4aCqLKJMUrBaGvx8SrGG3bNIvxK.jpg'},
+  // DK
+  {id:'borgen',title:'Borgen',country:'dk',genres:['Chính trị','Kịch tính'],type:'series',score:8.4,img:'https://image.tmdb.org/t/p/w185/bSBdXj3QMW5v0Z0jjy0dKbSz8j0.jpg'},
+  {id:'the-killing',title:'The Killing',country:'dk',genres:['Tội phạm','Bí ẩn'],type:'series',score:8.3,img:'https://image.tmdb.org/t/p/w185/oMIqjNUMvfFREFvQkQYSW7AMAVF.jpg'},
+  // TR
+  {id:'ertugrul',title:'Diriliş: Ertuğrul',country:'tr',genres:['Lịch sử','Hành động'],type:'series',score:8.1,img:'https://image.tmdb.org/t/p/w185/bNBpzjCixPB6WaRcT0vWVnGmTIL.jpg'},
+  {id:'rise-of-empires',title:'Rise of Empires: Ottoman',country:'tr',genres:['Lịch sử','Kịch tính'],type:'series',score:7.7,img:'https://image.tmdb.org/t/p/w185/m7cMZkKkZl4RBK0jtKIaRD0rQbk.jpg'},
+  // AR
+  {id:'secret-eyes',title:'Bí Mật Trong Đôi Mắt',country:'ar',genres:['Tội phạm','Tình cảm'],type:'film',score:8.2,year:2009,img:'https://image.tmdb.org/t/p/w185/7CYuGzJGmAMBEBJPZuvgGa3XO2V.jpg'},
+  {id:'wild-tales',title:'Wild Tales',country:'ar',genres:['Hài kịch','Hồi hộp'],type:'film',score:8.1,year:2014,img:'https://image.tmdb.org/t/p/w185/cAEoaXuRxPgMVkqKWuQnj0Rc3Ck.jpg'},
+  // SE
+  {id:'wallander-se',title:'Wallander',country:'se',genres:['Tội phạm','Bí ẩn'],type:'series',score:8.0,img:'https://image.tmdb.org/t/p/w185/5xBBlZxfSnBIJYITIWRfxGCiDmX.jpg'},
+  {id:'girl-dragon-tattoo-se',title:'Cô Gái Có Hình Xăm Rồng',country:'se',genres:['Tội phạm','Bí ẩn'],type:'film',score:7.8,year:2009,img:'https://image.tmdb.org/t/p/w185/bjEKJVQzFlGBTM3lZjT5qDiB5Xz.jpg'},
+  // MX
+  {id:'roma',title:'Roma',country:'mx',genres:['Kịch tính','Gia đình'],type:'film',score:7.7,year:2018,img:'https://image.tmdb.org/t/p/w185/dtlNiYBIiGemJJRHp33xeVb78S4.jpg'},
+  {id:'narcos-mexico',title:'Narcos: Mexico',country:'mx',genres:['Tội phạm','Lịch sử'],type:'series',score:8.0,img:'https://image.tmdb.org/t/p/w185/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg'},
+];
+
+// ── SECTIONS & COLLECTIONS ────────────────────────────────────────────────
+const SECTIONS = [
+  {
+    label: 'Theo Quốc Gia',
+    collections: [
+      {slug:'my',       icon:'🇺🇸', iconCls:'emoji', name:'Top Phim Mỹ',         desc:'Hollywood & Streaming originals',     filter:{country:'us'}},
+      {slug:'han-quoc', icon:'🇰🇷', iconCls:'emoji', name:'Top Phim Hàn Quốc',   desc:'K-Drama, K-Movie đình đám thế giới', filter:{country:'kr'}},
+      {slug:'nhat-ban', icon:'🇯🇵', iconCls:'emoji', name:'Top Phim Nhật Bản',   desc:'Anime & điện ảnh Nhật Bản',          filter:{country:'jp'}},
+      {slug:'viet-nam', icon:'🇻🇳', iconCls:'emoji', name:'Top Phim Việt Nam',   desc:'Phim Việt được yêu thích nhất',      filter:{country:'vn'}},
+      {slug:'anh',      icon:'🇬🇧', iconCls:'emoji', name:'Top Phim Anh',        desc:'BBC & British cinema đỉnh cao',       filter:{country:'gb'}},
+      {slug:'phap',     icon:'🇫🇷', iconCls:'emoji', name:'Top Phim Pháp',       desc:'Điện ảnh Pháp & Arthouse',           filter:{country:'fr'}},
+      {slug:'trung-quoc',icon:'🇨🇳',iconCls:'emoji', name:'Top Phim Trung Quốc', desc:'Bom tấn Hoa ngữ & cổ trang',         filter:{country:'cn'}},
+      {slug:'duc',      icon:'🇩🇪', iconCls:'emoji', name:'Top Phim Đức',        desc:'Series & điện ảnh Đức xuất sắc',     filter:{country:'de'}},
+      {slug:'thai-lan',    icon:'🇹🇭', iconCls:'emoji', name:'Top Phim Thái Lan',    desc:'Y2K, Tình cảm & Thriller Thái',       filter:{country:'th'}},
+      {slug:'an-do',       icon:'🇮🇳', iconCls:'emoji', name:'Top Phim Ấn Độ',       desc:'Bollywood, Tollywood & OTT originals', filter:{country:'in'}},
+      {slug:'tay-ban-nha', icon:'🇪🇸', iconCls:'emoji', name:'Top Phim Tây Ban Nha', desc:'Heist, Teen drama & Arthouse',         filter:{country:'es'}},
+      {slug:'brazil',      icon:'🇧🇷', iconCls:'emoji', name:'Top Phim Brazil',       desc:'Crime, Favela & Latin mãnh liệt',      filter:{country:'br'}},
+      {slug:'y',           icon:'🇮🇹', iconCls:'emoji', name:'Top Phim Ý',            desc:'Mafia, tình yêu & Ý kinh điển',        filter:{country:'it'}},
+      {slug:'dan-mach',    icon:'🇩🇰', iconCls:'emoji', name:'Top Phim Đan Mạch',     desc:'Nordic Noir & chính trị Scandinavia',  filter:{country:'dk'}},
+      {slug:'tho-nhi-ky',  icon:'🇹🇷', iconCls:'emoji', name:'Top Phim Thổ Nhĩ Kỳ',  desc:'Sử thi Ottoman & dizi đình đám',       filter:{country:'tr'}},
+      {slug:'argentina',   icon:'🇦🇷', iconCls:'emoji', name:'Top Phim Argentina',    desc:'Hài đen, Crime & Latin sắc bén',       filter:{country:'ar'}},
+      {slug:'thuy-dien',   icon:'🇸🇪', iconCls:'emoji', name:'Top Phim Thụy Điển',    desc:'Scandinavian crime & Nordic drama',    filter:{country:'se'}},
+      {slug:'mexico',      icon:'🇲🇽', iconCls:'emoji', name:'Top Phim Mexico',       desc:'Cartel drama, Arthouse & điện ảnh Mexico', filter:{country:'mx'}},
+    ]
+  },
+  {
+    label: 'Theo Thể Loại',
+    collections: [
+      {slug:'hanh-dong',     icon:'hanh-dong',     iconCls:'indigo',  name:'Top Phim Hành Động',    desc:'Rượt đuổi, chiến đấu, kịch tính tới cùng',    filter:{genre:'Hành động'},    svgD:'M13 10V3L4 14h7v7l9-11h-7z'},
+      {slug:'kinh-di',       icon:'kinh-di',        iconCls:'rose',    name:'Top Phim Kinh Dị',      desc:'Nỗi sợ, bí ẩn, ám ảnh không thể quên',        filter:{genre:'Kinh dị'},      svgD:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'},
+      {slug:'tinh-cam',      icon:'tinh-cam',       iconCls:'rose',    name:'Top Phim Tình Cảm',     desc:'Câu chuyện tình yêu đẹp nhất màn ảnh',         filter:{genre:'Tình cảm'},     svgD:'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'},
+      {slug:'hoat-hinh',     icon:'hoat-hinh',      iconCls:'amber',   name:'Top Phim Hoạt Hình',    desc:'Animation Ghibli, Pixar & Anime đỉnh cao',     filter:{genre:'Hoạt hình'},    svgD:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 3a7 7 0 0 1 0 14 7 7 0 0 1 0-14zm0 1a2 2 0 1 0 0 4 2 2 0 0 0 0-4z'},
+      {slug:'khoa-hoc',      icon:'khoa-hoc',       iconCls:'indigo',  name:'Top Phim Sci-Fi',       desc:'Vũ trụ, tương lai, khoa học viễn tưởng',       filter:{genre:'Khoa học viễn tưởng'},svgD:'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'},
+      {slug:'toi-pham',      icon:'toi-pham',       iconCls:'purple',  name:'Top Phim Tội Phạm',     desc:'Thriller, Crime Drama & Neo-noir',             filter:{genre:'Tội phạm'},     svgD:'M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z'},
+      {slug:'hai-huoc',      icon:'hai-huoc',       iconCls:'amber',   name:'Top Phim Hài',          desc:'Cười thỏa thích cùng những bộ phim hài hay nhất',filter:{genre:'Hài kịch'},    svgD:'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m10 0h3a2 2 0 0 0 2-2v-3'},
+      {slug:'tam-ly',        icon:'tam-ly',         iconCls:'sky',     name:'Top Phim Tâm Lý',       desc:'Sâu sắc, đa chiều, đánh thẳng vào cảm xúc',   filter:{genre:'Tâm lý'},       svgD:'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'},
+    ]
+  },
+  {
+    label: 'Danh Sách Đặc Biệt',
+    collections: [
+      {slug:'series-chau-a', icon:'series-chau-a',  iconCls:'indigo',  name:'Top TV Series Châu Á',  desc:'K-Drama, Anime, C-Drama & series châu Á đỉnh nhất', filter:{continent:'asia'}, svgD:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'},
+      {slug:'series',        icon:'series',         iconCls:'indigo',  name:'Top TV Series',         desc:'Những bộ series ăn khách nhất mọi thời đại',   filter:{type:'series'},        svgD:'M21 3H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8v2H8v2h8v-2h-3v-2h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm-1 14H4V5h16v12z'},
+      {slug:'phim-le',       icon:'phim-le',        iconCls:'purple',  name:'Top Phim Lẻ',           desc:'Chỉ phim điện ảnh, không phải series',          filter:{type:'film'},          svgD:'M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1z'},
+      {slug:'co-dien',       icon:'co-dien',        iconCls:'amber',   name:'Top Phim Kinh Điển',    desc:'Những kiệt tác trước năm 2000 bất tử theo thời gian',filter:{before:2000},      svgD:'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'},
+      {slug:'moi-nhat',      icon:'moi-nhat',       iconCls:'green',   name:'Top Phim Mới Nhất',     desc:'Phim ra mắt từ năm 2023 trở đi',               filter:{from:2023},            svgD:'M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83'},
+      {slug:'chien-tranh',   icon:'chien-tranh',    iconCls:'rose',    name:'Top Phim Chiến Tranh',  desc:'Lịch sử, bi tráng và những anh hùng thầm lặng', filter:{genre:'Chiến tranh'},  svgD:'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'},
+      {slug:'gia-dinh',      icon:'gia-dinh',       iconCls:'green',   name:'Top Phim Gia Đình',     desc:'Phù hợp mọi lứa tuổi, xem cùng gia đình',     filter:{genre:'Gia đình'},     svgD:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'},
+    ]
+  },
+];
+
+// ── FILTER LOGIC ─────────────────────────────────────────────────────────
+const ASIA_COUNTRIES = new Set(['kr','jp','cn','vn','th','in','tw','id','ph','sg','my']);
+
+function applyFilter(films, filter){
+  return films.filter(f=>{
+    if(filter.continent === 'asia' && f.type !== 'series') return false;
+    if(filter.continent === 'asia' && !ASIA_COUNTRIES.has(f.country)) return false;
+    if(filter.country && f.country !== filter.country) return false;
+    if(filter.genre   && !(f.genres||[]).includes(filter.genre)) return false;
+    if(filter.type    && f.type !== filter.type) return false;
+    if(filter.before  && (f.year||9999) >= filter.before) return false;
+    if(filter.from    && (f.year||0) < filter.from) return false;
+    return true;
+  }).sort((a,b)=>b.score-a.score);
+}
+
+function getTop3(filter){ return applyFilter(FILMS,filter).slice(0,3); }
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderCard(c){
+  const top3 = getTop3(c.filter);
+  const postersHtml = top3.map((f,i)=>`
+    <div class="col-poster-item">
+      <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)';this.src=''">
+      <span class="col-rank-badge">#${i+1}</span>
+      <span class="col-score-badge"><svg width="8" height="8" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${f.score}</span>
+    </div>`).join('');
+
+  const iconHtml = c.iconCls === 'emoji'
+    ? `<div class="col-icon emoji">${c.icon}</div>`
+    : `<div class="col-icon ${c.iconCls}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${c.svgD}"/></svg></div>`;
+
+  return `<a class="col-card" href="/cinema/top-phim/${c.slug}">
+    <div class="col-card-header">
+      ${iconHtml}
+      <div class="col-meta">
+        <div class="col-name">${c.name}</div>
+        <div class="col-sub">${c.desc}</div>
+      </div>
+      <div class="col-arrow"><i data-lucide="chevron-right" width="18" height="18"></i></div>
+    </div>
+    ${top3.length ? `<div class="col-posters">${postersHtml}</div>` : ''}
+    <div class="col-footer">
+      <span class="col-cta">Xem chi tiết <i data-lucide="arrow-right" width="12" height="12"></i></span>
+    </div>
+  </a>`;
+}
+
+document.getElementById('main').innerHTML = SECTIONS.map(s=>`
+  <div>
+    <div class="section-label">${s.label}</div>
+    <div class="col-grid">${s.collections.map(renderCard).join('')}</div>
+  </div>`).join('');
+
+lucide.createIcons();
+</script>
+
+<nav class="mobile-bnav">
+  <a class="mbn-item" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg><span>Phim</span></a>
+  <a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a>
+  <a class="mbn-item on" href="/cinema/top-phim"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Top phim</span></a>
+  <a class="mbn-item" href="/cinema/person"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a>
+  <a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a>
+</nav>
+</body>
+</html>
