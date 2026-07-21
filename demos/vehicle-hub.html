@@ -402,7 +402,7 @@ body {
   background: var(--gray-200); animation: skel-pulse 1.4s ease-in-out infinite;
   vertical-align: middle;
 }
-.hub-dash--preview + * { display: none; } /* hide reset header in preview */
+.hub-dash--preview { display: none; } /* ẩn hoàn toàn trước khi submit — entry cards đã đủ hướng dẫn */
 
 /* ── VR PANEL (violations detail) ── */
 .vr-section { max-height: 0; overflow: hidden; transition: max-height .45s cubic-bezier(0.4,0,0.2,1); }
@@ -2966,6 +2966,7 @@ body {
       document.getElementById('plateDashReset').innerHTML = LI.rotateCcw + ' Đổi xe';
       hubDashHeader.style.display = '';
       hubDash.classList.remove('hub-dash--preview');
+      hubDash.style.display = '';
       document.getElementById('plateDashReset').addEventListener('click', resetPlate);
     }
 
@@ -3025,12 +3026,8 @@ body {
       if (province) { plateProvince.textContent = province; plateProvince.classList.add('is-visible'); }
       renderDash(formatted, getPlateData(saved));
     } else {
-      /* Show demo data so user sees what they'll get */
-      const demoPlate = '51A12345';
-      renderDash('51A-12345', getPlateData(demoPlate));
-      /* Mark as demo so plate tag shows hint */
-      document.getElementById('hubDashPlateTag').textContent = 'Demo · 51A-12345';
-      hubDash.classList.add('hub-dash--demo');
+      /* Entry cards visible — hide dash until user submits a real plate */
+      hubDash.style.display = 'none';
     }
   }());
 
