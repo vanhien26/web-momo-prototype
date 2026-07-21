@@ -272,6 +272,19 @@ body {
   color: rgba(255,255,255,.35); margin-bottom: 14px;
 }
 
+/* Entry use-case cards */
+.plate-entry-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.pec-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 8px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06); color: rgba(255,255,255,.55);
+  cursor: pointer; transition: all .15s; font-family: inherit; text-align: center;
+}
+.pec-card:hover { border-color: rgba(235,47,150,.4); color: rgba(255,255,255,.85); background: rgba(235,47,150,.08); }
+.pec-card.pec-active { border-color: var(--pink-500); background: rgba(235,47,150,.15); color: #fff; }
+.pec-card svg { width: 16px; height: 16px; }
+.pec-label { font-size: 11px; font-weight: 600; line-height: 1.3; }
+
 /* The plate input — styled as a Vietnamese license plate */
 .plate-input-wrap {
   display: flex; flex-direction: column; gap: 12px;
@@ -1795,7 +1808,21 @@ body {
     </div>
 
     <div class="plate-panel">
-      <div class="plate-panel-label">Nhập biển số xe của bạn</div>
+      <div class="plate-entry-cards" id="plateEntryCards">
+        <button class="pec-card pec-active" type="button" data-use="phat-nguoi" onclick="selectUseCase(this)">
+          <i data-lucide="alert-circle" width="16" height="16"></i>
+          <span class="pec-label">Kiểm tra phạt nguội</span>
+        </button>
+        <button class="pec-card" type="button" data-use="dinh-gia" onclick="selectUseCase(this)">
+          <i data-lucide="tag" width="16" height="16"></i>
+          <span class="pec-label">Định giá xe</span>
+        </button>
+        <button class="pec-card" type="button" data-use="dang-kiem" onclick="selectUseCase(this)">
+          <i data-lucide="clipboard-check" width="16" height="16"></i>
+          <span class="pec-label">Tra đăng kiểm</span>
+        </button>
+      </div>
+      <div class="plate-panel-label" id="platePanelLabel">Nhập biển số để kiểm tra phạt nguội</div>
       <div class="vtype-toggle" id="vtypeToggle">
         <button class="vtype-btn active" id="vtype-oto" onclick="setVtype('oto')">
           <i data-lucide="car" width="15" height="15"></i>
@@ -2941,6 +2968,21 @@ body {
       hubDash.classList.remove('hub-dash--preview');
       document.getElementById('plateDashReset').addEventListener('click', resetPlate);
     }
+
+    const USE_CASE_LABELS = {
+      'phat-nguoi': 'Nhập biển số để kiểm tra phạt nguội',
+      'dinh-gia':   'Nhập biển số để định giá xe',
+      'dang-kiem':  'Nhập biển số để tra đăng kiểm',
+    };
+    let activeUseCase = 'phat-nguoi';
+
+    window.selectUseCase = function(btn) {
+      document.querySelectorAll('.pec-card').forEach(c => c.classList.remove('pec-active'));
+      btn.classList.add('pec-active');
+      activeUseCase = btn.dataset.use;
+      document.getElementById('platePanelLabel').textContent = USE_CASE_LABELS[activeUseCase] || 'Nhập biển số xe của bạn';
+      plateInput.focus();
+    };
 
     function submitPlate() {
       const raw = plateInput.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
