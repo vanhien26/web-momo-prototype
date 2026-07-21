@@ -158,6 +158,43 @@ for (const subPage of cinemaSubPages) {
   } catch {}
 }
 
+// ── PHAT NGUOI — CSS completeness
+// phat-nguoi.css must define all structural classes used across hub + location detail pages.
+// Adding a new class to ha-noi without a desktop definition caused the unstyled-page bug (2026-07).
+const pnCss = (() => { try { return read('demos/phat-nguoi.css'); } catch { return ''; } })();
+const pnHub = (() => { try { return read('demos/phat-nguoi.html'); } catch { return ''; } })();
+const pnHaNoi = (() => { try { return read('demos/phat-nguoi-ha-noi.html'); } catch { return ''; } })();
+
+record(pnCss.includes('.hero-layout'), 'phat-nguoi.css defines .hero-layout');
+record(pnCss.includes('.trust-strip'), 'phat-nguoi.css defines .trust-strip');
+record(pnCss.includes('.route-card--detail'), 'phat-nguoi.css defines .route-card--detail');
+record(pnCss.includes('.contact-grid'), 'phat-nguoi.css defines .contact-grid');
+record(pnCss.includes('.pc-layout'), 'phat-nguoi.css defines .pc-layout (penalty calculator)');
+
+// Nav items: hub defines the canonical set — location detail pages must mirror them.
+// Canonical: Tổng quan · Giải đáp · Nộp phạt · ← Lab + nav-cta (varies per page)
+const pnNavItems = ['Tổng quan', 'Giải đáp', 'Nộp phạt', '← Lab'];
+for (const item of pnNavItems) {
+  record(pnHub.includes(item), `phat-nguoi hub nav has "${item}"`);
+  record(pnHaNoi.includes(item), `phat-nguoi ha-noi nav has "${item}"`);
+}
+
+// Location detail page structure checks
+record(pnHaNoi.includes('hero-layout'), 'ha-noi uses hero-layout (consistent with hub)');
+record(pnHaNoi.includes('route-list--detail'), 'ha-noi has route section with route-list--detail');
+record(pnHaNoi.includes('contact-grid'), 'ha-noi has contact-grid section');
+record(pnHaNoi.includes('section-kicker') && pnHaNoi.includes('FAQ') || pnHaNoi.includes('Câu hỏi thường gặp'), 'ha-noi has FAQ section');
+record(pnHaNoi.includes('lucide.min.js'), 'ha-noi includes lucide script for contact icons');
+record(pnHaNoi.includes('lucide.createIcons()'), 'ha-noi calls lucide.createIcons() after script load');
+
+// Breadcrumb: location detail must have breadcrumb back to hub
+record(pnHaNoi.includes('breadcrumb') && pnHaNoi.includes('phat-nguoi.html'), 'ha-noi has breadcrumb linking back to hub');
+
+// No emoji used as icons in phat-nguoi pages (emoji in body copy is OK — check icon-context patterns)
+const emojiIconPattern = /(?:class="[^"]*icon[^"]*">|data-lucide[^>]*>)\s*[\u{1F300}-\u{1FFFF}]/u;
+record(!emojiIconPattern.test(pnHub), 'phat-nguoi hub has no emoji used as icons');
+record(!emojiIconPattern.test(pnHaNoi), 'phat-nguoi ha-noi has no emoji used as icons');
+
 // ── ICON POLICY (global)
 // All icons across demos must come from Lucide SVG (inline <svg> with Lucide paths).
 // Do NOT use emoji (🛡, ⚡, 📋…) as UI icons — they render inconsistently across OS/browser
