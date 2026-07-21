@@ -71,20 +71,39 @@
     <section class="section">
       <div class="shell">
         <div class="section-head">
-          <div><span class="section-kicker">Điểm nóng phạt nguội</span><h2>Các tuyến đường hay bị phạt nguội tại Hà Nội</h2></div>
+          <div><span class="section-kicker">Tra cứu tuyến đường</span><h2>Tuyến đường của bạn có phạt nguội không?</h2></div>
         </div>
-        <ul class="route-name-list">
-          <li>Vành đai 3 — Pháp Vân đến Ngã tư Sở</li>
-          <li>Đại lộ Thăng Long</li>
-          <li>Đường Phạm Văn Đồng</li>
-          <li>Đường Giải Phóng — đoạn Ngọc Hồi</li>
-          <li>Võ Chí Công — đoạn cầu Nhật Tân</li>
-          <li>Đường Nguyễn Trãi (Hà Đông)</li>
-          <li>Quốc lộ 1A — đoạn qua Hà Nội</li>
-          <li>Đường Láng — Hòa Lạc (QL6)</li>
-          <li>Đường Trường Chinh</li>
-          <li>Đường Minh Khai – Vĩnh Tuy</li>
-        </ul>
+        <div class="route-search-wrap">
+          <div class="route-search-field">
+            <i data-lucide="search" width="16" height="16" class="route-search-icon"></i>
+            <input type="text" id="routeSearchInput" class="route-search-input" placeholder="Nhập tên đường, ví dụ: Thăng Long, Nguyễn Trãi…" autocomplete="off" oninput="filterRoutes(this.value)">
+            <button type="button" class="route-search-clear" id="routeSearchClear" onclick="clearRouteSearch()" aria-label="Xóa">
+              <i data-lucide="x" width="14" height="14"></i>
+            </button>
+          </div>
+          <ul class="route-name-list" id="routeNameList">
+            <li data-route>Vành đai 3 — Pháp Vân đến Ngã tư Sở</li>
+            <li data-route>Đại lộ Thăng Long</li>
+            <li data-route>Đường Phạm Văn Đồng</li>
+            <li data-route>Đường Giải Phóng — đoạn Ngọc Hồi</li>
+            <li data-route>Võ Chí Công — đoạn cầu Nhật Tân</li>
+            <li data-route>Đường Nguyễn Trãi (Hà Đông)</li>
+            <li data-route>Quốc lộ 1A — đoạn qua Hà Nội</li>
+            <li data-route>Đường Láng — Hòa Lạc (QL6)</li>
+            <li data-route>Đường Trường Chinh</li>
+            <li data-route>Đường Minh Khai – Vĩnh Tuy</li>
+            <li data-route>Đường Hoàng Quốc Việt</li>
+            <li data-route>Đường Xuân Thủy — Cầu Giấy</li>
+            <li data-route>Đường Kim Mã</li>
+            <li data-route>Đường Nghi Tàm — Âu Cơ</li>
+            <li data-route>Đường Lê Văn Lương (Thanh Xuân)</li>
+          </ul>
+          <div class="route-empty" id="routeEmpty" style="display:none">
+            <i data-lucide="map-pin-off" width="32" height="32"></i>
+            <p>Không tìm thấy tuyến đường này trong danh sách.</p>
+            <span>Không có trong danh sách không có nghĩa là không có camera — hệ thống phạt nguội tiếp tục mở rộng.</span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -248,6 +267,36 @@
   <footer class="site-footer"><div class="shell footer-inner"><span>Template: Phạt Nguội Location Detail · Hà Nội</span><nav class="footer-links"><a href="phat-nguoi.html">Hub</a><a href="phat-nguoi-giai-dap.html">Giải đáp</a><a href="../lab.html">Lab</a></nav></div></footer>
   <script src="/assets/lucide.min.js"></script>
   <script src="/demos/phat-nguoi.js?v=1"></script>
-  <script>if(window.lucide)lucide.createIcons();</script>
+  <script>
+    if(window.lucide) lucide.createIcons();
+
+    function normalize(s) {
+      return s.toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g,'')
+        .replace(/đ/g,'d');
+    }
+
+    function filterRoutes(q) {
+      const items = document.querySelectorAll('#routeNameList [data-route]');
+      const clear = document.getElementById('routeSearchClear');
+      const empty = document.getElementById('routeEmpty');
+      const norm = normalize(q.trim());
+      let found = 0;
+      items.forEach(li => {
+        const match = !norm || normalize(li.textContent).includes(norm);
+        li.style.display = match ? '' : 'none';
+        if (match) found++;
+      });
+      clear.style.display = q ? 'flex' : 'none';
+      empty.style.display = (!found && norm) ? 'flex' : 'none';
+    }
+
+    function clearRouteSearch() {
+      const input = document.getElementById('routeSearchInput');
+      input.value = '';
+      input.focus();
+      filterRoutes('');
+    }
+  </script>
 </body>
 </html>
