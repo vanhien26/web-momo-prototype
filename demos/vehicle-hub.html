@@ -750,19 +750,48 @@ body {
 }
 .fc-back-cta:hover { background: var(--pink-600); }
 
-/* fc-card mobile: override aspect-ratio AFTER base to avoid cascade conflict */
+/* fc mobile: horizontal list rows */
 @media(max-width: 480px) {
-  .fc-card { aspect-ratio: auto; min-height: 300px; }
-  .fc-inner { min-height: 300px; }
-  .fc-back { overflow-y: auto; }
-  .fc-front { padding: 14px; }
-  .fc-front-title { font-size: 15px; }
-  .fc-front-desc { font-size: 11px; }
-  .fc-back { padding: 16px; }
-  .fc-back-title { font-size: 14px; }
-  .fc-back-desc { font-size: 11.5px; line-height: 1.5; }
-  .fc-back-cta { padding: 9px; font-size: 12px; margin-top: 12px; }
-  .fc-back-icon-wrap { margin-bottom: 8px; }
+  .fc-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+  .fc-tab { flex-shrink: 0; font-size: 12px; height: 34px; padding: 0 14px; }
+
+  .fc-grid { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Disable 3d flip */
+  .fc-card { aspect-ratio: unset; min-height: unset; perspective: none; border-radius: 14px; }
+  .fc-inner { position: static; min-height: unset; transform: none !important; transition: none; transform-style: flat; }
+  .fc-card.flipped .fc-inner { transform: none !important; }
+
+  /* Horizontal row */
+  .fc-front {
+    position: relative;
+    flex-direction: row; align-items: center;
+    padding: 12px 14px; border-radius: 14px;
+    gap: 12px; min-height: 64px;
+  }
+  .fc-front::after {
+    background: linear-gradient(to right, rgba(0,0,0,.3) 0%, rgba(0,0,0,.05) 70%, transparent 100%);
+  }
+
+  /* Repurpose the watermark icon as a small icon swatch on the left */
+  .fc-front-icon {
+    display: flex; position: static; order: 1;
+    flex-shrink: 0; width: 44px; height: 44px;
+    border-radius: 11px; background: rgba(255,255,255,.18);
+    align-items: center; justify-content: center;
+    color: rgba(255,255,255,.85);
+  }
+  .fc-front-icon svg { width: 22px !important; height: 22px !important; }
+
+  .fc-front-content { order: 2; flex: 1; position: relative; z-index: 1; }
+  .fc-front-title { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+  .fc-front-desc { font-size: 12px; line-height: 1.4; }
+
+  .fc-arrow-btn { order: 3; position: static; flex-shrink: 0; z-index: 2; }
+
+  /* Back not needed on mobile — tap navigates directly */
+  .fc-back { display: none !important; }
+
 }
 
 /* utility cards grid */
@@ -921,6 +950,24 @@ body {
   border: none;
 }
 .ep-topup-btn:hover { background: var(--pink-600); }
+
+@media(max-width:480px) {
+  .epass-copy { padding: 20px 16px 14px; }
+  .epass-visual { padding: 0 16px 20px; }
+  .epass-copy h2 { font-size: 22px; margin-bottom: 12px; }
+  .epass-copy > p { display: none; }
+  .epass-steps { flex-direction: row; gap: 6px; margin-bottom: 18px; }
+  .epass-steps li {
+    flex: 1; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; font-size: 10px; gap: 5px; line-height: 1.3;
+    background: rgba(255,255,255,.05); border-radius: 10px; padding: 10px 5px;
+  }
+  .ep-route-teaser { display: none !important; }
+  .ep-full-link { display: none !important; }
+  .ep-footnote { display: none !important; }
+  .ep-auto-row-wrap { display: none !important; }
+  .btn-fill { display: block; width: 100%; text-align: center; box-sizing: border-box; }
+}
 
 /* ── INSURANCE SECTION ───────────────────── */
 .ins-wrap { display: grid; grid-template-columns: 340px 1fr; gap: 16px; align-items: start; }
@@ -1099,6 +1146,9 @@ body {
   .gas-region-tabs { padding: 12px 16px 0; }
   .w2a-panel { grid-template-columns: 1fr; }
   .w2a-copy { padding: 28px 20px; }
+  .epass-panel { grid-template-columns: 1fr; }
+  .epass-copy { padding: 28px 20px 16px; }
+  .epass-visual { padding: 0 20px 28px; }
 }
 
 /* ── W2A SECTION (profile / MoXe) ────────── */
@@ -2114,10 +2164,10 @@ body {
           <li><span class="ep-step-num">3</span>Xong - MoMo tự canh số dư cho bạn</li>
         </ul>
         <button class="btn-fill" onclick="toast('Mở MoMo App để liên kết ePass...')">Liên kết ePass trong App</button>
-        <a class="section-more" href="/epass" style="display:inline-block;margin-top:12px">Xem trang ePass đầy đủ →</a>
+        <a class="section-more ep-full-link" href="/epass" style="display:inline-block;margin-top:12px">Xem trang ePass đầy đủ →</a>
 
         <!-- Route toll teaser -->
-        <div style="margin-top:18px;padding:14px 16px;background:rgba(235,47,150,.06);border:1.5px solid rgba(235,47,150,.15);border-radius:12px;">
+        <div class="ep-route-teaser" style="margin-top:18px;padding:14px 16px;background:rgba(235,47,150,.06);border:1.5px solid rgba(235,47,150,.15);border-radius:12px;">
           <div style="font-size:11px;font-weight:700;color:var(--pink-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">🛣️ Tính phí trạm ETC trước khi đi</div>
           <div style="font-size:12.5px;color:var(--gray-600);margin-bottom:10px;line-height:1.5">Cần nạp bao nhiêu tiền ePass cho chuyến HCM→Đà Lạt? Tính ngay.</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
@@ -2138,11 +2188,11 @@ body {
             <button class="ep-chip" style="height:52px;font-size:15px;font-weight:800" onclick="selectEpChip(this,300)">300.000đ</button>
           </div>
           <button class="ep-topup-btn" id="epTopupBtn" onclick="toast('Mở MoMo App để nạp ePass...')">Nạp 100.000đ vào ePass</button>
-          <div style="margin-top:12px;font-size:11.5px;color:rgba(255,255,255,.35);text-align:center;line-height:1.5">
+          <div class="ep-footnote" style="margin-top:12px;font-size:11.5px;color:rgba(255,255,255,.35);text-align:center;line-height:1.5">
             Nạp qua MoMo App · Liên kết ePass VTTI<br>Số dư hiển thị sau khi đăng nhập
           </div>
-          <div class="ep-divider" style="margin-top:16px"></div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:14px">
+          <div class="ep-divider ep-auto-row-wrap" style="margin-top:16px"></div>
+          <div class="ep-auto-row-wrap" style="display:flex;align-items:center;gap:8px;margin-top:14px">
             <span class="ep-auto-badge">⚡ AUTO-TOPUP</span>
             <span style="font-size:12px;color:rgba(255,255,255,.5)">Tự nạp khi số dư xuống thấp · Liên kết 1 lần</span>
           </div>
@@ -2180,40 +2230,6 @@ body {
       </div>
     </div>
 
-  </section>
-
-  <!-- DANG KIEM -->
-  <section class="section" id="dang-kiem">
-    <div class="section-head">
-      <div>
-        <h2 class="section-title">Kiểm tra hạn đăng kiểm</h2>
-        <p class="section-desc">Tra cứu hạn kiểm định kỹ thuật theo biển số - miễn phí, không CAPTCHA, kết quả ngay lập tức.</p>
-      </div>
-      <a class="section-more" href="/dang-kiem">Xem demo đầy đủ →</a>
-    </div>
-    <div class="dk-wrap">
-      <div class="dk-search-panel">
-        <div class="dk-input-row">
-          <input class="dk-plate-input" id="dkPlate" placeholder="Nhập biển số (VD: 51F-123.45)" maxlength="14" oninput="dkFormatPlate(this)" onkeydown="if(event.key==='Enter')dkSearch()">
-          <button class="dk-search-btn" onclick="dkSearch()">Tra cứu</button>
-        </div>
-        <div id="dkResult">
-          <div class="dk-empty">
-            <i data-lucide="calendar" width="18" height="18"></i>
-            Nhập biển số xe để xem hạn đăng kiểm và lịch nhắc gia hạn
-          </div>
-        </div>
-      </div>
-      <div class="dk-info-panel">
-        <div class="dk-info-title">Lịch đăng kiểm định kỳ</div>
-        <div class="dk-schedule-row"><span class="dk-schedule-label">Ô tô con &lt; 3 năm tuổi</span><span class="dk-schedule-val">30 tháng</span></div>
-        <div class="dk-schedule-row"><span class="dk-schedule-label">Ô tô con 3 - 7 năm tuổi</span><span class="dk-schedule-val">18 tháng</span></div>
-        <div class="dk-schedule-row"><span class="dk-schedule-label">Ô tô con &gt; 7 năm tuổi</span><span class="dk-schedule-val">12 tháng</span></div>
-        <div class="dk-schedule-row"><span class="dk-schedule-label">Xe chở hàng, buýt, taxi</span><span class="dk-schedule-val">6 - 12 tháng</span></div>
-        <div class="dk-law-note">Theo Thông tư 16/2021/TT-BGTVT (sửa đổi 2024) · Xe máy chưa bắt buộc kiểm định</div>
-        <a class="btn-outline" href="/dang-kiem" style="display:block;text-align:center;padding:10px 16px;border-radius:10px;border:1.5px solid var(--gray-200);font-size:13.5px;font-weight:700;color:var(--gray-700);text-decoration:none;transition:border-color .15s,color .15s" onmouseover="this.style.borderColor='var(--pink-500)';this.style.color='var(--pink-500)'" onmouseout="this.style.borderColor='var(--gray-200)';this.style.color='var(--gray-700)'">Xem trang đăng kiểm đầy đủ →</a>
-      </div>
-    </div>
   </section>
 
   <!-- STATIONS -->
@@ -3494,7 +3510,7 @@ function renderFC(groupIdx) {
   document.getElementById('fcGrid').innerHTML = FC_GROUPS[groupIdx].cards.map((c, i) => `
     <div class="fc-card" id="fcc-${groupIdx}-${i}">
       <div class="fc-inner">
-        <div class="fc-front" style="background:${c.bg}" onclick="flipCard('fcc-${groupIdx}-${i}')">
+        <div class="fc-front" style="background:${c.bg}" data-href="${c.href}" onclick="flipCard('fcc-${groupIdx}-${i}', this)">
           <span class="fc-front-icon">${licon(c.icon, 72, 1.25)}</span>
           <button class="fc-arrow-btn" onclick="event.stopPropagation();flipCard('fcc-${groupIdx}-${i}')">→</button>
           <div class="fc-front-content">
@@ -3514,7 +3530,11 @@ function renderFC(groupIdx) {
   `).join('');
 }
 
-function flipCard(id) {
+function flipCard(id, front) {
+  if (window.innerWidth <= 480 && front?.dataset.href) {
+    window.location.href = front.dataset.href;
+    return;
+  }
   document.getElementById(id)?.classList.toggle('flipped');
 }
 function unflipCard(id) {

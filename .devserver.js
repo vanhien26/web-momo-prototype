@@ -28,9 +28,11 @@ const MIME = {
 };
 
 let rewrites = [];
+let redirects = [];
 try {
   const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
   if (Array.isArray(cfg.rewrites)) rewrites = cfg.rewrites;
+  if (Array.isArray(cfg.redirects)) redirects = cfg.redirects;
 } catch (_) {}
 
 function applyRewrite(pathname) {
@@ -70,6 +72,14 @@ function send(res, status, body, headers = {}) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = url.pathname;
+
+  for (const r of redirects) {
+    if (r.source && r.destination && pathname === r.source) {
+      res.writeHead(r.permanent ? 301 : 302, { Location: r.destination });
+      res.end();
+      return;
+    }
+  }
 
   const rewritten = applyRewrite(pathname);
   if (rewritten) pathname = rewritten;
