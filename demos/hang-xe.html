@@ -116,11 +116,15 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 
 /* ── BRAND CARDS GRID ── */
 .brand-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:56px}
-.brand-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:20px;display:block;transition:.2s;position:relative}
-.brand-card:hover{box-shadow:var(--shadow-m);border-color:var(--pink-100);transform:translateY(-2px)}
-.brand-mark{border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-weight:900;letter-spacing:-.5px;margin-bottom:14px}
-.brand-card-name{font-size:17px;font-weight:800;color:var(--gray-900);margin-bottom:3px}
-.brand-card-origin{font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:10px}
+.brand-card{background:var(--white);border:1.5px solid var(--gray-100);border-radius:20px;overflow:hidden;display:block;transition:.22s cubic-bezier(.2,.8,.2,1);position:relative;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.brand-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.11);border-color:transparent;transform:translateY(-3px)}
+.brand-card-visual{position:relative;height:86px;overflow:hidden}
+.brand-card-car-bg{position:absolute;bottom:-6px;right:-10px;width:130px;opacity:.28;pointer-events:none;filter:saturate(.7)}
+.brand-card-mark-wrap{position:absolute;bottom:12px;left:14px}
+.brand-card-body{padding:12px 14px 15px}
+.brand-mark{border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-weight:900;letter-spacing:-.5px;box-shadow:0 3px 10px rgba(0,0,0,.22)}
+.brand-card-name{font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:1px;line-height:1.2}
+.brand-card-origin{font-size:10.5px;color:var(--gray-400);font-weight:600;margin-bottom:9px}
 .brand-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
 .tag{display:inline-flex;align-items:center;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;gap:3px}
 .tag-petrol{background:#FFFBEB;color:#92400e}
@@ -193,10 +197,12 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .brand-card-desc{font-size:11.5px;color:var(--gray-500);line-height:1.55;margin-bottom:10px}
 
 /* ── LISTING CARD BOTTOM ── */
-.brand-card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--gray-100)}
-.brand-card-top-model{font-size:11px;font-weight:700;color:var(--gray-500)}
+.brand-card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-100)}
+.brand-card-top-model{font-size:11.5px;font-weight:700;color:var(--gray-500)}
 .brand-card-top-model strong{color:var(--gray-900);font-weight:800}
 .brand-card-type{font-size:12px;font-weight:800;color:var(--gray-700)}
+.brand-card-arrow{width:24px;height:24px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;color:var(--gray-500);transition:.2s;flex-shrink:0}
+.brand-card:hover .brand-card-arrow{background:var(--pink-500);color:#fff}
 
 /* ── SCORE PILLS ── */
 .score-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
@@ -766,12 +772,14 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 
   /* ── BRAND GRID ── */
   .brand-grid{gap:10px;margin-bottom:32px}
-  .brand-card{padding:14px}
-  .brand-card-name{font-size:15px;margin-bottom:2px}
-  .brand-card-origin{font-size:10.5px;margin-bottom:8px}
-  .brand-mark{margin-bottom:10px}
+  .brand-card{padding:0}
+  .brand-card-visual{height:72px}
+  .brand-card-car-bg{width:110px}
+  .brand-card-body{padding:10px 12px 12px}
+  .brand-card-name{font-size:14.5px;margin-bottom:1px}
+  .brand-card-origin{font-size:10px;margin-bottom:8px}
   .brand-card-desc{font-size:11px;line-height:1.5;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
-  .brand-card-bottom{margin-top:10px;padding-top:10px}
+  .brand-card-bottom{margin-top:8px;padding-top:8px}
   .brand-tags{margin-bottom:8px}
   .tag{font-size:9.5px;padding:2px 7px}
 
@@ -2039,18 +2047,21 @@ function renderListing() {
 
   function brandCardHTML(id) {
     const b = BRANDS[id];
+    const topType = b.models[0].type;
     return `<a class="brand-card" href="/hang-xe/${id}">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        ${brandMark(id,40,40,10,13)}
-        <div>
-          <div class="brand-card-name">${b.name}</div>
-          <div class="brand-card-origin">${b.origin}</div>
-        </div>
+      <div class="brand-card-visual" style="background:linear-gradient(140deg,${b.color}18 0%,${b.color}08 60%,transparent 100%)">
+        <div class="brand-card-car-bg">${carSVG(topType, b.color)}</div>
+        <div class="brand-card-mark-wrap">${brandMark(id,44,44,11,14)}</div>
       </div>
-      <div class="brand-tags">${b.fuels.slice(0,2).map(fuelTag).join('')}</div>
-      <div class="brand-card-bottom">
-        <span class="brand-card-top-model">Model <strong>${b.models[0].name}</strong></span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <div class="brand-card-body">
+        <div class="brand-card-name">${b.name}</div>
+        <div class="brand-card-origin">${b.origin}</div>
+        <div class="brand-card-bottom">
+          <span class="brand-card-top-model">Model <strong>${b.models[0].name}</strong></span>
+          <div class="brand-card-arrow">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
       </div>
     </a>`;
   }
@@ -2119,12 +2130,17 @@ window.filterByType = function(typeId, btn) {
     const b = BRANDS[id];
     const topModel = topModelFn(id);
     return `<a class="brand-card" href="/hang-xe/${id}">
-      ${brandMark(id,48,48,12,14)}
-      <div class="brand-card-name">${b.name}</div>
-      <div class="brand-card-origin">${b.origin}</div>
-      <div class="brand-card-bottom">
-        <div class="brand-card-top-model">${licon('Trophy',12,2.5)} <strong>${topModel.name}</strong></div>
-        <div class="brand-card-type">${modelTypeLabel(topModel)}</div>
+      <div class="brand-card-visual" style="background:linear-gradient(140deg,${b.color}18 0%,${b.color}08 60%,transparent 100%)">
+        <div class="brand-card-car-bg">${carSVG(topModel.type||'suv', b.color)}</div>
+        <div class="brand-card-mark-wrap">${brandMark(id,44,44,11,14)}</div>
+      </div>
+      <div class="brand-card-body">
+        <div class="brand-card-name">${b.name}</div>
+        <div class="brand-card-origin">${b.origin}</div>
+        <div class="brand-card-bottom">
+          <span class="brand-card-top-model">Model <strong>${topModel.name}</strong></span>
+          <div class="brand-card-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
       </div>
     </a>`;
   }).join('') || '<div class="empty"><p>Không tìm thấy hãng xe có loại xe này</p></div>';
