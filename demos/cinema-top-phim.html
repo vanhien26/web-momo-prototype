@@ -60,14 +60,18 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .col-icon.sky{background:#e0f2fe;color:#0284c7}
 
 /* COUNTRY GRID — Theo Quốc Gia */
-.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;background:var(--gray-200);border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--gray-200)}
-.cc{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;text-decoration:none;color:inherit;background:var(--white);transition:background .13s}
-.cc:hover{background:var(--gray-50)}
-.cc-left{display:flex;flex-direction:column;gap:3px;min-width:0}
-.cc-name{font-size:14px;font-weight:800;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cc-desc{font-size:11px;color:var(--gray-400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cc-arrow{color:var(--gray-300);flex-shrink:0;transition:color .13s,transform .13s}
-.cc:hover .cc-arrow{color:var(--pink);transform:translateX(2px)}
+.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.cc{position:relative;display:block;text-decoration:none;border-radius:var(--r-xl);overflow:hidden;aspect-ratio:2/3;max-height:220px;background:#111;cursor:pointer}
+.cc-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease,filter .4s ease;filter:brightness(.72)}
+.cc:hover .cc-bg{transform:scale(1.06);filter:brightness(.5)}
+.cc-bg-fallback{position:absolute;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.cc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.2) 55%,transparent 100%)}
+.cc-body{position:absolute;bottom:0;left:0;right:0;padding:14px 12px 12px}
+.cc-name{font-size:15px;font-weight:900;color:#fff;line-height:1.2;letter-spacing:-.01em}
+.cc-desc{font-size:10px;color:rgba(255,255,255,.6);margin-top:4px;line-height:1.3;display:none}
+.cc:hover .cc-desc{display:block}
+.cc-arrow-wrap{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.cc:hover .cc-arrow-wrap{opacity:1}
 
 @media(max-width:600px){.col-grid{grid-template-columns:1fr}body{padding-bottom:72px}}
 .mobile-bnav{display:none}
@@ -230,24 +234,24 @@ const SECTIONS = [
   {
     label: 'Theo Quốc Gia',
     collections: [
-      {slug:'my',       icon:'🇺🇸', iconCls:'emoji', name:'Top Phim Mỹ',         desc:'Hollywood & Streaming originals',     filter:{country:'us'}},
-      {slug:'han-quoc', icon:'🇰🇷', iconCls:'emoji', name:'Top Phim Hàn Quốc',   desc:'K-Drama, K-Movie đình đám thế giới', filter:{country:'kr'}},
-      {slug:'nhat-ban', icon:'🇯🇵', iconCls:'emoji', name:'Top Phim Nhật Bản',   desc:'Anime & điện ảnh Nhật Bản',          filter:{country:'jp'}},
-      {slug:'viet-nam', icon:'🇻🇳', iconCls:'emoji', name:'Top Phim Việt Nam',   desc:'Phim Việt được yêu thích nhất',      filter:{country:'vn'}},
-      {slug:'anh',      icon:'🇬🇧', iconCls:'emoji', name:'Top Phim Anh',        desc:'BBC & British cinema đỉnh cao',       filter:{country:'gb'}},
-      {slug:'phap',     icon:'🇫🇷', iconCls:'emoji', name:'Top Phim Pháp',       desc:'Điện ảnh Pháp & Arthouse',           filter:{country:'fr'}},
-      {slug:'trung-quoc',icon:'🇨🇳',iconCls:'emoji', name:'Top Phim Trung Quốc', desc:'Bom tấn Hoa ngữ & cổ trang',         filter:{country:'cn'}},
-      {slug:'duc',      icon:'🇩🇪', iconCls:'emoji', name:'Top Phim Đức',        desc:'Series & điện ảnh Đức xuất sắc',     filter:{country:'de'}},
-      {slug:'thai-lan',    icon:'🇹🇭', iconCls:'emoji', name:'Top Phim Thái Lan',    desc:'Y2K, Tình cảm & Thriller Thái',       filter:{country:'th'}},
-      {slug:'an-do',       icon:'🇮🇳', iconCls:'emoji', name:'Top Phim Ấn Độ',       desc:'Bollywood, Tollywood & OTT originals', filter:{country:'in'}},
-      {slug:'tay-ban-nha', icon:'🇪🇸', iconCls:'emoji', name:'Top Phim Tây Ban Nha', desc:'Heist, Teen drama & Arthouse',         filter:{country:'es'}},
-      {slug:'brazil',      icon:'🇧🇷', iconCls:'emoji', name:'Top Phim Brazil',       desc:'Crime, Favela & Latin mãnh liệt',      filter:{country:'br'}},
-      {slug:'y',           icon:'🇮🇹', iconCls:'emoji', name:'Top Phim Ý',            desc:'Mafia, tình yêu & Ý kinh điển',        filter:{country:'it'}},
-      {slug:'dan-mach',    icon:'🇩🇰', iconCls:'emoji', name:'Top Phim Đan Mạch',     desc:'Nordic Noir & chính trị Scandinavia',  filter:{country:'dk'}},
-      {slug:'tho-nhi-ky',  icon:'🇹🇷', iconCls:'emoji', name:'Top Phim Thổ Nhĩ Kỳ',  desc:'Sử thi Ottoman & dizi đình đám',       filter:{country:'tr'}},
-      {slug:'argentina',   icon:'🇦🇷', iconCls:'emoji', name:'Top Phim Argentina',    desc:'Hài đen, Crime & Latin sắc bén',       filter:{country:'ar'}},
-      {slug:'thuy-dien',   icon:'🇸🇪', iconCls:'emoji', name:'Top Phim Thụy Điển',    desc:'Scandinavian crime & Nordic drama',    filter:{country:'se'}},
-      {slug:'mexico',      icon:'🇲🇽', iconCls:'emoji', name:'Top Phim Mexico',       desc:'Cartel drama, Arthouse & điện ảnh Mexico', filter:{country:'mx'}},
+      {slug:'my',          icon:'🇺🇸', iconCls:'emoji', name:'Top Phim Mỹ',          desc:'Hollywood & Streaming originals',      filter:{country:'us'}, color:'linear-gradient(135deg,#1a1a4e,#2d2d8f)', img:'https://image-fworker.momocdn.net/momo-external/80e991a3fd9003c6afc835f8775bd667a14ed0d7b604338b3b2c170d7c161ddc?size=M'},
+      {slug:'han-quoc',    icon:'🇰🇷', iconCls:'emoji', name:'Top Phim Hàn Quốc',    desc:'K-Drama, K-Movie đình đám thế giới',   filter:{country:'kr'}, color:'linear-gradient(135deg,#3d0014,#8b0033)', img:'https://image-fworker.momocdn.net/momo-external/23d1f6a008ffde1437ef09febba78608455a8a2d7d538cc983d880b79e9c4e52?size=M'},
+      {slug:'nhat-ban',    icon:'🇯🇵', iconCls:'emoji', name:'Top Phim Nhật Bản',    desc:'Anime & điện ảnh Nhật Bản',            filter:{country:'jp'}, color:'linear-gradient(135deg,#1a0a2e,#4a1060)', img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM'},
+      {slug:'viet-nam',    icon:'🇻🇳', iconCls:'emoji', name:'Top Phim Việt Nam',    desc:'Phim Việt được yêu thích nhất',        filter:{country:'vn'}, color:'linear-gradient(135deg,#1a2e00,#3a5c00)', img:'https://cinema.momocdn.net/convert-webp/img/35666559403550656-ruuningmanvn26.jpg?size=SM'},
+      {slug:'anh',         icon:'🇬🇧', iconCls:'emoji', name:'Top Phim Anh',         desc:'BBC & British cinema đỉnh cao',        filter:{country:'gb'}, color:'linear-gradient(135deg,#001a3d,#003080)', img:'https://image-fworker.momocdn.net/momo-external/4a982e1fc6ae9c40f1e2b361877e1c9aa3f5b49480f5329ff5e5a0c21470d81e?size=M'},
+      {slug:'phap',        icon:'🇫🇷', iconCls:'emoji', name:'Top Phim Pháp',        desc:'Điện ảnh Pháp & Arthouse',             filter:{country:'fr'}, color:'linear-gradient(135deg,#1a1000,#3d2800)', img:'https://image-fworker.momocdn.net/momo-external/5fc116d01edaafa90852777614981dd9d7e8dec1a00d158fe997533a6ae204c5?size=M'},
+      {slug:'trung-quoc',  icon:'🇨🇳', iconCls:'emoji', name:'Top Phim Trung Quốc',  desc:'Bom tấn Hoa ngữ & cổ trang',          filter:{country:'cn'}, color:'linear-gradient(135deg,#3d0000,#7a0000)', img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM'},
+      {slug:'duc',         icon:'🇩🇪', iconCls:'emoji', name:'Top Phim Đức',         desc:'Series & điện ảnh Đức xuất sắc',       filter:{country:'de'}, color:'linear-gradient(135deg,#0a0a0a,#1f1f1f)', img:'https://image-fworker.momocdn.net/momo-external/17c1f4eaa52eeca2bb15a8ae25121b0256dbffb9f438266899803caf23a90d67?size=M'},
+      {slug:'thai-lan',    icon:'🇹🇭', iconCls:'emoji', name:'Top Phim Thái Lan',    desc:'Y2K, Tình cảm & Thriller Thái',       filter:{country:'th'}, color:'linear-gradient(135deg,#001a2e,#003a5c)', img:'https://image-fworker.momocdn.net/momo-external/cc8152677724186c4e038dccd9653a7a098e908de9e1f25104a2a77ea0cf751c?size=M'},
+      {slug:'an-do',       icon:'🇮🇳', iconCls:'emoji', name:'Top Phim Ấn Độ',       desc:'Bollywood, Tollywood & OTT originals', filter:{country:'in'}, color:'linear-gradient(135deg,#2e1000,#5c2200)', img:'https://image-fworker.momocdn.net/momo-external/f25e9882f3f2ae527619ca767d546d773a0d577885358a36b4169d72bfc85786?size=M'},
+      {slug:'tay-ban-nha', icon:'🇪🇸', iconCls:'emoji', name:'Top Phim Tây Ban Nha', desc:'Heist, Teen drama & Arthouse',         filter:{country:'es'}, color:'linear-gradient(135deg,#2e0000,#600000)', img:'https://image-fworker.momocdn.net/momo-external/c54bf87f9c3bac1776375100b75410ff0750cb45117ac8d6efdf86debc72002d?size=M'},
+      {slug:'brazil',      icon:'🇧🇷', iconCls:'emoji', name:'Top Phim Brazil',       desc:'Crime, Favela & Latin mãnh liệt',      filter:{country:'br'}, color:'linear-gradient(135deg,#002e00,#005500)', img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM'},
+      {slug:'y',           icon:'🇮🇹', iconCls:'emoji', name:'Top Phim Ý',            desc:'Mafia, tình yêu & Ý kinh điển',        filter:{country:'it'}, color:'linear-gradient(135deg,#1a0000,#400010)', img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM'},
+      {slug:'dan-mach',    icon:'🇩🇰', iconCls:'emoji', name:'Top Phim Đan Mạch',     desc:'Nordic Noir & chính trị Scandinavia',  filter:{country:'dk'}, color:'linear-gradient(135deg,#00102e,#002050)', img:'https://image-fworker.momocdn.net/momo-external/97fe8f4c02de808ec96c54f05fbe54a1cdb7b9d99c00e5484f8b48309b784a16?size=M'},
+      {slug:'tho-nhi-ky',  icon:'🇹🇷', iconCls:'emoji', name:'Top Phim Thổ Nhĩ Kỳ',  desc:'Sử thi Ottoman & dizi đình đám',       filter:{country:'tr'}, color:'linear-gradient(135deg,#1a0a00,#3d1a00)', img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM'},
+      {slug:'argentina',   icon:'🇦🇷', iconCls:'emoji', name:'Top Phim Argentina',    desc:'Hài đen, Crime & Latin sắc bén',       filter:{country:'ar'}, color:'linear-gradient(135deg,#002e2e,#005050)', img:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM'},
+      {slug:'thuy-dien',   icon:'🇸🇪', iconCls:'emoji', name:'Top Phim Thụy Điển',    desc:'Scandinavian crime & Nordic drama',    filter:{country:'se'}, color:'linear-gradient(135deg,#001020,#002040)', img:'https://image-fworker.momocdn.net/momo-external/727aee70358838dad7fc18ebd1998e33b715514b31c3cdec8ba38d4eeef444cf?size=M'},
+      {slug:'mexico',      icon:'🇲🇽', iconCls:'emoji', name:'Top Phim Mexico',       desc:'Cartel drama, Arthouse & điện ảnh Mexico', filter:{country:'mx'}, color:'linear-gradient(135deg,#002800,#004d00)', img:'https://image-fworker.momocdn.net/momo-external/93335f95e93e60bcdc7f2dd605403cce8e6fb69c79245ba593985a9e2214ae15?size=M'},
     ]
   },
   {
@@ -297,12 +301,19 @@ function getTop3(filter){ return applyFilter(FILMS,filter).slice(0,3); }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
 function renderCountryCard(c) {
+  const bgStyle = c.color ? `style="background:${c.color}"` : '';
+  const imgHtml = c.img ? `<img class="cc-bg" src="${c.img}" alt="" onerror="this.style.display='none'">` : '';
   return `<a class="cc" href="/cinema/top-phim/${c.slug}">
-    <div class="cc-left">
+    <div class="cc-bg-fallback" ${bgStyle}></div>
+    ${imgHtml}
+    <div class="cc-overlay"></div>
+    <div class="cc-arrow-wrap">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div class="cc-body">
       <div class="cc-name">${c.name.replace('Top Phim ','')}</div>
       <div class="cc-desc">${c.desc}</div>
     </div>
-    <svg class="cc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
   </a>`;
 }
 
