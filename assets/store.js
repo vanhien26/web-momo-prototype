@@ -255,6 +255,22 @@ const PROTOTYPES = [
         address: 'web-momo-prototype.vercel.app/cinema/series',
       },
       {
+        id: 'cinema-top-phim',
+        name: 'Top Phim',
+        category: 'Platform',
+        ownerGroup: 'Cell Team',
+        maturity: 'Listing Page',
+        description: 'Bảng xếp hạng phim hay nhất — filter theo loại (phim lẻ/bộ) và quốc gia, sort theo điểm/năm.',
+        jtbd: 'Tìm phim hay nhất theo quốc gia yêu thích để xem hoặc đặt vé',
+        northStar: 'Film detail CTR → Booking CR',
+        loop: 'Top Phim → filter country → Film Detail → Đặt vé / Xem ngay',
+        hypothesis: 'Ranking table với filter quốc gia capture search intent "top phim hàn quốc", "phim mỹ hay nhất".',
+        value: 'SEO landing cho truy vấn xếp hạng phim theo quốc gia — high-intent discovery traffic.',
+        gate: 'Filter usage, detail CTR, booking conversion.',
+        src: 'demos/cinema-top-phim.html',
+        address: 'web-momo-prototype.vercel.app/cinema/top-phim',
+      },
+      {
         id: 'cinema-series',
         name: 'Series Detail',
         category: 'Series Page',
@@ -1205,7 +1221,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['momo-service-icons', 'worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 

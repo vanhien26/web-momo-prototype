@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title id="pageTitle">Thể loại - MoMo Cinema</title>
-<meta name="description" id="pageDesc" content="Xem phim theo thể loại trên MoMo Cinema">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -12,7 +12,7 @@
   --gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;
   --gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;
   --gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;
-  --amber-500:#f59e0b;--green-500:#22c55e;--blue-500:#3b82f6;
+  --amber-500:#f59e0b;
   --shadow-s:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
   --shadow-m:0 4px 12px rgba(0,0,0,.1);
   --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-2xl:24px;
@@ -23,15 +23,12 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .nav{background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:100}
 .nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;gap:24px}
 .nav-logo{display:flex;align-items:center;cursor:pointer;text-decoration:none}
-.nav-logo img{height:28px}
 .nav-links{display:flex;gap:4px}
 .nav-link{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-600);background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:var(--r-sm);transition:.15s}
 .nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
 .nav-link.on{color:var(--pink-500)}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.nav-search{font-size:13px;color:var(--gray-400);background:var(--gray-100);border-radius:var(--r-xl);padding:7px 14px;cursor:pointer;white-space:nowrap}
-.nav-city{font-family:inherit;font-size:12px;font-weight:600;color:var(--gray-600);background:none;border:none;cursor:pointer}
-.nav-login{font-family:inherit;font-size:13px;font-weight:800;color:#fff;background:var(--pink-500);border:none;border-radius:var(--r-xl);padding:7px 18px;cursor:pointer}
+.nav-search{font-size:13px;color:var(--gray-400);background:var(--gray-100);border-radius:var(--r-xl);padding:7px 14px;cursor:pointer}
 @media(max-width:768px){.nav-links,.nav-search{display:none}}
 
 /* BREADCRUMB */
@@ -43,142 +40,134 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .bc-current{color:var(--gray-900);font-weight:700}
 
 /* GENRE HEADER */
-.genre-header{background:#fff;padding:28px 20px 0;border-bottom:1px solid var(--gray-200)}
+.genre-header{background:#fff;padding:24px 20px 20px;border-bottom:1px solid var(--gray-200)}
 .genre-header-inner{max-width:1100px;margin:0 auto}
-.genre-icon-row{display:flex;align-items:center;gap:16px;margin-bottom:14px}
-.genre-icon-wrap{width:68px;height:68px;border-radius:var(--r-xl);display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--genre-bg,var(--gray-100));flex-shrink:0}
-.genre-title-group h1{font-size:26px;font-weight:900;color:var(--gray-900);line-height:1.2;margin-bottom:4px}
-.genre-count{font-size:13px;color:var(--gray-500)}
+.genre-title-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.genre-icon{width:44px;height:44px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.genre-title-row h1{font-size:26px;font-weight:900;color:var(--gray-900);line-height:1.2}
+.genre-count{font-size:13px;color:var(--gray-500);margin-bottom:8px}
 .genre-count strong{color:var(--pink-500)}
-.genre-desc{font-size:13px;color:var(--gray-600);line-height:1.6;max-width:640px;margin-bottom:18px}
-
-/* FILTER BAR */
-.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0}
-.filter-label{font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
-.filter-pills{display:flex;gap:6px;flex-wrap:wrap}
-.fpill{font-family:inherit;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:.15s}
-.fpill.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
-.fpill:hover:not(.on){background:var(--gray-100)}
-.filter-sep{color:var(--gray-200);font-size:16px}
-
-/* GENRE TABS */
-.genre-tabs{display:flex;gap:0;margin-top:4px;border-top:1px solid var(--gray-100)}
-.genre-tab{font-family:inherit;font-size:14px;font-weight:700;color:var(--gray-400);background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;padding:13px 20px;transition:.15s;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
-.genre-tab.on{color:var(--pink-500);border-bottom-color:var(--pink-500)}
-.genre-tab:hover:not(.on){color:var(--gray-700)}
-.tab-count{font-size:11px;font-weight:800;background:var(--gray-100);color:var(--gray-500);border-radius:20px;padding:1px 7px}
-.genre-tab.on .tab-count{background:var(--pink-50);color:var(--pink-500)}
+.genre-desc{font-size:13px;color:var(--gray-600);line-height:1.6;max-width:640px}
 
 /* CONTENT */
-.content{max-width:1100px;margin:0 auto;padding:28px 20px}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.section-title{font-size:16px;font-weight:900;color:var(--gray-900)}
-.section-sub{font-size:12px;color:var(--gray-400)}
+.content{max-width:1100px;margin:0 auto;padding:32px 20px}
 
-/* FILM GRID */
-.film-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
-@media(min-width:600px){.film-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
-.film-card{background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-s);cursor:pointer;transition:.2s}
-.film-card:hover{box-shadow:var(--shadow-m);transform:translateY(-3px)}
-.film-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--gray-200)}
-.film-poster img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.film-card:hover .film-poster img{transform:scale(1.04)}
-.film-age{position:absolute;top:8px;left:8px;font-size:10px;font-weight:900;padding:3px 7px;border-radius:5px;color:#fff}
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.sec-title{font-size:18px;font-weight:900;color:var(--gray-900);display:flex;align-items:center;gap:8px}
+.sec-title i{flex-shrink:0}
+.sec-sub{font-size:12px;color:var(--gray-400)}
+
+/* ── SECTION 1: ĐANG CHIẾU ── */
+.showing-wrap{position:relative}
+.showing-grid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:8px}
+.showing-grid::-webkit-scrollbar{display:none}
+.showing-grid .film-card{flex:0 0 160px;scroll-snap-align:start}
+@media(min-width:600px){.showing-grid .film-card{flex:0 0 180px}}
+.scroll-btn{position:absolute;top:50%;transform:translateY(-60%);width:36px;height:36px;border-radius:50%;background:#fff;border:none;box-shadow:0 2px 10px rgba(0,0,0,.18);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:.15s;color:var(--gray-700)}
+.scroll-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.22);transform:translateY(-60%) scale(1.08)}
+.scroll-btn.prev{left:-14px}.scroll-btn.next{right:-14px}
+.scroll-btn.hidden{opacity:0;pointer-events:none}
+@media(max-width:600px){.scroll-btn{display:none}}
+
+.film-card{background:#1a1a2e;border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.film-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.film-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:#2a2a3e}
+.film-poster img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.film-card:hover .film-poster img{transform:scale(1.05)}
+.film-poster-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 50%)}
+.film-age{position:absolute;top:8px;left:8px;font-size:10px;font-weight:900;padding:2px 7px;border-radius:5px;color:#fff;z-index:2}
 .film-age.p{background:#16a34a}.film-age.t13{background:#ca8a04}.film-age.t16{background:#ea580c}.film-age.c18{background:#dc2626}
-.film-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;color:#fff}
-.film-badge.now{background:var(--pink-500)}
-.film-badge.soon{background:#6366f1}
-.film-badge.past{background:var(--gray-400)}
-.film-score{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:20px;backdrop-filter:blur(4px)}
-.film-body{padding:12px}
-.film-title{font-size:13px;font-weight:800;color:var(--gray-900);margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.film-meta{font-size:11px;color:var(--gray-400);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.film-dot{color:var(--gray-200)}
-.film-genre-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
-.film-genre-tag{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);padding:2px 7px;border-radius:4px}
-.film-cta{width:100%;font-family:inherit;font-size:12px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-sm);padding:7px;cursor:pointer;transition:.15s}
-.film-cta:hover{background:var(--pink-100)}
-.film-cta.soon{color:var(--gray-500);background:var(--gray-100);border-color:var(--gray-200)}
-.film-cta.past{color:var(--gray-400);background:var(--gray-50);border-color:var(--gray-200);cursor:default}
+.film-score{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:20px;backdrop-filter:blur(4px);display:flex;align-items:center;gap:3px;z-index:2}
+.film-badge{position:absolute;bottom:8px;left:8px;font-size:9px;font-weight:900;padding:2px 8px;border-radius:20px;letter-spacing:.4px;z-index:2}
+.film-badge.hot{background:#ef4444;color:#fff}
+.film-badge.new{background:#22c55e;color:#fff}
+.film-body{padding:9px 11px 11px;background:#1a1a2e}
+.film-title{font-size:12px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.film-meta{font-size:10px;color:rgba(255,255,255,.45);margin-bottom:8px}
+.btn-book{width:100%;font-family:inherit;font-size:12px;font-weight:800;color:#fff;background:var(--pink-500);border:none;border-radius:var(--r-sm);padding:7px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-book:hover{background:#c9178c}
 
-/* TOP 10 */
-.top10-section{margin-top:44px}
-.top10-section .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.top10-section .sh-title{font-size:18px;font-weight:900;color:var(--gray-900)}
-.top10-section .sh-sub{font-size:12px;color:var(--gray-400)}
-.rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:560px){.rank-grid{grid-template-columns:1fr}}
-.rank-item{display:flex;align-items:center;gap:0;background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-s);cursor:pointer;transition:.2s;position:relative}
-.rank-item:hover{box-shadow:var(--shadow-m);transform:translateY(-2px)}
-.rank-num{font-size:48px;font-weight:900;color:var(--gray-100);line-height:1;width:56px;flex-shrink:0;text-align:center;padding:0 4px;position:relative;z-index:1;font-style:italic;letter-spacing:-2px}
-.rank-item[data-rank="1"] .rank-num{color:#fef3c7}
-.rank-item[data-rank="2"] .rank-num{color:#f1f5f9}
-.rank-item[data-rank="3"] .rank-num{color:#fed7aa}
-.rank-poster{width:64px;height:96px;flex-shrink:0;overflow:hidden;background:var(--gray-200)}
-.rank-poster img{width:100%;height:100%;object-fit:cover}
-.rank-info{flex:1;padding:10px 12px;min-width:0}
-.rank-title{font-size:13px;font-weight:800;color:var(--gray-900);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank-meta{font-size:11px;color:var(--gray-400);margin-bottom:6px}
-.rank-score{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#92400e;background:#fef3c7;border-radius:6px;padding:2px 7px;margin-bottom:6px}
-.rank-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:20px;color:#fff}
-.rank-badge.now{background:var(--pink-500)}
-.rank-badge.soon{background:#6366f1}
-.rank-cta{font-family:inherit;font-size:11px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-sm);padding:4px 10px;cursor:pointer;transition:.15s;white-space:nowrap}
-.rank-cta:hover{background:var(--pink-100)}
-.rank-medal{font-size:14px}
+/* ── SECTION 2: TẤT CẢ PHIM & SERIES ── */
+.catalog-filters{display:flex;gap:6px;margin-bottom:20px}
+.cfl{font-family:inherit;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:.15s}
+.cfl.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.cfl:hover:not(.on){background:var(--gray-100)}
 
-/* COLLECTIONS */
-.collections-section{margin-top:44px}
-.collections-section .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.collections-section .sh-title{font-size:18px;font-weight:900;color:var(--gray-900)}
-.coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-@media(max-width:600px){.coll-grid{grid-template-columns:1fr 1fr}}
-.coll-card{border-radius:var(--r-xl);overflow:hidden;position:relative;cursor:pointer;aspect-ratio:16/9;min-height:130px;box-shadow:var(--shadow-s);transition:.2s}
-.coll-card:hover{box-shadow:var(--shadow-m);transform:translateY(-2px)}
-.coll-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
-.coll-gradient{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.2) 100%)}
-.coll-overlay-color{position:absolute;inset:0;opacity:.5}
-.coll-body{position:relative;z-index:2;padding:16px;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
-.coll-icon{font-size:22px;margin-bottom:6px}
-.coll-name{font-size:14px;font-weight:900;color:#fff;line-height:1.25;margin-bottom:4px}
-.coll-desc{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.coll-footer{display:flex;align-items:center;justify-content:space-between}
-.coll-count{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);background:rgba(255,255,255,.15);border-radius:20px;padding:2px 9px}
-.coll-arrow{font-size:12px;font-weight:800;color:rgba(255,255,255,.8)}
+.catalog-list{display:flex;flex-direction:column;background:#fff;border-radius:var(--r-xl);box-shadow:var(--shadow-s);overflow:hidden}
 
-/* RELATED GENRES */
-.related-genres{margin-top:40px}
-.related-genres h2{font-size:16px;font-weight:900;color:var(--gray-900);margin-bottom:14px}
-.genre-chip-grid{display:flex;flex-wrap:wrap;gap:10px}
-.genre-chip{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:8px 16px;cursor:pointer;transition:.15s;text-decoration:none}
-.genre-chip:hover{border-color:var(--pink-300);background:var(--pink-50)}
-.genre-chip-icon{font-size:18px}
-.genre-chip-name{font-size:13px;font-weight:700;color:var(--gray-800)}
-.genre-chip-count{font-size:11px;color:var(--gray-400)}
+.catalog-card{display:flex;gap:0;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--gray-100);position:relative}
+.catalog-card:last-child{border-bottom:none}
+.catalog-card:hover{background:var(--gray-50)}
 
-.empty-state{padding:48px 0;text-align:center;color:var(--gray-400);font-size:14px}
-.empty-icon{font-size:36px;margin-bottom:12px}
+/* Rank */
+.cc-rank{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:var(--gray-300);padding:20px 0}
+
+/* Poster */
+.cc-poster{width:72px;flex-shrink:0;position:relative;overflow:hidden;background:var(--gray-200);align-self:stretch}
+.cc-poster img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.catalog-card:hover .cc-poster img{transform:scale(1.05)}
+.cc-age{position:absolute;bottom:5px;left:5px;font-size:9px;font-weight:900;padding:1px 5px;border-radius:3px;color:#fff;line-height:1.4}
+.cc-age.p{background:#16a34a}.cc-age.t13{background:#ca8a04}.cc-age.t16{background:#ea580c}.cc-age.c18{background:#dc2626}
+
+/* Body */
+.cc-body{flex:1;padding:16px 16px 16px 14px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.cc-title{font-size:15px;font-weight:800;color:var(--gray-900);line-height:1.3}
+.cc-score{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:#78350f;white-space:nowrap;flex-shrink:0}
+.cc-score i{flex-shrink:0}
+.cc-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:11px;color:var(--gray-400)}
+.cc-meta-dot{color:var(--gray-200)}
+.cc-type-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;color:#fff;display:inline-flex}
+.cc-type-badge.film{background:var(--pink-500)}.cc-type-badge.series{background:#6366f1}
+.cc-desc{font-size:12px;color:var(--gray-500);line-height:1.65;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cc-crew{font-size:11px;color:var(--gray-400);display:flex;flex-wrap:wrap;gap:3px 14px}
+.cc-crew span{display:flex;align-items:center;gap:4px}
+.cc-crew strong{color:var(--gray-600)}
+.cc-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+.cc-status{font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px}
+.cc-status.soon{color:#6366f1}.cc-status.past{color:var(--gray-400)}.cc-status.ongoing{color:#16a34a}
+.btn-cc{font-family:inherit;font-size:11px;font-weight:800;border:none;border-radius:var(--r-sm);padding:5px 12px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.btn-cc.pink{color:#fff;background:var(--pink-500)}.btn-cc.pink:hover{background:#c9178c}
+.btn-cc.indigo{color:#6366f1;background:#eef2ff;border:1.5px solid #c7d2fe}
+.btn-cc.gray{color:var(--gray-400);background:var(--gray-100);cursor:default;border:1.5px solid var(--gray-200)}
+
+/* RELATED */
+.related-section{margin-top:44px}
+.related-section h2{font-size:16px;font-weight:900;color:var(--gray-900);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.related-section h2 i{color:var(--gray-400)}
+.chip-grid{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:8px 16px;cursor:pointer;transition:.15s;text-decoration:none}
+.chip:hover{border-color:var(--pink-100);background:var(--pink-50)}
+.chip i{color:var(--gray-500)}
+.chip-name{font-size:13px;font-weight:700;color:var(--gray-800)}
+.chip-count{font-size:11px;color:var(--gray-400)}
+
+.empty{padding:40px 0;text-align:center;color:var(--gray-400);font-size:14px}
+.pager{display:flex;align-items:center;justify-content:space-between;margin-top:20px;gap:8px}
+.pager-info{font-size:12px;color:var(--gray-400)}
+.pager-btns{display:flex;align-items:center;gap:6px}
+.pg-btn{font-family:inherit;font-size:13px;font-weight:700;padding:6px 14px;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px}
+.pg-btn:hover:not(:disabled){background:var(--gray-100);border-color:var(--gray-300)}
+.pg-btn:disabled{opacity:.35;cursor:default}
+.pg-nums{display:flex;gap:4px}
+.pg-n{font-family:inherit;font-size:13px;font-weight:700;width:34px;height:34px;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+.pg-n:hover{background:var(--gray-100)}
+.pg-n.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
 .footer{background:var(--gray-900);color:var(--gray-400);font-size:12px;padding:20px;text-align:center;margin-top:48px}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:var(--r-xl);opacity:0;pointer-events:none;transition:.25s;white-space:nowrap;z-index:9999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* MOBILE BOTTOM NAV */
 .mobile-bnav{display:none}
 @media(max-width:768px){
-  .mobile-bnav{
-    display:flex;position:fixed;bottom:0;left:0;right:0;
-    background:#fff;border-top:1px solid var(--gray-200);
-    padding:6px 0 env(safe-area-inset-bottom,8px);
-    z-index:200;box-shadow:0 -1px 8px rgba(0,0,0,.08)
-  }
-  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
-    text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0;
-    transition:.15s}
+  .mobile-bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-200);padding:6px 0 env(safe-area-inset-bottom,8px);z-index:200;box-shadow:0 -1px 8px rgba(0,0,0,.08)}
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:700;padding:4px 0;transition:.15s}
   .mbn-item.on{color:var(--pink-500)}
-  .mbn-item svg{display:block}
   body{padding-bottom:72px}
   .nav-lab-link{display:none!important}
   .breadcrumb-bar{display:none}
+  .cc-poster{width:80px}
+  .cc-desc{-webkit-line-clamp:2}
 }
 </style>
 </head>
@@ -188,475 +177,467 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
   <div class="nav-inner">
     <a class="nav-lab-link" href="../lab.html" style="font-size:12px;font-weight:700;color:var(--gray-400);text-decoration:none;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:4px 8px;border-radius:var(--r-sm);transition:all .15s" onmouseover="this.style.background='var(--gray-100)';this.style.color='var(--gray-700)'" onmouseout="this.style.background='';this.style.color='var(--gray-400)'">← Lab</a>
     <a class="nav-logo" href="/cinema">
-      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28" style="display:block">
-      <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block;vertical-align:middle"></span>
-      <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span></span>
+      <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="28">
+      <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;display:inline-block"></span>
+      <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22"><span style="font-size:14px;font-weight:800;color:var(--pink-500)">Cinema</span></span>
     </a>
-    <div class="nav-links">
-      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/person'">Diễn viên</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/genres'">Thể loại</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/series'">TV Series</button>
+    <div class="nav-links">      <button class="nav-link" onclick="location.href='/cinema/dang-chieu'">Đang chiếu</button>
+      <button class="nav-link" onclick="location.href='/cinema/sap-chieu'">Sắp chiếu</button>
+      <button class="nav-link" onclick="location.href='/cinema/person'">Diễn viên</button>
+      <button class="nav-link" onclick="location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="location.href='/cinema/top-phim'">Top phim</button>
+      <button class="nav-link" onclick="location.href='/cinema/genres'">Thể loại</button>
+      <button class="nav-link" onclick="location.href='/cinema/series'">TV Series</button>
     </div>
-    <div class="nav-right"><div class="nav-search" style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..."></div></div>
+    <div class="nav-right">
+      <div class="nav-search" style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="Tìm phim, rạp, thể loại..." style="background:none;border:none;outline:none;font-size:13px;font-family:inherit;color:var(--gray-900);width:160px"></div>
+    </div>
   </div>
 </nav>
 
 <div class="breadcrumb-bar">
   <div class="breadcrumb-inner">
-    <a class="bc-item" href="/cinema">Phim</a>
-    <span class="bc-sep">›</span>
-    <span class="bc-item">Thể loại</span>
-    <span class="bc-sep">›</span>
+    <a class="bc-item" href="/cinema">Phim</a><span class="bc-sep">›</span>
+    <a class="bc-item" href="/cinema/genres">Thể loại</a><span class="bc-sep">›</span>
     <span class="bc-current" id="bcName">—</span>
   </div>
 </div>
 
 <div class="genre-header">
   <div class="genre-header-inner">
-    <div class="genre-icon-row">
-      <div class="genre-icon-wrap" id="genreIconWrap">
-        <span id="genreIconEmoji">🎬</span>
-      </div>
-      <div class="genre-title-group">
-        <h1 id="genreTitle">—</h1>
-        <div class="genre-count" id="genreCount"></div>
-      </div>
+    <div class="genre-title-row">
+      <div class="genre-icon" id="genreIcon"><i id="genreIconEl"></i></div>
+      <h1 id="genreTitle">—</h1>
     </div>
     <p class="genre-desc" id="genreDesc"></p>
-    <div class="filter-bar">
-      <span class="filter-label">Format</span>
-      <div class="filter-pills" id="formatPills">
-        <button class="fpill on" onclick="setFormat('all',this)">Tất cả</button>
-        <button class="fpill" onclick="setFormat('2D',this)">2D</button>
-        <button class="fpill" onclick="setFormat('3D',this)">3D</button>
-        <button class="fpill" onclick="setFormat('IMAX',this)">IMAX</button>
-        <button class="fpill" onclick="setFormat('4DX',this)">4DX</button>
-      </div>
-      <span class="filter-sep">|</span>
-      <span class="filter-label">Sắp xếp</span>
-      <div class="filter-pills">
-        <button class="fpill on" onclick="setSort('popular',this)">Phổ biến</button>
-        <button class="fpill" onclick="setSort('newest',this)">Mới nhất</button>
-        <button class="fpill" onclick="setSort('rating',this)">MoMo Score</button>
-      </div>
-    </div>
-    <div class="genre-tabs">
-      <button class="genre-tab on" id="tabNow" onclick="showTab('now',this)">
-        Đang chiếu <span class="tab-count" id="countNow">0</span>
-      </button>
-      <button class="genre-tab" id="tabSoon" onclick="showTab('soon',this)">
-        Sắp chiếu <span class="tab-count" id="countSoon">0</span>
-      </button>
-      <button class="genre-tab" id="tabAll" onclick="showTab('all',this)">
-        Tất cả <span class="tab-count" id="countAll">0</span>
-      </button>
-    </div>
   </div>
 </div>
 
 <div class="content">
-  <div class="section-head">
-    <div class="section-title" id="sectionTitle"></div>
-    <div class="section-sub" id="sectionSub"></div>
-  </div>
-  <div id="filmGrid"></div>
 
-  <!-- TOP 10 -->
-  <div class="top10-section" id="top10Section">
-    <div class="sh">
-      <div class="sh-title">🔥 Top 10 phim <span id="top10GenreName"></span> được đặt vé nhiều nhất</div>
-      <div class="sh-sub">Tính trên MoMo · 7 ngày qua</div>
+  <!-- SECTION 1: ĐANG CHIẾU -->
+  <div style="margin-bottom:44px">
+    <div class="sec-hd">
+      <div class="sec-title">
+        <i data-lucide="ticket" width="18" height="18" style="color:var(--pink-500)"></i>
+        Đang chiếu
+      </div>
+      <div class="sec-sub" id="showingCount"></div>
     </div>
-    <div id="rankList"></div>
-  </div>
-
-  <!-- COLLECTIONS -->
-  <div class="collections-section" id="collectionsSection">
-    <div class="sh">
-      <div class="sh-title">📦 Bộ sưu tập theo chủ đề</div>
+    <div class="showing-wrap">
+      <button class="scroll-btn prev hidden" id="showPrev" onclick="scrollShowing(-1)"><i data-lucide="chevron-left" width="18" height="18"></i></button>
+      <div id="showingGrid"></div>
+      <button class="scroll-btn next" id="showNext" onclick="scrollShowing(1)"><i data-lucide="chevron-right" width="18" height="18"></i></button>
     </div>
-    <div class="coll-grid" id="collectionGrid"></div>
   </div>
 
-  <div class="related-genres" id="relatedSection">
-    <h2>Thể loại khác</h2>
-    <div class="genre-chip-grid" id="relatedChips"></div>
+  <!-- SECTION 2: TẤT CẢ PHIM & SERIES -->
+  <div>
+    <div class="sec-hd">
+      <div class="sec-title">
+        <i data-lucide="library" width="18" height="18" style="color:var(--gray-500)"></i>
+        Tất cả phim &amp; series
+      </div>
+      <div class="sec-sub" id="catalogCount"></div>
+    </div>
+    <div class="catalog-filters">
+      <button class="cfl on" onclick="setCatalogFilter('all',this)">Tất cả</button>
+      <button class="cfl" onclick="setCatalogFilter('film',this)">Phim lẻ</button>
+      <button class="cfl" onclick="setCatalogFilter('series',this)">Phim bộ</button>
+    </div>
+    <div id="catalogList"></div>
+    <div id="catalogPager"></div>
   </div>
+
+  <!-- RELATED -->
+  <div class="related-section">
+    <h2><i data-lucide="grid-2x2" width="16" height="16"></i> Thể loại khác</h2>
+    <div class="chip-grid" id="relatedChips"></div>
+  </div>
+
 </div>
 
 <div class="footer">MoMo Cinema — Dữ liệu lịch chiếu là prototype demo.</div>
 <div class="toast" id="toastEl"></div>
 
 <script>
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const CHAINS = ['CGV','Lotte','Galaxy','BHD Star'];
+const SLOTS_TABLE = [
+  ['10:00','12:30','15:00'],['11:00','13:45','16:15'],
+  ['09:30','14:30','19:45'],['10:30','15:30','20:30'],['13:00','16:00','19:00'],
+];
+function hash(s,m){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))&0xffff;return h%m;}
+function genSlots(id){return SLOTS_TABLE[hash(id,SLOTS_TABLE.length)];}
+function genChain(id){return CHAINS[hash(id+'c',CHAINS.length)];}
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
 const ALL_GENRES = {
-  'hanh-dong': {
-    name: 'Hành động', emoji: '⚔️', color: '#fef3c7',
-    desc: 'Những bộ phim hành động kịch tính, với các cảnh chiến đấu mãn nhãn, rượt đuổi hồi hộp và nhân vật anh hùng dũng cảm. Thể loại luôn được khán giả yêu thích nhất tại phòng vé.',
-    now: [
-      {id:'supergirl',title:'Supergirl: Woman of Tomorrow',age:'T13',dur:'130 phút',score:'8.2',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',tags:['IMAX','2D'],subGenre:'Siêu anh hùng'},
-      {id:'tung-hoanh-tu-hai',title:'Tung Hoành Tứ Hải',age:'T16',dur:'126 phút',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',tags:['2D','3D'],subGenre:'Giang hồ'},
-      {id:'colony',title:'Colony',age:'T16',dur:'118 phút',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',tags:['IMAX','2D'],subGenre:'Viễn tưởng'},
+  'hanh-dong':{
+    name:'Hành động', lucideIcon:'zap', iconColor:'#f59e0b', iconBg:'#fef3c7',
+    desc:'Cảnh chiến đấu mãn nhãn, rượt đuổi hồi hộp và nhân vật anh hùng dũng cảm. Thể loại luôn được khán giả yêu thích nhất tại phòng vé.',
+    showing:[
+      {id:'supergirl',title:'Supergirl: Woman of Tomorrow',age:'T13',dur:'130 phút',score:'8.2',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',subGenre:'Siêu anh hùng'},
+      {id:'tung-hoanh',title:'Tung Hoành Tứ Hải',age:'T16',dur:'126 phút',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',subGenre:'Giang hồ'},
+      {id:'colony',title:'Colony',age:'T16',dur:'118 phút',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',subGenre:'Viễn tưởng'},
+      {id:'bach-xa-act',title:'Bạch Xà: Phản Công',age:'T13',dur:'115 phút',score:'7.9',img:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',subGenre:'Võ thuật'},
     ],
-    soon: [
-      {id:'giai-cuu',title:'Giải Cứu',age:'T13',dur:'120 phút',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',tags:['IMAX','4DX'],subGenre:'Gián điệp'},
-    ],
-    past: [
-      {id:'endgame',title:'Avengers: Endgame',age:'T13',dur:'181 phút',score:'9.1',img:'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',tags:['IMAX'],subGenre:'Siêu anh hùng'},
-      {id:'top-gun',title:'Top Gun: Maverick',age:'T13',dur:'130 phút',score:'8.7',img:'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',tags:['IMAX'],subGenre:'Quân sự'},
-    ],
-  },
-  'kinh-di': {
-    name: 'Kinh dị', emoji: '👻', color: '#fce7f3',
-    desc: 'Thể loại phim kinh dị đưa khán giả vào hành trình ớn lạnh với những pha hù dọa, yếu tố siêu nhiên và tâm lý căng thẳng. Đặc biệt phổ biến trong dịp lễ Halloween và Tết Nguyên Đán tại Việt Nam.',
-    now: [
-      {id:'dong-dao-ma-quai',title:'Đồng Dao Ma Quái',age:'C18',dur:'108 phút',score:'7.9',img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',tags:['2D','3D'],subGenre:'Ma quái'},
-      {id:'ma-nu-oan-tinh',title:'Ma Nữ Oán Tình',age:'C18',dur:'98 phút',score:'7.3',img:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM',tags:['2D'],subGenre:'Ma nữ'},
-      {id:'ma-lu',title:'Ma Lu',age:'T16',dur:'95 phút',score:'7.1',img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',tags:['2D'],subGenre:'Tâm lý kinh dị'},
-      {id:'lau-chu-hoa',title:'Lầu Chú Hỏa',age:'T16',dur:'105 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',tags:['2D','3D'],subGenre:'Kinh dị Việt'},
-      {id:'lieu-trai',title:'Liêu Trai',age:'T13',dur:'112 phút',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',tags:['2D','3D'],subGenre:'Kinh dị cổ trang'},
-      {id:'colony',title:'Colony',age:'T16',dur:'118 phút',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',tags:['IMAX','2D'],subGenre:'Sci-fi kinh dị'},
-    ],
-    soon: [
-      {id:'am-anh',title:'Ám Ảnh',age:'C18',dur:'100 phút',score:'—',img:'https://image.tmdb.org/t/p/w500/A81kDB6a1K2oS5alEuCbSwGkwM5.jpg',tags:['2D'],subGenre:'Tâm lý'},
-    ],
-    past: [
-      {id:'it-chapter-2',title:'IT Chapter Two',age:'C18',dur:'169 phút',score:'7.3',img:'https://image.tmdb.org/t/p/w500/v3qqAgfcnlCEBfLKRkQl9MpSgYA.jpg',tags:['2D'],subGenre:'Ma quái'},
+    catalog:[
+      {type:'film',id:'supergirl',title:'Supergirl: Woman of Tomorrow',age:'T13',dur:'130 phút',year:'2025',score:'8.2',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',subGenre:'Siêu anh hùng',status:'now',desc:'Kara Zor-El rời trái đất để khám phá vũ trụ, gặp cô bé Ruthye trong hành trình phục thù đầy nguy hiểm. Phiên bản Supergirl hoàn toàn khác - tàn bạo, cô đơn và mãnh liệt.'},
+      {type:'film',id:'tung-hoanh',title:'Tung Hoành Tứ Hải',age:'T16',dur:'126 phút',year:'2025',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',subGenre:'Giang hồ',status:'now',desc:'Bộ tứ trộm lành nghề bị cuốn vào mạng lưới ngầm nguy hiểm khi phi vụ tưởng dễ ăn bỗng lật ngược mọi toan tính. Phim hành động Hồng Kông thế hệ mới.'},
+      {type:'film',id:'colony',title:'Colony',age:'T16',dur:'118 phút',year:'2025',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',subGenre:'Sci-fi hành động',status:'now',desc:'Nhân loại thiết lập thuộc địa đầu tiên ngoài trái đất, nhưng thứ ẩn náu bên dưới bề mặt hành tinh không có trong bất kỳ bản đồ nào.'},
+      {type:'film',id:'giai-cuu',title:'Giải Cứu',age:'T13',dur:'120 phút',year:'2025',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',subGenre:'Gián điệp',status:'soon',desc:'Đặc nhiệm hàng đầu được giao nhiệm vụ bất khả thi: xâm nhập căn cứ của nhóm khủng bố để giải cứu con tin trước khi quá muộn.'},
+      {type:'film',id:'endgame',title:'Avengers: Endgame',age:'T13',dur:'181 phút',year:'2019',score:'9.1',img:'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',subGenre:'Siêu anh hùng',status:'past',desc:'22 bộ phim MCU dẫn đến khoảnh khắc này. Các Avengers còn sống thực hiện sứ mệnh cuối cùng để đảo ngược thảm họa Thanos gây ra.'},
+      {type:'film',id:'top-gun',title:'Top Gun: Maverick',age:'T13',dur:'130 phút',year:'2022',score:'8.7',img:'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',subGenre:'Không quân',status:'past',desc:'Maverick trở lại huấn luyện thế hệ phi công mới, trong đó có con trai của người đồng đội đã khuất. Cảnh bay thực tế không CGI gây chấn động phòng vé toàn cầu.'},
+      {type:'series',id:'jack-reacher',title:'Jack Reacher',age:'T16',eps:'16 tập',year:'2022',score:'8.0',img:'https://image.tmdb.org/t/p/w500/6UH9ELAkGZ6kiAMJOIWjMQRQTbY.jpg',subGenre:'Hành động tội phạm',status:'ongoing',desc:'Cựu quân nhân Jack Reacher lang thang không điểm đến thì bị cuốn vào vụ án tưởng chừng đơn giản — nhưng lại kéo theo âm mưu che đậy động trời.'},
+      {type:'series',id:'the-boys',title:'The Boys',age:'C18',eps:'32 tập',year:'2019',score:'8.7',img:'https://image.tmdb.org/t/p/w500/stTEycfG9928HYGEISBFaG1ngjM.jpg',subGenre:'Siêu anh hùng đen tối',status:'ongoing',desc:'Trong thế giới mà siêu anh hùng được công ty tập đoàn hóa và tha hóa, một nhóm thường dân quyết định phản kháng bằng mọi phương tiện.'},
     ],
   },
-  'hoat-hinh': {
-    name: 'Hoạt hình', emoji: '🎨', color: '#ede9fe',
-    desc: 'Phim hoạt hình dành cho mọi lứa tuổi, từ những câu chuyện phiêu lưu sắc màu cho đến các tác phẩm nghệ thuật đỉnh cao. Không chỉ dành cho trẻ em - người lớn cũng sẽ tìm thấy ý nghĩa sâu sắc trong từng thước phim.',
-    now: [
-      {id:'toy-story-5',title:'Toy Story 5',age:'P',dur:'100 phút',score:'8.5',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',tags:['2D','3D'],subGenre:'Pixar'},
-      {id:'doraemon-45',title:'Doraemon Movie 45',age:'P',dur:'100 phút',score:'8.1',img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',tags:['2D','4DX'],subGenre:'Anime'},
-      {id:'bach-xa',title:'Bạch Xà: Nghịch Thiên',age:'P',dur:'105 phút',score:'7.9',img:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',tags:['2D','3D'],subGenre:'CGI Trung Quốc'},
+  'kinh-di':{
+    name:'Kinh dị', lucideIcon:'ghost', iconColor:'#7c3aed', iconBg:'#f5f3ff',
+    desc:'Hành trình ớn lạnh với những pha hù dọa, yếu tố siêu nhiên và tâm lý căng thẳng. Đặc biệt phổ biến dịp lễ Halloween và Tết Nguyên Đán tại Việt Nam.',
+    showing:[
+      {id:'dong-dao',title:'Đồng Dao Ma Quái',age:'C18',dur:'108 phút',score:'7.9',img:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',subGenre:'Ma quái'},
+      {id:'ma-nu',title:'Ma Nữ Oán Tình',age:'C18',dur:'98 phút',score:'7.3',img:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM',subGenre:'Ma nữ'},
+      {id:'ma-lu',title:'Ma Lu',age:'T16',dur:'95 phút',score:'7.1',img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',subGenre:'Tâm lý kinh dị'},
+      {id:'lau-chu-hoa',title:'Lầu Chú Hỏa',age:'T16',dur:'105 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',subGenre:'Kinh dị Việt'},
+      {id:'lieu-trai',title:'Liêu Trai',age:'T13',dur:'112 phút',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',subGenre:'Kinh dị cổ trang'},
+      {id:'colony-kd',title:'Colony',age:'T16',dur:'118 phút',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',subGenre:'Sci-fi kinh dị'},
     ],
-    soon: [
-      {id:'minions-4',title:'Despicable Me 4',age:'P',dur:'94 phút',score:'—',img:'https://image.tmdb.org/t/p/w500/wWba3TkzvDvvImxbE5lndzkqn6U.jpg',tags:['2D','3D'],subGenre:'Illumination'},
-    ],
-    past: [
-      {id:'frozen-2',title:'Frozen II',age:'P',dur:'103 phút',score:'8.3',img:'https://image.tmdb.org/t/p/w500/pjeMs3yqRmFL3giJy4PMXWZTTPa.jpg',tags:['2D','3D'],subGenre:'Disney'},
-      {id:'encanto',title:'Encanto',age:'P',dur:'102 phút',score:'8.4',img:'https://image.tmdb.org/t/p/w500/4j0PNHkMr5ax3IA8tjtxcmPU3QT.jpg',tags:['2D'],subGenre:'Disney'},
-    ],
-  },
-  'tinh-cam': {
-    name: 'Tình cảm - Lãng mạn', emoji: '💕', color: '#fff1f2',
-    desc: 'Những câu chuyện tình yêu đong đầy cảm xúc, từ mối tình học đường ngọt ngào đến những mối quan hệ phức tạp của người trưởng thành. Thể loại phim luôn có sức hút mạnh với khán giả nữ trẻ Việt Nam.',
-    now: [
-      {id:'mesdames',title:'Mesdames Thanh Sắc',age:'C18',dur:'110 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',tags:['2D'],subGenre:'Tình cảm Việt'},
-      {id:'lieu-trai',title:'Liêu Trai',age:'T13',dur:'112 phút',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',tags:['2D','3D'],subGenre:'Cổ trang lãng mạn'},
-    ],
-    soon: [
-      {id:'nguoi-duoc-chon',title:'Người Được Chọn',age:'T13',dur:'110 phút',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',tags:['2D'],subGenre:'Tình cảm Việt'},
-    ],
-    past: [
-      {id:'mat-biec',title:'Mắt Biếc',age:'P',dur:'115 phút',score:'9.1',img:'https://image.tmdb.org/t/p/w500/wcahBISlczoYqcakatu2uyX8kGQ.jpg',tags:['2D'],subGenre:'Tình cảm Việt'},
-      {id:'em-chua-18',title:'Em Chưa 18',age:'T13',dur:'108 phút',score:'8.5',img:'https://image.tmdb.org/t/p/w500/cFOnIqPNyVqmU1ZtXSsaztCebul.jpg',tags:['2D'],subGenre:'Học đường'},
+    catalog:[
+      {type:'film',id:'am-anh',title:'Ám Ảnh',age:'C18',dur:'100 phút',year:'2025',score:'—',country:'Việt Nam',director:'Trần Hữu Tấn',cast:'Quang Tuấn, Lâm Thanh Mỹ',img:'https://image.tmdb.org/t/p/w500/A81kDB6a1K2oS5alEuCbSwGkwM5.jpg',subGenre:'Siêu nhiên',status:'soon',desc:'Ngôi nhà bỏ hoang 20 năm bỗng có người dọn vào. Đêm đầu tiên, họ nghe tiếng bước chân từ tầng không có cầu thang. Phần tiếp theo của thương hiệu kinh dị Việt ăn khách nhất.'},
+      {type:'film',id:'it-2',title:'IT Chapter Two',age:'C18',dur:'169 phút',year:'2019',score:'7.3',country:'Mỹ',director:'Andy Muschietti',cast:'Jessica Chastain, James McAvoy, Bill Hader',img:'https://image.tmdb.org/t/p/w500/v3qqAgfcnlCEBfLKRkQl9MpSgYA.jpg',subGenre:'Ma quái',status:'past',desc:'Nhóm Losers Club trở lại Derry 27 năm sau để đối mặt lần cuối với Pennywise. Nỗi sợ hãi thời thơ ấu theo họ đến tận tuổi trưởng thành — và Pennywise đã chờ đợi rất lâu.'},
+      {type:'series',id:'haunting-hill',title:'The Haunting of Hill House',age:'C18',eps:'10 tập',year:'2018',score:'8.6',country:'Mỹ',director:'Mike Flanagan',cast:'Michiel Huisman, Carla Gugino, Henry Thomas',img:'https://image.tmdb.org/t/p/w500/gNa6cCM2bNEIB4JCmHcvHsUlyHV.jpg',subGenre:'Kinh dị tâm lý',status:'ongoing',desc:'Gia đình Crain trở lại ngôi nhà đồi Hill để đối mặt với những bóng ma từ quá khứ — cả nghĩa bóng lẫn nghĩa đen. Series kinh dị được đánh giá cao nhất thập kỷ trên Netflix.'},
+      {type:'series',id:'wednesday',title:'Wednesday',age:'T13',eps:'16 tập',year:'2022',score:'8.1',country:'Mỹ',director:'Tim Burton, James Marshall',cast:'Jenna Ortega, Gwendoline Christie, Emma Myers',img:'https://image.tmdb.org/t/p/w500/jeGtaMwGxPmQN5xM4ClnwPQcNQz.jpg',subGenre:'Kinh dị hài',status:'ongoing',desc:'Wednesday Addams vào trường nội trú Nevermore, nơi bí ẩn về thứ quái vật đang giết người trong rừng bắt đầu hé lộ — và có liên quan đến gia đình cô.'},
+      {type:'series',id:'stranger-things',title:'Stranger Things',age:'T16',eps:'34 tập',year:'2016',score:'8.7',country:'Mỹ',director:'Anh em Duffer',cast:'Millie Bobby Brown, Finn Wolfhard, David Harbour',img:'https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',subGenre:'Kinh dị siêu nhiên',status:'ongoing',desc:'Hawkins năm 1983: một cậu bé mất tích, một cô gái kỳ lạ xuất hiện và thứ gì đó kinh khủng đang bò ra từ chiều không gian song song. Hiện tượng văn hóa thế hệ của Netflix.'},
     ],
   },
-  'hai': {
-    name: 'Hài - Hài hước', emoji: '😂', color: '#fefce8',
-    desc: 'Phim hài mang đến tiếng cười sảng khoái sau giờ làm việc mệt mỏi. Từ hài tình huống đến hài nhân vật, thể loại này luôn có lượng khán giả trung thành ổn định tại Việt Nam.',
-    now: [
-      {id:'lau-chu-hoa',title:'Lầu Chú Hỏa',age:'T16',dur:'105 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',tags:['2D','3D'],subGenre:'Hài kinh dị Việt'},
+  'hoat-hinh':{
+    name:'Hoạt hình', lucideIcon:'palette', iconColor:'#6366f1', iconBg:'#ede9fe',
+    desc:'Phim hoạt hình dành cho mọi lứa tuổi, từ kiệt tác Pixar và Disney đến anime Nhật Bản. Không chỉ dành cho trẻ em — người lớn cũng sẽ tìm thấy ý nghĩa sâu sắc.',
+    showing:[
+      {id:'toy-story-5',title:'Toy Story 5',age:'P',dur:'100 phút',score:'8.5',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',subGenre:'Pixar'},
+      {id:'doraemon-45',title:'Doraemon Movie 45',age:'P',dur:'100 phút',score:'8.1',img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',subGenre:'Anime'},
+      {id:'bach-xa',title:'Bạch Xà: Nghịch Thiên',age:'P',dur:'105 phút',score:'7.9',img:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',subGenre:'CGI Trung Quốc'},
     ],
-    soon: [
-      {id:'nghi-he-so-nghi-huu',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',tags:['2D'],subGenre:'Hài gia đình Việt'},
-    ],
-    past: [
-      {id:'nha-ba-nu',title:'Nhà Bà Nữ',age:'T13',dur:'129 phút',score:'8.6',img:'https://image.tmdb.org/t/p/w500/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',tags:['2D'],subGenre:'Hài Việt'},
-      {id:'bo-gia',title:'Bố Già',age:'P',dur:'120 phút',score:'8.3',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',tags:['2D'],subGenre:'Hài gia đình'},
-    ],
-  },
-  'vien-tuong': {
-    name: 'Khoa học viễn tưởng', emoji: '🚀', color: '#eff6ff',
-    desc: 'Phim khoa học viễn tưởng khám phá tương lai, vũ trụ và những công nghệ chưa từng tồn tại. Thể loại kích thích trí tưởng tượng và đặt ra những câu hỏi triết học sâu sắc về nhân loại.',
-    now: [
-      {id:'supergirl',title:'Supergirl: Woman of Tomorrow',age:'T13',dur:'130 phút',score:'8.2',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',tags:['IMAX','2D'],subGenre:'Superhero'},
-      {id:'colony',title:'Colony',age:'T16',dur:'118 phút',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',tags:['IMAX','2D'],subGenre:'Space opera'},
-    ],
-    soon: [
-      {id:'giai-cuu',title:'Giải Cứu',age:'T13',dur:'120 phút',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',tags:['IMAX','4DX'],subGenre:'Cyberpunk'},
-    ],
-    past: [
-      {id:'interstellar',title:'Interstellar',age:'T13',dur:'169 phút',score:'9.2',img:'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIe.jpg',tags:['IMAX'],subGenre:'Hard sci-fi'},
-      {id:'dune-2',title:'Dune: Part Two',age:'T13',dur:'166 phút',score:'8.8',img:'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',tags:['IMAX'],subGenre:'Epic sci-fi'},
+    catalog:[
+      {type:'film',id:'toy-story-5',title:'Toy Story 5',age:'P',dur:'100 phút',year:'2025',score:'8.5',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',subGenre:'Pixar',status:'now',desc:'Woody và Buzz trở lại trong cuộc phiêu lưu hoàn toàn mới sau nhiều năm vắng bóng. Pixar một lần nữa chứng minh không ai làm hoạt hình cảm xúc tốt hơn họ.'},
+      {type:'film',id:'doraemon-45',title:'Doraemon Movie 45',age:'P',dur:'100 phút',year:'2025',score:'8.1',img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',subGenre:'Anime',status:'now',desc:'Nobita và những người bạn bước vào cuộc phiêu lưu kỳ diệu lần thứ 45 trên màn ảnh rộng. Vẫn là công thức quen thuộc, nhưng không bao giờ lỗi thời.'},
+      {type:'film',id:'bach-xa',title:'Bạch Xà: Nghịch Thiên',age:'P',dur:'105 phút',year:'2025',score:'7.9',img:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',subGenre:'CGI Trung Quốc',status:'now',desc:'Bạch Xà và Tiểu Bạch vượt qua ranh giới thiên đình để cứu người thương. CGI đỉnh cao của hoạt hình Trung Quốc thế hệ mới.'},
+      {type:'film',id:'inside-out-2',title:'Inside Out 2',age:'P',dur:'100 phút',year:'2024',score:'8.2',img:'https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg',subGenre:'Pixar',status:'past',desc:'Riley bước vào tuổi teen và cảm xúc mới — lo lắng, buồn chán, ghen tị — tràn vào đảo cảm xúc. Phim hoạt hình ăn khách nhất 2024.'},
+      {type:'film',id:'frozen-2',title:'Frozen II',age:'P',dur:'103 phút',year:'2019',score:'8.3',img:'https://image.tmdb.org/t/p/w500/pjeMs3yqRmFL3giJy4PMXWZTTPa.jpg',subGenre:'Disney',status:'past',desc:'Elsa và Anna lên đường khám phá nguồn gốc phép thuật của Elsa, dẫn đến bí ẩn về gia đình và vương quốc Arendelle chưa từng được tiết lộ.'},
+      {type:'series',id:'blue-eye-samurai',title:'Blue Eye Samurai',age:'C18',eps:'8 tập',year:'2023',score:'8.7',img:'https://image.tmdb.org/t/p/w500/j3Z3XA3TRBPQi6JqxuWFAVqQM3b.jpg',subGenre:'Anime hành động',status:'ongoing',desc:'Nhật Bản thế kỷ 17: một kiếm khách lai mang đôi mắt xanh truy tìm người cha phương Tây. Hoạt hình người lớn được Netflix sản xuất, chinh phục giải Annie Award.'},
+      {type:'series',id:'arcane',title:'Arcane',age:'T16',eps:'18 tập',year:'2021',score:'9.0',img:'https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg',subGenre:'Fantasy anime',status:'ongoing',desc:'Hai chị em Vi và Jinx bị chia cắt bởi chiến tranh giai cấp và tham vọng quyền lực tại thế giới Runeterra. Series hoạt hình được Rotten Tomatoes chấm 100%.'},
     ],
   },
-  'tam-ly': {
-    name: 'Tâm lý - Bí ẩn', emoji: '🧠', color: '#f0fdf4',
-    desc: 'Phim tâm lý và bí ẩn khai thác chiều sâu nội tâm nhân vật, với những twist bất ngờ và câu đố khó đoán. Thể loại dành cho khán giả thích suy nghĩ và phân tích.',
-    now: [
-      {id:'ma-lu',title:'Ma Lu',age:'T16',dur:'95 phút',score:'7.1',img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',tags:['2D'],subGenre:'Tâm lý kinh dị'},
-      {id:'mesdames',title:'Mesdames Thanh Sắc',age:'C18',dur:'110 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',tags:['2D'],subGenre:'Tâm lý drama'},
+  'tinh-cam':{
+    name:'Tình cảm - Lãng mạn', lucideIcon:'heart', iconColor:'#e11d48', iconBg:'#fff1f2',
+    desc:'Những câu chuyện tình yêu đong đầy cảm xúc, từ mối tình học đường ngọt ngào đến những mối quan hệ phức tạp của người trưởng thành.',
+    showing:[
+      {id:'mesdames',title:'Mesdames Thanh Sắc',age:'C18',dur:'110 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',subGenre:'Tình cảm Việt'},
+      {id:'lieu-trai-tc',title:'Liêu Trai',age:'T13',dur:'112 phút',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',subGenre:'Cổ trang lãng mạn'},
+      {id:'nguoi-duoc-chon',title:'Người Được Chọn',age:'T13',dur:'110 phút',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',subGenre:'Tình cảm Việt'},
     ],
-    soon: [
-      {id:'tham-tu-kien-2',title:'Thám Tử Kiên 2',age:'T16',dur:'125 phút',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',tags:['2D'],subGenre:'Trinh thám'},
-    ],
-    past: [
-      {id:'parasite',title:'Parasite',age:'T16',dur:'132 phút',score:'9.0',img:'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',tags:['2D'],subGenre:'Xã hội'},
-      {id:'knives-out',title:'Knives Out',age:'T13',dur:'131 phút',score:'8.7',img:'https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg',tags:['2D'],subGenre:'Trinh thám hài'},
+    catalog:[
+      {type:'film',id:'mesdames',title:'Mesdames Thanh Sắc',age:'C18',dur:'110 phút',year:'2025',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',subGenre:'Drama',status:'now',desc:'Ba người phụ nữ ở ba thế hệ, ba cách yêu và ba vết thương lòng khác nhau. Phim tình cảm Việt hiếm hoi khai thác chiều sâu nội tâm nhân vật nữ.'},
+      {type:'film',id:'nguoi-duoc-chon',title:'Người Được Chọn',age:'T13',dur:'110 phút',year:'2025',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',subGenre:'Tình cảm Việt',status:'now',desc:'Cô gái trẻ vô tình trở thành người được một gia tộc thần bí lựa chọn, kéo theo tình yêu và nguy hiểm khó lường. Lãng mạn pha fantasy.'},
+      {type:'film',id:'mat-biec',title:'Mắt Biếc',age:'P',dur:'115 phút',year:'2019',score:'9.1',img:'https://image.tmdb.org/t/p/w500/wcahBISlczoYqcakatu2uyX8kGQ.jpg',subGenre:'Tình cảm Việt',status:'past',desc:'Chuyện tình đơn phương xuyên suốt tuổi thơ của Ngạn dành cho Hà Lan. Victor Vũ chuyển thể thành công tiểu thuyết Nguyễn Nhật Ánh.'},
+      {type:'series',id:'crash-landing',title:'Crash Landing on You',age:'T13',eps:'16 tập',year:'2019',score:'8.7',img:'https://image.tmdb.org/t/p/w500/3bXFjGDzFlVMlGdkxBsS2ouvBf8.jpg',subGenre:'K-Drama',status:'ongoing',desc:'Nữ tỷ phú Hàn Quốc hạ cánh khẩn cấp xuống Bắc Triều Tiên và được sĩ quan quân đội che giấu. Bom tấn K-Drama được xem nhiều nhất tại Việt Nam 2020.'},
+      {type:'series',id:'twenty-five-twenty-one',title:'Twenty-Five Twenty-One',age:'T13',eps:'16 tập',year:'2022',score:'8.5',img:'https://image.tmdb.org/t/p/w500/2Rm6OG0L6bFLnz0i4uTlDgMezQL.jpg',subGenre:'K-Drama học đường',status:'ongoing',desc:'Năm 1998, hai người trẻ gặp nhau giữa khủng hoảng kinh tế châu Á. Câu chuyện về ước mơ, tuổi trẻ và tình yêu không đúng thời điểm.'},
     ],
   },
-  'gia-dinh': {
-    name: 'Gia đình', emoji: '👨‍👩‍👧‍👦', color: '#fff7ed',
-    desc: 'Phim gia đình mang đến những câu chuyện ấm áp về tình thân, sự gắn kết và những bài học cuộc sống. Phù hợp để xem cùng cả gia đình vào dịp cuối tuần hay ngày lễ.',
-    now: [
-      {id:'toy-story-5',title:'Toy Story 5',age:'P',dur:'100 phút',score:'8.5',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',tags:['2D','3D'],subGenre:'Hoạt hình'},
-      {id:'doraemon-45',title:'Doraemon Movie 45',age:'P',dur:'100 phút',score:'8.1',img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',tags:['2D','4DX'],subGenre:'Anime'},
+  'hai':{
+    name:'Hài - Hài hước', lucideIcon:'laugh', iconColor:'#d97706', iconBg:'#fefce8',
+    desc:'Phim hài mang đến tiếng cười sảng khoái sau giờ làm việc mệt mỏi. Từ hài tình huống đến hài nhân vật, thể loại có lượng khán giả trung thành ổn định tại Việt Nam.',
+    showing:[
+      {id:'lau-chu-hoa-hai',title:'Lầu Chú Hỏa',age:'T16',dur:'105 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',subGenre:'Hài kinh dị Việt'},
+      {id:'nghi-he',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',subGenre:'Hài gia đình'},
     ],
-    soon: [
-      {id:'nghi-he-so-nghi-huu',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',score:'—',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',tags:['2D'],subGenre:'Hài gia đình'},
+    catalog:[
+      {type:'film',id:'lau-chu-hoa-hai',title:'Lầu Chú Hỏa',age:'T16',dur:'105 phút',year:'2025',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',subGenre:'Hài kinh dị',status:'now',desc:'Nhóm bạn tình cờ thuê trọ trong ngôi lầu 100 tuổi nổi tiếng Sài Gòn. Mỗi đêm lại có thêm điều kỳ lạ — nhưng sáng ra mọi người vẫn ăn ngủ bình thường vì... tiền cọc không lấy lại.'},
+      {type:'film',id:'nghi-he',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',year:'2025',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',subGenre:'Hài gia đình',status:'now',desc:'Ông nội 70 tuổi quyết định tham gia khóa học hè cùng cháu để chứng minh mình không già. Hài gia đình Việt ấm áp với nhiều câu thoại đắt giá.'},
+      {type:'film',id:'nha-ba-nu',title:'Nhà Bà Nữ',age:'T13',dur:'129 phút',year:'2023',score:'8.6',img:'https://image.tmdb.org/t/p/w500/jlbCaCevS4YHASzW5wVnevbrSy8.jpg',subGenre:'Hài Việt',status:'past',desc:'Bà Nữ cùng ba con dâu dưới một mái nhà, mỗi người một tính, dẫn đến chuỗi hiểu lầm và xung đột hài hước. Phim Việt ăn khách nhất 2023.'},
+      {type:'series',id:'ted-lasso',title:'Ted Lasso',age:'T13',eps:'34 tập',year:'2020',score:'8.8',img:'https://image.tmdb.org/t/p/w500/5fhZdwP1DVJ0FyVH6vrFdHwpXIn.jpg',subGenre:'Hài thể thao',status:'ongoing',desc:'HLV bóng bầu dục Mỹ sang Anh dẫn dắt đội bóng đá hạng dưới với thái độ lạc quan đến phi thường. Nhiều giải Emmy nhất lịch sử comedy.'},
+      {type:'series',id:'schitts-creek',title:"Schitt's Creek",age:'T13',eps:'80 tập',year:'2015',score:'8.5',img:'https://image.tmdb.org/t/p/w500/4yfqoMQDQvDcMlMEFaRuU62CLUI.jpg',subGenre:'Hài tình huống',status:'ongoing',desc:'Gia đình triệu phú mất toàn bộ tài sản, buộc phải dọn về sống ở thị trấn nhỏ họ từng mua làm trò đùa. Sitcom được xem nhiều nhất Netflix 2020.'},
     ],
-    past: [
-      {id:'bo-gia',title:'Bố Già',age:'P',dur:'120 phút',score:'8.3',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',tags:['2D'],subGenre:'Hài gia đình Việt'},
-      {id:'toi-thay-hoa-vang',title:'Tôi Thấy Hoa Vàng Trên Cỏ Xanh',age:'P',dur:'120 phút',score:'9.3',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',tags:['2D'],subGenre:'Gia đình Việt'},
+  },
+  'vien-tuong':{
+    name:'Khoa học viễn tưởng', lucideIcon:'rocket', iconColor:'#2563eb', iconBg:'#eff6ff',
+    desc:'Khám phá tương lai, vũ trụ và công nghệ chưa từng tồn tại. Thể loại kích thích trí tưởng tượng và đặt ra những câu hỏi triết học sâu sắc về nhân loại.',
+    showing:[
+      {id:'supergirl-vt',title:'Supergirl: Woman of Tomorrow',age:'T13',dur:'130 phút',score:'8.2',img:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',subGenre:'Superhero'},
+      {id:'colony-vt',title:'Colony',age:'T16',dur:'118 phút',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',subGenre:'Space opera'},
+    ],
+    catalog:[
+      {type:'film',id:'colony-vt',title:'Colony',age:'T16',dur:'118 phút',year:'2025',score:'7.5',img:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',subGenre:'Space opera',status:'now',desc:'Thuộc địa đầu tiên của nhân loại ngoài trái đất đối mặt với mối đe dọa không ai có thể hiểu hay đặt tên cho nó. Khoa học viễn tưởng hard sci-fi.'},
+      {type:'film',id:'interstellar',title:'Interstellar',age:'T13',dur:'169 phút',year:'2014',score:'9.2',img:'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIe.jpg',subGenre:'Hard sci-fi',status:'past',desc:'Phi hành gia rời trái đất đang hấp hối để tìm hành tinh mới cho loài người — nhưng thứ anh không ngờ tới là thời gian sẽ trở thành kẻ thù lớn nhất.'},
+      {type:'film',id:'dune-2',title:'Dune: Part Two',age:'T13',dur:'166 phút',year:'2024',score:'8.8',img:'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',subGenre:'Epic sci-fi',status:'past',desc:'Paul Atreides dẫn dắt người Fremen trong cuộc chiến chống lại gia tộc Harkonnen và Đế chế. Denis Villeneuve hoàn thành sử thi vũ trụ vĩ đại nhất điện ảnh 2020s.'},
+      {type:'series',id:'silo',title:'Silo',age:'T16',eps:'20 tập',year:'2023',score:'8.4',img:'https://image.tmdb.org/t/p/w500/9liKbHqPFQDYdqrNUaA1vEe1C9K.jpg',subGenre:'Dystopia',status:'ongoing',desc:'Nhân loại sống trong hầm ngầm 140 tầng sau thảm họa không ai được phép nhắc đến. Khi cảnh sát trưởng bắt đầu đặt câu hỏi, cả hệ thống bắt đầu rung chuyển.'},
+      {type:'series',id:'dark',title:'Dark',age:'T16',eps:'26 tập',year:'2017',score:'8.8',img:'https://image.tmdb.org/t/p/w500/apbrbWs8M9lyOpJYU5IrNDTBhCl.jpg',subGenre:'Du hành thời gian',status:'ongoing',desc:'Bốn gia đình ở thị trấn nhỏ nước Đức kết nối qua những cỗ máy thời gian bí ẩn xuyên suốt ba thập kỷ. Sci-fi phức tạp nhất trong lịch sử truyền hình.'},
+    ],
+  },
+  'tam-ly':{
+    name:'Tâm lý - Bí ẩn', lucideIcon:'eye', iconColor:'#0f766e', iconBg:'#f0fdf4',
+    desc:'Twist bất ngờ, câu đố khó đoán và chiều sâu nội tâm nhân vật. Thể loại dành cho khán giả thích suy nghĩ và phân tích.',
+    showing:[
+      {id:'ma-lu-tl',title:'Ma Lu',age:'T16',dur:'95 phút',score:'7.1',img:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',subGenre:'Tâm lý kinh dị'},
+      {id:'mesdames-tl',title:'Mesdames Thanh Sắc',age:'C18',dur:'110 phút',score:'8.0',img:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',subGenre:'Tâm lý drama'},
+      {id:'tham-tu-kien-2',title:'Thám Tử Kiên 2',age:'T16',dur:'125 phút',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',subGenre:'Trinh thám'},
+    ],
+    catalog:[
+      {type:'film',id:'tham-tu-kien-2',title:'Thám Tử Kiên 2',age:'T16',dur:'125 phút',year:'2025',score:'7.8',img:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',subGenre:'Trinh thám',status:'now',desc:'Thám tử Kiên trở lại với vụ án liên hoàn giết người không để lại dấu vết. Phần 2 nâng cấp quy mô và độ phức tạp của bản án so với phần đầu.'},
+      {type:'film',id:'parasite',title:'Parasite',age:'T16',dur:'132 phút',year:'2019',score:'9.0',img:'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',subGenre:'Tâm lý xã hội',status:'past',desc:'Gia đình nghèo khéo léo thâm nhập vào gia đình giàu, nhưng bí mật trong tầng hầm lật ngược mọi tính toán. Phim đầu tiên ngoài tiếng Anh giành Oscar Phim Hay Nhất.'},
+      {type:'film',id:'knives-out',title:'Knives Out',age:'T13',dur:'131 phút',year:'2019',score:'8.7',img:'https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg',subGenre:'Trinh thám hài',status:'past',desc:'Nhà tiểu thuyết gia trinh thám lừng danh chết đêm sinh nhật 85 tuổi. Thám tử Benoit Blanc vào cuộc và lật tẩy từng thành viên trong gia đình.'},
+      {type:'series',id:'true-detective',title:'True Detective',age:'C18',eps:'32 tập',year:'2014',score:'9.0',img:'https://image.tmdb.org/t/p/w500/JkX98c1lAeOhFNAuHFMCqVRwet.jpg',subGenre:'Crime drama',status:'ongoing',desc:'Hai thám tử đối lập truy tìm kẻ giết người theo nghi thức huyền bí tại Louisiana trong suốt 17 năm. Mỗi mùa là một câu chuyện độc lập hoàn toàn.'},
+      {type:'series',id:'mindhunter',title:'Mindhunter',age:'C18',eps:'19 tập',year:'2017',score:'8.6',img:'https://image.tmdb.org/t/p/w500/zoo9INm9eMXaOqLFzGo9pJEjBg3.jpg',subGenre:'Crime psychology',status:'ongoing',desc:'FBI thập niên 70 lần đầu tiên phỏng vấn tội phạm tâm thần để hiểu hành vi giết người hàng loạt. Fincher sản xuất - lạnh lùng, chi tiết và ám ảnh.'},
+    ],
+  },
+  'gia-dinh':{
+    name:'Gia đình', lucideIcon:'home', iconColor:'#ea580c', iconBg:'#fff7ed',
+    desc:'Câu chuyện ấm áp về tình thân, sự gắn kết và những bài học cuộc sống. Phù hợp để xem cùng cả gia đình vào dịp cuối tuần hay ngày lễ.',
+    showing:[
+      {id:'toy-story-5-gd',title:'Toy Story 5',age:'P',dur:'100 phút',score:'8.5',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',subGenre:'Hoạt hình'},
+      {id:'doraemon-gd',title:'Doraemon Movie 45',age:'P',dur:'100 phút',score:'8.1',img:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',subGenre:'Anime'},
+      {id:'nghi-he-gd',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',subGenre:'Hài gia đình'},
+    ],
+    catalog:[
+      {type:'film',id:'toy-story-5-gd',title:'Toy Story 5',age:'P',dur:'100 phút',year:'2025',score:'8.5',img:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',subGenre:'Hoạt hình',status:'now',desc:'Woody và Buzz trở lại với hành trình phiêu lưu mới đầy cảm xúc. Pixar tiếp tục chứng minh câu chuyện về tình bạn không bao giờ cũ.'},
+      {type:'film',id:'nghi-he-gd',title:'Nghỉ Hè Sợ Nghỉ Hưu',age:'P',dur:'115 phút',year:'2025',score:'7.6',img:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',subGenre:'Hài gia đình',status:'now',desc:'Ông nội 70 tuổi quyết định tham gia khóa học hè cùng cháu. Hài gia đình Việt ấm áp, thích hợp cho cả nhà xem cùng cuối tuần.'},
+      {type:'film',id:'bo-gia',title:'Bố Già',age:'P',dur:'120 phút',year:'2021',score:'8.3',img:'https://image.tmdb.org/t/p/w500/Am54LYDfEawpZ4sAQ6t9oKm2baB.jpg',subGenre:'Hài gia đình Việt',status:'past',desc:'Ông Sang - người bố hết mình vì con cái nhưng không ai hiểu - và hành trình hòa giải với thế hệ trẻ. Phim Việt đầu tiên vượt 400 tỷ đồng phòng vé.'},
+      {type:'series',id:'this-is-us',title:'This Is Us',age:'T13',eps:'106 tập',year:'2016',score:'8.7',img:'https://image.tmdb.org/t/p/w500/yzp4JUvmPDdvDGQrSCLBblnJVcP.jpg',subGenre:'Drama gia đình',status:'ongoing',desc:'Ba đứa con sinh ba và bố mẹ họ xuyên suốt nhiều thập kỷ. Series drama gia đình xúc động nhất thập kỷ — chuẩn bị khăn giấy.'},
+      {type:'series',id:'modern-family',title:'Modern Family',age:'T13',eps:'250 tập',year:'2009',score:'8.4',img:'https://image.tmdb.org/t/p/w500/fNpHKdKXHmGq0aZQWomxiMpuRNj.jpg',subGenre:'Hài gia đình',status:'ongoing',desc:'Ba nhánh gia đình Pritchett với ba lối sống hoàn toàn khác nhau nhưng gắn kết bởi tình thân. 11 mùa, 250 tập hài hước không bao giờ lỗi thời.'},
     ],
   },
 };
 
-const GENRE_COLLECTIONS = {
-  'hanh-dong': [
-    {name:'Siêu anh hùng',icon:'🦸',desc:'Marvel, DC và các tên tuổi lớn màn bạc',cover:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',color:'#1e3a5f',count:12},
-    {name:'Giang hồ châu Á',icon:'⚔️',desc:'Võ thuật, gangster, thế giới ngầm đầy kịch tính',cover:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',color:'#1a0800',count:8},
-    {name:'Gián điệp & Thriller',icon:'🕵️',desc:'Nhiệm vụ bí mật, âm mưu toàn cầu',cover:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',color:'#0c1a2e',count:6},
-    {name:'Sci-fi Action',icon:'🚀',desc:'Hành động kết hợp khoa học viễn tưởng',cover:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',color:'#0a1628',count:5},
-  ],
-  'kinh-di': [
-    {name:'Kinh dị Việt Nam',icon:'🇻🇳',desc:'Thế giới tâm linh và ma quái thuần Việt',cover:'https://cinema.momocdn.net/convert-webp/img/77654494959907436-ddmq.png?size=SM',color:'#7f1d1d',count:9},
-    {name:'J-Horror & K-Horror',icon:'🎌',desc:'Nỗi kinh hoàng đến từ Nhật Bản và Hàn Quốc',cover:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',color:'#1e1b4b',count:6},
-    {name:'Kinh dị tâm lý',icon:'🧠',desc:'Hù dọa từ bên trong — không phải ma',cover:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',color:'#164e63',count:7},
-    {name:'Siêu nhiên & Ám ảnh',icon:'👻',desc:'Nhập hồn, thế giới bên kia, lời nguyền',cover:'https://cinema.momocdn.net/convert-webp/img/77653061526174131-mnot.png?size=SM',color:'#3b0764',count:10},
-  ],
-  'hoat-hinh': [
-    {name:'Pixar & Disney',icon:'✨',desc:'Những kiệt tác hoạt hình của thế giới',cover:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',color:'#1d4ed8',count:14},
-    {name:'Anime Movie',icon:'🎌',desc:'Doraemon, Conan, One Piece và các siêu phẩm Nhật',cover:'https://cinema.momocdn.net/convert-webp/img/24268527084304697-4dxdoora.png?size=SM',color:'#dc2626',count:11},
-    {name:'CGI Châu Á',icon:'🐲',desc:'Hoạt hình 3D Trung Quốc thế hệ mới',cover:'https://cinema.momocdn.net/convert-webp/img/145819503207552036-bachxxa.png?size=SM',color:'#7c3aed',count:5},
-    {name:'Gia đình vui',icon:'🎠',desc:'Phim dành cho cả nhà xem cùng cuối tuần',cover:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',color:'#0369a1',count:8},
-  ],
-  'tinh-cam': [
-    {name:'Tình yêu học đường',icon:'🌸',desc:'Mối tình ngây thơ, ngọt ngào và đáng nhớ',cover:'https://cinema.momocdn.net/convert-webp/img/154903641510946968-PosterNguoiDuocChoncompressed.jpg?size=M',color:'#be185d',count:7},
-    {name:'Tình cảm Việt',icon:'🇻🇳',desc:'Chuyện tình Việt thuần văn hóa đương đại',cover:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',color:'#9d174d',count:9},
-    {name:'Cổ trang lãng mạn',icon:'🏯',desc:'Tình yêu xuyên thời đại, phục trang cổ phục',cover:'https://cinema.momocdn.net/convert-webp/img/33894375987018707-350x495-lieutrai.jpg?size=SM',color:'#92400e',count:5},
-    {name:'Drama Hàn - Nhật',icon:'🎎',desc:'Tình cảm châu Á đầy cảm xúc và ý nghĩa',cover:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',color:'#1e3a5f',count:6},
-  ],
-  'hai': [
-    {name:'Hài Việt đặc sắc',icon:'🎭',desc:'Trấn Thành, Thu Trang, Hoài Linh và nhiều hơn',cover:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',color:'#92400e',count:11},
-    {name:'Hài gia đình',icon:'👨‍👩‍👦',desc:'Cười vui cùng cả nhà, không giới hạn tuổi',cover:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',color:'#166534',count:8},
-    {name:'Hài hành động',icon:'💥',desc:'Cười nhiều, đánh không ít — phong cách Jackie Chan',cover:'https://cinema.momocdn.net/convert-webp/img/33894194531231265-470wx700h-thief.jpg?size=SM',color:'#1e40af',count:5},
-  ],
-  'vien-tuong': [
-    {name:'Siêu anh hùng vũ trụ',icon:'🦸',desc:'MCU, DCU và các vũ trụ điện ảnh mở rộng',cover:'https://cinema.momocdn.net/convert-webp/img/33968384416504217-spg.png?size=SM',color:'#1e3a5f',count:10},
-    {name:'Space Opera',icon:'🌌',desc:'Khám phá vũ trụ, hành tinh xa lạ và nền văn minh',cover:'https://cinema.momocdn.net/convert-webp/img/115606187938743904-conlonyy.png?size=SM',color:'#0a0a2e',count:7},
-    {name:'Dystopia & AI',icon:'🤖',desc:'Tương lai đen tối, trí tuệ nhân tạo nổi loạn',cover:'https://cinema.momocdn.net/convert-webp/img/111912471900960170-683296a567c61915902677.jpg?size=M',color:'#1c1c2e',count:6},
-  ],
-  'tam-ly': [
-    {name:'Trinh thám bí ẩn',icon:'🔍',desc:'Ai đã làm gì? Bí ẩn chờ bạn giải mã',cover:'https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M',color:'#1e293b',count:9},
-    {name:'Tâm lý tội phạm',icon:'🎭',desc:'Góc khuất tâm lý, ranh giới mong manh',cover:'https://cinema.momocdn.net/convert-webp/img/115456074788690542-malu.png?size=SM',color:'#3b0764',count:7},
-    {name:'Drama xã hội',icon:'🎬',desc:'Bức tranh xã hội đương đại đa chiều',cover:'https://cinema.momocdn.net/convert-webp/img/115947433721927575-mdts.png?size=SM',color:'#14532d',count:5},
-  ],
-  'gia-dinh': [
-    {name:'Cuối tuần cùng nhà',icon:'🏠',desc:'Phim phù hợp xem cùng bố mẹ và con cái',cover:'https://cinema.momocdn.net/convert-webp/img/107954068933179447-postertoystory5.jpg?size=SM',color:'#92400e',count:12},
-    {name:'Chuyện bố mẹ & con',icon:'👨‍👧',desc:'Tình thân vượt thời gian, bài học yêu thương',cover:'https://cinema.momocdn.net/convert-webp/img/22106669547309318-nhsnh.png?size=SM',color:'#065f46',count:8},
-    {name:'Phim Việt cho cả nhà',icon:'🇻🇳',desc:'Câu chuyện gia đình Việt đầy ắp tình cảm',cover:'https://cinema.momocdn.net/convert-webp/img/116033739346174952-lch.png?size=SM',color:'#7f1d1d',count:6},
-  ],
-};
-
+// ── STATE ─────────────────────────────────────────────────────────────────────
 const slug = location.pathname.replace(/\/$/, '').split('/').pop();
-const genre = ALL_GENRES[slug] || ALL_GENRES['hanh-dong'];
-let activeTab = 'now';
-let activeFormat = 'all';
-let activeSort = 'popular';
+const genre = ALL_GENRES[slug] || ALL_GENRES['kinh-di'];
+let catalogFilter = 'all';
 
+// ── INIT ──────────────────────────────────────────────────────────────────────
 function init(){
   document.getElementById('pageTitle').textContent = `Phim ${genre.name} - MoMo Cinema`;
   document.getElementById('bcName').textContent = genre.name;
   document.getElementById('genreTitle').textContent = genre.name;
-  document.getElementById('genreIconEmoji').textContent = genre.emoji;
-  document.getElementById('genreIconWrap').style.setProperty('background', genre.color);
   document.getElementById('genreDesc').textContent = genre.desc;
-  document.getElementById('top10GenreName').textContent = genre.name;
 
-  updateCounts();
-  renderFilms();
-  renderTop10();
-  renderCollections();
+  const iconEl = document.getElementById('genreIconEl');
+  iconEl.setAttribute('data-lucide', genre.lucideIcon);
+  iconEl.setAttribute('width','22');
+  iconEl.setAttribute('height','22');
+  iconEl.setAttribute('stroke-width','2');
+  iconEl.style.color = genre.iconColor;
+  document.getElementById('genreIcon').style.background = genre.iconBg;
+
+  const nowCount = (genre.showing||[]).length;
+  const catCount = (genre.catalog||[]).length;
+
+  renderShowing();
+  renderCatalog();
   renderRelated();
+  lucide.createIcons();
 }
 
-function updateCounts(){
-  const now = filterFilms(genre.now||[]);
-  const soon = filterFilms(genre.soon||[]);
-  const all = filterFilms([...(genre.now||[]),...(genre.soon||[]),...(genre.past||[])]);
-  document.getElementById('countNow').textContent = now.length;
-  document.getElementById('countSoon').textContent = soon.length;
-  document.getElementById('countAll').textContent = all.length;
-
-  const total = (genre.now||[]).length + (genre.soon||[]).length;
-  document.getElementById('genreCount').innerHTML = `<strong>${(genre.now||[]).length}</strong> phim đang chiếu · <strong>${(genre.soon||[]).length}</strong> phim sắp chiếu`;
-}
-
-function filterFilms(films){
-  if(activeFormat === 'all') return films;
-  return films.filter(f=>(f.tags||[]).includes(activeFormat));
-}
-
-function sortFilms(films){
-  if(activeSort === 'rating') return [...films].sort((a,b)=>parseFloat(b.score||0)-parseFloat(a.score||0));
-  if(activeSort === 'newest') return [...films].reverse();
-  return films;
-}
-
-function showTab(tab, el){
-  activeTab = tab;
-  document.querySelectorAll('.genre-tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  renderFilms();
-}
-
-function setFormat(fmt, el){
-  activeFormat = fmt;
-  document.querySelectorAll('#formatPills .fpill').forEach(p=>p.classList.remove('on'));
-  el.classList.add('on');
-  updateCounts();
-  renderFilms();
-}
-
-function setSort(sort, el){
-  activeSort = sort;
-  el.closest('.filter-bar').querySelectorAll('.filter-pills:last-of-type .fpill').forEach(p=>p.classList.remove('on'));
-  el.classList.add('on');
-  renderFilms();
-}
-
-function renderFilms(){
-  let films;
-  let label, sub;
-  if(activeTab==='now'){
-    films = sortFilms(filterFilms(genre.now||[]));
-    label = `Đang chiếu - ${genre.name}`;
-    sub = `${films.length} phim`;
-  } else if(activeTab==='soon'){
-    films = sortFilms(filterFilms(genre.soon||[]));
-    label = `Sắp chiếu - ${genre.name}`;
-    sub = `${films.length} phim`;
-  } else {
-    const all = [...(genre.now||[]).map(f=>({...f,status:'now'})), ...(genre.soon||[]).map(f=>({...f,status:'soon'})), ...(genre.past||[]).map(f=>({...f,status:'past'}))];
-    films = sortFilms(filterFilms(all));
-    label = `Tất cả phim - ${genre.name}`;
-    sub = `${films.length} phim`;
-  }
-
-  document.getElementById('sectionTitle').textContent = label;
-  document.getElementById('sectionSub').textContent = sub;
+// ── SECTION 1 ─────────────────────────────────────────────────────────────────
+function renderShowing(){
+  const films = genre.showing || [];
+  document.getElementById('showingCount').textContent = `${films.length} phim`;
 
   if(!films.length){
-    document.getElementById('filmGrid').innerHTML = `<div class="empty-state"><div class="empty-icon">🎬</div>Không có phim phù hợp với bộ lọc</div>`;
-    return;
+    document.getElementById('showingGrid').innerHTML =
+      `<div class="empty"><i data-lucide="clapperboard" width="32" height="32" style="display:block;margin:0 auto 10px;color:var(--gray-300)"></i>Chưa có phim đang chiếu</div>`;
+    lucide.createIcons(); return;
   }
 
-  document.getElementById('filmGrid').innerHTML = `<div class="film-grid">${films.map(f=>{
-    const ageCls = f.age.toLowerCase().replace(' ','');
-    const status = f.status || activeTab;
-    const isPast = status==='past';
-    const isSoon = status==='soon';
-    const tags = (f.tags||[]).map(t=>`<span class="film-genre-tag">${t}</span>`).join('');
-    const badgeText = isPast?'Đã chiếu':isSoon?'Sắp chiếu':'Đang chiếu';
-    const badgeCls = isPast?'past':isSoon?'soon':'now';
-    const ctaClass = isSoon?'soon':isPast?'past':'';
-    const ctaText = isSoon?'Đặt vé trước →':isPast?'Xem lại':'Đặt vé →';
-    return `<div class="film-card" onclick="${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">
-      <div class="film-poster">
-        <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'">
-        <span class="film-age ${ageCls}">${f.age}</span>
-        <span class="film-badge ${badgeCls}">${badgeText}</span>
-        ${f.score&&f.score!=='—'?`<span class="film-score">⭐ ${f.score}</span>`:''}
-      </div>
-      <div class="film-body">
-        <div class="film-title">${f.title}</div>
-        <div class="film-meta"><span>${f.dur}</span><span class="film-dot">·</span><span>${f.subGenre||''}</span></div>
-        <div class="film-genre-tags">${tags}</div>
-        <button class="film-cta ${ctaClass}" onclick="event.stopPropagation();${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">${ctaText}</button>
-      </div>
-    </div>`;
-  }).join('')}</div>`;
+  document.getElementById('showingGrid').innerHTML =
+    `<div class="showing-grid">${films.map((f,i)=>{
+      const ageCls = f.age.toLowerCase().replace(' ','');
+      const scoreHtml = f.score&&f.score!=='—'
+        ? `<div class="film-score"><i data-lucide="star" width="10" height="10" style="fill:#f59e0b;color:#f59e0b"></i>${f.score}</div>` : '';
+      const badgeCls = i < 2 ? 'hot' : 'new';
+      const badgeTxt = i < 2 ? 'HOT' : 'MỚI';
+      return `<div class="film-card" onclick="location.href='/cinema/${f.id}'">
+        <div class="film-poster">
+          <img src="${f.img}" alt="${f.title}" loading="lazy">
+          <div class="film-poster-overlay"></div>
+          <span class="film-age ${ageCls}">${f.age}</span>
+          ${scoreHtml}
+          <span class="film-badge ${badgeCls}">${badgeTxt}</span>
+        </div>
+        <div class="film-body">
+          <div class="film-title">${f.title}</div>
+          <div class="film-meta">${f.dur}</div>
+          <button class="btn-book" onclick="event.stopPropagation();location.href='/cinema/${f.id}'">
+            <i data-lucide="ticket" width="13" height="13"></i>Đặt vé
+          </button>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  lucide.createIcons();
+  const grid = document.querySelector('.showing-grid');
+  if(grid) grid.addEventListener('scroll', updateScrollBtns, {passive:true});
 }
 
-function renderTop10(){
-  const allFilms = [
-    ...(genre.now||[]).map(f=>({...f,status:'now'})),
-    ...(genre.soon||[]).map(f=>({...f,status:'soon'})),
-    ...(genre.past||[]).map(f=>({...f,status:'past'})),
-  ];
-  const sorted = [...allFilms].sort((a,b)=>{
-    const sa = parseFloat(a.score)||0, sb = parseFloat(b.score)||0;
-    return sb - sa;
-  });
-  const top = sorted.slice(0,10);
-  if(!top.length){ document.getElementById('top10Section').style.display='none'; return; }
-  const medals = ['🥇','🥈','🥉'];
-  document.getElementById('rankList').innerHTML = `<div class="rank-grid">${top.map((f,i)=>{
-    const rank = i+1;
-    const isPast = f.status==='past', isSoon = f.status==='soon';
-    const ageCls = f.age.toLowerCase().replace(' ','');
-    const badgeText = isPast?'Đã chiếu':isSoon?'Sắp chiếu':'Đang chiếu';
-    const badgeCls = isPast?'past':isSoon?'soon':'now';
-    return `<div class="rank-item" data-rank="${rank}" onclick="${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">
-      <div class="rank-num">${rank}</div>
-      <div class="rank-poster"><img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'"></div>
-      <div class="rank-info">
-        ${rank<=3?`<div class="rank-medal">${medals[rank-1]}</div>`:''}
-        <div class="rank-title">${f.title}</div>
-        <div class="rank-meta">${f.dur} · ${f.subGenre||f.genre||''}</div>
-        ${f.score&&f.score!=='—'?`<div class="rank-score">⭐ ${f.score}/10</div>`:''}
-        <button class="rank-cta" onclick="event.stopPropagation();${isPast?`toast('${f.title} đã kết thúc lịch chiếu')`:`window.location.href='/cinema/${f.id}'`}">${isPast?'Xem lại':isSoon?'Đặt vé trước →':'Đặt vé →'}</button>
-      </div>
-      <span class="rank-badge ${badgeCls}">${badgeText}</span>
-    </div>`;
-  }).join('')}</div>`;
+// ── SECTION 2 ─────────────────────────────────────────────────────────────────
+const PAGE_SIZE = 3;
+let catalogPage = 1;
+
+function setCatalogFilter(f, el){
+  catalogFilter = f;
+  catalogPage = 1;
+  document.querySelectorAll('.cfl').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderCatalog();
 }
 
-function renderCollections(){
-  const colls = GENRE_COLLECTIONS[slug] || [];
-  if(!colls.length){ document.getElementById('collectionsSection').style.display='none'; return; }
-  document.getElementById('collectionGrid').innerHTML = colls.map(c=>`
-    <div class="coll-card" onclick="toast('Bộ sưu tập: ${c.name}')">
-      <div class="coll-bg" style="background-image:url('${c.cover}')"></div>
-      <div class="coll-overlay-color" style="background:${c.color}"></div>
-      <div class="coll-gradient"></div>
-      <div class="coll-body">
-        <div class="coll-icon">${c.icon}</div>
-        <div class="coll-name">${c.name}</div>
-        <div class="coll-desc">${c.desc}</div>
-        <div class="coll-footer">
-          <span class="coll-count">${c.count} phim</span>
-          <span class="coll-arrow">Xem tất cả →</span>
+function goPage(p){
+  catalogPage = p;
+  renderCatalog();
+  document.querySelector('.catalog-filters')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderCatalog(){
+  const all = (genre.catalog || []).filter(i=>i.status !== 'now');
+  const items = catalogFilter === 'all' ? all : all.filter(i=>i.type===catalogFilter);
+  const total = items.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  catalogPage = Math.min(catalogPage, totalPages);
+  const start = (catalogPage - 1) * PAGE_SIZE;
+  const pageItems = items.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('catalogCount').textContent = `${total} mục`;
+
+  if(!total){
+    document.getElementById('catalogList').innerHTML = `<div class="empty">Không có kết quả</div>`;
+    document.getElementById('catalogPager').innerHTML = '';
+    lucide.createIcons(); return;
+  }
+
+  document.getElementById('catalogList').innerHTML = pageItems.map((item,idx)=>{
+    const isFilm = item.type === 'film';
+    const isSoon = item.status === 'soon';
+    const isPast = item.status === 'past';
+    const isOngoing = item.status === 'ongoing';
+    const ageCls = item.age.toLowerCase().replace(' ','');
+
+    const statusText = isPast ? 'Đã chiếu' : isSoon ? 'Sắp chiếu' : isOngoing ? 'Đang phát' : 'Đang chiếu';
+    const statusCls = isPast ? 'past' : isSoon ? 'soon' : isOngoing ? 'ongoing' : 'now';
+
+    const meta = isFilm
+      ? `${item.dur} · ${item.year}`
+      : `${item.eps} · ${item.year}`;
+
+    const scoreHtml = item.score && item.score !== '—'
+      ? `<span class="cc-score"><i data-lucide="star" width="10" height="10" style="fill:#f59e0b;color:#f59e0b"></i>${item.score}</span>` : '';
+
+    let btnCls, btnIcon, btnText;
+    if(isPast){        btnCls='gray';   btnIcon='clock';  btnText='Đã kết thúc'; }
+    else if(isSoon){   btnCls='gray';   btnIcon='calendar'; btnText='Sắp chiếu'; }
+    else if(isOngoing){btnCls='indigo'; btnIcon='play';    btnText='Xem ngay'; }
+    else {             btnCls='pink';   btnIcon='ticket';  btnText='Đặt vé'; }
+
+    const crewParts = [
+      item.director ? `<span><i data-lucide="video" width="10" height="10"></i><strong>Đạo diễn:</strong> ${item.director}</span>` : '',
+      item.cast     ? `<span><i data-lucide="users" width="10" height="10"></i><strong>Diễn viên:</strong> ${item.cast}</span>` : '',
+    ].filter(Boolean).join('');
+
+    const rank = start + idx + 1;
+
+    return `<div class="catalog-card" onclick="${isPast?`toast('${item.title.replace(/'/g,"\\'")} đã kết thúc')`:`location.href='/cinema/${item.id}'`}">
+      <div class="cc-rank">${rank}</div>
+      <div class="cc-poster">
+        <img src="${item.img}" alt="${item.title}" loading="lazy" onerror="this.style.background='var(--gray-200)'">
+        <span class="cc-age ${ageCls}">${item.age}</span>
+      </div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-title">${item.title}</div>
+          ${item.score && item.score!=='—' ? `<div class="cc-score"><i data-lucide="star" width="14" height="14" style="fill:#f59e0b;color:#f59e0b"></i>${item.score}</div>` : ''}
+        </div>
+        <div class="cc-meta">
+          <span class="cc-type-badge ${item.type}">${isFilm?'Phim lẻ':'Phim bộ'}</span>
+          <span class="cc-meta-dot">·</span>
+          <span>${meta}</span>
+          <span class="cc-meta-dot">·</span>
+          <span>${item.subGenre}</span>
+          ${item.country ? `<span class="cc-meta-dot">·</span><span>${item.country}</span>` : ''}
+        </div>
+        <div class="cc-desc">${item.desc}</div>
+        <div class="cc-bottom">
+          ${isPast ? '' : `<span class="cc-status ${statusCls}"><i data-lucide="${isSoon?'calendar':isOngoing?'play-circle':'ticket'}" width="11" height="11"></i>${statusText}</span>`}
+          ${!isPast ? `<button class="btn-cc ${btnCls}" onclick="event.stopPropagation();location.href='/cinema/${item.id}'"><i data-lucide="${btnIcon}" width="11" height="11"></i>${btnText}</button>` : ''}
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+
+  // Render pager
+  if(totalPages <= 1){
+    document.getElementById('catalogPager').innerHTML = '';
+  } else {
+    const maxVisible = 5;
+    let pgStart = Math.max(1, catalogPage - 2);
+    let pgEnd = Math.min(totalPages, pgStart + maxVisible - 1);
+    if(pgEnd - pgStart < maxVisible - 1) pgStart = Math.max(1, pgEnd - maxVisible + 1);
+    let nums = '';
+    if(pgStart > 1) nums += `<button class="pg-n" onclick="goPage(1)">1</button>${pgStart > 2 ? '<span style="padding:0 2px;color:var(--gray-300)">…</span>' : ''}`;
+    for(let i=pgStart;i<=pgEnd;i++) nums += `<button class="pg-n${i===catalogPage?' on':''}" onclick="goPage(${i})">${i}</button>`;
+    if(pgEnd < totalPages) nums += `${pgEnd < totalPages-1 ? '<span style="padding:0 2px;color:var(--gray-300)">…</span>' : ''}<button class="pg-n" onclick="goPage(${totalPages})">${totalPages}</button>`;
+    document.getElementById('catalogPager').innerHTML = `<div class="pager">
+      <span class="pager-info">${start+1}–${Math.min(start+PAGE_SIZE,total)} / ${total} mục</span>
+      <div class="pager-btns">
+        <button class="pg-btn" onclick="goPage(${catalogPage-1})" ${catalogPage===1?'disabled':''}><i data-lucide="chevron-left" width="14" height="14"></i> Trước</button>
+        <div class="pg-nums">${nums}</div>
+        <button class="pg-btn" onclick="goPage(${catalogPage+1})" ${catalogPage===totalPages?'disabled':''}> Sau <i data-lucide="chevron-right" width="14" height="14"></i></button>
+      </div>
+    </div>`;
+  }
+
+  lucide.createIcons();
 }
 
+// ── RELATED ───────────────────────────────────────────────────────────────────
 function renderRelated(){
   const others = Object.entries(ALL_GENRES).filter(([k])=>k!==slug).slice(0,6);
   document.getElementById('relatedChips').innerHTML = others.map(([k,g])=>`
-    <a class="genre-chip" href="/cinema/genre/${k}">
-      <span class="genre-chip-icon">${g.emoji}</span>
+    <a class="chip" href="/cinema/genres/${k}">
+      <i data-lucide="${g.lucideIcon}" width="16" height="16"></i>
       <div>
-        <div class="genre-chip-name">${g.name}</div>
-        <div class="genre-chip-count">${(g.now||[]).length} đang chiếu</div>
+        <div class="chip-name">${g.name}</div>
+        <div class="chip-count">${(g.showing||[]).length} đang chiếu</div>
       </div>
     </a>`).join('');
+  lucide.createIcons();
+}
+
+function scrollShowing(dir){
+  const grid = document.querySelector('.showing-grid');
+  if(!grid) return;
+  grid.scrollBy({left: dir * 360, behavior:'smooth'});
+  setTimeout(updateScrollBtns, 350);
+}
+function updateScrollBtns(){
+  const grid = document.querySelector('.showing-grid');
+  if(!grid) return;
+  const prev = document.getElementById('showPrev');
+  const next = document.getElementById('showNext');
+  if(prev) prev.classList.toggle('hidden', grid.scrollLeft < 10);
+  if(next) next.classList.toggle('hidden', grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 10);
 }
 
 let toastTimer;
-function toast(msg){ const el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200); }
+function toast(msg){const el=document.getElementById('toastEl');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200);}
 
 init();
 </script>
-<nav class="mobile-bnav"><a class="mbn-item on" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a><a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a><a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a><a class="mbn-item" href="/cinema/person"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a><a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a></nav>
+
+<nav class="mobile-bnav">
+  <a class="mbn-item on" href="/cinema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg><span>Phim</span></a>
+  <a class="mbn-item" href="/cinema/dang-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Đang chiếu</span></a>
+  <a class="mbn-item" href="/cinema/sap-chieu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span>Sắp chiếu</span></a>
+  <a class="mbn-item" href="/cinema/person"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Diễn viên</span></a>
+  <a class="mbn-item" href="/cinema/cgv"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Rạp</span></a>
+</nav>
 </body>
 </html>

@@ -71,26 +71,14 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 /* GENRE CARD */
 .genre-card{border-radius:var(--r-2xl);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;background:#fff;box-shadow:var(--shadow-s)}
 .genre-card:hover{box-shadow:var(--shadow-l);transform:translateY(-4px)}
-.gc-poster-strip{position:relative;height:140px;overflow:hidden;background:var(--gc-dark,#111)}
-.gc-posters{display:flex;height:100%;gap:2px}
-.gc-p{flex:1;overflow:hidden;background:var(--gray-200)}
-.gc-p img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
-.genre-card:hover .gc-p img{transform:scale(1.06)}
+.gc-poster-strip{position:relative;height:160px;overflow:hidden;background:var(--gc-dark,#111)}
+.gc-poster-strip img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.genre-card:hover .gc-poster-strip img{transform:scale(1.06)}
 .gc-fade{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 25%,var(--gc-dark,#111) 100%)}
 .gc-hot-badge{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:800;background:var(--pink-500);color:#fff;padding:3px 9px 3px 7px;border-radius:20px;z-index:2}
-.gc-body{padding:14px 16px 16px;background:#fff;display:flex;flex-direction:column;gap:10px}
-.gc-title-row{display:flex;align-items:center;gap:10px}
-.gc-icon-wrap{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.gc-name{font-size:16px;font-weight:900;color:var(--gray-900);line-height:1.2;letter-spacing:-.01em}
-.gc-counts{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.gc-count-now{font-size:11px;font-weight:700;color:var(--pink-500);background:var(--pink-50);border:1px solid var(--pink-100);border-radius:6px;padding:2px 8px;display:flex;align-items:center;gap:3px}
-.gc-count-soon{font-size:11px;font-weight:700;color:#6366f1;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:2px 8px;display:flex;align-items:center;gap:3px}
-.gc-count-past{font-size:11px;font-weight:700;color:var(--gray-400);background:var(--gray-100);border-radius:6px;padding:2px 8px;display:flex;align-items:center;gap:3px}
-.gc-desc{font-size:12px;color:var(--gray-500);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.gc-subgenres{display:flex;flex-wrap:wrap;gap:4px}
-.gc-sg{font-size:10px;font-weight:700;color:var(--gray-500);background:var(--gray-100);border-radius:5px;padding:2px 7px;border:1px solid var(--gray-200)}
-.gc-cta{width:100%;font-family:inherit;font-size:13px;font-weight:800;color:var(--pink-500);background:var(--pink-50);border:1.5px solid var(--pink-100);border-radius:var(--r-md);padding:9px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px}
-.gc-cta:hover{background:var(--pink-100)}
+.gc-body{padding:12px 14px 14px;background:#fff}
+.gc-name{font-size:15px;font-weight:900;color:var(--gray-900);line-height:1.2;margin-bottom:3px}
+.gc-count{font-size:12px;color:var(--gray-400);font-weight:600}
 
 /* FEATURED ROW */
 .featured-section{max-width:1100px;margin:0 auto;padding:28px 20px 4px}
@@ -154,12 +142,11 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
       <span style="width:1px;height:18px;background:var(--gray-200);margin:0 2px 0 6px;flex-shrink:0;display:inline-block;vertical-align:middle"></span>
       <span style="display:flex;align-items:center;gap:5px"><img src="https://homepage.momocdn.net/img/momo-amazone-s3-api-240808153440-638587280804204391.svg" alt="" height="22" style="display:block;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:var(--pink-500);letter-spacing:-.01em;line-height:1">Cinema</span></span>
     </a>
-    <div class="nav-links">
-      <button class="nav-link on" onclick="window.location.href='/cinema'">Phim</button>
-      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
+    <div class="nav-links">      <button class="nav-link" onclick="window.location.href='/cinema/dang-chieu'">Đang chiếu</button>
       <button class="nav-link" onclick="window.location.href='/cinema/sap-chieu'">Sắp chiếu</button>
       <button class="nav-link" onclick="window.location.href='/cinema/person'">Diễn viên</button>
       <button class="nav-link" onclick="window.location.href='/cinema/cgv'">Rạp</button>
+      <button class="nav-link" onclick="location.href='/cinema/top-phim'">Top phim</button>
       <button class="nav-link" onclick="window.location.href='/cinema/genres'">Thể loại</button>
       <button class="nav-link" onclick="window.location.href='/cinema/series'">TV Series</button>
     </div>
@@ -359,24 +346,13 @@ function renderGrid(){
     const totalFilms = g.nowCount + g.soonCount + g.pastCount;
     return `<div class="genre-card" onclick="window.location.href='/cinema/genres/${g.slug}'" style="--gc-dark:${g.dark}">
       <div class="gc-poster-strip">
-        <div class="gc-posters">
-          ${g.posters.map(p=>`<div class="gc-p"><img src="${p}" loading="lazy" onerror="this.parentElement.style.background='${g.tint}';this.style.display='none'"></div>`).join('')}
-        </div>
+        <img src="${g.posters[0]}" loading="lazy" onerror="this.style.display='none'">
         <div class="gc-fade"></div>
         ${g.hot?`<span class="gc-hot-badge"><i data-lucide="flame" width="10" height="10" stroke-width="2.5"></i>Đang hot</span>`:''}
       </div>
       <div class="gc-body">
-        <div class="gc-title-row">
-          <div class="gc-icon-wrap" style="background:${g.tint}22">
-            <i data-lucide="${g.lucideIcon}" width="18" height="18" stroke-width="2" style="color:${g.tint}"></i>
-          </div>
-          <span class="gc-name">${g.name}</span>
-        </div>
-        <div class="gc-desc">${g.desc}</div>
-        <div class="gc-subgenres">${g.subGenres.slice(0,4).map(s=>`<span class="gc-sg">${s}</span>`).join('')}</div>
-        <button class="gc-cta" onclick="event.stopPropagation();window.location.href='/cinema/genres/${g.slug}'">
-          Khám phá ${g.name}<i data-lucide="arrow-right" width="14" height="14" stroke-width="2.5"></i>
-        </button>
+        <div class="gc-name">${g.name}</div>
+        <div class="gc-count">${totalFilms} phim</div>
       </div>
     </div>`;
   }).join('');
