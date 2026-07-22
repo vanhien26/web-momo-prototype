@@ -66,17 +66,16 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .sb-header-link{font-size:11px;font-weight:700;color:var(--pink);text-decoration:none}
 .sb-header-link:hover{text-decoration:underline}
 .sb-film-list{display:flex;flex-direction:column}
-.sb-film{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;transition:.12s}
+.sb-film{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;transition:.12s}
 .sb-film:last-child{border-bottom:none}
 .sb-film:hover{background:var(--gray-50)}
-.sb-film-poster{width:42px;height:60px;border-radius:8px;object-fit:cover;background:var(--gray-200);flex-shrink:0;display:block}
-.sb-film-poster-fallback{width:42px;height:60px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff}
+.sb-film-poster-wrap{position:relative;width:36px;height:52px;flex-shrink:0;border-radius:6px;overflow:hidden}
+.sb-film-poster{width:100%;height:100%;object-fit:cover;display:block}
+.sb-film-poster-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff}
 .sb-film-info{flex:1;min-width:0}
 .sb-film-name{font-size:12px;font-weight:800;color:var(--gray-900);line-height:1.3;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-film-meta{font-size:11px;color:var(--gray-400);display:flex;align-items:center;gap:5px}
-.sb-film-score{display:flex;align-items:center;gap:3px;font-weight:700;color:var(--gray-700)}
-.sb-book-btn{font-family:inherit;font-size:11px;font-weight:800;padding:5px 10px;border-radius:20px;border:none;background:var(--pink);color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:.12s}
-.sb-book-btn:hover{background:#c9178c}
+.sb-film-meta{font-size:11px;color:var(--gray-400);display:flex;align-items:center;gap:4px}
+.sb-film-score{display:flex;align-items:center;gap:2px;font-weight:700;color:var(--gray-600)}
 
 .table-wrap{padding:0}
 .rank-list{display:flex;flex-direction:column;gap:12px}
@@ -510,23 +509,19 @@ function closeFilmModal(){
 function renderSidebar(){
   document.getElementById('sbFilmList').innerHTML = NOW_PLAYING.map(f=>{
     const initial = f.title.charAt(0).toUpperCase();
-    const posterEl = f.img
-      ? `<img class="sb-film-poster" src="${f.img}" alt="${f.title}" onerror="this.style.display='none';this.previousElementSibling.style.display='flex'">`
-      : '';
     return `<a class="sb-film" href="/cinema/${f.id}">
-      <div class="sb-film-poster-fallback" style="background:${f.color};display:${f.img?'none':'flex'}">${initial}</div>
-      ${f.img ? `<img class="sb-film-poster" src="${f.img}" alt="${f.title}" onerror="this.style.display='none';this.previousElementSibling.style.display='flex'">` : ''}
+      <div class="sb-film-poster-wrap">
+        <div class="sb-film-poster-fallback" style="background:${f.color}">${initial}</div>
+        ${f.img ? `<img class="sb-film-poster" src="${f.img}" alt="${f.title}" onerror="this.style.display='none'">` : ''}
+      </div>
       <div class="sb-film-info">
         <div class="sb-film-name">${f.title}</div>
         <div class="sb-film-meta">
           <span class="sb-film-score"><svg width="10" height="10" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${f.score.toFixed(1)}</span>
-          <span style="color:var(--gray-300)">·</span>
-          <span>${f.dur}</span>
-          <span style="color:var(--gray-300)">·</span>
-          <span>${f.age}</span>
+          <span style="color:var(--gray-300)">·</span><span>${f.dur}</span>
+          <span style="color:var(--gray-300)">·</span><span>${f.age}</span>
         </div>
       </div>
-      <button class="sb-book-btn" onclick="event.preventDefault();event.stopPropagation();location.href='/cinema/${f.id}'">Đặt vé</button>
     </a>`;
   }).join('');
 }
