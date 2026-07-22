@@ -510,6 +510,38 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .cta-block-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.5}
 .btn-white{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--gray-900);font-family:inherit;font-size:14px;font-weight:800;padding:13px 24px;border-radius:var(--r-md);border:none;cursor:pointer;transition:.15s;white-space:nowrap;text-decoration:none}
 .btn-white:hover{background:var(--gray-100)}
+/* brand-color CTA variant */
+.cta-brand{border-radius:var(--r-xl);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:48px}
+.cta-brand-btn{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-size:14px;font-weight:800;color:#fff;text-decoration:none;white-space:nowrap;transition:.15s;backdrop-filter:blur(4px)}
+.cta-brand-btn:hover{background:rgba(255,255,255,.28)}
+/* ── COMPARE WIDGET ── */
+.compare-wrap{background:var(--white);border:1.5px solid var(--gray-200);border-radius:20px;overflow:hidden}
+.compare-pick-bar{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
+.compare-a-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:800;color:#fff}
+.compare-vs-label{font-size:12px;font-weight:800;color:var(--gray-400);letter-spacing:.5px;flex-shrink:0}
+.compare-sel{flex:1;min-width:160px;max-width:220px;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:10px;font-size:13px;font-weight:700;color:var(--gray-700);background:var(--white);cursor:pointer;outline:none;font-family:inherit}
+.compare-sel:focus{border-color:var(--pink-400)}
+.compare-body{padding:0 20px 4px}
+.compare-col-heads{display:grid;grid-template-columns:130px 1fr 1fr;padding:12px 0 4px}
+.compare-col-head{text-align:center;font-size:11px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
+.compare-col-head:first-child{text-align:left}
+.compare-row{display:grid;grid-template-columns:130px 1fr 1fr;align-items:center;border-top:1px solid var(--gray-100);padding:9px 0}
+.compare-row-label{font-size:11.5px;color:var(--gray-500);font-weight:600}
+.compare-cell{text-align:center;font-size:13px;font-weight:700;color:var(--gray-700)}
+.compare-cell.win{color:#16a34a;font-weight:800}
+.compare-placeholder{padding:36px 20px;text-align:center;color:var(--gray-400);font-size:13px}
+/* sticky BH bar (model detail) */
+.sticky-bh-bar{position:fixed;bottom:0;left:0;right:0;z-index:300;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.12);backdrop-filter:blur(12px)}
+.sticky-bh-copy strong{font-size:14px;font-weight:800;color:#fff;display:block}
+.sticky-bh-copy span{font-size:11.5px;color:rgba(255,255,255,.6)}
+.sticky-bh-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:#fff;border-radius:10px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;flex-shrink:0}
+@media(max-width:480px){
+  .cta-brand{padding:20px 16px}
+  .compare-pick-bar{gap:10px;padding:14px 16px}
+  .compare-body{padding:0 14px 4px}
+  .compare-col-heads,.compare-row{grid-template-columns:100px 1fr 1fr}
+  .sticky-bh-bar{padding:10px 14px}
+}
 
 /* ── MODEL DETAIL PAGE ── */
 .md-hero{position:relative;background:linear-gradient(150deg,var(--mobase-ink) 0%,#111C33 55%,var(--mobase-ink-2) 100%);overflow:hidden;padding:44px 0 36px;color:#fff}
@@ -2146,6 +2178,39 @@ window.filterByType = function(typeId, btn) {
   }).join('') || '<div class="empty"><p>Không tìm thấy hãng xe có loại xe này</p></div>';
 };
 
+window.doCompare = function(idA, idB) {
+  if (!idB) { document.getElementById('compare-result').innerHTML = '<div class="compare-placeholder">← Chọn một hãng xe để xem bảng so sánh</div>'; return; }
+  const a = BRANDS[idA], bx = BRANDS[idB];
+  const sm = s => { const o={}; (s||[]).forEach(x=>o[x.label]=x.val); return o; };
+  const sa = sm(a.scores), sb = sm(bx.scores);
+  const aM = a.insight?.monthly||0, bM = bx.insight?.monthly||0;
+  const aG = a.garages?.length||0, bG = bx.garages?.length||0;
+  const fmtM = v => v ? `${(v/1000).toFixed(1).replace('.',',')}tr/tháng` : 'N/A';
+  const rows = [
+    { label:'Thực chi/tháng', a:fmtM(aM), b:fmtM(bM), win: aM&&bM ? (aM<bM?'a':aM>bM?'b':'') : '' },
+    { label:'Giữ giá',        a:sa['Giữ giá']||'—',     b:sb['Giữ giá']||'—',     win:'' },
+    { label:'Bảo dưỡng',      a:sa['Bảo dưỡng']||'—',   b:sb['Bảo dưỡng']||'—',   win:'' },
+    { label:'Phụ tùng',       a:sa['Phụ tùng']||'—',    b:sb['Phụ tùng']||'—',    win:'' },
+    { label:'Garage VN',      a:`${aG} điểm`,            b:`${bG} điểm`,            win:aG>bG?'a':aG<bG?'b':'' },
+    { label:'Số model',       a:`${a.models.length} model`, b:`${bx.models.length} model`, win:a.models.length>bx.models.length?'a':a.models.length<bx.models.length?'b':'' },
+    { label:'Nhiên liệu',     a:a.fuels.join(', '),      b:bx.fuels.join(', '),     win:'' },
+    { label:'Xuất xứ',        a:a.origin,                b:bx.origin,               win:'' },
+  ];
+  document.getElementById('compare-result').innerHTML = `
+    <div class="compare-body">
+      <div class="compare-col-heads">
+        <div class="compare-col-head"></div>
+        <div class="compare-col-head">${a.name}</div>
+        <div class="compare-col-head">${bx.name}</div>
+      </div>
+      ${rows.map(r=>`<div class="compare-row">
+        <div class="compare-row-label">${r.label}</div>
+        <div class="compare-cell${r.win==='a'?' win':''}">${r.a}</div>
+        <div class="compare-cell${r.win==='b'?' win':''}">${r.b}</div>
+      </div>`).join('')}
+    </div>`;
+};
+
 function getCityLabel(city) {
   const map = {
     'HCM': 'TP.HCM',
@@ -2359,6 +2424,7 @@ function renderDetail(id) {
             <a class="quick-pill" href="#chi-phi">Chi phí</a>
             <a class="quick-pill" href="#garage">Garage</a>
             <a class="quick-pill" href="#notes">Ghi chú</a>
+            <a class="quick-pill" href="#so-sanh">So sánh</a>
             <a class="quick-pill" href="#tin-tuc">Tin tức</a>
           </div>
         </div>
@@ -2579,7 +2645,34 @@ function renderDetail(id) {
         ${renderNews(id)}
       </div>
 
-      <!-- CTA -->
+      <!-- SO SÁNH HÃNG -->
+      <div class="d-section" id="so-sanh">
+        <div class="d-section-head">
+          <div class="eyebrow">So sánh hãng</div>
+          <div class="section-h">So sánh ${b.name} với hãng khác</div>
+          <div class="section-sub">Chọn hãng thứ hai để xem bảng so sánh chi phí, đánh giá và garage</div>
+        </div>
+        <div class="compare-wrap">
+          <div class="compare-pick-bar">
+            <div class="compare-a-pill" style="background:${b.color}">${brandMark(id,28,28,7,10)} ${b.name}</div>
+            <div class="compare-vs-label">VS</div>
+            <select class="compare-sel" onchange="doCompare('${id}',this.value)">
+              <option value="">Chọn hãng để so sánh...</option>
+              ${BRAND_LIST.filter(x=>x!==id).map(x=>`<option value="${x}">${BRANDS[x].name}</option>`).join('')}
+            </select>
+          </div>
+          <div id="compare-result"><div class="compare-placeholder">← Chọn một hãng xe để xem bảng so sánh</div></div>
+        </div>
+      </div>
+
+      <!-- CTA MUA BH -->
+      <div class="cta-brand" style="background:linear-gradient(135deg,${b.color} 0%,${b.color}bb 100%)">
+        <div class="cta-block-copy">
+          <div class="cta-block-title">Mua bảo hiểm ô tô cho xe ${b.name} trên MoMo</div>
+          <div class="cta-block-desc">So sánh từ 10+ nhà bảo hiểm · Phê duyệt trong 5 phút · Bồi thường nhanh qua app</div>
+        </div>
+        <a class="cta-brand-btn" href="/bao-hiem-o-to">${licon('Shield',16,2)} Xem gói BH ngay →</a>
+      </div>
     </div>`;
 }
 
@@ -3241,6 +3334,14 @@ function renderModelDetail(brandId, modelSlug) {
       </div>`;
   }
 
+  const stickyBar = `<div class="sticky-bh-bar" style="background:linear-gradient(90deg,${b.color} 0%,${b.color}cc 100%)">
+    <div class="sticky-bh-copy">
+      <strong>Mua BH cho ${b.name} ${m.name}</strong>
+      <span>So sánh 10+ nhà BH · Phê duyệt 5 phút</span>
+    </div>
+    <a class="sticky-bh-btn" href="/bao-hiem-o-to" style="color:${b.color}">${licon('Shield',14,2)} Xem ngay</a>
+  </div>`;
+
   document.getElementById('app').innerHTML = bc + hero + `
     <div class="wrap detail-body">
       ${costSection}
@@ -3253,7 +3354,7 @@ function renderModelDetail(brandId, modelSlug) {
       ${compareSection}
       ${noteSection}
       ${otherModelsSection}
-    </div>`;
+    </div>` + stickyBar;
   initModelDetailMotion();
   // Init ownership calc with default km
   setTimeout(() => calcOC(1500, document.getElementById('oc-km-slider')), 0);
