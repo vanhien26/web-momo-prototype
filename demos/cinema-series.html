@@ -748,6 +748,7 @@ const MOCK_CATALOG = {
   1396: {
     id: 1396, name: 'Breaking Bad', original_name: 'Breaking Bad',
     tagline: 'All Hail the King.',
+    color_palette: ['rgba(180,120,0,.55)', 'rgba(40,80,20,.35)', 'rgba(80,50,10,.25)', '#0F0C01 0%, #060A02 60%, #080807 100%'],
     overview: 'Walter White — giáo viên hóa học mắc ung thư phổi giai đoạn cuối — bắt tay với học trò cũ Jesse Pinkman sản xuất methamphetamine để lo tài chính cho gia đình. Từ người đàn ông bình thường, ông biến thành kẻ tội phạm nguy hiểm nhất Albuquerque.',
     poster_path: '/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
     backdrop_path: '/9faGSFi5jam6pDWGNd0p8JcJgXQ.jpg',
@@ -783,6 +784,7 @@ const MOCK_CATALOG = {
   94997: {
     id: 94997, name: 'House of the Dragon', original_name: 'House of the Dragon',
     tagline: 'Fire will reign.',
+    color_palette: ['rgba(180,40,0,.6)', 'rgba(80,20,0,.3)', 'rgba(120,60,0,.25)', '#1A0200 0%, #0C0100 60%, #0A0300 100%'],
     overview: 'Câu chuyện về dòng họ Targaryen — 200 năm trước sự kiện Game of Thrones. Cuộc nội chiến khốc liệt giữa các phe phái tranh giành Ngai vàng sắt, với những con rồng hùng mạnh và tham vọng quyền lực không hồi kết.',
     poster_path: '/z2yahl2uefxDCl0nogcRBstwruJ.jpg',
     backdrop_path: '/suopoADq0k8YZr4yLaOiblpS4h.jpg',
@@ -811,6 +813,7 @@ const MOCK_CATALOG = {
   66732: {
     id: 66732, name: 'Stranger Things', original_name: 'Stranger Things',
     tagline: 'Every ending has a beginning.',
+    color_palette: ['rgba(20,40,160,.55)', 'rgba(140,0,180,.3)', 'rgba(0,20,80,.25)', '#020410 0%, #01020C 60%, #040208 100%'],
     overview: 'Khi cậu bé Will Byers mất tích bí ẩn tại Hawkins, Indiana, nhóm bạn Mike, Dustin, Lucas khám phá ra bí mật đen tối của chính phủ và sinh vật từ chiều không gian khác — Upside Down. Một cô gái với năng lực siêu nhiên xuất hiện và thay đổi mọi thứ.',
     poster_path: '/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',
     backdrop_path: '/rcA35Vs6Cs1bl5K3VFbS0J7p7Hx.jpg',
@@ -868,6 +871,7 @@ const MOCK_CATALOG = {
   63174: {
     id: 63174, name: 'Succession', original_name: 'Succession',
     tagline: 'More. More. More.',
+    color_palette: ['rgba(80,60,20,.5)', 'rgba(20,30,60,.35)', 'rgba(40,20,0,.25)', '#0A0800 0%, #060508 60%, #08070A 100%'],
     overview: 'Gia đình Roy — chủ sở hữu tập đoàn truyền thông toàn cầu Waystar RoyCo — đấu đá nội bộ không ngừng khi cha Logan Roy đứng trước quyết định chuyển giao quyền lực. Mỗi thành viên đều muốn là người kế vị, nhưng không ai hoàn toàn đáng tin.',
     poster_path: '/7HW47XbkNQ5fiwQFYGWdw9gs144.jpg',
     backdrop_path: '/bkI2GJmA3jCWCzxhpXH4LBcCpMn.jpg',
@@ -1062,7 +1066,11 @@ const seasonCache = {};
 
 async function loadSeason(seriesId, seasonNum) {
   if (seasonCache[seasonNum]) return seasonCache[seasonNum];
-  if (!(TMDB.USE_REAL && TMDB.KEY)) return cloneSeries(FALLBACK_SEASONS[seasonNum] || null);
+  // Only use FALLBACK_SEASONS for The Last of Us (id 100088), otherwise show empty
+  if (!(TMDB.USE_REAL && TMDB.KEY)) {
+    const isTLOU = seriesId === 100088;
+    return cloneSeries((isTLOU && FALLBACK_SEASONS[seasonNum]) || null);
+  }
 
   try {
     const data = await tmdbFetch(`/tv/${seriesId}/season/${seasonNum}`, { language: 'vi-VN' });
@@ -1179,18 +1187,21 @@ function icon(name, sz = 16) {
 function renderHero(s) {
   const heroBg = document.getElementById('hero-bg');
   const backdropPath = s.hero_backdrop_path || s.backdrop_path;
-  if (backdropPath) {
-    // Real TMDB backdrop (16:9 image) when available
+  const isFullUrl = backdropPath && (backdropPath.startsWith('http://') || backdropPath.startsWith('https://'));
+  if (isFullUrl) {
     heroBg.classList.add('has-backdrop');
-    heroBg.innerHTML = `<img src="${tImg(backdropPath,'original')}" alt="">`;
+    heroBg.innerHTML = `<img src="${backdropPath}" alt="">`;
   } else {
-    // CSS gradient backdrop — palette pulled from series color identity
-    // TLOU: burnt amber / ash teal / near-black
+    // CSS gradient per series — palette defined in MOCK_CATALOG or FALLBACK_SERIES
+    const p = s.color_palette || [
+      'rgba(120,68,22,.58)', 'rgba(28,72,58,.38)', 'rgba(80,40,10,.25)',
+      '#1C0F04 0%, #080810 60%, #060A0D 100%',
+    ];
     heroBg.style.background = [
-      'radial-gradient(ellipse 110% 70% at 65% 15%, rgba(120,68,22,.58) 0%, transparent 55%)',
-      'radial-gradient(ellipse 70% 55% at 15% 75%, rgba(28,72,58,.38) 0%, transparent 55%)',
-      'radial-gradient(ellipse 50% 40% at 85% 80%, rgba(80,40,10,.25) 0%, transparent 50%)',
-      'linear-gradient(160deg, #1C0F04 0%, #080810 60%, #060A0D 100%)',
+      `radial-gradient(ellipse 110% 70% at 65% 15%, ${p[0]} 0%, transparent 55%)`,
+      `radial-gradient(ellipse 70% 55% at 15% 75%, ${p[1]} 0%, transparent 55%)`,
+      `radial-gradient(ellipse 50% 40% at 85% 80%, ${p[2]} 0%, transparent 50%)`,
+      `linear-gradient(160deg, ${p[3]})`,
     ].join(',');
   }
   const pi = document.getElementById('poster-img');
