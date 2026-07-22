@@ -27,6 +27,33 @@
   .mbn-item svg{display:block}
   body{padding-bottom:72px}
   .nav-lab-link{display:none!important}
+  .nav-inner{
+    height:auto;
+    padding:10px 16px 12px;
+    gap:8px 10px;
+    flex-wrap:wrap;
+    align-items:flex-start;
+  }
+  .nav-logo{flex-shrink:0}
+  .nav-search{display:none}
+  .nav-right{display:none}
+  .nav-links{
+    display:flex;
+    width:100%;
+    gap:6px;
+    overflow-x:auto;
+    padding-top:2px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-link{
+    flex-shrink:0;
+    padding:6px 12px;
+    font-size:12px;
+    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.04);
+  }
   .breadcrumb-bar{display:none}
   .bo-hd>span{display:none}
   .bo-hd{text-transform:none;font-size:13px}
@@ -125,12 +152,49 @@ body::after {
 .nav-link.on { background: var(--pink-50); color: var(--pink-500); }
 .nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 .nav-search {
+  position: relative;
   display: flex; align-items: center; gap: 8px;
   background: var(--gray-100); border: 1px solid var(--gray-200);
   border-radius: var(--r-sm); padding: 8px 14px; flex: 1; max-width: 260px;
+  transition: border-color .15s, box-shadow .15s;
 }
+.nav-search.focused { border-color: var(--pink-500); box-shadow: 0 0 0 3px rgba(235,47,150,.1); background: #fff; }
 .nav-search input { background: none; border: none; outline: none; color: var(--gray-900); font-family: 'MoMoTrustSans', inherit; font-size: 13px; width: 100%; }
 .nav-search input::placeholder { color: var(--gray-400); }
+/* Search dropdown */
+.search-dropdown {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: #fff; border: 1px solid var(--gray-200); border-radius: var(--r-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12); z-index: 999; max-height: 420px; overflow-y: auto;
+  min-width: 320px;
+}
+.search-dropdown.open { display: block; }
+.sd-group-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--gray-400); padding: 10px 14px 4px; border-top: 1px solid var(--gray-100);
+}
+.sd-group-label:first-child { border-top: none; }
+.sd-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px; cursor: pointer; transition: background .1s;
+  text-decoration: none; color: inherit;
+}
+.sd-item:hover, .sd-item.active { background: var(--gray-50); }
+.sd-poster {
+  width: 32px; height: 46px; border-radius: 4px; object-fit: cover; flex-shrink: 0;
+  background: var(--gray-100);
+}
+.sd-icon-wrap {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--gray-100);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-500);
+}
+.sd-info { flex: 1; min-width: 0; }
+.sd-title { font-size: 13px; font-weight: 600; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sd-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.sd-badge { font-size: 10px; font-weight: 700; background: var(--pink-50); color: var(--pink-500); border-radius: 4px; padding: 1px 5px; }
+.sd-rating { display: flex; align-items: center; gap: 3px; color: #f59e0b; font-weight: 700; font-size: 11px; }
+.sd-empty { padding: 24px 14px; text-align: center; font-size: 13px; color: var(--gray-400); }
+.sd-shortcut { font-size: 11px; color: var(--gray-400); background: var(--gray-100); border-radius: 4px; padding: 2px 6px; white-space: nowrap; }
 .nav-city {
   font-size: 13px; font-weight: 600; color: var(--gray-700);
   display: flex; align-items: center; gap: 5px;
@@ -780,9 +844,14 @@ body::after {
       <button class="nav-link" onclick="window.location.href='/cinema/genres'">Thể loại</button>
       <button class="nav-link" onclick="window.location.href='/cinema/series'">TV Series</button>
     </div>
-    <div class="nav-search">
-      <i data-lucide="search" width="14" height="14" stroke-width="2"></i>
-      <input type="text" placeholder="Tìm phim, rạp, thể loại...">
+    <div class="nav-search" id="navSearch">
+      <i data-lucide="search" width="14" height="14" stroke-width="2" style="flex-shrink:0;color:var(--gray-400)"></i>
+      <input type="text" id="searchInput" placeholder="Tìm phim, rạp..." autocomplete="off"
+        oninput="onSearchInput(this.value)"
+        onfocus="onSearchFocus()"
+        onkeydown="onSearchKey(event)">
+      <span class="sd-shortcut" id="searchKbd">⌘K</span>
+      <div class="search-dropdown" id="searchDropdown"></div>
     </div>
     <div class="nav-right"></div>
   </div>
@@ -1635,6 +1704,119 @@ renderHeroPosters(); renderBoxOffice(); renderNearbyDateStrip(); renderGenreTabs
 renderSeriesRow(); renderGenreGrid();
 try { renderMissions(); } catch(e) {}
 lucide.createIcons();
+
+// ─── Inline Search ───────────────────────────────────────────────────────────
+let _sdActive = -1;
+
+function buildSearchIndex() {
+  const items = [];
+  FILMS_NOW.forEach(f => items.push({ type:'now', title:f.title, img:f.img, meta:f.genre+' · '+f.dur, age:f.age, rating:f.rating, href:'/cinema/'+slugify(f.title) }));
+  FILMS_SOON.forEach(f => items.push({ type:'soon', title:f.title, img:f.img, meta:f.genre, date:f.date, href:'/cinema/'+slugify(f.title) }));
+  CINEMAS.forEach(c => items.push({ type:'cinema', name:c.name, addr:c.addr, chain:c.chain, href:'/cinema/'+c.chain }));
+  return items;
+}
+function slugify(s){ return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
+const _searchIndex = buildSearchIndex();
+
+function matchScore(item, q) {
+  const lq = q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');
+  const src = ((item.title||item.name)+'|'+(item.meta||item.addr||'')).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');
+  if (src.includes(lq)) return src.indexOf(lq) === 0 ? 2 : 1;
+  return 0;
+}
+
+function onSearchInput(val) {
+  _sdActive = -1;
+  const dd = document.getElementById('searchDropdown');
+  const kbd = document.getElementById('searchKbd');
+  if (!val || val.trim().length < 1) { dd.classList.remove('open'); dd.innerHTML=''; kbd.style.display=''; return; }
+  kbd.style.display = 'none';
+  const q = val.trim();
+  const scored = _searchIndex.map(item => ({ item, score: matchScore(item, q) })).filter(x => x.score > 0).sort((a,b) => b.score - a.score);
+  if (!scored.length) { dd.innerHTML = `<div class="sd-empty">Không tìm thấy kết quả cho "<b>${q}</b>"</div>`; dd.classList.add('open'); return; }
+  const nowFilms = scored.filter(x=>x.item.type==='now').slice(0,4);
+  const soonFilms = scored.filter(x=>x.item.type==='soon').slice(0,3);
+  const cinemas = scored.filter(x=>x.item.type==='cinema').slice(0,3);
+  let html = '';
+  if (nowFilms.length) {
+    html += `<div class="sd-group-label">Đang chiếu</div>`;
+    html += nowFilms.map(({item:f}) => `
+      <a class="sd-item" href="${f.href}">
+        <img class="sd-poster" src="${f.img}" onerror="this.style.display='none'">
+        <div class="sd-info">
+          <div class="sd-title">${f.title}</div>
+          <div class="sd-meta">
+            <span class="sd-rating"><svg width="10" height="10" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${f.rating}</span>
+            <span>${f.meta}</span>
+            <span class="sd-badge">${f.age}</span>
+          </div>
+        </div>
+      </a>`).join('');
+  }
+  if (soonFilms.length) {
+    html += `<div class="sd-group-label">Sắp chiếu</div>`;
+    html += soonFilms.map(({item:f}) => `
+      <a class="sd-item" href="${f.href}">
+        <img class="sd-poster" src="${f.img}" onerror="this.style.display='none'">
+        <div class="sd-info">
+          <div class="sd-title">${f.title}</div>
+          <div class="sd-meta"><span>${f.meta}</span><span>· ${f.date}</span></div>
+        </div>
+      </a>`).join('');
+  }
+  if (cinemas.length) {
+    html += `<div class="sd-group-label">Rạp chiếu</div>`;
+    html += cinemas.map(({item:c}) => `
+      <a class="sd-item" href="${c.href}">
+        <div class="sd-icon-wrap"><i data-lucide="map-pin" width="14" height="14"></i></div>
+        <div class="sd-info">
+          <div class="sd-title">${c.name}</div>
+          <div class="sd-meta">${c.addr}</div>
+        </div>
+      </a>`).join('');
+  }
+  dd.innerHTML = html;
+  dd.classList.add('open');
+  lucide.createIcons();
+}
+
+function onSearchFocus() {
+  document.getElementById('navSearch').classList.add('focused');
+  const val = document.getElementById('searchInput').value;
+  if (val.length >= 1) document.getElementById('searchDropdown').classList.add('open');
+}
+
+function onSearchKey(e) {
+  const dd = document.getElementById('searchDropdown');
+  const items = dd.querySelectorAll('.sd-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); _sdActive = Math.min(_sdActive+1, items.length-1); highlightSd(items); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); _sdActive = Math.max(_sdActive-1, -1); highlightSd(items); }
+  else if (e.key === 'Enter' && _sdActive >= 0) { e.preventDefault(); items[_sdActive].click(); }
+  else if (e.key === 'Escape') { closeSearch(); }
+}
+
+function highlightSd(items) {
+  items.forEach((el,i) => el.classList.toggle('active', i===_sdActive));
+  if (_sdActive >= 0) items[_sdActive].scrollIntoView({ block:'nearest' });
+}
+
+function closeSearch() {
+  document.getElementById('navSearch').classList.remove('focused');
+  document.getElementById('searchDropdown').classList.remove('open');
+  document.getElementById('searchKbd').style.display = '';
+  _sdActive = -1;
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('navSearch').contains(e.target)) closeSearch();
+});
+
+// ⌘K / Ctrl+K shortcut
+document.addEventListener('keydown', e => {
+  if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); document.getElementById('searchInput').focus(); onSearchFocus(); }
+});
 
 // Drag-to-scroll for film grid
 (function(){
