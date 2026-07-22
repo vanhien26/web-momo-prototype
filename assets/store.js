@@ -60,6 +60,19 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'hang-xe-may',
+    name: 'Hãng Xe Máy',
+    category: 'Platform',
+    ownerGroup: 'Tiện ích Giao Thông',
+    maturity: 'Hub',
+    description: 'Hub hãng xe máy: 8 thương hiệu chính tại VN, dòng xe chủ lực, chi phí BH xe máy bắt buộc + tự nguyện, mạng lưới garage/đại lý, FAQ theo từng hãng.',
+    jtbd: 'Tra cứu thông tin xe máy và mua BH xe máy nhanh theo đúng dòng xe đang sở hữu',
+    northStar: 'BH xe máy checkout rate từ brand/model detail',
+    loop: 'Chọn hãng → Chọn dòng xe → Xem chi phí BH → Mua BH',
+    src: 'demos/hang-xe-may.html',
+    address: 'web-momo-prototype.vercel.app/hang-xe-may',
+  },
+  {
     id: 'bao-hiem-o-to',
     name: 'Bảo Hiểm Ô Tô',
     category: 'Platform',
@@ -1221,7 +1234,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: ['momo-service-icons', 'worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
 };
 

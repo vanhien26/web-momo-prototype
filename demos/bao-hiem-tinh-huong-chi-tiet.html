@@ -185,7 +185,7 @@
     </a>
     <nav class="bh-nav">
       <a class="bh-nav-link" href="bao-hiem-o-to.html">Báo giá</a>
-      <a class="bh-nav-link active" href="bao-hiem-tinh-huong-chi-tiet.html">Tình huống</a>
+      <a class="bh-nav-link active" href="/bao-hiem-o-to/tinh-huong">Tình huống</a>
       <a class="bh-nav-link" href="bao-hiem-o-to.html#faq">Hỏi đáp</a>
     </nav>
     <div style="display:flex;align-items:center;gap:12px">
@@ -198,11 +198,11 @@
 <!-- ── Breadcrumb ── -->
 <div class="bh-breadcrumb-bar">
   <div class="shell bh-bc-inner">
-    <a class="bh-bc-btn" href="bao-hiem-o-to.html">
+    <a class="bh-bc-btn" href="/bao-hiem-o-to">
       <span id="bc-home-icon"></span> Bảo hiểm Ô Tô
     </a>
     <span class="bh-bc-sep">›</span>
-    <a class="bh-bc-btn" href="bao-hiem-tinh-huong-chi-tiet.html">Tình huống</a>
+    <a class="bh-bc-btn" href="/bao-hiem-o-to/tinh-huong">Tình huống</a>
     <span class="bh-bc-sep" id="bc-sep2" style="display:none">›</span>
     <span class="bh-bc-current" id="bc-current" style="display:none"></span>
   </div>
@@ -244,6 +244,8 @@ function licon(name, size=20, sw=1.75, cls='') {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"${cls?' class="'+cls+'"':''}>${children}</svg>`;
 }
 const SIT_ICONS = { collision:'Zap', thuykick:'Waves', fire:'Flame', theft:'LockOpen', parttheft:'Wrench', natural:'CloudLightning', glass:'PanelTop', parked:'Car' };
+const SLUG_TO_ID = { 'va-cham-tai-nan':'collision', 'thuy-kich-nuoc-vao-may':'thuykick', 'chay-no-xe':'fire', 'mat-cap-toan-bo-xe':'theft', 'mat-cap-bo-phan':'parttheft', 'thien-tai-bao-lu':'natural', 'vo-kinh':'glass', 'xe-do-bi-va-xay-xuoc':'parked' };
+const ID_TO_SLUG = { collision:'va-cham-tai-nan', thuykick:'thuy-kich-nuoc-vao-may', fire:'chay-no-xe', theft:'mat-cap-toan-bo-xe', parttheft:'mat-cap-bo-phan', natural:'thien-tai-bao-lu', glass:'vo-kinh', parked:'xe-do-bi-va-xay-xuoc' };
 const STEP_ICONS = { '📸':'Camera','📞':'Phone','📋':'ClipboardList','🔍':'Search','🔧':'Wrench','💰':'Banknote','🚫':'Ban','🚗':'Car','🔒':'Lock','🚔':'ShieldAlert','📄':'FileText','📊':'BarChart2','🚒':'Truck','📹':'Video','✅':'CheckCircle','⚠️':'AlertTriangle','🪟':'RectangleHorizontal' };
 function sitIcon(id, size=36) { return licon(SIT_ICONS[id]||'Shield', size, 1.5); }
 function stepIcon(emoji, size=15) { return licon(STEP_ICONS[emoji]||'Circle', size, 2); }
@@ -545,8 +547,8 @@ function getCarValue(brandId, model, variant, year) {
 
 /* ── Render ── */
 function renderPage() {
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id');
+  const pathSlug = location.pathname.split('/').pop();
+  const id = SLUG_TO_ID[pathSlug] || null;
   const main = document.getElementById('main-content');
 
   if (!id) {
@@ -561,7 +563,7 @@ function renderPage() {
   const s = SITUATIONS.find(x => x.id === id);
   const d = SIT_DETAIL[id];
   if (!s || !d) {
-    main.innerHTML = `<div class="error-page"><h2>Không tìm thấy tình huống</h2><p>Tình huống "${id}" không tồn tại.</p><a href="bao-hiem-tinh-huong-chi-tiet.html" class="btn btn-primary">Xem tất cả tình huống</a></div>`;
+    main.innerHTML = `<div class="error-page"><h2>Không tìm thấy tình huống</h2><p>Tình huống "${id}" không tồn tại.</p><a href="/bao-hiem-o-to/tinh-huong" class="btn btn-primary">Xem tất cả tình huống</a></div>`;
     return;
   }
 
@@ -727,7 +729,7 @@ function renderPage() {
 function renderSituationList() {
   const cards = SITUATIONS.map(s => {
     const badgeCls = s.baseCover ? 'green' : 'amber';
-    return `<a href="?id=${s.id}" style="display:block;padding:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;text-decoration:none;transition:.15s" onmouseenter="this.style.borderColor='var(--pink)'" onmouseleave="this.style.borderColor='var(--line)'">
+    return `<a href="/bao-hiem-o-to/tinh-huong/${ID_TO_SLUG[s.id]||s.id}" style="display:block;padding:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;text-decoration:none;transition:.15s" onmouseenter="this.style.borderColor='var(--pink)'" onmouseleave="this.style.borderColor='var(--line)'">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
         <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--pink-bg);border:1.5px solid var(--pink-light);border-radius:12px;color:var(--pink);flex-shrink:0">${sitIcon(s.id, 26)}</div>
         <span class="sit-badge ${badgeCls}">${s.badge}</span>

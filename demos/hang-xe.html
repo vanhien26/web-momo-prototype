@@ -24,7 +24,7 @@
   --red-50:#FEF2F2;--red-500:#DC2626;
   --shadow-s:0 1px 3px rgba(28,23,26,.08),0 1px 2px rgba(28,23,26,.06);
   --shadow-m:0 4px 12px rgba(28,23,26,.1),0 2px 4px rgba(28,23,26,.06);
-  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--content:1040px;
+  --r-sm:4px;--r-md:8px;--r-lg:10px;--r-xl:12px;--content:1040px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{background:var(--bg);scroll-behavior:smooth;overflow-x:clip}
@@ -116,7 +116,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 
 /* ── BRAND CARDS GRID ── */
 .brand-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:56px}
-.brand-card{background:var(--white);border:1.5px solid var(--gray-100);border-radius:20px;overflow:hidden;display:block;transition:.22s cubic-bezier(.2,.8,.2,1);position:relative;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.brand-card{background:var(--white);border:1.5px solid var(--gray-100);border-radius:10px;overflow:hidden;display:block;transition:.22s cubic-bezier(.2,.8,.2,1);position:relative;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .brand-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.11);border-color:transparent;transform:translateY(-3px)}
 .brand-card-visual{position:relative;height:86px;overflow:hidden}
 .brand-card-car-bg{position:absolute;bottom:-6px;right:-10px;width:130px;opacity:.28;pointer-events:none;filter:saturate(.7)}
@@ -515,7 +515,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .cta-brand-btn{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-size:14px;font-weight:800;color:#fff;text-decoration:none;white-space:nowrap;transition:.15s;backdrop-filter:blur(4px)}
 .cta-brand-btn:hover{background:rgba(255,255,255,.28)}
 /* ── COMPARE WIDGET ── */
-.compare-wrap{background:var(--white);border:1.5px solid var(--gray-200);border-radius:20px;overflow:hidden}
+.compare-wrap{background:var(--white);border:1.5px solid var(--gray-200);border-radius:10px;overflow:hidden}
 .compare-pick-bar{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
 .compare-a-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:800;color:#fff}
 .compare-vs-label{font-size:12px;font-weight:800;color:var(--gray-400);letter-spacing:.5px;flex-shrink:0}
@@ -2477,10 +2477,11 @@ function renderDetail(id) {
   const firstM = b.models[0];
 
   // Scenarios
+  const SIT_SLUG = { collision:'va-cham-tai-nan', thuykick:'thuy-kich-nuoc-vao-may', fire:'chay-no-xe', theft:'mat-cap-toan-bo-xe', parttheft:'mat-cap-bo-phan', natural:'thien-tai-bao-lu', glass:'vo-kinh', parked:'xe-do-bi-va-xay-xuoc' };
   const scCards = b.scenarios.map(sid => {
     const sc = SCENARIOS[sid];
     if (!sc) return '';
-    return `<a class="scenario-card" href="/bao-hiem-tinh-huong-chi-tiet?id=${sid}">
+    return `<a class="scenario-card" href="/bao-hiem-o-to/tinh-huong/${SIT_SLUG[sid]||sid}">
       <div class="scenario-icon">${licon(sc.icon,20,2)}</div>
       <div class="scenario-name">${sc.name}</div>
       <div class="scenario-short">${sc.short}</div>
@@ -2545,15 +2546,7 @@ function renderDetail(id) {
         </div>
         <div class="model-grid">${modelCards}</div>
         ${(() => {
-          const sluggedModels = b.models.filter(m => m.slug);
-          if (!sluggedModels.length) return '';
-          const chips = sluggedModels.map(m =>
-            `<a class="maint-chip" href="/bao-duong/${id}/${m.slug}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83"/></svg>
-              ${m.name}
-            </a>`
-          ).join('');
-          return `<div class="maint-row"><span class="maint-row-label">${licon('Wrench',13,2.2)} Lịch bảo dưỡng:</span>${chips}</div>`;
+          return '';
         })()}
       </div>
 

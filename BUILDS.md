@@ -560,3 +560,22 @@ Tách section `#cuu-ho` trong vehicle-hub.html thành trang đầy đủ tại `
 
 ### Lessons
 - Section trong model page dùng scroll-reveal (class `rv`) - screenshot verify phải scroll để trigger IntersectionObserver.
+
+## Hãng Xe Máy — 2026-07-22
+
+**ID:** `hang-xe-may` | **Category:** Platform | **File:** `demos/hang-xe-may.html`
+
+### Brief
+Hub hãng xe máy cho trang Vehicle Hub - 8 thương hiệu chính VN (Honda, Yamaha, Suzuki, Kawasaki, SYM, Piaggio, Kymco, VinFast), gắn với sản phẩm BH xe máy của MoMo.
+
+### Decisions made
+- Clone structure 3-state từ hang-xe (Listing → Brand → Model): đồng nhất UX trong Vehicle Hub
+- BH xe máy sidebar hiện cả BH bắt buộc (66k/năm) + tự nguyện range - phân biệt rõ 2 loại
+- Sticky bar ở model detail dùng brand color để reinforce conversion intent
+- bikeSVG() helper render inline SVG theo type (so/tayga/con/dien) thay vì dùng emoji/icon
+
+### Issues gặp phải
+- Không có issue đáng kể - pattern đã được establish từ hang-xe
+
+### Lessons
+- Reuse 3-state URL pattern (listing/:brand/:model) hoạt động tốt, nên apply cho mọi hub loại tương tự
