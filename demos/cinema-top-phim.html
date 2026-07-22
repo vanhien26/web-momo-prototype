@@ -59,23 +59,15 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
 .col-icon.purple{background:#f3e8ff;color:#9333ea}
 .col-icon.sky{background:#e0f2fe;color:#0284c7}
 
-/* COUNTRY CARD — riêng cho Theo Quốc Gia */
-.cc{display:flex;align-items:center;gap:0;text-decoration:none;color:inherit;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r-xl);overflow:hidden;transition:box-shadow .18s,transform .15s;box-shadow:var(--shadow-s)}
-.cc:hover{box-shadow:var(--shadow-m);transform:translateY(-2px)}
-.cc-posters{display:flex;flex-shrink:0;width:96px;height:80px;position:relative;overflow:hidden;background:var(--gray-100)}
-.cc-poster{position:absolute;top:0;height:100%;object-fit:cover;border-radius:0}
-.cc-poster:nth-child(1){left:0;width:52px;z-index:3}
-.cc-poster:nth-child(2){left:34px;width:44px;z-index:2;opacity:.85}
-.cc-poster:nth-child(3){left:58px;width:38px;z-index:1;opacity:.6}
-.cc-body{flex:1;min-width:0;padding:12px 14px 12px 10px;display:flex;flex-direction:column;gap:3px}
-.cc-top{display:flex;align-items:center;gap:8px}
-.cc-flag{font-size:20px;line-height:1;flex-shrink:0}
-.cc-name{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--gray-900)}
-.cc-desc{font-size:11px;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cc-count{font-size:10px;font-weight:700;color:var(--pink);margin-top:2px}
-.cc-arrow{color:var(--gray-300);flex-shrink:0;margin-left:auto;transition:.15s}
+/* COUNTRY GRID — Theo Quốc Gia */
+.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;background:var(--gray-200);border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--gray-200)}
+.cc{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;text-decoration:none;color:inherit;background:var(--white);transition:background .13s}
+.cc:hover{background:var(--gray-50)}
+.cc-left{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cc-name{font-size:14px;font-weight:800;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-desc{font-size:11px;color:var(--gray-400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-arrow{color:var(--gray-300);flex-shrink:0;transition:color .13s,transform .13s}
 .cc:hover .cc-arrow{color:var(--pink);transform:translateX(2px)}
-.cc-poster-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--gray-100),var(--gray-200))}
 
 @media(max-width:600px){.col-grid{grid-template-columns:1fr}body{padding-bottom:72px}}
 .mobile-bnav{display:none}
@@ -305,22 +297,12 @@ function getTop3(filter){ return applyFilter(FILMS,filter).slice(0,3); }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
 function renderCountryCard(c) {
-  const top3 = getTop3(c.filter);
-  const postersHtml = top3.length
-    ? top3.map(f => `<img class="cc-poster" src="${f.img}" alt="${f.title}" onerror="this.style.display='none'">`).join('')
-    : `<div class="cc-poster-placeholder"></div>`;
-  const count = applyFilter(FILMS, c.filter).length;
   return `<a class="cc" href="/cinema/top-phim/${c.slug}">
-    <div class="cc-posters">${postersHtml}</div>
-    <div class="cc-body">
-      <div class="cc-top">
-        <span class="cc-flag">${c.icon}</span>
-        <span class="cc-name">${c.name.replace('Top Phim ','')}</span>
-        <svg class="cc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
+    <div class="cc-left">
+      <div class="cc-name">${c.name.replace('Top Phim ','')}</div>
       <div class="cc-desc">${c.desc}</div>
-      ${count ? `<div class="cc-count">${count} phim</div>` : ''}
     </div>
+    <svg class="cc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
   </a>`;
 }
 
@@ -343,11 +325,14 @@ function renderCard(c){
   </a>`;
 }
 
-document.getElementById('main').innerHTML = SECTIONS.map(s=>`
-  <div>
+document.getElementById('main').innerHTML = SECTIONS.map(s=>{
+  const isCountry = s.collections.every(c => c.iconCls === 'emoji');
+  const gridCls = isCountry ? 'country-grid' : 'col-grid';
+  return `<div>
     <div class="section-label">${s.label}</div>
-    <div class="col-grid">${s.collections.map(renderCard).join('')}</div>
-  </div>`).join('');
+    <div class="${gridCls}">${s.collections.map(renderCard).join('')}</div>
+  </div>`;
+}).join('');
 
 lucide.createIcons();
 </script>
