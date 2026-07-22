@@ -1116,7 +1116,7 @@ function displayGroupName(groupName) {
   return GROUP_LABEL[groupName] || groupName;
 }
 
-const GROUP_ORDER = ['MiniWeb', 'MoSpark', 'Widget', 'Platform', 'Other'];
+const GROUP_ORDER = ['MiniWeb', 'Platform', 'Widget', 'MoSpark', 'Other'];
 const GROUP_DOT_COLORS = {
   MiniWeb: '#60a5fa', MoSpark: '#f472b6', Widget: '#34d399', Platform: '#fb923c', Other: '#9ca3af',
 };
