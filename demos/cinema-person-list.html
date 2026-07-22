@@ -96,6 +96,13 @@ body{font-family:'Be Vietnam Pro','Helvetica Neue',sans-serif;background:var(--g
   .page-title{font-size:22px}
   .person-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 }
+.pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;padding-bottom:8px}
+.pg-nums{display:flex;gap:4px}
+.pg-n{font-family:inherit;font-size:13px;font-weight:700;width:34px;height:34px;border-radius:8px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+.pg-n:hover{background:var(--gray-100)}.pg-n.on{background:var(--gray-900);color:#fff;border-color:var(--gray-900)}
+.pg-btn{font-family:inherit;font-size:13px;font-weight:700;padding:6px 14px;border-radius:8px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px}
+.pg-btn:hover:not(:disabled){background:var(--gray-100)}.pg-btn:disabled{opacity:.3;cursor:default}
+.pg-ellipsis{padding:0 2px;color:var(--gray-400);font-size:13px;display:flex;align-items:center}
 </style>
 </head>
 <body>
@@ -257,11 +264,13 @@ function filtered() {
 function renderFilters() {
   const list = filtered();
   document.getElementById('filterTabs').innerHTML =
-    FILTERS.map(f => `<button class="ftab${f===active?' on':''}" onclick="setFilter('${f}')">${f}</button>`).join('') +
-    `<span class="filter-count">${list.length} người</span>`;
+    FILTERS.map(f => `<button class="ftab${f===active?' on':''}" onclick="setFilter('${f}')">${f}</button>`).join('');
 }
 
-function setFilter(f) { active = f; renderFilters(); renderGrid(); }
+function setFilter(f) { active = f; page = 1; renderFilters(); renderGrid(); }
+
+const PAGE_SIZE = 12;
+let page = 1;
 
 function roleChips(roles) {
   const chips = [];
@@ -282,26 +291,49 @@ function photoEl(p) {
 
 function renderGrid() {
   const list = filtered();
-  if (!list.length) {
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  page = Math.min(page, totalPages);
+  const pageItems = list.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+
+  if (!total) {
     document.getElementById('personGrid').innerHTML =
       `<div class="empty-state"><i data-lucide="users" width="36" height="36" stroke-width="1.5"></i><span>Không tìm thấy</span></div>`;
     lucide.createIcons();
     return;
   }
+
+  let pagerHtml = '';
+  if (totalPages > 1) {
+    const maxVis = 5;
+    let pgS = Math.max(1, page-2), pgE = Math.min(totalPages, pgS+maxVis-1);
+    if (pgE-pgS < maxVis-1) pgS = Math.max(1, pgE-maxVis+1);
+    let nums = '';
+    if (pgS > 1) nums += `<button class="pg-n" onclick="goPage(1)">1</button>${pgS>2?'<span class="pg-ellipsis">…</span>':''}`;
+    for (let i=pgS; i<=pgE; i++) nums += `<button class="pg-n${i===page?' on':''}" onclick="goPage(${i})">${i}</button>`;
+    if (pgE < totalPages) nums += `${pgE<totalPages-1?'<span class="pg-ellipsis">…</span>':''}<button class="pg-n" onclick="goPage(${totalPages})">${totalPages}</button>`;
+    pagerHtml = `<div class="pager">
+      <button class="pg-btn" onclick="goPage(${page-1})" ${page===1?'disabled':''}><i data-lucide="chevron-left" width="14" height="14"></i> Trước</button>
+      <div class="pg-nums">${nums}</div>
+      <button class="pg-btn" onclick="goPage(${page+1})" ${page===totalPages?'disabled':''}>Sau <i data-lucide="chevron-right" width="14" height="14"></i></button>
+    </div>`;
+  }
+
   document.getElementById('personGrid').innerHTML =
-    `<div class="person-grid">${list.map(p => `
+    `<div class="person-grid">${pageItems.map(p => `
       <a class="person-card" href="/cinema/person/${p.slug}">
         <div class="person-photo">${photoEl(p)}</div>
         <div class="person-body">
           <div class="person-name">${p.name}</div>
           <div class="person-chips">${roleChips(p.roles)}</div>
           <div class="person-nation"><i data-lucide="map-pin" width="10" height="10" stroke-width="2" style="flex-shrink:0"></i>${p.nationality}</div>
-          ${p.nowPlaying ? `<div class="person-film"><i data-lucide="clapperboard" width="11" height="11" stroke-width="2" style="flex-shrink:0;color:var(--pink-500)"></i><span>${p.nowPlaying}</span></div>` : ''}
         </div>
       </a>`).join('')}
-    </div>`;
+    </div>${pagerHtml}`;
   lucide.createIcons();
 }
+
+function goPage(p) { page = p; renderGrid(); window.scrollTo({top:0,behavior:'smooth'}); }
 
 renderFilters();
 renderGrid();
