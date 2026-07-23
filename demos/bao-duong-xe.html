@@ -120,91 +120,176 @@ body {
 .bd-hero-section::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(235,47,150,.12) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 90% at 75% 50%, rgba(235,47,150,.13) 0%, transparent 65%);
   pointer-events: none;
 }
 .bd-hero-inner {
-  max-width: var(--content); margin: 0 auto; padding: 72px 20px 64px;
-  display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: center;
+  max-width: var(--content); margin: 0 auto; padding: 56px 20px 56px;
+  display: grid; grid-template-columns: 1fr 440px; gap: 56px; align-items: center;
 }
 .bd-hero-eyebrow {
   font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--pink-400); margin-bottom: 16px;
+  color: var(--pink-400); margin-bottom: 14px;
 }
 .bd-hero-title {
   font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif;
-  font-size: clamp(30px, 4vw, 48px); font-weight: 900; line-height: 1.08;
-  letter-spacing: -.025em; color: #fff; margin-bottom: 16px;
+  font-size: clamp(28px, 3.6vw, 44px); font-weight: 900; line-height: 1.09;
+  letter-spacing: -.025em; color: #fff; margin-bottom: 12px;
 }
 .bd-hero-title em { color: var(--pink-400); font-style: normal; }
 .bd-hero-sub {
-  font-size: 16px; color: rgba(255,255,255,.55); line-height: 1.6;
-  max-width: 480px; margin-bottom: 28px;
+  font-size: 15px; color: rgba(255,255,255,.5); line-height: 1.6;
+  max-width: 460px; margin-bottom: 28px;
 }
 .bd-hero-stats {
-  display: flex; gap: 24px; margin-bottom: 32px;
+  display: flex; gap: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.08);
 }
-.bd-hero-stat { }
 .bd-hero-stat-num {
   font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif;
-  font-size: 26px; font-weight: 900; color: #fff; line-height: 1;
+  font-size: 22px; font-weight: 900; color: #fff; line-height: 1;
 }
 .bd-hero-stat-label {
-  font-size: 11px; color: rgba(255,255,255,.4); margin-top: 3px; font-weight: 500;
+  font-size: 11px; color: rgba(255,255,255,.35); margin-top: 3px; font-weight: 500;
 }
-.bd-hero-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--pink-500); color: #fff;
-  font-size: 15px; font-weight: 700; padding: 13px 24px;
-  border-radius: 12px; text-decoration: none; border: none; cursor: pointer;
-  font-family: inherit; transition: background .15s, transform .1s;
-}
-.bd-hero-cta:hover { background: var(--pink-600); transform: translateY(-1px); }
 
-/* Hero visual - odometer preview */
-.bd-hero-visual {
-  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
-  border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; gap: 0;
+/* ── HERO MINI FORM ── */
+.hf-card {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px; overflow: hidden;
 }
-.bd-odo-label {
-  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255,255,255,.35); margin-bottom: 12px;
+.hf-header {
+  padding: 18px 20px 14px; border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: space-between;
 }
-.bd-odo-display {
-  display: flex; align-items: baseline; gap: 6px; margin-bottom: 24px;
+.hf-header-label {
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,.5);
+  letter-spacing: .04em; text-transform: uppercase;
 }
-.bd-odo-num {
+.hf-step-dots { display: flex; align-items: center; gap: 6px; }
+.hf-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,.2); transition: all .2s;
+}
+.hf-dot.active { background: var(--pink-400); width: 18px; border-radius: 3px; }
+.hf-dot.done { background: rgba(255,255,255,.4); }
+
+.hf-body { padding: 20px; }
+
+/* Type pills */
+.hf-type-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.hf-type-pill {
+  flex: 1; padding: 10px 12px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.12);
+  background: transparent; color: rgba(255,255,255,.5); font-family: inherit;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.hf-type-pill:hover { border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.8); }
+.hf-type-pill.active { background: rgba(235,47,150,.18); border-color: var(--pink-400); color: #fff; }
+
+/* Selects */
+.hf-select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.hf-select {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);
+  color: #fff; font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 30px; transition: border-color .15s;
+}
+.hf-select:focus { outline: none; border-color: rgba(235,47,150,.6); }
+.hf-select option { background: #1a2535; color: #fff; }
+.hf-select:disabled { opacity: .35; cursor: not-allowed; }
+
+/* KM Input */
+.hf-km-row { position: relative; margin-bottom: 16px; }
+.hf-km-input {
+  width: 100%; padding: 12px 48px 12px 14px;
+  border-radius: 10px; border: 1.5px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06); color: #fff;
   font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif;
-  font-size: 52px; font-weight: 900; color: #fff; letter-spacing: -.03em;
-  line-height: 1;
+  font-size: 20px; font-weight: 900; letter-spacing: -.01em; transition: border-color .15s;
 }
-.bd-odo-unit { font-size: 18px; font-weight: 600; color: rgba(255,255,255,.4); }
-.bd-odo-divider { height: 1px; background: rgba(255,255,255,.08); margin-bottom: 16px; }
-.bd-odo-items { display: flex; flex-direction: column; gap: 10px; }
-.bd-odo-item {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+.hf-km-input::placeholder { color: rgba(255,255,255,.2); font-size: 14px; font-weight: 500; font-family: 'MoMoTrustSans', sans-serif; }
+.hf-km-input:focus { outline: none; border-color: rgba(235,47,150,.6); }
+.hf-km-unit {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,.3); pointer-events: none;
 }
-.bd-odo-item-name {
-  font-size: 13px; font-weight: 600; color: rgba(255,255,255,.8);
-  display: flex; align-items: center; gap: 8px;
+.hf-km-chips { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.hf-km-chip {
+  padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12);
+  background: transparent; color: rgba(255,255,255,.45); font-family: inherit;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s;
 }
-.bd-odo-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+.hf-km-chip:hover { border-color: rgba(255,255,255,.3); color: rgba(255,255,255,.75); }
+.hf-km-chip.active { border-color: var(--pink-400); color: var(--pink-300); background: rgba(235,47,150,.1); }
+
+/* CTA Button */
+.hf-cta {
+  width: 100%; padding: 13px 20px; border-radius: 12px;
+  background: var(--pink-500); color: #fff; border: none;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 16px rgba(235,47,150,.3);
 }
-.bd-odo-dot.warn { background: var(--amber-400); }
-.bd-odo-dot.ok { background: var(--green-400); }
-.bd-odo-item-km { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.4); }
-.bd-odo-item-km.warn { color: var(--amber-400); }
-.bd-odo-item-km.ok { color: rgba(255,255,255,.3); }
-.bd-odo-footer {
-  margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.06);
-  font-size: 11px; color: rgba(255,255,255,.25); line-height: 1.5;
+.hf-cta:hover { background: var(--pink-600); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(235,47,150,.35); }
+.hf-cta:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Result preview */
+.hf-result { display: none; }
+.hf-result.show { display: block; }
+.hf-result-car {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 12px; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: space-between;
 }
+.hf-result-car button {
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,.4); background: none;
+  border: 1px solid rgba(255,255,255,.15); border-radius: 5px; padding: 3px 8px;
+  cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.hf-result-car button:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+.hf-result-km {
+  display: flex; align-items: baseline; gap: 5px; margin-bottom: 16px;
+}
+.hf-result-km-num {
+  font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif;
+  font-size: 44px; font-weight: 900; color: #fff; letter-spacing: -.03em; line-height: 1;
+}
+.hf-result-km-unit { font-size: 16px; font-weight: 600; color: rgba(255,255,255,.35); }
+.hf-result-items { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+.hf-result-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
+}
+.hf-result-item.urgent { background: rgba(220,38,38,.08); border-color: rgba(220,38,38,.2); }
+.hf-result-item.warn-item { background: rgba(251,191,36,.06); border-color: rgba(251,191,36,.15); }
+.hf-result-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.hf-result-dot.red { background: var(--red-500); }
+.hf-result-dot.amber { background: var(--amber-400); }
+.hf-result-dot.green { background: var(--green-400); }
+.hf-result-name { flex: 1; font-size: 13px; font-weight: 700; color: rgba(255,255,255,.85); }
+.hf-result-status { font-size: 11px; font-weight: 800; }
+.hf-result-status.red { color: var(--red-500); }
+.hf-result-status.amber { color: var(--amber-400); }
+.hf-result-status.green { color: rgba(255,255,255,.3); }
+.hf-result-cta {
+  width: 100%; padding: 12px 20px; border-radius: 12px;
+  background: var(--pink-500); color: #fff; border: none;
+  font-family: inherit; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 16px rgba(235,47,150,.3);
+}
+.hf-result-cta:hover { background: var(--pink-600); }
 
 @media (max-width: 860px) {
-  .bd-hero-inner { grid-template-columns: 1fr; gap: 32px; padding: 48px 16px 40px; }
-  .bd-hero-visual { display: none; }
+  .bd-hero-inner { grid-template-columns: 1fr; gap: 28px; padding: 40px 16px 40px; }
   .bd-hero-stats { gap: 20px; }
+  .hf-select-row { grid-template-columns: 1fr; }
 }
 
 /* ── GARAGE SECTION ─────────────────────── */
@@ -877,10 +962,11 @@ body {
   <!-- Hero -->
   <section class="bd-hero-section">
     <div class="bd-hero-inner">
+      <!-- Left: copy -->
       <div class="bd-hero-text">
         <div class="bd-hero-eyebrow">Tiện ích · Bảo dưỡng xe</div>
         <h1 class="bd-hero-title">Biết xe cần gì,<br><em>trước khi xe cần sửa.</em></h1>
-        <p class="bd-hero-sub">Nhập số km đồng hồ để xem ngay hạng mục nào sắp đến hạn - từ dầu máy đến đai cam, đúng theo chu kỳ nhà sản xuất.</p>
+        <p class="bd-hero-sub">Bỏ sót một lần đổi dầu có thể dẫn đến hỏng động cơ tốn 5-15 triệu. Nhập xe và số km để xem ngay hạng mục nào sắp đến hạn.</p>
         <div class="bd-hero-stats">
           <div class="bd-hero-stat">
             <div class="bd-hero-stat-num">13</div>
@@ -895,49 +981,84 @@ body {
             <div class="bd-hero-stat-label">dòng xe phổ biến</div>
           </div>
         </div>
-        <a href="#bd-tool-anchor" class="bd-hero-cta">
-          Kiểm tra xe của bạn
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-        </a>
       </div>
-      <div class="bd-hero-visual">
-        <div class="bd-odo-label">Honda Air Blade 125 · 2023</div>
-        <div class="bd-odo-display">
-          <div class="bd-odo-num" id="hero-odo">0</div>
-          <div class="bd-odo-unit">km</div>
-        </div>
-        <div class="bd-odo-divider"></div>
-        <div class="bd-odo-items">
-          <div class="bd-odo-item">
-            <div class="bd-odo-item-name">
-              <div class="bd-odo-dot warn"></div>
-              Má phanh
-            </div>
-            <div class="bd-odo-item-km warn">Sắp đến hạn</div>
-          </div>
-          <div class="bd-odo-item">
-            <div class="bd-odo-item-name">
-              <div class="bd-odo-dot ok"></div>
-              Dầu máy
-            </div>
-            <div class="bd-odo-item-km ok">Còn 1.500 km</div>
-          </div>
-          <div class="bd-odo-item">
-            <div class="bd-odo-item-name">
-              <div class="bd-odo-dot ok"></div>
-              Lọc gió
-            </div>
-            <div class="bd-odo-item-km ok">Còn 5.500 km</div>
-          </div>
-          <div class="bd-odo-item">
-            <div class="bd-odo-item-name">
-              <div class="bd-odo-dot ok"></div>
-              Bugi
-            </div>
-            <div class="bd-odo-item-km ok">Còn 3.500 km</div>
+
+      <!-- Right: mini form card -->
+      <div class="hf-card">
+        <div class="hf-header">
+          <span class="hf-header-label" id="hf-header-label">Chọn loại xe</span>
+          <div class="hf-step-dots">
+            <div class="hf-dot active" id="hf-d1"></div>
+            <div class="hf-dot" id="hf-d2"></div>
+            <div class="hf-dot" id="hf-d3"></div>
           </div>
         </div>
-        <div class="bd-odo-footer">Nhập xe của bạn phía dưới để xem lịch chính xác</div>
+        <div class="hf-body">
+
+          <!-- Step 1: type + brand + model -->
+          <div id="hf-step1">
+            <div class="hf-type-row">
+              <button class="hf-type-pill active" id="hf-pill-xemay" onclick="hfSelectType('xemay')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2H5z"/><circle cx="14" cy="17" r="2"/><circle cx="5" cy="17" r="2"/></svg>
+                Xe máy
+              </button>
+              <button class="hf-type-pill" id="hf-pill-oto" onclick="hfSelectType('oto')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Ô tô
+              </button>
+            </div>
+            <div class="hf-select-row">
+              <select class="hf-select" id="hf-brand" onchange="hfOnBrandChange()">
+                <option value="">Chọn hãng</option>
+              </select>
+              <select class="hf-select" id="hf-model" onchange="hfOnModelChange()" disabled>
+                <option value="">Chọn model</option>
+              </select>
+            </div>
+            <button class="hf-cta" id="hf-btn1" onclick="hfGoStep2()" disabled>
+              Tiếp theo - Nhập số km
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+
+          <!-- Step 2: km input -->
+          <div id="hf-step2" style="display:none">
+            <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:12px;" id="hf-step2-car"></div>
+            <div class="hf-km-row">
+              <input class="hf-km-input" type="number" id="hf-km" placeholder="Nhập số km đồng hồ" min="0" max="999999" oninput="hfOnKmInput()">
+              <span class="hf-km-unit">km</span>
+            </div>
+            <div class="hf-km-chips">
+              <button class="hf-km-chip" onclick="hfSetKm(5000)">5.000</button>
+              <button class="hf-km-chip" onclick="hfSetKm(10000)">10.000</button>
+              <button class="hf-km-chip" onclick="hfSetKm(20000)">20.000</button>
+              <button class="hf-km-chip" onclick="hfSetKm(35000)">35.000</button>
+              <button class="hf-km-chip" onclick="hfSetKm(50000)">50.000</button>
+            </div>
+            <button class="hf-cta" id="hf-btn2" onclick="hfShowResult()" disabled>
+              Xem lịch bảo dưỡng
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+          <!-- Result preview -->
+          <div id="hf-result" class="hf-result">
+            <div class="hf-result-car" id="hf-result-car">
+              <span id="hf-result-car-label"></span>
+              <button onclick="hfReset()">Đổi xe</button>
+            </div>
+            <div class="hf-result-km">
+              <div class="hf-result-km-num" id="hf-result-km-num">0</div>
+              <div class="hf-result-km-unit">km</div>
+            </div>
+            <div class="hf-result-items" id="hf-result-items"></div>
+            <button class="hf-result-cta" onclick="hfScrollToTool()">
+              Xem đầy đủ + đặt lịch garage
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            </button>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
@@ -1379,6 +1500,158 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
+// ── HERO MINI FORM ────────────────────────────────────────────────────────────
+
+const HF = { type: 'xemay', brand: '', model: '', km: null };
+
+function hfInit() {
+  hfPopulateBrands();
+}
+
+function hfPopulateBrands() {
+  const sel = document.getElementById('hf-brand');
+  const data = VEHICLE_DATA[HF.type];
+  sel.innerHTML = '<option value="">Chọn hãng</option>';
+  data.brands.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
+  document.getElementById('hf-model').innerHTML = '<option value="">Chọn model</option>';
+  document.getElementById('hf-model').disabled = true;
+  HF.brand = ''; HF.model = '';
+  hfCheckStep1();
+}
+
+function hfSelectType(type) {
+  HF.type = type;
+  document.getElementById('hf-pill-xemay').classList.toggle('active', type === 'xemay');
+  document.getElementById('hf-pill-oto').classList.toggle('active', type === 'oto');
+  hfPopulateBrands();
+}
+
+function hfOnBrandChange() {
+  HF.brand = document.getElementById('hf-brand').value;
+  HF.model = '';
+  const modelSel = document.getElementById('hf-model');
+  const models = (VEHICLE_DATA[HF.type].models[HF.brand] || []);
+  modelSel.innerHTML = '<option value="">Chọn model</option>';
+  models.forEach(m => modelSel.innerHTML += `<option value="${m}">${m}</option>`);
+  modelSel.disabled = !HF.brand;
+  hfCheckStep1();
+}
+
+function hfOnModelChange() {
+  HF.model = document.getElementById('hf-model').value;
+  hfCheckStep1();
+}
+
+function hfCheckStep1() {
+  document.getElementById('hf-btn1').disabled = !(HF.brand && HF.model);
+}
+
+function hfGoStep2() {
+  document.getElementById('hf-step1').style.display = 'none';
+  document.getElementById('hf-step2').style.display = 'block';
+  document.getElementById('hf-result').classList.remove('show');
+  document.getElementById('hf-step2-car').textContent = `${HF.brand} ${HF.model}`;
+  document.getElementById('hf-header-label').textContent = 'Nhập số km đồng hồ';
+  document.getElementById('hf-d1').classList.remove('active'); document.getElementById('hf-d1').classList.add('done');
+  document.getElementById('hf-d2').classList.add('active');
+  document.getElementById('hf-d3').classList.remove('active', 'done');
+  document.getElementById('hf-km').value = '';
+  HF.km = null;
+  hfCheckStep2();
+}
+
+function hfOnKmInput() {
+  const v = parseInt(document.getElementById('hf-km').value);
+  HF.km = isNaN(v) ? null : v;
+  // sync chips
+  document.querySelectorAll('.hf-km-chip').forEach(c => c.classList.remove('active'));
+  hfCheckStep2();
+}
+
+function hfSetKm(val) {
+  document.getElementById('hf-km').value = val;
+  HF.km = val;
+  document.querySelectorAll('.hf-km-chip').forEach(c => {
+    c.classList.toggle('active', parseInt(c.textContent.replace(/\./g,'')) === val);
+  });
+  hfCheckStep2();
+}
+
+function hfCheckStep2() {
+  document.getElementById('hf-btn2').disabled = !(HF.km !== null && HF.km >= 0);
+}
+
+function hfShowResult() {
+  const intervals = VEHICLE_DATA[HF.type].intervals;
+  const km = HF.km;
+  // compute items: show top 4 by urgency
+  const items = intervals.map(iv => {
+    const cyclesDone = Math.floor(km / iv.km);
+    const nextAt = (cyclesDone + 1) * iv.km;
+    const remaining = nextAt - km;
+    const pct = remaining / iv.km;
+    return { ...iv, remaining, pct };
+  }).sort((a, b) => a.pct - b.pct).slice(0, 4);
+
+  // render
+  let html = '';
+  items.forEach(it => {
+    let cls = 'green', dotCls = 'green', statusText = '';
+    if (it.remaining <= 0) {
+      cls = 'red'; dotCls = 'red'; statusText = 'Quá hạn';
+    } else if (it.pct <= 0.25) {
+      cls = 'red'; dotCls = 'red'; statusText = `Còn ${it.remaining.toLocaleString('vi-VN')} km`;
+    } else if (it.pct <= 0.5) {
+      cls = 'amber'; dotCls = 'amber'; statusText = `Còn ${it.remaining.toLocaleString('vi-VN')} km`;
+    } else {
+      statusText = `Còn ${it.remaining.toLocaleString('vi-VN')} km`;
+    }
+    const rowCls = dotCls === 'red' ? 'urgent' : dotCls === 'amber' ? 'warn-item' : '';
+    html += `<div class="hf-result-item ${rowCls}">
+      <div class="hf-result-dot ${dotCls}"></div>
+      <div class="hf-result-name">${it.name}</div>
+      <div class="hf-result-status ${cls}">${statusText}</div>
+    </div>`;
+  });
+
+  document.getElementById('hf-result-items').innerHTML = html;
+  document.getElementById('hf-result-car-label').textContent = `${HF.brand} ${HF.model}`;
+  document.getElementById('hf-result-km-num').textContent = km.toLocaleString('vi-VN');
+
+  document.getElementById('hf-step2').style.display = 'none';
+  document.getElementById('hf-result').classList.add('show');
+  document.getElementById('hf-header-label').textContent = 'Tình trạng xe của bạn';
+  document.getElementById('hf-d2').classList.remove('active'); document.getElementById('hf-d2').classList.add('done');
+  document.getElementById('hf-d3').classList.add('active');
+}
+
+function hfReset() {
+  document.getElementById('hf-result').classList.remove('show');
+  document.getElementById('hf-step2').style.display = 'none';
+  document.getElementById('hf-step1').style.display = 'block';
+  document.getElementById('hf-header-label').textContent = 'Chọn loại xe';
+  document.getElementById('hf-d1').classList.add('active'); document.getElementById('hf-d1').classList.remove('done');
+  document.getElementById('hf-d2').classList.remove('active', 'done');
+  document.getElementById('hf-d3').classList.remove('active', 'done');
+  hfPopulateBrands();
+}
+
+function hfScrollToTool() {
+  // sync state to main tool then scroll
+  if (HF.type !== S.type) selectType(HF.type);
+  setTimeout(() => {
+    const brandSel = document.getElementById('sel-brand');
+    if (brandSel) { brandSel.value = HF.brand; onBrandChange(); }
+    setTimeout(() => {
+      const modelSel = document.getElementById('sel-model');
+      if (modelSel) { modelSel.value = HF.model; onModelChange(); }
+      const kmInp = document.getElementById('inp-km');
+      if (kmInp) { kmInp.value = HF.km; S.km = HF.km; checkReady(); }
+    }, 50);
+  }, 50);
+  document.getElementById('bd-tool-anchor').scrollIntoView({ behavior: 'smooth' });
+}
+
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
 const VEHICLE_DATA = {
@@ -1463,6 +1736,7 @@ const S = {
 function init() {
   populateYears();
   populateBrands();
+  hfInit();
 }
 
 function populateYears() {
