@@ -1057,7 +1057,7 @@ function renderUnivGrid() {
   }
 
   grid.innerHTML = filtered.map(u => `
-    <div class="univ-card" onclick="selectUniversity('${u.id}')">
+    <a class="univ-card" href="/student-hub/${u.id}" onclick="event.preventDefault(); selectUniversity('${u.id}')">
       <div class="univ-banner">
         <img src="${u.banner}" alt="${u.name}">
         <span class="univ-badge-city"><i data-lucide="map-pin" width="12" height="12"></i> ${u.cityName}</span>
@@ -1078,7 +1078,7 @@ function renderUnivGrid() {
           <i data-lucide="arrow-right" width="14" height="14"></i>
         </div>
       </div>
-    </div>
+    </a>
   `).join('');
 
   if (window.lucide) lucide.createIcons();
@@ -1092,7 +1092,7 @@ function setUnivFilter(cat, btn) {
 }
 
 // VIEW SWITCHING LOGIC
-function showDirectoryView() {
+function showDirectoryView(pushUrl) {
   currentUnivId = null;
   document.getElementById('navUnivSelect').value = '';
   document.getElementById('directoryView').style.display = 'block';
@@ -1101,9 +1101,10 @@ function showDirectoryView() {
   document.getElementById('bcAction').innerHTML = '';
   renderUnivGrid();
   switchLifePillar('nhaphoc');
+  if (pushUrl !== false) history.pushState({ view: 'directory' }, '', '/student-hub');
 }
 
-function selectUniversity(id) {
+function selectUniversity(id, pushUrl) {
   const u = UNIVERSITIES.find(x => x.id === id);
   if (!u) return;
   currentUnivId = id;
@@ -1123,6 +1124,9 @@ function selectUniversity(id) {
   document.getElementById('qEmailTitle').textContent = `Xác thực Student Pass qua email ${u.emailDomain}`;
 
   renderCampusMerchants(id);
+  if (pushUrl !== false) {
+    history.pushState({ view: 'detail', univId: id }, '', '/student-hub/' + id);
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1265,8 +1269,28 @@ function calcBudget() {
   if (window.lucide) lucide.createIcons();
 }
 
+// URL ROUTING
+function initFromUrl() {
+  const p = window.location.pathname.replace(/\/+$/, '');
+  const match = p.match(/^\/student-hub\/([a-z0-9_-]+)$/i);
+  if (match) {
+    const univId = match[1];
+    if (UNIVERSITIES.find(x => x.id === univId)) {
+      selectUniversity(univId, false);
+    } else {
+      showDirectoryView(false);
+    }
+  } else {
+    showDirectoryView(false);
+  }
+}
+
+window.addEventListener('popstate', function() {
+  initFromUrl();
+});
+
 // INIT
-showDirectoryView();
+initFromUrl();
 calcBudget();
 if (window.lucide) lucide.createIcons();
 </script>
