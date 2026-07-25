@@ -595,7 +595,7 @@ const PROTOTYPES = [
     id: 'student-hub',
     name: 'MoMo Student Hub (TDTU Campus Edition)',
     category: 'Platform',
-    ownerGroup: 'Student Pass & Gen Z Growth',
+    ownerGroup: 'Student Pass',
     maturity: 'Concept',
     description: 'Hub Đặc quyền Sinh Viên x Merchant Exploration x Gamification dành riêng cho Trường Đại Học Tôn Đức Thắng (TDTU). Bao gồm Thẻ Sinh Viên Điện Tử, Merchant Map quanh campus, Ví Trả Sau HSSV, Túi Thần Tài tiết kiệm tiền lẻ, và Hệ thống Quests tích điểm đổi quà 0đ.',
     jtbd: 'Tôi là tân sinh viên TDTU mới lên thành phố, muốn biết quanh trường có tiện ích & merchant nào chấp nhận MoMo/Ví Trả Sau, nhận voucher đặc quyền và quản lý chi tiêu học tập dễ dàng.',
@@ -1100,7 +1100,7 @@ function buildLabActivityDashboard() { return ''; /*
         `).join('')}
       </div>
     </section>`; */ }
-const PLG_OWNER_ORDER = ['Tiện ích Giao Thông', 'Cell Team', 'Web Platform'];
+const PLG_OWNER_ORDER = ['Student Pass', 'Tiện ích Giao Thông', 'Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
