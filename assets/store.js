@@ -572,37 +572,6 @@ const PROTOTYPES = [
     address: 'web-momo-prototype.vercel.app/plg-score',
   },
   {
-    id: 'universal-search',
-    name: 'Universal Search',
-    category: 'Other',
-    ownerGroup: 'Web Platform',
-    maturity: 'Interactive',
-    description: 'Google-style federated search cho toàn bộ domain MoMo: dịch vụ, bài viết, merchant và công cụ tài chính trong một trang — với AI Answer box, content-type tabs và related queries.',
-    jtbd: 'Tìm bất kỳ thứ gì trên MoMo mà không cần biết nó nằm ở đâu',
-    northStar: 'Search-to-action conversion rate',
-    loop: 'Query → Federated results → Action',
-    hypothesis: 'Một điểm tìm kiếm duy nhất cho tất cả nội dung MoMo giảm friction discovery và tăng cross-sell giữa các use case.',
-    value: 'Bề mặt entry point cho mọi intent — thay thế navigation phức tạp bằng một search bar duy nhất với kết quả multi-entity.',
-    gate: 'Đo search-to-click, tab filter usage, AI box engagement, related query CTR và cross-entity discovery rate.',
-    src: 'demos/universal-search.html',
-    address: 'web-momo-prototype.vercel.app/search',
-  },
-  {
-    id: 'worldcup',
-    name: 'World Cup 2026 Predictor',
-    category: 'Other',
-    maturity: 'Data experience',
-    description: 'Trải nghiệm dữ liệu thể thao dễ hiểu cho đại chúng, dùng sự kiện mùa vụ để tạo traffic, repeat visit và bề mặt activation.',
-    jtbd: 'So sánh cơ hội đội tuyển yêu thích',
-    northStar: 'Team analysis engagement',
-    loop: 'Event → Explore → Return',
-    hypothesis: 'Data storytelling trực quan giúp MoMo sở hữu seasonal search demand và tạo lý do quay lại trong suốt giải đấu.',
-    value: 'Tạo engagement surface có khả năng gắn prediction game, voucher, mini app và campaign activation.',
-    gate: 'Đo team views, comparison depth, returning users và campaign CTA conversion.',
-    src: 'demos/world-cup.html',
-    address: 'web-momo-prototype.vercel.app/world-cup-2026',
-  },
-  {
     id: 'payments',
     name: 'Billpay',
     category: 'Platform',
@@ -636,14 +605,14 @@ const PROTOTYPES = [
     value: 'Phễu tự nhiên kéo tệp chủ xe ARPU cao vào ecosystem MoMo qua SEO Widget + O2O QR tại cây xăng. Target: 100K saved vehicles, 800K MEU, 5% insurance CR.',
     gate: 'Đo saved vehicles, auto-topup activation rate, insurance attach rate, W2A từ widget phạt nguội và số QR scan tại cột bơm.',
     src: 'demos/vehicle-hub.html',
-    address: 'web-momo-prototype.vercel.app/vehicle-hub',
+    address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong',
     tools: [
       {
         id: 'gia-xang',
         name: 'Giá Xăng Dầu Hôm Nay',
         category: 'Child Page',
         src: 'demos/gia-xang.html',
-        address: 'web-momo-prototype.vercel.app/gia-xang',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/gia-xang',
         description: 'Spoke SEO: bảng giá Vùng 1/Vùng 2, lịch sử 10 kỳ điều hành, trend chart 90 ngày, công cụ tính tiền đổ xăng và countdown kỳ điều hành tiếp theo.',
       },
       {
@@ -667,7 +636,7 @@ const PROTOTYPES = [
         name: 'Tìm Bãi Đậu Xe',
         category: 'Child Page',
         src: 'demos/bai-do-xe.html',
-        address: 'web-momo-prototype.vercel.app/bai-do-xe',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/bai-do-xe',
         description: 'Parking finder: SVG map tối với P-marker pulse theo trạng thái (còn/ít/đầy), split list + map, filter xe máy/ô tô/MoMo-only, detail panel phí + CTA. Đối tác: VETC, eParking, iParking. Bảng giá theo khu vực + FAQ.',
       },
       {
@@ -683,7 +652,7 @@ const PROTOTYPES = [
         name: 'Đặt Lịch Đăng Kiểm',
         category: 'Platform',
         src: 'demos/dang-kiem.html',
-        address: 'web-momo-prototype.vercel.app/dang-kiem',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/dang-kiem',
         description: '4-step booking wizard: nhập thông tin xe → arc countdown tính hạn/chu kỳ → chọn trung tâm đăng kiểm (Leaflet map) → chọn ngày giờ → thanh toán lệ phí qua MoMo.',
       },
       {
@@ -699,7 +668,7 @@ const PROTOTYPES = [
         name: 'Tính Phí ETC Theo Tuyến',
         category: 'Child Page',
         src: 'demos/tinh-phi-etc.html',
-        address: 'web-momo-prototype.vercel.app/tinh-phi-etc',
+        address: 'web-momo-prototype.vercel.app/epass/tinh-phi-etc',
         description: 'Route-based ETC toll calculator: chọn tuyến (HCM→ĐL, HCM→PT, HN→HP…), phân loại xe, hiển thị từng trạm + phí, tổng ETC, so sánh với số dư ePass, CTA nạp tiền. Road visualization SVG theo tuyến.',
       },
       {
@@ -707,7 +676,7 @@ const PROTOTYPES = [
         name: 'Chuẩn Bị Chuyến Đi A→B',
         category: 'Child Page',
         src: 'demos/trip-planner.html',
-        address: 'web-momo-prototype.vercel.app/trip-planner',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/chuyen-di',
         description: 'Trip cost calculator: chọn tuyến (6 tuyến phổ biến HCM/HN), loại xe (xe máy / ô tô xăng / ô tô điện), tính chi phí nhiên liệu + phí ETC, checklist trước khi xuất phát, điểm dừng dọc đường. Nhận ?route= param từ vehicle-hub.',
       },
 
@@ -734,7 +703,7 @@ const PROTOTYPES = [
         name: 'Hãng Xe · Chi tiết',
         category: 'Child Page',
         src: 'demos/hang-xe.html',
-        address: 'web-momo-prototype.vercel.app/hang-xe',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/hang-xe',
         description: 'Hub hãng xe: 10 thương hiệu phổ biến (Toyota, Honda, VinFast…), chi tiết từng hãng gồm bảo hiểm thân vỏ, ước tính chi phí vận hành hàng tháng, nhà bảo hiểm phù hợp nhất và tình huống bồi thường hay gặp.',
       },
     ],
@@ -758,31 +727,6 @@ const PROTOTYPES = [
       { id: 'mua-hay-thue',     name: 'Mua hay Thuê nhà?',      category: 'Planning', src: 'demos/mua-hay-thue.html',     address: 'web-momo-prototype.vercel.app/mua-hay-thue' },
       { id: 'chi-phi-du-lich',  name: 'Chi phí du lịch',        category: 'Planning', src: 'demos/chi-phi-du-lich.html',  address: 'web-momo-prototype.vercel.app/chi-phi-du-lich' },
     ],
-  },
-  {
-    id: 'scam-check',
-    name: 'Scam Check',
-    category: 'Other',
-    maturity: 'Safety Hub',
-    description: 'An Toàn MoMo - chống lừa đảo end-to-end: (1) Tra cứu rủi ro SĐT/STK/link/QR trước khi chuyển, (2) Báo cáo lừa đảo ẩn danh 3 bước, (3) Cơ chế 4 bước xử lý phối hợp ngân hàng & cơ quan chức năng, (4) Impact stats cộng đồng (1.245.678+ user bảo vệ, 320 tỷ chặn), (5) Feature bảo vệ bền vững (sinh trắc học, AI 24/7, cảnh báo số xấu).',
-    jtbd: 'Phòng và chống lừa đảo: kiểm tra trước, báo cáo sau, bảo vệ cộng đồng',
-    northStar: 'Anonymous report + risk-check completion combined',
-    loop: 'Trigger → Lookup OR Report → Community alert → App download',
-    hypothesis: 'Kết hợp lookup (defense) + report (community impact) trên cùng surface tăng cả conversion checking và submission rate so với tách 2 page.',
-    value: 'Single safety hub: bảo vệ user trước transaction, thu fraud signals từ cộng đồng, cross-sell tải app cho lớp bảo mật sinh trắc/AI.',
-    gate: 'Đo: lookup completion, scenario CTR, report 3-step funnel, abort vs submit ratio, app download CTR sau impact stats.',
-    src: 'demos/scam-check.html',
-    address: 'web-momo-prototype.vercel.app/scam-check',
-  },
-  {
-    id: 'momo-service-icons',
-    name: 'MoMo Service Icons',
-    category: 'Other',
-    maturity: 'Asset Library',
-    description: 'Thư viện preview SVG/PNG cho icon dịch vụ MoMo: xem nhanh, lọc theo định dạng và copy đường dẫn asset để Dev dùng lại trong UI hoặc component.',
-    jtbd: 'Lấy đúng icon dịch vụ và path asset trong vài giây thay vì mò từng file trong thư mục',
-    src: 'demos/momo-service-icons.html',
-    address: 'web-momo-prototype.vercel.app/momo-service-icons',
   },
   {
     id: 'news',
@@ -964,73 +908,6 @@ const PROTOTYPES = [
     ],
   },
   {
-    id: 'onboarding',
-    name: 'User Onboarding — Giới thiệu & Đăng ký',
-    category: 'Other',
-    ownerGroup: 'Web Platform',
-    maturity: 'Interactive',
-    description: 'Luồng onboarding 6 màn hướng dẫn người dùng mới hiểu MoMo: feature tour, social proof, download CTA và đăng ký số điện thoại với OTP.',
-    jtbd: 'Hiểu MoMo làm được gì và bắt đầu ngay không mất công',
-    northStar: 'Activation rate (register started)',
-    loop: 'Discover → Educate → Register → Activate',
-    hypothesis: 'Feature tour có visual rõ ràng + social proof giúp tăng tỷ lệ người mới hoàn thành đăng ký so với landing page dạng text truyền thống.',
-    value: 'Tăng top-of-funnel conversion cho kênh web/paid, giảm churn ngay từ bước đầu tiên.',
-    gate: 'Đo slide completion rate, CTA click rate, register started và OTP verify rate.',
-    src: 'demos/onboarding.html',
-    address: 'web-momo-prototype.vercel.app/welcome',
-    tools: [
-      { id: 'kyc', name: 'eKYC — Xác Minh Danh Tính', category: 'Sub-flow', description: 'Luồng xác minh danh tính nâng cấp tài khoản MoMo Tier 2: so sánh quyền lợi, chụp CCCD, selfie liveness và kết quả.', jtbd: 'Nâng cấp tài khoản để giao dịch không giới hạn, vay và đầu tư', src: 'demos/kyc.html', address: 'web-momo-prototype.vercel.app/ekyc' },
-    ],
-  },
-  {
-    id: 'dashboard',
-    name: 'Dashboard Analytics',
-    category: 'Other',
-    ownerGroup: 'Web Platform',
-    maturity: 'Interactive',
-    description: 'Dashboard phân tích vận hành: KPI cards, line chart giao dịch/doanh thu, donut phân loại, bar chart kênh acquisition, heatmap hoạt động, funnel chuyển đổi, top services table.',
-    jtbd: 'Nắm tình hình kinh doanh và phát hiện vấn đề từ một màn hình',
-    northStar: 'Time-to-insight',
-    loop: 'Monitor → Detect → Investigate → Act',
-    hypothesis: 'Dashboard tổng hợp đa chiều giúp team ra quyết định nhanh hơn so với xem từng báo cáo rời rạc.',
-    value: 'Tăng tốc độ phát hiện sự cố, tối ưu sản phẩm dựa trên data và giảm thời gian họp báo cáo định kỳ.',
-    gate: 'Đo time-on-page, chart interaction rate, export rate, alert action rate.',
-    src: 'demos/dashboard.html',
-    address: 'web-momo-prototype.vercel.app/analytics',
-  },
-  {
-    id: 'search',
-    name: 'Search & Discovery',
-    category: 'Other',
-    ownerGroup: 'Web Platform',
-    maturity: 'Interactive',
-    description: 'Tìm kiếm dịch vụ với autocomplete, gợi ý, lịch sử, bộ lọc đa chiều (category, ưu đãi, rating), sort, pagination và highlight từ khoá.',
-    jtbd: 'Tìm đúng dịch vụ cần ngay, không mất công lướt',
-    northStar: 'Search-to-action rate',
-    loop: 'Search → Filter → Find → Act',
-    hypothesis: 'Autocomplete + filter sidebar giúp người dùng tìm đúng dịch vụ trong ít bước hơn, tăng tỷ lệ chuyển đổi so với danh sách duyệt thủ công.',
-    value: 'Tăng discoverability cho danh mục dịch vụ dài, giảm churn do không tìm thấy sản phẩm.',
-    gate: 'Đo search volume, query → result click rate, filter usage rate, zero-results rate.',
-    src: 'demos/search.html',
-    address: 'web-momo-prototype.vercel.app/search',
-  },
-  {
-    id: 'notification-center',
-    name: 'Notification Center',
-    category: 'Other',
-    ownerGroup: 'Web Platform',
-    maturity: 'Interactive',
-    description: 'Component thông báo đầy đủ: bell icon + badge counter + dropdown + trang danh sách + settings. 5 loại thông báo: giao dịch, ưu đãi, hệ thống, xã hội, tài chính.',
-    jtbd: 'Không bỏ sót thông báo quan trọng, kiểm soát được loại nào muốn nhận',
-    northStar: 'Notification open rate',
-    loop: 'Receive → Open → Act → Return',
-    hypothesis: 'Nhóm thông báo theo loại và cho phép filter giúp người dùng tìm thấy thông tin cần thiết nhanh hơn và giảm notification fatigue.',
-    value: 'Tăng engagement với các sự kiện quan trọng (giao dịch, ưu đãi hết hạn), giảm churn từ missed opportunities.',
-    gate: 'Đo open rate, CTA click rate per type, settings change rate và unsubscribe rate.',
-    src: 'demos/notification-center.html',
-    address: 'web-momo-prototype.vercel.app/notifications',
-  },
-  {
     id: 'phat-nguoi',
     name: 'Phạt Nguội',
     category: 'Platform',
@@ -1150,7 +1027,7 @@ const LAB_ACTIVITY_EVENTS = [
   { time: '08:19', user: 'Phúc Long', team: 'Cell Team', action: 'remove', project: 'Phạt Nguội', surface: 'Guide', subject: 'Old province guide', detail: 'Remove địa phương lỗi thời sau khi gộp nội dung.' },
 ];
 
-function buildLabActivityDashboard() {
+function buildLabActivityDashboard() { return ''; /*
   const totals = LAB_ACTIVITY_EVENTS.reduce((acc, event) => {
     acc[event.action] = (acc[event.action] || 0) + 1;
     acc.projects[event.project] = (acc.projects[event.project] || 0) + 1;
@@ -1206,8 +1083,7 @@ function buildLabActivityDashboard() {
           </div>
         `).join('')}
       </div>
-    </section>`;
-}
+    </section>`; */ }
 const PLG_OWNER_ORDER = ['Tiện ích Giao Thông', 'Cell Team', 'Web Platform'];
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
@@ -1235,7 +1111,7 @@ const GROUP_ITEM_ORDER = {
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
   Platform: ['vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
-  Other: ['momo-service-icons', 'worldcup', 'universal-search', 'onboarding', 'dashboard', 'search', 'notification-center', 'scam-check'],
+  Other: [],
 };
 
 const GROUP_SUMMARY = {
@@ -1596,11 +1472,17 @@ function buildProtoCard(proto, chipCls) {
   const chipsHtml = children.length ? `<div class="proto-chips">${
     shown.map(t => `<button class="child-pill ${chipCls}" data-open-proto="${proto.id}" data-open-tool="${t.id}">${t.name}</button>`).join('')
   }${rest > 0 ? `<span class="child-pill-more">+${rest} nữa</span>` : ''}</div>` : '';
+  const countLabel = children.length ? `<span class="proto-card-count">${children.length} tool${children.length > 1 ? 's' : ''}</span>` : '';
   return `
     <div class="proto-card" data-open-proto="${proto.id}" data-search="${searchText}">
       <div class="proto-card-head">
-        <span class="proto-card-name">${proto.name}</span>
-        <button class="proto-card-arrow" data-open-proto="${proto.id}" tabindex="-1">↗</button>
+        <div class="proto-card-head-left">
+          <span class="proto-card-name">${proto.name}</span>
+          ${countLabel}
+        </div>
+        <div class="proto-card-head-right">
+          <button class="proto-card-arrow" data-open-proto="${proto.id}" tabindex="-1">↗</button>
+        </div>
       </div>
       ${chipsHtml}
     </div>`;
@@ -1678,9 +1560,10 @@ function buildLabDirectory() {
   return `
     <div class="lab-page">
       <div class="lab-hero">
-        <p class="lab-kicker">Internal · Web Platform · ${getTotalSurfaceCount()} surfaces</p>
-        <h1 class="lab-title">Prototype<br><span class="lab-title-accent">Lab.</span></h1>
+        <p class="lab-kicker">MoMo.vn · Product-Led Growth</p>
+        <h1 class="lab-title"><span class="lab-title-word">Web</span> <span class="lab-title-accent">Platform</span><br><span class="lab-title-sub">Prototype Lab</span></h1>
         <p class="lab-sub">All prototypes, demos và tools được build bởi Web Platform.</p>
+        <div class="lab-stars" aria-hidden="true">${Array.from({length:14},(_,i)=>`<span class="lab-star" style="--sx:${Math.random()*100}%;--sy:${Math.random()*100}%;--sd:${(Math.random()*4).toFixed(1)}s;--ss:${(.6+Math.random()*.8).toFixed(2)}"></span>`).join('')}</div>
         <div class="lab-hero-search">
           <div class="lab-search-wrap">
             <svg class="lab-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -1967,10 +1850,21 @@ function buildProtoView(proto) {
   </div>
 
   <div class="ws-mobile-cta">
-    <div class="ws-mobile-cta-label">Live Demo</div>
-    <div class="ws-mobile-cta-title">${proto.name}</div>
-    <div class="ws-mobile-cta-desc">Mở prototype để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
-    <a href="${proto.src}" class="ws-mobile-cta-btn">Mở Demo ↗</a>
+    <div class="ws-mct-screen-art">
+      <div class="ws-mct-screen">
+        <div class="ws-mct-bar"><i></i><i></i><i></i><span></span></div>
+        <div class="ws-mct-lines">
+          <b style="width:55%"></b><b style="width:80%"></b><b style="width:40%"></b>
+          <b style="width:70%"></b><b style="width:30%"></b><b style="width:60%"></b>
+        </div>
+      </div>
+    </div>
+    <div class="ws-mct-body">
+      <span class="ws-mct-cat" style="background:${cat.bg};color:${cat.text}">${displayGroupName(proto.category)}</span>
+      <h2 class="ws-mct-name">${proto.name}</h2>
+      ${proto.description ? `<p class="ws-mct-desc">${proto.description}</p>` : ''}
+    </div>
+    <a href="${proto.src}" class="ws-mct-btn">Mở trên trình duyệt ↗</a>
   </div>
 
   <div class="ws-preview expanded">
@@ -2019,10 +1913,21 @@ function buildToolView(proto, tool, toolPath = [tool]) {
   </div>
 
   <div class="ws-mobile-cta">
-    <div class="ws-mobile-cta-label">Live Demo</div>
-    <div class="ws-mobile-cta-title">${tool.name}</div>
-    <div class="ws-mobile-cta-desc">Mở prototype để trải nghiệm đầy đủ trên màn hình lớn hơn.</div>
-    <a href="${src}" class="ws-mobile-cta-btn">Mở Demo ↗</a>
+    <div class="ws-mct-screen-art">
+      <div class="ws-mct-screen">
+        <div class="ws-mct-bar"><i></i><i></i><i></i><span></span></div>
+        <div class="ws-mct-lines">
+          <b style="width:55%"></b><b style="width:80%"></b><b style="width:40%"></b>
+          <b style="width:70%"></b><b style="width:30%"></b><b style="width:60%"></b>
+        </div>
+      </div>
+    </div>
+    <div class="ws-mct-body">
+      <span class="ws-mct-cat" style="background:${tc.bg};color:${tc.text}">${tool.category}</span>
+      <h2 class="ws-mct-name">${tool.name}</h2>
+      ${tool.description ? `<p class="ws-mct-desc">${tool.description}</p>` : ''}
+    </div>
+    <a href="${src}" class="ws-mct-btn">Mở trên trình duyệt ↗</a>
   </div>
 
   <div class="ws-preview expanded">

@@ -101,7 +101,7 @@
     const ALL = {
       nopphat:  { href: 'phat-nguoi-nop-qua-momo.html', icon: 'momo', name: 'Nộp phạt online', hint: 'Không cần đến kho bạc' },
       giaidap:  { href: 'phat-nguoi-giai-dap.html', icon: 'article', name: 'Mức phạt & khiếu nại', hint: 'Hiểu lỗi trước khi nộp' },
-      dangkiem: { href: '/dang-kiem', icon: 'inspect', name: 'Đăng kiểm', hint: 'Vi phạm chưa nộp sẽ bị chặn' },
+      dangkiem: { href: '/tien-ich-giao-thong/dang-kiem', icon: 'inspect', name: 'Đăng kiểm', hint: 'Vi phạm chưa nộp sẽ bị chặn' },
       tnds:     { href: '/bao-hiem-o-to', icon: 'shield', name: 'Bảo hiểm TNDS', hint: 'Bắt buộc khi đăng kiểm' },
       hoso:     { href: '/vehicle-hub#ho-so-xe', icon: 'car', name: 'Hồ sơ xe', hint: 'Tự quét vi phạm hàng tuần' },
       baoduong: { href: '/bao-duong-xe', icon: 'wrench', name: 'Bảo dưỡng xe', hint: 'Đèn hỏng, lốp mòn cũng bị phạt' },

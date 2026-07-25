@@ -13,6 +13,14 @@ body { margin: 0; background: var(--white); color: var(--ink); font-family: 'MoM
 h1, h2, h3 { font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif; }
 a { color: inherit; }
 
+/* ─── Scroll progress bar ────────────────────────────── */
+.rm-progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
+  background: linear-gradient(90deg, var(--momo) 0%, #ff6bb5 100%);
+  width: 0%; will-change: width;
+  pointer-events: none;
+}
+
 /* ─── Page shell ─────────────────────────────────────────── */
 .pr-topbar {
   height: 60px;
@@ -20,6 +28,14 @@ a { color: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 28px;
   position: sticky; top: 0; background: var(--white); z-index: 10;
+  transition: box-shadow .2s, background .2s;
+}
+.pr-topbar.scrolled {
+  box-shadow: 0 2px 20px rgba(16,24,40,.09);
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: transparent;
 }
 .pr-back {
   display: flex; align-items: center; gap: 6px;
@@ -36,15 +52,37 @@ a { color: inherit; }
 .pr-brand img { height: 16px; width: auto; display: block; }
 .pr-container { max-width: 1080px; margin: 0 auto; }
 
-/* Astryx-inspired soft elevation scale, scoped to this page only */
+/* Elevation scale */
 :root {
   --rm-shadow-low: 0px 1px 1px rgba(16,24,40,.08), 0px 2px 8px rgba(16,24,40,.06);
   --rm-radius-container: 12px;
 }
 
-/* ─── Roadmap 2026 ───────────────────────────────────────── */
-.rm-roadmap { padding: 40px 28px 80px; background: var(--grey-50); min-height: calc(100vh - 60px); }
-.rm-roadmap-head { max-width: 1080px; margin: 0 auto 28px; }
+/* ─── Roadmap hero ───────────────────────────────────────── */
+.rm-roadmap { padding: 48px 28px 80px; background: var(--grey-50); min-height: calc(100vh - 60px); }
+.rm-roadmap-head { max-width: 1080px; margin: 0 auto 36px; }
+
+/* Hero entrance stagger */
+.rm-roadmap-head .rm-kicker {
+  opacity: 0; transform: translateY(10px);
+  animation: rm-hero-in .45s ease .0s forwards;
+}
+.rm-roadmap-head .rm-roadmap-title {
+  opacity: 0; transform: translateY(10px);
+  animation: rm-hero-in .45s ease .07s forwards;
+}
+.rm-roadmap-head .rm-roadmap-sub {
+  opacity: 0; transform: translateY(10px);
+  animation: rm-hero-in .45s ease .13s forwards;
+}
+.rm-roadmap-head .rm-hero-stats {
+  opacity: 0; transform: translateY(10px);
+  animation: rm-hero-in .45s ease .19s forwards;
+}
+@keyframes rm-hero-in {
+  to { opacity: 1; transform: none; }
+}
+
 .rm-kicker {
   margin: 0 0 4px;
   font-size: 11px; font-weight: 800; letter-spacing: .1em;
@@ -53,52 +91,86 @@ a { color: inherit; }
 .rm-roadmap-title { margin: 0 0 6px; font-size: clamp(24px, 2.6vw, 32px); font-weight: 800; letter-spacing: -.4px; }
 .rm-roadmap-sub { margin: 0; font-size: 13px; color: var(--muted); }
 
-/* Track — vertical timeline (spine + stop node per phase) */
+/* Hero stats row — hidden */
+.rm-hero-stats { display: none; }
+
+/* ─── Track — vertical timeline ──────────────────────── */
 .rm-track { position: relative; max-width: 1080px; margin: 0 auto; }
-.rm-stop { position: relative; padding-left: 44px; padding-bottom: 32px; }
+
+/* Phase scroll reveal */
+.rm-stop {
+  position: relative; padding-left: 44px; padding-bottom: 40px;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .55s cubic-bezier(.22,.68,0,1.1), transform .55s cubic-bezier(.22,.68,0,1.1);
+}
+.rm-stop.rm-visible {
+  opacity: 1; transform: none;
+}
+.rm-stop:last-child { padding-bottom: 0; }
+
+/* Timeline spine - draw in on reveal */
 .rm-stop::before {
   content: ''; position: absolute; left: 7px; top: 6px; bottom: -12px;
   width: 2px; background: var(--line);
+  transform-origin: top center; transform: scaleY(0);
+  transition: transform .7s ease .3s;
 }
-.rm-stop:last-child { padding-bottom: 0; }
+.rm-stop.rm-visible::before { transform: scaleY(1); }
 .rm-stop:last-child::before { display: none; }
+
 .rm-stop-node {
   position: absolute; left: 0; top: 2px;
   width: 16px; height: 16px; border-radius: 50%;
   background: var(--momo); border: 3px solid var(--white);
   box-shadow: 0 0 0 1.5px var(--momo);
+  transition: transform .3s ease;
 }
+.rm-stop.rm-visible .rm-stop-node { animation: rm-node-pop .4s cubic-bezier(.34,1.56,.64,1) .15s both; }
+@keyframes rm-node-pop {
+  from { transform: scale(0); } to { transform: scale(1); }
+}
+
 .rm-stop-future::before { background: repeating-linear-gradient(180deg, var(--grey-300) 0 6px, transparent 6px 12px); }
 .rm-stop-future .rm-stop-node { background: var(--white); box-shadow: 0 0 0 1.5px var(--grey-300); }
 .rm-stop-placeholder { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); font-style: italic; }
 
-/* Phase */
+/* Phase header */
 .rm-phase-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .rm-phase-tag { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--momo); }
 .rm-phase-tag-future { color: var(--muted); }
 .rm-phase-status { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; }
 .rm-phase-status::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+  content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex: none;
 }
 .rm-phase-status-done { color: #15803d; }
 .rm-phase-status-done::before { background: #12b76a; box-shadow: 0 0 0 3px #d1fadf; }
 .rm-phase-status-in-progress { color: #b54708; }
-.rm-phase-status-in-progress::before { background: #f79009; box-shadow: 0 0 0 3px #fef0c7; }
+.rm-phase-status-in-progress::before {
+  background: #f79009; box-shadow: 0 0 0 3px #fef0c7;
+  animation: rm-dot-pulse 1.3s ease infinite;
+}
+@keyframes rm-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 3px #fef0c7; }
+  50%       { opacity: .7; transform: scale(1.4); box-shadow: 0 0 0 5px rgba(247,144,9,.1); }
+}
 .rm-phase-title { margin: 0 0 6px; font-size: 20px; font-weight: 800; letter-spacing: -.3px; color: var(--ink); }
-.rm-phase-summary { margin: 0 0 18px; max-width: 76ch; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+.rm-phase-summary { margin: 0 0 20px; max-width: 76ch; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
 
-/* Milestones — each project is a node on its own vertical bar, detail unfolds to the right */
-.rm-milestones { display: flex; align-items: flex-start; gap: 28px; }
+/* ─── Milestones ─────────────────────────────────────── */
+.rm-milestones { display: flex; align-items: flex-start; gap: 24px; }
 .rm-milestone-rail {
-  flex: 0 0 220px;
+  flex: 0 0 248px;
   display: flex; flex-direction: column;
 }
+
 .rm-milestone {
   position: relative;
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 4px 20px 4px;
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 8px 20px 4px;
   border: 0; background: transparent;
   text-align: left; cursor: pointer;
+  border-radius: 8px;
+  transition: padding-left .15s;
 }
 .rm-milestone::before {
   content: '';
@@ -107,24 +179,60 @@ a { color: inherit; }
 }
 .rm-milestone:last-child { padding-bottom: 8px; }
 .rm-milestone:last-child::before { display: none; }
+
+/* Hover background sweep via pseudo */
+.rm-milestone::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 8px;
+  background: var(--pink-50, #fff5fb);
+  opacity: 0; z-index: -1;
+  transition: opacity .15s;
+}
+.rm-milestone:hover::after { opacity: 1; }
+.rm-milestone.active::after { opacity: 1; }
+
 .rm-milestone-node {
-  flex: none;
+  flex: none; margin-top: 1px;
   width: 18px; height: 18px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--white); border: 2px solid var(--grey-300);
   font-size: 10px; font-weight: 900; line-height: 1;
-  transition: background .15s, border-color .15s, box-shadow .15s;
+  transition: background .15s, border-color .15s, box-shadow .2s;
 }
+
+/* milestone content */
+.rm-milestone-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .rm-milestone-label {
   font: 700 12.5px 'MoMoTrustSans', sans-serif; color: var(--ink);
   transition: color .15s;
 }
-.rm-milestone:hover .rm-milestone-node { border-color: var(--momo); }
-.rm-milestone.active .rm-milestone-node { background: var(--momo); border-color: var(--momo); }
-.rm-milestone.active .rm-milestone-node::after { color: #fff; }
-.rm-milestone.active .rm-milestone-label { color: var(--momo); }
+.rm-milestone-preview-text {
+  font-size: 10.5px; font-weight: 400; color: var(--muted);
+  line-height: 1.4;
+  max-width: 190px;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height .2s ease, opacity .2s ease, margin-top .2s ease;
+}
+.rm-milestone:hover .rm-milestone-preview-text,
+.rm-milestone.active .rm-milestone-preview-text {
+  max-height: 40px; opacity: 1; margin-top: 1px;
+}
 
-/* Achieved goals — phase status "done" gets a checked-off look by default */
+.rm-milestone:hover .rm-milestone-node { border-color: var(--momo); }
+.rm-milestone.active .rm-milestone-node {
+  background: var(--momo); border-color: var(--momo);
+  animation: rm-node-glow 2s ease infinite;
+}
+.rm-milestone.active .rm-milestone-label { color: var(--momo); }
+@keyframes rm-node-glow {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(175,1,113,.4); }
+  50%       { box-shadow: 0 0 0 5px rgba(175,1,113,.0); }
+}
+
+/* done status rail */
 .rm-milestone-rail[data-status="done"] .rm-milestone::before { background: var(--pink-100); }
 .rm-milestone-rail[data-status="done"] .rm-milestone-node {
   background: var(--pink-50);
@@ -134,10 +242,13 @@ a { color: inherit; }
   content: '✓'; color: var(--momo);
 }
 .rm-milestone-rail[data-status="done"] .rm-milestone:hover .rm-milestone-node { border-color: var(--momo); }
-.rm-milestone-rail[data-status="done"] .rm-milestone.active .rm-milestone-node { background: var(--momo); border-color: var(--momo); }
+.rm-milestone-rail[data-status="done"] .rm-milestone.active .rm-milestone-node {
+  background: var(--momo); border-color: var(--momo);
+  animation: rm-node-glow 2s ease infinite;
+}
 .rm-milestone-rail[data-status="done"] .rm-milestone.active .rm-milestone-node::after { color: #fff; }
 
-/* Detail panel — fills the right side when a milestone is clicked */
+/* ─── Detail panel ────────────────────────────────────── */
 .rm-milestone-detail {
   flex: 1; min-width: 0;
   padding: 20px 22px;
@@ -148,26 +259,63 @@ a { color: inherit; }
   min-height: 320px;
 }
 .rm-milestone-detail-inner {
-  animation: rm-fade-in 0.18s ease;
+  animation: rm-detail-in 0.22s cubic-bezier(.22,.68,0,1.1);
 }
-@keyframes rm-fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes rm-detail-in {
+  from { opacity: 0; transform: translateX(10px) scale(.995); }
+  to   { opacity: 1; transform: none; }
 }
+
 .rm-milestone-empty { margin: 0; font-size: 12.5px; color: var(--muted); font-style: italic; }
-.rm-milestone-detail-name { margin: 0 0 12px; font-size: 15px; font-weight: 800; color: var(--ink); }
+.rm-milestone-detail-name { margin: 0 0 10px; font-size: 15px; font-weight: 800; color: var(--ink); }
+
+/* Preview callout */
+.rm-detail-preview-callout {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  background: var(--grey-50);
+  border-left: 3px solid var(--momo);
+  border-radius: 0 8px 8px 0;
+  font-size: 12px; color: var(--muted); line-height: 1.65; font-style: italic;
+}
+
 .rm-milestone-detail .rm-module-points { column-count: 2; column-gap: 28px; }
 
 .rm-module-points {
   margin: 0; padding-left: 16px;
   font-size: 12px; line-height: 1.6; color: var(--muted);
 }
-.rm-module-points li { padding-left: 2px; margin-bottom: 8px; break-inside: avoid; }
+.rm-module-points li {
+  padding-left: 2px; margin-bottom: 8px; break-inside: avoid;
+  opacity: 0; transform: translateX(8px);
+  animation: rm-li-in .3s ease forwards;
+}
+.rm-module-points li:nth-child(1)  { animation-delay: .06s; }
+.rm-module-points li:nth-child(2)  { animation-delay: .10s; }
+.rm-module-points li:nth-child(3)  { animation-delay: .14s; }
+.rm-module-points li:nth-child(4)  { animation-delay: .18s; }
+.rm-module-points li:nth-child(5)  { animation-delay: .22s; }
+.rm-module-points li:nth-child(6)  { animation-delay: .26s; }
+.rm-module-points li:nth-child(7)  { animation-delay: .30s; }
+.rm-module-points li:nth-child(8)  { animation-delay: .34s; }
+@keyframes rm-li-in {
+  to { opacity: 1; transform: none; }
+}
 .rm-module-points li:last-child { margin-bottom: 0; }
 .rm-module-points strong { color: var(--ink); }
-.rm-module-image { display: block; width: 100%; margin-top: 16px; border-radius: 10px; object-fit: cover; }
 
-/* ─── Track tabs ──────────────────────────────────────────── */
+/* Image with zoom on hover */
+.rm-module-image-wrap {
+  margin-top: 16px; border-radius: 10px; overflow: hidden;
+}
+.rm-module-image {
+  display: block; width: 100%; object-fit: cover;
+  transition: transform .5s cubic-bezier(.22,.68,0,1.1);
+  border-radius: 0;
+}
+.rm-module-image-wrap:hover .rm-module-image { transform: scale(1.025); }
+
+/* ─── Track tabs ──────────────────────────────────────── */
 .rm-track-tabs {
   display: flex; gap: 4px;
   margin-bottom: 18px;
@@ -186,36 +334,34 @@ a { color: inherit; }
   white-space: nowrap;
 }
 .rm-track-tab:hover { color: var(--ink); }
-.rm-track-tab.active {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-}
-.rm-track-tab[data-track="plg"].active {
-  color: var(--momo);
-  border-bottom-color: var(--momo);
-}
+.rm-track-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.rm-track-tab[data-track="plg"].active { color: var(--momo); border-bottom-color: var(--momo); }
 .rm-track-tab-badge {
   font-size: 10px; font-weight: 700;
   padding: 1px 6px; border-radius: 20px;
   background: var(--grey-100); color: var(--muted);
   transition: background .15s, color .15s;
 }
-.rm-track-tab.active .rm-track-tab-badge {
-  background: var(--grey-200); color: var(--ink);
-}
-.rm-track-tab[data-track="plg"].active .rm-track-tab-badge {
-  background: var(--pink-50); color: var(--momo);
-}
+.rm-track-tab.active .rm-track-tab-badge { background: var(--grey-200); color: var(--ink); }
+.rm-track-tab[data-track="plg"].active .rm-track-tab-badge { background: var(--pink-50); color: var(--momo); }
 
 .rm-track-panel { display: none; }
-.rm-track-panel.active { display: block; }
+.rm-track-panel.active {
+  display: block;
+  animation: rm-tab-fade .22s ease;
+}
+@keyframes rm-tab-fade {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: none; }
+}
 
-/* PLG panel detail tint */
+/* PLG tint */
 .rm-track-panel[data-track="plg"] .rm-milestone-detail {
   border-color: var(--pink-100);
   background: var(--pink-50, #fff5fb);
 }
 
+/* ─── Responsive ──────────────────────────────────────── */
 @media (max-width: 780px) {
   .rm-milestones { flex-direction: column; gap: 16px; }
   .rm-milestone-rail { flex: none; width: 100%; }
@@ -225,12 +371,20 @@ a { color: inherit; }
   .rm-roadmap { padding: 24px 16px 48px; }
   .rm-stop { padding-left: 32px; }
   .rm-stop-node { width: 13px; height: 13px; }
+  .rm-hero-stats { gap: 8px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .rm-stop { opacity: 1; transform: none; }
+  .rm-stop::before { transform: none; }
 }
 </style>
 </head>
 <body>
 
-<div class="pr-topbar">
+<div class="rm-progress-bar" id="rmProgressBar"></div>
+
+<div class="pr-topbar" id="prTopbar">
   <a class="pr-back" href="/">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     Trang chủ
@@ -245,6 +399,9 @@ a { color: inherit; }
     <p class="rm-kicker">Roadmap 2026</p>
     <h1 class="rm-roadmap-title">Product Roadmap — Web Platform</h1>
     <p class="rm-roadmap-sub">Các dự án Web Platform theo từng giai đoạn trong năm.</p>
+    <div class="rm-hero-stats" id="rmHeroStats">
+      <!-- populated by JS -->
+    </div>
   </div>
   <div class="rm-track" id="rmTrack"></div>
 </section>
@@ -543,16 +700,49 @@ const PHASE_STATUS_LABELS = {
   planned: 'Sắp triển khai',
 };
 
+// ── Populate hero stats ─────────────────────────────────
+(function () {
+  const totalModules = ROADMAP_PHASES.reduce((acc, p) => {
+    if (p.tracks) return acc + p.tracks.reduce((a, t) => a + t.modules.length, 0);
+    return acc + p.modules.length;
+  }, 0);
+  const pilotCount = 1;
+  const el = document.getElementById('rmHeroStats');
+  el.innerHTML = `
+    <div class="rm-hero-stat">
+      <span class="rm-hero-stat-num">${ROADMAP_PHASES.length}</span>
+      <span class="rm-hero-stat-label">Giai đoạn</span>
+    </div>
+    <span class="rm-hero-stat-sep">·</span>
+    <div class="rm-hero-stat">
+      <span class="rm-hero-stat-num">${totalModules}+</span>
+      <span class="rm-hero-stat-label">Module</span>
+    </div>
+    <span class="rm-hero-stat-sep">·</span>
+    <div class="rm-hero-stat">
+      <span class="rm-hero-stat-num">${pilotCount}</span>
+      <span class="rm-hero-stat-label">Pilot ra mắt</span>
+    </div>`;
+})();
+
+// ── Render helpers ──────────────────────────────────────
+function renderMilestoneRail(modules, railKey, status) {
+  return modules.map((m, i) => `
+    <button type="button" class="rm-milestone" data-idx="${i}">
+      <span class="rm-milestone-node"></span>
+      <span class="rm-milestone-content">
+        <span class="rm-milestone-label">${m.name}</span>
+        ${m.preview ? `<span class="rm-milestone-preview-text">${m.preview}</span>` : ''}
+      </span>
+    </button>`).join('');
+}
+
 function renderMilestoneBlock(modules, railKey, status) {
   const emptyHtml = '<p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>';
   return `
     <div class="rm-milestones">
       <div class="rm-milestone-rail" data-rail="${railKey}" data-status="${status}">
-        ${modules.map((m, i) => `
-          <button type="button" class="rm-milestone" data-idx="${i}">
-            <span class="rm-milestone-node"></span>
-            <span class="rm-milestone-label">${m.name}</span>
-          </button>`).join('')}
+        ${renderMilestoneRail(modules, railKey, status)}
       </div>
       <div class="rm-milestone-detail" data-rail="${railKey}">
         ${emptyHtml}
@@ -560,6 +750,24 @@ function renderMilestoneBlock(modules, railKey, status) {
     </div>`;
 }
 
+function renderDetail(m) {
+  const imageHtml = m.image ? `
+    <div class="rm-module-image-wrap">
+      <img src="${m.image}" alt="${m.name}" class="rm-module-image">
+    </div>` : '';
+  const previewHtml = m.preview ? `<p class="rm-detail-preview-callout">${m.preview}</p>` : '';
+  return `
+    <div class="rm-milestone-detail-inner">
+      <h3 class="rm-milestone-detail-name">${m.name}</h3>
+      ${previewHtml}
+      <ul class="rm-module-points">
+        ${m.points.map(pt => `<li><strong>${pt.title}:</strong> ${pt.desc}</li>`).join('')}
+      </ul>
+      ${imageHtml}
+    </div>`;
+}
+
+// ── Build roadmap ───────────────────────────────────────
 function buildRoadmap() {
   const stops = ROADMAP_PHASES.map(p => {
     let contentHtml;
@@ -568,6 +776,7 @@ function buildRoadmap() {
         p.tracks.map((t, ti) => `
           <button class="rm-track-tab${ti === 0 ? ' active' : ''}" data-track="${t.id}" data-phase="${p.period}">
             ${t.label}
+            <span class="rm-track-tab-badge">${t.modules.length}</span>
           </button>`).join('') +
         `</div>`;
       const panels = p.tracks.map((t, ti) => `
@@ -578,6 +787,10 @@ function buildRoadmap() {
     } else {
       contentHtml = renderMilestoneBlock(p.modules, p.period, p.status);
     }
+
+    const moduleCount = p.tracks
+      ? p.tracks.reduce((a, t) => a + t.modules.length, 0)
+      : p.modules.length;
 
     return `
     <div class="rm-stop rm-stop-${p.status}">
@@ -596,20 +809,27 @@ function buildRoadmap() {
 
   document.getElementById('rmTrack').innerHTML = stops;
 
+  // Wire milestone clicks
   document.querySelectorAll('.rm-milestone-rail').forEach(rail => {
     const railKey = rail.dataset.rail;
     const detail = document.querySelector(`.rm-milestone-detail[data-rail="${railKey}"]`);
     const milestones = rail.querySelectorAll('.rm-milestone');
     const emptyHtml = '<p class="rm-milestone-empty">Chọn một dự án bên trái để xem chi tiết.</p>';
 
-    // Resolve which modules array this rail maps to
     let modules;
-    const [period, trackId] = railKey.split(/-(?=[^-]*$)/); // split on last '-'
+    const lastDash = railKey.lastIndexOf('-');
+    const period = railKey.substring(0, lastDash);
+    const trackId = railKey.substring(lastDash + 1);
     const phase = ROADMAP_PHASES.find(p => p.period === period);
-    if (phase.tracks) {
+
+    if (phase && phase.tracks) {
       modules = phase.tracks.find(t => t.id === trackId)?.modules || [];
-    } else {
+    } else if (phase) {
       modules = phase.modules;
+    } else {
+      // fallback: find by full period key
+      const pFull = ROADMAP_PHASES.find(p => p.period === railKey);
+      modules = pFull ? pFull.modules : [];
     }
 
     milestones.forEach(btn => {
@@ -625,14 +845,7 @@ function buildRoadmap() {
 
         btn.classList.add('active');
         const m = modules[idx];
-        detail.innerHTML = `
-          <div class="rm-milestone-detail-inner">
-            <h3 class="rm-milestone-detail-name">${m.name}</h3>
-            <ul class="rm-module-points">
-              ${m.points.map(pt => `<li><strong>${pt.title}:</strong> ${pt.desc}</li>`).join('')}
-            </ul>
-            ${m.image ? `<img src="${m.image}" alt="${m.name}" class="rm-module-image">` : ''}
-          </div>`;
+        detail.innerHTML = renderDetail(m);
       });
     });
   });
@@ -658,9 +871,37 @@ function buildRoadmap() {
       activePanel?.querySelector('.rm-milestone')?.click();
     });
   });
+
+  // Intersection Observer — phase scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('rm-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.rm-stop').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+    io.observe(el);
+  });
 }
 
 buildRoadmap();
+
+// ── Scroll: progress bar + topbar elevation ─────────────
+const progressBar = document.getElementById('rmProgressBar');
+const topbar = document.getElementById('prTopbar');
+
+function onScroll() {
+  const scrolled = window.scrollY;
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  if (maxScroll > 0) progressBar.style.width = (scrolled / maxScroll * 100).toFixed(1) + '%';
+  topbar.classList.toggle('scrolled', scrolled > 8);
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
 </script>
 </body>
 </html>

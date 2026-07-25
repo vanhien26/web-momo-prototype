@@ -1751,5 +1751,153 @@ document.querySelectorAll('[data-workflow-step]').forEach(button=>{
 renderWorkflowStep(0);
 </script>
 
+<!-- ══════════════════════════════════════════════
+     Enhancement layer — scroll, stagger, orb
+══════════════════════════════════════════════ -->
+<style>
+/* ── Navbar scroll elevation ── */
+.nav-elevated {
+  box-shadow: 0 2px 28px rgba(16,24,40,.10) !important;
+  border-bottom-color: transparent !important;
+}
+
+/* ── Hero children entrance ── */
+.hero-child-enter {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+/* ── Grid child stagger ──
+   Parent .rv.grid stays visible instantly (opacity 1).
+   Children cascade in after .vis fires on parent.          */
+.rv.grid {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+.rv.grid > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .42s ease, transform .42s cubic-bezier(.22,1,.36,1);
+}
+.rv.grid.vis > *:nth-child(1) { opacity:1; transform:none; transition-delay: 0s; }
+.rv.grid.vis > *:nth-child(2) { opacity:1; transform:none; transition-delay:.07s; }
+.rv.grid.vis > *:nth-child(3) { opacity:1; transform:none; transition-delay:.14s; }
+.rv.grid.vis > *:nth-child(4) { opacity:1; transform:none; transition-delay:.21s; }
+.rv.grid.vis > *:nth-child(5) { opacity:1; transform:none; transition-delay:.28s; }
+.rv.grid.vis > *:nth-child(6) { opacity:1; transform:none; transition-delay:.35s; }
+
+/* ── Mouse spotlight orb ── */
+#hero-orb {
+  position: absolute;
+  width: 560px; height: 560px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(165,0,100,.085), transparent 68%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  left: 30%; top: 50%;
+  transition: left .65s cubic-bezier(.22,1,.36,1), top .65s cubic-bezier(.22,1,.36,1);
+  z-index: 0; will-change: left, top;
+}
+
+/* ── Section entrance — left/right variant ── */
+.rv-left  { transform: translateX(-20px) !important; }
+.rv-right { transform: translateX(20px) !important; }
+.rv-left.vis, .rv-right.vis { transform: none !important; }
+
+/* ── CTA button magnetic hover ── */
+.btn-magnetic {
+  transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease !important;
+  will-change: transform;
+}
+.btn-magnetic:hover {
+  box-shadow: 0 8px 28px rgba(165,0,100,.32) !important;
+}
+</style>
+
+<script>
+(function () {
+  /* ── 1. Navbar scroll elevation ── */
+  const nav = document.querySelector('nav');
+  const onScroll = () => nav.classList.toggle('nav-elevated', window.scrollY > 10);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ── 2. Hero entrance stagger ── */
+  const heroGrid = document.querySelector('main > section:first-child .relative.z-10 > div');
+  if (heroGrid) {
+    const kids = Array.from(heroGrid.children);
+    kids.forEach(el => el.classList.add('hero-child-enter'));
+
+    // Stagger: badge → h1 → p → cta-row
+    const delays = [0, 80, 160, 240];
+    kids.forEach((el, i) => {
+      const delay = delays[i] ?? i * 80;
+      setTimeout(() => {
+        el.style.transition = `opacity .55s ease, transform .55s cubic-bezier(.22,.68,0,1.2)`;
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }, delay);
+    });
+
+    // OS panel (right side of hero grid) fades in slightly later
+    const osPanel = document.querySelector('main > section:first-child .rv.os-panel');
+    if (osPanel) {
+      osPanel.style.opacity = '0';
+      osPanel.style.transform = 'translateY(20px) scale(.98)';
+      setTimeout(() => {
+        osPanel.style.transition = 'opacity .65s ease .3s, transform .65s cubic-bezier(.22,.68,0,1.2) .3s';
+        osPanel.style.opacity = '1';
+        osPanel.style.transform = 'none';
+      }, 100);
+    }
+  }
+
+  /* ── 3. Mouse spotlight orb in hero ── */
+  const heroSection = document.querySelector('main > section:first-child');
+  if (heroSection) {
+    const orb = document.createElement('div');
+    orb.id = 'hero-orb';
+    heroSection.appendChild(orb);
+    let raf;
+    heroSection.addEventListener('mousemove', e => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = heroSection.getBoundingClientRect();
+        orb.style.left = (e.clientX - r.left) + 'px';
+        orb.style.top  = (e.clientY - r.top)  + 'px';
+      });
+    });
+  }
+
+  /* ── 4. Magnetic CTA button ── */
+  document.querySelectorAll('a[href="lab.html"]').forEach(btn => {
+    btn.classList.add('btn-magnetic');
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - r.left - r.width  / 2) * 0.22;
+      const dy = (e.clientY - r.top  - r.height / 2) * 0.22;
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+  });
+
+  /* ── 5. Scroll progress bar ── */
+  const bar = document.createElement('div');
+  bar.style.cssText = 'position:fixed;top:0;left:0;height:2px;z-index:9999;background:linear-gradient(90deg,#a50064,#ff6bb5);width:0%;pointer-events:none;transition:width .1s linear';
+  document.body.prepend(bar);
+  window.addEventListener('scroll', () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    if (max > 0) bar.style.width = (window.scrollY / max * 100).toFixed(1) + '%';
+  }, { passive: true });
+
+  /* ── 6. Section text reveals — platform section ── */
+  // Add rv-left to left col, rv-right to right col of the LP form section
+  const lpLeft = document.querySelector('#lp-request .rv > div:first-child');
+  const lpRight = document.querySelector('#lp-request .rv > div:last-child');
+  if (lpLeft)  lpLeft.classList.add('rv-left');
+  if (lpRight) lpRight.classList.add('rv-right');
+})();
+</script>
+
 </body>
 </html>

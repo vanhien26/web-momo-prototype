@@ -6,7 +6,8 @@
   <title>MoMo Prototype Home</title>
   <meta name="description" content="Homepage điều hướng prototype cho đội Dev: chọn MoSpark Platform, Mini Web Overview, Utilities Tool hoặc PLG Project.">
   <link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
-  <link rel="stylesheet" href="assets/store.css?v=24">
+  <link rel="stylesheet" href="assets/store.css?v=36">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.css">
 </head>
 <body>
   <div class="app-shell">
@@ -52,6 +53,88 @@
 
   <script src="assets/mini-web-data.js?v=1"></script>
   <script src="assets/mini-web-volume.js?v=1"></script>
-  <script src="assets/store.js?v=112"></script>
+  <script src="assets/store.js?v=122"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.18.2/dist/motion.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+  // Runs after store.js DOMContentLoaded (registered first) has rendered the workspace
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // ── Tier 1: CountUp ─────────────────────────────────────────────────────
+    var CU = window.countUp && window.countUp.CountUp;
+    if (CU) {
+      document.querySelectorAll('.lab-chip b').forEach(function(el) {
+        var end = parseInt(el.textContent, 10);
+        if (isNaN(end)) return;
+        el.textContent = '0';
+        new CU(el, end, { duration: 1.4, useEasing: true }).start();
+      });
+      document.querySelectorAll('.lab-section-cnt').forEach(function(el) {
+        var end = parseInt(el.textContent, 10);
+        if (isNaN(end)) return;
+        el.textContent = '0';
+        new CU(el, end, { duration: 1.1, useEasing: true, delay: 0.3 }).start();
+      });
+    }
+
+    // ── Tier 1: Motion One scroll reveal ────────────────────────────────────
+    if (window.Motion) {
+      var _anim = window.Motion.animate, _inView = window.Motion.inView;
+      document.querySelectorAll('.lab-section').forEach(function(el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(18px)';
+      });
+      _inView('.lab-section', function(entry) {
+        _anim(entry.target,
+          { opacity: 1, transform: 'translateY(0px)' },
+          { duration: 0.5, easing: [0.22, 1, 0.36, 1] }
+        );
+      }, { margin: '-6% 0px' });
+    }
+
+    // ── Tier 1: Tippy sidebar nav tooltips ──────────────────────────────────
+    if (typeof tippy !== 'undefined' && typeof tippy.delegate === 'function') {
+      tippy.delegate('#protoNav', {
+        target: '[data-id]',
+        content: function(ref) {
+          var proto = PROTOTYPES.find(function(p) { return p.id === ref.dataset.id; });
+          return (proto && proto.description) ? proto.description : '';
+        },
+        placement: 'right',
+        delay: [450, 0],
+        theme: 'lab-dark',
+        maxWidth: 230,
+        onShow: function(instance) {
+          return !!instance.props.content(instance.reference);
+        },
+      });
+    }
+
+    // ── GSAP Hero Entrance ───────────────────────────────────────────────────
+    if (typeof gsap === 'undefined') return;
+    var hero = document.querySelector('.lab-hero');
+    if (!hero) return;
+
+    gsap.set('.lab-star',        { opacity: 0 });
+    gsap.set('.lab-kicker',      { opacity: 0, y: -10 });
+    gsap.set('.lab-title-word',  { opacity: 0, y: 22 });
+    gsap.set('.lab-title-accent',{ opacity: 0, y: 22 });
+    gsap.set('.lab-title-sub',   { opacity: 0, y: 14 });
+    gsap.set('.lab-sub',         { opacity: 0, y: 12 });
+    gsap.set('.lab-hero-search', { opacity: 0, y: 8 });
+
+    gsap.timeline({ defaults: { ease: 'power3.out' } })
+      .to('.lab-star',         { opacity: 1, duration: 1.8, stagger: 0.06 }, 0)
+      .to('.lab-kicker',       { opacity: 1, y: 0, duration: 0.55 }, 0.08)
+      .to('.lab-title-word',   { opacity: 1, y: 0, duration: 0.65 }, 0.26)
+      .to('.lab-title-accent', { opacity: 1, y: 0, duration: 0.65 }, 0.40)
+      .to('.lab-title-sub',    { opacity: 1, y: 0, duration: 0.60 }, 0.55)
+      .to('.lab-sub',          { opacity: 1, y: 0, duration: 0.55 }, 0.70)
+      .to('.lab-hero-search',  { opacity: 1, y: 0, duration: 0.50 }, 0.84);
+  });
+  </script>
 </body>
 </html>

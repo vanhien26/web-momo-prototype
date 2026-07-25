@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tiện Ích Giao Thông MoMo - Tra Phạt Nguội, Giá Xăng, ePass, Bảo Hiểm Xe</title>
 <meta name="description" content="Tra cứu phạt nguội theo biển số không CAPTCHA, xem giá xăng dầu hôm nay, nạp ePass tự động, mua bảo hiểm TNDS và tìm cây xăng đối tác MoMo gần bạn.">
-<link rel="icon" href="../assets/images/momo-logo.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/images/momo-logo.svg" type="image/svg+xml">
 <style>
 @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
 @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
@@ -81,7 +81,7 @@ body {
   display: flex; align-items: center; gap: 16px;
   overflow: visible;
 }
-.nav-left { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.nav-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .nav-back {
   display: inline-flex; align-items: center; gap: 4px;
   font-size: 12px; font-weight: 600; color: var(--gray-400);
@@ -90,11 +90,46 @@ body {
 }
 .nav-back:hover { color: var(--gray-700); background: var(--gray-100); }
 .nav-sep { width: 1px; height: 18px; background: var(--gray-200); flex-shrink: 0; }
-.nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
-.logo-icon { width: 32px; height: 32px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
+/* MoMo logo (square icon only) */
+.nav-momo-logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+.nav-momo-icon { width: 30px; height: 30px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+.nav-momo-icon img { width: 100%; height: 100%; display: block; }
+.site-nav:has(.nav-item:hover) .nav-sep { background: rgba(255,255,255,.15); }
+/* Vehicle hub brand */
+.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.logo-icon { width: 30px; height: 30px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
 .logo-icon img { width: 100%; height: 100%; display: block; }
-.logo-text { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.logo-text { font-size: 13.5px; font-weight: 800; color: var(--gray-900); }
 .logo-text em { color: var(--pink-500); font-style: normal; }
+.site-nav:has(.nav-item:hover) .logo-text { color: #fff; }
+.site-nav:has(.nav-item:hover) .logo-text em { color: rgba(255,255,255,.7); }
+
+/* Mobile search icon btn */
+.nav-search-icon-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 8px;
+  background: none; border: 1.5px solid var(--gray-200);
+  color: var(--gray-600); cursor: pointer; flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+.nav-search-icon-btn:hover { background: var(--gray-100); color: var(--gray-900); }
+
+/* Mobile search overlay */
+.nav-search-overlay {
+  display: none; position: sticky; top: 84px; left: 0; right: 0;
+  z-index: 199; padding: 8px 12px 10px;
+  background: #fff; border-bottom: 1px solid var(--gray-200);
+  box-shadow: 0 4px 12px rgba(28,23,26,.08);
+}
+.nav-search-overlay.open { display: block; }
+.nav-search-overlay .nav-search-box {
+  width: 100%; min-width: 0; border-color: var(--pink-500);
+  background: #fff; box-shadow: 0 0 0 3px rgba(235,47,150,.1);
+}
+.nav-search-overlay .nav-search-drop {
+  position: static; width: 100%; margin-top: 8px;
+  max-height: 320px; border-radius: 10px;
+}
 
 /* top-level items */
 .nav-links { display: flex; gap: 0; margin-left: 8px; }
@@ -176,43 +211,130 @@ body {
 }
 .mega-tag:hover { background: rgba(255,255,255,.18); }
 
+/* ── NAV SEARCH ─────────────────────────── */
+.nav-search {
+  position: relative; margin-left: auto; flex-shrink: 0;
+}
+.nav-search-box {
+  display: flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 10px 0 11px;
+  background: var(--gray-100); border: 1.5px solid var(--gray-200);
+  border-radius: 9px; cursor: text; min-width: 200px;
+  transition: border-color .18s, background .18s, min-width .25s cubic-bezier(.4,0,.2,1), box-shadow .18s;
+}
+.nav-search-box:focus-within {
+  border-color: var(--pink-500); background: #fff;
+  box-shadow: 0 0 0 3px rgba(235,47,150,.12);
+  min-width: 260px;
+}
+.nav-search-box svg { flex-shrink: 0; color: var(--gray-400); transition: color .15s; }
+.nav-search-box:focus-within svg { color: var(--pink-500); }
+.nav-search-inp {
+  flex: 1; border: none; background: none; outline: none;
+  font-family: inherit; font-size: 13px; font-weight: 500; color: var(--gray-900);
+  min-width: 0;
+}
+.nav-search-inp::placeholder { color: var(--gray-400); }
+.nav-search-kbd {
+  font-size: 10px; font-weight: 700; color: var(--gray-400);
+  background: var(--gray-200); border-radius: 4px;
+  padding: 1px 5px; flex-shrink: 0; font-family: inherit;
+  pointer-events: none; transition: opacity .15s;
+}
+.nav-search-box:focus-within .nav-search-kbd { opacity: 0; }
+
+/* Dark mode when mega nav hovered */
+.site-nav:has(.nav-item:hover) .nav-search-box {
+  background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16);
+}
+.site-nav:has(.nav-item:hover) .nav-search-inp { color: #fff; }
+.site-nav:has(.nav-item:hover) .nav-search-inp::placeholder { color: rgba(255,255,255,.38); }
+.site-nav:has(.nav-item:hover) .nav-search-box svg { color: rgba(255,255,255,.4); }
+.site-nav:has(.nav-item:hover) .nav-search-kbd { background: rgba(255,255,255,.12); color: rgba(255,255,255,.4); }
+.site-nav:has(.nav-item:hover) .nav-search-box:focus-within {
+  background: rgba(255,255,255,.12); border-color: rgba(235,47,150,.6);
+}
+
+/* Dropdown */
+.nav-search-drop {
+  position: absolute; top: calc(100% + 10px); right: 0;
+  width: 320px; max-height: 400px; overflow-y: auto;
+  background: #fff; border: 1px solid var(--gray-200);
+  border-radius: 14px; box-shadow: 0 12px 40px rgba(28,23,26,.16), 0 2px 8px rgba(28,23,26,.07);
+  z-index: 600; display: none; flex-direction: column;
+  scrollbar-width: thin; scrollbar-color: var(--gray-200) transparent;
+}
+.nav-search-drop.open { display: flex; }
+.nav-search-drop::-webkit-scrollbar { width: 4px; }
+.nav-search-drop::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 99px; }
+
+.nsd-section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--gray-400); padding: 12px 14px 6px; flex-shrink: 0;
+}
+.nsd-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 14px; cursor: pointer; text-decoration: none;
+  transition: background .12s;
+}
+.nsd-item:hover, .nsd-item.nsd-active { background: var(--gray-50); }
+.nsd-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.nsd-info { flex: 1; min-width: 0; }
+.nsd-model {
+  font-size: 13.5px; font-weight: 700; color: var(--gray-900);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nsd-brand {
+  font-size: 11.5px; color: var(--gray-500); margin-top: 1px;
+}
+.nsd-type {
+  font-size: 10px; font-weight: 700; letter-spacing: .03em;
+  padding: 3px 7px; border-radius: 5px; flex-shrink: 0;
+  background: var(--gray-100); color: var(--gray-600);
+}
+.nsd-type.ev { background: var(--green-50); color: var(--green-500); }
+.nsd-type.motorbike { background: var(--blue-50); color: var(--blue-500); }
+.nsd-divider { height: 1px; background: var(--gray-100); margin: 4px 0; flex-shrink: 0; }
+.nsd-empty {
+  padding: 28px 14px; text-align: center;
+  font-size: 13px; color: var(--gray-400);
+}
+.nsd-empty strong { display: block; font-size: 14px; font-weight: 700; color: var(--gray-600); margin-bottom: 4px; }
+
 /* ── HAMBURGER SIDEBAR NAV ─────────────── */
 .nav-menu-btn{display:none;margin-left:auto;width:36px;height:36px;border-radius:8px;background:none;border:none;color:var(--gray-700);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,color .15s}
 .nav-menu-btn:hover{background:var(--gray-100)}
-.nav-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.nav-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:800;backdrop-filter:blur(2px)}
 .nav-sidebar-overlay.open{display:block}
-.nav-sidebar{position:fixed;top:0;right:0;bottom:0;width:300px;background:#1a2535;z-index:1001;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.nav-sidebar{position:fixed;top:0;right:0;width:280px;height:100dvh;background:#fff;z-index:900;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
 .nav-sidebar.open{transform:translateX(0)}
-.nav-sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0}
-.nav-sidebar-logo{font-size:15px;font-weight:800;color:#fff}
+.nav-sidebar-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--gray-100);flex:none}
+.nav-sidebar-logo{font-size:13px;font-weight:800;color:var(--gray-900)}
 .nav-sidebar-logo em{color:var(--pink-500);font-style:normal}
-.nav-sidebar-close{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:none;display:grid;place-items:center;color:rgba(255,255,255,.8);cursor:pointer;transition:background .15s,color .15s}
-.nav-sidebar-close:hover{background:rgba(255,255,255,.18);color:#fff}
-.nav-sidebar-body{flex:1;overflow-y:auto;padding:8px 0 32px}
-.nav-sidebar-body::-webkit-scrollbar{width:3px}
-.nav-sidebar-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px}
-.nav-sidebar-section{margin-bottom:2px}
-.nav-sidebar-group{display:flex;align-items:center;gap:6px;padding:12px 20px;font-size:13px;font-weight:700;color:rgba(255,255,255,.6);cursor:pointer;user-select:none;transition:color .15s,background .15s}
-.nav-sidebar-group:hover{color:#fff;background:rgba(255,255,255,.06)}
-.nav-sidebar-group svg{flex:none;transition:transform .2s;margin-left:auto;color:rgba(255,255,255,.3)}
-.nav-sidebar-group.expanded{color:#fff}
-.nav-sidebar-group.expanded svg{transform:rotate(180deg);color:rgba(255,255,255,.5)}
-.nav-sidebar-links{display:none;padding:0 0 6px}
-.nav-sidebar-links.open{display:block}
-.nav-sidebar-col-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);letter-spacing:.07em;text-transform:uppercase;padding:10px 20px 4px}
-.nav-sidebar-link{display:block;padding:9px 20px;font-size:14px;font-weight:500;color:rgba(255,255,255,.75);text-decoration:none;transition:color .12s,background .12s}
-.nav-sidebar-link:hover{color:#fff;background:rgba(255,255,255,.07)}
-.nav-sidebar-divider{height:1px;background:rgba(255,255,255,.07);margin:4px 0}
+.nav-sidebar-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--gray-200);background:#fff;display:grid;place-items:center;color:var(--gray-500);cursor:pointer}
+.nav-sidebar-body{flex:1;padding:8px 0 24px;overflow-y:auto}
+.nav-sidebar-section{padding:12px 16px 4px}
+.nav-sidebar-section-label{font-size:10.5px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.nav-sidebar-link{display:flex;align-items:center;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--gray-700);text-decoration:none;transition:.12s;gap:8px}
+.nav-sidebar-link:hover{background:var(--gray-50);color:var(--gray-900)}
+.nav-sidebar-divider{height:1px;background:var(--gray-100);margin:8px 16px}
 
 @media(max-width: 768px) {
-  .nav-inner { height: 48px; padding: 0 10px; gap: 8px; }
+  .nav-inner { height: 48px; padding: 0 10px; gap: 6px; }
   .nav-back span { display: none; }
+  .nav-back { padding: 5px 6px; }
   .nav-sep { display: none; }
-  .logo-text { font-size: 13px; }
-  .logo-icon { width: 28px; height: 28px; }
+  .logo-text { font-size: 12.5px; }
+  .logo-icon { width: 26px; height: 26px; }
+  .nav-momo-icon { width: 26px; height: 26px; }
   .nav-links { display: none; }
   .mega { display: none; }
   .nav-menu-btn { display: flex; }
+  .nav-search { display: none; }
+  .nav-search-icon-btn { display: flex; margin-left: auto; }
+  .nav-menu-btn { margin-left: 0; }
 }
 
 /* ── HERO: VEHICLE HUB ───────────────────── */
@@ -274,6 +396,31 @@ body {
 
 /* Entry use-case cards */
 .plate-entry-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 16px; }
+.pec-card[data-use="gia-xang"] { border-color: rgba(251,146,60,.25); }
+.pec-card[data-use="gia-xang"]:hover,.pec-card[data-use="gia-xang"].pec-active { border-color: rgba(251,146,60,.5); background: rgba(251,146,60,.1); color:#fff; }
+.pec-card[data-use="bao-hiem"] { border-color: rgba(34,197,94,.15); }
+.pec-card[data-use="bao-hiem"]:hover,.pec-card[data-use="bao-hiem"].pec-active { border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.08); color:#fff; }
+
+/* Inline panels */
+.pec-inline { padding-top: 4px; }
+.pec-inline-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 12px; }
+.pec-fuel-rows { display: flex; flex-direction: column; gap: 0; margin-bottom: 14px; }
+.pec-fuel-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+.pec-fuel-row:last-child { border-bottom: none; }
+.pec-fuel-name { flex: 1; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.8); }
+.pec-fuel-price { font-size: 14px; font-weight: 800; color: #fff; }
+.pec-fuel-change { font-size: 11px; font-weight: 700; min-width: 52px; text-align: right; }
+.pec-down { color: #4ade80; }
+.pec-up { color: #f87171; }
+.pec-inline-cta { display: block; font-size: 12.5px; font-weight: 700; color: var(--pink-400); text-decoration: none; padding: 10px 0 2px; }
+.pec-inline-cta:hover { color: #fff; }
+.pec-bh-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); text-decoration: none; margin-bottom: 8px; transition: background .15s, border-color .15s; color: rgba(255,255,255,.7); }
+.pec-bh-row:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2); color: #fff; }
+.pec-bh-row svg { flex-shrink: 0; }
+.pec-bh-info { flex: 1; }
+.pec-bh-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.pec-bh-desc { font-size: 11.5px; color: rgba(255,255,255,.45); }
+.pec-bh-arrow { opacity: .4; flex-shrink: 0; }
 .pec-card {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   padding: 12px 8px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12);
@@ -999,7 +1146,7 @@ body {
   font-size: 11px; font-weight: 800; color: #fff;
 }
 .ins-info { flex: 1; min-width: 0; }
-.ins-name { font-size: 14px; font-weight: 700; }
+.ins-name { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 5px; flex-wrap: nowrap; white-space: nowrap; }
 .ins-perk { font-size: 12px; color: var(--gray-500); }
 .ins-price { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ins-price small { font-size: 11px; color: var(--gray-400); font-weight: 400; }
@@ -1720,7 +1867,7 @@ body {
     </div>
   </div>
   <div class="gs-link-wrap">
-    <a class="gs-link" href="/gia-xang">Xem chi tiết →</a>
+    <a class="gs-link" href="/tien-ich-giao-thong/gia-xang">Xem chi tiết →</a>
   </div>
 </div>
 
@@ -1734,7 +1881,13 @@ body {
         <span>Lab</span>
       </a>
       <div class="nav-sep"></div>
-      <a class="nav-logo" href="/vehicle-hub">
+      <a class="nav-momo-logo" href="/" title="MoMo">
+        <span class="nav-momo-icon">
+          <img src="/assets/images/momo-logo.svg" alt="MoMo">
+        </span>
+      </a>
+      <div class="nav-sep"></div>
+      <a class="nav-logo" href="/tien-ich-giao-thong">
         <span class="logo-icon logo-icon--hub">
           <img src="https://homepage.momocdn.net/img/dang-kiem-260710113006.png" alt="Tiện ích Giao thông">
         </span>
@@ -1753,18 +1906,18 @@ body {
         </button>
         <div class="mega">
           <div class="mega-body">
-            <a class="mega-header" href="/trip-planner">Xem tất cả Di chuyển <i data-lucide="arrow-right" width="14" height="14"></i></a>
+            <a class="mega-header" href="/tien-ich-giao-thong/chuyen-di">Xem tất cả Di chuyển <i data-lucide="arrow-right" width="14" height="14"></i></a>
             <div class="mega-cols">
               <div class="mega-col">
                 <div class="mega-col-label">Nhiên liệu</div>
-                <a class="mega-item" href="/gia-xang" data-micon="Fuel">Giá xăng dầu hôm nay</a>
+                <a class="mega-item" href="/tien-ich-giao-thong/gia-xang" data-micon="Fuel">Giá xăng dầu hôm nay</a>
                 <a class="mega-item" href="/cay-xang" data-micon="MapPin">Tìm cây xăng gần đây</a>
                 <a class="mega-item" href="/tram-sac" data-micon="Zap">Trạm sạc xe điện</a>
               </div>
               <div class="mega-col">
                 <div class="mega-col-label">Hành trình</div>
-                <a class="mega-item" href="/trip-planner" data-micon="Route">Tính chi phí chuyến đi</a>
-                <a class="mega-item" href="/tinh-phi-etc" data-micon="Milestone">Tính phí ETC theo tuyến</a>
+                <a class="mega-item" href="/tien-ich-giao-thong/chuyen-di" data-micon="Route">Tính chi phí chuyến đi</a>
+                <a class="mega-item" href="/epass/tinh-phi-etc" data-micon="Milestone">Tính phí ETC theo tuyến</a>
               </div>
             </div>
           </div>
@@ -1805,12 +1958,12 @@ body {
               <div class="mega-col">
                 <div class="mega-col-label">Pháp lý</div>
                 <a class="mega-item" href="/phat-nguoi" data-micon="ShieldAlert">Tra phạt nguội</a>
-                <a class="mega-item" href="/dang-kiem" data-micon="ClipboardList">Kiểm tra đăng kiểm</a>
+                <a class="mega-item" href="/tien-ich-giao-thong/dang-kiem" data-micon="ClipboardList">Kiểm tra đăng kiểm</a>
               </div>
               <div class="mega-col">
                 <div class="mega-col-label">Bảo dưỡng</div>
                 <a class="mega-item" href="/bao-duong-xe" data-micon="Wrench">Lịch bảo dưỡng xe</a>
-                <a class="mega-item" href="/vehicle-hub/cuu-ho" data-micon="Truck">Cứu hộ khẩn cấp</a>
+                <a class="mega-item" href="/tien-ich-giao-thong/cuu-ho" data-micon="Truck">Cứu hộ khẩn cấp</a>
               </div>
             </div>
           </div>
@@ -1825,18 +1978,18 @@ body {
         </button>
         <div class="mega">
           <div class="mega-body">
-            <a class="mega-header" href="/vehicle-hub#ho-so-xe">Xem tất cả Xe của tôi <i data-lucide="arrow-right" width="14" height="14"></i></a>
+            <a class="mega-header" href="/tien-ich-giao-thong#ho-so-xe">Xem tất cả Xe của tôi <i data-lucide="arrow-right" width="14" height="14"></i></a>
             <div class="mega-cols">
               <div class="mega-col">
                 <div class="mega-col-label">Hồ sơ & Chi phí</div>
-                <a class="mega-item" href="/vehicle-hub#ho-so-xe" data-micon="Car">Hồ sơ phương tiện</a>
-                <a class="mega-item" href="/vehicle-hub#chi-phi-xe" data-micon="Calculator">Chi phí nuôi xe / năm</a>
-                <a class="mega-item" href="/hang-xe" data-micon="Tag">Nhãn xe & Dòng xe</a>
+                <a class="mega-item" href="/tien-ich-giao-thong#ho-so-xe" data-micon="Car">Hồ sơ phương tiện</a>
+                <a class="mega-item" href="/tien-ich-giao-thong#chi-phi-xe" data-micon="Calculator">Chi phí nuôi xe / năm</a>
+                <a class="mega-item" href="/tien-ich-giao-thong/hang-xe" data-micon="Tag">Nhãn xe & Dòng xe</a>
               </div>
               <div class="mega-col">
                 <div class="mega-col-label">Tiện ích</div>
                 <a class="mega-item" href="/epass" data-micon="CreditCard">ePass & Tự động nạp</a>
-                <a class="mega-item" href="/bai-do-xe" data-micon="SquareParking">Tìm bãi đỗ xe</a>
+                <a class="mega-item" href="/tien-ich-giao-thong/bai-do-xe" data-micon="SquareParking">Tìm bãi đỗ xe</a>
               </div>
             </div>
           </div>
@@ -1845,6 +1998,21 @@ body {
 
     </div><!-- /nav-links -->
 
+    <!-- Vehicle search -->
+    <div class="nav-search" id="navSearch">
+      <div class="nav-search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="navSearchInp" class="nav-search-inp" type="text" placeholder="Tìm xe của bạn..." autocomplete="off" spellcheck="false">
+        <kbd class="nav-search-kbd">/</kbd>
+      </div>
+      <div class="nav-search-drop" id="navSearchDrop"></div>
+    </div>
+
+    <!-- Mobile search icon (mobile only) -->
+    <button class="nav-search-icon-btn" onclick="toggleMobileSearch()" aria-label="Tìm xe">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    </button>
+
     <!-- Hamburger button (mobile only) -->
     <button class="nav-menu-btn" onclick="openNavSidebar()" aria-label="Menu">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -1852,77 +2020,58 @@ body {
   </div>
 </nav>
 
+<!-- Mobile search overlay -->
+<div class="nav-search-overlay" id="mobileSearchOverlay">
+  <div class="nav-search-box">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="mobileSearchInp" class="nav-search-inp" type="text" placeholder="Tìm xe của bạn..." autocomplete="off" spellcheck="false">
+    <button onclick="closeMobileSearch()" style="background:none;border:none;cursor:pointer;color:var(--gray-400);padding:0;display:flex;align-items:center;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-search-drop" id="mobileSearchDrop"></div>
+</div>
+
 <!-- Mobile sidebar nav -->
 <div class="nav-sidebar-overlay" id="navSidebarOverlay" onclick="closeNavSidebar()"></div>
 <div class="nav-sidebar" id="navSidebar">
-  <div class="nav-sidebar-header">
+  <div class="nav-sidebar-top">
     <span class="nav-sidebar-logo">Tiện Ích <em>Giao Thông</em></span>
     <button class="nav-sidebar-close" onclick="closeNavSidebar()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
   <div class="nav-sidebar-body">
-    <!-- Di chuyển (expanded by default) -->
     <div class="nav-sidebar-section">
-      <div class="nav-sidebar-group expanded" onclick="toggleSidebarSection(this)">
-        Di chuyển
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="nav-sidebar-links open">
-        <div class="nav-sidebar-col-label">Nhiên liệu</div>
-        <a class="nav-sidebar-link" href="/gia-xang" onclick="closeNavSidebar()">Giá xăng dầu hôm nay</a>
-        <a class="nav-sidebar-link" href="/cay-xang" onclick="closeNavSidebar()">Tìm cây xăng gần đây</a>
-        <a class="nav-sidebar-link" href="/tram-sac" onclick="closeNavSidebar()">Trạm sạc xe điện</a>
-        <div class="nav-sidebar-divider"></div>
-        <div class="nav-sidebar-col-label">Hành trình</div>
-        <a class="nav-sidebar-link" href="/trip-planner" onclick="closeNavSidebar()">Tính chi phí chuyến đi</a>
-        <a class="nav-sidebar-link" href="/tinh-phi-etc" onclick="closeNavSidebar()">Tính phí ETC theo tuyến</a>
-      </div>
+      <div class="nav-sidebar-section-label">Di chuyển</div>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/gia-xang">Giá xăng dầu hôm nay</a>
+      <a class="nav-sidebar-link" href="/cay-xang">Tìm cây xăng gần đây</a>
+      <a class="nav-sidebar-link" href="/tram-sac">Trạm sạc xe điện</a>
+      <a class="nav-sidebar-link" href="/epass/tinh-phi-etc">Tính phí ETC theo tuyến</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/chuyen-di">Tính chi phí chuyến đi</a>
     </div>
-    <!-- Bảo hiểm -->
+    <div class="nav-sidebar-divider"></div>
     <div class="nav-sidebar-section">
-      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
-        Bảo hiểm
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="nav-sidebar-links">
-        <div class="nav-sidebar-col-label">Ô tô</div>
-        <a class="nav-sidebar-link" href="/bao-hiem-o-to" onclick="closeNavSidebar()">Bảo hiểm TNDS bắt buộc</a>
-        <a class="nav-sidebar-link" href="/bao-hiem-o-to" onclick="closeNavSidebar()">Bảo hiểm thân vỏ</a>
-      </div>
+      <div class="nav-sidebar-section-label">Bảo hiểm</div>
+      <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm TNDS bắt buộc</a>
+      <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm thân vỏ</a>
     </div>
-    <!-- Pháp lý & Bảo dưỡng -->
+    <div class="nav-sidebar-divider"></div>
     <div class="nav-sidebar-section">
-      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
-        Pháp lý &amp; Bảo dưỡng
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="nav-sidebar-links">
-        <div class="nav-sidebar-col-label">Pháp lý</div>
-        <a class="nav-sidebar-link" href="/phat-nguoi" onclick="closeNavSidebar()">Tra phạt nguội</a>
-        <a class="nav-sidebar-link" href="/dang-kiem" onclick="closeNavSidebar()">Kiểm tra đăng kiểm</a>
-        <div class="nav-sidebar-divider"></div>
-        <div class="nav-sidebar-col-label">Bảo dưỡng</div>
-        <a class="nav-sidebar-link" href="/bao-duong-xe" onclick="closeNavSidebar()">Lịch bảo dưỡng xe</a>
-        <a class="nav-sidebar-link" href="/vehicle-hub/cuu-ho" onclick="closeNavSidebar()">Cứu hộ khẩn cấp</a>
-      </div>
+      <div class="nav-sidebar-section-label">Pháp lý &amp; Bảo dưỡng</div>
+      <a class="nav-sidebar-link" href="/phat-nguoi">Tra phạt nguội</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/dang-kiem">Kiểm tra đăng kiểm</a>
+      <a class="nav-sidebar-link" href="/bao-duong-xe">Lịch bảo dưỡng xe</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/cuu-ho">Cứu hộ khẩn cấp</a>
     </div>
-    <!-- Xe của tôi -->
+    <div class="nav-sidebar-divider"></div>
     <div class="nav-sidebar-section">
-      <div class="nav-sidebar-group" onclick="toggleSidebarSection(this)">
-        Xe của tôi
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="nav-sidebar-links">
-        <div class="nav-sidebar-col-label">Hồ sơ &amp; Chi phí</div>
-        <a class="nav-sidebar-link" href="/vehicle-hub#ho-so-xe" onclick="closeNavSidebar()">Hồ sơ phương tiện</a>
-        <a class="nav-sidebar-link" href="/vehicle-hub#chi-phi-xe" onclick="closeNavSidebar()">Chi phí nuôi xe / năm</a>
-        <a class="nav-sidebar-link" href="/hang-xe" onclick="closeNavSidebar()">Nhãn xe &amp; Dòng xe</a>
-        <div class="nav-sidebar-divider"></div>
-        <div class="nav-sidebar-col-label">Tiện ích</div>
-        <a class="nav-sidebar-link" href="/epass" onclick="closeNavSidebar()">ePass &amp; Tự động nạp</a>
-        <a class="nav-sidebar-link" href="/bai-do-xe" onclick="closeNavSidebar()">Tìm bãi đỗ xe</a>
-      </div>
+      <div class="nav-sidebar-section-label">Xe của tôi</div>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong#ho-so-xe">Hồ sơ phương tiện</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong#chi-phi-xe">Chi phí nuôi xe / năm</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/hang-xe">Nhãn xe &amp; Dòng xe</a>
+      <a class="nav-sidebar-link" href="/epass">ePass &amp; Tự động nạp</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/bai-do-xe">Tìm bãi đỗ xe</a>
     </div>
   </div>
 </div>
@@ -1931,54 +2080,64 @@ body {
 <section class="hero" id="vehicle-hub">
   <div class="hero-inner">
     <div class="hero-content">
-      <h1 class="hero-title">Chạy xe an toàn,<br><em>đúng luật, đúng chi phí.</em></h1>
-      <p class="hero-desc">Pháp lý bắt buộc, chuẩn bị hành trình, chi phí vận hành - MoMo lo trọn vòng đời của người có xe.</p>
+      <h1 class="hero-title">Mọi thứ về chiếc xe<br><em>của bạn, một nơi.</em></h1>
+      <p class="hero-desc">Từ hàng ngày đến sự cố - giá xăng, phạt nguội, đăng kiểm, bảo hiểm. Chủ xe cần gì, MoMo có đó.</p>
       <div class="hero-service-pills">
         <a class="hero-service-pill" href="#bao-hiem"><span class="pill-icon"><i data-lucide="shield" width="14" height="14"></i></span>Bảo hiểm xe</a>
         <a class="hero-service-pill" href="#phat-nguoi"><span class="pill-icon"><i data-lucide="alert-circle" width="14" height="14"></i></span>Phạt nguội</a>
         <a class="hero-service-pill" href="#dang-kiem"><span class="pill-icon"><i data-lucide="clipboard-check" width="14" height="14"></i></span>Đăng kiểm</a>
         <a class="hero-service-pill" href="/bao-duong-xe"><span class="pill-icon"><i data-lucide="wrench" width="14" height="14"></i></span>Bảo dưỡng xe</a>
-        <a class="hero-service-pill" href="/tinh-phi-etc"><span class="pill-icon"><i data-lucide="layout-grid" width="14" height="14"></i></span>Phí ETC</a>
+        <a class="hero-service-pill" href="/epass/tinh-phi-etc"><span class="pill-icon"><i data-lucide="layout-grid" width="14" height="14"></i></span>Phí ETC</a>
         <a class="hero-service-pill" href="/epass"><span class="pill-icon"><i data-lucide="credit-card" width="14" height="14"></i></span>ePass</a>
         <a class="hero-service-pill" href="#gia-xang"><span class="pill-icon"><i data-lucide="fuel" width="14" height="14"></i></span>Giá xăng</a>
         <a class="hero-service-pill" href="/tram-sac"><span class="pill-icon"><i data-lucide="zap" width="14" height="14"></i></span>Trạm sạc EV</a>
         <a class="hero-service-pill" href="#cuu-ho"><span class="pill-icon"><i data-lucide="truck" width="14" height="14"></i></span>Cứu hộ xe</a>
-        <a class="hero-service-pill" href="/bai-do-xe"><span class="pill-icon"><i data-lucide="parking-circle" width="14" height="14"></i></span>Bãi đỗ xe</a>
+        <a class="hero-service-pill" href="/tien-ich-giao-thong/bai-do-xe"><span class="pill-icon"><i data-lucide="parking-circle" width="14" height="14"></i></span>Bãi đỗ xe</a>
         <a class="hero-service-pill" href="#chi-phi-xe"><span class="pill-icon"><i data-lucide="wallet" width="14" height="14"></i></span>Chi phí nuôi xe</a>
       </div>
     </div>
 
     <div class="plate-panel">
       <div class="plate-entry-cards" id="plateEntryCards">
-        <button class="pec-card pec-active" type="button" data-use="phat-nguoi" onclick="selectUseCase(this)">
-          <i data-lucide="alert-circle" width="16" height="16"></i>
-          <span class="pec-label">Kiểm tra phạt nguội</span>
+        <button class="pec-card" type="button" data-use="gia-xang" onclick="selectUseCase(this)">
+          <i data-lucide="fuel" width="16" height="16"></i>
+          <span class="pec-label">Giá xăng hôm nay</span>
         </button>
-        <button class="pec-card" type="button" data-use="dang-kiem" onclick="selectUseCase(this)">
+        <button class="pec-card pec-active" type="button" data-use="dang-kiem" onclick="selectUseCase(this)">
           <i data-lucide="clipboard-check" width="16" height="16"></i>
           <span class="pec-label">Tra đăng kiểm</span>
         </button>
-      </div>
-      <div class="plate-panel-label" id="platePanelLabel">Nhập biển số để kiểm tra phạt nguội</div>
-      <div class="vtype-toggle" id="vtypeToggle">
-        <button class="vtype-btn active" id="vtype-oto" onclick="setVtype('oto')">
-          <i data-lucide="car" width="15" height="15"></i>
-          Ô tô
+        <button class="pec-card" type="button" data-use="phat-nguoi" onclick="selectUseCase(this)">
+          <i data-lucide="alert-circle" width="16" height="16"></i>
+          <span class="pec-label">Kiểm tra phạt nguội</span>
         </button>
-        <button class="vtype-btn" id="vtype-xemay" onclick="setVtype('xemay')">
-          <i data-lucide="bike" width="15" height="15"></i>
-          Xe máy
+        <button class="pec-card" type="button" data-use="bao-hiem" onclick="selectUseCase(this)">
+          <i data-lucide="shield-check" width="16" height="16"></i>
+          <span class="pec-label">Tra bảo hiểm</span>
         </button>
       </div>
-      <div class="plate-input-wrap">
-        <div class="plate-box" id="plateBox">
-          <div class="plate-vn-strip">🇻🇳 VIỆT NAM</div>
-          <input class="plate-input" id="plateInput" autocomplete="off"
-            placeholder="51A · 12345" maxlength="10"
-            aria-label="Biển số xe" inputmode="text">
-          <div class="plate-province" id="plateProvince"></div>
+      <div id="plateInputArea">
+        <div class="plate-panel-label" id="platePanelLabel">Nhập biển số để tra đăng kiểm</div>
+        <div class="vtype-toggle" id="vtypeToggle">
+          <button class="vtype-btn active" id="vtype-oto" onclick="setVtype('oto')">
+            <i data-lucide="car" width="15" height="15"></i>
+            Ô tô
+          </button>
+          <button class="vtype-btn" id="vtype-xemay" onclick="setVtype('xemay')">
+            <i data-lucide="bike" width="15" height="15"></i>
+            Xe máy
+          </button>
         </div>
-        <button class="plate-submit" id="plateSubmit" type="button">Kiểm tra xe →</button>
+        <div class="plate-input-wrap">
+          <div class="plate-box" id="plateBox">
+            <div class="plate-vn-strip">🇻🇳 VIỆT NAM</div>
+            <input class="plate-input" id="plateInput" autocomplete="off"
+              placeholder="51A · 12345" maxlength="10"
+              aria-label="Biển số xe" inputmode="text">
+            <div class="plate-province" id="plateProvince"></div>
+          </div>
+          <button class="plate-submit" id="plateSubmit" type="button">Kiểm tra xe →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1994,43 +2153,43 @@ body {
   <div class="brand-strip-inner">
     <div class="brand-strip-label">Thông tin theo hãng xe</div>
     <div class="brand-strip-scroll">
-      <a class="brand-chip" href="/hang-xe/toyota">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/toyota">
         <div class="brand-chip-logo" style="background:#fff1f1"><svg viewBox="0 0 60 60" width="32" height="32" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="30" rx="28" ry="28" fill="none" stroke="#EB0A1E" stroke-width="3"/><ellipse cx="30" cy="30" rx="17" ry="10" fill="none" stroke="#EB0A1E" stroke-width="3"/><ellipse cx="30" cy="30" rx="10" ry="28" fill="none" stroke="#EB0A1E" stroke-width="3"/></svg></div>
         <div class="brand-chip-name">Toyota</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/honda">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/honda">
         <div class="brand-chip-logo" style="background:#fff1f1"><svg viewBox="0 0 60 40" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><text x="2" y="33" font-family="Arial Black,sans-serif" font-size="36" font-weight="900" fill="#CC0000">H</text></svg></div>
         <div class="brand-chip-name">Honda</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/hyundai">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/hyundai">
         <div class="brand-chip-logo" style="background:#f0f4ff"><svg viewBox="0 0 60 40" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><text x="4" y="33" font-family="Arial Black,sans-serif" font-size="36" font-weight="900" fill="#002C5F" font-style="italic">H</text></svg></div>
         <div class="brand-chip-name">Hyundai</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/kia">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/kia">
         <div class="brand-chip-logo" style="background:#f5f5f5"><svg viewBox="0 0 70 28" width="42" height="17" xmlns="http://www.w3.org/2000/svg"><text x="0" y="24" font-family="Arial Black,sans-serif" font-size="26" font-weight="900" fill="#05141F" letter-spacing="-1">KIA</text></svg></div>
         <div class="brand-chip-name">KIA</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/mazda">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/mazda">
         <div class="brand-chip-logo" style="background:#fff1f1"><svg viewBox="0 0 60 42" width="36" height="25" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="21" rx="28" ry="14" fill="none" stroke="#910000" stroke-width="3"/><ellipse cx="30" cy="21" rx="14" ry="20" fill="none" stroke="#910000" stroke-width="3"/></svg></div>
         <div class="brand-chip-name">Mazda</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/ford">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/ford">
         <div class="brand-chip-logo" style="background:#f0f4ff"><svg viewBox="0 0 80 36" width="46" height="21" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="76" height="32" rx="16" fill="none" stroke="#003478" stroke-width="3"/><text x="40" y="27" font-family="Arial,sans-serif" font-size="20" font-weight="900" fill="#003478" text-anchor="middle" font-style="italic">Ford</text></svg></div>
         <div class="brand-chip-name">Ford</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/mitsubishi">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/mitsubishi">
         <div class="brand-chip-logo" style="background:#fff1f1"><svg viewBox="0 0 56 52" width="30" height="28" xmlns="http://www.w3.org/2000/svg"><polygon points="28,2 54,48 2,48" fill="none" stroke="#ED1B2F" stroke-width="3"/><polygon points="28,18 48,48 8,48" fill="none" stroke="#ED1B2F" stroke-width="3"/><polygon points="28,34 42,48 14,48" fill="none" stroke="#ED1B2F" stroke-width="3"/></svg></div>
         <div class="brand-chip-name">Mitsubishi</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/vinfast">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/vinfast">
         <div class="brand-chip-logo" style="background:#f0fdf4"><svg viewBox="0 0 70 36" width="42" height="22" xmlns="http://www.w3.org/2000/svg"><text x="2" y="28" font-family="Arial Black,sans-serif" font-size="22" font-weight="900" fill="#00953B" letter-spacing="-0.5">VinFast</text></svg></div>
         <div class="brand-chip-name">VinFast</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/mercedes">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/mercedes">
         <div class="brand-chip-logo" style="background:#f5f5f5"><svg viewBox="0 0 56 56" width="32" height="32" xmlns="http://www.w3.org/2000/svg"><circle cx="28" cy="28" r="26" fill="none" stroke="#1a1a1a" stroke-width="2.5"/><line x1="28" y1="4" x2="28" y2="28" stroke="#1a1a1a" stroke-width="2.5"/><line x1="28" y1="28" x2="7" y2="44" stroke="#1a1a1a" stroke-width="2.5"/><line x1="28" y1="28" x2="49" y2="44" stroke="#1a1a1a" stroke-width="2.5"/></svg></div>
         <div class="brand-chip-name">Mercedes</div>
       </a>
-      <a class="brand-chip" href="/hang-xe/bmw">
+      <a class="brand-chip" href="/tien-ich-giao-thong/hang-xe/bmw">
         <div class="brand-chip-logo" style="background:#f0f4ff"><svg viewBox="0 0 56 56" width="32" height="32" xmlns="http://www.w3.org/2000/svg"><circle cx="28" cy="28" r="26" fill="none" stroke="#1C1C1C" stroke-width="2.5"/><circle cx="28" cy="28" r="13" fill="none" stroke="#1C1C1C" stroke-width="2"/><path d="M28 2 L28 28 L2 28" fill="#003A99"/><path d="M54 28 L28 28 L28 54" fill="#003A99"/></svg></div>
         <div class="brand-chip-name">BMW</div>
       </a>
@@ -2120,7 +2279,7 @@ body {
         <h2 class="section-title">Giá xăng dầu hôm nay</h2>
         <p class="section-desc">Kỳ điều hành gần nhất: 15:00 ngày 09/07/2026 theo Bộ Công Thương.</p>
       </div>
-      <a class="section-more" href="/gia-xang">Trang giá xăng đầy đủ →</a>
+      <a class="section-more" href="/tien-ich-giao-thong/gia-xang">Trang giá xăng đầy đủ →</a>
     </div>
     <div class="gas-panel">
       <div>
@@ -2171,11 +2330,11 @@ body {
           <div style="font-size:11px;font-weight:700;color:var(--pink-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">🛣️ Tính phí trạm ETC trước khi đi</div>
           <div style="font-size:12.5px;color:var(--gray-600);margin-bottom:10px;line-height:1.5">Cần nạp bao nhiêu tiền ePass cho chuyến HCM→Đà Lạt? Tính ngay.</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-            <a href="/tinh-phi-etc?r=hcm-dalat" style="height:28px;padding:0 12px;line-height:28px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(235,47,150,.1);color:var(--pink-500);border:1px solid rgba(235,47,150,.2);">HCM → Đà Lạt</a>
-            <a href="/tinh-phi-etc?r=hcm-vung-tau" style="height:28px;padding:0 12px;line-height:28px;border-radius:20px;font-size:12px;font-weight:600;background:var(--gray-50);color:var(--gray-600);border:1px solid var(--gray-200);">HCM → Vũng Tàu</a>
-            <a href="/tinh-phi-etc?r=hn-ha-long" style="height:28px;padding:0 12px;line-height:28px;border-radius:20px;font-size:12px;font-weight:600;background:var(--gray-50);color:var(--gray-600);border:1px solid var(--gray-200);">HN → Hạ Long</a>
+            <a href="/epass/tinh-phi-etc?r=hcm-dalat" style="height:28px;padding:0 12px;line-height:28px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(235,47,150,.1);color:var(--pink-500);border:1px solid rgba(235,47,150,.2);">HCM → Đà Lạt</a>
+            <a href="/epass/tinh-phi-etc?r=hcm-vung-tau" style="height:28px;padding:0 12px;line-height:28px;border-radius:20px;font-size:12px;font-weight:600;background:var(--gray-50);color:var(--gray-600);border:1px solid var(--gray-200);">HCM → Vũng Tàu</a>
+            <a href="/epass/tinh-phi-etc?r=hn-ha-long" style="height:28px;padding:0 12px;line-height:28px;border-radius:20px;font-size:12px;font-weight:600;background:var(--gray-50);color:var(--gray-600);border:1px solid var(--gray-200);">HN → Hạ Long</a>
           </div>
-          <a href="/tinh-phi-etc" style="font-size:12.5px;font-weight:700;color:var(--pink-500);">Tính tuyến khác →</a>
+          <a href="/epass/tinh-phi-etc" style="font-size:12.5px;font-weight:700;color:var(--pink-500);">Tính tuyến khác →</a>
         </div>
       </div>
       <div class="epass-visual">
@@ -2285,7 +2444,7 @@ body {
         <h2 class="section-title">Cứu hộ xe máy toàn quốc</h2>
         <p class="section-desc">Hỏng xe giữa đường, gọi cứu hộ ngay trên MoMo. Zuttoride phủ sóng 63 tỉnh thành, đến trong 30 phút, thanh toán không tiền mặt.</p>
       </div>
-      <a class="section-more" href="/vehicle-hub/cuu-ho">Xem chi tiết →</a>
+      <a class="section-more" href="/tien-ich-giao-thong/cuu-ho">Xem chi tiết →</a>
     </div>
     <div class="rescue-panel">
       <div class="rescue-card" onclick="toast('Mở MoMo App để gọi cứu hộ...')">
@@ -2317,7 +2476,7 @@ body {
         <h2 class="section-title">Tìm bãi đỗ xe</h2>
         <p class="section-desc">Hai đối tác bãi đỗ tích hợp MoMo - tìm vị trí và thanh toán không tiền mặt ngay trong App.</p>
       </div>
-      <a class="section-more" href="/bai-do-xe">Xem demo →</a>
+      <a class="section-more" href="/tien-ich-giao-thong/bai-do-xe">Xem demo →</a>
     </div>
     <div class="parking-grid">
       <div class="parking-card">
@@ -2665,7 +2824,7 @@ body {
         <h4>Tiện ích</h4>
         <a href="#tra-phat-nguoi">Tra phạt nguội</a>
         <a href="/phat-nguoi-nop-qua-momo">Nộp phạt vi phạm</a>
-        <a href="/gia-xang">Giá xăng hôm nay</a>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá xăng hôm nay</a>
         <a href="/epass">Nạp ePass</a>
         <a href="#bao-hiem">Bảo hiểm TNDS</a>
         <a href="#cuu-ho">Cứu hộ xe máy</a>
@@ -2675,8 +2834,8 @@ body {
         <h4>Tra cứu phổ biến</h4>
         <a href="#tra-phat-nguoi">Phạt nguội TP.HCM</a>
         <a href="#tra-phat-nguoi">Phạt nguội Hà Nội</a>
-        <a href="/gia-xang">Giá xăng RON 95</a>
-        <a href="/gia-xang">Giá dầu Diesel</a>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá xăng RON 95</a>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá dầu Diesel</a>
       </div>
       <div class="footer-col">
         <h4>MoMo</h4>
@@ -2996,12 +3155,16 @@ body {
 const USE_CASE_LABELS = {
       'phat-nguoi': 'Nhập biển số để kiểm tra phạt nguội',
       'dang-kiem':  'Nhập biển số để tra đăng kiểm',
+      'gia-xang':   null,
+      'bao-hiem':   'Nhập biển số để tra bảo hiểm xe',
     };
     const USE_CASE_NAMES = {
       'phat-nguoi': 'Phạt nguội',
       'dang-kiem':  'Đăng kiểm',
+      'gia-xang':   'Giá xăng',
+      'bao-hiem':   'Bảo hiểm',
     };
-    let activeUseCase = 'phat-nguoi';
+    let activeUseCase = 'dang-kiem';
 
     const prsWrap  = document.getElementById('plateResultSection');
     const prsInner = document.getElementById('plateResultInner');
@@ -3084,7 +3247,7 @@ const USE_CASE_LABELS = {
               </div>
               <div class="prs-footer">
                 <span class="prs-note">Thông tin theo quy định hiện hành của Bộ GTVT.</span>
-                <a class="prs-cta" href="/dang-kiem">Tìm hiểu về đăng kiểm ${licon('ChevronRight', 13, 2.5)}</a>
+                <a class="prs-cta" href="/tien-ich-giao-thong/dang-kiem">Tìm hiểu về đăng kiểm ${licon('ChevronRight', 13, 2.5)}</a>
               </div>
             </div>`;
         } else if (dkRemain >= 30) {
@@ -3104,7 +3267,7 @@ const USE_CASE_LABELS = {
               </div>
               <div class="prs-footer">
                 <span class="prs-note">Nhớ gia hạn trước khi hết hạn để tránh bị phạt.</span>
-                <a class="prs-cta" href="/dang-kiem">Tìm điểm đăng kiểm ${licon('ChevronRight', 13, 2.5)}</a>
+                <a class="prs-cta" href="/tien-ich-giao-thong/dang-kiem">Tìm điểm đăng kiểm ${licon('ChevronRight', 13, 2.5)}</a>
               </div>
             </div>`;
         } else {
@@ -3130,7 +3293,7 @@ const USE_CASE_LABELS = {
               </div>
               <div class="prs-footer">
                 <span class="prs-note">Đăng kiểm tại các trung tâm đăng kiểm toàn quốc.</span>
-                <a class="prs-cta-btn" href="/dang-kiem">${licon('CalendarClock', 13, 2.5)} Đặt lịch đăng kiểm</a>
+                <a class="prs-cta-btn" href="/tien-ich-giao-thong/dang-kiem">${licon('CalendarClock', 13, 2.5)} Đặt lịch đăng kiểm</a>
               </div>
             </div>`;
         }
@@ -3149,11 +3312,77 @@ const USE_CASE_LABELS = {
       prsWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    function showInlinePanel(html) {
+      document.getElementById('plateInputArea').style.display = 'none';
+      let panel = document.getElementById('pecInlinePanel');
+      if (!panel) {
+        panel = document.createElement('div');
+        panel.id = 'pecInlinePanel';
+        document.getElementById('plateInputArea').insertAdjacentElement('afterend', panel);
+      }
+      panel.innerHTML = html;
+      panel.style.display = '';
+      if (window.lucide) lucide.createIcons();
+    }
+    function hideInlinePanel() {
+      const p = document.getElementById('pecInlinePanel');
+      if (p) p.style.display = 'none';
+      document.getElementById('plateInputArea').style.display = '';
+    }
+
     window.selectUseCase = function(btn) {
+      const use = btn.dataset.use;
       document.querySelectorAll('.pec-card').forEach(c => c.classList.remove('pec-active'));
       btn.classList.add('pec-active');
-      activeUseCase = btn.dataset.use;
-      document.getElementById('platePanelLabel').textContent = USE_CASE_LABELS[activeUseCase] || 'Nhập biển số xe của bạn';
+      activeUseCase = use;
+
+      if (use === 'gia-xang') {
+        const d = new Date(); const day = d.getDate(); const month = d.getMonth()+1;
+        showInlinePanel(`
+          <div class="pec-inline pec-fuel">
+            <div class="pec-inline-label">Giá xăng dầu — ${day}/${month < 10 ? '0'+month : month}/2026</div>
+            <div class="pec-fuel-rows">
+              <div class="pec-fuel-row">
+                <span class="pec-fuel-name">E10 RON 95</span>
+                <span class="pec-fuel-price">20.003đ/L</span>
+                <span class="pec-fuel-change pec-down">▼ 412đ</span>
+              </div>
+              <div class="pec-fuel-row">
+                <span class="pec-fuel-name">E5 RON 92</span>
+                <span class="pec-fuel-price">19.191đ/L</span>
+                <span class="pec-fuel-change pec-down">▼ 539đ</span>
+              </div>
+              <div class="pec-fuel-row">
+                <span class="pec-fuel-name">Dầu diesel 0.05S</span>
+                <span class="pec-fuel-price">17.450đ/L</span>
+                <span class="pec-fuel-change pec-down">▼ 295đ</span>
+              </div>
+            </div>
+            <a class="pec-inline-cta" href="/tien-ich-giao-thong/gia-xang">Xem đầy đủ giá xăng dầu →</a>
+          </div>`);
+        return;
+      }
+      if (use === 'bao-hiem') {
+        showInlinePanel(`
+          <div class="pec-inline pec-bh">
+            <div class="pec-inline-label">Bảo hiểm xe trên MoMo</div>
+            <a class="pec-bh-row" href="/bao-hiem-o-to">
+              <i data-lucide="car" width="16" height="16"></i>
+              <div class="pec-bh-info"><div class="pec-bh-name">Bảo hiểm ô tô</div><div class="pec-bh-desc">TNDS bắt buộc + thân vỏ</div></div>
+              <i data-lucide="chevron-right" width="14" height="14" class="pec-bh-arrow"></i>
+            </a>
+            <a class="pec-bh-row" href="#bao-hiem">
+              <i data-lucide="bike" width="16" height="16"></i>
+              <div class="pec-bh-info"><div class="pec-bh-name">Bảo hiểm xe máy</div><div class="pec-bh-desc">TNDS bắt buộc từ 66.000đ/năm</div></div>
+              <i data-lucide="chevron-right" width="14" height="14" class="pec-bh-arrow"></i>
+            </a>
+          </div>`);
+        return;
+      }
+      // plate-based jobs
+      hideInlinePanel();
+      const label = USE_CASE_LABELS[use];
+      document.getElementById('platePanelLabel').textContent = label || 'Nhập biển số xe của bạn';
       plateInput.focus();
     };
 
@@ -3459,7 +3688,7 @@ const FC_GROUPS = [
         backDesc:'So sánh giá từ PVI, Bảo Việt, PJICO... Thanh toán qua MoMo, nhận giấy bảo hiểm PDF ngay.', href:'/bao-hiem-o-to' },
       { icon:'ClipboardList', bg:'linear-gradient(135deg,#134e4a 0%,#0f766e 100%)',
         title:'Đặt lịch đăng kiểm', desc:'Đặt lịch đăng kiểm xe ô tô, nhận nhắc hạn tự động.',
-        backDesc:'Chọn trung tâm đăng kiểm gần nhà, đặt giờ thuận tiện. MoMo nhắc trước 30 ngày khi sắp hết hạn.', href:'/dang-kiem' },
+        backDesc:'Chọn trung tâm đăng kiểm gần nhà, đặt giờ thuận tiện. MoMo nhắc trước 30 ngày khi sắp hết hạn.', href:'/tien-ich-giao-thong/dang-kiem' },
     ]
   },
   {
@@ -3467,7 +3696,7 @@ const FC_GROUPS = [
     cards: [
       { icon:'Route', bg:'linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%)',
         title:'Phí ETC theo tuyến', desc:'Tính trước tổng phí qua trạm ETC cho chuyến đi của bạn.',
-        backDesc:'Chọn tuyến đường, xem chi tiết từng trạm thu phí và camera tốc độ. Nạp ePass đúng số tiền cần.', href:'/tinh-phi-etc' },
+        backDesc:'Chọn tuyến đường, xem chi tiết từng trạm thu phí và camera tốc độ. Nạp ePass đúng số tiền cần.', href:'/epass/tinh-phi-etc' },
       { icon:'Fuel', bg:'linear-gradient(135deg,#78350f 0%,#d97706 100%)',
         title:'Giá xăng hôm nay', desc:'Giá xăng dầu mới nhất theo từng loại, cập nhật mỗi kỳ điều hành.',
         backDesc:'Theo dõi RON 95, E5 RON 92, DO 0.05S theo 2 vùng. Biểu đồ xu hướng 90 ngày giúp dự đoán kỳ tới.', href:'/gia-xang' },
@@ -3476,7 +3705,7 @@ const FC_GROUPS = [
         backDesc:'Bật định vị để xem khoảng cách đến từng cây xăng Petrolimex, PV Oil, Shell. Thanh toán không tiền mặt.', href:'/cay-xang' },
       { icon:'SquareParking', bg:'linear-gradient(135deg,#1e1b4b 0%,#4338ca 100%)',
         title:'Tìm bãi đỗ xe', desc:'Tra cứu và thanh toán phí đỗ xe bằng MoMo tại các bãi đối tác.',
-        backDesc:'Xem bãi đỗ xe gần điểm đến, giá theo giờ và còn chỗ không. Thanh toán quét QR khi ra, không cần tiền lẻ.', href:'/bai-do-xe' },
+        backDesc:'Xem bãi đỗ xe gần điểm đến, giá theo giờ và còn chỗ không. Thanh toán quét QR khi ra, không cần tiền lẻ.', href:'/tien-ich-giao-thong/bai-do-xe' },
     ]
   },
   {
@@ -3490,7 +3719,7 @@ const FC_GROUPS = [
         backDesc:'Nhập loại xe, số km/tháng - hệ thống tính xăng, bảo hiểm, đăng kiểm, bảo dưỡng và ETC theo năm.', href:'#chi-phi-xe' },
       { icon:'Wrench', bg:'linear-gradient(135deg,#881337 0%,#e11d48 100%)',
         title:'Cứu hộ xe máy', desc:'Gọi cứu hộ khẩn cấp 24/7 ngay trên MoMo khi xe hỏng dọc đường.',
-        backDesc:'Dịch vụ cứu hộ tại chỗ, vá lốp, kéo xe về gara gần nhất. Thanh toán qua MoMo, có giá niêm yết rõ ràng.', href:'/vehicle-hub/cuu-ho' },
+        backDesc:'Dịch vụ cứu hộ tại chỗ, vá lốp, kéo xe về gara gần nhất. Thanh toán qua MoMo, có giá niêm yết rõ ràng.', href:'/tien-ich-giao-thong/cuu-ho' },
       { icon:'Zap', bg:'linear-gradient(135deg,#052e16 0%,#16a34a 100%)',
         title:'Trạm sạc xe điện', desc:'Tìm trạm sạc VinFast, Charge++ và các đối tác trên toàn quốc.',
         backDesc:'Xem trạm sạc theo bản đồ, loại đầu sạc, tốc độ sạc và trạng thái còn trống. Thanh toán qua MoMo.', href:'/tram-sac' },
@@ -3614,31 +3843,48 @@ const TP_ROUTES_UNUSED = {
 
 // ── TRIP SEARCH WIDGET ──────────────────────
 const CITIES = [
-  { name:'TP. Hồ Chí Minh', region:'Miền Nam',     alias:['hcm','saigon','sài gòn','ho chi minh'] },
-  { name:'Hà Nội',           region:'Miền Bắc',     alias:['hn','hanoi','ha noi'] },
-  { name:'Đà Nẵng',          region:'Miền Trung',   alias:['dn','da nang'] },
-  { name:'Vũng Tàu',         region:'Miền Nam',     alias:['vt','vung tau'] },
-  { name:'Đà Lạt',           region:'Miền Nam',     alias:['dl','da lat'] },
-  { name:'Phan Thiết',       region:'Miền Nam',     alias:['pt','mui ne','mũi né','phan thiet'] },
-  { name:'Nha Trang',        region:'Miền Trung',   alias:['nt'] },
-  { name:'Cần Thơ',          region:'Miền Nam',     alias:['ct','can tho'] },
-  { name:'Hội An',           region:'Miền Trung',   alias:['ha','hoi an'] },
-  { name:'Huế',              region:'Miền Trung',   alias:['hue'] },
-  { name:'Hải Phòng',        region:'Miền Bắc',     alias:['hp','hai phong'] },
-  { name:'Ninh Bình',        region:'Miền Bắc',     alias:['nb','ninh binh'] },
-  { name:'Sầm Sơn',          region:'Miền Bắc',     alias:['ss','sam son'] },
-  { name:'Quy Nhơn',         region:'Miền Trung',   alias:['qn','quy nhon'] },
-  { name:'Buôn Ma Thuột',    region:'Tây Nguyên',   alias:['bmt','buon ma thuot'] },
-  { name:'Pleiku',           region:'Tây Nguyên',   alias:[] },
-  { name:'Long Xuyên',       region:'Miền Nam',     alias:['lx','long xuyen'] },
-  { name:'Rạch Giá',         region:'Miền Nam',     alias:['rg','rach gia'] },
-  { name:'Cà Mau',           region:'Miền Nam',     alias:['ca mau'] },
-  { name:'Mỹ Tho',           region:'Miền Nam',     alias:['my tho'] },
-  { name:'Hạ Long',          region:'Miền Bắc',     alias:['hl','ha long'] },
-  { name:'Lạng Sơn',         region:'Miền Bắc',     alias:['ls','lang son'] },
-  { name:'Thanh Hóa',        region:'Miền Bắc',     alias:['th','thanh hoa'] },
-  { name:'Vinh',             region:'Miền Trung',   alias:[] },
-  { name:'Đồng Hới',        region:'Miền Trung',   alias:['dong hoi'] },
+  { name:'TP. Hồ Chí Minh', alias:['hcm','saigon','sài gòn','ho chi minh'] },
+  { name:'Hà Nội',           alias:['hn','hanoi','ha noi'] },
+  { name:'Đà Nẵng',          alias:['dn','da nang'] },
+  { name:'Vũng Tàu',         alias:['vt','vung tau'] },
+  { name:'Đà Lạt',           alias:['dl','da lat'] },
+  { name:'Phan Thiết',       alias:['pt','mui ne','mũi né','phan thiet'] },
+  { name:'Nha Trang',        alias:['nt','nha trang'] },
+  { name:'Cần Thơ',          alias:['ct','can tho'] },
+  { name:'Hội An',           alias:['ha','hoi an'] },
+  { name:'Huế',              alias:['hue'] },
+  { name:'Hải Phòng',        alias:['hp','hai phong'] },
+  { name:'Ninh Bình',        alias:['nb','ninh binh'] },
+  { name:'Sầm Sơn',          alias:['ss','sam son'] },
+  { name:'Quy Nhơn',         alias:['qn','quy nhon'] },
+  { name:'Sa Pa',            alias:['sapa','sa pa','lao cai'] },
+  { name:'Mộc Châu',         alias:['moc chau','son la'] },
+  { name:'Hạ Long',          alias:['hl','ha long','quang ninh'] },
+  { name:'Phú Quốc',         alias:['pq','phu quoc'] },
+  { name:'Hà Giang',         alias:['hg','ha giang'] },
+  { name:'Tây Ninh',         alias:['tn','tay ninh'] },
+  { name:'Bà Rịa',           alias:['ba ria'] },
+  { name:'Buôn Ma Thuột',    alias:['bmt','buon ma thuot'] },
+  { name:'Pleiku',           alias:['gia lai'] },
+  { name:'Tuy Hòa',          alias:['phu yen','tuy hoa'] },
+  { name:'Quảng Ngãi',       alias:['quang ngai'] },
+  { name:'Biên Hòa',         alias:['dong nai','bien hoa'] },
+  { name:'Thủ Dầu Một',      alias:['binh duong','thu dau mot'] },
+  { name:'Mỹ Tho',           alias:['tien giang','my tho'] },
+  { name:'Long Xuyên',       alias:['an giang','long xuyen'] },
+  { name:'Châu Đốc',         alias:['chau doc'] },
+  { name:'Rạch Giá',         alias:['kien giang','rach gia'] },
+  { name:'Cà Mau',           alias:['ca mau'] },
+  { name:'Bến Tre',          alias:['ben tre'] },
+  { name:'Vĩnh Long',        alias:['vinh long'] },
+  { name:'Sóc Trăng',        alias:['soc trang'] },
+  { name:'Bạc Liêu',         alias:['bac lieu'] },
+  { name:'Bảo Lộc',          alias:['bao loc'] },
+  { name:'Lạng Sơn',         alias:['ls','lang son'] },
+  { name:'Thanh Hóa',        alias:['th','thanh hoa'] },
+  { name:'Vinh',             alias:['nghe an'] },
+  { name:'Đồng Hới',         alias:['quang binh','dong hoi'] },
+  { name:'Cao Bằng',         alias:['cao bang'] },
 ];
 
 let tpVehicle = 'car-gas';
@@ -3649,16 +3895,16 @@ function showAC(inputId, dropId) {
   const other = inputId === 'tpFrom' ? document.getElementById('tpTo').value.trim() : document.getElementById('tpFrom').value.trim();
   const nVal = removeAccents(val).toLowerCase();
   const filtered = val.length === 0
-    ? CITIES.slice(0, 8)
+    ? CITIES.slice(0, 15)
     : CITIES.filter(c =>
         c.name.toLowerCase().includes(val) ||
         removeAccents(c.name).toLowerCase().includes(nVal) ||
         c.alias.some(a => a.includes(val) || a.includes(nVal))
-      ).slice(0, 8);
+      ).slice(0, 15);
   if (filtered.length === 0) { drop.classList.remove('open'); return; }
   drop.innerHTML = filtered.map(c =>
     `<div class="tp-ac-item" onmousedown="pickCity('${inputId}','${dropId}','${c.name}')">
-      ${c.name}<span class="tp-ac-region">${c.region}</span>
+      ${c.name}
     </div>`
   ).join('');
   drop.classList.add('open');
@@ -3696,7 +3942,7 @@ function checkGoBtn() {
 function goTrip() {
   const f = encodeURIComponent(document.getElementById('tpFrom').value.trim());
   const t = encodeURIComponent(document.getElementById('tpTo').value.trim());
-  location.href = `/trip-planner?from=${f}&to=${t}&vehicle=${tpVehicle}`;
+  location.href = `/tien-ich-giao-thong/chuyen-di?from=${f}&to=${t}&vehicle=${tpVehicle}`;
 }
 
 document.getElementById('tpFrom').addEventListener('input', checkGoBtn);
@@ -3755,7 +4001,7 @@ window.addEventListener('load', () => {
             ${licon('Bell',14,2)}
             Đặt nhắc
           </button>
-          <a class="dk-detail-link" href="/dang-kiem">Xem lịch sử đăng kiểm →</a>
+          <a class="dk-detail-link" href="/tien-ich-giao-thong/dang-kiem">Xem lịch sử đăng kiểm →</a>
         </div>
       </div>`;
   };
@@ -3785,7 +4031,322 @@ function toggleSidebarSection(el) {
   el.classList.toggle('expanded');
   el.nextElementSibling.classList.toggle('open');
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNavSidebar(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeNavSidebar(); closeNavSearch(); } });
+
+/* ── NAV VEHICLE SEARCH ─────────────────────────────────── */
+(function() {
+  const VEHICLE_DATA = [
+    // ── Ô TÔ ──
+    {brand:'toyota',label:'Toyota',color:'#EB0A1E',cat:'Ô tô',models:[
+      {name:'Fortuner',slug:'fortuner',type:'SUV'},
+      {name:'Camry',slug:'camry',type:'Sedan'},
+      {name:'Corolla Cross',slug:'corolla-cross',type:'Crossover'},
+      {name:'Innova Cross',slug:'innova-cross',type:'MPV'},
+      {name:'Veloz',slug:'veloz',type:'MPV'},
+      {name:'Raize',slug:'raize',type:'SUV'},
+      {name:'Vios',slug:'vios',type:'Sedan'},
+      {name:'Land Cruiser',slug:'land-cruiser',type:'SUV'},
+      {name:'Yaris Cross',slug:'yaris-cross',type:'Crossover'},
+    ]},
+    {brand:'honda',label:'Honda',color:'#CC0000',cat:'Ô tô',models:[
+      {name:'CR-V',slug:'cr-v',type:'SUV'},
+      {name:'City',slug:'city',type:'Sedan'},
+      {name:'Civic',slug:'civic',type:'Sedan'},
+      {name:'HR-V',slug:'hr-v',type:'Crossover'},
+      {name:'BR-V',slug:'br-v',type:'SUV'},
+      {name:'Accord',slug:'accord',type:'Sedan'},
+      {name:'Brio',slug:'brio',type:'Hatchback'},
+    ]},
+    {brand:'hyundai',label:'Hyundai',color:'#002C5F',cat:'Ô tô',models:[
+      {name:'Tucson',slug:'tucson',type:'SUV'},
+      {name:'Santa Fe',slug:'santa-fe',type:'SUV'},
+      {name:'Accent',slug:'accent',type:'Sedan'},
+      {name:'Creta',slug:'creta',type:'Crossover'},
+      {name:'Ioniq 6',slug:'ioniq-6',type:'EV'},
+      {name:'Kona Electric',slug:'kona-electric',type:'EV'},
+    ]},
+    {brand:'kia',label:'Kia',color:'#05141F',cat:'Ô tô',models:[
+      {name:'Carnival',slug:'carnival',type:'MPV'},
+      {name:'Sorento',slug:'sorento',type:'SUV'},
+      {name:'Seltos',slug:'seltos',type:'Crossover'},
+      {name:'Sportage',slug:'sportage',type:'SUV'},
+      {name:'K3',slug:'k3',type:'Sedan'},
+      {name:'Cerato',slug:'cerato',type:'Sedan'},
+      {name:'EV6',slug:'ev6',type:'EV'},
+    ]},
+    {brand:'mazda',label:'Mazda',color:'#91020C',cat:'Ô tô',models:[
+      {name:'CX-5',slug:'cx-5',type:'SUV'},
+      {name:'CX-8',slug:'cx-8',type:'SUV'},
+      {name:'Mazda3',slug:'mazda3',type:'Sedan'},
+      {name:'CX-3',slug:'cx-3',type:'Crossover'},
+      {name:'CX-30',slug:'cx-30',type:'Crossover'},
+      {name:'Mazda6',slug:'mazda6',type:'Sedan'},
+    ]},
+    {brand:'ford',label:'Ford',color:'#003499',cat:'Ô tô',models:[
+      {name:'Ranger',slug:'ranger',type:'Bán tải'},
+      {name:'Everest',slug:'everest',type:'SUV'},
+      {name:'Territory',slug:'territory',type:'Crossover'},
+      {name:'Explorer',slug:'explorer',type:'SUV'},
+    ]},
+    {brand:'mitsubishi',label:'Mitsubishi',color:'#BC1C2B',cat:'Ô tô',models:[
+      {name:'Xpander',slug:'xpander',type:'MPV'},
+      {name:'Xforce',slug:'xforce',type:'Crossover'},
+      {name:'Outlander',slug:'outlander',type:'SUV'},
+      {name:'Pajero Sport',slug:'pajero-sport',type:'SUV'},
+    ]},
+    {brand:'vinfast',label:'VinFast',color:'#009EDB',cat:'Ô tô',models:[
+      {name:'VF 8',slug:'vf-8',type:'EV'},
+      {name:'VF 9',slug:'vf-9',type:'EV'},
+      {name:'VF 7',slug:'vf-7',type:'EV'},
+      {name:'VF 6',slug:'vf-6',type:'EV'},
+      {name:'VF 5',slug:'vf-5',type:'EV'},
+      {name:'VF 3',slug:'vf-3',type:'EV'},
+    ]},
+    {brand:'mercedes',label:'Mercedes-Benz',color:'#A0A0A0',cat:'Ô tô',models:[
+      {name:'C-Class',slug:'c-class',type:'Sedan'},
+      {name:'E-Class',slug:'e-class',type:'Sedan'},
+      {name:'GLC',slug:'glc',type:'SUV'},
+      {name:'GLE',slug:'gle',type:'SUV'},
+    ]},
+    {brand:'bmw',label:'BMW',color:'#0066CC',cat:'Ô tô',models:[
+      {name:'3 Series',slug:'3-series',type:'Sedan'},
+      {name:'5 Series',slug:'5-series',type:'Sedan'},
+      {name:'X3',slug:'x3',type:'SUV'},
+      {name:'X5',slug:'x5',type:'SUV'},
+    ]},
+    {brand:'lexus',label:'Lexus',color:'#1A1A1A',cat:'Ô tô',models:[
+      {name:'NX',slug:'nx',type:'SUV'},
+      {name:'RX',slug:'rx',type:'SUV'},
+      {name:'ES',slug:'es',type:'Sedan'},
+    ]},
+    {brand:'suzuki',label:'Suzuki',color:'#003399',cat:'Ô tô',models:[
+      {name:'XL7',slug:'xl7',type:'MPV'},
+      {name:'Ertiga',slug:'ertiga',type:'MPV'},
+    ]},
+    {brand:'mg',label:'MG',color:'#B01922',cat:'Ô tô',models:[
+      {name:'ZS',slug:'zs',type:'SUV'},
+      {name:'5',slug:'mg5',type:'Sedan'},
+      {name:'HS',slug:'hs',type:'SUV'},
+    ]},
+    {brand:'isuzu',label:'Isuzu',color:'#CC0000',cat:'Ô tô',models:[
+      {name:'D-Max',slug:'d-max',type:'Bán tải'},
+      {name:'mu-X',slug:'mu-x',type:'SUV'},
+    ]},
+    {brand:'tesla',label:'Tesla',color:'#CC0000',cat:'Ô tô',models:[
+      {name:'Model 3',slug:'model-3',type:'EV'},
+      {name:'Model Y',slug:'model-y',type:'EV'},
+      {name:'Model X',slug:'model-x',type:'EV'},
+    ]},
+    // ── XE MÁY ──
+    {brand:'honda-may',label:'Honda',color:'#CC0000',cat:'Xe máy',models:[
+      {name:'Wave Alpha',slug:'wave-alpha',type:'Xe số'},
+      {name:'Vision',slug:'vision',type:'Tay ga'},
+      {name:'Air Blade',slug:'air-blade',type:'Tay ga'},
+      {name:'SH Mode',slug:'sh-mode',type:'Tay ga'},
+      {name:'SH 160i',slug:'sh-160i',type:'Tay ga'},
+      {name:'Winner X',slug:'winner-x',type:'Côn tay'},
+    ]},
+    {brand:'yamaha-may',label:'Yamaha',color:'#003087',cat:'Xe máy',models:[
+      {name:'Sirius',slug:'sirius',type:'Xe số'},
+      {name:'NVX 155',slug:'nvx-155',type:'Tay ga'},
+      {name:'Grande',slug:'grande',type:'Tay ga'},
+      {name:'Exciter 150',slug:'exciter-150',type:'Côn tay'},
+      {name:'Janus',slug:'janus',type:'Tay ga'},
+    ]},
+    {brand:'suzuki-may',label:'Suzuki',color:'#003399',cat:'Xe máy',models:[
+      {name:'Revo',slug:'revo',type:'Xe số'},
+      {name:'Raider R150',slug:'raider',type:'Côn tay'},
+      {name:'GSX-S150',slug:'gsx-s150',type:'Côn tay'},
+    ]},
+    {brand:'piaggio',label:'Piaggio',color:'#0033A0',cat:'Xe máy',models:[
+      {name:'Vespa GTS 300',slug:'vespa-gts',type:'Tay ga'},
+      {name:'Vespa Primavera',slug:'vespa-primavera',type:'Tay ga'},
+      {name:'Liberty 150',slug:'liberty',type:'Tay ga'},
+    ]},
+  ];
+
+  // Build flat index for fast search
+  const INDEX = [];
+  VEHICLE_DATA.forEach(b => {
+    b.models.forEach(m => {
+      const brandNorm = b.label.toLowerCase().replace(/[^a-z0-9]/g,'');
+      const nameNorm = m.name.toLowerCase().replace(/[^a-z0-9]/g,'');
+      INDEX.push({
+        brand: b.brand, brandLabel: b.label, color: b.color,
+        cat: b.cat, name: m.name, slug: m.slug, type: m.type,
+        search: (b.label + ' ' + m.name + ' ' + m.slug + ' ' + brandNorm + nameNorm).toLowerCase(),
+      });
+    });
+  });
+
+  const inp = document.getElementById('navSearchInp');
+  const drop = document.getElementById('navSearchDrop');
+  let activeIdx = -1;
+  let blurTimer = null;
+
+  function getUrl(item) {
+    if (item.cat === 'Xe máy') return '/tien-ich-giao-thong/hang-xe-may';
+    return '/tien-ich-giao-thong/hang-xe/' + item.brand + '/' + item.slug;
+  }
+
+  function renderResults(results) {
+    if (!results.length) {
+      drop.innerHTML = '<div class="nsd-empty"><strong>Không tìm thấy xe</strong>Thử tên khác như "Toyota Camry" hay "Honda SH"</div>';
+      return;
+    }
+    // Group by category
+    const groups = {};
+    results.forEach(r => {
+      if (!groups[r.cat]) groups[r.cat] = [];
+      groups[r.cat].push(r);
+    });
+    let html = '';
+    Object.entries(groups).forEach(([cat, items], gi) => {
+      if (gi > 0) html += '<div class="nsd-divider"></div>';
+      html += `<div class="nsd-section-label">${cat}</div>`;
+      items.forEach((item, i) => {
+        const isEV = item.type === 'EV';
+        const isMoto = item.cat === 'Xe máy';
+        const typeClass = isEV ? 'ev' : isMoto ? 'motorbike' : '';
+        const url = getUrl(item);
+        html += `<a class="nsd-item" href="${url}" data-idx="${INDEX.indexOf(item)}">
+          <span class="nsd-dot" style="background:${item.color}"></span>
+          <span class="nsd-info">
+            <span class="nsd-model">${item.name}</span>
+            <span class="nsd-brand">${item.brandLabel}</span>
+          </span>
+          <span class="nsd-type ${typeClass}">${item.type}</span>
+        </a>`;
+      });
+    });
+    drop.innerHTML = html;
+    activeIdx = -1;
+  }
+
+  function showEmpty() {
+    drop.innerHTML = `<div class="nsd-section-label">Phổ biến nhất</div>` +
+      ['toyota|fortuner|Fortuner|SUV|#EB0A1E|Ô tô','honda|city|City|Sedan|#CC0000|Ô tô','kia|seltos|Seltos|Crossover|#05141F|Ô tô',
+       'vinfast|vf-8|VF 8|EV|#009EDB|Ô tô','yamaha-may|nvx-155|NVX 155|Tay ga|#003087|Xe máy','honda-may|air-blade|Air Blade|Tay ga|#CC0000|Xe máy']
+      .map(s => { const [brand,slug,name,type,color,cat] = s.split('|');
+        const isEV = type === 'EV'; const isMoto = cat === 'Xe máy';
+        const typeClass = isEV ? 'ev' : isMoto ? 'motorbike' : '';
+        const url = isMoto ? '/tien-ich-giao-thong/hang-xe-may' : `/tien-ich-giao-thong/hang-xe/${brand}/${slug}`;
+        return `<a class="nsd-item" href="${url}">
+          <span class="nsd-dot" style="background:${color}"></span>
+          <span class="nsd-info"><span class="nsd-model">${name}</span><span class="nsd-brand">${brand.replace('-may','').charAt(0).toUpperCase()+brand.replace('-may','').slice(1)}</span></span>
+          <span class="nsd-type ${typeClass}">${type}</span></a>`;
+      }).join('');
+  }
+
+  function openDrop() {
+    const q = inp.value.trim();
+    if (!q) showEmpty();
+    drop.classList.add('open');
+  }
+  function closeDrop() {
+    drop.classList.remove('open');
+    activeIdx = -1;
+  }
+
+  inp.addEventListener('input', () => {
+    const q = inp.value.trim().toLowerCase();
+    if (!q) { showEmpty(); drop.classList.add('open'); return; }
+    const results = INDEX.filter(r => r.search.includes(q)).slice(0, 12);
+    renderResults(results);
+    drop.classList.add('open');
+  });
+
+  inp.addEventListener('focus', () => {
+    clearTimeout(blurTimer);
+    openDrop();
+  });
+
+  inp.addEventListener('blur', () => {
+    blurTimer = setTimeout(closeDrop, 160);
+  });
+
+  // Keyboard navigation
+  inp.addEventListener('keydown', e => {
+    const items = drop.querySelectorAll('.nsd-item');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, items.length - 1);
+      items.forEach((el, i) => el.classList.toggle('nsd-active', i === activeIdx));
+      if (items[activeIdx]) items[activeIdx].scrollIntoView({block:'nearest'});
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+      items.forEach((el, i) => el.classList.toggle('nsd-active', i === activeIdx));
+      if (items[activeIdx]) items[activeIdx].scrollIntoView({block:'nearest'});
+    } else if (e.key === 'Enter') {
+      if (activeIdx >= 0 && items[activeIdx]) {
+        e.preventDefault();
+        items[activeIdx].click();
+      }
+    } else if (e.key === 'Escape') {
+      closeDrop(); inp.blur();
+    }
+  });
+
+  // Slash key shortcut to focus search
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== inp && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault(); inp.focus();
+    }
+  });
+
+  window.closeNavSearch = closeDrop;
+
+  // ── MOBILE SEARCH ──────────────────────────
+  const mobileOverlay = document.getElementById('mobileSearchOverlay');
+  const mobileInp = document.getElementById('mobileSearchInp');
+  const mobileDrop = document.getElementById('mobileSearchDrop');
+
+  function renderMobileResults(results) {
+    if (!results.length) {
+      mobileDrop.innerHTML = '<div class="nsd-empty"><strong>Không tìm thấy xe</strong>Thử tên khác như "Toyota Camry" hay "Honda SH"</div>';
+    } else {
+      const groups = {};
+      results.forEach(r => { if (!groups[r.cat]) groups[r.cat] = []; groups[r.cat].push(r); });
+      let html = '';
+      Object.entries(groups).forEach(([cat, items], gi) => {
+        if (gi > 0) html += '<div class="nsd-divider"></div>';
+        html += `<div class="nsd-section-label">${cat}</div>`;
+        items.forEach(item => {
+          const typeClass = item.type === 'EV' ? 'ev' : item.cat === 'Xe máy' ? 'motorbike' : '';
+          const url = getUrl(item);
+          html += `<a class="nsd-item" href="${url}">
+            <span class="nsd-dot" style="background:${item.color}"></span>
+            <span class="nsd-info"><span class="nsd-model">${item.name}</span><span class="nsd-brand">${item.brandLabel}</span></span>
+            <span class="nsd-type ${typeClass}">${item.type}</span></a>`;
+        });
+      });
+      mobileDrop.innerHTML = html;
+    }
+    mobileDrop.classList.add('open');
+  }
+
+  mobileInp.addEventListener('input', () => {
+    const q = mobileInp.value.trim().toLowerCase();
+    if (!q) { mobileDrop.classList.remove('open'); return; }
+    renderMobileResults(INDEX.filter(r => r.search.includes(q)).slice(0, 10));
+  });
+
+  window.toggleMobileSearch = function() {
+    const isOpen = mobileOverlay.classList.contains('open');
+    if (isOpen) { closeMobileSearch(); } else {
+      mobileOverlay.classList.add('open');
+      mobileDrop.classList.remove('open');
+      mobileInp.value = '';
+      setTimeout(() => mobileInp.focus(), 60);
+    }
+  };
+  window.closeMobileSearch = function() {
+    mobileOverlay.classList.remove('open');
+    mobileDrop.classList.remove('open');
+    mobileInp.value = '';
+  };
+})();
 (function(){
   var el = document.getElementById('gs-date');
   if(el){ var d=new Date(); el.textContent=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
