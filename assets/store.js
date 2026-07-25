@@ -592,6 +592,22 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'student-hub',
+    name: 'MoMo Student Hub (TDTU Campus Edition)',
+    category: 'Platform',
+    ownerGroup: 'Student Pass & Gen Z Growth',
+    maturity: 'Concept',
+    description: 'Hub Đặc quyền Sinh Viên x Merchant Exploration x Gamification dành riêng cho Trường Đại Học Tôn Đức Thắng (TDTU). Bao gồm Thẻ Sinh Viên Điện Tử, Merchant Map quanh campus, Ví Trả Sau HSSV, Túi Thần Tài tiết kiệm tiền lẻ, và Hệ thống Quests tích điểm đổi quà 0đ.',
+    jtbd: 'Tôi là tân sinh viên TDTU mới lên thành phố, muốn biết quanh trường có tiện ích & merchant nào chấp nhận MoMo/Ví Trả Sau, nhận voucher đặc quyền và quản lý chi tiêu học tập dễ dàng.',
+    northStar: 'Student MAU & Verified HSSV Conversion',
+    loop: 'Back2School Campaign → Email .edu.vn Verification → Merchant Discovery → Ví Trả Sau/Túi Thần Tài → Quests & Login Streak',
+    hypothesis: 'Tối ưu trải nghiệm Merchant O2O quanh trường kết hợp Gamification theo đúng ngữ cảnh TDTU sẽ giúp kích hoạt thói quen dùng Ví Trả Sau & Túi Thần Tài ở giai đoạn 1st financial entry.',
+    value: 'Chiếm lĩnh "Top of Mind" Gen Z từ mốc 18-22 tuổi, cross-sell Ví Trả Sau & Túi Thần Tài, tăng tần suất giao dịch hàng ngày quanh campus.',
+    gate: 'Đo Verified HSSV rate, Merchant QR Scanning near TDTU, VTS activation rate, Daily Streak completion rate.',
+    src: 'demos/student-hub.html',
+    address: 'web-momo-prototype.vercel.app/student-hub',
+  },
+  {
     id: 'vehicle-hub',
     name: 'Tiện Ích Giao Thông',
     category: 'Platform',
@@ -1110,7 +1126,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['student-hub', 'vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: [],
 };
 
