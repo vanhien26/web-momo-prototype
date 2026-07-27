@@ -593,7 +593,7 @@ const PROTOTYPES = [
   },
   {
     id: 'student-hub',
-    name: 'MoMo Student Hub (TDTU Campus Edition)',
+    name: 'Student Hub',
     category: 'Platform',
     ownerGroup: 'Student Pass',
     maturity: 'Concept',
@@ -701,7 +701,7 @@ const PROTOTYPES = [
         name: 'Lịch Bảo Dưỡng Xe',
         category: 'Child Page',
         src: 'demos/bao-duong-xe.html',
-        address: 'web-momo-prototype.vercel.app/bao-duong-xe',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/bao-duong',
         description: 'PLG utility tool: nhập km hiện tại + hãng/model xe → tính toàn bộ chu kỳ bảo dưỡng (dầu máy, bugi, lọc gió, đai cam, má phanh, lốp). Health score, km timeline signature, item cards status. Hỗ trợ xe máy, ô tô xăng và VinFast EV.',
         tools: [
           {
@@ -1314,7 +1314,8 @@ const MOSPARK_AUDIENCE = [
 let activeProtoId = null;
 let activeToolId  = null;
 const expanded    = new Set();
-const collapsedOwnerGroups = new Set(); // owner groups that are collapsed
+// All PLG owner groups start collapsed; expand the active group on selectProto
+const collapsedOwnerGroups = new Set(PLG_OWNER_ORDER);
 
 function findToolPath(proto, toolId, tools = proto?.tools || [], ancestors = []) {
   for (const tool of tools) {
@@ -1404,10 +1405,9 @@ function renderNav() {
       ? PLG_OWNER_ORDER.map(owner => {
           const ownerItems = groupItems.filter(item => item.ownerGroup === owner);
           if (!ownerItems.length) return '';
-          const isCollapsible = owner === 'Tiện ích Giao Thông';
-          const isCollapsed = isCollapsible && collapsedOwnerGroups.has(owner);
-          return `<div class="proto-owner-group${isCollapsible ? ' owner-group--collapsible' : ''}${isCollapsed ? ' owner-group--collapsed' : ''}">
-            <p class="proto-owner-label${isCollapsible ? ' proto-owner-label--toggle' : ''}" data-owner-toggle="${isCollapsible ? owner : ''}">${owner}${isCollapsible ? `<span class="owner-caret${isCollapsed ? '' : ' open'}">›</span>` : ''}</p>
+          const isCollapsed = collapsedOwnerGroups.has(owner);
+          return `<div class="proto-owner-group owner-group--collapsible${isCollapsed ? ' owner-group--collapsed' : ''}">
+            <p class="proto-owner-label proto-owner-label--toggle" data-owner-toggle="${owner}">${owner}<span class="owner-caret${isCollapsed ? '' : ' open'}">›</span></p>
             <div class="owner-group-items">
               ${ownerItems.map(item => renderNavItem(item, groupItems.indexOf(item))).join('')}
             </div>
@@ -1627,6 +1627,9 @@ function selectProto(id) {
   }
   activeProtoId = id;
   activeToolId  = null;
+  if (proto?.ownerGroup && PLG_OWNER_ORDER.includes(proto.ownerGroup)) {
+    collapsedOwnerGroups.delete(proto.ownerGroup);
+  }
   renderNav();
   renderWorkspace();
   closeSidebar();

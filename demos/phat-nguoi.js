@@ -104,7 +104,7 @@
       dangkiem: { href: '/tien-ich-giao-thong/dang-kiem', icon: 'inspect', name: 'Đăng kiểm', hint: 'Vi phạm chưa nộp sẽ bị chặn' },
       tnds:     { href: '/bao-hiem-o-to', icon: 'shield', name: 'Bảo hiểm TNDS', hint: 'Bắt buộc khi đăng kiểm' },
       hoso:     { href: '/vehicle-hub#ho-so-xe', icon: 'car', name: 'Hồ sơ xe', hint: 'Tự quét vi phạm hàng tuần' },
-      baoduong: { href: '/bao-duong-xe', icon: 'wrench', name: 'Bảo dưỡng xe', hint: 'Đèn hỏng, lốp mòn cũng bị phạt' },
+      baoduong: { href: '/tien-ich-giao-thong/bao-duong', icon: 'wrench', name: 'Bảo dưỡng xe', hint: 'Đèn hỏng, lốp mòn cũng bị phạt' },
       cuuho:    { href: '/vehicle-hub/cuu-ho', icon: 'phone', name: 'Cứu hộ 24/7', hint: 'Lưu sẵn trước chuyến đi xa' },
       epass:    { href: '/epass', icon: 'card', name: 'Nạp ePass', hint: 'Tự động nạp, không lo dừng trạm' },
     };
