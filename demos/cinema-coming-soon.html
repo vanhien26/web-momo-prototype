@@ -6,6 +6,7 @@
 <title>Phim Sắp Chiếu 2026 - Lịch Ra Rạp | MoMo Cinema</title>
 <meta name="description" content="Danh sách phim sắp chiếu tháng 7, 8, 9/2026. Đặt vé trước, nhận thông báo ra rạp. Phim Việt và quốc tế cập nhật liên tục tại MoMo Cinema.">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="data/cinema-data.js"></script>
 <style>
 @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
 @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
@@ -256,32 +257,14 @@ body::after{
 
 <div class="page-wrap">
   <!-- FEATURED FILM -->
-  <div class="featured-banner" onclick="showToast('Thám Tử Kiên 2 - 01/08/2026')">
-    <div class="fb-poster">
-      <img src="https://cinema.momocdn.net/convert-webp/img/154903476143772777-PosterTHAMTUKIEN2compressed.jpg?size=M" alt="Thám Tử Kiên 2">
-    </div>
-    <div class="fb-body">
-      <div class="fb-eyebrow">Được mong đợi nhất · Phim Việt</div>
-      <div class="fb-title">Thám Tử Kiên 2</div>
-      <div class="fb-meta">Hành động · Bí ẩn · 115 phút · T16 · 01/08/2026</div>
-      <div class="fb-desc">Thám tử Kiên trở lại với vụ án kinh hoàng chấn động dư luận. Kẻ thù lần này không chỉ là con người - mà là cả hệ thống.</div>
-      <div class="fb-actions">
-        <div class="fb-want">♥ 42.8k muốn xem</div>
-        <button class="fb-cta" onclick="event.stopPropagation();showToast('Đang mở trailer...')">▶ Trailer</button>
-      </div>
-    </div>
-    <div class="fb-countdown">
-      <div class="fb-cd-label">Đếm ngược ra rạp</div>
-      <div class="cd-units" id="cdUnits"></div>
-    </div>
-  </div>
+  <div class="featured-banner" id="featuredBanner"></div>
 
   <div id="filmSections"></div>
 
   <div class="seo-text">
     <p>Danh sách phim sắp chiếu tại rạp được cập nhật liên tục từ nhà phát hành chính thức. MoMo Cinema thông báo lịch mở bán vé trước, giúp bạn không bỏ lỡ suất đẹp cho các bộ phim bom tấn trong nước và quốc tế.</p>
     <h2>Phim sắp chiếu tháng 8/2026</h2>
-    <p>Tháng 8 hứa hẹn với nhiều phim lớn: Thám Tử Kiên 2 từ đội ngũ làm nên phần 1 ăn khách nhất lịch sử phim Việt, Avatar 5 kết thúc saga Pandora, cùng nhiều phim kinh dị từ Hollywood.</p>
+    <p>Danh sách nổi bật hiện có Thư Tình Gửi Ngoại, Hộ Linh Tráng Sĩ: Bí Ẩn Mộ Vua Đinh, Dune: Hành Tinh Cát - Phần Ba, Phim Shin và Trại Buôn Người, cùng nhiều phim khác đang mở bán hoặc chuẩn bị mở bán trên MoMo.</p>
     <h2>Đặt vé trước qua MoMo</h2>
     <p>Đặt vé trước tại MoMo giúp bạn chọn được suất chiếu và hàng ghế đẹp ngay từ ngày đầu mở bán. Thanh toán bằng ví MoMo, hoàn tiền nếu hủy trước 2 tiếng.</p>
   </div>
@@ -299,6 +282,8 @@ body::after{
 
 <script>
 function icon(n,s=16){const k=n.split('-').map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join('');if(!window.lucide||!lucide[k])return'';return lucide.createElement(lucide[k],{width:s,height:s,'stroke-width':2,style:'display:inline-block;vertical-align:middle;flex-shrink:0'}).outerHTML}
+function slugify(s){return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function filmHref(movie){return `/cinema/${movie.slug||slugify(movie.title)}`;}
 
 /* ── TMDB CONFIG ─────────────────────────────────────────────
    Để dùng API thật: điền API_KEY và bật USE_REAL_API = true
@@ -353,6 +338,7 @@ function transformTMDB(results) {
     const rd = new Date(m.release_date);
     const month = String(rd.getMonth()+1);
     return {
+      slug: m.slug || slugify(m.title),
       id: String(m.id),
       title: m.title,
       img: m._img || (m.poster_path ? TMDB.IMG + m.poster_path : ''),
@@ -361,6 +347,7 @@ function transformTMDB(results) {
       dur: m.runtime ? `${m.runtime} phút` : 'TBA',
       want: m._want || fmtCount(m.vote_count),
       date: m._date || rd.toLocaleDateString('vi-VN'),
+      releaseDate: m.release_date || '',
       month: m._month || month,
       presale: m._presale || false,
       featured: m._featured || false,
@@ -370,6 +357,31 @@ function transformTMDB(results) {
 }
 
 async function loadMovies() {
+  if (typeof UPCOMING !== 'undefined' && Array.isArray(UPCOMING) && UPCOMING.length > 0) {
+    return UPCOMING.map(m => {
+      const genreStr = m.genres ? m.genres.map(g => typeof getGenreVN === 'function' ? getGenreVN(g) : g).slice(0,2).join(' · ') : 'Điện ảnh';
+      const rd = new Date(m.releaseDate);
+      const monthStr = String(rd.getMonth() + 1);
+      const dayStr = String(rd.getDate()).padStart(2, '0');
+      const formattedDate = `${dayStr}/${monthStr.padStart(2, '0')}/${rd.getFullYear()}`;
+      return {
+        slug: m.slug || slugify(m.title),
+        id: String(m.id),
+        title: m.title,
+        img: m.poster || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop',
+        age: m.ageRating || 'T13',
+        genre: genreStr,
+        dur: m.runtime ? `${m.runtime} phút` : 'TBA',
+        want: m.notifyCount ? (m.notifyCount > 1000 ? (m.notifyCount/1000).toFixed(1) + 'k' : m.notifyCount) : '25.0k',
+        date: m.openingDate || formattedDate,
+        releaseDate: m.releaseDate || '',
+        month: monthStr,
+        presale: true,
+        featured: m.highlight || false,
+        popularity: 2000
+      };
+    });
+  }
   if (TMDB.USE_REAL_API && TMDB.API_KEY) {
     try {
       const res = await fetch(`${TMDB.BASE}/movie/upcoming?api_key=${TMDB.API_KEY}&language=vi-VN&region=VN&page=1`);
@@ -383,6 +395,7 @@ async function loadMovies() {
 let FILMS_SOON = [];
 let notified = new Set();
 let activeMonth = 'all';
+let countdownTarget = '2026-08-01T00:00:00';
 
 const MONTH_LABELS = {
   '7':'Tháng 7 · 2026','8':'Tháng 8 · 2026','9':'Tháng 9 · 2026',
@@ -406,6 +419,38 @@ function renderMonthNav(){
     html += `<button class="month-tab${activeMonth===m?' on':''}" onclick="setMonth('${m}',this)">${MONTH_SHORT[m]||'T'+m} <span class="month-count">${months[m]}</span></button>`;
   });
   document.getElementById('monthNav').innerHTML = html;
+}
+
+function renderFeaturedBanner(){
+  const el = document.getElementById('featuredBanner');
+  const now = new Date();
+  const featured = FILMS_SOON.find(f => f.featured && new Date(f.releaseDate) > now)
+    || FILMS_SOON.find(f => new Date(f.releaseDate) > now)
+    || FILMS_SOON.find(f => f.featured)
+    || FILMS_SOON[0];
+  if (!el || !featured) return;
+  if (featured.releaseDate && new Date(featured.releaseDate) > now) {
+    countdownTarget = `${featured.releaseDate}T00:00:00`;
+  }
+  el.innerHTML = `
+    <div class="fb-poster">
+      <img src="${featured.img}" alt="${featured.title}">
+    </div>
+    <div class="fb-body">
+      <div class="fb-eyebrow">Được mong đợi nhất · ${featured.presale ? 'Đặt vé trước' : 'Phim sắp ra rạp'}</div>
+      <div class="fb-title">${featured.title}</div>
+      <div class="fb-meta">${featured.genre}${featured.dur !== 'TBA' ? ' · ' + featured.dur : ''} · ${featured.age}${featured.date ? ' · ' + featured.date : ''}</div>
+      <div class="fb-desc">Phim nổi bật trong nhóm sắp chiếu trên MoMo Cinema.</div>
+      <div class="fb-actions">
+        <div class="fb-want">♥ ${featured.want} muốn xem</div>
+        <button class="fb-cta" onclick="event.stopPropagation();window.location.href='${filmHref(featured)}'">Xem chi tiết</button>
+      </div>
+    </div>
+    <div class="fb-countdown">
+      <div class="fb-cd-label">Đếm ngược ra rạp</div>
+      <div class="cd-units" id="cdUnits"></div>
+    </div>
+  `;
 }
 
 function setMonth(m, el){
@@ -442,7 +487,7 @@ function renderSections(){
 }
 
 function filmCard(f){
-  return `<div class="cs-card" onclick="showToast('${f.title.replace(/'/g,"\\'")} · ${f.date}')">
+  return `<div class="cs-card" onclick="window.location.href='${filmHref(f)}'">
     <div class="cs-poster">
       <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-100)'">
       <div class="cs-age">${f.age}</div>
@@ -473,7 +518,7 @@ function toggleNotifyAll(){
 }
 
 function renderCountdown(){
-  const target = new Date('2026-08-01T00:00:00');
+  const target = new Date(countdownTarget);
   const now = new Date();
   const diff = Math.max(0, target - now);
   const d = Math.floor(diff/86400000);
@@ -504,6 +549,7 @@ function showToast(msg){
 async function init(){
   FILMS_SOON = await loadMovies();
   renderMonthNav();
+  renderFeaturedBanner();
   renderSections();
   renderCountdown();
   setInterval(renderCountdown, 1000);

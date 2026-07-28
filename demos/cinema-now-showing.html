@@ -251,6 +251,7 @@ body::after{
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="data/cinema-data.js"></script>
 </head>
 <body>
 
@@ -394,6 +395,7 @@ function transformTMDB(results) {
   return results.map(m=>{
     const genres=(m.genre_ids||[]).map(id=>TMDB.GENRE_MAP[id]).filter(Boolean);
     return {
+      slug: m.slug || slugify(m.title),
       id:String(m.id),title:m.title,
       img:m._img||(m.poster_path?TMDB.IMG+m.poster_path:''),
       age:m._age||'P',rating:Math.round(m.vote_average*10)/10,
@@ -409,6 +411,29 @@ function transformTMDB(results) {
 }
 
 async function loadMovies() {
+  if (typeof NOW_PLAYING !== 'undefined' && Array.isArray(NOW_PLAYING) && NOW_PLAYING.length > 0) {
+    return NOW_PLAYING.map(m => {
+      const mainGenre = m.genres && m.genres.length ? (typeof getGenreVN === 'function' ? getGenreVN(m.genres[0]) : m.genres[0]) : 'Điện ảnh';
+      const genreStr = m.genres ? m.genres.map(g => typeof getGenreVN === 'function' ? getGenreVN(g) : g).slice(0,2).join(' · ') : 'Điện ảnh';
+      return {
+        slug: m.slug || slugify(m.title),
+        id: String(m.id),
+        title: m.title,
+        img: m.poster || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop',
+        age: m.ageRating || 'P',
+        rating: m.rating || 8.5,
+        genre: genreStr,
+        tag: mainGenre,
+        dur: m.runtime ? `${m.runtime} phút` : '120 phút',
+        want: m.ratingCount ? (m.ratingCount > 1000 ? (m.ratingCount/1000).toFixed(1) + 'k' : m.ratingCount) : '15.4k',
+        badge: m.highlight ? 'hot' : null,
+        box: m.boxOffice ? (m.boxOffice >= 1e9 ? `${(m.boxOffice/1e9).toFixed(1)}B USD` : `${(m.boxOffice/1e6).toFixed(0)}M USD`) : null,
+        trailer: '',
+        formats: m.formats || ['2D'],
+        isNew: m.releaseDate ? m.releaseDate.startsWith('2026') : false
+      };
+    });
+  }
   if(TMDB.USE_REAL_API&&TMDB.API_KEY){
     try{
       const res=await fetch(`${TMDB.BASE}/movie/now_playing?api_key=${TMDB.API_KEY}&language=vi-VN&region=VN&page=1`);
@@ -494,7 +519,8 @@ function renderFilmGrid(){
   el.innerHTML=list.map(f=>{
     const badge=f.badge?`<div class="poster-badge badge-${f.badge}">${f.badge==='hot'?'🔥 Hot':f.badge==='new'?'Mới':'Ngày cuối'}</div>`:'';
     const play=f.trailer?`<button class="poster-play" onclick="event.stopPropagation();showToast('Đang mở trailer...')" aria-label="Xem trailer">${icon('play',12,'color:#fff;margin-left:2px')}</button>`:'';
-    return `<div class="film-card" onclick="window.location.href='/cinema/supergirl-24851'">
+    const href = filmHref(f);
+    return `<div class="film-card" onclick="window.location.href='${href}'">
       <div class="film-poster">
         <img src="${f.img}" alt="${f.title}" loading="lazy" onerror="this.style.background='var(--gray-100)'">
         <div class="poster-age">${f.age}</div>
@@ -507,7 +533,7 @@ function renderFilmGrid(){
         <div class="film-meta">${f.dur} · ${f.genre}</div>
         <div class="film-bottom">
           <div class="film-want">${icon('heart',11,'fill:var(--pink-500);stroke:var(--pink-500)')}<strong style="color:var(--gray-600)">${f.want}</strong></div>
-          <button class="stub-btn" onclick="event.stopPropagation();window.location.href='/cinema/supergirl-24851'">Đặt vé</button>
+          <button class="stub-btn" onclick="event.stopPropagation();window.location.href='${href}'">Đặt vé</button>
         </div>
       </div>
     </div>`;
