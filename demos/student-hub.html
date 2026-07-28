@@ -7,6 +7,8 @@
 <meta name="description" content="MoMo Student Hub: Giải quyết trọn vẹn mọi vấn đề thực tế của sinh viên qua 4 trụ cột: Nhập Học &amp; Thủ Tục, Sinh Hoạt &amp; Thuê Trọ, Giải Trí &amp; CLB, Học Tập &amp; Công Cụ AI.">
 <link rel="icon" href="/assets/images/momo-logo.svg" type="image/svg+xml">
 <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Light.otf') format('opentype');font-weight:300;font-display:swap}
 @font-face{font-family:'MoMoTrustSans';src:url('/assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
@@ -76,16 +78,38 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 
 .nav-slogan { font-size: 11.5px; font-weight: 700; color: var(--gray-700); background: var(--gray-100); border: 1px solid var(--gray-200); padding: 4px 10px; border-radius: 99px; display: flex; align-items: center; gap: 4px; }
 
-.nav-univ-select { background: var(--gray-100); border: 1px solid var(--gray-200); color: var(--gray-700); font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 99px; display: flex; align-items: center; gap: 6px; cursor: pointer; outline: none; font-family: inherit; }
+/* CUSTOM UNIV DROPDOWN */
+.nav-univ-dropdown { position: relative; }
+.nav-univ-trigger { display: flex; align-items: center; gap: 6px; background: var(--gray-100); border: 1px solid var(--gray-200); color: var(--gray-700); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 99px; cursor: pointer; outline: none; font-family: inherit; transition: all .15s; white-space: nowrap; max-width: 240px; }
+.nav-univ-trigger:hover { background: var(--gray-200); border-color: var(--gray-300); }
+.nav-univ-trigger span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-univ-menu { position: absolute; top: calc(100% + 6px); left: 0; min-width: 260px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; box-shadow: 0 8px 24px rgba(15,23,42,.1); padding: 6px; z-index: 500; display: none; max-height: 320px; overflow-y: auto; }
+.nav-univ-menu.open { display: block; }
+.nav-univ-opt { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--gray-700); cursor: pointer; transition: background .1s; }
+.nav-univ-opt:hover { background: var(--gray-100); color: var(--gray-900); }
+.nav-univ-opt.selected { background: var(--gray-100); font-weight: 800; color: var(--gray-900); }
 
 .nav-search { flex: 1; max-width: 280px; position: relative; }
 .nav-search-inp { width: 100%; height: 36px; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 20px; padding: 0 14px 0 34px; font-size: 12px; color: var(--gray-900); outline: none; transition: all .15s; font-family: inherit; }
 .nav-search-inp:focus { background: #fff; border-color: var(--gray-400); box-shadow: 0 0 0 3px rgba(15,23,42,0.08); }
 .nav-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); pointer-events: none; }
 
-.nav-user { display: flex; align-items: center; gap: 10px; }
-.user-status { display: flex; align-items: center; gap: 6px; background: var(--gray-100); border: 1px solid var(--gray-200); padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; color: var(--gray-700); cursor: pointer; }
-.user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-900); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.nav-user { display: flex; align-items: center; gap: 8px; }
+/* Social login - guest state */
+.nav-login-btn { display: flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 700; color: var(--gray-800); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.nav-login-btn:hover { border-color: var(--gray-400); background: var(--gray-50); }
+.nav-login-btn .social-icons { display: flex; align-items: center; gap: 3px; }
+.nav-login-btn .social-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; }
+.si-google { background: #fff; border: 1px solid #e0e0e0; color: #4285F4; }
+.si-facebook { background: #1877F2; color: #fff; }
+.nav-register-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 99px; background: var(--gray-900); color: #fff; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: background .15s; white-space: nowrap; }
+.nav-register-btn:hover { background: var(--pink-500); }
+/* Logged-in state */
+.nav-user-logged { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 10px 4px 4px; border-radius: 99px; border: 1px solid var(--gray-200); background: #fff; transition: all .15s; }
+.nav-user-logged:hover { border-color: var(--gray-300); background: var(--gray-50); }
+.user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-900); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+.user-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.nav-user-name { font-size: 12px; font-weight: 700; color: var(--gray-800); }
 
 /* BREADCRUMB */
 .bc-bar { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 8px 0; font-size: 12px; color: var(--gray-500); }
@@ -196,6 +220,86 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .m-pay-status { display: flex; align-items: center; gap: 6px; background: var(--gray-50); border: 1px solid var(--gray-200); color: var(--gray-700); font-size: 11.5px; font-weight: 700; padding: 8px 10px; border-radius: 8px; margin-top: 8px; }
 .m-pay-status strong { font-weight: 800; color: var(--gray-900); }
 
+/* MERCHANT FILTER CHIPS */
+.m-filter-row { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 20px; padding-bottom: 2px; }
+.m-filter-row::-webkit-scrollbar { display: none; }
+.m-filter-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--gray-200); font-size: 12px; font-weight: 600; color: var(--gray-700); white-space: nowrap; flex: none; cursor: pointer; transition: all .15s; }
+.m-filter-chip:hover { border-color: var(--pink-500); color: var(--pink-500); }
+.m-filter-chip.active { background: var(--pink-500); border-color: var(--pink-500); color: #fff; box-shadow: 0 2px 10px rgba(235,47,150,.25); }
+.m-filter-count { font-size: 10px; font-weight: 800; background: rgba(0,0,0,.08); border-radius: 99px; padding: 1px 6px; margin-left: 2px; }
+.m-filter-chip.active .m-filter-count { background: rgba(255,255,255,.25); }
+.m-show-map-btn { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 999px; background: var(--gray-900); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; white-space: nowrap; }
+.m-show-map-btn:hover { background: var(--pink-500); }
+
+/* ENHANCED MERCHANT CARDS */
+.m-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .15s, border-color .15s; display: flex; flex-direction: column; cursor: pointer; }
+.m-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--pink-500); }
+.m-img-box { height: 160px; position: relative; background: var(--gray-100); overflow: hidden; }
+.m-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.m-card:hover .m-img-box img { transform: scale(1.04); }
+.m-cat-badge { position: absolute; top: 10px; left: 10px; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; color: #fff; }
+.m-cat-campus { background: #7C3AED; }
+.m-cat-fnb { background: #EB2F96; }
+.m-cat-food { background: #EA580C; }
+.m-cat-print { background: #0284C7; }
+.m-cat-market { background: #16A34A; }
+.m-map-hint { position: absolute; bottom: 10px; right: 10px; background: rgba(15,23,42,.7); backdrop-filter: blur(4px); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 9px; border-radius: 6px; display: flex; align-items: center; gap: 4px; opacity: 0; transition: opacity .2s; }
+.m-card:hover .m-map-hint { opacity: 1; }
+.m-dist-badge { position: absolute; top: 10px; right: 10px; background: rgba(15,23,42,.75); backdrop-filter: blur(4px); color: #fff; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
+.m-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.m-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.m-name { font-size: 14px; font-weight: 800; color: var(--gray-900); line-height: 1.3; }
+.m-rating { font-size: 11.5px; font-weight: 700; color: #F59E0B; display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.m-desc { font-size: 11.5px; color: var(--gray-500); line-height: 1.5; display: flex; align-items: flex-start; gap: 4px; }
+.m-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-100); padding-top: 8px; margin-top: auto; }
+.m-hours { font-size: 10.5px; font-weight: 600; color: var(--gray-500); display: flex; align-items: center; gap: 4px; }
+.m-hours.open { color: #16A34A; }
+.m-view-map { font-size: 10.5px; font-weight: 700; color: var(--pink-500); display: flex; align-items: center; gap: 3px; }
+
+/* MAP OVERLAY (FULL-SCREEN) */
+.map-overlay { position: fixed; inset: 0; z-index: 999; display: flex; flex-direction: column; background: #fff; transform: translateY(100%); transition: transform .32s cubic-bezier(.32,1,.22,1); pointer-events: none; }
+.map-overlay.open { transform: translateY(0); pointer-events: auto; }
+.map-overlay-head { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--gray-200); background: #fff; flex: none; z-index: 10; }
+.map-back-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px 6px 10px; border-radius: 999px; border: 1px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 700; color: var(--gray-800); cursor: pointer; transition: all .15s; }
+.map-back-btn:hover { border-color: var(--pink-500); color: var(--pink-500); }
+.map-overlay-title { font-size: 15px; font-weight: 800; color: var(--gray-900); flex: 1; }
+.map-overlay-sub { font-size: 11px; color: var(--gray-500); }
+.map-split { display: flex; flex: 1; overflow: hidden; }
+.map-list-pane { width: 360px; flex: none; height: 100%; overflow-y: auto; overflow-x: hidden; border-right: 1px solid var(--gray-200); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.map-card { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: 12px; border: 1px solid var(--gray-200); cursor: pointer; transition: all .15s; background: #fff; }
+.map-card:hover { border-color: var(--pink-500); box-shadow: 0 2px 8px rgba(235,47,150,.12); }
+.map-card.active { border-color: var(--pink-500); box-shadow: 0 0 0 1.5px var(--pink-500); background: #FFF0F9; }
+.map-card-img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex: none; }
+.map-card-body { flex: 1; min-width: 0; }
+.map-card-name { font-size: 12.5px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; line-height: 1.3; }
+.map-card-dist { font-size: 10.5px; color: var(--gray-500); display: flex; align-items: center; gap: 3px; margin-bottom: 4px; }
+.map-card-rating { font-size: 10.5px; font-weight: 700; color: #F59E0B; display: flex; align-items: center; gap: 2px; }
+.map-pane { flex: 1; height: 100%; position: relative; }
+#merchantLeafletMap { height: 100%; width: 100%; }
+
+/* NHU CAU TUU TRUONG */
+.needs-sec { padding: 32px 0 40px; background: #fff; border-top: 1px solid var(--gray-200); }
+.needs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.need-card { display: flex; gap: 16px; padding: 20px; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: #fff; transition: box-shadow .15s, border-color .15s; }
+.need-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-md); }
+.need-icon-wrap { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.need-body { flex: 1; min-width: 0; }
+.need-eyebrow { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-400); margin-bottom: 4px; }
+.need-title { font-size: 15px; font-weight: 800; color: var(--gray-900); margin-bottom: 8px; line-height: 1.3; }
+.need-desc { font-size: 12px; color: var(--gray-500); line-height: 1.6; margin-bottom: 12px; }
+.need-bullets { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 5px; }
+.need-bullets li { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--gray-600); font-weight: 600; }
+.need-bullets li i { color: #16A34A; flex-shrink: 0; }
+.need-cta { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 999px; background: var(--gray-900); color: #fff; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: background .15s; }
+.need-cta:hover { background: var(--pink-500); }
+.need-cta--green { background: #16A34A; }
+.need-cta--green:hover { background: #15803D; }
+.need-cta--orange { background: #EA580C; }
+.need-cta--orange:hover { background: #C2410C; }
+.need-cta--purple { background: #9333EA; }
+.need-cta--purple:hover { background: #7E22CE; }
+@media (max-width: 680px) { .needs-grid { grid-template-columns: 1fr; } .need-card { flex-direction: column; } .need-icon-wrap { width: 44px; height: 44px; } }
+
 /* GAMIFICATION & DAILY QUESTS */
 .quest-sec { padding: 24px 0; background: #fff; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
 .quest-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
@@ -228,7 +332,14 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .btn-redeem { font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 99px; background: var(--emerald-500); color: #fff; }
 
 /* BUDGET SIMULATOR */
-.budget-sec { padding: 28px 0; }
+.budget-sec { padding: 28px 0 8px; }
+.budget-cta-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 16px 20px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); flex-wrap: wrap; }
+.budget-cta-hint { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; color: var(--gray-500); line-height: 1.5; flex: 1; min-width: 200px; }
+.budget-cta-btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.bcta-secondary { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--gray-300); background: #fff; color: var(--gray-700); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.bcta-secondary:hover { border-color: var(--gray-400); background: var(--gray-50); }
+.bcta-primary { display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: 99px; background: var(--gray-900); color: #fff; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: background .15s; white-space: nowrap; }
+.bcta-primary:hover { background: var(--pink-500); }
 .budget-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-md); display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
 .budget-control { display: flex; flex-direction: column; gap: 16px; }
 .b-slider-lbl { font-size: 13px; font-weight: 700; color: var(--gray-700); display: flex; justify-content: space-between; }
@@ -240,22 +351,164 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .b-item-name { font-weight: 600; color: var(--gray-700); display: flex; align-items: center; gap: 8px; }
 .b-item-val { font-weight: 800; color: var(--gray-900); }
 
-/* AUTH MODAL */
+/* AUTH MODAL - STUDENT PASS FLOW */
 .auth-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px; }
 .auth-overlay.open { display: flex; }
-.auth-card { background: #fff; border-radius: var(--radius-xl); max-width: 480px; width: 100%; overflow: hidden; box-shadow: var(--shadow-lg); animation: popIn .2s ease-out; }
+.auth-card { background: #fff; border-radius: var(--radius-xl); max-width: 520px; width: 100%; overflow: hidden; box-shadow: var(--shadow-lg); animation: popIn .2s ease-out; }
 @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-.auth-head { background: var(--gray-900); color: #fff; padding: 20px; position: relative; }
-.auth-close { position: absolute; top: 16px; right: 16px; color: rgba(255,255,255,0.7); font-size: 20px; cursor: pointer; }
-.auth-body { padding: 24px; }
+.auth-head { background: var(--gray-900); color: #fff; padding: 20px 24px; position: relative; }
+.auth-close { position: absolute; top: 16px; right: 16px; color: rgba(255,255,255,0.6); font-size: 22px; cursor: pointer; line-height: 1; }
+.auth-body { padding: 20px 24px 24px; }
 .auth-tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 18px; }
 .auth-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--gray-500); cursor: pointer; }
 .auth-tab.active { color: var(--gray-900); border-bottom: 2px solid var(--gray-900); margin-bottom: -2px; }
 .auth-form-group { margin-bottom: 14px; }
 .auth-label { font-size: 12px; font-weight: 700; color: var(--gray-700); margin-bottom: 4px; display: block; }
 .auth-input { width: 100%; height: 40px; border: 1px solid var(--gray-300); border-radius: 8px; padding: 0 12px; font-size: 13px; outline: none; font-family: inherit; }
-.auth-input:focus { border-color: var(--gray-400); }
-.auth-submit-btn { width: 100%; height: 42px; background: var(--gray-900); color: #fff; font-size: 14px; font-weight: 800; border-radius: 99px; margin-top: 10px; }
+.auth-input:focus { border-color: #EB2F96; box-shadow: 0 0 0 3px rgba(235,47,150,0.12); }
+.auth-submit-btn { width: 100%; height: 44px; background: #EB2F96; color: #fff; font-size: 14px; font-weight: 800; border-radius: 99px; margin-top: 10px; transition: background .15s; }
+.auth-submit-btn:hover { background: #C4196B; }
+
+/* STEP PROGRESS */
+.sp-steps-row { display: flex; align-items: center; gap: 0; margin-bottom: 20px; }
+.sp-step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gray-300); background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--gray-400); flex-shrink: 0; transition: all .3s; }
+.sp-step-dot.active { border-color: #EB2F96; color: #EB2F96; }
+.sp-step-dot.done { background: #10B981; border-color: #10B981; color: #fff; font-size: 16px; }
+.sp-step-line { flex: 1; height: 2px; background: var(--gray-200); transition: background .4s; }
+.sp-step-line.done { background: #10B981; }
+.sp-step-label { font-size: 10.5px; font-weight: 700; color: var(--gray-400); text-align: center; margin-top: 4px; white-space: nowrap; }
+.sp-steps-labels { display: flex; justify-content: space-between; margin-bottom: 16px; }
+.sp-steps-labels span { font-size: 10.5px; font-weight: 700; color: var(--gray-400); }
+.sp-steps-labels span.active { color: #EB2F96; }
+.sp-steps-labels span.done { color: #10B981; }
+
+/* VERIFYING ANIMATION */
+.sp-verifying { text-align: center; padding: 28px 20px; }
+.sp-spinner { width: 52px; height: 52px; border: 3px solid var(--gray-200); border-top-color: #EB2F96; border-radius: 50%; animation: spin .75s linear infinite; margin: 0 auto 18px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.sp-verify-list { display: flex; flex-direction: column; gap: 8px; text-align: left; background: var(--gray-50); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+.sp-vitem { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--gray-400); }
+.sp-vitem.done { color: #10B981; font-weight: 700; }
+.sp-vitem.active { color: var(--gray-900); font-weight: 700; }
+
+/* STUDENT PASS CARD (physical card visual) */
+.pass-card-wrap { perspective: 1000px; margin: 0 auto 20px; max-width: 360px; }
+.pass-card {
+  width: 100%;
+  aspect-ratio: 1.586;
+  background: linear-gradient(135deg, #6B0040 0%, #AF0171 30%, #D82D8B 65%, #F072B6 100%);
+  border-radius: 18px;
+  padding: 22px 24px;
+  position: relative;
+  color: #fff;
+  box-shadow: 0 24px 48px rgba(175,1,113,0.35), 0 8px 16px rgba(235,47,150,0.2);
+  animation: cardReveal .55s cubic-bezier(.34,1.56,.64,1) both;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+@keyframes cardReveal { from { opacity: 0; transform: rotateY(-25deg) scale(0.88); } to { opacity: 1; transform: rotateY(0) scale(1); } }
+.pass-card::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 180px; height: 180px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.pass-card::after {
+  content: '';
+  position: absolute;
+  bottom: -70px; left: 20px;
+  width: 220px; height: 220px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.pass-card-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+.pass-chip { width: 34px; height: 26px; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 4px; position: relative; }
+.pass-chip::after { content: ''; position: absolute; inset: 3px; border: 1px solid rgba(0,0,0,0.12); border-radius: 2px; }
+.pass-card-logo-area { text-align: right; }
+.pass-card-logo-area .pass-logo { font-family: 'MoMoTrustDisplay', sans-serif; font-size: 13px; font-weight: 900; opacity: 0.95; line-height: 1; }
+.pass-card-logo-area .pass-type { font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7; }
+.pass-card-mid { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 12px 0 8px; position: relative; z-index: 1; }
+.pass-card-name { font-family: 'MoMoTrustDisplay', sans-serif; font-size: 17px; font-weight: 900; letter-spacing: 0.02em; margin-bottom: 3px; }
+.pass-card-mssv { font-size: 11px; opacity: 0.65; letter-spacing: 0.06em; font-weight: 600; }
+.pass-card-bottom { display: flex; align-items: flex-end; justify-content: space-between; position: relative; z-index: 1; }
+.pass-card-univ { font-size: 10.5px; font-weight: 700; opacity: 0.8; max-width: 180px; line-height: 1.3; }
+.pass-card-exp { text-align: right; }
+.pass-card-exp .exp-label { font-size: 9px; opacity: 0.55; letter-spacing: 0.06em; text-transform: uppercase; }
+.pass-card-exp .exp-val { font-size: 12px; font-weight: 800; }
+.pass-perks-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.pass-perk { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 99px; font-size: 10.5px; font-weight: 700; }
+
+/* PASS REVEALED STATE */
+.pass-success-header { text-align: center; margin-bottom: 16px; }
+.pass-success-header .pass-sh-title { font-size: 17px; font-weight: 900; color: var(--gray-900); }
+.pass-success-header .pass-sh-sub { font-size: 12.5px; color: var(--gray-500); margin-top: 3px; }
+
+/* PAYMENT MODAL */
+.pay-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px; }
+.pay-overlay.open { display: flex; }
+.pay-modal { background: #fff; border-radius: var(--radius-xl); max-width: 500px; width: 100%; overflow: hidden; box-shadow: var(--shadow-lg); animation: popIn .2s ease-out; max-height: 90vh; overflow-y: auto; }
+.pay-head { background: var(--gray-900); color: #fff; padding: 18px 20px; position: relative; display: flex; align-items: center; gap: 14px; }
+.pay-head-ico { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pay-close { position: absolute; top: 14px; right: 16px; color: rgba(255,255,255,0.6); font-size: 22px; cursor: pointer; line-height: 1; }
+.pay-tabs { display: flex; border-bottom: 1px solid var(--gray-200); }
+.pay-tab { flex: 1; padding: 12px 16px; font-size: 13px; font-weight: 700; color: var(--gray-500); cursor: pointer; text-align: center; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+.pay-tab.active { color: var(--gray-900); border-bottom-color: #EB2F96; }
+.pay-body { padding: 20px; }
+.pay-input-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.pay-inp { flex: 1; height: 46px; border: 1.5px solid var(--gray-300); border-radius: 10px; padding: 0 14px; font-size: 14px; font-family: inherit; outline: none; transition: border .15s; }
+.pay-inp:focus { border-color: #EB2F96; box-shadow: 0 0 0 3px rgba(235,47,150,0.1); }
+.pay-lookup-btn { height: 46px; padding: 0 18px; background: var(--gray-900); color: #fff; font-size: 13px; font-weight: 800; border-radius: 10px; flex-shrink: 0; transition: background .15s; }
+.pay-lookup-btn:hover { background: #EB2F96; }
+.pay-result { background: var(--gray-50); border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 16px; margin-bottom: 14px; display: none; }
+.pay-result.show { display: block; animation: popIn .2s ease-out; }
+.pay-result-name { font-size: 16px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; }
+.pay-result-info { font-size: 12px; color: var(--gray-500); margin-bottom: 14px; }
+.pay-amount-box { background: #fff; border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+.pay-amount-label { font-size: 12px; color: var(--gray-500); font-weight: 600; margin-bottom: 2px; }
+.pay-amount-value { font-size: 24px; font-weight: 900; color: var(--gray-900); }
+.pay-amount-note { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.pay-confirm-btn { width: 100%; height: 48px; background: #EB2F96; color: #fff; font-size: 15px; font-weight: 800; border-radius: 99px; transition: background .15s; }
+.pay-confirm-btn:hover { background: #C4196B; }
+.pay-hint { font-size: 11.5px; color: var(--gray-500); background: var(--gray-50); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 7px; }
+.pay-success-view { text-align: center; padding: 28px 20px; display: none; }
+.pay-success-view.show { display: block; }
+.pay-success-ico { width: 64px; height: 64px; background: #ECFDF5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.pay-success-title { font-size: 19px; font-weight: 900; color: var(--gray-900); margin-bottom: 6px; }
+.pay-success-sub { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; line-height: 1.5; }
+.pay-receipt { background: var(--gray-50); border: 1px dashed var(--gray-300); border-radius: 12px; padding: 16px; text-align: left; margin-bottom: 20px; }
+.pay-receipt-row { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; padding: 5px 0; color: var(--gray-600); }
+.pay-receipt-row span:last-child { font-weight: 700; color: var(--gray-900); }
+.pay-receipt-row.total { border-top: 1px solid var(--gray-300); margin-top: 8px; padding-top: 10px; }
+.pay-receipt-row.total span { font-weight: 900; font-size: 15px; color: var(--gray-900); }
+.pay-receipt-row.total span:last-child { color: #EB2F96; }
+.pay-done-btn { width: 100%; height: 44px; background: var(--gray-900); color: #fff; font-size: 14px; font-weight: 800; border-radius: 99px; }
+
+/* TUU TRUONG DEALS SECTION */
+.deals-sec { padding: 48px 0; background: linear-gradient(180deg, #FFF5FB 0%, #fff 100%); border-top: 1px solid #FAE0F0; }
+.deals-season-badge { display: inline-flex; align-items: center; gap: 6px; background: #EB2F96; color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 12px; border-radius: 99px; margin-bottom: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+.deals-category { margin-bottom: 32px; }
+.deals-cat-title { font-size: 14.5px; font-weight: 800; color: var(--gray-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.deals-strip { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px; }
+.deals-strip::-webkit-scrollbar { display: none; }
+.deal-card { flex: none; width: 210px; background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .15s; cursor: pointer; }
+.deal-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.deal-img { width: 100%; height: 108px; object-fit: cover; background: var(--gray-100); display: block; }
+.deal-body { padding: 11px 13px; }
+.deal-brand { font-size: 13px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; }
+.deal-desc { font-size: 11.5px; color: var(--gray-500); margin-bottom: 9px; line-height: 1.35; }
+.deal-footer { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.deal-badge { font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.deal-badge.pink { background: #FFF0F6; color: #C4196B; border: 1px solid #FBBDDB; }
+.deal-badge.green { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+.deal-badge.blue { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+.deal-badge.amber { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+.deal-get-btn { font-size: 11.5px; font-weight: 800; color: #EB2F96; background: var(--pink-50); padding: 4px 10px; border-radius: 99px; border: 1px solid #FBBDDB; transition: all .15s; white-space: nowrap; }
+.deal-get-btn:hover { background: #EB2F96; color: #fff; border-color: #EB2F96; }
 
 /* FOOTER RE-DESIGNED FOR STUDENT HUB */
 .footer-sec { background: #0B0F19; color: var(--gray-400); padding: 40px 0 24px; font-size: 12.5px; border-top: 1px solid var(--gray-800); }
@@ -315,33 +568,82 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
         <div class="nav-logo-text">Student <em>Hub</em></div>
       </a>
 
-      <!-- SELECTOR DROPDOWN -->
-      <select class="nav-univ-select" id="navUnivSelect" onchange="onUnivSelectChange(this.value)">
-        <option value="">🏫 Tất cả các trường</option>
-        <option value="tdtu">🏫 ĐH Tôn Đức Thắng (TDTU)</option>
-        <option value="hcmut">🏫 ĐH Bách Khoa TP.HCM (HCMUT)</option>
-        <option value="ueh">🏫 ĐH Kinh Tế TP.HCM (UEH)</option>
-        <option value="hcmus">🏫 ĐH Khoa Học Tự Nhiên (HCMUS)</option>
-        <option value="hcmute">🏫 ĐH SP Kỹ Thuật TP.HCM (HCMUTE)</option>
-        <option value="vnu">🏫 ĐH Quốc Gia Hà Nội (VNU)</option>
-        <option value="hust">🏫 ĐH Bách Khoa Hà Nội (HUST)</option>
-        <option value="neu">🏫 ĐH Kinh Tế Quốc Dân (NEU)</option>
-        <option value="ftu">🏫 ĐH Ngoại Thương (FTU)</option>
-        <option value="rmit">🏫 ĐH RMIT Vietnam</option>
-        <option value="ump">🏫 ĐH Y Dược TP.HCM (UMP)</option>
-        <option value="fpt">🏫 ĐH FPT Vietnam</option>
-        <option value="dut">🏫 ĐH Bách Khoa Đà Nẵng (DUT)</option>
-        <option value="ctu">🏫 ĐH Cần Thơ (CTU)</option>
-        <option value="hmu">🏫 ĐH Y Hà Nội (HMU)</option>
-      </select>
+      <!-- CUSTOM UNIV SELECTOR -->
+      <div class="nav-univ-dropdown" id="navUnivDropdown">
+        <button class="nav-univ-trigger" id="navUnivTrigger" onclick="toggleUnivDropdown()">
+          <i data-lucide="school" width="14" height="14"></i>
+          <span id="navUnivLabel">Tất cả các trường</span>
+          <i data-lucide="chevron-down" width="13" height="13" id="navUnivChevron"></i>
+        </button>
+        <div class="nav-univ-menu" id="navUnivMenu">
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('')">
+            <i data-lucide="layout-grid" width="13" height="13"></i> Tất cả các trường
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('tdtu')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Tôn Đức Thắng (TDTU)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('hcmut')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Bách Khoa TP.HCM (HCMUT)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('ueh')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Kinh Tế TP.HCM (UEH)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('hcmus')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Khoa Học Tự Nhiên (HCMUS)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('hcmute')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH SP Kỹ Thuật TP.HCM (HCMUTE)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('vnu')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Quốc Gia Hà Nội (VNU)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('hust')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Bách Khoa Hà Nội (HUST)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('neu')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Kinh Tế Quốc Dân (NEU)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('ftu')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Ngoại Thương (FTU)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('rmit')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH RMIT Vietnam
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('fpt')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH FPT Vietnam
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('dut')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Bách Khoa Đà Nẵng (DUT)
+          </div>
+          <div class="nav-univ-opt" onclick="onUnivSelectChange('ctu')">
+            <i data-lucide="school" width="13" height="13"></i> ĐH Cần Thơ (CTU)
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="nav-user">
-      <button class="user-status" onclick="openAuthModal()">
-        <i data-lucide="shield-check" width="14" height="14" style="color:#10B981"></i>
-        <span>Xác Thực Student Pass</span>
-      </button>
-      <div class="user-avatar" title="Nguyễn Văn An">AN</div>
+    <div class="nav-user" id="navUserArea">
+      <!-- GUEST STATE (default) -->
+      <div id="navGuestState" style="display:flex;align-items:center;gap:8px">
+        <button class="nav-login-btn" onclick="doSocialLogin('google')">
+          <div class="social-icons">
+            <div class="social-icon si-google">G</div>
+            <div class="social-icon si-facebook">f</div>
+          </div>
+          Đăng nhập
+        </button>
+        <button class="nav-register-btn" onclick="doSocialLogin('google')">
+          Đăng ký miễn phí
+        </button>
+      </div>
+      <!-- LOGGED-IN STATE (shown after social login) -->
+      <div id="navLoggedState" style="display:none">
+        <div class="nav-user-logged" onclick="toggleUserMenu()">
+          <div class="user-avatar" id="navAvatar">AN</div>
+          <span class="nav-user-name" id="navUserName">Nguyễn Văn An</span>
+          <i data-lucide="chevron-down" width="13" height="13" style="color:var(--gray-400)"></i>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -443,7 +745,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
       <div style="max-width:640px">
         <div class="hero-info-tag" id="heroUnivTag"><i data-lucide="school" width="14" height="14"></i> Sinh Viên ĐH Tôn Đức Thắng</div>
         <h1 class="hero-title" id="heroTitle">Tiện Ích &amp; Học Tập <em>Quanh Trường TDTU</em></h1>
-        <p class="hero-sub" id="heroSub">Tra cứu tiệm in giáo trình, căn tin, Circle K 24/7 quanh trường. Thanh toán bằng <strong>MoMo QR &amp; Ví Trả Sau</strong>.</p>
+        <p class="hero-sub" id="heroSub">Tra cứu tiệm in giáo trình, căn tin, Circle K 24/7 quanh trường. Tìm địa điểm, xem giờ mở cửa và điểm rating từ sinh viên cùng trường.</p>
 
         <div class="hero-cta-group">
           <button class="btn-primary" onclick="scrollToSec('merchantsSec')">
@@ -465,7 +767,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
     <div class="sec-sub">Tích hợp đầy đủ giải pháp nộp học phí, quản lý chi tiêu và di chuyển xe bus</div>
 
     <div class="tools-grid">
-      <a class="tool-card" href="#hoc-phi" onclick="openToolModal('Đóng Học Phí')">
+      <a class="tool-card" href="#hoc-phi" onclick="event.preventDefault();openPayModal('hoc-phi')">
         <div class="tool-icon" style="background:#F1F5F9;color:#334155"><i data-lucide="graduation-cap" width="22" height="22"></i></div>
         <div class="tool-title" id="toolTuitionTitle">Đóng Học Phí</div>
         <span class="tool-tag" style="background:#1E293B">1-Click Tra Cứu</span>
@@ -506,11 +808,143 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
   <!-- MERCHANT EXPLORATION SECTION -->
   <section class="merchant-sec wrap" id="merchantsSec">
     <div class="sec-h"><i data-lucide="store" width="20" height="20" style="color:#EB2F96"></i> Hệ Sinh Thái Địa Điểm Sinh Hoạt Quanh Trường</div>
-    <div class="sec-sub" id="merchantSecSub">Các địa điểm phục vụ nhu cầu ăn uống, in ấn đồ án, Circle K 24/7 quanh trường</div>
+    <div class="sec-sub" id="merchantSecSub">Khám phá địa điểm ăn uống, tiện lợi, in ấn và dịch vụ sinh viên quanh campus - bấm card để xem bản đồ</div>
+
+    <!-- FILTER CHIPS -->
+    <div class="m-filter-row" id="merchantFilterRow">
+      <button class="m-filter-chip active" onclick="filterMerchants('all',this)">
+        <i data-lucide="grid-3x3" width="13" height="13"></i> Tất Cả <span class="m-filter-count" id="fCount-all">5</span>
+      </button>
+      <button class="m-filter-chip" onclick="filterMerchants('campus',this)">
+        <i data-lucide="building-2" width="13" height="13"></i> Trong Campus
+      </button>
+      <button class="m-filter-chip" onclick="filterMerchants('fnb',this)">
+        <i data-lucide="coffee" width="13" height="13"></i> Cafe & Trà Sữa
+      </button>
+      <button class="m-filter-chip" onclick="filterMerchants('food',this)">
+        <i data-lucide="utensils" width="13" height="13"></i> Ăn Uống
+      </button>
+      <button class="m-filter-chip" onclick="filterMerchants('print',this)">
+        <i data-lucide="printer" width="13" height="13"></i> In Ấn & Văn Phòng
+      </button>
+      <button class="m-show-map-btn" onclick="openMerchantMap(null)">
+        <i data-lucide="map" width="14" height="14"></i> Xem Bản Đồ
+      </button>
+    </div>
 
     <!-- MERCHANTS GRID -->
     <div class="merchant-grid" id="merchantGrid">
       <!-- Rendered via JS -->
+    </div>
+  </section>
+
+  <!-- MAP OVERLAY -->
+  <div class="map-overlay" id="merchantMapOverlay">
+    <div class="map-overlay-head">
+      <button class="map-back-btn" onclick="closeMerchantMap()">
+        <i data-lucide="arrow-left" width="14" height="14"></i> Quay lại
+      </button>
+      <div>
+        <div class="map-overlay-title" id="mapOverlayTitle">Địa điểm quanh trường</div>
+        <div class="map-overlay-sub" id="mapOverlaySub">Chọn địa điểm để xem chi tiết</div>
+      </div>
+    </div>
+    <div class="map-split">
+      <div class="map-list-pane" id="mapListPane"><!-- rendered by JS --></div>
+      <div class="map-pane">
+        <div id="merchantLeafletMap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NHU CAU TUU TRUONG -->
+  <section class="needs-sec" id="dealsSec">
+    <div class="wrap">
+      <div class="sec-h"><i data-lucide="compass" width="20" height="20" style="color:#EB2F96"></i> Giải Quyết 4 Nhu Cầu Lớn Nhất Khi Lên Thành Phố</div>
+      <div class="sec-sub">Từ tìm phòng đến mua vé về quê - MoMo lo trọn, không cần app nào khác</div>
+      <div class="needs-grid">
+
+        <!-- 1. PHONG TRO -->
+        <div class="need-card">
+          <div class="need-icon-wrap" style="background:#EFF6FF">
+            <i data-lucide="home" width="28" height="28" style="color:#2563EB"></i>
+          </div>
+          <div class="need-body">
+            <div class="need-eyebrow">Chỗ ở</div>
+            <div class="need-title">Tìm Phòng Trọ Gần Trường</div>
+            <div class="need-desc">Xem danh sách phòng theo khoảng cách tới campus, thanh toán tiền cọc và tiền phòng hàng tháng qua MoMo - không cần ra ngân hàng.</div>
+            <ul class="need-bullets">
+              <li><i data-lucide="check" width="12" height="12"></i> Phòng theo quận, tuyến bus, khoảng giá</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Thanh toán tiền nhà tự động hàng tháng</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Nạp điện nước KTX không cần xếp hàng</li>
+            </ul>
+            <button class="need-cta" onclick="openToolModal('Tìm Phòng Trọ')">
+              <i data-lucide="search" width="14" height="14"></i> Xem phòng quanh trường
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. DI CHUYEN -->
+        <div class="need-card">
+          <div class="need-icon-wrap" style="background:#F0FDF4">
+            <i data-lucide="train" width="28" height="28" style="color:#16A34A"></i>
+          </div>
+          <div class="need-body">
+            <div class="need-eyebrow">Di chuyển</div>
+            <div class="need-title">Mua Vé Tàu & Xe Về Quê</div>
+            <div class="need-desc">Đặt vé tàu hỏa, xe khách liên tỉnh ngay trong MoMo - không cần ra quầy. Sinh viên HSSV được áp dụng giá ưu đãi theo quy định nhà nước.</div>
+            <ul class="need-bullets">
+              <li><i data-lucide="check" width="12" height="12"></i> Vé tàu VNR - giá sinh viên theo quy định</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Xe khách liên tỉnh Futa, Phương Trang</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Nạp thẻ xe buýt điện tử TP.HCM</li>
+            </ul>
+            <button class="need-cta need-cta--green" onclick="openToolModal('Mua Vé Di Chuyển')">
+              <i data-lucide="ticket" width="14" height="14"></i> Đặt vé ngay
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. AN UONG -->
+        <div class="need-card">
+          <div class="need-icon-wrap" style="background:#FFF7ED">
+            <i data-lucide="utensils" width="28" height="28" style="color:#EA580C"></i>
+          </div>
+          <div class="need-body">
+            <div class="need-eyebrow">Ăn uống hàng ngày</div>
+            <div class="need-title">Địa Điểm Ăn Uống Quanh Campus</div>
+            <div class="need-desc">Căn tin, quán cơm bình dân, tiệm cà phê và cửa hàng tiện lợi được sinh viên đánh giá thực tế - kèm giờ mở cửa và bản đồ chỉ đường.</div>
+            <ul class="need-bullets">
+              <li><i data-lucide="check" width="12" height="12"></i> Đánh giá từ sinh viên cùng trường</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Giờ mở cửa thực tế, cập nhật liên tục</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Bản đồ chỉ đường từ cổng trường</li>
+            </ul>
+            <button class="need-cta need-cta--orange" onclick="scrollToSec('merchantsSec'); closeMerchantMap()">
+              <i data-lucide="map-pin" width="14" height="14"></i> Xem địa điểm gần trường
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. NGAN SACH -->
+        <div class="need-card">
+          <div class="need-icon-wrap" style="background:#FDF4FF">
+            <i data-lucide="wallet" width="28" height="28" style="color:#9333EA"></i>
+          </div>
+          <div class="need-body">
+            <div class="need-eyebrow">Quản lý chi tiêu</div>
+            <div class="need-title">Lập Ngân Sách Tháng Sinh Viên</div>
+            <div class="need-desc">Chia tiền bố mẹ chuyển theo quy tắc 50/30/20: 50% thiết yếu, 30% cá nhân, 20% tiết kiệm. Công cụ tự động theo dõi và cảnh báo khi vượt hạn mức.</div>
+            <ul class="need-bullets">
+              <li><i data-lucide="check" width="12" height="12"></i> Quy tắc 50/30/20 điều chỉnh theo thu nhập SV</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Phân loại chi tiêu tự động qua lịch sử MoMo</li>
+              <li><i data-lucide="check" width="12" height="12"></i> Cảnh báo khi sắp hết tiền sinh hoạt</li>
+            </ul>
+            <button class="need-cta need-cta--purple" onclick="scrollToSec('budgetSec')">
+              <i data-lucide="bar-chart-3" width="14" height="14"></i> Lập kế hoạch ngân sách
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
@@ -560,7 +994,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
               <div class="q-info">
                 <div class="q-ico"><i data-lucide="credit-card" width="20" height="20"></i></div>
                 <div>
-                  <div class="q-title">Dùng Ví Trả Sau thanh toán tại Circle K hoặc Căn tin trường</div>
+                  <div class="q-title">Mua đồ ăn tại một địa điểm quanh trường trong tuần này</div>
                   <div class="q-reward"><i data-lucide="sparkles" width="12" height="12"></i> +300 Xu · 0/1 Lần</div>
                 </div>
               </div>
@@ -637,41 +1071,268 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
         <!-- Rendered via JS -->
       </div>
     </div>
+
+    <!-- BUDGET CTA ROW -->
+    <div class="budget-cta-row">
+      <div class="budget-cta-hint">
+        <i data-lucide="info" width="14" height="14" style="color:var(--gray-400);flex-shrink:0"></i>
+        Kế hoạch trên dựa vào số bạn nhập. MoMo có thể tự động phân tích chi tiêu thực tế từ lịch sử giao dịch.
+      </div>
+      <div class="budget-cta-btns">
+        <button class="bcta-secondary" onclick="openToolModal('Túi Thần Tài Tiền Lẻ')">
+          <i data-lucide="piggy-bank" width="14" height="14"></i> Mở Túi Thần Tài
+        </button>
+        <button class="bcta-primary" onclick="doSocialLogin('google')">
+          <i data-lucide="bar-chart-3" width="14" height="14"></i> Kết nối MoMo để theo dõi thực tế
+          <i data-lucide="arrow-right" width="13" height="13"></i>
+        </button>
+      </div>
+    </div>
   </section>
 </main>
 
-<!-- WEB-NATIVE AUTH MODAL (BRD SECTION 3.1) -->
+<!-- STUDENT PASS VERIFICATION MODAL (MULTI-STEP) -->
 <div class="auth-overlay" id="authModal">
   <div class="auth-card">
     <div class="auth-head">
-      <div style="font-size:16px;font-weight:800">Xác Thực Student Pass (Web-Native)</div>
-      <div style="font-size:12px;opacity:0.8;margin-top:2px">Mở khóa Thẻ Sinh Viên Số &amp; Hệ Thống Giải Pháp Sinh Viên</div>
+      <div style="font-size:16px;font-weight:800">Kích Hoạt Student Pass</div>
+      <div style="font-size:12px;opacity:0.75;margin-top:2px">Xác thực danh tính sinh viên để mở khoá đặc quyền</div>
       <span class="auth-close" onclick="closeAuthModal()">&times;</span>
     </div>
     <div class="auth-body">
-      <div class="auth-tabs">
-        <div class="auth-tab active" id="tabEmail" onclick="switchAuthTab('email')">1. Email Trường (.edu.vn)</div>
-        <div class="auth-tab" id="tabCard" onclick="switchAuthTab('card')">2. Upload Thẻ SV / CCCD</div>
+
+      <!-- STEP 1: INPUT -->
+      <div id="spStep1">
+        <!-- Progress -->
+        <div class="sp-steps-row">
+          <div class="sp-step-dot active" id="sdot1">1</div>
+          <div class="sp-step-line" id="sline1"></div>
+          <div class="sp-step-dot" id="sdot2">2</div>
+          <div class="sp-step-line" id="sline2"></div>
+          <div class="sp-step-dot" id="sdot3">3</div>
+        </div>
+        <div class="sp-steps-labels">
+          <span class="active">Nhập thông tin</span>
+          <span>Đang xác thực</span>
+          <span>Nhận thẻ</span>
+        </div>
+
+        <div class="auth-tabs">
+          <div class="auth-tab active" id="tabEmail" onclick="switchAuthTab('email')">Email trường (.edu.vn)</div>
+          <div class="auth-tab" id="tabCard" onclick="switchAuthTab('card')">Mã số sinh viên</div>
+        </div>
+
+        <div id="formEmail">
+          <div class="auth-form-group">
+            <label class="auth-label">Email Sinh Viên Trường</label>
+            <input class="auth-input" id="authEmailInp" type="email" placeholder="example@student.tdtu.edu.vn">
+          </div>
+          <div style="font-size:11.5px;color:var(--gray-500);background:var(--gray-50);border-radius:8px;padding:10px 12px;margin-bottom:12px;line-height:1.5">
+            <i data-lucide="shield-check" width="12" height="12" style="color:#10B981;vertical-align:middle;margin-right:4px"></i>
+            MoMo chỉ xác thực domain email - không lưu trữ thông tin đăng nhập của bạn.
+          </div>
+          <button class="auth-submit-btn" onclick="submitAuth('email')">Xác Thực Ngay</button>
+        </div>
+
+        <div id="formCard" style="display:none">
+          <div class="auth-form-group">
+            <label class="auth-label">Mã Số Sinh Viên (MSSV)</label>
+            <input class="auth-input" id="authMssvInp" type="text" placeholder="VD: 52100892">
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label">Trường Đại Học</label>
+            <select class="auth-input" id="authUnivSel">
+              <option value="">-- Chọn trường của bạn --</option>
+            </select>
+          </div>
+          <button class="auth-submit-btn" onclick="submitAuth('mssv')">Xác Thực Ngay</button>
+        </div>
       </div>
 
-      <div id="formEmail">
-        <div class="auth-form-group">
-          <label class="auth-label">Email Sinh Viên Trường của bạn:</label>
-          <input class="auth-input" type="email" placeholder="example@student.tdtu.edu.vn">
+      <!-- STEP 2: VERIFYING -->
+      <div id="spStep2" style="display:none">
+        <div class="sp-steps-row">
+          <div class="sp-step-dot done" id="sdot1b">✓</div>
+          <div class="sp-step-line done" id="sline1b"></div>
+          <div class="sp-step-dot active" id="sdot2b">2</div>
+          <div class="sp-step-line" id="sline2b"></div>
+          <div class="sp-step-dot" id="sdot3b">3</div>
         </div>
-        <button class="auth-submit-btn" onclick="submitAuth('Email .edu.vn')">Xác Thực 1-Click Ngay</button>
+        <div class="sp-steps-labels">
+          <span class="done">Nhập thông tin</span>
+          <span class="active">Đang xác thực</span>
+          <span>Nhận thẻ</span>
+        </div>
+        <div class="sp-verifying">
+          <div class="sp-spinner"></div>
+          <div style="font-size:15px;font-weight:800;color:var(--gray-900);margin-bottom:4px">Đang xác thực danh tính...</div>
+          <div style="font-size:12.5px;color:var(--gray-500);margin-bottom:16px">Vui lòng đợi trong giây lát</div>
+          <div class="sp-verify-list" id="spVerifyList">
+            <div class="sp-vitem active" id="spv1"><i data-lucide="circle" width="14" height="14"></i> Kiểm tra domain email trường</div>
+            <div class="sp-vitem" id="spv2"><i data-lucide="circle" width="14" height="14"></i> Đối chiếu cơ sở dữ liệu sinh viên</div>
+            <div class="sp-vitem" id="spv3"><i data-lucide="circle" width="14" height="14"></i> Cấp phát Student Pass ID</div>
+          </div>
+        </div>
       </div>
 
-      <div id="formCard" style="display:none">
-        <div class="auth-form-group">
-          <label class="auth-label">Họ và Tên Sinh Viên:</label>
-          <input class="auth-input" type="text" placeholder="Nguyễn Văn An">
+      <!-- STEP 3: PASS REVEALED -->
+      <div id="spStep3" style="display:none">
+        <div class="sp-steps-row">
+          <div class="sp-step-dot done">✓</div>
+          <div class="sp-step-line done"></div>
+          <div class="sp-step-dot done">✓</div>
+          <div class="sp-step-line done"></div>
+          <div class="sp-step-dot done">✓</div>
         </div>
-        <div class="auth-form-group">
-          <label class="auth-label">Tải ảnh Mặt Trước Thẻ Sinh Viên / CCCD:</label>
-          <input class="auth-input" type="file" style="padding:6px">
+        <div class="sp-steps-labels">
+          <span class="done">Nhập thông tin</span>
+          <span class="done">Đã xác thực</span>
+          <span class="done">Thẻ đã kích hoạt</span>
         </div>
-        <button class="auth-submit-btn" onclick="submitAuth('Ảnh Thẻ Sinh Viên')">Gửi Duyệt Định Danh</button>
+
+        <div class="pass-success-header">
+          <div class="pass-sh-title">🎉 Student Pass đã kích hoạt!</div>
+          <div class="pass-sh-sub">Thẻ của bạn có hiệu lực đến hết năm học 2026-2027</div>
+        </div>
+
+        <div class="pass-card-wrap">
+          <div class="pass-card">
+            <div class="pass-card-top">
+              <div class="pass-chip"></div>
+              <div class="pass-card-logo-area">
+                <div class="pass-logo">MoMo</div>
+                <div class="pass-type">Student Pass</div>
+              </div>
+            </div>
+            <div class="pass-card-mid">
+              <div class="pass-card-name" id="passCardName">Nguyễn Văn An</div>
+              <div class="pass-card-mssv" id="passCardMssv">MSSV: 52100892 · ĐH Tôn Đức Thắng</div>
+            </div>
+            <div class="pass-card-bottom">
+              <div class="pass-card-univ" id="passCardUniv">Khoa Công Nghệ Thông Tin (TDTU)</div>
+              <div class="pass-card-exp">
+                <div class="exp-label">Hiệu lực đến</div>
+                <div class="exp-val">07/2027</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pass-perks-row" style="justify-content:center;margin-bottom:16px">
+          <div class="pass-perk" style="background:var(--pink-50);color:#C4196B;border-color:#FBBDDB">
+            <i data-lucide="utensils" width="12" height="12"></i> F&amp;B -20%
+          </div>
+          <div class="pass-perk" style="background:#EFF6FF;color:#2563EB;border-color:#BFDBFE">
+            <i data-lucide="wifi" width="12" height="12"></i> Data 2GB/ngày
+          </div>
+          <div class="pass-perk" style="background:#FFFBEB;color:#B45309;border-color:#FDE68A">
+            <i data-lucide="ticket" width="12" height="12"></i> CGV 75k
+          </div>
+          <div class="pass-perk" style="background:#ECFDF5;color:#059669;border-color:#A7F3D0">
+            <i data-lucide="credit-card" width="12" height="12"></i> VTS 0% 3 tháng
+          </div>
+        </div>
+
+        <button class="auth-submit-btn" onclick="closeAuthModal()" style="background:var(--gray-900)">
+          Vào Trang Chủ Student Hub
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL (Học Phí & Lệ Phí Xét Tuyển) -->
+<div class="pay-overlay" id="payModal">
+  <div class="pay-modal">
+    <div class="pay-head">
+      <div class="pay-head-ico"><i data-lucide="landmark" width="20" height="20" style="color:#fff"></i></div>
+      <div>
+        <div style="font-size:16px;font-weight:800">Cổng Thanh Toán Học Đường</div>
+        <div style="font-size:12px;opacity:0.7;margin-top:1px">Tra cứu &amp; thanh toán học phí, lệ phí xét tuyển 1-click</div>
+      </div>
+      <span class="pay-close" onclick="closePayModal()">&times;</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="pay-tabs">
+      <div class="pay-tab active" id="payTab1" onclick="switchPayTab('hoc-phi')">
+        <i data-lucide="graduation-cap" width="13" height="13" style="vertical-align:middle;margin-right:4px"></i>Đóng Học Phí
+      </div>
+      <div class="pay-tab" id="payTab2" onclick="switchPayTab('le-phi')">
+        <i data-lucide="file-text" width="13" height="13" style="vertical-align:middle;margin-right:4px"></i>Lệ Phí Xét Tuyển
+      </div>
+    </div>
+
+    <!-- HOC PHI PANEL -->
+    <div id="payPanelHocPhi" class="pay-body">
+      <div id="hpForm">
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px;line-height:1.5">Nhập MSSV để tra cứu học phí kỳ 1 năm học 2025-2026. Áp dụng cho tất cả sinh viên đã nhập học.</p>
+        <div class="pay-input-row">
+          <input class="pay-inp" id="hpMssvInp" type="text" placeholder="Nhập MSSV của bạn (VD: 52100892)">
+          <button class="pay-lookup-btn" onclick="lookupHocPhi()">
+            <i data-lucide="search" width="14" height="14" style="vertical-align:middle;margin-right:4px"></i>Tra cứu
+          </button>
+        </div>
+        <div class="pay-hint">
+          <i data-lucide="info" width="14" height="14" style="color:#2563EB;flex-shrink:0;margin-top:1px"></i>
+          <span>Hệ thống tra cứu liên kết với Phòng Tài vụ của 15 trường đối tác. Thông tin học phí được cập nhật theo từng kỳ học.</span>
+        </div>
+      </div>
+      <div class="pay-result" id="hpResult">
+        <div class="pay-result-name" id="hpName">Nguyễn Văn An</div>
+        <div class="pay-result-info" id="hpInfo">MSSV: 52100892 · Khóa 25 · Khoa Công Nghệ Thông Tin</div>
+        <div class="pay-amount-box">
+          <div class="pay-amount-label">Học phí Kỳ 1 · Năm học 2025-2026</div>
+          <div class="pay-amount-value" id="hpAmount">3.450.000đ</div>
+          <div class="pay-amount-note" id="hpNote">Hạn nộp: 30/09/2025 · Đóng qua MoMo miễn phí giao dịch</div>
+        </div>
+        <button class="pay-confirm-btn" onclick="confirmPayment('hoc-phi')">
+          <i data-lucide="zap" width="16" height="16" style="vertical-align:middle;margin-right:6px"></i>Thanh Toán Ngay
+        </button>
+      </div>
+      <div class="pay-success-view" id="hpSuccess">
+        <div class="pay-success-ico"><i data-lucide="check-circle-2" width="32" height="32" style="color:#10B981"></i></div>
+        <div class="pay-success-title">Thanh toán thành công!</div>
+        <div class="pay-success-sub">Học phí đã được ghi nhận vào hệ thống Phòng Tài vụ. Biên lai điện tử đã gửi về email sinh viên.</div>
+        <div class="pay-receipt" id="hpReceipt"></div>
+        <button class="pay-done-btn" onclick="closePayModal()">Đóng</button>
+      </div>
+    </div>
+
+    <!-- LE PHI PANEL -->
+    <div id="payPanelLePhi" class="pay-body" style="display:none">
+      <div id="lpForm">
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px;line-height:1.5">Tra cứu lệ phí xét tuyển nguyện vọng đại học theo Số Báo Danh (SBD) kỳ thi THPT Quốc Gia 2025.</p>
+        <div class="pay-input-row">
+          <input class="pay-inp" id="lpSbdInp" type="text" placeholder="Nhập Số Báo Danh (VD: 01123456)">
+          <button class="pay-lookup-btn" onclick="lookupLePhi()">
+            <i data-lucide="search" width="14" height="14" style="vertical-align:middle;margin-right:4px"></i>Tra cứu
+          </button>
+        </div>
+        <div class="pay-hint">
+          <i data-lucide="info" width="14" height="14" style="color:#2563EB;flex-shrink:0;margin-top:1px"></i>
+          <span>Lệ phí xét tuyển Đợt 1 theo quy định Bộ GD&amp;ĐT: <strong>30.000đ/nguyện vọng</strong>. Thanh toán trước 17:00 ngày 30/07/2025.</span>
+        </div>
+      </div>
+      <div class="pay-result" id="lpResult">
+        <div class="pay-result-name" id="lpName">Trần Thị Hương</div>
+        <div class="pay-result-info" id="lpInfo">SBD: 01123456 · Cụm thi: TP. Hồ Chí Minh · THPT Lê Quý Đôn</div>
+        <div class="pay-amount-box">
+          <div class="pay-amount-label">Lệ phí Xét Tuyển · Đợt 1/2025</div>
+          <div class="pay-amount-value" id="lpAmount">150.000đ</div>
+          <div class="pay-amount-note" id="lpNote">5 nguyện vọng × 30.000đ · Hạn nộp: 30/07/2025</div>
+        </div>
+        <button class="pay-confirm-btn" onclick="confirmPayment('le-phi')">
+          <i data-lucide="zap" width="16" height="16" style="vertical-align:middle;margin-right:6px"></i>Nộp Lệ Phí Ngay
+        </button>
+      </div>
+      <div class="pay-success-view" id="lpSuccess">
+        <div class="pay-success-ico"><i data-lucide="check-circle-2" width="32" height="32" style="color:#10B981"></i></div>
+        <div class="pay-success-title">Nộp lệ phí thành công!</div>
+        <div class="pay-success-sub">Lệ phí xét tuyển đã được ghi nhận trên Cổng tuyển sinh quốc gia. Biên lai điện tử đã được lưu trong ứng dụng MoMo của bạn.</div>
+        <div class="pay-receipt" id="lpReceipt"></div>
+        <button class="pay-done-btn" onclick="closePayModal()">Đóng</button>
       </div>
     </div>
   </div>
@@ -733,7 +1394,7 @@ const LIFE_PILLARS = {
     title: '2. Ăn Ở &amp; Thuê Trọ: Sống tự lập siêu mượt',
     sub: 'Mẹo ăn ngon bổ rẻ quanh cổng trường, tìm phòng trọ an toàn và chia tiền phòng sòng phẳng',
     items: [
-      { icon: 'utensils', title: 'Căn Tin &amp; Quán Ăn Quanh Trường', desc: 'Căn tin Khu F, Cơm tấm Ba Cường, Circle K 24/7 nhận MoMo QR &amp; Ví Trả Sau.', action: 'Xem Quán Ăn' },
+      { icon: 'utensils', title: 'Căn Tin &amp; Quán Ăn Quanh Trường', desc: 'Căn tin Khu F, Cơm tấm Ba Cường, Circle K 24/7 - review từ sinh viên cùng trường, giờ đông nhất và mức giá thực tế.', action: 'Xem Quán Ăn' },
       { icon: 'home', title: 'Cẩm Nang Thuê Trọ Tránh Bẫy Cọc', desc: 'Mẫu hợp đồng thuê trọ chuẩn, mẹo soi đồng hồ điện nước và cách né bẫy cọc trọ đa cấp.', action: 'Xem Cẩm Nang' },
       { icon: 'calculator', title: 'Sổ Chi Tiêu &amp; Chia Tiền Trọ', desc: 'Tự động phân bổ tiền chu cấp 50/30/20 và chia tiền phòng trọ sòng phẳng không ngại miệng.', action: 'Tính Ngân Sách' }
     ]
@@ -975,20 +1636,23 @@ const UNIVERSITIES = [
 // CAMPUS MERCHANTS DATA PER UNIVERSITY
 const MERCHANTS_BY_UNIV = {
   tdtu: [
-    { id: 'cantin-tdtu', name: 'Căn Tin TDTU (Khu F)', cat: 'campus', dist: 'Trong Campus (Cách 20m)', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Căn tin trung tâm phục vụ hơn 5.000 lượt sinh viên TDTU mỗi ngày. Cơm trưa nóng hổi 25k, hủ tiếu, nước sâm.' },
-    { id: 'phuclong-nth', name: 'Phúc Long Nguyễn Hữu Thọ', cat: 'fnb', zone: 'cong1', dist: 'Cổng 1 (Cách 80m)', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Quán cà phê trà sữa quen thuộc ngay đối diện cổng chính TDTU. Không gian máy lạnh thích hợp học nhóm.' },
-    { id: 'comtam-bacuong', name: 'Cơm Tấm Ba Cường', cat: 'food', zone: 'cong1', dist: 'Cổng 1 (Cách 120m)', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Quán cơm tấm sườn nướng ngon nức tiếng khu Nguyễn Hữu Thọ. Sườn miếng to, cơm thêm miễn phí.' },
-    { id: 'circlek-cong1', name: 'Circle K Cổng 1 TDTU', cat: 'campus', zone: 'cong1', dist: 'Cổng 1 (Cách 50m)', img: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&auto=format&fit=crop&q=80', rating: '4.9', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Cửa hàng tiện lợi 24/7 đối diện cổng trường. Chỗ ngồi máy lạnh tầng 2 kèm ổ sạc sạc pin.' },
-    { id: 'highlands-tdtu', name: 'Highlands Coffee TDTU', cat: 'fnb', zone: 'cong2', dist: 'Cổng 2 (Cách 100m)', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.8', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Highlands đường D1 ngay cổng sau TDTU. Phù hợp chạy deadline cá nhân hoặc họp CLB.' }
+    { id: 'cantin-tdtu', name: 'Căn Tin TDTU (Khu F)', cat: 'campus', dist: 'Trong Campus · 20m', hours: '6:30 - 20:00', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: 'Khu F, 19 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7283, lng: 106.7074 },
+    { id: 'phuclong-nth', name: 'Phúc Long Nguyễn Hữu Thọ', cat: 'fnb', dist: 'Cổng 1 · 80m', hours: '7:00 - 22:00', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '37 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7290, lng: 106.7082 },
+    { id: 'comtam-bacuong', name: 'Cơm Tấm Ba Cường', cat: 'food', dist: 'Cổng 1 · 120m', hours: '6:00 - 14:00', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '52 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7278, lng: 106.7090 },
+    { id: 'circlek-cong1', name: 'Circle K Cổng 1 TDTU', cat: 'campus', dist: 'Cổng 1 · 50m', hours: '24/7', img: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '21 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7288, lng: 106.7068 },
+    { id: 'highlands-tdtu', name: 'Highlands Coffee TDTU', cat: 'fnb', dist: 'Cổng 2 · 100m', hours: '7:00 - 22:30', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '3 D1, Tân Phong, Q.7 (đối diện cổng 2)', lat: 10.7270, lng: 106.7080 },
+    { id: 'in-an-tdtu', name: 'In Ấn Nguyễn Hữu Thọ', cat: 'print', dist: 'Cổng 1 · 60m', hours: '7:00 - 21:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '29B Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7292, lng: 106.7065 }
   ],
   hcmut: [
-    { id: 'cantin-bk', name: 'Căn Tin Bách Khoa (Nhà C6)', cat: 'campus', dist: 'Trong Campus (Cách 30m)', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Căn tin huyền thoại nhà C6 Bách Khoa Q10. Cơm trưa sinh viên 22k, bún thái hải sản, trà đá 3k.' },
-    { id: 'in-do-an-bk', name: 'In Ấn Đồ Án Bách Khoa', cat: 'campus', dist: 'Trong Campus (Cổng Tô Hiến Thành)', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.9', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Chuyên in bản vẽ CAD, đóng bìa mạ vàng đồ án tốt nghiệp Kỹ sư Bách Khoa.' },
-    { id: 'passio-lythaito', name: 'Passio Coffee Lý Thường Kiệt', cat: 'fnb', dist: 'Cổng Lý Thường Kiệt (50m)', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Quán cafe take-away quen thuộc của sinh viên Bách Khoa trước giờ lên lớp.' }
+    { id: 'cantin-bk', name: 'Căn Tin Bách Khoa (Nhà C6)', cat: 'campus', dist: 'Trong Campus · 30m', hours: '6:30 - 19:30', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: 'Nhà C6, 268 Lý Thường Kiệt, Q.10', lat: 10.7731, lng: 106.6589 },
+    { id: 'in-do-an-bk', name: 'In Ấn Đồ Án Bách Khoa', cat: 'print', dist: 'Cổng Tô Hiến Thành', hours: '7:00 - 22:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '12 Tô Hiến Thành, Q.10 (cổng phụ BK)', lat: 10.7740, lng: 106.6600 },
+    { id: 'passio-lythaito', name: 'Passio Coffee Lý Thường Kiệt', cat: 'fnb', dist: 'Cổng Lý Thường Kiệt · 50m', hours: '6:30 - 21:00', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '270B Lý Thường Kiệt, Q.10', lat: 10.7725, lng: 106.6578 },
+    { id: 'comtam-bk', name: 'Cơm Tấm Cô Ba Q10', cat: 'food', dist: 'Cổng phụ · 80m', hours: '6:00 - 13:30', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '8 Tô Hiến Thành, Q.10', lat: 10.7745, lng: 106.6610 }
   ],
   ueh: [
-    { id: 'cantin-ueh', name: 'Căn Tin UEH Nguyễn Đình Chiểu', cat: 'campus', dist: 'Trong Campus Cơ sở A', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.8', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Căn tin cơ sở A UEH phục vụ sinh viên kinh tế. Cơm văn phòng & sinh viên chất lượng cao.' },
-    { id: 'highlands-ueh', name: 'Highlands UEH Cơ sở B', cat: 'fnb', dist: 'Cơ sở B Nguyễn Tri Phương (40m)', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.9', vts: true, pay: ['MoMo QR', 'Ví Trả Sau'], desc: 'Điểm hẹn thảo luận case-study & chạy deadline của dân UEH.' }
+    { id: 'cantin-ueh', name: 'Căn Tin UEH Nguyễn Đình Chiểu', cat: 'campus', dist: 'Cơ sở A · trong campus', hours: '7:00 - 19:00', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '59C Nguyễn Đình Chiểu, Q.3 (Cơ sở A)', lat: 10.7745, lng: 106.6916 },
+    { id: 'highlands-ueh', name: 'Highlands UEH Cơ sở B', cat: 'fnb', dist: 'Cơ sở B · 40m', hours: '7:00 - 22:30', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '17 Phạm Ngọc Thạch, Q.3 (gần cơ sở B)', lat: 10.7752, lng: 106.6908 },
+    { id: 'in-an-ueh', name: 'In Ấn & Photocopy UEH', cat: 'print', dist: 'Ngay cổng phụ · 30m', hours: '7:00 - 21:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '61 Nguyễn Đình Chiểu, Q.3', lat: 10.7738, lng: 106.6925 }
   ]
 };
 
@@ -1104,7 +1768,7 @@ function setUnivFilter(cat, btn) {
 // VIEW SWITCHING LOGIC
 function showDirectoryView(pushUrl) {
   currentUnivId = null;
-  document.getElementById('navUnivSelect').value = '';
+  setNavUnivLabel('Tất cả các trường');
   document.getElementById('directoryView').style.display = 'block';
   document.getElementById('detailView').style.display = 'none';
   document.getElementById('bcCurrent').textContent = 'Danh Mục Các Trường Đại Học';
@@ -1118,7 +1782,7 @@ function selectUniversity(id, pushUrl) {
   const u = UNIVERSITIES.find(x => x.id === id);
   if (!u) return;
   currentUnivId = id;
-  document.getElementById('navUnivSelect').value = id;
+  setNavUnivLabel(u.name);
 
   // Render detail view content for selected university
   document.getElementById('directoryView').style.display = 'none';
@@ -1129,7 +1793,7 @@ function selectUniversity(id, pushUrl) {
   // Update hero
   document.getElementById('heroUnivTag').innerHTML = `<i data-lucide="school" width="14" height="14"></i> Sinh Viên ${u.name}`;
   document.getElementById('heroTitle').innerHTML = `Tiện Ích &amp; Học Tập <em>Quanh Trường ${u.name}</em>`;
-  document.getElementById('heroSub').innerHTML = `Tra cứu tiệm in giáo trình, căn tin, Circle K 24/7 quanh trường <strong>${u.fullName}</strong>. Thanh toán bằng MoMo QR &amp; Ví Trả Sau.`;
+  document.getElementById('heroSub').innerHTML = `Căn tin, tiệm in, Circle K 24/7 quanh <strong>${u.fullName}</strong> - giờ đông nhất, mức giá thực tế và đánh giá từ sinh viên cùng trường.`;
   document.getElementById('toolTuitionTitle').textContent = `Đóng Học Phí ${u.name}`;
   document.getElementById('qEmailTitle').textContent = `Xác thực Student Pass qua email ${u.emailDomain}`;
 
@@ -1141,9 +1805,38 @@ function selectUniversity(id, pushUrl) {
   if (window.lucide) lucide.createIcons();
 }
 
+// UNIV DROPDOWN HELPERS
+function toggleUnivDropdown() {
+  const menu = document.getElementById('navUnivMenu');
+  menu.classList.toggle('open');
+  // Close on outside click
+  if (menu.classList.contains('open')) {
+    setTimeout(() => {
+      document.addEventListener('click', closeUnivDropdown, { once: true });
+    }, 0);
+  }
+}
+function closeUnivDropdown(e) {
+  const menu = document.getElementById('navUnivMenu');
+  if (menu && !menu.contains(e.target)) menu.classList.remove('open');
+}
+function setNavUnivLabel(label) {
+  const el = document.getElementById('navUnivLabel');
+  if (el) el.textContent = label;
+  // Mark selected opt
+  document.querySelectorAll('.nav-univ-opt').forEach(o => o.classList.remove('selected'));
+}
+
 function onUnivSelectChange(val) {
-  if (!val) showDirectoryView();
-  else selectUniversity(val);
+  document.getElementById('navUnivMenu').classList.remove('open');
+  if (!val) {
+    setNavUnivLabel('Tất cả các trường');
+    showDirectoryView();
+  } else {
+    const u = UNIVERSITIES.find(x => x.id === val);
+    setNavUnivLabel(u ? u.shortName || u.name : val.toUpperCase());
+    selectUniversity(val);
+  }
 }
 
 function onMainSearch(val) {
@@ -1154,42 +1847,175 @@ function onMainSearch(val) {
   }
 }
 
+// MERCHANT CATEGORY LABELS
+const CAT_LABEL = { campus: 'Trong Campus', fnb: 'Cafe & Trà', food: 'Ăn Uống', print: 'In Ấn', market: 'Tiện Lợi' };
+const CAT_CLS   = { campus: 'm-cat-campus', fnb: 'm-cat-fnb', food: 'm-cat-food', print: 'm-cat-print', market: 'm-cat-market' };
+
+let currentMerchantFilter = 'all';
+
+function filterMerchants(cat, btn) {
+  currentMerchantFilter = cat;
+  document.querySelectorAll('.m-filter-chip').forEach(c => c.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCampusMerchants(currentUnivId);
+}
+
 // CAMPUS MERCHANTS LOGIC FOR DETAIL VIEW
 function renderCampusMerchants(univId) {
   const grid = document.getElementById('merchantGrid');
-  const searchVal = document.getElementById('mainSearchInp').value.trim().toLowerCase();
+  const searchEl = document.getElementById('mainSearchInp');
+  const searchVal = searchEl ? searchEl.value.trim().toLowerCase() : '';
   const merchants = MERCHANTS_BY_UNIV[univId] || MERCHANTS_BY_UNIV['tdtu'];
 
   const filtered = merchants.filter(m => {
-    if (!searchVal) return true;
-    return m.name.toLowerCase().includes(searchVal) || m.desc.toLowerCase().includes(searchVal);
+    const matchSearch = !searchVal || m.name.toLowerCase().includes(searchVal) || m.desc.toLowerCase().includes(searchVal);
+    const matchCat = currentMerchantFilter === 'all' || m.cat === currentMerchantFilter;
+    return matchSearch && matchCat;
   });
 
-  grid.innerHTML = filtered.map(m => `
-    <div class="m-card">
+  const hourNow = new Date().getHours();
+  grid.innerHTML = filtered.map(m => {
+    const isOpen = m.hours === '24/7' || (() => {
+      const p = m.hours.split(' - ');
+      if (p.length < 2) return true;
+      const oh = parseInt(p[0]); const ch = parseInt(p[1]);
+      return hourNow >= oh && hourNow < ch;
+    })();
+    return `
+    <div class="m-card" onclick="openMerchantMap('${m.id}')">
       <div class="m-img-box">
-        <img src="${m.img}" alt="${m.name}">
-        <span class="m-badge-dist"><i data-lucide="map-pin" width="12" height="12"></i> ${m.dist}</span>
-        ${m.vts ? '<span class="m-badge-vts"><i data-lucide="credit-card" width="12" height="12"></i> Ví Trả Sau</span>' : ''}
+        <img src="${m.img}" alt="${m.name}" loading="lazy">
+        <span class="m-dist-badge"><i data-lucide="map-pin" width="11" height="11"></i> ${m.dist}</span>
+        <span class="m-map-hint"><i data-lucide="map" width="11" height="11"></i> Xem bản đồ</span>
       </div>
       <div class="m-body">
-        <div>
-          <div class="m-title-row">
-            <div class="m-name">${m.name}</div>
-            <div class="m-rating"><i data-lucide="star" width="12" height="12" style="color:#F59E0B"></i> ${m.rating}</div>
-          </div>
-          <div class="m-address">${m.desc}</div>
+        <div class="m-title-row">
+          <div class="m-name">${m.name}</div>
+          <div class="m-rating"><i data-lucide="star" width="12" height="12"></i> ${m.rating}</div>
         </div>
+        <div class="m-desc"><i data-lucide="map-pin" width="11" height="11" style="flex-shrink:0;color:var(--gray-400);margin-right:3px"></i>${m.addr}</div>
+        <div class="m-footer">
+          <div class="m-hours ${isOpen ? 'open' : ''}"><i data-lucide="${isOpen ? 'clock' : 'clock-off'}" width="11" height="11"></i> ${isOpen ? 'Đang mở · ' : 'Đã đóng · '}${m.hours}</div>
+          <div class="m-view-map"><i data-lucide="navigation" width="11" height="11"></i> Chỉ đường</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 
-        <div class="m-pay-status">
-          <i data-lucide="check-circle-2" width="15" height="15" style="color:#10B981;flex-shrink:0"></i>
-          <span>Thanh toán <strong>MoMo QR</strong> ${m.vts ? '· <strong>Ví Trả Sau</strong>' : ''}</span>
-        </div>
+  if (window.lucide) lucide.createIcons();
+}
+
+// MAP OVERLAY LOGIC
+let leafletMap = null;
+let leafletMarkers = [];
+let activeMapMerchantId = null;
+
+function openMerchantMap(merchantId) {
+  const overlay = document.getElementById('merchantMapOverlay');
+  const merchants = MERCHANTS_BY_UNIV[currentUnivId] || MERCHANTS_BY_UNIV['tdtu'];
+  activeMapMerchantId = merchantId;
+
+  // Render list pane
+  const pane = document.getElementById('mapListPane');
+  pane.innerHTML = merchants.map(m => `
+    <div class="map-card ${m.id === merchantId ? 'active' : ''}" id="mapcard-${m.id}" onclick="selectMapMerchant('${m.id}')">
+      <img class="map-card-img" src="${m.img}" alt="${m.name}" loading="lazy">
+      <div class="map-card-body">
+        <div class="map-card-name">${m.name}</div>
+        <div class="map-card-dist"><i data-lucide="map-pin" width="10" height="10"></i> ${m.dist}</div>
+        <div class="map-card-rating"><i data-lucide="star" width="10" height="10"></i> ${m.rating} · ${m.hours}</div>
       </div>
     </div>
   `).join('');
 
-  if (window.lucide) lucide.createIcons();
+  // Update header
+  const chosen = merchants.find(m => m.id === merchantId);
+  document.getElementById('mapOverlayTitle').textContent = chosen ? chosen.name : 'Địa điểm quanh trường';
+  document.getElementById('mapOverlaySub').textContent = chosen ? chosen.dist : `${merchants.length} địa điểm gần campus`;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Init or reset Leaflet
+  setTimeout(() => {
+    if (!leafletMap) {
+      leafletMap = L.map('merchantLeafletMap', { zoomControl: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors', maxZoom: 19
+      }).addTo(leafletMap);
+    } else {
+      leafletMarkers.forEach(m => m.remove());
+      leafletMarkers = [];
+    }
+
+    const pinkIcon = (active) => L.divIcon({
+      className: '',
+      html: `<div style="width:${active?36:28}px;height:${active?36:28}px;border-radius:50%;background:${active?'#EB2F96':'#fff'};border:${active?'3px solid #fff':'2px solid #EB2F96'};box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:${active?16:12}px">
+        ${active?'📍':'🏪'}
+      </div>`,
+      iconSize: [active?36:28, active?36:28], iconAnchor: [active?18:14, active?36:28]
+    });
+
+    merchants.forEach(m => {
+      const marker = L.marker([m.lat, m.lng], { icon: pinkIcon(m.id === merchantId) })
+        .addTo(leafletMap)
+        .bindPopup(`<strong>${m.name}</strong><br>${m.dist}<br>⭐ ${m.rating}`);
+      marker._merchantId = m.id;
+      if (m.id === merchantId) marker.openPopup();
+      marker.on('click', () => selectMapMerchant(m.id));
+      leafletMarkers.push(marker);
+    });
+
+    if (merchantId && chosen) {
+      leafletMap.setView([chosen.lat, chosen.lng], 17);
+    } else {
+      const avg = { lat: merchants.reduce((s,m)=>s+m.lat,0)/merchants.length, lng: merchants.reduce((s,m)=>s+m.lng,0)/merchants.length };
+      leafletMap.setView([avg.lat, avg.lng], 16);
+    }
+    leafletMap.invalidateSize();
+
+    // Scroll list to active card
+    if (merchantId) {
+      const card = document.getElementById('mapcard-' + merchantId);
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    if (window.lucide) lucide.createIcons();
+  }, 50);
+}
+
+function selectMapMerchant(merchantId) {
+  activeMapMerchantId = merchantId;
+  const merchants = MERCHANTS_BY_UNIV[currentUnivId] || MERCHANTS_BY_UNIV['tdtu'];
+  const chosen = merchants.find(m => m.id === merchantId);
+  if (!chosen) return;
+
+  // Update list active state
+  document.querySelectorAll('.map-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('mapcard-' + merchantId);
+  if (card) { card.classList.add('active'); card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+
+  // Update header
+  document.getElementById('mapOverlayTitle').textContent = chosen.name;
+  document.getElementById('mapOverlaySub').textContent = chosen.dist;
+
+  // Update markers
+  const pinkIcon = (active) => L.divIcon({
+    className: '',
+    html: `<div style="width:${active?36:28}px;height:${active?36:28}px;border-radius:50%;background:${active?'#EB2F96':'#fff'};border:${active?'3px solid #fff':'2px solid #EB2F96'};box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:${active?16:12}px">
+      ${active?'📍':'🏪'}
+    </div>`,
+    iconSize: [active?36:28, active?36:28], iconAnchor: [active?18:14, active?36:28]
+  });
+  leafletMarkers.forEach(marker => {
+    const isActive = marker._merchantId === merchantId;
+    marker.setIcon(pinkIcon(isActive));
+    if (isActive) { marker.openPopup(); leafletMap.setView([chosen.lat, chosen.lng], 17, { animate: true }); }
+  });
+}
+
+function closeMerchantMap() {
+  document.getElementById('merchantMapOverlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function claimQuest(btn, coins) {
@@ -1214,6 +2040,9 @@ function redeemGift(name, cost) {
 }
 
 function openToolModal(name) {
+  if (name.includes('Học Phí') || name.includes('học phí')) { openPayModal('hoc-phi'); return; }
+  if (name.includes('Lệ Phí') || name.includes('lệ phí') || name.includes('Xét Tuyển')) { openPayModal('le-phi'); return; }
+  if (name.includes('Student Pass') || name.includes('Xác thực') || name === 'Nhận Thẻ Ngay') { openAuthModal(); return; }
   alert(`🚀 Đang mở giải pháp hỗ trợ sinh viên: [${name}] trên MoMo!`);
 }
 
@@ -1222,13 +2051,59 @@ function scrollToSec(id) {
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
-// AUTH MODAL LOGIC (BRD SECTION 3.1)
-function openAuthModal() {
-  document.getElementById('authModal').classList.add('open');
+// AUTH MODAL - STUDENT PASS MULTI-STEP FLOW
+// SOCIAL LOGIN PROTOTYPE
+const DEMO_USERS = {
+  google: { name: 'Nguyễn Văn An', avatar: 'NA', provider: 'Google' },
+  facebook: { name: 'Trần Minh Châu', avatar: 'TC', provider: 'Facebook' }
+};
+function doSocialLogin(provider) {
+  const user = DEMO_USERS[provider] || DEMO_USERS.google;
+  document.getElementById('navGuestState').style.display = 'none';
+  document.getElementById('navLoggedState').style.display = 'block';
+  document.getElementById('navAvatar').textContent = user.avatar;
+  document.getElementById('navUserName').textContent = user.name;
+  if (window.lucide) lucide.createIcons();
+  showToast(`Đăng nhập ${user.provider} thành công · Xin chào ${user.name.split(' ').pop()}!`);
 }
+function toggleUserMenu() {
+  // Prototype: logout on click
+  document.getElementById('navGuestState').style.display = 'flex';
+  document.getElementById('navLoggedState').style.display = 'none';
+  showToast('Đã đăng xuất');
+}
+
+function openAuthModal() {
+  // Populate university select
+  const sel = document.getElementById('authUnivSel');
+  if (sel && sel.options.length <= 1) {
+    UNIVERSITIES.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = u.name;
+      sel.appendChild(opt);
+    });
+  }
+  // If a university is selected, pre-fill email placeholder
+  if (currentUnivId) {
+    const u = UNIVERSITIES.find(x => x.id === currentUnivId);
+    if (u) {
+      const emailInp = document.getElementById('authEmailInp');
+      if (emailInp) emailInp.placeholder = 'example' + u.emailDomain;
+    }
+  }
+  // Reset to step 1
+  document.getElementById('spStep1').style.display = 'block';
+  document.getElementById('spStep2').style.display = 'none';
+  document.getElementById('spStep3').style.display = 'none';
+  document.getElementById('authModal').classList.add('open');
+  if (window.lucide) lucide.createIcons();
+}
+
 function closeAuthModal() {
   document.getElementById('authModal').classList.remove('open');
 }
+
 function switchAuthTab(type) {
   if (type === 'email') {
     document.getElementById('tabEmail').classList.add('active');
@@ -1242,9 +2117,191 @@ function switchAuthTab(type) {
     document.getElementById('formEmail').style.display = 'none';
   }
 }
+
 function submitAuth(method) {
-  alert(`🎉 Xác thực thành công bằng ${method}! Thẻ Sinh Viên Số của bạn đã được kích hoạt cùng Hệ thống giải pháp tự lập HSSV.`);
-  closeAuthModal();
+  // Go to step 2: verifying
+  document.getElementById('spStep1').style.display = 'none';
+  document.getElementById('spStep2').style.display = 'block';
+  if (window.lucide) lucide.createIcons();
+
+  // Animate verification steps
+  const steps = [
+    { el: 'spv1', label: 'Kiểm tra domain email trường', delay: 600 },
+    { el: 'spv2', label: 'Đối chiếu cơ sở dữ liệu sinh viên', delay: 1400 },
+    { el: 'spv3', label: 'Cấp phát Student Pass ID', delay: 2200 },
+  ];
+
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      // Mark previous as done
+      if (i > 0) {
+        const prev = document.getElementById(steps[i-1].el);
+        if (prev) { prev.classList.remove('active'); prev.classList.add('done'); prev.innerHTML = `<i data-lucide="check-circle-2" width="14" height="14"></i> ${steps[i-1].label}`; }
+      }
+      const cur = document.getElementById(s.el);
+      if (cur) { cur.classList.add('active'); cur.innerHTML = `<i data-lucide="loader" width="14" height="14" style="animation:spin .75s linear infinite"></i> ${s.label}`; }
+      if (window.lucide) lucide.createIcons();
+    }, s.delay);
+  });
+
+  // After all done → go to step 3
+  setTimeout(() => {
+    const last = document.getElementById('spv3');
+    if (last) { last.classList.remove('active'); last.classList.add('done'); last.innerHTML = `<i data-lucide="check-circle-2" width="14" height="14"></i> Cấp phát Student Pass ID`; }
+
+    // Populate card with university demo data
+    const u = currentUnivId ? UNIVERSITIES.find(x => x.id === currentUnivId) : UNIVERSITIES[0];
+    const demo = u ? u.studentDemo : UNIVERSITIES[0].studentDemo;
+    document.getElementById('passCardName').textContent = demo.name;
+    document.getElementById('passCardMssv').textContent = demo.id + ' · ' + (u ? u.name : '');
+    document.getElementById('passCardUniv').textContent = demo.major;
+
+    setTimeout(() => {
+      document.getElementById('spStep2').style.display = 'none';
+      document.getElementById('spStep3').style.display = 'block';
+      if (window.lucide) lucide.createIcons();
+    }, 400);
+  }, 3200);
+}
+
+// PAYMENT MODAL
+let _payActiveTab = 'hoc-phi';
+
+function openPayModal(tab) {
+  _payActiveTab = tab || 'hoc-phi';
+  switchPayTab(_payActiveTab);
+  // Reset forms
+  ['hpResult','hpSuccess','lpResult','lpSuccess'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('show'); el.style.display = ''; }
+  });
+  document.getElementById('hpForm').style.display = 'block';
+  document.getElementById('lpForm').style.display = 'block';
+  if (document.getElementById('hpMssvInp')) document.getElementById('hpMssvInp').value = '';
+  if (document.getElementById('lpSbdInp')) document.getElementById('lpSbdInp').value = '';
+  document.getElementById('payModal').classList.add('open');
+  if (window.lucide) lucide.createIcons();
+}
+
+function closePayModal() {
+  document.getElementById('payModal').classList.remove('open');
+}
+
+function switchPayTab(tab) {
+  _payActiveTab = tab;
+  document.getElementById('payTab1').classList.toggle('active', tab === 'hoc-phi');
+  document.getElementById('payTab2').classList.toggle('active', tab === 'le-phi');
+  document.getElementById('payPanelHocPhi').style.display = tab === 'hoc-phi' ? 'block' : 'none';
+  document.getElementById('payPanelLePhi').style.display = tab === 'le-phi' ? 'block' : 'none';
+}
+
+function lookupHocPhi() {
+  const inp = document.getElementById('hpMssvInp').value.trim();
+  if (!inp) { document.getElementById('hpMssvInp').focus(); return; }
+
+  // Find matching university demo data (or use selected university's data)
+  const u = currentUnivId ? UNIVERSITIES.find(x => x.id === currentUnivId) : UNIVERSITIES[0];
+  const demo = u ? u.studentDemo : UNIVERSITIES[0].studentDemo;
+
+  document.getElementById('hpName').textContent = demo.name;
+  document.getElementById('hpInfo').textContent = demo.id + ' · ' + demo.major;
+  document.getElementById('hpAmount').textContent = demo.ttt;
+  document.getElementById('hpNote').textContent = 'Hạn nộp: 30/09/2025 · Đóng qua MoMo miễn phí giao dịch';
+
+  const res = document.getElementById('hpResult');
+  res.style.display = 'block';
+  res.classList.add('show');
+  if (window.lucide) lucide.createIcons();
+}
+
+function lookupLePhi() {
+  const inp = document.getElementById('lpSbdInp').value.trim();
+  if (!inp) { document.getElementById('lpSbdInp').focus(); return; }
+
+  document.getElementById('lpName').textContent = 'Nguyễn Thị Lan Anh';
+  document.getElementById('lpInfo').textContent = 'SBD: ' + inp + ' · Cụm thi: TP. Hồ Chí Minh · THPT Lê Quý Đôn';
+  document.getElementById('lpAmount').textContent = '150.000đ';
+  document.getElementById('lpNote').textContent = '5 nguyện vọng × 30.000đ · Hạn nộp: 30/07/2025';
+
+  const res = document.getElementById('lpResult');
+  res.style.display = 'block';
+  res.classList.add('show');
+  if (window.lucide) lucide.createIcons();
+}
+
+function confirmPayment(type) {
+  const now = new Date();
+  const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ' · ' +
+                  now.getDate() + '/' + (now.getMonth()+1) + '/' + now.getFullYear();
+
+  if (type === 'hoc-phi') {
+    const u = currentUnivId ? UNIVERSITIES.find(x => x.id === currentUnivId) : UNIVERSITIES[0];
+    const demo = u ? u.studentDemo : UNIVERSITIES[0].studentDemo;
+    const mssvVal = document.getElementById('hpMssvInp').value || demo.id.replace('MSSV: ','').split(' ')[0];
+    const hpRes = document.getElementById('hpResult');
+    hpRes.classList.remove('show'); hpRes.style.display = 'none';
+    document.getElementById('hpReceipt').innerHTML = `
+      <div class="pay-receipt-row"><span>Người nộp</span><span>${demo.name}</span></div>
+      <div class="pay-receipt-row"><span>MSSV</span><span>${mssvVal}</span></div>
+      <div class="pay-receipt-row"><span>Nội dung</span><span>Học phí Kỳ 1 / 2025-2026</span></div>
+      <div class="pay-receipt-row"><span>Thời gian</span><span>${timeStr}</span></div>
+      <div class="pay-receipt-row"><span>Phương thức</span><span>Ví MoMo</span></div>
+      <div class="pay-receipt-row total"><span>Tổng thanh toán</span><span>${demo.ttt}</span></div>
+    `;
+    document.getElementById('hpResult').classList.remove('show');
+    document.getElementById('hpForm').style.display = 'none';
+    const sv = document.getElementById('hpSuccess');
+    sv.style.display = 'block'; sv.classList.add('show');
+  } else {
+    const sbdVal = document.getElementById('lpSbdInp').value || '01123456';
+    document.getElementById('lpReceipt').innerHTML = `
+      <div class="pay-receipt-row"><span>Thí sinh</span><span>Nguyễn Thị Lan Anh</span></div>
+      <div class="pay-receipt-row"><span>Số Báo Danh</span><span>${sbdVal}</span></div>
+      <div class="pay-receipt-row"><span>Số nguyện vọng</span><span>5 nguyện vọng</span></div>
+      <div class="pay-receipt-row"><span>Thời gian</span><span>${timeStr}</span></div>
+      <div class="pay-receipt-row"><span>Phương thức</span><span>Ví MoMo</span></div>
+      <div class="pay-receipt-row total"><span>Tổng lệ phí</span><span>150.000đ</span></div>
+    `;
+    const lpRes = document.getElementById('lpResult');
+    lpRes.classList.remove('show'); lpRes.style.display = 'none';
+    document.getElementById('lpForm').style.display = 'none';
+    const sv = document.getElementById('lpSuccess');
+    sv.style.display = 'block'; sv.classList.add('show');
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+// DEALS - CLAIM
+function claimDeal(cardEl, dealName) {
+  const btn = cardEl.querySelector('.deal-get-btn');
+  if (btn && btn.dataset.claimed) return;
+  if (btn) {
+    btn.dataset.claimed = '1';
+    btn.textContent = '✓ Đã nhận';
+    btn.style.background = '#ECFDF5';
+    btn.style.color = '#059669';
+    btn.style.borderColor = '#A7F3D0';
+  }
+  // Small toast
+  showToast(`✓ Đã lưu "${dealName}" vào ví MoMo của bạn!`);
+}
+
+function showToast(msg) {
+  let t = document.getElementById('globalToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'globalToast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1C171A;color:#fff;padding:12px 20px;border-radius:99px;font-size:13.5px;font-weight:700;z-index:9999;opacity:0;transition:all .3s;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.25)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2800);
 }
 
 // BUDGET CALCULATOR SIMULATOR
