@@ -187,6 +187,27 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .univ-enroll-btn { background: #1D4ED8; color: #fff; font-size: 12.5px; font-weight: 800; padding: 8px 16px; border-radius: 8px; white-space: nowrap; transition: background .15s; }
 .univ-card:hover .univ-enroll-btn { background: #1E40AF; }
 
+/* CAMPUS BADGE on univ card */
+.campus-badge { display: inline-flex; align-items: center; gap: 4px; background: #EDE9FE; color: #6D28D9; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 99px; border: 1px solid #DDD6FE; white-space: nowrap; margin-top: 6px; width: fit-content; }
+
+/* CAMPUS PICKER MODAL */
+.campus-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.campus-overlay.open { display: flex; }
+.campus-modal { background: #fff; border-radius: 20px; max-width: 480px; width: 100%; overflow: hidden; box-shadow: 0 24px 56px rgba(15,23,42,.2); animation: popIn .2s ease-out; }
+.campus-modal-head { background: linear-gradient(135deg, #0F172A, #1E293B); color: #fff; padding: 20px 24px; }
+.campus-modal-title { font-size: 18px; font-weight: 900; margin-bottom: 4px; }
+.campus-modal-sub { font-size: 12.5px; color: rgba(255,255,255,0.6); }
+.campus-modal-close { float: right; cursor: pointer; color: rgba(255,255,255,0.5); font-size: 22px; line-height: 1; margin-top: -2px; }
+.campus-list { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.campus-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1.5px solid var(--gray-200); border-radius: 12px; cursor: pointer; transition: all .15s; background: #fff; }
+.campus-item:hover { border-color: #6D28D9; background: #F5F3FF; }
+.campus-item-icon { width: 40px; height: 40px; border-radius: 10px; background: #EDE9FE; color: #6D28D9; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.campus-item-info { flex: 1; min-width: 0; }
+.campus-item-name { font-size: 14px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; }
+.campus-item-addr { font-size: 11.5px; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.campus-item-city { font-size: 10.5px; font-weight: 700; color: #6D28D9; background: #EDE9FE; padding: 2px 8px; border-radius: 99px; flex-shrink: 0; }
+.campus-modal-footer { padding: 12px 16px 16px; text-align: center; font-size: 11.5px; color: var(--gray-400); border-top: 1px solid var(--gray-100); }
+
 /* DETAIL VIEW STYLES */
 .hero-sec { padding: 48px 0 36px; background: linear-gradient(135deg, #FFF0F8 0%, #FFF8F0 50%, #F0F4FF 100%); border-bottom: 1px solid #F5DCF0; }
 
@@ -815,7 +836,57 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
   .sec-h-row { flex-direction:column;gap:10px; }
   .rank-cta-link { align-self:flex-start; }
 }
+
+/* ============================================================
+   CAMPUS FACILITY SECTION
+   ============================================================ */
+.facility-sec { padding: 40px 0 8px; }
+.facility-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+.facility-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .15s, border-color .15s; cursor: default; position: relative; overflow: hidden; }
+.facility-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.facility-card.fc-library::before { background: linear-gradient(90deg, #6D28D9, #8B5CF6); }
+.facility-card.fc-ktx::before { background: linear-gradient(90deg, #059669, #10B981); }
+.facility-card.fc-sport::before { background: linear-gradient(90deg, #D97706, #F59E0B); }
+.facility-card.fc-health::before { background: linear-gradient(90deg, #DC2626, #EF4444); }
+.facility-card.fc-tech::before { background: linear-gradient(90deg, #2563EB, #3B82F6); }
+.facility-card.fc-food::before { background: linear-gradient(90deg, #D82D8B, #F472B6); }
+.facility-card.fc-culture::before { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+.facility-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--gray-300); }
+.facility-card-top { display: flex; align-items: flex-start; gap: 12px; }
+.facility-icon-wrap { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.facility-card-title { font-size: 14.5px; font-weight: 800; color: var(--gray-900); line-height: 1.3; }
+.facility-card-subtitle { font-size: 11.5px; color: var(--gray-500); margin-top: 2px; }
+.facility-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.facility-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 99px; background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200); }
+.facility-tag.highlight { background: #EDE9FE; color: #6D28D9; border-color: #DDD6FE; }
+.facility-tag.green { background: #ECFDF5; color: #059669; border-color: #A7F3D0; }
+.facility-tag.amber { background: #FFFBEB; color: #B45309; border-color: #FDE68A; }
+.facility-tag.red { background: #FEF2F2; color: #DC2626; border-color: #FECACA; }
+.facility-tag.blue { background: #EFF6FF; color: #2563EB; border-color: #BFDBFE; }
+.facility-tag.pink { background: #FFF0F8; color: #BE185D; border-color: #FBBDDB; }
+.facility-hours { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--gray-500); font-weight: 600; border-top: 1px solid var(--gray-100); padding-top: 10px; margin-top: auto; }
+.facility-open { color: #16A34A; font-weight: 700; }
+
+/* FACULTY TAB SWITCH */
+.faculty-tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
+.faculty-tab-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 99px; border: 1.5px solid var(--gray-200); background: #fff; font-size: 12.5px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all .15s; }
+.faculty-tab-btn.active { background: var(--gray-900); border-color: var(--gray-900); color: #fff; }
+.faculty-tab-btn:hover:not(.active) { border-color: var(--gray-400); color: var(--gray-900); }
+
+/* GENERAL COURSES TABLE */
+.gen-course-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.gen-course-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; transition: box-shadow .15s, border-color .15s; }
+.gen-course-card:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+.gen-course-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.gen-course-info { flex: 1; min-width: 0; }
+.gen-course-name { font-size: 13px; font-weight: 700; color: var(--gray-900); line-height: 1.3; }
+.gen-course-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.gen-course-tc { font-size: 12px; font-weight: 800; color: #6366F1; white-space: nowrap; }
+
+@media(max-width: 900px) { .facility-grid { grid-template-columns: repeat(2, 1fr); } .gen-course-grid { grid-template-columns: 1fr; } }
+@media(max-width: 600px) { .facility-grid { grid-template-columns: 1fr; } }
 </style>
+
 </head>
 <body>
 
@@ -845,48 +916,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
           <i data-lucide="chevron-down" width="13" height="13" id="navUnivChevron"></i>
         </button>
         <div class="nav-univ-menu" id="navUnivMenu">
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('')">
-            <i data-lucide="layout-grid" width="13" height="13"></i> Tất cả các trường
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('tdtu')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Tôn Đức Thắng (TDTU)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('hcmut')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Bách Khoa TP.HCM (HCMUT)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('ueh')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Kinh Tế TP.HCM (UEH)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('hcmus')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Khoa Học Tự Nhiên (HCMUS)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('hcmute')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH SP Kỹ Thuật TP.HCM (HCMUTE)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('vnu')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Quốc Gia Hà Nội (VNU)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('hust')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Bách Khoa Hà Nội (HUST)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('neu')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Kinh Tế Quốc Dân (NEU)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('ftu')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Ngoại Thương (FTU)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('rmit')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH RMIT Vietnam
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('fpt')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH FPT Vietnam
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('dut')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Bách Khoa Đà Nẵng (DUT)
-          </div>
-          <div class="nav-univ-opt" onclick="onUnivSelectChange('ctu')">
-            <i data-lucide="school" width="13" height="13"></i> ĐH Cần Thơ (CTU)
-          </div>
+          <!-- Rendered dynamically by renderNavUnivDropdown() -->
         </div>
       </div>
     </div>
@@ -999,12 +1029,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
     </div>
 
     <div class="f-scroll" id="univFilterScroll">
-      <button class="f-chip active" onclick="setUnivFilter('all', this)"><i data-lucide="layout-grid" width="14" height="14"></i> Tất cả trường (15)</button>
-      <button class="f-chip" onclick="setUnivFilter('hcm', this)"><i data-lucide="map-pin" width="14" height="14"></i> TP. Hồ Chí Minh (7)</button>
-      <button class="f-chip" onclick="setUnivFilter('hn', this)"><i data-lucide="map-pin" width="14" height="14"></i> Hà Nội (5)</button>
-      <button class="f-chip" onclick="setUnivFilter('dn', this)"><i data-lucide="map-pin" width="14" height="14"></i> Đà Nẵng &amp; Khác (3)</button>
-      <button class="f-chip" onclick="setUnivFilter('cong-lap', this)"><i data-lucide="building" width="14" height="14"></i> Trường Công Lập</button>
-      <button class="f-chip" onclick="setUnivFilter('dan-lap', this)"><i data-lucide="sparkles" width="14" height="14"></i> Quốc Tế &amp; Dân Lập</button>
+      <!-- Rendered dynamically by renderFilterChips() -->
     </div>
 
     <div class="univ-grid" id="univGrid">
@@ -1012,6 +1037,24 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
     </div>
   </section>
 </main>
+
+<!-- CAMPUS PICKER MODAL -->
+<div class="campus-overlay" id="campusOverlay" onclick="if(event.target===this)closeCampusPicker()">
+  <div class="campus-modal" id="campusModal">
+    <div class="campus-modal-head">
+      <span class="campus-modal-close" onclick="closeCampusPicker()">×</span>
+      <div class="campus-modal-title" id="campusModalTitle">Chọn Chi Nhánh</div>
+      <div class="campus-modal-sub" id="campusModalSub">Trường này có nhiều cơ sở — chọn campus bạn muốn khám phá</div>
+    </div>
+    <div class="campus-list" id="campusList">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="campus-modal-footer">
+      <i data-lucide="map-pin" width="12" height="12" style="display:inline;vertical-align:middle;margin-right:3px"></i>
+      Mỗi cơ sở có bản đồ tiện ích & địa điểm ăn uống riêng
+    </div>
+  </div>
+</div>
 
 <!-- ================================================================= -->
 <!-- VIEW 2: SPECIFIC UNIVERSITY CAMPUS HUB (DETAIL VIEW) -->
@@ -1154,10 +1197,28 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 
   <!-- ACADEMIC SECTION: FACULTY -->
   <section class="acad-sec wrap" id="facultySec">
-    <div class="sec-h"><i data-lucide="layout-list" width="20" height="20" style="color:#10B981"></i> Khoa &amp; Môn Học</div>
-    <div class="sec-sub">Khám phá các khoa và danh sách môn học, tín chỉ theo từng kỳ</div>
+    <div class="sec-h"><i data-lucide="layout-list" width="20" height="20" style="color:#10B981"></i> Khoa &amp; Chương Trình Học</div>
+    <div class="sec-sub">Khám phá các khoa, danh sách môn học chuyên ngành và môn đại cương bắt buộc</div>
+    <div class="faculty-tab-row">
+      <button class="faculty-tab-btn active" id="tabFacultySpec" onclick="switchFacultyTab('spec')"><i data-lucide="book" width="14" height="14"></i> Môn Chuyên Ngành</button>
+      <button class="faculty-tab-btn" id="tabFacultyGeneral" onclick="switchFacultyTab('general')"><i data-lucide="layers" width="14" height="14"></i> Môn Học Đại Cương</button>
+    </div>
     <div id="acadPanel-faculty">
-      <div class="faculty-list" id="facultyList"></div>
+      <div id="facultySpecPanel">
+        <div class="faculty-list" id="facultyList"></div>
+      </div>
+      <div id="facultyGeneralPanel" style="display:none">
+        <div class="gen-course-grid" id="generalCourseGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAMPUS FACILITIES SECTION -->
+  <section class="acad-sec wrap facility-sec" id="facilitySec">
+    <div class="sec-h"><i data-lucide="building" width="20" height="20" style="color:#6D28D9"></i> Tiện Ích Nội Khu Campus</div>
+    <div class="sec-sub" id="facilitySecSub">Thư viện, ký túc xá, gym, hồ bơi và các tiện ích trong campus TDTU</div>
+    <div class="facility-grid" id="facilityGrid">
+      <!-- Rendered by JS -->
     </div>
   </section>
 
@@ -1868,6 +1929,11 @@ const UNIVERSITIES = [
     address: '144 Xuân Thủy, Dịch Vọng Hậu, Cầu Giấy, Hà Nội',
     banner: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=600&auto=format&fit=crop&q=80',
     emailDomain: '@vnu.edu.vn',
+    campuses: [
+      { id: 'vnu-caugiay', name: 'Cơ sở Cầu Giấy', city: 'hn', cityName: 'Hà Nội', address: '144 Xuân Thủy, Dịch Vọng Hậu, Cầu Giấy, Hà Nội' },
+      { id: 'vnu-xuanthuy', name: 'Làng ĐHQGHN Xuân Thủy', city: 'hn', cityName: 'Hà Nội', address: 'Xuân Thủy, Cầu Giấy, Hà Nội (Trung tâm ĐHQG)' },
+      { id: 'vnu-hoalac', name: 'Cơ sở Hòa Lạc', city: 'hn', cityName: 'Hà Nội', address: 'Km29, Đại lộ Thăng Long, Hòa Lạc, Hà Nội' }
+    ],
     studentDemo: { name: 'Phạm Đức Anh', id: 'MSV: 22020105 · K67', major: 'Trường Đại Học Công Nghệ (VNU)', vts: '2.500.000đ', ttt: '1.900.000đ' }
   },
   {
@@ -1906,10 +1972,14 @@ const UNIVERSITIES = [
     cityName: 'Hà Nội',
     type: 'cong-lap',
     typeName: 'Công lập',
-    students: '16.000 Sinh viên',
+    students: '20.000 Sinh viên',
     address: '91 Chùa Láng, Láng Thượng, Đống Đa, Hà Nội',
     banner: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format&fit=crop&q=80',
     emailDomain: '@ftu.edu.vn',
+    campuses: [
+      { id: 'ftu-hanoi', name: 'Cơ sở Hà Nội', city: 'hn', cityName: 'Hà Nội', address: '91 Chùa Láng, Láng Thượng, Đống Đa, Hà Nội' },
+      { id: 'ftu-hcm', name: 'Cơ sở II TP.HCM', city: 'hcm', cityName: 'TP.HCM', address: '15 D5, Phường 25, Bình Thạnh, TP.HCM' }
+    ],
     studentDemo: { name: 'Hoàng Phương Thảo', id: 'MSV: 2111110024 · K60', major: 'Khoa Kinh Tế Đối Ngoại (FTU)', vts: '3.500.000đ', ttt: '4.200.000đ' }
   },
   {
@@ -1924,6 +1994,10 @@ const UNIVERSITIES = [
     address: '702 Nguyễn Văn Linh, Phường Tân Phong, Quận 7, TP.HCM',
     banner: 'https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?w=600&auto=format&fit=crop&q=80',
     emailDomain: '@rmit.edu.vn',
+    campuses: [
+      { id: 'rmit-hcm', name: 'Campus TP.HCM', city: 'hcm', cityName: 'TP.HCM', address: '702 Nguyễn Văn Linh, Phường Tân Phong, Quận 7, TP.HCM' },
+      { id: 'rmit-hn', name: 'Campus Hà Nội', city: 'hn', cityName: 'Hà Nội', address: '193 Trần Duy Hưng, Trung Hòa, Cầu Giấy, Hà Nội' }
+    ],
     studentDemo: { name: 'Kevin Nguyễn', id: 's3819204 · Batch 2024', major: 'Design & Digital Media (RMIT)', vts: '5.000.000đ', ttt: '8.500.000đ' }
   },
   {
@@ -1945,13 +2019,19 @@ const UNIVERSITIES = [
     name: 'ĐH FPT Việt Nam',
     fullName: 'Trường Đại Học FPT Việt Nam',
     city: 'hcm',
-    cityName: 'TP.HCM',
+    cityName: 'TP.HCM & Toàn Quốc',
     type: 'dan-lap',
     typeName: 'Dân lập',
-    students: '20.000 Sinh viên',
+    students: '30.000 Sinh viên',
     address: 'Lô E2a-7, Đường D1, Khu Công Nghệ Cao, Q.9, TP.HCM',
     banner: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=600&auto=format&fit=crop&q=80',
     emailDomain: '@fpt.edu.vn',
+    campuses: [
+      { id: 'fpt-hcm', name: 'Campus TP.HCM', city: 'hcm', cityName: 'TP.HCM', address: 'Lô E2a-7, Đường D1, Khu Công Nghệ Cao, Q.9, TP.HCM' },
+      { id: 'fpt-hn', name: 'Campus Hà Nội', city: 'hn', cityName: 'Hà Nội', address: 'Khu Giáo Dục & Đào Tạo, KĐT FPT City, Mỹ Đình II, Hà Nội' },
+      { id: 'fpt-dn', name: 'Campus Đà Nẵng', city: 'dn', cityName: 'Đà Nẵng', address: 'Khu Đô Thị FPT Đà Nẵng, Ngũ Hành Sơn, Đà Nẵng' },
+      { id: 'fpt-ct', name: 'Campus Cần Thơ', city: 'other', cityName: 'Cần Thơ', address: '600 Nguyễn Văn Cừ, Ninh Kiều, Cần Thơ' }
+    ],
     studentDemo: { name: 'Đặng Tuấn Kiệt', id: 'MSSV: SE160124 · K16', major: 'Software Engineering (FPT)', vts: '3.000.000đ', ttt: '2.400.000đ' }
   },
   {
@@ -1972,7 +2052,7 @@ const UNIVERSITIES = [
     id: 'ctu',
     name: 'Đại Học Cần Thơ',
     fullName: 'Trường Đại Học Cần Thơ (CTU)',
-    city: 'dn',
+    city: 'other',
     cityName: 'Cần Thơ',
     type: 'cong-lap',
     typeName: 'Công lập',
@@ -1995,6 +2075,143 @@ const UNIVERSITIES = [
     banner: 'https://images.unsplash.com/photo-1551076805-e1869033e561?w=600&auto=format&fit=crop&q=80',
     emailDomain: '@hmu.edu.vn',
     studentDemo: { name: 'Nguyễn Khánh Linh', id: 'MSV: 20510199 · Y2020', major: 'Khoa Y Khoa (HMU)', vts: '3.000.000đ', ttt: '4.800.000đ' }
+  },
+  // ====== TRƯỜNG MỚI BỔ SUNG ======
+  {
+    id: 'hcmulaw',
+    name: 'ĐH Luật TP.HCM',
+    fullName: 'Trường Đại Học Luật TP.Hồ Chí Minh (HCMULAW)',
+    city: 'hcm',
+    cityName: 'TP.HCM',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '16.000 Sinh viên',
+    address: '2 Nguyễn Tất Thành, Phường 12, Quận 4, TP.HCM',
+    banner: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@student.hcmulaw.edu.vn',
+    studentDemo: { name: 'Lê Phương Ngân', id: 'MSSV: 2153801012 · K46', major: 'Khoa Luật Dân Sự (HCMULAW)', vts: '2.500.000đ', ttt: '2.200.000đ' }
+  },
+  {
+    id: 'hcmupeda',
+    name: 'ĐH Sư Phạm TP.HCM',
+    fullName: 'Trường Đại Học Sư Phạm TP.Hồ Chí Minh (HCMUE)',
+    city: 'hcm',
+    cityName: 'TP.HCM',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '21.000 Sinh viên',
+    address: '280 An Dương Vương, Phường 4, Quận 5, TP.HCM',
+    banner: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@student.hcmue.edu.vn',
+    studentDemo: { name: 'Bùi Thị Mai', id: 'MSSV: 46.01.601.013 · K46', major: 'Khoa Sư Phạm Toán - Tin (HCMUE)', vts: '2.000.000đ', ttt: '1.700.000đ' }
+  },
+  {
+    id: 'ou',
+    name: 'ĐH Mở TP.HCM',
+    fullName: 'Trường Đại Học Mở TP.Hồ Chí Minh (HOU)',
+    city: 'hcm',
+    cityName: 'TP.HCM',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '25.000 Sinh viên',
+    address: '97 Võ Văn Tần, Phường 6, Quận 3, TP.HCM',
+    banner: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@ou.edu.vn',
+    campuses: [
+      { id: 'ou-q3', name: 'Cơ sở Quận 3', city: 'hcm', cityName: 'TP.HCM', address: '97 Võ Văn Tần, Phường 6, Quận 3, TP.HCM' },
+      { id: 'ou-binhduong', name: 'Cơ sở Bình Dương', city: 'other', cityName: 'Bình Dương', address: 'Đường DT 743, Phường Bình Chuẩn, Thuận An, Bình Dương' }
+    ],
+    studentDemo: { name: 'Ngô Minh Tuấn', id: 'MSSV: 2153010112 · K21', major: 'Khoa Công Nghệ Thông Tin (HOU)', vts: '1.800.000đ', ttt: '1.500.000đ' }
+  },
+  {
+    id: 'hueuni',
+    name: 'Đại Học Huế',
+    fullName: 'Đại Học Huế (Huế University)',
+    city: 'dn',
+    cityName: 'Huế',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '50.000 Sinh viên',
+    address: '3 Lê Lợi, Phường Vĩnh Ninh, TP. Huế, Thừa Thiên Huế',
+    banner: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@hueuni.edu.vn',
+    campuses: [
+      { id: 'hueuni-main', name: 'Trường ĐH Khoa Học', city: 'dn', cityName: 'Huế', address: '77 Nguyễn Huệ, Phường Phú Nhuận, TP. Huế' },
+      { id: 'hueuni-edu', name: 'Trường ĐH Sư Phạm', city: 'dn', cityName: 'Huế', address: '34 Lê Lợi, Phường Vĩnh Ninh, TP. Huế' },
+      { id: 'hueuni-med', name: 'Trường ĐH Y Dược', city: 'dn', cityName: 'Huế', address: '6 Ngô Quyền, Phường Phú Nhuận, TP. Huế' },
+      { id: 'hueuni-econ', name: 'Trường ĐH Kinh Tế', city: 'dn', cityName: 'Huế', address: '99 Hồ Đắc Di, Nam Đông, TP. Huế' }
+    ],
+    studentDemo: { name: 'Trần Thị Hương', id: 'MSSV: HUE2022KH0089 · K2022', major: 'Khoa Hóa Học (ĐH Khoa Học Huế)', vts: '1.800.000đ', ttt: '1.400.000đ' }
+  },
+  {
+    id: 'dlu',
+    name: 'Đại Học Đà Lạt',
+    fullName: 'Trường Đại Học Đà Lạt (DLU)',
+    city: 'other',
+    cityName: 'Đà Lạt',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '18.000 Sinh viên',
+    address: '1 Phù Đổng Thiên Vương, Phường 8, TP. Đà Lạt, Lâm Đồng',
+    banner: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@student.dlu.edu.vn',
+    studentDemo: { name: 'Đinh Hoàng Long', id: 'MSSV: 2151120035 · K2021', major: 'Khoa CNTT (DLU)', vts: '1.600.000đ', ttt: '1.300.000đ' }
+  },
+  {
+    id: 'vinhuni',
+    name: 'Đại Học Vinh',
+    fullName: 'Trường Đại Học Vinh (Vinh University)',
+    city: 'other',
+    cityName: 'Nghệ An',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '22.000 Sinh viên',
+    address: '182 Lê Duẩn, Phường Hưng Bình, TP. Vinh, Nghệ An',
+    banner: 'https://images.unsplash.com/photo-1535982330050-f1c2fb79ff78?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@vinhuni.edu.vn',
+    studentDemo: { name: 'Nguyễn Thị Lan', id: 'MSSV: 2154066123 · K62', major: 'Khoa Kinh Tế (Vinh)', vts: '1.500.000đ', ttt: '1.200.000đ' }
+  },
+  {
+    id: 'ulis',
+    name: 'ĐH Ngoại Ngữ - ĐHQGHN',
+    fullName: 'Trường ĐH Ngoại Ngữ - Đại Học Quốc Gia Hà Nội (ULIS)',
+    city: 'hn',
+    cityName: 'Hà Nội',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '10.000 Sinh viên',
+    address: 'Phường Dịch Vọng, Cầu Giấy, Hà Nội',
+    banner: 'https://images.unsplash.com/photo-1543269665-7821e259f610?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@ulis.vnu.edu.vn',
+    studentDemo: { name: 'Trần Quỳnh Anh', id: 'MSV: 21040075 · K61', major: 'Khoa Ngôn Ngữ Anh (ULIS)', vts: '2.500.000đ', ttt: '2.000.000đ' }
+  },
+  {
+    id: 'acud',
+    name: 'ĐH Kiến Trúc HCM',
+    fullName: 'Trường Đại Học Kiến Trúc TP.Hồ Chí Minh (UAH)',
+    city: 'hcm',
+    cityName: 'TP.HCM',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '14.000 Sinh viên',
+    address: '196 Pasteur, Phường Võ Thị Sáu, Quận 3, TP.HCM',
+    banner: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@student.uah.edu.vn',
+    studentDemo: { name: 'Phạm Thiện Nhân', id: 'MSSV: 21140098 · K45', major: 'Khoa Kiến Trúc (UAH)', vts: '2.500.000đ', ttt: '2.800.000đ' }
+  },
+  {
+    id: 'hnue',
+    name: 'ĐH Sư Phạm Hà Nội',
+    fullName: 'Trường Đại Học Sư Phạm Hà Nội (HNUE)',
+    city: 'hn',
+    cityName: 'Hà Nội',
+    type: 'cong-lap',
+    typeName: 'Công lập',
+    students: '20.000 Sinh viên',
+    address: '136 Xuân Thủy, Cầu Giấy, Hà Nội',
+    banner: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&auto=format&fit=crop&q=80',
+    emailDomain: '@hnue.edu.vn',
+    studentDemo: { name: 'Lưu Thị Hoa', id: 'MSV: 21522088 · K71', major: 'Khoa Sư Phạm Ngữ Văn (HNUE)', vts: '2.000.000đ', ttt: '1.800.000đ' }
   }
 ];
 
@@ -2095,6 +2312,34 @@ const ACADEMIC_BY_UNIV = {
       { name: 'Học Bổng Vì Tương Lai - FPT', amount: '15.000.000đ', amountSub: 'một lần', criteria: 'Chuyên ngành CNTT/AI, GPA ≥ 3.0, tiếng Anh IELTS 6.0+', deadline: '20/08/2026', type: 'enterprise', urgent: false },
       { name: 'Học Bổng KKHS Bộ GD&ĐT', amount: '3.960.000đ', amountSub: 'mỗi tháng', criteria: 'Hộ gia đình chính sách, điểm thi THPT ≥ 27 điểm', deadline: '01/10/2026', type: 'government', urgent: false }
     ],
+    generalCourses: [
+      // Lý luận chính trị — theo Thông tư 17/2021/TT-BGDĐT (cố định toàn quốc, 11 TC)
+      { name: 'Triết học Mác - Lênin', credits: 3, icon: 'book-open', bg: '#EDE9FE', color: '#7C3AED', semester: 'HK1', category: 'Lý luận chính trị' },
+      { name: 'Kinh tế Chính trị Mác - Lênin', credits: 2, icon: 'landmark', bg: '#EDE9FE', color: '#7C3AED', semester: 'HK2', category: 'Lý luận chính trị' },
+      { name: 'Chủ nghĩa Xã hội Khoa học', credits: 2, icon: 'flag', bg: '#EDE9FE', color: '#7C3AED', semester: 'HK2', category: 'Lý luận chính trị' },
+      { name: 'Lịch sử Đảng Cộng sản Việt Nam', credits: 2, icon: 'history', bg: '#EDE9FE', color: '#7C3AED', semester: 'HK3', category: 'Lý luận chính trị' },
+      { name: 'Tư tưởng Hồ Chí Minh', credits: 2, icon: 'star', bg: '#EDE9FE', color: '#7C3AED', semester: 'HK3', category: 'Lý luận chính trị' },
+      // Toán - Khoa học — TDTU ngành kỹ thuật/CN: Toán 4TC, Lý 4TC, Hóa 3TC
+      { name: 'Toán cao cấp A1', credits: 4, icon: 'calculator', bg: '#EFF6FF', color: '#2563EB', semester: 'HK1', category: 'Toán - Khoa học' },
+      { name: 'Toán cao cấp A2', credits: 4, icon: 'calculator', bg: '#EFF6FF', color: '#2563EB', semester: 'HK2', category: 'Toán - Khoa học' },
+      { name: 'Xác suất - Thống kê', credits: 3, icon: 'bar-chart-2', bg: '#EFF6FF', color: '#2563EB', semester: 'HK2', category: 'Toán - Khoa học' },
+      { name: 'Vật lý đại cương (Lý thuyết + Thực hành)', credits: 4, icon: 'zap', bg: '#FFF7ED', color: '#C2410C', semester: 'HK1', category: 'Toán - Khoa học' },
+      { name: 'Hóa đại cương A', credits: 3, icon: 'flask-conical', bg: '#FFF7ED', color: '#C2410C', semester: 'HK1', category: 'Toán - Khoa học' },
+      { name: 'Cơ sở tin học', credits: 2, icon: 'monitor', bg: '#EFF6FF', color: '#2563EB', semester: 'HK1', category: 'Toán - Khoa học' },
+      // Ngoại ngữ — TDTU dùng hệ B1/B2, thường 4 học phần × 3 TC
+      { name: 'Tiếng Anh 1 (Elementary)', credits: 3, icon: 'languages', bg: '#ECFDF5', color: '#059669', semester: 'HK1', category: 'Ngoại ngữ - Kỹ năng' },
+      { name: 'Tiếng Anh 2 (Pre-Intermediate)', credits: 3, icon: 'languages', bg: '#ECFDF5', color: '#059669', semester: 'HK2', category: 'Ngoại ngữ - Kỹ năng' },
+      { name: 'Tiếng Anh 3 (Intermediate)', credits: 3, icon: 'languages', bg: '#ECFDF5', color: '#059669', semester: 'HK3', category: 'Ngoại ngữ - Kỹ năng' },
+      { name: 'Tiếng Anh 4 (Upper-Intermediate)', credits: 3, icon: 'file-text', bg: '#ECFDF5', color: '#059669', semester: 'HK4', category: 'Ngoại ngữ - Kỹ năng' },
+      // Kỹ năng
+      { name: 'Kỹ năng mềm', credits: 2, icon: 'users', bg: '#F0FDF4', color: '#15803D', semester: 'HK2', category: 'Ngoại ngữ - Kỹ năng' },
+      { name: 'Pháp luật đại cương', credits: 2, icon: 'scale', bg: '#FEF3C7', color: '#B45309', semester: 'HK2', category: 'Xã hội - Pháp luật' },
+      // Thể chất & Quốc phòng — TDTU: GDTC không tính vào TC tốt nghiệp; GDQPAN = chứng chỉ riêng
+      { name: 'Giáo dục thể chất 1', credits: 0, icon: 'dumbbell', bg: '#FFFBEB', color: '#B45309', semester: 'HK1', category: 'Thể chất - Quốc phòng', note: 'Bắt buộc — không tính vào TC tốt nghiệp' },
+      { name: 'Giáo dục thể chất 2', credits: 0, icon: 'dumbbell', bg: '#FFFBEB', color: '#B45309', semester: 'HK2', category: 'Thể chất - Quốc phòng', note: 'Bắt buộc — không tính vào TC tốt nghiệp' },
+      { name: 'Giáo dục thể chất 3', credits: 0, icon: 'dumbbell', bg: '#FFFBEB', color: '#B45309', semester: 'HK3', category: 'Thể chất - Quốc phòng', note: 'Bắt buộc — không tính vào TC tốt nghiệp' },
+      { name: 'Giáo dục Quốc phòng - An ninh', credits: 0, icon: 'shield', bg: '#FFF0F8', color: '#BE185D', semester: 'HK1', category: 'Thể chất - Quốc phòng', note: '165 tiết — cấp chứng chỉ riêng, không tính TC tốt nghiệp' },
+    ],
     faculties: [
       { name: 'Khoa Điện - Điện tử', abbr: 'Electrical Engineering', icon: 'zap', color: '#FEF3C7', iconColor: '#D97706', students: '3.200 SV', courses: [
         { name: 'Mạch điện', credits: 3, type: 'cs', semester: 'HK1' },
@@ -2103,6 +2348,8 @@ const ACADEMIC_BY_UNIV = {
         { name: 'Vi xử lý & Vi điều khiển', credits: 3, type: 'tc', semester: 'HK2' },
         { name: 'Kỹ thuật điều khiển tự động', credits: 3, type: 'tc', semester: 'HK3' },
         { name: 'Điện tử công suất', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Hệ thống nhúng (Embedded Systems)', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'IoT & Hệ thống thông minh', credits: 3, type: 'tc', semester: 'HK4' },
         { name: 'Thực tập tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
       ]},
       { name: 'Khoa Công nghệ Thông tin', abbr: 'Information Technology', icon: 'monitor', color: '#EDE9FE', iconColor: '#7C3AED', students: '4.800 SV', courses: [
@@ -2112,6 +2359,9 @@ const ACADEMIC_BY_UNIV = {
         { name: 'Mạng máy tính', credits: 3, type: 'tc', semester: 'HK3' },
         { name: 'Trí tuệ nhân tạo', credits: 3, type: 'tc', semester: 'HK3' },
         { name: 'Phát triển ứng dụng Web', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'Học máy (Machine Learning)', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'An toàn thông tin', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'Phát triển ứng dụng Mobile', credits: 3, type: 'tc', semester: 'HK5' },
         { name: 'Đồ án tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
       ]},
       { name: 'Khoa Quản trị Kinh doanh', abbr: 'Business Administration', icon: 'briefcase', color: '#FFF0F8', iconColor: '#BE185D', students: '5.100 SV', courses: [
@@ -2120,6 +2370,9 @@ const ACADEMIC_BY_UNIV = {
         { name: 'Marketing căn bản', credits: 3, type: 'cs', semester: 'HK2' },
         { name: 'Quản trị học', credits: 3, type: 'tc', semester: 'HK2' },
         { name: 'Quản trị tài chính', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Quản trị nguồn nhân lực', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Thương mại điện tử', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'Khởi nghiệp & Đổi mới sáng tạo', credits: 3, type: 'tc', semester: 'HK4' },
         { name: 'Khóa luận tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
       ]},
       { name: 'Khoa Cơ khí', abbr: 'Mechanical Engineering', icon: 'settings', color: '#F0FDF4', iconColor: '#15803D', students: '2.700 SV', courses: [
@@ -2128,7 +2381,42 @@ const ACADEMIC_BY_UNIV = {
         { name: 'Sức bền vật liệu', credits: 3, type: 'cs', semester: 'HK2' },
         { name: 'Chi tiết máy', credits: 3, type: 'tc', semester: 'HK3' },
         { name: 'Công nghệ chế tạo máy', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Robot công nghiệp', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'CAD/CAM/CNC', credits: 3, type: 'tc', semester: 'HK4' },
         { name: 'Đồ án tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
+      ]},
+      { name: 'Khoa Khoa học Ứng dụng', abbr: 'Applied Sciences', icon: 'flask-conical', color: '#F0FDF4', iconColor: '#0369A1', students: '1.800 SV', courses: [
+        { name: 'Toán học ứng dụng', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Vật lý ứng dụng', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Hóa học ứng dụng', credits: 3, type: 'cs', semester: 'HK2' },
+        { name: 'Công nghệ vật liệu mới', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Năng lượng tái tạo', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Đồ án tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
+      ]},
+      { name: 'Khoa Môi trường & Bảo hộ Lao động', abbr: 'Environment & Safety', icon: 'leaf', color: '#ECFDF5', iconColor: '#16A34A', students: '1.200 SV', courses: [
+        { name: 'Khoa học môi trường', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Quản lý chất thải', credits: 3, type: 'cs', semester: 'HK2' },
+        { name: 'Công nghệ xử lý nước', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Kiểm soát ô nhiễm không khí', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Hệ thống quản lý an toàn OHSAS', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'Đồ án tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
+      ]},
+      { name: 'Khoa Luật', abbr: 'Law Faculty', icon: 'scale', color: '#FEF3C7', iconColor: '#92400E', students: '2.100 SV', courses: [
+        { name: 'Luật dân sự 1', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Luật hình sự 1', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Luật thương mại', credits: 3, type: 'cs', semester: 'HK2' },
+        { name: 'Luật lao động', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Pháp luật kinh doanh quốc tế', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Luật sở hữu trí tuệ', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'Khóa luận tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
+      ]},
+      { name: 'Viện Khoa học Xã hội & Nhân văn', abbr: 'Social Sciences & Humanities', icon: 'users', color: '#FFF0F8', iconColor: '#9333EA', students: '1.600 SV', courses: [
+        { name: 'Ngôn ngữ học', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Văn hóa học đại cương', credits: 3, type: 'cs', semester: 'HK1' },
+        { name: 'Xã hội học', credits: 3, type: 'tc', semester: 'HK2' },
+        { name: 'Tâm lý học tổ chức', credits: 3, type: 'tc', semester: 'HK3' },
+        { name: 'Truyền thông & Quan hệ công chúng', credits: 3, type: 'tc', semester: 'HK4' },
+        { name: 'Khóa luận tốt nghiệp', credits: 10, type: 'bt', semester: 'HK cuối' }
       ]}
     ]
   },
@@ -2241,6 +2529,142 @@ const ACADEMIC_BY_UNIV = {
   }
 };
 
+// ============================================================
+// TIỆN ÍCH NỘI KHU (CAMPUS FACILITIES)
+// ============================================================
+const CAMPUS_FACILITIES_BY_UNIV = {
+  tdtu: [
+    {
+      type: 'fc-library',
+      icon: 'library',
+      iconBg: '#EDE9FE', iconColor: '#6D28D9',
+      name: 'Thư Viện Trung Tâm TDTU',
+      subtitle: 'Tòa nhà A - Khu F, diện tích 8.000 m²',
+      tags: [
+        { label: '120.000+ đầu sách', style: 'highlight' },
+        { label: 'E-Library 24/7', style: 'blue' },
+        { label: 'Phòng nghiên cứu im lặng', style: '' },
+        { label: 'PC miễn phí', style: '' },
+      ],
+      hours: '6:00 – 22:00 (T2–T6) | 7:00 – 17:00 (T7)'
+    },
+    {
+      type: 'fc-ktx',
+      icon: 'building-2',
+      iconBg: '#ECFDF5', iconColor: '#059669',
+      name: 'KTX Sinh Viên TDTU',
+      subtitle: 'Khu ký túc xá 4 tòa nhà, sức chứa 3.200 SV',
+      tags: [
+        { label: 'Giá từ 550.000đ/tháng', style: 'green' },
+        { label: 'Điều hòa', style: '' },
+        { label: 'WiFi tốc độ cao', style: 'blue' },
+        { label: 'Bảo vệ 24/7', style: '' },
+        { label: 'Canteen tầng trệt', style: '' },
+      ],
+      hours: 'Cổng KTX mở 5:30 – 23:00'
+    },
+    {
+      type: 'fc-sport',
+      icon: 'dumbbell',
+      iconBg: '#FFFBEB', iconColor: '#D97706',
+      name: 'Khu Thể Thao & Gym TDTU',
+      subtitle: 'Sân bóng đá 11 người, 7 người, sân tennis, gym',
+      tags: [
+        { label: 'Hồ bơi Olympic 50m', style: 'blue' },
+        { label: 'Gym hiện đại', style: 'amber' },
+        { label: 'Sân bóng rổ', style: '' },
+        { label: 'Cầu lông trong nhà', style: '' },
+        { label: 'Sân tennis 6 sân', style: '' },
+      ],
+      hours: '5:30 – 21:30 hàng ngày (Hồ bơi: 6:00 – 20:00)'
+    },
+    {
+      type: 'fc-food',
+      icon: 'utensils',
+      iconBg: '#FFF0F8', iconColor: '#BE185D',
+      name: 'Hệ Thống Căn Tin TDTU',
+      subtitle: '3 căn tin trong campus + khu ăn uống Khu F',
+      tags: [
+        { label: 'Căn tin A (≥100 món)', style: 'pink' },
+        { label: 'Căn tin B (chay)', style: 'green' },
+        { label: 'Giá từ 15.000đ/suất', style: 'amber' },
+        { label: 'MoMo thanh toán', style: 'pink' },
+      ],
+      hours: '6:30 – 19:30 (T2–T6) | 7:00 – 13:00 (T7)'
+    },
+    {
+      type: 'fc-tech',
+      icon: 'monitor-check',
+      iconBg: '#EFF6FF', iconColor: '#2563EB',
+      name: 'Phòng Lab & Máy Tính',
+      subtitle: 'Hơn 25 phòng máy tính, 1.200+ máy tính hiện đại',
+      tags: [
+        { label: 'Máy tính core i7+', style: 'blue' },
+        { label: 'Phòng thực hành AI/ML', style: 'highlight' },
+        { label: 'In ấn miễn phí 20 trang/tuần', style: 'green' },
+        { label: 'Mở đến 22:00', style: '' },
+      ],
+      hours: '7:00 – 22:00 (T2–T6) | 7:00 – 17:00 (T7)'
+    },
+    {
+      type: 'fc-health',
+      icon: 'heart-pulse',
+      iconBg: '#FEF2F2', iconColor: '#DC2626',
+      name: 'Phòng Khám Y Tế Sinh Viên',
+      subtitle: 'Trung tâm y tế học đường miễn phí cho sinh viên',
+      tags: [
+        { label: 'Khám bệnh miễn phí', style: 'red' },
+        { label: 'BHYT học sinh', style: '' },
+        { label: 'Thuốc cơ bản', style: '' },
+        { label: 'Tư vấn tâm lý', style: 'highlight' },
+      ],
+      hours: '7:30 – 17:00 (T2–T6)'
+    },
+    {
+      type: 'fc-culture',
+      icon: 'music',
+      iconBg: '#F5F3FF', iconColor: '#7C3AED',
+      name: 'Nhà Văn Hóa Sinh Viên',
+      subtitle: 'Sân khấu 800 chỗ, phòng CLB, phòng tập nhảy/nhạc',
+      tags: [
+        { label: '50+ CLB hoạt động', style: 'highlight' },
+        { label: 'Phòng tập nhảy', style: '' },
+        { label: 'Phòng thu âm', style: '' },
+        { label: 'Sân khấu ngoài trời', style: '' },
+      ],
+      hours: '8:00 – 21:00 (T2–T7)'
+    },
+    {
+      type: 'fc-library',
+      icon: 'graduation-cap',
+      iconBg: '#F0FDF4', iconColor: '#15803D',
+      name: 'Trung Tâm Hỗ Trợ Sinh Viên',
+      subtitle: 'Văn phòng tư vấn học tập, tuyển dụng, thực tập',
+      tags: [
+        { label: 'Tư vấn việc làm miễn phí', style: 'green' },
+        { label: 'Job Fair hàng kỳ', style: '' },
+        { label: 'CV Review', style: '' },
+        { label: 'Kết nối doanh nghiệp', style: 'amber' },
+      ],
+      hours: '8:00 – 17:00 (T2–T6)'
+    },
+    {
+      type: 'fc-tech',
+      icon: 'wifi',
+      iconBg: '#EFF6FF', iconColor: '#2563EB',
+      name: 'Hạ Tầng WiFi & Kết Nối',
+      subtitle: 'Mạng WiFi miễn phí phủ toàn bộ campus 19 ha',
+      tags: [
+        { label: 'WiFi 1 Gbps', style: 'blue' },
+        { label: 'VPN học thuật', style: '' },
+        { label: 'Truy cập thư viện số', style: 'highlight' },
+        { label: 'Tốc độ SV: 100Mbps', style: '' },
+      ],
+      hours: 'Hoạt động 24/7'
+    }
+  ]
+};
+
 const RANKINGS = [
   { id: 'hcmut', abbr: 'HCMUT / BKU', name: 'ĐH Bách Khoa TP.HCM', logo: 'https://upload.wikimedia.org/wikipedia/vi/a/a4/Logo_Truong_Dai_hoc_Bach_khoa_-_Dai_hoc_Quoc_gia_TP_Ho_Chi_Minh.png', overall: 4.7, academic: 4.9, facility: 4.4, environment: 4.6, student: 4.5 },
   { id: 'ueh', abbr: 'UEH', name: 'ĐH Kinh tế TP.HCM', logo: 'https://upload.wikimedia.org/wikipedia/vi/thumb/e/ef/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Kinh_t%E1%BA%BF_TP_HCM.png/220px-Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Kinh_t%E1%BA%BF_TP_HCM.png', overall: 4.6, academic: 4.7, facility: 4.5, environment: 4.6, student: 4.6 },
@@ -2313,8 +2737,9 @@ function renderUnivGrid() {
     if (currentUnivFilter === 'hcm') matchFilter = u.city === 'hcm';
     else if (currentUnivFilter === 'hn') matchFilter = u.city === 'hn';
     else if (currentUnivFilter === 'dn') matchFilter = u.city === 'dn';
+    else if (currentUnivFilter === 'other') matchFilter = !['hcm','hn','dn'].includes(u.city);
     else if (currentUnivFilter === 'cong-lap') matchFilter = u.type === 'cong-lap';
-    else if (currentUnivFilter === 'dan-lap') matchFilter = u.type === 'dan-lap';
+    else if (currentUnivFilter === 'dan-lap') matchFilter = u.type !== 'cong-lap';
 
     let matchSearch = true;
     if (searchVal) {
@@ -2343,14 +2768,21 @@ function renderUnivGrid() {
     const fee = acadData ? (acadData.creditPrice / 1000).toFixed(0) + 'K/TC' : '--';
     const rating = '4.' + (5 + Math.floor(Math.random()*2));
     const svCount = u.students.replace(' Sinh viên','');
+    const hasCampuses = u.campuses && u.campuses.length > 1;
+    const campusBadge = hasCampuses
+      ? `<span class="campus-badge"><i data-lucide="git-branch" width="10" height="10"></i> ${u.campuses.length} chi nhánh</span>`
+      : '';
+    const clickHandler = hasCampuses
+      ? `event.preventDefault(); openCampusPicker('${u.id}')`
+      : `event.preventDefault(); selectUniversity('${u.id}')`;
     return `
-    <a class="univ-card" href="/student-hub/${u.id}" onclick="event.preventDefault(); selectUniversity('${u.id}')">
+    <a class="univ-card" href="/student-hub/${u.id}" onclick="${clickHandler}">
       <div class="univ-banner">
         <img src="${u.banner}" alt="${u.name}" loading="lazy">
         <span class="univ-type-pill" style="background:${pill.bg};color:${pill.color}">${u.typeName}</span>
         <div class="univ-img-overlay">
           <span class="univ-metrics-chip">⭐ ${rating} &nbsp;|&nbsp; 👥 ${svCount}</span>
-          <span class="univ-quickview-btn"><i data-lucide="eye" width="13" height="13"></i></span>
+          ${hasCampuses ? '<span class="univ-quickview-btn" style="background:rgba(109,40,217,.75)"><i data-lucide="git-branch" width="13" height="13"></i> ' + u.campuses.length + ' CS</span>' : '<span class="univ-quickview-btn"><i data-lucide="eye" width="13" height="13"></i></span>'}
         </div>
       </div>
       <div class="univ-body">
@@ -2362,12 +2794,13 @@ function renderUnivGrid() {
           <span class="univ-meta-item"><i data-lucide="map-pin" width="12" height="12"></i> ${u.cityName}</span>
           <span class="univ-meta-item"><i data-lucide="clock" width="12" height="12"></i> ${u.typeName}</span>
         </div>
-        <div class="univ-fee-row">
+        ${campusBadge}
+        <div class="univ-fee-row" style="margin-top:${hasCampuses ? '8px' : 'auto'}">
           <div>
             <div class="univ-fee-label">Học phí từ:</div>
             <div class="univ-fee-val">${fee}</div>
           </div>
-          <div class="univ-enroll-btn">Nhập học ngay</div>
+          <div class="univ-enroll-btn">${hasCampuses ? 'Chọn campus' : 'Nhập học ngay'}</div>
         </div>
       </div>
     </a>`;
@@ -2376,11 +2809,66 @@ function renderUnivGrid() {
   if (window.lucide) lucide.createIcons();
 }
 
-function setUnivFilter(cat, btn) {
+function setUnivFilter(cat, el) {
   currentUnivFilter = cat;
   document.querySelectorAll('#univFilterScroll .f-chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (el) el.classList.add('active');
+  else {
+    // find the matching chip by data-filter attr
+    const chip = document.querySelector(`#univFilterScroll .f-chip[data-filter="${cat}"]`);
+    if (chip) chip.classList.add('active');
+  }
   renderUnivGrid();
+}
+
+// Render filter chips dynamically with real counts
+function renderFilterChips() {
+  const total = UNIVERSITIES.length;
+  const hcmCount = UNIVERSITIES.filter(u => u.city === 'hcm').length;
+  const hnCount = UNIVERSITIES.filter(u => u.city === 'hn').length;
+  const dnCount = UNIVERSITIES.filter(u => u.city === 'dn').length;
+  const otherCount = UNIVERSITIES.filter(u => !['hcm','hn','dn'].includes(u.city)).length;
+  const congLapCount = UNIVERSITIES.filter(u => u.type === 'cong-lap').length;
+  const danLapCount = UNIVERSITIES.filter(u => u.type !== 'cong-lap').length;
+
+  const chips = [
+    { filter: 'all',      icon: 'layout-grid', label: `Tất cả trường (${total})` },
+    { filter: 'hcm',      icon: 'map-pin',     label: `TP.HCM (${hcmCount})` },
+    { filter: 'hn',       icon: 'map-pin',     label: `Hà Nội (${hnCount})` },
+    { filter: 'dn',       icon: 'map-pin',     label: `Miền Trung (${dnCount})` },
+    { filter: 'other',    icon: 'map-pin',     label: `Vùng Khác (${otherCount})` },
+    { filter: 'cong-lap', icon: 'building',    label: `Công Lập (${congLapCount})` },
+    { filter: 'dan-lap',  icon: 'sparkles',    label: `Quốc Tế & Dân Lập (${danLapCount})` },
+  ];
+
+  const container = document.getElementById('univFilterScroll');
+  if (!container) return;
+  container.innerHTML = chips.map(c => {
+    const active = currentUnivFilter === c.filter ? ' active' : '';
+    return `<button class="f-chip${active}" data-filter="${c.filter}" onclick="setUnivFilter('${c.filter}', this)"><i data-lucide="${c.icon}" width="14" height="14"></i> ${c.label}</button>`;
+  }).join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+// Render nav dropdown dynamically from UNIVERSITIES array
+function renderNavUnivDropdown() {
+  const menu = document.getElementById('navUnivMenu');
+  if (!menu) return;
+  // Group by city for headers
+  const cityOrder = ['hcm', 'hn', 'dn', 'other'];
+  const cityLabels = { hcm: '🏙️ TP. Hồ Chí Minh', hn: '🏛️ Hà Nội', dn: '🌊 Miền Trung & Tây Nguyên', other: '🌿 Vùng Khác' };
+  let html = `<div class="nav-univ-opt" onclick="onUnivSelectChange('')"><i data-lucide="layout-grid" width="13" height="13"></i> Tất cả các trường</div>`;
+  cityOrder.forEach(city => {
+    const group = UNIVERSITIES.filter(u => u.city === city);
+    if (!group.length) return;
+    html += `<div style="padding:6px 10px 2px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-400)">${cityLabels[city]}</div>`;
+    group.forEach(u => {
+      const campusBadge = u.campuses && u.campuses.length > 1 ? ` <span style="background:#EDE9FE;color:#6D28D9;font-size:9px;padding:1px 6px;border-radius:99px;font-weight:800">${u.campuses.length} CS</span>` : '';
+      html += `<div class="nav-univ-opt" data-id="${u.id}" onclick="onUnivSelectChange('${u.id}')"><i data-lucide="school" width="13" height="13"></i> ${u.name}${campusBadge}</div>`;
+    });
+  });
+  menu.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
 }
 
 // VIEW SWITCHING LOGIC
@@ -2392,6 +2880,8 @@ function showDirectoryView(pushUrl) {
   document.getElementById('rankingView').style.display = 'none';
   document.getElementById('bcCurrent').textContent = 'Danh Mục Các Trường Đại Học';
   document.getElementById('bcAction').innerHTML = '';
+  renderFilterChips();
+  renderNavUnivDropdown();
   renderUnivGrid();
   switchLifePillar('nhaphoc');
   if (pushUrl !== false) history.pushState({ view: 'directory' }, '', '/student-hub');
@@ -2423,11 +2913,58 @@ function selectUniversity(id, pushUrl) {
   renderTuition(id);
   renderScholarships(id, 'school');
   renderFaculties(id);
+  renderCampusFacilities(id);
+  // Reset faculty tab to 'spec' on each navigation
+  switchFacultyTab('spec');
   if (pushUrl !== false) {
     history.pushState({ view: 'detail', univId: id }, '', '/student-hub/' + id);
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (window.lucide) lucide.createIcons();
+}
+
+// ============================================================
+// CAMPUS PICKER — for multi-campus universities
+// ============================================================
+function openCampusPicker(univId) {
+  const u = UNIVERSITIES.find(x => x.id === univId);
+  if (!u || !u.campuses || u.campuses.length < 2) {
+    // Fallback: direct select
+    selectUniversity(univId);
+    return;
+  }
+  document.getElementById('campusModalTitle').textContent = u.name;
+  document.getElementById('campusModalSub').textContent = `${u.campuses.length} cơ sở — chọn campus bạn muốn khám phá`;
+  const list = document.getElementById('campusList');
+  list.innerHTML = u.campuses.map(campus => `
+    <div class="campus-item" onclick="selectCampus('${univId}', '${campus.id}')">
+      <div class="campus-item-icon"><i data-lucide="map-pin" width="18" height="18"></i></div>
+      <div class="campus-item-info">
+        <div class="campus-item-name">${campus.name}</div>
+        <div class="campus-item-addr">${campus.address}</div>
+      </div>
+      <span class="campus-item-city">${campus.cityName}</span>
+    </div>
+  `).join('');
+  document.getElementById('campusOverlay').classList.add('open');
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeCampusPicker() {
+  document.getElementById('campusOverlay').classList.remove('open');
+}
+
+function selectCampus(univId, campusId) {
+  closeCampusPicker();
+  // For now: select the university with campus info noted
+  // In a full implementation, campusId could switch the merchant data
+  const u = UNIVERSITIES.find(x => x.id === univId);
+  const campus = u && u.campuses ? u.campuses.find(c => c.id === campusId) : null;
+  if (campus) {
+    // Override address for this session
+    u._activeCampus = campus;
+  }
+  selectUniversity(univId);
 }
 
 // UNIV DROPDOWN HELPERS
@@ -2460,7 +2997,12 @@ function onUnivSelectChange(val) {
   } else {
     const u = UNIVERSITIES.find(x => x.id === val);
     setNavUnivLabel(u ? u.shortName || u.name : val.toUpperCase());
-    selectUniversity(val);
+    // If multi-campus, show picker
+    if (u && u.campuses && u.campuses.length > 1) {
+      openCampusPicker(val);
+    } else {
+      selectUniversity(val);
+    }
   }
 }
 
@@ -3178,7 +3720,18 @@ function renderFaculties(univId) {
   const courseTypeLbl = { cs: 'Cơ sở ngành', tc: 'Tự chọn', bt: 'Bắt buộc' };
   const courseTypeCls = { cs: 'course-type-cs', tc: 'course-type-tc', bt: 'course-type-bt' };
 
-  const html = data.faculties.map((f, fi) => {
+  // Disclaimer banner
+  const disclaimer = `
+  <div style="display:flex;gap:10px;padding:14px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;margin-bottom:16px">
+    <i data-lucide="triangle-alert" width="16" height="16" style="color:#B45309;flex-shrink:0;margin-top:1px"></i>
+    <div style="font-size:12px;color:#92400E;line-height:1.6">
+      <strong>Dữ liệu tham khảo — dựa trên khung chương trình đào tạo điển hình.</strong>
+      Tên môn và số TC thực tế tùy ngành, khóa và có thể thay đổi hàng năm.
+      Xem đề cương chính xác tại <a href="https://tdtu.edu.vn" target="_blank" style="color:#B45309;font-weight:700;text-decoration:underline">tdtu.edu.vn</a>.
+    </div>
+  </div>`;
+
+  const html = disclaimer + data.faculties.map((f, fi) => {
     const fid = 'faculty-' + fi;
     const totalCredits = f.courses.reduce((s, c) => s + c.credits, 0);
     const courses = f.courses.map(c => `
@@ -3219,6 +3772,122 @@ function toggleFaculty(fid) {
   const isOpen = el.classList.contains('open');
   document.querySelectorAll('.faculty-item.open').forEach(x => x.classList.remove('open'));
   if (!isOpen) el.classList.add('open');
+  if (window.lucide) lucide.createIcons();
+}
+
+/* ---- FACULTY TAB SWITCH (Chuyên ngành / Đại cương) ---- */
+function switchFacultyTab(tab) {
+  const specPanel = document.getElementById('facultySpecPanel');
+  const genPanel = document.getElementById('facultyGeneralPanel');
+  const specBtn = document.getElementById('tabFacultySpec');
+  const genBtn = document.getElementById('tabFacultyGeneral');
+  if (tab === 'spec') {
+    specPanel.style.display = '';
+    genPanel.style.display = 'none';
+    specBtn.classList.add('active');
+    genBtn.classList.remove('active');
+  } else {
+    specPanel.style.display = 'none';
+    genPanel.style.display = '';
+    specBtn.classList.remove('active');
+    genBtn.classList.add('active');
+    renderGeneralCourses(currentUnivId);
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+/* ---- GENERAL (ĐẠI CƯƠNG) COURSES ---- */
+function renderGeneralCourses(univId) {
+  const data = getAcadData(univId);
+  const grid = document.getElementById('generalCourseGrid');
+  if (!grid) return;
+  if (!data.generalCourses || !data.generalCourses.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;color:var(--gray-400);padding:32px 0;text-align:center;font-size:13px">Chưa có dữ liệu môn đại cương cho trường này</div>`;
+    return;
+  }
+  const catColors = {
+    'Lý luận chính trị': { bg: '#EDE9FE', color: '#7C3AED' },
+    'Toán - Khoa học':    { bg: '#EFF6FF', color: '#2563EB' },
+    'Ngoại ngữ - Kỹ năng': { bg: '#ECFDF5', color: '#059669' },
+    'Thể chất - Quốc phòng': { bg: '#FFFBEB', color: '#B45309' },
+    'Xã hội - Pháp luật': { bg: '#FEF3C7', color: '#92400E' },
+  };
+  // Chỉ tính TC có giá trị (GDTC/GDQPAN = 0, không tính TN)
+  const countableTC = data.generalCourses.reduce((s, c) => s + c.credits, 0);
+  const totalMon = data.generalCourses.length;
+
+  // Disclaimer banner
+  let html = `
+  <div style="grid-column:1/-1;display:flex;gap:10px;padding:14px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;margin-bottom:8px">
+    <i data-lucide="triangle-alert" width="16" height="16" style="color:#B45309;flex-shrink:0;margin-top:1px"></i>
+    <div style="font-size:12px;color:#92400E;line-height:1.6">
+      <strong>Dữ liệu tham khảo — dựa trên Thông tư 17/2021/TT-BGDĐT và CTĐT TDTU công bố công khai.</strong>
+      Số TC thực tế có thể khác nhau theo ngành và khóa đào tạo.
+      Kiểm tra chính xác tại <a href="https://tdtu.edu.vn" target="_blank" style="color:#B45309;font-weight:700;text-decoration:underline">tdtu.edu.vn</a> hoặc Hệ thống thông tin SV.
+    </div>
+  </div>
+  <div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:4px;padding:12px 16px;background:linear-gradient(135deg,#EDE9FE,#EFF6FF);border-radius:12px">
+    <i data-lucide="info" width="16" height="16" style="color:#6366F1;flex-shrink:0"></i>
+    <span style="font-size:12.5px;color:#4338CA;font-weight:600">Tổng cộng <strong>${totalMon} học phần đại cương</strong> — <strong>${countableTC} TC tính vào tốt nghiệp</strong> + GDTC &amp; GDQPAN bắt buộc riêng (không tính TC)</span>
+  </div>`;
+
+  data.generalCourses.forEach(c => {
+    const cat = catColors[c.category] || { bg: '#F1F5F9', color: '#475569' };
+    const isZeroTC = c.credits === 0;
+    const tcLabel = isZeroTC
+      ? `<span style="font-size:10.5px;font-weight:800;color:#B45309;background:#FEF3C7;padding:2px 8px;border-radius:99px;white-space:nowrap">Bắt buộc</span>`
+      : `<span class="gen-course-tc">${c.credits} TC</span>`;
+    const noteHtml = c.note
+      ? `<div style="font-size:10px;color:#B45309;margin-top:2px;font-style:italic">${c.note}</div>`
+      : '';
+    html += `
+    <div class="gen-course-card" style="${isZeroTC ? 'opacity:.75;border-style:dashed' : ''}">
+      <div class="gen-course-icon" style="background:${c.bg};color:${c.color}"><i data-lucide="${c.icon}" width="18" height="18"></i></div>
+      <div class="gen-course-info">
+        <div class="gen-course-name">${c.name}</div>
+        <div class="gen-course-meta"><span style="background:${cat.bg};color:${cat.color};padding:1px 7px;border-radius:99px;font-size:10px;font-weight:700">${c.category}</span> · ${c.semester}</div>
+        ${noteHtml}
+      </div>
+      ${tcLabel}
+    </div>`;
+  });
+  grid.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+}
+
+/* ---- CAMPUS FACILITIES ---- */
+function renderCampusFacilities(univId) {
+  const grid = document.getElementById('facilityGrid');
+  const sub = document.getElementById('facilitySecSub');
+  if (!grid) return;
+  const facilities = CAMPUS_FACILITIES_BY_UNIV[univId] || [];
+  if (!facilities.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;color:var(--gray-400);padding:32px 0;text-align:center;font-size:13px">Chưa có dữ liệu tiện ích nội khu cho trường này</div>`;
+    if (sub) sub.textContent = 'Thông tin tiện ích đang được cập nhật';
+    return;
+  }
+  const u = UNIVERSITIES.find(x => x.id === univId);
+  if (sub && u) sub.textContent = `Thư viện, ký túc xá, gym, hồ bơi và các tiện ích trong campus ${u.name}`;
+  grid.innerHTML = facilities.map(f => `
+    <div class="facility-card ${f.type}">
+      <div class="facility-card-top">
+        <div class="facility-icon-wrap" style="background:${f.iconBg};color:${f.iconColor}">
+          <i data-lucide="${f.icon}" width="22" height="22"></i>
+        </div>
+        <div>
+          <div class="facility-card-title">${f.name}</div>
+          <div class="facility-card-subtitle">${f.subtitle}</div>
+        </div>
+      </div>
+      <div class="facility-tags">
+        ${f.tags.map(t => `<span class="facility-tag${t.style ? ' ' + t.style : ''}">${t.label}</span>`).join('')}
+      </div>
+      <div class="facility-hours">
+        <i data-lucide="clock" width="12" height="12"></i>
+        <span class="facility-open">Giờ mở cửa:</span>
+        <span>${f.hours}</span>
+      </div>
+    </div>`).join('');
   if (window.lucide) lucide.createIcons();
 }
 

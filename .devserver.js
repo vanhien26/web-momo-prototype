@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = __dirname;
+const ROOT = path.resolve(__dirname);
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 const MIME = {
@@ -58,10 +58,11 @@ function applyRewrite(pathname) {
 }
 
 function safeJoin(root, reqPath) {
-  const decoded = decodeURIComponent(reqPath.split('?')[0]);
-  const resolved = path.normalize(path.join(root, decoded));
-  if (!resolved.startsWith(root)) return null;
-  return resolved;
+  const cleanPath = decodeURIComponent(reqPath.split('?')[0]).replace(/^\/+/, '');
+  const rRoot = fs.realpathSync(root);
+  const rResolved = path.resolve(rRoot, cleanPath);
+  if (!rResolved.startsWith(rRoot)) return null;
+  return rResolved;
 }
 
 function send(res, status, body, headers = {}) {

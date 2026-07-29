@@ -64,6 +64,7 @@ const PROTOTYPES = [
     name: 'Hãng Xe Máy',
     category: 'Platform',
     ownerGroup: 'Tiện ích Giao Thông',
+    navHidden: true,
     maturity: 'Hub',
     description: 'Hub hãng xe máy: 8 thương hiệu chính tại VN, dòng xe chủ lực, chi phí BH xe máy bắt buộc + tự nguyện, mạng lưới garage/đại lý, FAQ theo từng hãng.',
     jtbd: 'Tra cứu thông tin xe máy và mua BH xe máy nhanh theo đúng dòng xe đang sở hữu',
@@ -149,6 +150,16 @@ const PROTOTYPES = [
     northStar: 'ePass link rate + auto-topup setup rate',
     src: 'demos/epass.html',
     address: 'web-momo-prototype.vercel.app/epass',
+    tools: [
+      {
+        id: 'tinh-phi-etc',
+        name: 'Tính Phí ETC Theo Tuyến',
+        category: 'Child Page',
+        src: 'demos/tinh-phi-etc.html',
+        address: 'web-momo-prototype.vercel.app/epass/tinh-phi-etc',
+        description: 'Route-based ETC toll calculator: chọn tuyến (HCM→ĐL, HCM→PT, HN→HP…), phân loại xe, hiển thị từng trạm + phí, tổng ETC, so sánh với số dư ePass, CTA nạp tiền. Road visualization SVG theo tuyến.',
+      },
+    ],
   },
   {
     id: 'ota',
@@ -232,7 +243,7 @@ const PROTOTYPES = [
     hypothesis: 'Ticket stub card design tích hợp cashback benefit ngay trên poster tăng intent mua vé so với card thông thường.',
     value: 'SEO entry point cho toàn bộ Cinema use case — organic traffic 1M/quý. PLG hook: cashback gắn mỗi film card.',
     gate: 'Film card CTR, genre filter usage, coming soon notify rate, cinema row click.',
-    src: 'demos/cinema.html',
+    src: '/cinema',
     address: 'web-momo-prototype.vercel.app/cinema',
     tools: [
       {
@@ -248,7 +259,7 @@ const PROTOTYPES = [
         hypothesis: 'Đặt vé theo chuỗi popup ngắn giảm ma sát so với campaign flow và giúp user đi thẳng tới checkout.',
         value: 'Trang detail bám intent đặt vé, dẫn người dùng từ film overview tới seat, snack và payment trong một luồng rõ ràng.',
         gate: 'Đo showtime CTR, seat selection, snack attach rate và payment completion.',
-        src: 'demos/cinema-film-detail.html',
+        src: '/cinema/supergirl-24851',
         address: 'web-momo-prototype.vercel.app/cinema/supergirl-24851',
       },
       {
@@ -264,7 +275,7 @@ const PROTOTYPES = [
         hypothesis: 'Hub listing với filter đầy đủ giúp user khám phá series nhanh hơn, tăng tỉ lệ click vào detail page và conversion sang subscription.',
         value: 'SEO landing cho các truy vấn "xem phim bộ online", "series hay nhất 2025" — capture organic traffic top-of-funnel.',
         gate: 'Filter usage rate, detail page CTR, avg session depth.',
-        src: 'demos/cinema-series-list.html',
+        src: '/cinema/series',
         address: 'web-momo-prototype.vercel.app/cinema/series',
       },
       {
@@ -280,7 +291,7 @@ const PROTOTYPES = [
         hypothesis: 'Ranking table với filter quốc gia capture search intent "top phim hàn quốc", "phim mỹ hay nhất".',
         value: 'SEO landing cho truy vấn xếp hạng phim theo quốc gia — high-intent discovery traffic.',
         gate: 'Filter usage, detail CTR, booking conversion.',
-        src: 'demos/cinema-top-phim.html',
+        src: '/cinema/top-phim',
         address: 'web-momo-prototype.vercel.app/cinema/top-phim',
       },
       {
@@ -296,8 +307,21 @@ const PROTOTYPES = [
         hypothesis: 'Series page với TMDB data + streaming CTA tạo funnel mới từ organic traffic đến subscription payment qua MoMo.',
         value: 'Mở rộng MoMo Cinema từ theatrical sang streaming — capture user đang tìm kiếm series để tạo thêm payment moment.',
         gate: 'Episode click-through rate, platform CTA CTR, MoMo subscription conversion.',
-        src: 'demos/cinema-series.html',
+        src: '/cinema/series/the-last-of-us-100088',
         address: 'web-momo-prototype.vercel.app/cinema/series/the-last-of-us-100088',
+      },
+      {
+        id: 'cinema-rap',
+        name: 'Rạp Chiếu Phim',
+        category: 'Platform',
+        ownerGroup: 'Cell Team',
+        maturity: 'Listing Page',
+        description: 'Trang listing /cinema/rap — 11 chuỗi rạp đối tác MoMo, logo + stats, click vào chain → /cinema/rap/{slug}.',
+        jtbd: 'Khám phá và chọn chuỗi rạp yêu thích để xem lịch chiếu và đặt vé',
+        northStar: 'Chain card click → Chain page → Theater → Showtime → Ticket purchase',
+        loop: 'Rạp listing → Chain page → Theater list → Theater detail → Đặt vé',
+        src: '/cinema/rap',
+        address: 'web-momo-prototype.vercel.app/cinema/rap',
       },
       {
         id: 'cinema-chain',
@@ -305,15 +329,15 @@ const PROTOTYPES = [
         category: 'Chain Page',
         ownerGroup: 'Cell Team',
         maturity: 'Detail Page',
-        description: 'Trang hệ thống rạp (e.g. /cinema/cgv) — brand hero với màu riêng, lịch chiếu phim, danh sách rạp theo thành phố, định dạng chiếu, membership block.',
+        description: 'Trang hệ thống rạp (e.g. /cinema/rap/cgv) — brand hero với màu riêng, lịch chiếu phim, danh sách rạp theo thành phố, định dạng chiếu, membership block.',
         jtbd: 'Khám phá toàn bộ rạp trong một chuỗi, so sánh định dạng, chọn ngày và tìm suất chiếu phù hợp',
         northStar: 'Theater card click → Theater detail page',
         loop: 'Chain landing → Film schedule → Theater list → Theater detail',
         hypothesis: 'Brand-colored chain page tạo trust và giúp user lọc nhanh theo chuỗi rạp ưa thích thay vì scroll toàn bộ rạp.',
         value: 'SEO target cho branded query "rạp CGV", "lịch chiếu Lotte Cinema" — 11 chains × N thành phố.',
         gate: 'Theater card CTR, date strip usage, city tab filter rate.',
-        src: 'demos/cinema-chain.html',
-        address: 'web-momo-prototype.vercel.app/cinema/cgv',
+        src: '/cinema/rap/cgv',
+        address: 'web-momo-prototype.vercel.app/cinema/rap/cgv',
       },
       {
         id: 'cinema-theater',
@@ -328,8 +352,8 @@ const PROTOTYPES = [
         hypothesis: 'Format tabs per film (2D / 3D / IMAX) trên theater page giảm click so với filter riêng biệt.',
         value: 'SEO target "CGV Crescent Mall lịch chiếu", LocalBusiness schema tăng rich result trên Google Maps.',
         gate: 'Film card CTR, showtime pill click, format tab switch rate, nearby theater click.',
-        src: 'demos/cinema-theater.html',
-        address: 'web-momo-prototype.vercel.app/cinema/cgv/cgv-crescent-mall',
+        src: '/cinema/rap/cgv/cgv-crescent-mall',
+        address: 'web-momo-prototype.vercel.app/cinema/rap/cgv/cgv-crescent-mall',
       },
       {
         id: 'cinema-genres',
@@ -340,24 +364,8 @@ const PROTOTYPES = [
         description: 'Trang liệt kê tất cả thể loại phim (/cinema/genres) — featured genres, sort controls, genre grid với poster strip, count badges, sub-genre chips.',
         jtbd: 'Browse tất cả thể loại phim, so sánh nhanh và chọn thể loại phù hợp',
         northStar: 'Genre card click → genre detail page → film card → ticket purchase',
-        src: 'demos/cinema-genres.html',
+        src: '/cinema/genres',
         address: 'web-momo-prototype.vercel.app/cinema/genres',
-      },
-      {
-        id: 'cinema-director',
-        name: 'Đạo diễn',
-        category: 'Director Page',
-        ownerGroup: 'Cell Team',
-        maturity: 'Detail Page',
-        description: 'Trang profile đạo diễn (e.g. /cinema/director/christopher-nolan) — avatar, bio, stats, awards, filmography tabs: Đang chiếu / Sắp chiếu / Đã chiếu.',
-        jtbd: 'Tìm phim của đạo diễn yêu thích, xem lịch chiếu và đặt vé ngay',
-        northStar: 'Film card click → ticket purchase',
-        loop: 'Search đạo diễn → Director page → Film grid → Film detail → Đặt vé',
-        hypothesis: 'Trang đạo diễn tập hợp toàn bộ phim đang chiếu của một tên tuổi giúp fan movie không bỏ sót và tăng CTR sang film detail.',
-        value: 'SEO target branded query "phim của Christopher Nolan", "phim Trấn Thành đang chiếu" — high-intent filmmaker search.',
-        gate: 'Tab switch rate, film card CTR, ticket CTA click per director.',
-        src: 'demos/cinema-director.html',
-        address: 'web-momo-prototype.vercel.app/cinema/director/christopher-nolan',
       },
       {
         id: 'cinema-actor',
@@ -372,7 +380,7 @@ const PROTOTYPES = [
         hypothesis: '"Known For" poster strip ngay dưới hero giúp user nhận ra diễn viên đúng và tăng trust trước khi scroll filmography.',
         value: 'SEO target "phim Trấn Thành 2025", "Kaity Nguyễn đang chiếu" — fan-driven search intent.',
         gate: 'Known For click rate, tab switch rate, film card CTR, role badge hover.',
-        src: 'demos/cinema-actor.html',
+        src: '/cinema/actor/tran-thanh',
         address: 'web-momo-prototype.vercel.app/cinema/actor/tran-thanh',
       },
       {
@@ -384,7 +392,7 @@ const PROTOTYPES = [
         description: 'Trang chi tiết diễn viên/đạo diễn — map đầy đủ TMDB API fields (biography, credits, images). Robert Pattinson làm demo subject.',
         jtbd: 'Xem profile diễn viên, filmography và ảnh trước khi chọn phim',
         northStar: 'Film card click → Film detail → Đặt vé',
-        src: 'demos/cinema-person.html',
+        src: '/cinema/person/robert-pattinson',
         address: 'web-momo-prototype.vercel.app/cinema/person/robert-pattinson',
       },
       {
@@ -400,37 +408,8 @@ const PROTOTYPES = [
         hypothesis: 'Listing page tạo SEO entry point cho query "diễn viên Việt Nam 2025", "phim Scarlett Johansson đang chiếu".',
         value: 'SEO: person-discovery queries, cross-link với Film detail và Director pages.',
         gate: 'Person card CTR, filter usage.',
-        src: 'demos/cinema-person-list.html',
+        src: '/cinema/person',
         address: 'web-momo-prototype.vercel.app/cinema/person',
-      },
-      {
-        id: 'cinema-genre',
-        name: 'Thể loại phim (legacy)',
-        category: 'Genre Page',
-        ownerGroup: 'Cell Team',
-        maturity: 'Category Page',
-        description: 'Trang phim theo thể loại (e.g. /cinema/genre/kinh-di) — header genre, filter format + sort, tabs Đang chiếu / Sắp chiếu / Tất cả, film grid + MoMo Score, Related genres.',
-        jtbd: 'Browse phim trong thể loại yêu thích, lọc format và chọn suất chiếu',
-        northStar: 'Film card click → ticket purchase',
-        loop: 'Search thể loại → Genre page → Filter → Film card → Film detail → Đặt vé',
-        hypothesis: 'Genre landing page với filter format và tab trạng thái (đang/sắp/tất cả) phục vụ nhóm user intent cao hơn homepage genre chip — tăng funnel depth.',
-        value: 'SEO target "phim kinh dị đang chiếu", "phim hoạt hình 2025" — 8 genres × intent query volume.',
-        gate: 'Format filter usage, tab switch rate, Related genre click, film card CTR.',
-        src: 'demos/cinema-genre.html',
-        address: 'web-momo-prototype.vercel.app/cinema/genre/kinh-di',
-      },
-      {
-        id: 'cinema-genres-detail',
-        name: 'Thể loại - Detail',
-        category: 'Platform',
-        ownerGroup: 'Cell Team',
-        maturity: 'Category Page',
-        description: 'Trang phim theo thể loại (/cinema/genres/:slug) — header genre, filter format + sort, tabs Đang chiếu / Sắp chiếu / Tất cả, film grid + MoMo Score, Related genres.',
-        jtbd: 'Browse phim trong thể loại yêu thích, lọc format và chọn suất chiếu',
-        northStar: 'Film card click → ticket purchase',
-        loop: 'Genres index → Genre detail → Filter → Film card → Film detail → Đặt vé',
-        src: 'demos/cinema-genres-detail.html',
-        address: 'web-momo-prototype.vercel.app/cinema/genres/kinh-di',
       },
       {
         id: 'cinema-now-showing',
@@ -445,7 +424,7 @@ const PROTOTYPES = [
         hypothesis: 'Standalone URL /cinema/dang-chieu có thể rank cho query volume 200K+/tháng, hiện không có URL riêng để crawl.',
         value: 'SEO target "phim đang chiếu", "phim đang chiếu hôm nay" — query volume cao nhất trong cinema cluster.',
         gate: 'Organic traffic, genre filter usage, sort usage, film card CTR.',
-        src: 'demos/cinema-now-showing.html',
+        src: '/cinema/dang-chieu',
         address: 'web-momo-prototype.vercel.app/cinema/dang-chieu',
       },
       {
@@ -461,7 +440,7 @@ const PROTOTYPES = [
         hypothesis: 'Notify flow cho phim sắp chiếu tạo vòng lặp engagement (user quay lại khi nhận thông báo) — differentiated từ đối thủ chỉ list static.',
         value: 'SEO target "phim sắp chiếu", "phim sắp chiếu 2026" — intent cao, ít cạnh tranh hơn "phim đang chiếu".',
         gate: 'Notify registration rate, presale click, countdown interaction, most wanted list click.',
-        src: 'demos/cinema-coming-soon.html',
+        src: '/cinema/sap-chieu',
         address: 'web-momo-prototype.vercel.app/cinema/sap-chieu',
       },
     ],
@@ -627,7 +606,7 @@ const PROTOTYPES = [
         id: 'gia-xang',
         name: 'Giá Xăng Dầu Hôm Nay',
         category: 'Child Page',
-        src: 'demos/gia-xang.html',
+        src: '/tien-ich-giao-thong/gia-xang',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/gia-xang',
         description: 'Spoke SEO: bảng giá Vùng 1/Vùng 2, lịch sử 10 kỳ điều hành, trend chart 90 ngày, công cụ tính tiền đổ xăng và countdown kỳ điều hành tiếp theo.',
       },
@@ -651,7 +630,7 @@ const PROTOTYPES = [
         id: 'bai-do-xe',
         name: 'Tìm Bãi Đậu Xe',
         category: 'Child Page',
-        src: 'demos/bai-do-xe.html',
+        src: '/tien-ich-giao-thong/bai-do-xe',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/bai-do-xe',
         description: 'Parking finder: SVG map tối với P-marker pulse theo trạng thái (còn/ít/đầy), split list + map, filter xe máy/ô tô/MoMo-only, detail panel phí + CTA. Đối tác: VETC, eParking, iParking. Bảng giá theo khu vực + FAQ.',
       },
@@ -667,31 +646,15 @@ const PROTOTYPES = [
         id: 'dang-kiem',
         name: 'Đặt Lịch Đăng Kiểm',
         category: 'Platform',
-        src: 'demos/dang-kiem.html',
+        src: '/tien-ich-giao-thong/dang-kiem',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/dang-kiem',
         description: '4-step booking wizard: nhập thông tin xe → arc countdown tính hạn/chu kỳ → chọn trung tâm đăng kiểm (Leaflet map) → chọn ngày giờ → thanh toán lệ phí qua MoMo.',
-      },
-      {
-        id: 'tra-cuu-dang-kiem',
-        name: 'Tra Cứu Đăng Kiểm',
-        category: 'Platform',
-        src: 'demos/tra-cuu-dang-kiem.html',
-        address: 'web-momo-prototype.vercel.app/tra-cuu-dang-kiem',
-        description: 'Section widget tra cứu hạn đăng kiểm: chọn loại xe, nhập năm SX + hạn hiện tại → arc countdown tính ngày còn lại, chu kỳ, hạn kế tiếp và lệ phí. Self-contained, embeddable trong vehicle-hub.',
-      },
-      {
-        id: 'tinh-phi-etc',
-        name: 'Tính Phí ETC Theo Tuyến',
-        category: 'Child Page',
-        src: 'demos/tinh-phi-etc.html',
-        address: 'web-momo-prototype.vercel.app/epass/tinh-phi-etc',
-        description: 'Route-based ETC toll calculator: chọn tuyến (HCM→ĐL, HCM→PT, HN→HP…), phân loại xe, hiển thị từng trạm + phí, tổng ETC, so sánh với số dư ePass, CTA nạp tiền. Road visualization SVG theo tuyến.',
       },
       {
         id: 'trip-planner',
         name: 'Chuẩn Bị Chuyến Đi A→B',
         category: 'Child Page',
-        src: 'demos/trip-planner.html',
+        src: '/tien-ich-giao-thong/chuyen-di',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/chuyen-di',
         description: 'Trip cost calculator: chọn tuyến (6 tuyến phổ biến HCM/HN), loại xe (xe máy / ô tô xăng / ô tô điện), tính chi phí nhiên liệu + phí ETC, checklist trước khi xuất phát, điểm dừng dọc đường. Nhận ?route= param từ vehicle-hub.',
       },
@@ -700,25 +663,15 @@ const PROTOTYPES = [
         id: 'bao-duong-xe',
         name: 'Lịch Bảo Dưỡng Xe',
         category: 'Child Page',
-        src: 'demos/bao-duong-xe.html',
+        src: '/tien-ich-giao-thong/bao-duong',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/bao-duong',
         description: 'PLG utility tool: nhập km hiện tại + hãng/model xe → tính toàn bộ chu kỳ bảo dưỡng (dầu máy, bugi, lọc gió, đai cam, má phanh, lốp). Health score, km timeline signature, item cards status. Hỗ trợ xe máy, ô tô xăng và VinFast EV.',
-        tools: [
-          {
-            id: 'bao-duong-model',
-            name: 'pSEO - Bảo dưỡng theo Model',
-            category: 'Child Page',
-            src: 'demos/bao-duong-model.html?brand=honda&model=airblade-125',
-            address: 'web-momo-prototype.vercel.app/bao-duong/honda/airblade-125',
-            description: 'pSEO template: /bao-duong/:brand/:model - guide bảo dưỡng theo từng model xe (10 model từ Honda, Yamaha, Toyota, Hyundai, VinFast). FAQ Schema, cost estimate, mini calculator, related models. Mỗi URL = 1 trang editorial targeting long-tail keyword.',
-          },
-        ],
       },
       {
         id: 'hang-xe',
         name: 'Hãng Xe · Chi tiết',
         category: 'Child Page',
-        src: 'demos/hang-xe.html',
+        src: '/tien-ich-giao-thong/hang-xe',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/hang-xe',
         description: 'Hub hãng xe: 10 thương hiệu phổ biến (Toyota, Honda, VinFast…), chi tiết từng hãng gồm bảo hiểm thân vỏ, ước tính chi phí vận hành hàng tháng, nhà bảo hiểm phù hợp nhất và tình huống bồi thường hay gặp.',
       },
@@ -1101,6 +1054,17 @@ function buildLabActivityDashboard() { return ''; /*
       </div>
     </section>`; */ }
 const PLG_OWNER_ORDER = ['Student Pass', 'Tiện ích Giao Thông', 'Cell Team', 'Web Platform'];
+const PLG_OWNER_COLOR = {
+  'Student Pass':        '#EB2F96',
+  'Tiện ích Giao Thông': '#3B82F6',
+  'Cell Team':           '#8B5CF6',
+  'Web Platform':        '#F59E0B',
+};
+const MOSPARK_CLUSTER_COLOR = {
+  'GenAI':    '#7C3AED',
+  'Database': '#0EA5E9',
+  'Modules':  '#F472B6',
+};
 const MOSPARK_CLUSTER_ORDER = ['GenAI', 'Database', 'Modules'];
 const MOSPARK_CLUSTER_ITEMS = {
   GenAI:    ['orchestrator', 'genai-image', 'agentic-hub'],
@@ -1126,7 +1090,7 @@ const GROUP_ITEM_ORDER = {
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
-  Platform: ['student-hub', 'vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-genres-detail', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
+  Platform: ['student-hub', 'vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-rap', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
   Other: [],
 };
 
@@ -1353,7 +1317,7 @@ function renderNav() {
   nav.innerHTML = pinnedHtml + GROUP_ORDER.map(groupName => {
     const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
     const groupItems = PROTOTYPES
-      .filter(p => p.category === groupName && !p.pinned)
+      .filter(p => p.category === groupName && !p.pinned && !p.navHidden)
       .slice()
       .sort((a, b) => {
         const ia = desiredOrder.indexOf(a.id);
@@ -1406,8 +1370,14 @@ function renderNav() {
           const ownerItems = groupItems.filter(item => item.ownerGroup === owner);
           if (!ownerItems.length) return '';
           const isCollapsed = collapsedOwnerGroups.has(owner);
+          const accentColor = PLG_OWNER_COLOR[owner] || '#6b7280';
           return `<div class="proto-owner-group owner-group--collapsible${isCollapsed ? ' owner-group--collapsed' : ''}">
-            <p class="proto-owner-label proto-owner-label--toggle" data-owner-toggle="${owner}">${owner}<span class="owner-caret${isCollapsed ? '' : ' open'}">›</span></p>
+            <button class="proto-owner-toggle" data-owner-toggle="${owner}">
+              <span class="owner-accent" style="background:${accentColor}"></span>
+              <span class="owner-toggle-name">${owner}</span>
+              <span class="owner-toggle-count">${ownerItems.length}</span>
+              <span class="owner-caret${isCollapsed ? '' : ' open'}">›</span>
+            </button>
             <div class="owner-group-items">
               ${ownerItems.map(item => renderNavItem(item, groupItems.indexOf(item))).join('')}
             </div>
@@ -1417,8 +1387,13 @@ function renderNav() {
         ? MOSPARK_CLUSTER_ORDER.map(cluster => {
             const clusterItems = groupItems.filter(item => getMoSparkCluster(item.id) === cluster);
             if (!clusterItems.length) return '';
+            const accentColor = MOSPARK_CLUSTER_COLOR[cluster] || '#6b7280';
             return `<div class="proto-owner-group proto-mospark-cluster cluster-${cluster.toLowerCase()}">
-              <p class="proto-owner-label">${cluster}</p>
+              <div class="proto-owner-toggle" style="cursor:default">
+                <span class="owner-accent" style="background:${accentColor}"></span>
+                <span class="owner-toggle-name">${cluster}</span>
+                <span class="owner-toggle-count">${clusterItems.length}</span>
+              </div>
               ${clusterItems.map((item, index) => renderNavItem(item, index)).join('')}
             </div>`;
           }).join('')
@@ -1542,7 +1517,7 @@ function buildLabDirectory() {
   const sections = GROUP_ORDER.map(groupName => {
     const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
     const groupItems = PROTOTYPES
-      .filter(p => p.category === groupName && !p.pinned)
+      .filter(p => p.category === groupName && !p.pinned && !p.navHidden)
       .slice()
       .sort((a, b) => {
         const ia = desiredOrder.indexOf(a.id), ib = desiredOrder.indexOf(b.id);

@@ -42,6 +42,11 @@
       `<button class="nav-link${l.id === activeTab ? ' on' : ''}" onclick="location.href='${l.href}'">${l.label}</button>`
     ).join('');
 
+    // Build mobile drawer items (all nav links)
+    const mobileMenuHtml = NAV_LINKS.map(l =>
+      `<a class="mob-menu-item${l.id === activeTab ? ' on' : ''}" href="${l.href}">${l.label}</a>`
+    ).join('');
+
     // Build nav HTML
     const navHtml = `
 <nav class="site-nav" id="cinemaNav">
@@ -61,27 +66,24 @@
       <input type="text" placeholder="Tìm phim, rạp..." autocomplete="off">
     </div>
     <div class="nav-right"></div>
+    <button class="nav-hamburger" id="cinemaHamburger" aria-label="Menu" onclick="cinemaOpenMenu()">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-</nav>`;
-
-    // Build bottom nav HTML
-    const bnavHtml = `
-<nav class="mobile-bnav" id="cinemaBnav">
-  ${BNAV_TABS.map(t =>
-    `<a class="mbn-item${t.id === activeTab ? ' on' : ''}" href="${t.href}">${BNAV_ICONS[t.id]}<span>${t.label}</span></a>`
-  ).join('')}
-</nav>`;
+</nav>
+<div class="mob-menu-overlay" id="cinemaMobOverlay" onclick="cinemaCloseMenu()"></div>
+<div class="mob-menu" id="cinemaMobMenu">
+  <div class="mob-menu-hd">
+    <span class="mob-menu-hd-title">MoMo Cinema</span>
+    <button class="mob-menu-close" onclick="cinemaCloseMenu()">✕</button>
+  </div>
+  <div class="mob-menu-body">
+    ${mobileMenuHtml}
+  </div>
+</div>`;
 
     // Insert nav at top of body
     document.body.insertAdjacentHTML('afterbegin', navHtml);
-
-    // Insert bottom nav at end of body (before toast)
-    const toast = document.getElementById('toastEl');
-    if (toast) {
-      toast.insertAdjacentHTML('beforebegin', bnavHtml);
-    } else {
-      document.body.insertAdjacentHTML('beforeend', bnavHtml);
-    }
 
     // Init lucide icons if available
     if (window.lucide && window.lucide.createIcons) {
@@ -89,19 +91,18 @@
     }
   };
 
-  // Inject ONLY the mobile bottom nav (for pages with their own desktop nav)
-  window.injectCinemaBnav = function(activeTab) {
-    const bnavHtml = `
-<nav class="mobile-bnav" id="cinemaBnav">
-  ${BNAV_TABS.map(t =>
-    `<a class="mbn-item${t.id === activeTab ? ' on' : ''}" href="${t.href}">${BNAV_ICONS[t.id]}<span>${t.label}</span></a>`
-  ).join('')}
-</nav>`;
-    const toast = document.getElementById('toastEl');
-    if (toast) {
-      toast.insertAdjacentHTML('beforebegin', bnavHtml);
-    } else {
-      document.body.insertAdjacentHTML('beforeend', bnavHtml);
-    }
+
+  window.cinemaOpenMenu = function() {
+    document.getElementById('cinemaMobMenu').classList.add('open');
+    document.getElementById('cinemaMobOverlay').classList.add('open');
+    document.getElementById('cinemaHamburger').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.cinemaCloseMenu = function() {
+    document.getElementById('cinemaMobMenu').classList.remove('open');
+    document.getElementById('cinemaMobOverlay').classList.remove('open');
+    document.getElementById('cinemaHamburger').classList.remove('open');
+    document.body.style.overflow = '';
   };
 })();

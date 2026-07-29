@@ -97,28 +97,90 @@ button { font-family: inherit; }
 }
 .nav-search input::placeholder { color: var(--gray-400); }
 
-/* ── MOBILE BOTTOM NAV ───────────────────── */
-.mobile-bnav { display: none; }
+/* ── HAMBURGER + MOBILE MENU ──────────────── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; padding: 6px; margin-left: auto;
+  background: none; border: none; cursor: pointer; flex-shrink: 0;
+}
+.nav-hamburger span {
+  display: block; width: 18px; height: 2px;
+  background: rgba(255,255,255,.7); border-radius: 2px;
+  transition: transform .22s, opacity .22s;
+  transform-origin: center;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile drawer — slides from right */
+.mob-menu-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.55); z-index: 800; backdrop-filter: blur(2px);
+}
+.mob-menu-overlay.open { display: block; }
+.mob-menu {
+  position: fixed; top: 0; right: 0; width: 260px; height: 100dvh;
+  background: #111; z-index: 900;
+  transform: translateX(100%); transition: transform .28s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto; display: flex; flex-direction: column;
+  border-left: 1px solid rgba(255,255,255,.08);
+}
+.mob-menu.open { transform: translateX(0); }
+.mob-menu-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.08); flex-shrink: 0;
+}
+.mob-menu-hd-title { font-size: 13px; font-weight: 800; color: rgba(255,255,255,.5); }
+.mob-menu-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.12); background: transparent;
+  display: grid; place-items: center; color: rgba(255,255,255,.5); cursor: pointer;
+  font-size: 16px; transition: .15s;
+}
+.mob-menu-close:hover { background: rgba(255,255,255,.08); color: #fff; }
+.mob-menu-body { flex: 1; padding: 8px 0; }
+.mob-menu-item {
+  display: block; padding: 12px 20px;
+  font-size: 14px; font-weight: 600; color: rgba(255,255,255,.55);
+  text-decoration: none; transition: color .15s, background .15s;
+}
+.mob-menu-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+.mob-menu-item.on { color: var(--pink-500, #EB2F96); }
+
 @media(max-width:768px) {
-  .mobile-bnav {
-    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-    background: #000; border-top: 1px solid #2A2A2A;
-    padding: 6px 0 env(safe-area-inset-bottom,8px);
-    z-index: 200; box-shadow: 0 -1px 8px rgba(0,0,0,.3);
-  }
-  .mbn-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    text-decoration: none; color: rgba(255,255,255,.4);
-    font-size: 10px; font-weight: 700; padding: 4px 0; transition: .15s;
-  }
-  .mbn-item.on { color: var(--pink-500); }
-  .mbn-item svg { display: block; }
-  body { padding-bottom: 72px; }
   .nav-lab-link { display: none !important; }
   .nav-links { display: none; }
   .nav-search { display: none; }
   .nav-right { display: none; }
+  .nav-hamburger { display: flex; }
 }
+.nav-hamburger span {
+  display: block; width: 18px; height: 2px;
+  background: rgba(255,255,255,.7); border-radius: 2px;
+  transition: transform .22s, opacity .22s;
+  transform-origin: center;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile dropdown menu */
+.mob-menu {
+  display: none;
+  flex-direction: column;
+  background: #111; border-top: 1px solid rgba(255,255,255,.08);
+  padding: 8px 0;
+}
+.mob-menu.open { display: flex; }
+.mob-menu-item {
+  padding: 12px 20px;
+  font-size: 14px; font-weight: 600; color: rgba(255,255,255,.6);
+  text-decoration: none; transition: color .15s, background .15s;
+}
+.mob-menu-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+.mob-menu-item.on { color: var(--pink-500, #EB2F96); }
 
 /* ── FILM CARD ───────────────────────────── */
 .film-card {

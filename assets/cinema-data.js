@@ -119,6 +119,98 @@ const CINEMAS = [
         { fmt:'3D Phụ Đề',     tag:'3d', price:95000, times:[{t:'13:50'},{t:'17:20',few:true},{t:'20:00'}] },
       ]},
     ]},
+  { name:'CGV Aeon Mall Bình Tân', addr:'1 Đường Số 17A, Bình Tân', dist:'9.4 km', totalFilms:11, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Spider-Man: Brand New Day', dur:'148 phút', age:'T13', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d',   price:85000,  times:[{t:'09:00'},{t:'11:30'},{t:'14:00'},{t:'17:00'},{t:'20:00'}] },
+        { fmt:'3D Phụ Đề',     tag:'3d',   price:100000, times:[{t:'10:15'},{t:'13:00'},{t:'16:00'},{t:'19:00'},{t:'21:45'}] },
+        { fmt:'IMAX',          tag:'imax', price:145000, times:[{t:'11:00'},{t:'14:30'},{t:'18:00'},{t:'21:00'}] },
+      ]},
+      { film:'Toy Story 5', dur:'100 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:80000, times:[{t:'09:30'},{t:'12:00'},{t:'15:00'},{t:'17:30'},{t:'20:30'}] },
+        { fmt:'3D Lồng Tiếng', tag:'3d', price:95000, times:[{t:'10:00'},{t:'13:15'},{t:'16:30'},{t:'19:30'}] },
+      ]},
+      { film:'Doraemon Movie 45', dur:'104 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:80000, times:[{t:'08:30'},{t:'10:45'},{t:'13:00'},{t:'15:30'},{t:'18:00'},{t:'20:45'}] },
+      ]},
+    ]},
+  { name:'CGV Vincom Thủ Đức', addr:'216 Võ Văn Ngân, TP Thủ Đức', dist:'10.1 km', totalFilms:10, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Supergirl', dur:'130 phút', age:'T13', formats:[
+        { fmt:'2D Phụ Đề',     tag:'2d',   price:85000,  times:[{t:'09:30'},{t:'12:00'},{t:'15:00'},{t:'18:00'},{t:'21:00'}] },
+        { fmt:'3D Phụ Đề',     tag:'3d',   price:100000, times:[{t:'10:30'},{t:'13:30'},{t:'16:30'},{t:'19:30'}] },
+      ]},
+      { film:'Toy Story 5', dur:'100 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:80000, times:[{t:'09:00'},{t:'11:15'},{t:'13:45'},{t:'16:15'},{t:'18:45'},{t:'21:15'}] },
+        { fmt:'3D Lồng Tiếng', tag:'3d', price:95000, times:[{t:'10:00'},{t:'12:30'},{t:'15:00'},{t:'17:30'},{t:'20:00'}] },
+      ]},
+      { film:'Lầu Chú Hỏa', dur:'105 phút', age:'T16', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:80000, times:[{t:'10:00'},{t:'13:00'},{t:'16:00'},{t:'19:00','few':true},{t:'21:30'}] },
+      ]},
+    ]},
+  { name:'CGV Crescent Mall', addr:'101 Tôn Dật Tiên, Quận 7', dist:'5.6 km', totalFilms:9, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Toy Story 5', dur:'100 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d',   price:80000,  times:[{t:'09:15'},{t:'11:30'},{t:'14:00'},{t:'16:30'},{t:'19:00'},{t:'21:30'}] },
+        { fmt:'IMAX',          tag:'imax', price:135000, times:[{t:'10:00'},{t:'13:00'},{t:'16:00'},{t:'19:30'}] },
+      ]},
+      { film:'Spider-Man: Brand New Day', dur:'148 phút', age:'T13', formats:[
+        { fmt:'2D Phụ Đề',     tag:'2d',   price:85000,  times:[{t:'09:45'},{t:'12:30'},{t:'15:30'},{t:'18:30'},{t:'21:15'}] },
+        { fmt:'4DX',           tag:'4dx',  price:150000, times:[{t:'11:00'},{t:'14:00'},{t:'17:15'},{t:'20:30'}] },
+      ]},
+    ]},
+  { name:'CGV Giga Mall Thủ Đức', addr:'240-242 Hương Lộ 2, TP Thủ Đức', dist:'13.2 km', totalFilms:8, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Doraemon Movie 45', dur:'104 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:75000, times:[{t:'09:00'},{t:'11:00'},{t:'13:00'},{t:'15:30'},{t:'18:00'},{t:'20:30'}] },
+        { fmt:'3D Lồng Tiếng', tag:'3d', price:90000, times:[{t:'10:00'},{t:'12:30'},{t:'14:30'},{t:'17:00'},{t:'19:30'}] },
+      ]},
+      { film:'Mesdames Thanh Sắc', dur:'110 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:75000, times:[{t:'10:30'},{t:'13:00'},{t:'15:30'},{t:'18:30'},{t:'21:00'}] },
+      ]},
+      { film:'Supergirl', dur:'130 phút', age:'T13', formats:[
+        { fmt:'2D Phụ Đề', tag:'2d', price:80000, times:[{t:'09:30'},{t:'12:00'},{t:'16:00'},{t:'20:00'}] },
+        { fmt:'3D Phụ Đề', tag:'3d', price:95000, times:[{t:'11:00'},{t:'14:00'},{t:'17:30'},{t:'21:00',few:true}] },
+      ]},
+    ]},
+  { name:'CGV Vincom Mega Mall Grand Park', addr:'18B Nguyễn Xiển, TP Thủ Đức', dist:'16.8 km', totalFilms:10, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Spider-Man: Brand New Day', dur:'148 phút', age:'T13', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d',   price:85000,  times:[{t:'09:00'},{t:'12:00'},{t:'15:00'},{t:'18:00'},{t:'21:00'}] },
+        { fmt:'3D Phụ Đề',     tag:'3d',   price:100000, times:[{t:'10:30'},{t:'13:30'},{t:'16:30'},{t:'19:30'}] },
+        { fmt:'IMAX',          tag:'imax', price:145000, times:[{t:'11:00'},{t:'14:00'},{t:'17:00'},{t:'20:00'}] },
+        { fmt:'4DX',           tag:'4dx',  price:150000, times:[{t:'11:30'},{t:'14:30',few:true},{t:'17:30'},{t:'20:30'}] },
+      ]},
+      { film:'Toy Story 5', dur:'100 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:80000, times:[{t:'09:30'},{t:'11:45'},{t:'14:15'},{t:'16:45'},{t:'19:15'},{t:'21:30'}] },
+      ]},
+    ]},
+  { name:'CGV Pearl Plaza', addr:'561A Điện Biên Phủ, Bình Thạnh', dist:'4.3 km', totalFilms:9, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Supergirl', dur:'130 phút', age:'T13', formats:[
+        { fmt:'2D Phụ Đề', tag:'2d',   price:85000,  times:[{t:'09:45'},{t:'12:15'},{t:'15:00'},{t:'17:45'},{t:'20:30'}] },
+        { fmt:'3D Phụ Đề', tag:'3d',   price:100000, times:[{t:'10:30'},{t:'13:15'},{t:'16:00'},{t:'18:45'},{t:'21:15'}] },
+        { fmt:'IMAX',      tag:'imax', price:140000, times:[{t:'11:15'},{t:'14:00'},{t:'17:00'},{t:'20:15'}] },
+      ]},
+      { film:'Lầu Chú Hỏa', dur:'105 phút', age:'T16', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:80000, times:[{t:'09:00'},{t:'11:30'},{t:'14:00'},{t:'16:30'},{t:'19:00'},{t:'21:45'}] },
+      ]},
+    ]},
+  { name:'CGV Landmark 81', addr:'772A Điện Biên Phủ, Bình Thạnh', dist:'4.9 km', totalFilms:11, chain:'cgv', label:'CGV',
+    shows:[
+      { film:'Spider-Man: Brand New Day', dur:'148 phút', age:'T13', formats:[
+        { fmt:'2D Phụ Đề',     tag:'2d',   price:90000,  times:[{t:'10:00'},{t:'13:00'},{t:'16:00'},{t:'19:00'},{t:'21:30'}] },
+        { fmt:'IMAX',          tag:'imax', price:150000, times:[{t:'11:00',few:true},{t:'14:30'},{t:'17:30'},{t:'20:30'}] },
+      ]},
+      { film:'Toy Story 5', dur:'100 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:85000, times:[{t:'09:00'},{t:'11:15'},{t:'13:30'},{t:'15:45'},{t:'18:00'},{t:'20:15'}] },
+        { fmt:'3D Lồng Tiếng', tag:'3d', price:100000, times:[{t:'09:45'},{t:'12:00'},{t:'14:15'},{t:'16:30'},{t:'19:15'},{t:'21:30'}] },
+      ]},
+      { film:'Doraemon Movie 45', dur:'104 phút', age:'P', formats:[
+        { fmt:'2D Lồng Tiếng', tag:'2d', price:85000, times:[{t:'09:30'},{t:'12:00'},{t:'14:30'},{t:'17:00'},{t:'19:30'}] },
+        { fmt:'3D Lồng Tiếng', tag:'3d', price:100000, times:[{t:'10:30'},{t:'13:00'},{t:'15:30'},{t:'18:00'},{t:'20:30'}] },
+      ]},
+    ]},
   { name:'Lotte Cinema Nowzone', addr:'235 Nguyễn Văn Cừ, Quận 1', dist:'1.2 km', totalFilms:10, chain:'lotte', label:'LOTTE',
     shows:[
       { film:'Doraemon Movie 45', dur:'104 phút', age:'P', formats:[

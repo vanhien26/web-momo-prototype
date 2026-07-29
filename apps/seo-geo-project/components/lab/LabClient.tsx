@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import debounce from "lodash/debounce";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
@@ -117,6 +118,7 @@ function statTone(category: string) {
 
 export default function LabClient({ prototypes }: LabClientProps) {
   const [query, setQuery] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [selectedId, setSelectedId] = useState(prototypes[0]?.id ?? "");
   const [category, setCategory] = useState<CategoryFilter>("all");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -193,6 +195,17 @@ export default function LabClient({ prototypes }: LabClientProps) {
   const activeCategoryCount = category === "all"
     ? prototypes.length
     : prototypes.filter((item) => (item.category || "Other") === category).length;
+
+  const debouncedSearch = useMemo(
+    () => debounce((value: string) => setQuery(value), 180),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   const openCurrentPreview = () => {
     if (!previewPath) return;
@@ -282,8 +295,12 @@ export default function LabClient({ prototypes }: LabClientProps) {
                 <label className="lab-search">
                   <Search className="lab-search-icon" />
                   <input
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
+                    value={searchText}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setSearchText(value);
+                      debouncedSearch(value);
+                    }}
                     placeholder="Tìm theo tên, id, mô tả..."
                   />
                 </label>

@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ePass x MoMo — Qua trạm ETC không cần nạp tiền</title>
+  <title>ePass x MoMo — Qua trạm ETC không cần nạp ePass</title>
   <meta name="description" content="Liên kết ePass với MoMo, qua trạm ETC bằng tiền trong ví, không cần nạp ePass. Tính chi phí qua trạm và thiết lập nạp tự động.">
   <link rel="icon" href="/assets/images/momo-logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/mobase-tokens.css">
+  <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
   <style>
-html, body { overflow-x: hidden; }
     *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
     body {
-      margin: 0; background: #f4f6fb; color: var(--ink);
+      margin: 0; background: #f4f6fb; color: #0f172a;
       font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: 14px; line-height: 1.5;
     }
-    h1,h2,h3,h4,h5,h6,strong.display { font-family: 'MoMoTrustDisplay', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    h1,h2,h3,h4,h5,h6 { font-family: 'MoMoTrustDisplay', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     a { color: inherit; text-decoration: none; }
     button, input, select { font: inherit; cursor: pointer; }
 
-    /* ── SITE NAV (Mega Menu) ── */
+    /* ── SITE NAV ── */
     .site-nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.06);transition:background .2s,border-color .2s,box-shadow .2s}
     .site-nav:has(.nav-item:hover){background:#1a2535;border-bottom-color:transparent;box-shadow:none}
     .site-nav:has(.nav-item:hover) .nav-trigger{color:rgba(255,255,255,.6)}
@@ -46,16 +46,18 @@ html, body { overflow-x: hidden; }
     .nav-trigger:hover,.nav-item:hover .nav-trigger{color:#111827}
     .nav-trigger svg{transition:transform .2s;flex:none}
     .nav-item:hover .nav-trigger svg{transform:rotate(180deg)}
-    .mega{position:absolute;top:100%;left:0;right:0;z-index:400;background:#1a2535;border-radius:0 0 20px 20px;padding:28px 32px 36px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 20px 48px rgba(0,0,0,.28)}
+    .mega{position:absolute;top:100%;left:0;right:0;z-index:400;background:#1a2535;border-radius:0 0 20px 20px;padding:0;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 20px 48px rgba(0,0,0,.28)}
     .nav-item:hover .mega{opacity:1;transform:translateY(0);pointer-events:auto}
+    .mega-body{max-width:1152px;margin:0 auto;padding:28px 20px 36px}
     .mega-header{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;margin-bottom:24px;opacity:.9;transition:opacity .12s}
     .mega-header:hover{opacity:1}
-    .mega-header svg{flex:none}
     .mega-cols{display:flex;gap:48px}
     .mega-col{display:flex;flex-direction:column;gap:0;min-width:140px}
     .mega-col-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.04em;margin-bottom:10px}
-    .mega-item{display:block;padding:7px 0;font-size:15px;font-weight:500;color:rgba(255,255,255,.85);text-decoration:none;transition:color .12s;white-space:nowrap}
+    .mega-item{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:15px;font-weight:500;color:rgba(255,255,255,.85);text-decoration:none;transition:color .12s;white-space:nowrap}
     .mega-item:hover{color:#fff}
+    .mega-item svg{flex-shrink:0;opacity:.7;transition:opacity .12s}
+    .mega-item:hover svg{opacity:1}
     @media(max-width:768px){
       .nav-inner{height:48px;padding:0 10px;gap:8px}
       .nav-back span{display:none}
@@ -71,56 +73,148 @@ html, body { overflow-x: hidden; }
     /* ── SHELL */
     .shell { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
-    /* ── HERO */
+    /* ── HERO — Road at Night ── */
     .hero {
-      background: linear-gradient(135deg, #fde8c8 0%, #fef3d0 40%, #fce4e4 80%, #fde0ef 100%);
-      padding: 60px 0 0;
+      background: #0b0f1a;
+      padding: 64px 0 56px;
+      position: relative;
       overflow: hidden;
     }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(34,197,94,.35), transparent);
+    }
+    /* road lane lines - ambient */
+    .hero-road-lines {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      overflow: hidden; pointer-events: none;
+    }
     .hero-inner {
-      display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end;
+      display: grid; grid-template-columns: 1fr 280px; gap: 40px; align-items: center;
     }
     .hero-kicker {
-      display: inline-block; background: rgba(175,1,113,.12); color: var(--momo);
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(34,197,94,.1); color: #22c55e;
       font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
-      padding: 4px 12px; border-radius: 999px; margin-bottom: 14px;
+      padding: 5px 12px; border-radius: 999px; margin-bottom: 20px;
+      border: 1px solid rgba(34,197,94,.2);
+    }
+    .kicker-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #22c55e; box-shadow: 0 0 8px #22c55e; flex-shrink: 0;
     }
     .hero h1 {
-      font-size: clamp(26px, 4vw, 40px); font-weight: 900; line-height: 1.1;
-      color: #1a1a2e; margin: 0 0 14px;
+      font-size: clamp(30px, 4.5vw, 52px); font-weight: 900; line-height: 1.05;
+      color: #fff; margin: 0 0 16px; letter-spacing: -.02em;
     }
-    .hero h1 span { color: var(--momo); }
-    .hero-dek { font-size: 15px; color: #4a4a6a; margin: 0 0 28px; max-width: 520px; }
-    .benefit-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .hero h1 span { color: #22c55e; }
+    .hero-dek { font-size: 15px; color: rgba(255,255,255,.5); margin: 0 0 32px; max-width: 480px; line-height: 1.65; }
+    .benefit-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
     .benefit-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      background: rgba(255,255,255,.72); backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,.9); border-radius: 16px;
-      padding: 12px 16px;
+      display: flex; align-items: center; gap: 14px;
     }
     .benefit-icon {
-      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 20px;
-      background: rgba(175,1,113,.08);
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(34,197,94,.1); color: #22c55e;
+      border: 1px solid rgba(34,197,94,.18);
     }
-    .benefit-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #1a1a2e; }
-    .benefit-text small { color: #667085; font-size: 12px; }
+    .benefit-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #fff; }
+    .benefit-text small { color: rgba(255,255,255,.38); font-size: 12px; }
     .hero-cta {
       display: inline-flex; align-items: center; gap: 8px;
-      background: var(--momo); color: #fff;
+      background: var(--momo, #AF0171); color: #fff;
       font-size: 15px; font-weight: 800; padding: 14px 32px;
       border-radius: 999px; border: none;
-      box-shadow: 0 6px 20px rgba(175,1,113,.28);
+      box-shadow: 0 6px 24px rgba(175,1,113,.4);
       transition: background .15s, transform .15s, box-shadow .15s;
     }
-    .hero-cta:hover { background: #8f0060; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(175,1,113,.32); }
-    .hero-visual { display: flex; align-items: flex-end; justify-content: flex-end; }
-    .hero-visual img { width: 220px; display: block; }
+    .hero-cta:hover { background: #8f0060; transform: translateY(-2px); box-shadow: 0 10px 32px rgba(175,1,113,.45); }
     .hero-trust {
       display: flex; align-items: center; gap: 8px;
-      margin-top: 20px; font-size: 11.5px; color: #667085;
+      margin-top: 20px; font-size: 11.5px; color: rgba(255,255,255,.28);
     }
-    .hero-trust svg { color: #12b76a; }
+    .hero-trust svg { color: #22c55e; flex-shrink: 0; }
+
+    /* Toll gate visual */
+    .hero-visual {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .gate-scene {
+      position: relative; width: 200px; height: 240px; flex-shrink: 0;
+    }
+    .gate-post {
+      position: absolute; bottom: 20px; left: 56px;
+      width: 14px; height: 160px;
+      background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+      border-radius: 5px 5px 0 0;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .gate-head {
+      position: absolute; bottom: 176px; left: 46px;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: #1e2a3a;
+      border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gate-light {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 12px #22c55e, 0 0 28px rgba(34,197,94,.5);
+    }
+    .gate-arm {
+      position: absolute; bottom: 184px; left: 79px;
+      height: 10px; width: 108px; border-radius: 0 5px 5px 0;
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 60%, #bbf7d0 100%);
+      transform-origin: left center;
+      transform: rotate(-85deg);
+      transition: transform .8s cubic-bezier(.34,1.4,.64,1);
+      box-shadow: 0 2px 12px rgba(34,197,94,.4);
+    }
+    .gate-arm.closed { transform: rotate(0deg); }
+    .gate-sensor-bar {
+      position: absolute; bottom: 52px; left: 30px;
+      width: 60px; height: 5px;
+      background: #1e2a3a; border-radius: 3px;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .gate-road-base {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 22px; background: #131929; border-radius: 3px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .gate-road-line {
+      position: absolute; bottom: 8px; left: 10px; right: 10px;
+      height: 3px; border-radius: 2px;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,.15) 0px, rgba(255,255,255,.15) 16px, transparent 16px, transparent 28px);
+    }
+    .gate-label {
+      position: absolute; bottom: -24px; left: 0; right: 0;
+      text-align: center; font-size: 9px; font-weight: 800;
+      color: #22c55e; letter-spacing: .14em; text-transform: uppercase; opacity: .6;
+    }
+    /* floating car */
+    .gate-car {
+      position: absolute; bottom: 22px; right: 8px;
+      animation: carSlide 3.2s ease-in-out infinite;
+    }
+    @keyframes carSlide {
+      0%   { transform: translateX(60px); opacity: 0; }
+      20%  { opacity: 1; }
+      70%  { transform: translateX(0px); opacity: 1; }
+      100% { transform: translateX(-10px); opacity: 0; }
+    }
+    /* ambient glow behind gate */
+    .gate-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,197,94,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
     /* ── SECTION base */
     .section { padding: 56px 0; }
@@ -128,12 +222,12 @@ html, body { overflow-x: hidden; }
     .section-head { margin-bottom: 32px; }
     .section-kicker {
       display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--momo); margin-bottom: 8px;
+      text-transform: uppercase; color: var(--momo, #AF0171); margin-bottom: 8px;
     }
-    .section-head h2 { font-size: 24px; font-weight: 900; color: #1a1a2e; margin: 0 0 8px; }
-    .section-head p { color: #667085; margin: 0; }
+    .section-head h2 { font-size: 24px; font-weight: 900; color: #0f172a; margin: 0 0 8px; }
+    .section-head p { color: #64748b; margin: 0; }
 
-    /* ── UTILITIES (financial.html pattern exact) */
+    /* ── UTILITIES */
     .util-card {
       background: #fff; border: 1px solid rgba(15,23,42,.07);
       border-radius: 28px; padding: 24px;
@@ -143,12 +237,10 @@ html, body { overflow-x: hidden; }
     .util-head { margin-bottom: 20px; }
     .util-kicker {
       font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
-      color: #98a2b3; display: block; margin-bottom: 4px;
+      color: #94a3b8; display: block; margin-bottom: 4px;
     }
-    .util-head h3 { font-size: 17px; font-weight: 800; color: #1a1a2e; margin: 0 0 4px; }
-    .util-head p { font-size: 12.5px; color: #667085; margin: 0; }
-
-    /* reuse financial.css patterns inline */
+    .util-head h3 { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+    .util-head p { font-size: 12.5px; color: #64748b; margin: 0; }
     .calculator-layout {
       display: grid; grid-template-columns: minmax(0,1.16fr) minmax(300px,.84fr); gap: 20px;
       background: linear-gradient(180deg,#fff 0%,#fbfcff 100%);
@@ -159,19 +251,19 @@ html, body { overflow-x: hidden; }
     .field-label { font-size: 11px; font-weight: 700; color: #475467; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; display: block; }
     .pills-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
     .pill-btn {
-      padding: 10px 8px; border: 1px solid var(--line); background: #fff;
-      border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--ink);
+      padding: 10px 8px; border: 1px solid var(--line, #e5e7eb); background: #fff;
+      border-radius: 10px; font-size: 12px; font-weight: 700; color: #0f172a;
       transition: all .15s; white-space: nowrap; text-align: center;
     }
-    .pill-btn:hover { border-color: var(--momo); color: var(--momo); }
-    .pill-btn.active { background: var(--momo); border-color: var(--momo); color: #fff; box-shadow: 0 2px 8px rgba(165,0,100,.18); }
+    .pill-btn:hover { border-color: var(--momo, #AF0171); color: var(--momo, #AF0171); }
+    .pill-btn.active { background: var(--momo, #AF0171); border-color: var(--momo, #AF0171); color: #fff; box-shadow: 0 2px 8px rgba(165,0,100,.18); }
     .chip-btn {
-      flex: 1; min-width: 0; padding: 6px 12px; border: 1px solid var(--line); background: #fff;
-      border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--muted);
+      flex: 1; min-width: 0; padding: 6px 12px; border: 1px solid var(--line, #e5e7eb); background: #fff;
+      border-radius: 999px; font-size: 12px; font-weight: 600; color: #64748b;
       transition: border-color .15s, color .15s, background .15s; white-space: nowrap; text-align: center;
     }
-    .chip-btn:hover { border-color: rgba(175,1,113,.4); color: var(--momo); }
-    .chip-btn.active { border-color: var(--momo); background: #fff0f9; color: var(--momo); }
+    .chip-btn:hover { border-color: rgba(175,1,113,.4); color: var(--momo, #AF0171); }
+    .chip-btn.active { border-color: var(--momo, #AF0171); background: #fff0f9; color: var(--momo, #AF0171); }
     .chips-row { display: flex; gap: 6px; flex-wrap: wrap; }
     .money-input-row {
       display: flex; align-items: center; gap: 8px; background: #fff;
@@ -181,18 +273,18 @@ html, body { overflow-x: hidden; }
     .money-input-row:focus-within { border-color: #4fc3ff; box-shadow: 0 0 0 4px rgba(79,195,255,.14); }
     .money-input-row input {
       flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
-      font-size: 18px; font-weight: 700; color: var(--ink); padding: 0;
+      font-size: 18px; font-weight: 700; color: #0f172a; padding: 0;
     }
     .money-input-row input::-webkit-inner-spin-button,
     .money-input-row input::-webkit-outer-spin-button { -webkit-appearance: none; }
-    .unit-tag { font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .unit-tag { font-size: 13px; font-weight: 700; color: #64748b; white-space: nowrap; }
     .num-input-row {
       display: flex; align-items: center; gap: 8px; background: #fff;
       border: 1.5px solid #cfe7ff; border-radius: 20px; padding: 8px 12px;
     }
     .num-input-row input[type="number"] {
       flex: 1; min-width: 0; border: none; background: transparent;
-      font-size: 18px; font-weight: 700; color: var(--ink); text-align: center;
+      font-size: 18px; font-weight: 700; color: #0f172a; text-align: center;
       outline: 0; -moz-appearance: textfield;
     }
     .num-input-row input::-webkit-inner-spin-button,
@@ -200,21 +292,21 @@ html, body { overflow-x: hidden; }
     .num-step {
       width: 32px; height: 32px; flex-shrink: 0;
       background: #eff6ff; border: 1px solid #dbeafe; border-radius: 999px;
-      font-size: 18px; font-weight: 700; color: var(--ink);
+      font-size: 18px; font-weight: 700; color: #0f172a;
       display: flex; align-items: center; justify-content: center;
       transition: background .15s, border-color .15s;
     }
     .num-step:hover { background: #fff; border-color: #4fc3ff; }
     .select-native {
       width: 100%; padding: 11px 14px; border: 1.5px solid #cfe7ff; border-radius: 20px;
-      background: #fff; font-size: 14px; font-weight: 600; color: var(--ink);
+      background: #fff; font-size: 14px; font-weight: 600; color: #0f172a;
       outline: none; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 14px center;
       padding-right: 36px;
     }
     .select-native:focus { border-color: #4fc3ff; box-shadow: 0 0 0 4px rgba(79,195,255,.14); }
-    .inline-note { font-size: 11px; color: #98a2b3; margin: 4px 0 0; }
+    .inline-note { font-size: 11px; color: #94a3b8; margin: 4px 0 0; }
 
     /* Result panel */
     .result-panel {
@@ -256,30 +348,42 @@ html, body { overflow-x: hidden; }
     }
     .insight-box strong { color: #143c8b; }
     .result-cta {
-      background: var(--momo); color: #fff; border: none;
+      background: var(--momo, #AF0171); color: #fff; border: none;
       padding: 12px 20px; border-radius: 18px; font-size: 13px; font-weight: 800;
       text-align: center; transition: background .15s;
     }
     .result-cta:hover { background: #8f0060; }
 
     /* ── GUIDE STEPS */
-    .steps-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .steps-row {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 0;
+      position: relative;
+    }
+    .steps-row::before {
+      content: '';
+      position: absolute; top: 30px; left: calc(16.67% + 18px); right: calc(16.67% + 18px);
+      height: 1px; background: linear-gradient(90deg, var(--momo, #AF0171), rgba(175,1,113,.2));
+      z-index: 0;
+    }
     .step-card {
       background: #fff; border-radius: 20px; padding: 24px;
       border: 1px solid rgba(15,23,42,.07);
       box-shadow: 0 2px 12px rgba(15,23,42,.04);
+      position: relative; z-index: 1;
+      margin: 0 8px;
     }
+    .step-card:first-child { margin-left: 0; }
+    .step-card:last-child { margin-right: 0; }
     .step-num {
-      width: 36px; height: 36px; border-radius: 12px; background: var(--momo);
-      color: #fff; font-size: 16px; font-weight: 900;
+      width: 36px; height: 36px; border-radius: 12px;
+      background: var(--momo, #AF0171); color: #fff;
+      font-size: 16px; font-weight: 900;
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px; font-family: 'MoMoTrustDisplay', sans-serif;
+      margin-bottom: 14px;
+      font-family: 'MoMoTrustDisplay', sans-serif;
     }
-    .step-card h3 { font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 6px; }
-    .step-card p { font-size: 12.5px; color: #667085; margin: 0; }
-    .steps-connector {
-      display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
-    }
+    .step-card h3 { font-size: 14px; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+    .step-card p { font-size: 12.5px; color: #64748b; margin: 0; }
 
     /* ── CROSS-SELL */
     .crosssell-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
@@ -291,15 +395,16 @@ html, body { overflow-x: hidden; }
     .cs-card:hover { box-shadow: 0 6px 20px rgba(15,23,42,.08); transform: translateY(-2px); }
     .cs-icon {
       width: 48px; height: 48px; border-radius: 14px; background: #fff0f9;
-      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--momo, #AF0171); flex-shrink: 0;
     }
-    .cs-card h3 { font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 4px; }
-    .cs-card p { font-size: 12px; color: #667085; margin: 0 0 10px; }
-    .cs-link { font-size: 12px; font-weight: 700; color: var(--momo); }
+    .cs-card h3 { font-size: 14px; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+    .cs-card p { font-size: 12px; color: #64748b; margin: 0 0 10px; }
+    .cs-link { font-size: 12px; font-weight: 700; color: var(--momo, #AF0171); }
 
     /* ── CTA BAND */
     .cta-band {
-      background: linear-gradient(135deg, var(--momo) 0%, #d4008a 100%);
+      background: linear-gradient(135deg, var(--momo, #AF0171) 0%, #d4008a 100%);
       border-radius: 28px; padding: 40px 44px;
       display: flex; align-items: center; justify-content: space-between; gap: 32px;
     }
@@ -307,7 +412,7 @@ html, body { overflow-x: hidden; }
     .cta-band p { font-size: 13.5px; color: rgba(255,255,255,.75); margin: 0; }
     .cta-band-actions { display: flex; gap: 10px; flex-shrink: 0; }
     .cta-btn-primary {
-      background: #fff; color: var(--momo); border: none;
+      background: #fff; color: var(--momo, #AF0171); border: none;
       padding: 13px 24px; border-radius: 999px; font-size: 14px; font-weight: 800;
       box-shadow: 0 4px 14px rgba(0,0,0,.18); transition: transform .15s, box-shadow .15s;
     }
@@ -321,38 +426,35 @@ html, body { overflow-x: hidden; }
 
     /* ── NOTICE STRIP */
     .notice-strip {
-      background: linear-gradient(90deg, #fff0f9, #fce4e4);
-      border-top: 1px solid rgba(175,1,113,.12); border-bottom: 1px solid rgba(175,1,113,.12);
-      padding: 14px 0; text-align: center;
-      font-size: 13px; color: #7a1248; font-weight: 600;
+      background: #0f172a;
+      border-top: 1px solid rgba(34,197,94,.15);
+      border-bottom: 1px solid rgba(34,197,94,.08);
+      padding: 12px 0; text-align: center;
+      font-size: 12.5px; color: rgba(255,255,255,.45); font-weight: 500;
     }
-    .notice-strip strong { color: var(--momo); }
+    .notice-strip strong { color: #22c55e; }
 
     /* ── FOOTER */
-    .site-footer {
-      background: #fff; border-top: 1px solid var(--line); padding: 20px 0;
-    }
+    .site-footer { background: #fff; border-top: 1px solid var(--line, #e5e7eb); padding: 20px 0; }
     .footer-inner { display: flex; align-items: center; justify-content: space-between; }
-    .footer-inner span { font-size: 12px; color: var(--muted); }
+    .footer-inner span { font-size: 12px; color: #94a3b8; }
     .footer-links { display: flex; gap: 16px; }
-    .footer-links a { font-size: 12px; color: var(--muted); }
-    .footer-links a:hover { color: var(--momo); }
+    .footer-links a { font-size: 12px; color: #94a3b8; }
+    .footer-links a:hover { color: var(--momo, #AF0171); }
 
     /* ── Responsive */
     @media (max-width: 768px) {
       .hero-inner { grid-template-columns: 1fr; }
       .hero-visual { display: none; }
       .calculator-layout { grid-template-columns: 1fr; }
-      .steps-row { grid-template-columns: 1fr; }
+      .steps-row { grid-template-columns: 1fr; gap: 12px; }
+      .steps-row::before { display: none; }
+      .step-card { margin: 0; }
       .crosssell-grid { grid-template-columns: 1fr; }
-      .cta-band { flex-direction: column; text-align: center; }
+      .cta-band { flex-direction: column; text-align: center; padding: 28px 24px; }
       .cta-band-actions { justify-content: center; }
     }
-  .mega-item svg{flex-shrink:0;opacity:.7;transition:opacity .12s}.mega-item:hover svg{opacity:1}
-</style>
-  <script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
   </style>
-<script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -370,82 +472,86 @@ html, body { overflow-x: hidden; }
           <span class="logo-text">Tiện Ích <em>Giao Thông</em></span>
         </a>
       </div>
-          <div class="nav-links">
-      <!-- 1. Di chuyển -->
-      <div class="nav-item">
-        <button class="nav-trigger">Di chuyển <i data-lucide="chevron-down" width="12" height="12"></i></button>
-        <div class="mega">
-          <a class="mega-header" href="/tien-ich-giao-thong/chuyen-di">Xem tất cả Di chuyển <i data-lucide="arrow-right" width="14" height="14"></i></a>
-          <div class="mega-cols">
-            <div class="mega-col">
-              <div class="mega-col-label">Nhiên liệu</div>
-              <a class="mega-item" href="/tien-ich-giao-thong/gia-xang" data-micon="Fuel">Giá xăng dầu hôm nay</a>
-              <a class="mega-item" href="/cay-xang" data-micon="MapPin">Tìm cây xăng gần đây</a>
-              <a class="mega-item" href="/tram-sac" data-micon="Zap">Trạm sạc xe điện</a>
+      <div class="nav-links">
+        <div class="nav-item">
+          <button class="nav-trigger">Di chuyển <i data-lucide="chevron-down" width="12" height="12"></i></button>
+          <div class="mega">
+            <div class="mega-body">
+              <a class="mega-header" href="/tien-ich-giao-thong/chuyen-di">Xem tất cả Di chuyển <i data-lucide="arrow-right" width="14" height="14"></i></a>
+              <div class="mega-cols">
+                <div class="mega-col">
+                  <div class="mega-col-label">Nhiên liệu</div>
+                  <a class="mega-item" href="/tien-ich-giao-thong/gia-xang" data-micon="Fuel">Giá xăng dầu hôm nay</a>
+                  <a class="mega-item" href="/cay-xang" data-micon="MapPin">Tìm cây xăng gần đây</a>
+                  <a class="mega-item" href="/tram-sac" data-micon="Zap">Trạm sạc xe điện</a>
+                </div>
+                <div class="mega-col">
+                  <div class="mega-col-label">Hành trình</div>
+                  <a class="mega-item" href="/tien-ich-giao-thong/chuyen-di" data-micon="Route">Tính chi phí chuyến đi</a>
+                  <a class="mega-item" href="/epass/tinh-phi-etc" data-micon="Milestone">Tính phí ETC theo tuyến</a>
+                </div>
+              </div>
             </div>
-            <div class="mega-col">
-              <div class="mega-col-label">Hành trình</div>
-              <a class="mega-item" href="/tien-ich-giao-thong/chuyen-di" data-micon="Route">Tính chi phí chuyến đi</a>
-              <a class="mega-item" href="/epass/tinh-phi-etc" data-micon="Milestone">Tính phí ETC theo tuyến</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button class="nav-trigger">Bảo hiểm <i data-lucide="chevron-down" width="12" height="12"></i></button>
+          <div class="mega">
+            <div class="mega-body">
+              <a class="mega-header" href="/bao-hiem-o-to">Xem tất cả Bảo hiểm <i data-lucide="arrow-right" width="14" height="14"></i></a>
+              <div class="mega-cols">
+                <div class="mega-col">
+                  <div class="mega-col-label">Ô tô</div>
+                  <a class="mega-item" href="/bao-hiem-o-to" data-micon="ShieldCheck">Bảo hiểm TNDS bắt buộc</a>
+                  <a class="mega-item" href="/bao-hiem-o-to" data-micon="Shield">Bảo hiểm thân vỏ</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button class="nav-trigger">Pháp lý &amp; Bảo dưỡng <i data-lucide="chevron-down" width="12" height="12"></i></button>
+          <div class="mega">
+            <div class="mega-body">
+              <a class="mega-header" href="/phat-nguoi">Xem tất cả Pháp lý &amp; Bảo dưỡng <i data-lucide="arrow-right" width="14" height="14"></i></a>
+              <div class="mega-cols">
+                <div class="mega-col">
+                  <div class="mega-col-label">Pháp lý</div>
+                  <a class="mega-item" href="/phat-nguoi" data-micon="ShieldAlert">Tra phạt nguội</a>
+                  <a class="mega-item" href="/tien-ich-giao-thong/dang-kiem" data-micon="ClipboardList">Kiểm tra đăng kiểm</a>
+                </div>
+                <div class="mega-col">
+                  <div class="mega-col-label">Bảo dưỡng</div>
+                  <a class="mega-item" href="/tien-ich-giao-thong/bao-duong" data-micon="Wrench">Lịch bảo dưỡng xe</a>
+                  <a class="mega-item" href="/tien-ich-giao-thong/cuu-ho" data-micon="Truck">Cứu hộ khẩn cấp</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button class="nav-trigger">Xe của tôi <i data-lucide="chevron-down" width="12" height="12"></i></button>
+          <div class="mega">
+            <div class="mega-body">
+              <a class="mega-header" href="/tien-ich-giao-thong#ho-so-xe">Xem tất cả Xe của tôi <i data-lucide="arrow-right" width="14" height="14"></i></a>
+              <div class="mega-cols">
+                <div class="mega-col">
+                  <div class="mega-col-label">Hồ sơ &amp; Chi phí</div>
+                  <a class="mega-item" href="/tien-ich-giao-thong#ho-so-xe" data-micon="Car">Hồ sơ phương tiện</a>
+                  <a class="mega-item" href="/tien-ich-giao-thong#chi-phi-xe" data-micon="Calculator">Chi phí nuôi xe / năm</a>
+                  <a class="mega-item" href="/tien-ich-giao-thong/hang-xe" data-micon="Tag">Nhãn xe &amp; Dòng xe</a>
+                </div>
+                <div class="mega-col">
+                  <div class="mega-col-label">Tiện ích</div>
+                  <a class="mega-item" href="/epass" data-micon="CreditCard">ePass &amp; Tự động nạp</a>
+                  <a class="mega-item" href="/tien-ich-giao-thong/bai-do-xe" data-micon="SquareParking">Tìm bãi đỗ xe</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- 2. Bảo hiểm -->
-      <div class="nav-item">
-        <button class="nav-trigger">Bảo hiểm <i data-lucide="chevron-down" width="12" height="12"></i></button>
-        <div class="mega">
-          <a class="mega-header" href="/bao-hiem-o-to">Xem tất cả Bảo hiểm <i data-lucide="arrow-right" width="14" height="14"></i></a>
-          <div class="mega-cols">
-            <div class="mega-col">
-              <div class="mega-col-label">Ô tô</div>
-              <a class="mega-item" href="/bao-hiem-o-to" data-micon="ShieldCheck">Bảo hiểm TNDS bắt buộc</a>
-              <a class="mega-item" href="/bao-hiem-o-to" data-micon="Shield">Bảo hiểm thân vỏ</a>
-            </div>
-
-          </div>
-        </div>
-      </div>
-      <!-- 3. Pháp lý & Bảo dưỡng -->
-      <div class="nav-item">
-        <button class="nav-trigger">Pháp lý &amp; Bảo dưỡng <i data-lucide="chevron-down" width="12" height="12"></i></button>
-        <div class="mega">
-          <a class="mega-header" href="/phat-nguoi">Xem tất cả Pháp lý &amp; Bảo dưỡng <i data-lucide="arrow-right" width="14" height="14"></i></a>
-          <div class="mega-cols">
-            <div class="mega-col">
-              <div class="mega-col-label">Pháp lý</div>
-              <a class="mega-item" href="/phat-nguoi" data-micon="ShieldAlert">Tra phạt nguội</a>
-              <a class="mega-item" href="/tien-ich-giao-thong/dang-kiem" data-micon="ClipboardList">Kiểm tra đăng kiểm</a>
-            </div>
-            <div class="mega-col">
-              <div class="mega-col-label">Bảo dưỡng</div>
-              <a class="mega-item" href="/tien-ich-giao-thong/bao-duong" data-micon="Wrench">Lịch bảo dưỡng xe</a>
-              <a class="mega-item" href="/tien-ich-giao-thong/cuu-ho" data-micon="Truck">Cứu hộ khẩn cấp</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- 4. Xe của tôi -->
-      <div class="nav-item">
-        <button class="nav-trigger">Xe của tôi <i data-lucide="chevron-down" width="12" height="12"></i></button>
-        <div class="mega">
-          <a class="mega-header" href="/tien-ich-giao-thong#ho-so-xe">Xem tất cả Xe của tôi <i data-lucide="arrow-right" width="14" height="14"></i></a>
-          <div class="mega-cols">
-            <div class="mega-col">
-              <div class="mega-col-label">Hồ sơ &amp; Chi phí</div>
-              <a class="mega-item" href="/tien-ich-giao-thong#ho-so-xe" data-micon="Car">Hồ sơ phương tiện</a>
-              <a class="mega-item" href="/tien-ich-giao-thong#chi-phi-xe" data-micon="Calculator">Chi phí nuôi xe / năm</a>
-              <a class="mega-item" href="/tien-ich-giao-thong/hang-xe" data-micon="Tag">Nhãn xe &amp; Dòng xe</a>
-            </div>
-            <div class="mega-col">
-              <div class="mega-col-label">Tiện ích</div>
-              <a class="mega-item" href="/epass" data-micon="CreditCard">ePass &amp; Tự động nạp</a>
-              <a class="mega-item" href="/tien-ich-giao-thong/bai-do-xe" data-micon="SquareParking">Tìm bãi đỗ xe</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div></div>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -453,27 +559,36 @@ html, body { overflow-x: hidden; }
     <div class="shell">
       <div class="hero-inner">
         <div>
-          <span class="hero-kicker">Liên kết ePass x MoMo</span>
-          <h1>Qua trạm ETC<br><span>không cần nạp ePass</span></h1>
-          <p class="hero-dek">Thanh toán trạm thu phí tự động bằng tiền trong ví MoMo hoặc Túi Thần Tài. Không lo hết tiền — không bị chặn qua trạm.</p>
+          <div class="hero-kicker">
+            <span class="kicker-dot"></span>
+            Đã kết nối 2.1M+ xe tại Việt Nam
+          </div>
+          <h1>Qua trạm ETC —<br><span>MoMo lo tự động</span></h1>
+          <p class="hero-dek">Liên kết ePass với ví MoMo. Mỗi lần qua trạm, tiền tự trừ không cần nạp thẻ, không cần dừng xe, không lo hết số dư.</p>
 
           <div class="benefit-list">
             <div class="benefit-item">
-              <div class="benefit-icon">🔗</div>
+              <div class="benefit-icon">
+                <i data-lucide="link-2" width="16" height="16"></i>
+              </div>
               <div class="benefit-text">
                 <strong>5 giây có Tài khoản giao thông</strong>
                 <small>Đáp ứng Nghị định 119 · Tránh bị chặn qua trạm</small>
               </div>
             </div>
             <div class="benefit-item">
-              <div class="benefit-icon">💸</div>
+              <div class="benefit-icon">
+                <i data-lucide="banknote" width="16" height="16"></i>
+              </div>
               <div class="benefit-text">
                 <strong>Không cần nạp tiền vào ePass</strong>
                 <small>Qua trạm bằng số dư MoMo — tự động trừ mỗi lượt</small>
               </div>
             </div>
             <div class="benefit-item">
-              <div class="benefit-icon">👛</div>
+              <div class="benefit-icon">
+                <i data-lucide="wallet" width="16" height="16"></i>
+              </div>
               <div class="benefit-text">
                 <strong>Hỗ trợ đa dạng nguồn tiền</strong>
                 <small>Dùng được cả Ví MoMo và Túi Thần Tài</small>
@@ -487,12 +602,37 @@ html, body { overflow-x: hidden; }
           </button>
 
           <div class="hero-trust">
-            <i data-lucide="shield" width="14" height="14"></i>
+            <i data-lucide="shield-check" width="14" height="14"></i>
             Đáp ứng Nghị định 119/2024/NĐ-CP về tài khoản giao thông điện tử
           </div>
         </div>
+
+        <!-- CSS Toll Gate -->
         <div class="hero-visual">
-          <img src="https://homepage.momocdn.net/img/1-du-loai-xe-03-260612110634.png" alt="ePass MoMo">
+          <div class="gate-scene">
+            <div class="gate-glow"></div>
+            <div class="gate-road-base">
+              <div class="gate-road-line"></div>
+            </div>
+            <div class="gate-post"></div>
+            <div class="gate-head">
+              <div class="gate-light"></div>
+            </div>
+            <div class="gate-arm" id="gateArm"></div>
+            <div class="gate-sensor-bar"></div>
+            <div class="gate-car" id="gateCar">
+              <svg width="52" height="26" viewBox="0 0 52 26" fill="none">
+                <rect x="6" y="10" width="40" height="14" rx="4" fill="#334155"/>
+                <path d="M12 10 L18 2 H34 L40 10" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+                <rect x="20" y="3" width="12" height="6" rx="2" fill="#7dd3fc" opacity=".6"/>
+                <circle cx="14" cy="23" r="3.5" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+                <circle cx="38" cy="23" r="3.5" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+                <rect x="2" y="13" width="6" height="3" rx="1.5" fill="#fbbf24" opacity=".9"/>
+                <rect x="44" y="13" width="6" height="3" rx="1.5" fill="#f87171" opacity=".7"/>
+              </svg>
+            </div>
+            <div class="gate-label">ETC · ePass · MoMo</div>
+          </div>
         </div>
       </div>
     </div>
@@ -500,7 +640,7 @@ html, body { overflow-x: hidden; }
 
   <!-- NOTICE STRIP -->
   <div class="notice-strip">
-    <strong>Nhớ đủ số dư</strong> trong Ví MoMo hoặc Túi Thần Tài để qua trạm ETC không bị gián đoạn
+    Nhớ duy trì <strong>đủ số dư</strong> trong Ví MoMo hoặc Túi Thần Tài để qua trạm ETC liên tục
   </div>
 
   <!-- UTILITIES -->
@@ -521,8 +661,6 @@ html, body { overflow-x: hidden; }
         </div>
         <div class="calculator-layout">
           <div class="input-panel">
-
-            <!-- Loại xe -->
             <div>
               <span class="field-label">Loại phương tiện</span>
               <div class="pills-grid" id="vehiclePills">
@@ -531,8 +669,6 @@ html, body { overflow-x: hidden; }
                 <button class="pill-btn" onclick="setVehicle('xe3')">Xe tải lớn</button>
               </div>
             </div>
-
-            <!-- Tuyến đường -->
             <div>
               <span class="field-label">Tuyến đường thường đi</span>
               <select class="select-native" id="routeSelect" onchange="calcToll()">
@@ -545,8 +681,6 @@ html, body { overflow-x: hidden; }
                 <option value="45000">Trung Lương - Mỹ Thuận — 45.000đ/lượt</option>
               </select>
             </div>
-
-            <!-- Số lần/tuần -->
             <div>
               <span class="field-label">Số lần qua trạm / tuần</span>
               <div class="num-input-row">
@@ -557,14 +691,12 @@ html, body { overflow-x: hidden; }
               </div>
               <div class="chips-row" style="margin-top:8px">
                 <button class="chip-btn" onclick="setTrips(5)">5 lượt</button>
-                <button class="chip-btn" onclick="setTrips(10)">10 lượt</button>
                 <button class="chip-btn active" onclick="setTrips(10)">10 lượt</button>
                 <button class="chip-btn" onclick="setTrips(20)">20 lượt</button>
                 <button class="chip-btn" onclick="setTrips(40)">40 lượt</button>
               </div>
               <p class="inline-note">Tính cả chiều đi và về nếu qua trạm 2 chiều.</p>
             </div>
-
           </div>
           <div class="result-panel">
             <div class="result-hero">
@@ -592,8 +724,6 @@ html, body { overflow-x: hidden; }
           <h3>Cần nạp bao nhiêu cho chuyến này?</h3>
           <p>Chọn tuyến, xem đúng từng trạm BOT và tổng phí ETC cần có trước khi lên đường.</p>
         </div>
-
-        <!-- Route picker -->
         <div style="margin-bottom:16px">
           <span class="field-label">Tuyến phổ biến</span>
           <div class="chips-row" style="margin-top:8px;flex-wrap:wrap" id="epRouteChips">
@@ -604,8 +734,6 @@ html, body { overflow-x: hidden; }
             <button class="chip-btn" onclick="epSelectRoute('hn-ha-long',this)">HN → Hạ Long</button>
           </div>
         </div>
-
-        <!-- Vehicle type -->
         <div style="margin-bottom:20px">
           <span class="field-label">Loại xe</span>
           <div class="chips-row" style="margin-top:8px" id="epVehicleChips">
@@ -614,36 +742,28 @@ html, body { overflow-x: hidden; }
             <button class="chip-btn" onclick="epSelectVehicle('truck',this)">Xe tải</button>
           </div>
         </div>
-
-        <!-- Results -->
         <div id="epRouteResult" style="display:none">
-
-          <!-- Route summary bar -->
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
             <div>
-              <div id="epRouteName" style="font-size:15px;font-weight:800;color:#1a1a2e"></div>
-              <div id="epRouteMeta" style="font-size:12px;color:#667085;margin-top:2px"></div>
+              <div id="epRouteName" style="font-size:15px;font-weight:800;color:#0f172a"></div>
+              <div id="epRouteMeta" style="font-size:12px;color:#64748b;margin-top:2px"></div>
             </div>
             <div style="text-align:right;flex-shrink:0">
-              <div style="font-size:11px;color:#667085;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Tổng phí ETC</div>
-              <div id="epTotalFee" style="font-size:24px;font-weight:900;color:#af0171"></div>
+              <div style="font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Tổng phí ETC</div>
+              <div id="epTotalFee" style="font-size:24px;font-weight:900;color:#AF0171"></div>
             </div>
           </div>
-
-          <!-- Station list -->
           <div style="margin-bottom:16px">
-            <div style="font-size:11px;font-weight:700;color:#667085;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Trạm thu phí trên tuyến</div>
+            <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Trạm thu phí trên tuyến</div>
             <div id="epStationList" style="display:flex;flex-direction:column;gap:6px"></div>
           </div>
-
-          <!-- CTA nạp ePass -->
           <div style="border-radius:12px;padding:16px;margin-bottom:12px;border:1.5px solid #e2e8f0">
             <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Phí ETC cần có cho chuyến đi</div>
             <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px">
-              <div id="epTripTotal" style="font-size:36px;font-weight:900;color:#af0171;line-height:1"></div>
+              <div id="epTripTotal" style="font-size:36px;font-weight:900;color:#AF0171;line-height:1"></div>
             </div>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:10px;user-select:none">
-              <input type="checkbox" id="epRoundTrip" onchange="epToggleReturn()" style="width:16px;height:16px;accent-color:#af0171;cursor:pointer">
+              <input type="checkbox" id="epRoundTrip" onchange="epToggleReturn()" style="width:16px;height:16px;accent-color:#AF0171;cursor:pointer">
               <span style="font-size:13px;color:#374151;font-weight:500">Có tuyến về</span>
             </label>
             <div id="epReturnWrap" style="display:none;margin-bottom:14px">
@@ -656,10 +776,9 @@ html, body { overflow-x: hidden; }
                 <button class="chip-btn" onclick="epSelectReturn('hn-ha-long',this)">HN → Hạ Long</button>
               </div>
             </div>
-            <button id="epTopupBtn" style="width:100%;height:40px;border-radius:10px;border:none;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;background:#af0171;color:#fff;transition:background .15s"></button>
+            <button id="epTopupBtn" style="width:100%;height:40px;border-radius:10px;border:none;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;background:#AF0171;color:#fff;transition:background .15s"></button>
           </div>
-
-          <a href="/epass/tinh-phi-etc" style="display:block;text-align:center;font-size:12.5px;font-weight:700;color:#af0171;padding:8px">Xem thêm tuyến khác →</a>
+          <a href="/epass/tinh-phi-etc" style="display:block;text-align:center;font-size:12.5px;font-weight:700;color:#AF0171;padding:8px">Xem thêm tuyến khác →</a>
         </div>
       </div>
 
@@ -672,8 +791,6 @@ html, body { overflow-x: hidden; }
         </div>
         <div class="calculator-layout">
           <div class="input-panel">
-
-            <!-- Số dư hiện tại -->
             <div>
               <span class="field-label">Số dư hiện tại trong MoMo</span>
               <div class="money-input-row">
@@ -682,14 +799,11 @@ html, body { overflow-x: hidden; }
               </div>
               <div class="chips-row" style="margin-top:8px">
                 <button class="chip-btn" onclick="setBalance(200000)">200k</button>
-                <button class="chip-btn" onclick="setBalance(500000)">500k</button>
                 <button class="chip-btn active" onclick="setBalance(500000)">500k</button>
                 <button class="chip-btn" onclick="setBalance(1000000)">1tr</button>
                 <button class="chip-btn" onclick="setBalance(2000000)">2tr</button>
               </div>
             </div>
-
-            <!-- Ngưỡng cảnh báo -->
             <div>
               <span class="field-label">Ngưỡng nạp tự động</span>
               <div class="chips-row" id="thresholdChips">
@@ -700,8 +814,6 @@ html, body { overflow-x: hidden; }
               </div>
               <p class="inline-note">Khi số dư xuống dưới ngưỡng này, MoMo sẽ nạp tự động.</p>
             </div>
-
-            <!-- Số tiền nạp mỗi lần -->
             <div>
               <span class="field-label">Số tiền nạp mỗi lần</span>
               <div class="chips-row" id="topupAmtChips">
@@ -711,7 +823,6 @@ html, body { overflow-x: hidden; }
                 <button class="chip-btn" onclick="setTopupAmt(500000)">500k</button>
               </div>
             </div>
-
           </div>
           <div class="result-panel">
             <div class="result-hero">
@@ -771,16 +882,20 @@ html, body { overflow-x: hidden; }
         <h2>Tiện ích liên quan</h2>
       </div>
       <div class="crosssell-grid">
-        <a class="cs-card" href="phat-nguoi.html">
-          <div class="cs-icon">📷</div>
+        <a class="cs-card" href="/phat-nguoi">
+          <div class="cs-icon">
+            <i data-lucide="scan-line" width="22" height="22"></i>
+          </div>
           <div>
             <h3>Tra cứu Phạt Nguội</h3>
             <p>Kiểm tra xe có vi phạm đang chờ xử lý. 1.800+ camera AI toàn quốc.</p>
             <span class="cs-link">Tra cứu miễn phí →</span>
           </div>
         </a>
-        <a class="cs-card" href="#guide">
-          <div class="cs-icon">🚗</div>
+        <a class="cs-card" href="/bao-hiem-o-to">
+          <div class="cs-icon">
+            <i data-lucide="shield-check" width="22" height="22"></i>
+          </div>
           <div>
             <h3>Bảo hiểm ô tô</h3>
             <p>Mua bảo hiểm xe máy, ô tô trực tuyến. Có hiệu lực ngay trong MoMo.</p>
@@ -811,9 +926,9 @@ html, body { overflow-x: hidden; }
     <div class="shell footer-inner">
       <span>ePass x MoMo · Prototype · Dữ liệu phí tham khảo, không phải chính thức</span>
       <nav class="footer-links">
-        <a href="phat-nguoi.html">Phạt Nguội</a>
+        <a href="/phat-nguoi">Phạt Nguội</a>
         <a href="/tien-ich-giao-thong">Vehicle Hub</a>
-        <a href="../lab.html">Lab</a>
+        <a href="/lab.html">Lab</a>
       </nav>
     </div>
   </footer>
@@ -823,7 +938,6 @@ html, body { overflow-x: hidden; }
     const st1 = { vehicle: 'xe1', multiplier: 1, trips: 10 };
     const st2 = { balance: 500000, threshold: 100000, topupAmt: 200000 };
 
-    // ── FORMAT ────────────────────────────────────────────────────────────────────
     function fmt(n) {
       return n.toLocaleString('vi-VN') + 'đ';
     }
@@ -857,7 +971,7 @@ html, body { overflow-x: hidden; }
     }
 
     function updateTripChips(n) {
-      const presets = [5, 10, 10, 20, 40];
+      const presets = [5, 10, 20, 40];
       document.querySelectorAll('#tripsInput ~ .chips-row .chip-btn').forEach((b, i) => {
         b.classList.toggle('active', presets[i] === n);
       });
@@ -869,8 +983,7 @@ html, body { overflow-x: hidden; }
       const rate = Math.round(baseRate * st1.multiplier);
       const tripsInput = document.getElementById('tripsInput');
       st1.trips = parseInt(tripsInput.value) || 10;
-      const tripsPerWeek = st1.trips;
-      const tripsPerMonth = Math.round(tripsPerWeek * 4.33);
+      const tripsPerMonth = Math.round(st1.trips * 4.33);
       const monthly = rate * tripsPerMonth;
       const yearly = monthly * 12;
 
@@ -879,14 +992,11 @@ html, body { overflow-x: hidden; }
       document.getElementById('tollTripsMo').textContent = tripsPerMonth + ' lượt';
       document.getElementById('tollYearly').textContent = fmt(yearly);
 
-      // badge
       const badge = document.getElementById('tollBadge');
       if (monthly < 200000) { badge.textContent = 'Thấp'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
       else if (monthly < 600000) { badge.textContent = 'Trung bình'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
       else { badge.textContent = 'Cao'; badge.style.background = '#fee2e2'; badge.style.color = '#991b1b'; }
 
-      // insight
-      const saved = Math.round(monthly * 0.15);
       document.getElementById('tollInsight').innerHTML =
         `Với MoMo ePass, bạn <strong>không cần giữ tiền mặt</strong> hay nạp thẻ trước. Tiền trừ tự động mỗi lượt — không lo dừng xe tại trạm.`;
     }
@@ -930,24 +1040,21 @@ html, body { overflow-x: hidden; }
       document.getElementById('topupThresholdDisplay').textContent = fmt(st2.threshold);
       document.getElementById('topupAmtDisplay').textContent = fmt(st2.topupAmt);
 
-      // badge
       const badge = document.getElementById('topupBadge');
       if (after >= 500000) { badge.textContent = 'Ổn định'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
       else if (after >= 200000) { badge.textContent = 'Đủ dùng'; badge.style.background = '#fef3c7'; badge.style.color = '#92400e'; }
       else { badge.textContent = 'Cần thêm'; badge.style.background = '#fee2e2'; badge.style.color = '#991b1b'; }
 
-      // insight
       let msg = '';
       if (bal < st2.threshold) {
         msg = `Số dư hiện tại <strong>${fmt(bal)}</strong> đang dưới ngưỡng. MoMo sẽ <strong>tự động nạp ${fmt(st2.topupAmt)}</strong> để đảm bảo đủ tiền qua trạm.`;
       } else {
-        const remaining = bal - st2.threshold;
         msg = `Số dư hiện tại ổn định. Khi giảm xuống dưới <strong>${fmt(st2.threshold)}</strong>, MoMo sẽ tự động nạp <strong>${fmt(st2.topupAmt)}</strong>.`;
       }
       document.getElementById('topupInsight').innerHTML = msg;
     }
 
-    // ── ROUTE CALC (ePass section) ───────────────────────────────────────────────
+    // ── ROUTE CALC ───────────────────────────────────────────────────────────────
     const EP_ROUTES = {
       'hcm-dalat': {
         name: 'TP. Hồ Chí Minh → Đà Lạt', meta: 'QL20 · Cao tốc Dầu Giây · 308 km · 6-7 giờ',
@@ -1002,7 +1109,6 @@ html, body { overflow-x: hidden; }
     function epToggleReturn() {
       const on = document.getElementById('epRoundTrip').checked;
       document.getElementById('epReturnWrap').style.display = on ? 'block' : 'none';
-      // sync return chips to current outbound route by default
       if (on) epSyncReturnChips();
       epRender();
     }
@@ -1045,12 +1151,12 @@ html, body { overflow-x: hidden; }
       document.getElementById('epStationList').innerHTML = r.stations.map(st => `
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;gap:8px">
           <div>
-            <div style="font-size:13px;font-weight:700;color:#1a1a2e">${st.name}</div>
+            <div style="font-size:13px;font-weight:700;color:#0f172a">${st.name}</div>
             <div style="font-size:11px;color:#94a3b8">${st.km}</div>
           </div>
           <div style="text-align:right;flex-shrink:0">
-            <div style="font-size:13.5px;font-weight:800;color:#1a1a2e">${fmt(st.fees[epVehicle])}đ</div>
-            <div style="font-size:10px;font-weight:700;color:#af0171">ETC/ePass</div>
+            <div style="font-size:13.5px;font-weight:800;color:#0f172a">${fmt(st.fees[epVehicle])}</div>
+            <div style="font-size:10px;font-weight:700;color:#AF0171">ETC/ePass</div>
           </div>
         </div>
       `).join('');
@@ -1058,42 +1164,48 @@ html, body { overflow-x: hidden; }
       const hasReturn = document.getElementById('epRoundTrip').checked;
       let returnTotal = 0;
       if (hasReturn) {
-        const ret = EP_ROUTES[epReturnRoute];
-        returnTotal = ret.stations.reduce((s, st) => s + st.fees[epVehicle], 0);
+        returnTotal = EP_ROUTES[epReturnRoute].stations.reduce((s, st) => s + st.fees[epVehicle], 0);
       }
       const tripTotal = total + returnTotal;
-
       document.getElementById('epTripTotal').textContent = fmt(tripTotal);
 
       const btn = document.getElementById('epTopupBtn');
-      btn.textContent = `Nạp ${fmt(tripTotal)}đ vào ePass`;
-      btn.onclick = () => alert(`Đã nạp ${fmt(tripTotal)}đ vào ePass thành công!`);
-
+      btn.textContent = `Nạp ${fmt(tripTotal)} vào ePass`;
+      btn.onclick = () => alert(`Đã nạp ${fmt(tripTotal)} vào ePass thành công!`);
       document.getElementById('epRouteResult').style.display = 'block';
+    }
+
+    // ── GATE ANIMATION ────────────────────────────────────────────────────────────
+    function initGate() {
+      const arm = document.getElementById('gateArm');
+      if (!arm) return;
+      // Start closed, open after 600ms
+      arm.classList.add('closed');
+      setTimeout(() => arm.classList.remove('closed'), 600);
+    }
+
+    // ── LUCIDE ICONS ─────────────────────────────────────────────────────────────
+    function licon(name, size, sw) {
+      if (!window.lucide || !window.lucide[name]) return '';
+      const children = window.lucide[name].map(([tag, attrs]) => {
+        const a = Object.entries(attrs).map(([k,v]) => `${k}="${v}"`).join(' ');
+        return `<${tag} ${a}/>`;
+      }).join('');
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${size||16}" height="${size||16}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2}" stroke-linecap="round" stroke-linejoin="round">${children}</svg>`;
     }
 
     // ── INIT ─────────────────────────────────────────────────────────────────────
     calcToll();
     calcTopup();
     epRender();
-  
-  // ── lucide helpers ──
-  function licon(name, size, sw) {
-    if (!window.lucide || !window.lucide[name]) return '';
-    const children = window.lucide[name].map(([tag, attrs]) => {
-      const a = Object.entries(attrs).map(([k,v]) => `${k}="${v}"`).join(' ');
-      return `<${tag} ${a}/>`;
-    }).join('');
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${size||16}" height="${size||16}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2}" stroke-linecap="round" stroke-linejoin="round">${children}</svg>`;
-  }
-  window.addEventListener('load', () => {
-    lucide.createIcons();
-    document.querySelectorAll('.mega-item[data-micon]').forEach(el => {
-      el.insertAdjacentHTML('afterbegin', licon(el.dataset.micon, 15, 1.8));
+
+    window.addEventListener('load', () => {
+      lucide.createIcons();
+      document.querySelectorAll('.mega-item[data-micon]').forEach(el => {
+        if (!el.querySelector('svg')) el.insertAdjacentHTML('afterbegin', licon(el.dataset.micon, 15, 1.8));
+      });
+      initGate();
     });
-  });
-</script>
-    lucide.createIcons();
   </script>
 
 </body>
