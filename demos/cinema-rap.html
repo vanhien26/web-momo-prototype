@@ -8,86 +8,115 @@
 <script src="/assets/cinema-nav.js"></script>
 <script src="/assets/cinema-data.js"></script>
 <style>
-:root{--surface:#111;--s2:#181818;--s3:#1f1f1f}
+:root{--surface:#111;--s2:#181818;--s3:#222}
 body{font-family:'MoMoTrustSans','Be Vietnam Pro',sans-serif}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
 /* PAGE HEADER */
 .page-header{border-bottom:1px solid var(--gray-200)}
-.page-header-inner{max-width:var(--content);margin:0 auto;padding:24px 20px 20px}
-.ph-title{font-size:26px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px}
-.ph-desc{font-size:14px;color:var(--gray-400);line-height:1.6;max-width:500px}
+.page-header-inner{max-width:var(--content);margin:0 auto;padding:20px 20px 16px}
+.ph-title{font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px}
+.ph-desc{font-size:13px;color:var(--gray-400);line-height:1.5}
 
-/* DATE STRIP - sticky */
-.date-strip{position:sticky;top:60px;z-index:100;background:#000;border-bottom:1px solid var(--gray-200)}
-.date-strip-inner{max-width:var(--content);margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none}
-.date-strip-inner::-webkit-scrollbar{display:none}
-.date-pill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:6px 14px;border-radius:100px;border:1.5px solid var(--gray-200);background:var(--surface);font-size:12px;font-weight:600;color:var(--gray-500);cursor:pointer;transition:all .15s;line-height:1.3;white-space:nowrap}
-.date-pill .dp-day{font-size:10px;font-weight:500;color:var(--gray-400)}
-.date-pill:hover{border-color:var(--gray-300);color:var(--gray-700)}
-.date-pill.on{border-color:var(--pink-500);background:rgba(235,47,150,.08);color:var(--pink-500)}
-.date-pill.on .dp-day{color:var(--pink-400)}
+/* CHAIN FILTER */
+.chain-filter{border-bottom:1px solid var(--gray-200);background:#000;position:sticky;top:60px;z-index:100}
+.chain-filter-inner{max-width:var(--content);margin:0 auto;padding:10px 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.chain-filter-inner::-webkit-scrollbar{display:none}
 
-/* MAIN */
-.page-wrap{max-width:var(--content);margin:0 auto;padding:28px 20px 60px}
+.chain-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 10px;border-radius:var(--r-lg);cursor:pointer;transition:all .15s;flex-shrink:0;min-width:56px}
+.chain-btn:hover{background:var(--s2)}
+.chain-btn.on{background:var(--s3)}
+.chain-btn-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(255,255,255,.06)}
+.chain-btn-logo img{width:30px;height:30px;object-fit:contain;transition:filter .15s}
+.chain-btn:not(.on) .chain-btn-logo img{filter:brightness(.55)}
+.chain-btn.on .chain-btn-logo img{filter:brightness(1)}
+.chain-btn-name{font-size:10px;font-weight:600;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56px;text-align:center}
+.chain-btn.on .chain-btn-name{color:var(--pink-500)}
 
-/* CHAIN PARTNER ROW */
-.partner-section{margin-bottom:32px}
-.partner-label{font-size:11px;font-weight:700;color:var(--gray-500);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
-.partner-row{display:flex;gap:0;flex-wrap:wrap}
-.partner-logo-btn{display:flex;align-items:center;justify-content:center;padding:10px 14px;cursor:pointer;border-radius:var(--r-lg);transition:all .18s}
-.partner-logo-btn:hover{background:var(--s2)}
-.partner-logo-btn.on{background:var(--s2);box-shadow:0 0 0 1.5px var(--pink-400)}
-.partner-logo-btn img{height:28px;object-fit:contain;display:block;filter:brightness(.6);transition:filter .18s}
-.partner-logo-btn.on img,.partner-logo-btn:hover img{filter:brightness(1)}
+/* ALL BUTTON */
+.chain-btn-all .chain-btn-logo{background:var(--pink-500)}
+.chain-btn.on.chain-btn-all .chain-btn-logo{background:var(--pink-500)}
+.chain-btn-all .chain-btn-name{color:var(--gray-500)}
+.chain-btn.on.chain-btn-all .chain-btn-name{color:var(--pink-500)}
 
-/* CHAIN ACCORDION */
-.chain-block{border:1px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px}
-.chain-hdr{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:var(--s2);transition:background .15s;user-select:none}
-.chain-hdr:hover{background:var(--s3)}
-.chain-hdr-logo{height:28px;object-fit:contain}
-.chain-hdr-info{flex:1}
-.chain-hdr-name{font-size:14px;font-weight:700;color:var(--gray-900)}
-.chain-hdr-sub{font-size:12px;color:var(--gray-500);margin-top:1px}
-.chain-chevron{width:18px;height:18px;color:var(--gray-400);transition:transform .22s;flex-shrink:0}
-.chain-hdr.open .chain-chevron{transform:rotate(180deg)}
-.chain-body{display:none}
-.chain-body.open{display:block}
+/* SPLIT LAYOUT */
+.split-wrap{max-width:var(--content);margin:0 auto;display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 160px)}
+@media(max-width:768px){.split-wrap{grid-template-columns:1fr}}
 
-/* THEATER ROW */
-.theater-row{border-top:1px solid var(--gray-200)}
-.theater-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .15s}
-.theater-hdr:hover{background:var(--s3)}
-.theater-hdr-dot{width:8px;height:8px;border-radius:50%;background:var(--gray-300);flex-shrink:0}
-.theater-hdr.open .theater-hdr-dot{background:var(--pink-500)}
-.theater-hdr-name{flex:1;font-size:13px;font-weight:600;color:var(--gray-800)}
-.theater-hdr-addr{font-size:11px;color:var(--gray-500);margin-top:1px}
-.theater-hdr-formats{display:flex;gap:4px;flex-shrink:0}
-.fmt-tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:.02em}
-.fmt-tag.imax{background:#0a1a3a;color:#4a9eff;border:1px solid #1a3a6a}
-.fmt-tag.d4x{background:#1a0a00;color:#ff8c42;border:1px solid #3a1a00}
-.fmt-tag.gc{background:#0a1a0a;color:#4ade80;border:1px solid #1a3a1a}
-.fmt-tag.d3,.fmt-tag.d2{background:rgba(255,255,255,.05);color:var(--gray-500);border:1px solid var(--gray-200)}
-.theater-chevron{width:14px;height:14px;color:var(--gray-400);transition:transform .2s;flex-shrink:0}
-.theater-hdr.open .theater-chevron{transform:rotate(180deg)}
+/* LEFT PANEL */
+.left-panel{border-right:1px solid var(--gray-200);position:sticky;top:118px;height:calc(100vh - 118px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--gray-200) transparent}
+.left-panel::-webkit-scrollbar{width:4px}
+.left-panel::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:2px}
 
-/* SHOWTIMES PANEL */
-.theater-shows{display:none;padding:0 16px 16px 34px;border-top:1px solid var(--gray-200);background:var(--surface)}
-.theater-shows.open{display:block}
-.show-film{margin-top:14px}
-.show-film-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.show-film-poster{width:36px;height:54px;border-radius:4px;object-fit:cover;flex-shrink:0;background:var(--s3)}
-.show-film-info{}
-.show-film-title{font-size:13px;font-weight:700;color:var(--gray-900)}
-.show-film-meta{font-size:11px;color:var(--gray-500);margin-top:2px}
-.show-fmt-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
-.show-fmt-label{font-size:11px;font-weight:600;color:var(--gray-600);min-width:100px}
-.time-pills{display:flex;gap:6px;flex-wrap:wrap}
-.time-pill{padding:5px 12px;border-radius:6px;border:1px solid var(--gray-200);background:var(--s2);font-size:12px;font-weight:700;color:var(--gray-700);cursor:pointer;transition:all .13s}
-.time-pill:hover{border-color:var(--pink-400);color:var(--pink-500);background:rgba(235,47,150,.06)}
-.time-pill.few{border-color:rgba(251,146,60,.5);color:#fb923c}
-.show-film-divider{height:1px;background:var(--gray-200);margin:12px 0 0}
+.search-wrap{padding:12px 16px;border-bottom:1px solid var(--gray-200);position:sticky;top:0;background:#000;z-index:10}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--gray-200);border-radius:var(--r-md);padding:8px 12px}
+.search-box input{background:none;border:none;outline:none;color:var(--gray-900);font-size:13px;flex:1;font-family:inherit}
+.search-box input::placeholder{color:var(--gray-400)}
+.search-box svg{flex-shrink:0;color:var(--gray-400)}
+
+.theater-list{}
+.theater-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .13s}
+.theater-item:hover{background:var(--s2)}
+.theater-item.on{background:rgba(235,47,150,.08);border-right:2px solid var(--pink-500)}
+.ti-logo{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.ti-logo img{width:22px;height:22px;object-fit:contain;filter:brightness(.8)}
+.theater-item.on .ti-logo img{filter:brightness(1)}
+.ti-info{flex:1;min-width:0}
+.ti-name{font-size:13px;font-weight:600;color:var(--gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.theater-item.on .ti-name{color:var(--gray-900)}
+.ti-addr{font-size:11px;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ti-arrow{color:var(--gray-300);flex-shrink:0}
+.theater-item.on .ti-arrow{color:var(--pink-400)}
+.see-more-btn{display:block;width:100%;padding:14px;font-size:13px;font-weight:700;color:var(--pink-500);text-align:center;border-top:1px solid var(--gray-200);cursor:pointer;transition:background .13s}
+.see-more-btn:hover{background:var(--s2)}
+
+/* RIGHT PANEL */
+.right-panel{padding:0}
+
+.rp-header{padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;align-items:flex-start;gap:12px}
+.rp-chain-logo{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.rp-chain-logo img{width:26px;height:26px;object-fit:contain}
+.rp-header-info{flex:1}
+.rp-name{font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:2px}
+.rp-addr{font-size:12px;color:var(--gray-500);line-height:1.4}
+.rp-map-link{font-size:12px;font-weight:600;color:var(--pink-500);flex-shrink:0;cursor:pointer}
+
+/* DATE STRIP in right panel */
+.rp-dates{padding:10px 20px;border-bottom:1px solid var(--gray-200);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.rp-dates::-webkit-scrollbar{display:none}
+.rp-date{flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-radius:var(--r-md);border:1px solid var(--gray-200);background:var(--surface);font-size:12px;font-weight:700;color:var(--gray-500);cursor:pointer;transition:all .13s;min-width:52px}
+.rp-date .rd-day{font-size:10px;font-weight:500;color:var(--gray-400);margin-bottom:2px}
+.rp-date:hover{border-color:var(--gray-300);color:var(--gray-700)}
+.rp-date.on{border-color:var(--pink-500);background:rgba(235,47,150,.08);color:var(--pink-500)}
+.rp-date.on .rd-day{color:var(--pink-400)}
+
+/* FILM LIST */
+.film-list{padding:8px 0 40px}
+.film-item{display:flex;gap:14px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sched-poster{width:64px;height:96px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--s3)}
+.sched-info{flex:1;min-width:0}
+.sched-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.age-badge{font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;flex-shrink:0;margin-top:1px}
+.age-P{background:#22c55e;color:#fff}
+.age-T13{background:#f59e0b;color:#fff}
+.age-T16{background:#f97316;color:#fff}
+.age-C18{background:#ef4444;color:#fff}
+.age-K{background:#8b5cf6;color:#fff}
+.sched-title{font-size:15px;font-weight:800;color:var(--gray-900);line-height:1.3}
+.sched-genre{font-size:12px;color:var(--gray-500);margin-bottom:10px}
+
+.fmt-group{margin-bottom:10px}
+.fmt-label{font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:6px}
+.time-pills{display:flex;flex-wrap:wrap;gap:6px}
+.time-pill{padding:5px 12px;border-radius:6px;border:1.5px solid rgba(235,47,150,.4);background:rgba(235,47,150,.05);font-size:12px;font-weight:700;color:var(--pink-500);cursor:pointer;transition:all .13s;white-space:nowrap}
+.time-pill:hover{background:rgba(235,47,150,.12);border-color:var(--pink-500)}
+.time-pill .tp-end{font-size:10px;font-weight:500;color:var(--pink-400);margin-left:4px}
+.time-pill.few{border-color:rgba(251,146,60,.5);background:rgba(251,146,60,.06);color:#fb923c}
+.time-pill.few .tp-end{color:#fdba74}
+
+.rp-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--gray-500)}
+.rp-empty-icon{font-size:48px;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -95,23 +124,34 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 <div class="page-header">
   <div class="page-header-inner">
     <h1 class="ph-title">Rạp chiếu phim</h1>
-    <p class="ph-desc">Xem lịch chiếu và đặt vé tại tất cả rạp đối tác MoMo - CGV, Lotte, BHD, Galaxy, Beta và nhiều hơn nữa.</p>
+    <p class="ph-desc">Chọn rạp để xem lịch chiếu và đặt vé nhanh qua MoMo · CGV, Lotte, BHD, Galaxy, Beta và nhiều rạp khác</p>
   </div>
 </div>
 
-<!-- DATE STRIP -->
-<div class="date-strip">
-  <div class="date-strip-inner" id="dateStrip"></div>
+<div class="chain-filter">
+  <div class="chain-filter-inner" id="chainFilter"></div>
 </div>
 
-<div class="page-wrap">
-  <!-- PARTNER LOGOS -->
-  <div class="partner-section">
-    <div class="partner-row" id="partnerRow"></div>
+<div class="split-wrap">
+  <!-- LEFT: theater list -->
+  <div class="left-panel">
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên rạp ..." oninput="onSearch(this.value)">
+      </div>
+    </div>
+    <div class="theater-list" id="theaterList"></div>
+    <button class="see-more-btn" id="seeMoreBtn" onclick="seeMore()" style="display:none">Xem thêm</button>
   </div>
 
-  <!-- CHAIN LIST -->
-  <div id="chainList"></div>
+  <!-- RIGHT: showtimes -->
+  <div class="right-panel" id="rightPanel">
+    <div class="rp-empty">
+      <div class="rp-empty-icon">🎬</div>
+      <div>Chọn rạp để xem lịch chiếu</div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toastEl"></div>
@@ -133,248 +173,201 @@ const CHAIN_LOGOS = {
   ncc:      'https://homepage.momocdn.net/cinema/ncclogo-260325100933.png',
 };
 
-const CHAINS = [
-  { slug:'cgv',    name:'CGV Cinemas',   logo:CHAIN_LOGOS.cgv, theaters:[
-    { slug:'cgv-vincom-dong-khoi', name:'CGV Vincom Đồng Khởi',   addr:'72 Lê Thánh Tôn, Quận 1, TP.HCM',         formats:['IMAX','4DX','3D','2D'], shows:[
-      { title:'Toy Story 5',   poster:'https://image.tmdb.org/t/p/w92/iMdHKPCX6oHNv5rKZWQUzGnPQJQ.jpg', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:15'},{t:'10:00'},{t:'12:45'},{t:'16:50'},{t:'19:45'},{t:'21:00',few:true}] },
-        { label:'3D Phụ Đề',     cls:'d3', times:[{t:'11:00'},{t:'13:20'},{t:'18:00'},{t:'20:30'}] },
-        { label:'IMAX',          cls:'imax',times:[{t:'11:30',few:true},{t:'15:15'},{t:'20:15'}] },
-      ]},
-      { title:'Supergirl',     poster:'https://image.tmdb.org/t/p/w92/vRmhRFDDCkfDlXJjNleQWFHRqlA.jpg', dur:'130 phút', age:'T13', fmts:[
-        { label:'2D Phụ Đề', cls:'d2', times:[{t:'10:30'},{t:'14:00'},{t:'18:00'},{t:'21:30'}] },
-        { label:'IMAX',      cls:'imax',times:[{t:'12:15'},{t:'17:30'},{t:'21:15'}] },
-      ]},
-    ]},
-    { slug:'cgv-crescent-mall', name:'CGV Crescent Mall',   addr:'101 Tôn Dật Tiên, Phú Mỹ Hưng, Quận 7, TP.HCM', formats:['IMAX','4DX','Goldclass','3D','2D'], shows:[
-      { title:'Toy Story 5',   poster:'https://image.tmdb.org/t/p/w92/iMdHKPCX6oHNv5rKZWQUzGnPQJQ.jpg', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:30'},{t:'11:00'},{t:'14:30'},{t:'17:45'},{t:'20:30'}] },
-        { label:'IMAX',          cls:'imax',times:[{t:'10:00'},{t:'13:00'},{t:'16:00'},{t:'19:00',few:true}] },
-      ]},
-      { title:'Lầu Chú Hỏa',  poster:'https://image.tmdb.org/t/p/w92/9Fo1MHEd0qv6AkzWlQAYqrTpCZi.jpg', dur:'105 phút', age:'T16', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'10:10'},{t:'12:00'},{t:'15:30'},{t:'18:45'},{t:'21:40'}] },
-        { label:'4DX',           cls:'d4x', times:[{t:'11:30'},{t:'14:00',few:true},{t:'17:20'}] },
-      ]},
-    ]},
-    { slug:'cgv-royal-city', name:'CGV Royal City',   addr:'72A Nguyễn Trãi, Thanh Xuân, Hà Nội', formats:['IMAX','4DX','3D','2D'], shows:[
-      { title:'Toy Story 5', poster:'https://image.tmdb.org/t/p/w92/iMdHKPCX6oHNv5rKZWQUzGnPQJQ.jpg', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:00'},{t:'11:00'},{t:'13:30'},{t:'16:00'},{t:'19:00'}] },
-        { label:'IMAX',          cls:'imax',times:[{t:'10:00'},{t:'14:00'},{t:'18:30',few:true}] },
-      ]},
-    ]},
-  ]},
-  { slug:'lotte', name:'Lotte Cinema',  logo:CHAIN_LOGOS.lotte, theaters:[
-    { slug:'lotte-nowzone', name:'Lotte Cinema Nowzone',   addr:'235 Nguyễn Văn Cừ, Quận 1, TP.HCM', formats:['4DX','3D','2D'], shows:[
-      { title:'Doraemon Movie 45', poster:'https://image.tmdb.org/t/p/w92/5YZbUmjbMa3ClvSW1Wj3D6XGkik.jpg', dur:'104 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:00'},{t:'09:40'},{t:'11:30'},{t:'14:15'},{t:'18:30'},{t:'21:00'}] },
-        { label:'4DX',           cls:'d4x', times:[{t:'13:00'},{t:'15:00',few:true},{t:'17:30'}] },
-      ]},
-      { title:'Tung Hoành Tứ Hải', poster:'', dur:'118 phút', age:'T13', fmts:[
-        { label:'2D Phụ Đề', cls:'d2', times:[{t:'10:00'},{t:'13:30'},{t:'17:00'},{t:'20:15'}] },
-      ]},
-    ]},
-    { slug:'lotte-hanoi', name:'Lotte Cinema Hà Nội',   addr:'54 Liễu Giai, Ba Đình, Hà Nội', formats:['4DX','3D','2D'], shows:[
-      { title:'Toy Story 5', poster:'https://image.tmdb.org/t/p/w92/iMdHKPCX6oHNv5rKZWQUzGnPQJQ.jpg', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'10:00'},{t:'12:30'},{t:'15:00'},{t:'17:30'},{t:'20:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'bhd',    name:'BHD Star',      logo:CHAIN_LOGOS.bhd, theaters:[
-    { slug:'bhd-bitexco', name:'BHD Star Bitexco',   addr:'2 Hải Triều, Quận 1, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Bạch Xà: Một Kiếp', poster:'', dur:'120 phút', age:'T13', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:30'},{t:'12:50'},{t:'16:20'},{t:'19:20'}] },
-        { label:'3D Phụ Đề',     cls:'d3', times:[{t:'11:30'},{t:'17:40'},{t:'21:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'galaxy', name:'Galaxy Cinema', logo:CHAIN_LOGOS.galaxy, theaters:[
-    { slug:'galaxy-nguyen-du', name:'Galaxy Cinema Nguyễn Du',   addr:'116 Nguyễn Du, Quận 1, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Mesdames Thanh Sắc', poster:'', dur:'110 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:15'},{t:'10:00'},{t:'12:30'},{t:'15:00'},{t:'17:30'},{t:'20:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'beta',   name:'Beta Cinemas',  logo:CHAIN_LOGOS.beta, theaters:[
-    { slug:'beta-thu-duc', name:'Beta Cinemas Thủ Đức',   addr:'18 Võ Văn Ngân, TP. Thủ Đức, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Doraemon Movie 45', dur:'104 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:00'},{t:'10:30'},{t:'12:00'},{t:'14:00'},{t:'16:30'},{t:'19:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'cinestar', name:'Cinestar', logo:CHAIN_LOGOS.cinestar, theaters:[
-    { slug:'cinestar-hai-ba-trung', name:'Cinestar Hai Bà Trưng', addr:'135 Hai Bà Trưng, Quận 1, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Mesdames Thanh Sắc', dur:'110 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:30'},{t:'11:30'},{t:'14:00'},{t:'16:30'},{t:'19:00'},{t:'21:00'}] },
-      ]},
-    ]},
-    { slug:'cinestar-quest', name:'Cinestar Quận 11', addr:'13 Lê Quang Sung, Quận 6, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Toy Story 5', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'10:00'},{t:'12:30'},{t:'15:00'},{t:'17:30'},{t:'20:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'megags', name:'Mega GS', logo:CHAIN_LOGOS.megags, theaters:[
-    { slug:'megags-cao-thang', name:'Mega GS Cao Thắng', addr:'25 Cao Thắng, Quận 3, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Bạch Xà: Một Kiếp', dur:'120 phút', age:'T13', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'10:00'},{t:'13:00'},{t:'16:00'},{t:'19:00'},{t:'21:30'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'dcine', name:'DCine+', logo:CHAIN_LOGOS.dcine, theaters:[
-    { slug:'dcine-aeon-binh-tan', name:'DCine+ Aeon Bình Tân', addr:'Aeon Mall Bình Tân, Tân Tạo, Bình Tân, TP.HCM', formats:['3D','2D'], shows:[
-      { title:'Toy Story 5', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:15'},{t:'11:45'},{t:'14:15'},{t:'16:45'},{t:'19:15'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'cinemax', name:'Cinemax', logo:CHAIN_LOGOS.cinemax, theaters:[
-    { slug:'cinemax-bis-thu-duc', name:'Cinemax Thủ Đức', addr:'Vincom Thủ Đức, Dĩ An, Bình Dương', formats:['2D'], shows:[
-      { title:'Doraemon Movie 45', dur:'104 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'09:00'},{t:'11:00'},{t:'13:30'},{t:'15:30'},{t:'17:30'},{t:'20:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'rio', name:'Rio Cinemas', logo:CHAIN_LOGOS.rio, theaters:[
-    { slug:'rio-tan-binh', name:'Rio Cinemas Tân Bình', addr:'Tân Bình, TP.HCM', formats:['2D'], shows:[
-      { title:'Mesdames Thanh Sắc', dur:'110 phút', age:'P', fmts:[
-        { label:'2D Lồng Tiếng', cls:'d2', times:[{t:'10:00'},{t:'13:00'},{t:'16:00'},{t:'19:00'}] },
-      ]},
-    ]},
-  ]},
-  { slug:'ncc', name:'Trung tâm chiếu phim QG', logo:CHAIN_LOGOS.ncc, theaters:[
-    { slug:'ncc-hanoi', name:'Trung tâm chiếu phim Quốc gia', addr:'87 Láng Hạ, Đống Đa, Hà Nội', formats:['2D'], shows:[
-      { title:'Toy Story 5', dur:'100 phút', age:'P', fmts:[
-        { label:'2D Phụ Đề', cls:'d2', times:[{t:'10:30'},{t:'14:00'},{t:'17:30'},{t:'20:00'}] },
-      ]},
-    ]},
-  ]},
+const CHAINS_META = [
+  { slug:'cgv',    name:'CGV' },
+  { slug:'lotte',  name:'Lotte Ci...' },
+  { slug:'galaxy', name:'Galaxy C...' },
+  { slug:'bhd',    name:'BHD Star' },
+  { slug:'beta',   name:'Beta Cin...' },
+  { slug:'cinestar',name:'Cinestar' },
+  { slug:'megags', name:'Mega GS' },
+  { slug:'dcine',  name:'DCINE' },
+  { slug:'cinemax',name:'Cinemax' },
+  { slug:'rio',    name:'Rio' },
+  { slug:'ncc',    name:'Trung Tâm...' },
 ];
 
-let activeDate = 0;
-let openChains = {};
-let openTheaters = {};
+const SHOWS_SAMPLE = {
+  toy5: { title:'Toy Story 5', age:'P', genre:'Hoạt hình, Gia đình, Phiêu lưu', fmts:[
+    { label:'2D Lồng tiếng', times:[{t:'09:40',e:'11:10'},{t:'10:15',e:'11:45'},{t:'12:10',e:'13:40'},{t:'14:05',e:'15:35'},{t:'15:15',e:'16:45'},{t:'16:10',e:'17:40'},{t:'17:15',e:'18:45'},{t:'18:45',e:'20:15'},{t:'19:50',e:'21:20'},{t:'21:15',e:'22:45',few:true}] },
+    { label:'3D Phụ đề',     times:[{t:'10:30',e:'12:00'},{t:'13:00',e:'14:30'},{t:'15:30',e:'17:00'},{t:'18:00',e:'19:30'},{t:'20:30',e:'22:00'}] },
+  ]},
+  moana: { title:'Hành Trình Của Moana', age:'P', genre:'Hài, Giả tưởng, Phiêu lưu, Gia đình', fmts:[
+    { label:'2D Lồng tiếng', times:[{t:'11:20',e:'13:16'},{t:'13:45',e:'15:41'},{t:'16:00',e:'17:56'},{t:'20:40',e:'22:36'}] },
+    { label:'3D Lồng tiếng', times:[{t:'09:30',e:'11:26'},{t:'12:00',e:'13:56'},{t:'14:30',e:'16:26'},{t:'17:00',e:'18:56'},{t:'19:30',e:'21:26'}] },
+  ]},
+  supergirl: { title:'Supergirl: Woman of Tomorrow', age:'T13', genre:'Hành động, Siêu anh hùng, Khoa học viễn tưởng', fmts:[
+    { label:'2D Phụ đề',  times:[{t:'10:30',e:'13:00'},{t:'13:30',e:'16:00'},{t:'17:00',e:'19:30'},{t:'20:30',e:'23:00',few:true}] },
+    { label:'IMAX',        times:[{t:'11:00',e:'13:30'},{t:'14:00',e:'16:30'},{t:'18:00',e:'20:30'},{t:'21:00',e:'23:30',few:true}] },
+  ]},
+  doraemon: { title:'Doraemon Movie 45', age:'K', genre:'Hoạt hình, Gia đình, Phiêu lưu', fmts:[
+    { label:'2D Lồng tiếng', times:[{t:'09:00',e:'10:44'},{t:'10:30',e:'12:14'},{t:'12:00',e:'13:44'},{t:'14:00',e:'15:44'},{t:'16:30',e:'18:14'},{t:'19:00',e:'20:44'},{t:'21:00',e:'22:44'}] },
+  ]},
+  lauChuHoa: { title:'Lầu Chú Hỏa', age:'T16', genre:'Kinh dị, Tâm lý, Hồi hộp', fmts:[
+    { label:'2D Lồng tiếng', times:[{t:'10:10',e:'12:00'},{t:'12:00',e:'13:50'},{t:'15:30',e:'17:20'},{t:'18:45',e:'20:35'},{t:'21:40',e:'23:30',few:true}] },
+    { label:'4DX',            times:[{t:'11:30',e:'13:20'},{t:'14:00',e:'15:50',few:true},{t:'17:20',e:'19:10'}] },
+  ]},
+};
 
-function buildDates() {
+const THEATERS = [
+  { slug:'cgv-giga-mall',    chain:'cgv',    name:'CGV Giga Mall Thủ Đức',       addr:'Tầng 6, Gigamall, 240-242 Phạm Văn Đồng, Thủ Đức, TP.HCM',   shows:['toy5','moana','supergirl','lauChuHoa'] },
+  { slug:'cgv-vincom-dk',    chain:'cgv',    name:'CGV Vincom Đồng Khởi',        addr:'72 Lê Thánh Tôn, Quận 1, TP.HCM',                             shows:['toy5','supergirl','moana'] },
+  { slug:'cgv-crescent',     chain:'cgv',    name:'CGV Crescent Mall',           addr:'101 Tôn Dật Tiên, Phú Mỹ Hưng, Quận 7, TP.HCM',               shows:['toy5','lauChuHoa','doraemon'] },
+  { slug:'cgv-satra-cu-chi', chain:'cgv',    name:'CGV Satra Củ Chi',            addr:'Satra Củ Chi, Tân An Hội, Củ Chi, TP.HCM',                     shows:['toy5','doraemon'] },
+  { slug:'cgv-aeon-binh-tan',chain:'cgv',    name:'CGV Aeon Bình Tân',           addr:'Aeon Mall Bình Tân, Tân Tạo, Bình Tân, TP.HCM',                shows:['toy5','moana','lauChuHoa'] },
+  { slug:'cgv-hoang-van-thu',chain:'cgv',    name:'CGV Hoàng Văn Thụ',          addr:'284 Hoàng Văn Thụ, Phú Nhuận, TP.HCM',                        shows:['toy5','supergirl'] },
+  { slug:'cgv-aeon-tan-phu', chain:'cgv',    name:'CGV Aeon Tân Phú',            addr:'Aeon Mall Tân Phú, Bình Trị Đông B, TP.HCM',                   shows:['doraemon','moana','lauChuHoa'] },
+  { slug:'cgv-hung-vuong',   chain:'cgv',    name:'CGV Hùng Vương Plaza',        addr:'126 Hùng Vương, Quận 5, TP.HCM',                              shows:['toy5','doraemon'] },
+  { slug:'cgv-go-vap',       chain:'cgv',    name:'CGV Vincom Gò Vấp',           addr:'Vincom Plaza, 12 Phan Văn Trị, Gò Vấp, TP.HCM',               shows:['toy5','moana'] },
+  { slug:'cgv-royal-city',   chain:'cgv',    name:'CGV Royal City',              addr:'72A Nguyễn Trãi, Thanh Xuân, Hà Nội',                         shows:['toy5','supergirl','doraemon'] },
+  { slug:'cgv-ba-trieu',     chain:'cgv',    name:'CGV Vincom Bà Triệu',         addr:'191 Bà Triệu, Hai Bà Trưng, Hà Nội',                          shows:['toy5','moana'] },
+  { slug:'cgv-da-nang',      chain:'cgv',    name:'CGV Vincom Đà Nẵng',          addr:'910A Ngô Quyền, Sơn Trà, Đà Nẵng',                            shows:['toy5','doraemon'] },
+  { slug:'lotte-nowzone',    chain:'lotte',  name:'Lotte Cinema Nowzone',        addr:'235 Nguyễn Văn Cừ, Quận 1, TP.HCM',                           shows:['doraemon','moana','lauChuHoa'] },
+  { slug:'lotte-cantavil',   chain:'lotte',  name:'Lotte Cinema Cantavil',       addr:'31 Đỗ Xuân Hợp, Quận 9, TP.HCM',                              shows:['toy5','doraemon'] },
+  { slug:'lotte-go-vap',     chain:'lotte',  name:'Lotte Cinema Gò Vấp',         addr:'Vincom Gò Vấp, Phan Văn Trị, TP.HCM',                         shows:['toy5','moana'] },
+  { slug:'lotte-hanoi',      chain:'lotte',  name:'Lotte Cinema Hà Nội',         addr:'54 Liễu Giai, Ba Đình, Hà Nội',                               shows:['toy5','supergirl','doraemon'] },
+  { slug:'bhd-bitexco',      chain:'bhd',    name:'BHD Star Bitexco',            addr:'2 Hải Triều, Quận 1, TP.HCM',                                  shows:['toy5','lauChuHoa'] },
+  { slug:'bhd-vincom-pnt',   chain:'bhd',    name:'BHD Star Vincom Phạm Ngọc Thạch', addr:'Vincom Center, 72 Lê Thánh Tôn, Quận 1, TP.HCM',         shows:['moana','supergirl'] },
+  { slug:'bhd-long-bien',    chain:'bhd',    name:'BHD Star Long Biên',          addr:'Vincom Long Biên, Long Biên, Hà Nội',                          shows:['toy5','doraemon'] },
+  { slug:'galaxy-nguyen-du', chain:'galaxy', name:'Galaxy Cinema Nguyễn Du',     addr:'116 Nguyễn Du, Quận 1, TP.HCM',                               shows:['toy5','moana','lauChuHoa'] },
+  { slug:'galaxy-kinh-duong',chain:'galaxy', name:'Galaxy Cinema Kinh Dương Vương', addr:'579 Kinh Dương Vương, Bình Tân, TP.HCM',                   shows:['doraemon','moana'] },
+  { slug:'galaxy-da-nang',   chain:'galaxy', name:'Galaxy Cinema Đà Nẵng',       addr:'255 Hùng Vương, Hải Châu, Đà Nẵng',                           shows:['toy5','doraemon'] },
+  { slug:'beta-thu-duc',     chain:'beta',   name:'Beta Cinemas Thủ Đức',        addr:'18 Võ Văn Ngân, TP. Thủ Đức, TP.HCM',                         shows:['doraemon','moana'] },
+  { slug:'beta-my-dinh',     chain:'beta',   name:'Beta Cinemas Mỹ Đình',        addr:'Mipec Mall, 229 Tây Sơn, Đống Đa, Hà Nội',                    shows:['toy5','doraemon'] },
+  { slug:'cinestar-hbt',     chain:'cinestar',name:'Cinestar Hai Bà Trưng',      addr:'135 Hai Bà Trưng, Quận 1, TP.HCM',                            shows:['moana','lauChuHoa'] },
+  { slug:'megags-cao-thang', chain:'megags', name:'Mega GS Cao Thắng',           addr:'25 Cao Thắng, Quận 3, TP.HCM',                                shows:['toy5','doraemon'] },
+  { slug:'dcine-binh-tan',   chain:'dcine',  name:'DCine+ Aeon Bình Tân',        addr:'Aeon Mall Bình Tân, Tân Tạo, Bình Tân, TP.HCM',                shows:['toy5','moana'] },
+  { slug:'cinemax-thu-duc',  chain:'cinemax',name:'Cinemax Thủ Đức',             addr:'Vincom Thủ Đức, Dĩ An, Bình Dương',                           shows:['doraemon'] },
+  { slug:'rio-tan-binh',     chain:'rio',    name:'Rio Cinemas Tân Bình',        addr:'Tân Bình, TP.HCM',                                            shows:['moana','toy5'] },
+  { slug:'ncc-hanoi',        chain:'ncc',    name:'Trung tâm chiếu phim QG',     addr:'87 Láng Hạ, Đống Đa, Hà Nội',                                 shows:['toy5','moana'] },
+];
+
+const PAGE_SIZE = 7;
+let activeChain = 'all';
+let activeTheater = null;
+let activeDate = 0;
+let searchQ = '';
+let showCount = PAGE_SIZE;
+
+function buildDates(){
   const today = new Date();
   return Array.from({length:7},(_,i)=>{
     const d = new Date(today); d.setDate(today.getDate()+i);
-    return { day: i===0?'Hôm nay': VN_DAYS[d.getDay()], date: d.getDate(), month: d.getMonth()+1 };
+    return { day:i===0?'Hôm nay':VN_DAYS[d.getDay()], date:d.getDate(), month:d.getMonth()+1 };
   });
 }
 
-function fmtClass(f){
-  if(f==='IMAX') return 'imax';
-  if(f==='4DX') return 'd4x';
-  if(f==='Goldclass') return 'gc';
-  if(f==='3D') return 'd3';
-  return 'd2';
+function filteredTheaters(){
+  return THEATERS.filter(t=>{
+    if(activeChain!=='all' && t.chain!==activeChain) return false;
+    if(searchQ && !t.name.toLowerCase().includes(searchQ.toLowerCase()) && !t.addr.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    return true;
+  });
 }
 
-function renderDateStrip(){
+function renderChainFilter(){
+  const allBtn = `<div class="chain-btn chain-btn-all ${activeChain==='all'?'on':''}" onclick="setChain('all')">
+    <div class="chain-btn-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    </div>
+    <span class="chain-btn-name" style="${activeChain==='all'?'color:var(--pink-500)':''}">Tất cả</span>
+  </div>`;
+  const pills = CHAINS_META.map(c=>`
+    <div class="chain-btn ${activeChain===c.slug?'on':''}" onclick="setChain('${c.slug}')">
+      <div class="chain-btn-logo"><img src="${CHAIN_LOGOS[c.slug]}" alt="${c.name}" onerror="this.style.opacity='.3'"></div>
+      <span class="chain-btn-name">${c.name}</span>
+    </div>`).join('');
+  document.getElementById('chainFilter').innerHTML = allBtn + pills;
+}
+
+function renderTheaterList(){
+  const list = filteredTheaters();
+  const visible = list.slice(0, showCount);
+  const seeMore = document.getElementById('seeMoreBtn');
+  seeMore.style.display = list.length > showCount ? 'block' : 'none';
+
+  document.getElementById('theaterList').innerHTML = visible.map(t=>`
+    <div class="theater-item ${activeTheater===t.slug?'on':''}" onclick="selectTheater('${t.slug}')">
+      <div class="ti-logo"><img src="${CHAIN_LOGOS[t.chain]}" alt="" onerror="this.style.opacity='.2'"></div>
+      <div class="ti-info">
+        <div class="ti-name">${t.name}</div>
+        <div class="ti-addr">${t.addr}</div>
+      </div>
+      <svg class="ti-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`).join('');
+}
+
+function renderRightPanel(){
+  const rp = document.getElementById('rightPanel');
+  if(!activeTheater){
+    rp.innerHTML=`<div class="rp-empty"><div class="rp-empty-icon">🎬</div><div>Chọn rạp để xem lịch chiếu</div></div>`;
+    return;
+  }
+  const t = THEATERS.find(x=>x.slug===activeTheater);
+  if(!t){ rp.innerHTML=''; return; }
+
   const dates = buildDates();
-  document.getElementById('dateStrip').innerHTML = dates.map((d,i)=>`
-    <button class="date-pill ${activeDate===i?'on':''}" onclick="setDate(${i})">
-      <span class="dp-day">${d.day}</span>
-      <span>${d.date}/${d.month}</span>
-    </button>`).join('');
-}
+  const datePills = dates.map((d,i)=>`
+    <div class="rp-date ${activeDate===i?'on':''}" onclick="setDate(${i})">
+      <span class="rd-day">${d.day}</span>
+      <span>${d.date}</span>
+    </div>`).join('');
 
-function renderPartners(){
-  document.getElementById('partnerRow').innerHTML = CHAINS.map(c=>`
-    <button class="partner-logo-btn ${openChains[c.slug]?'on':''}" data-slug="${c.slug}" onclick="toggleChain('${c.slug}')" title="${c.name}">
-      <img src="${c.logo}" alt="${c.name}" onerror="this.style.opacity='.3'">
-    </button>`).join('');
-}
-
-function renderChains(){
-  document.getElementById('chainList').innerHTML = CHAINS.map(c=>{
-    const isOpen = !!openChains[c.slug];
-    const theatersHtml = c.theaters.map(t=>{
-      const tKey = c.slug+'_'+t.slug;
-      const tOpen = !!openTheaters[tKey];
-      const showsHtml = t.shows.map((s,si)=>`
-        <div class="show-film">
-          ${si>0?'<div class="show-film-divider"></div>':''}
-          <div class="show-film-top" style="${si>0?'margin-top:12px':''}">
-            ${(s.poster||(FILM_IMG&&FILM_IMG[s.title]))?`<img class="show-film-poster" src="${s.poster||(FILM_IMG&&FILM_IMG[s.title])}" alt="${s.title}" onerror="this.style.opacity='.2'">`:`<div class="show-film-poster"></div>`}
-            <div class="show-film-info">
-              <div class="show-film-title">${s.title}</div>
-              <div class="show-film-meta">${s.age} · ${s.dur}</div>
-            </div>
-          </div>
-          ${s.fmts.map(f=>`
-            <div class="show-fmt-row">
-              <span class="show-fmt-label"><span class="fmt-tag ${f.cls}">${f.label}</span></span>
-              <div class="time-pills">${f.times.map(tt=>`
-                <button class="time-pill ${tt.few?'few':''}" onclick="bookTicket('${t.slug}','${tt.t}')">${tt.t}</button>`).join('')}
-              </div>
-            </div>`).join('')}
-        </div>`).join('');
-
-      return `
-        <div class="theater-row" id="theater-${tKey}">
-          <div class="theater-hdr ${tOpen?'open':''}" onclick="toggleTheater('${tKey}')">
-            <div class="theater-hdr-dot"></div>
-            <div style="flex:1;min-width:0">
-              <div class="theater-hdr-name">${t.name}</div>
-              <div class="theater-hdr-addr">${t.addr}</div>
-            </div>
-            <div class="theater-hdr-formats">${t.formats.slice(0,3).map(f=>`<span class="fmt-tag ${fmtClass(f)}">${f}</span>`).join('')}</div>
-            <svg class="theater-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-          </div>
-          <div class="theater-shows ${tOpen?'open':''}">${showsHtml}</div>
-        </div>`;
-    }).join('');
-
-    return `
-      <div class="chain-block" id="chain-${c.slug}">
-        <div class="chain-hdr ${isOpen?'open':''}" onclick="toggleChain('${c.slug}')">
-          <img class="chain-hdr-logo" src="${c.logo}" alt="${c.name}" onerror="this.style.opacity='.3'">
-          <div class="chain-hdr-info">
-            <div class="chain-hdr-name">${c.name}</div>
-          </div>
-          <svg class="chain-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  const films = t.shows.map(sk=>{
+    const s = SHOWS_SAMPLE[sk]; if(!s) return '';
+    const img = FILM_IMG && FILM_IMG[s.title];
+    const fmtRows = s.fmts.map(f=>`
+      <div class="fmt-group">
+        <div class="fmt-label">${f.label}</div>
+        <div class="time-pills">${f.times.map(tt=>`
+          <button class="time-pill ${tt.few?'few':''}" onclick="bookTicket('${t.slug}','${tt.t}')">
+            ${tt.t}<span class="tp-end">~ ${tt.e}</span>
+          </button>`).join('')}
         </div>
-        <div class="chain-body ${isOpen?'open':''}">${theatersHtml}</div>
-      </div>`;
+      </div>`).join('');
+    return `<div class="film-item">
+      ${img?`<img class="sched-poster" src="${img}" alt="${s.title}" onerror="this.style.background='var(--s3)'">`:`<div class="sched-poster"></div>`}
+      <div class="sched-info">
+        <div class="sched-top">
+          <span class="age-badge age-${s.age}">${s.age}</span>
+          <div class="sched-title">${s.title}</div>
+        </div>
+        <div class="sched-genre">${s.genre}</div>
+        ${fmtRows}
+      </div><!-- /sched-info -->
+    </div>`;
   }).join('');
+
+  rp.innerHTML = `
+    <div class="rp-header">
+      <div class="rp-chain-logo"><img src="${CHAIN_LOGOS[t.chain]}" alt=""></div>
+      <div class="rp-header-info">
+        <div class="rp-name">${t.name}</div>
+        <div class="rp-addr">${t.addr}</div>
+      </div>
+      <div class="rp-map-link">[ Bản đồ ]</div>
+    </div>
+    <div class="rp-dates">${datePills}</div>
+    <div class="film-list">${films}</div>`;
 }
 
-function render(){
-  renderDateStrip();
-  renderPartners();
-  renderChains();
+function setChain(slug){
+  activeChain=slug; activeTheater=null; showCount=PAGE_SIZE;
+  renderChainFilter(); renderTheaterList(); renderRightPanel();
 }
-
-function setDate(i){ activeDate=i; renderDateStrip(); }
-
-function toggleChain(slug){
-  openChains[slug]=!openChains[slug];
-  // update partner logo highlight
-  document.querySelectorAll('.partner-logo-btn').forEach(b=>{
-    b.classList.toggle('on', openChains[b.dataset.slug]);
-  });
-  // toggle chain body
-  const block = document.getElementById('chain-'+slug);
-  if(!block) return;
-  const hdr = block.querySelector('.chain-hdr');
-  const body = block.querySelector('.chain-body');
-  hdr.classList.toggle('open', openChains[slug]);
-  body.classList.toggle('open', openChains[slug]);
+function selectTheater(slug){
+  activeTheater=slug; activeDate=0;
+  renderTheaterList(); renderRightPanel();
 }
-
-function toggleTheater(key){
-  openTheaters[key]=!openTheaters[key];
-  const el = document.getElementById('theater-'+key);
-  if(!el) return;
-  el.querySelector('.theater-hdr').classList.toggle('open', openTheaters[key]);
-  el.querySelector('.theater-shows').classList.toggle('open', openTheaters[key]);
-}
-
-function bookTicket(theaterSlug, time){ window.location.href=`/cinema/rap/${theaterSlug}`; }
+function setDate(i){ activeDate=i; renderRightPanel(); }
+function onSearch(q){ searchQ=q; showCount=PAGE_SIZE; renderTheaterList(); }
+function seeMore(){ showCount+=PAGE_SIZE; renderTheaterList(); }
+function bookTicket(slug,time){ window.location.href=`/cinema/rap/${slug}`; }
 
 injectCinemaNav('rap');
-render();
+renderChainFilter();
+renderTheaterList();
+renderRightPanel();
 </script>
 </body>
 </html>
