@@ -672,6 +672,7 @@ body {
   .nb-right[data-empty="1"] { display: none; }
   .cinema-sel-card { display: flex !important; }
   .nb-section-hd { display: none; }
+  .nb-chain-filter { display: none; }
 }
 /* Cinema selector card (mobile only — base hidden, shown via media query above) */
 .cinema-sel-card { align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,.04); border: 1.5px solid rgba(255,255,255,.1); border-radius: 12px; margin: 10px 16px 4px; cursor: pointer; transition: background .15s; display: none; }
@@ -690,10 +691,23 @@ body {
 .csheet-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 8px; flex-shrink: 0; }
 .csheet-title { font-size: 16px; font-weight: 800; color: #fff; }
 .csheet-close { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.08); border: none; color: rgba(255,255,255,.6); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; line-height: 1; }
-.csheet-chain-row { padding: 2px 16px 10px; overflow-x: auto; display: flex; gap: 6px; scrollbar-width: none; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,.07); }
-.csheet-chain-row::-webkit-scrollbar { display: none; }
-.csheet-chain-pill { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1.5px solid rgba(255,255,255,.1); background: none; color: rgba(255,255,255,.5); cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0; transition: all .13s; }
-.csheet-chain-pill.on { background: var(--pink-500); border-color: var(--pink-500); color: #fff; }
+/* Step 1 – chain list */
+.csheet-chain-list { overflow-y: auto; flex: 1; padding-bottom: 28px; }
+.csheet-chain-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.06); cursor: pointer; transition: background .12s; }
+.csheet-chain-item:active { background: rgba(255,255,255,.06); }
+.csheet-chain-item.on { background: rgba(235,47,150,.08); }
+.csheet-chain-item.on .csheet-chain-chev { color: var(--pink-500); }
+.csheet-chain-logo { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.csheet-chain-logo img { width: 32px; height: 32px; object-fit: contain; }
+.csheet-chain-info { flex: 1; min-width: 0; }
+.csheet-chain-name { font-size: 14px; font-weight: 800; color: #fff; }
+.csheet-chain-sub { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.csheet-chain-chev { color: rgba(255,255,255,.25); flex-shrink: 0; }
+/* Step 2 – branch list */
+.csheet-back-bar { display: flex; align-items: center; gap: 8px; padding: 8px 16px 10px; border-bottom: 1px solid rgba(255,255,255,.07); flex-shrink: 0; }
+.csheet-back-btn { display: flex; align-items: center; gap: 4px; background: none; border: none; color: rgba(255,255,255,.6); font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; padding: 4px 0; }
+.csheet-back-btn svg { flex-shrink: 0; }
+.csheet-branch-chain-name { font-size: 13px; font-weight: 800; color: #fff; }
 .csheet-list { overflow-y: auto; flex: 1; padding-bottom: 28px; }
 .csheet-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.05); cursor: pointer; transition: background .12s; }
 .csheet-item:active { background: rgba(255,255,255,.06); }
@@ -1176,8 +1190,6 @@ body {
     <button class="scroll-btn scroll-btn-prev" onclick="scrollSection('filmGrid',-1)" aria-label="Trước"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <button class="scroll-btn scroll-btn-next" onclick="scrollSection('filmGrid',1)" aria-label="Tiếp"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
   </div>
-  <div class="swipe-hint"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg> Vuốt để xem thêm</div>
-
   <div class="sec-hd">
     <div class="sec-hd-left">
       <span class="sec-dot soon"></span>
@@ -1190,8 +1202,6 @@ body {
     <button class="scroll-btn scroll-btn-prev" onclick="scrollSection('comingSoonList',-1)" aria-label="Trước"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
     <button class="scroll-btn scroll-btn-next" onclick="scrollSection('comingSoonList',1)" aria-label="Tiếp"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
   </div>
-  <div class="swipe-hint"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg> Vuốt để xem thêm</div>
-
   <div class="promo-strip" onclick="toast('Mở trang ưu đãi...')">
     <div class="promo-icon"><i data-lucide="gift" width="24" height="24" stroke-width="1.75"></i></div>
     <div class="promo-body">
@@ -1298,11 +1308,21 @@ body {
 <div class="csheet" id="csheet">
   <div class="csheet-handle"></div>
   <div class="csheet-hd">
-    <span class="csheet-title">Chọn rạp chiếu</span>
+    <span class="csheet-title" id="csheetTitle">Chọn cụm rạp</span>
     <button class="csheet-close" onclick="closeCinemaSheet()">✕</button>
   </div>
-  <div class="csheet-chain-row" id="csheetChainRow"></div>
-  <div class="csheet-list" id="csheetList"></div>
+  <!-- Step 1: chain list -->
+  <div class="csheet-chain-list" id="csheetChainList"></div>
+  <!-- Step 2: back bar + branch list -->
+  <div class="csheet-back-bar" id="csheetBackBar" style="display:none">
+    <button class="csheet-back-btn" onclick="sheetGoBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      Cụm rạp
+    </button>
+    <span style="flex:1"></span>
+    <span class="csheet-branch-chain-name" id="csheetBranchChainName"></span>
+  </div>
+  <div class="csheet-list" id="csheetList" style="display:none"></div>
 </div>
 
 <div id="dealOverlay" onclick="closeDealSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900"></div>
@@ -1573,44 +1593,37 @@ function updateSelCard(c) {
   document.getElementById('cinemaSelAddr').textContent = c ? `${c.dist} · ${c.addr}` : 'Tap để xem danh sách';
 }
 
-function renderSheetList() {
+
+function renderSheetChainList() {
   const allCinemas = CINEMAS.map((c,i) => ({c,i,shows:getFilteredShows(c)})).filter(x=>x.shows.length);
-  const sheetChain = document.getElementById('csheetActiveChain') ? document.getElementById('csheetActiveChain').value : '';
-
-  // Chain pills
   const chains = [...new Set(allCinemas.map(x=>x.c.chain))];
-  document.getElementById('csheetChainRow').innerHTML =
-    `<button class="csheet-chain-pill${!sheetChain?' on':''}" onclick="filterSheetChain('')">Tất cả</button>` +
-    chains.map(ch => `<button class="csheet-chain-pill${sheetChain===ch?' on':''}" onclick="filterSheetChain('${ch}')">${CHAIN_LABELS[ch]||ch}</button>`).join('');
-
-  const filtered = sheetChain ? allCinemas.filter(x=>x.c.chain===sheetChain) : allCinemas;
-  document.getElementById('csheetList').innerHTML = filtered.length
-    ? filtered.map(({c,i,shows}) => {
-        const logo = CHAIN_LOGO[c.chain] || '';
-        const isOn = i === selectedCinemaIdx;
-        return `<div class="csheet-item${isOn?' on':''}" onclick="selectCinema(${i})">
-          <div class="csheet-item-logo">${logo?`<img src="${logo}" alt="">`:'🎬'}</div>
-          <div class="csheet-item-info">
-            <div class="csheet-item-name">${c.name}</div>
-            <div class="csheet-item-sub">${c.dist} · ${shows.length} phim</div>
-          </div>
-          ${isOn?`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="csheet-item-check"><polyline points="20 6 9 17 4 12"/></svg>`:''}
-        </div>`;
-      }).join('')
-    : `<div style="padding:40px 16px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">Không có rạp phù hợp</div>`;
+  document.getElementById('csheetChainList').innerHTML = chains.map(ch => {
+    const logo = CHAIN_LOGO[ch] || '';
+    const branches = allCinemas.filter(x=>x.c.chain===ch);
+    const isCurrentChain = branches.some(x=>x.i===selectedCinemaIdx);
+    return `<div class="csheet-chain-item${isCurrentChain?' on':''}" onclick="sheetSelectChain('${ch}')">
+      <div class="csheet-chain-logo">${logo?`<img src="${logo}" alt="">`:'🎬'}</div>
+      <div class="csheet-chain-info">
+        <div class="csheet-chain-name">${CHAIN_LABELS[ch]||ch}</div>
+        <div class="csheet-chain-sub">${branches.length} rạp</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="csheet-chain-chev"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+  }).join('');
 }
 
-let _sheetChain = '';
-function filterSheetChain(chain) {
-  _sheetChain = chain;
-  document.getElementById('csheetChainRow').querySelectorAll('.csheet-chain-pill').forEach(el => {
-    el.classList.toggle('on', el.textContent === (chain ? (CHAIN_LABELS[chain]||chain) : 'Tất cả'));
-  });
+function sheetSelectChain(chain) {
+  document.getElementById('csheetTitle').textContent = 'Chọn rạp';
+  document.getElementById('csheetChainList').style.display = 'none';
+  document.getElementById('csheetBackBar').style.display = 'flex';
+  document.getElementById('csheetBranchChainName').textContent = CHAIN_LABELS[chain]||chain;
+  document.getElementById('csheetList').style.display = 'block';
+
   const allCinemas = CINEMAS.map((c,i) => ({c,i,shows:getFilteredShows(c)})).filter(x=>x.shows.length);
-  const filtered = chain ? allCinemas.filter(x=>x.c.chain===chain) : allCinemas;
-  document.getElementById('csheetList').innerHTML = filtered.length
-    ? filtered.map(({c,i,shows}) => {
-        const logo = CHAIN_LOGO[c.chain] || '';
+  const branches = allCinemas.filter(x=>x.c.chain===chain);
+  const logo = CHAIN_LOGO[chain]||'';
+  document.getElementById('csheetList').innerHTML = branches.length
+    ? branches.map(({c,i,shows}) => {
         const isOn = i === selectedCinemaIdx;
         return `<div class="csheet-item${isOn?' on':''}" onclick="selectCinema(${i})">
           <div class="csheet-item-logo">${logo?`<img src="${logo}" alt="">`:'🎬'}</div>
@@ -1621,12 +1634,19 @@ function filterSheetChain(chain) {
           ${isOn?`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="csheet-item-check"><polyline points="20 6 9 17 4 12"/></svg>`:''}
         </div>`;
       }).join('')
-    : `<div style="padding:40px 16px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">Không có rạp phù hợp</div>`;
+    : `<div style="padding:40px 16px;text-align:center;color:rgba(255,255,255,.3);font-size:13px">Không có rạp</div>`;
+}
+
+function sheetGoBack() {
+  document.getElementById('csheetTitle').textContent = 'Chọn cụm rạp';
+  document.getElementById('csheetChainList').style.display = 'block';
+  document.getElementById('csheetBackBar').style.display = 'none';
+  document.getElementById('csheetList').style.display = 'none';
 }
 
 function openCinemaSheet() {
-  _sheetChain = '';
-  renderSheetList();
+  sheetGoBack();
+  renderSheetChainList();
   document.getElementById('csheet').classList.add('open');
   document.getElementById('csheetOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
