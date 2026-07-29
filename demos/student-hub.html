@@ -627,13 +627,38 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .rv-card { background:#fff;border:1px solid var(--gray-200);border-radius:16px;padding:20px;transition:box-shadow .18s; }
 .rv-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.08); }
 .rv-card-head { display:flex;align-items:flex-start;gap:12px;margin-bottom:12px; }
-.rv-avatar { width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#EB2F96,#F59E0B);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0; }
+.rv-avatar { width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0; }
+.rv-avatar.anon { background:var(--gray-200);color:var(--gray-400); }
 .rv-meta { flex:1;min-width:0; }
 .rv-author-row { display:flex;align-items:center;gap:7px;flex-wrap:wrap; }
 .rv-author { font-size:13.5px;font-weight:700;color:var(--gray-900); }
 .rv-verified { display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:#10B981;background:#ECFDF5;padding:2px 7px;border-radius:6px; }
 .rv-verified i { stroke:#10B981;flex-shrink:0; }
+.rv-author-anon { color:var(--gray-500);font-style:italic;font-weight:600; }
 .rv-tag { font-size:11px;color:var(--gray-500);margin-top:2px; }
+/* Write review modal */
+.rv-write-modal { position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s; }
+.rv-write-modal.open { opacity:1;pointer-events:auto; }
+.rv-write-sheet { background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:600px;padding:28px 24px 40px;transform:translateY(40px);transition:transform .28s cubic-bezier(.32,1,.22,1); }
+.rv-write-modal.open .rv-write-sheet { transform:translateY(0); }
+.rv-write-sheet-handle { width:40px;height:4px;border-radius:2px;background:var(--gray-200);margin:0 auto 20px; }
+.rv-write-sheet-title { font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:4px; }
+.rv-write-sheet-sub { font-size:12.5px;color:var(--gray-500);margin-bottom:20px; }
+.rv-anon-toggle-row { display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:14px;background:var(--gray-50);border:1.5px solid var(--gray-200);margin-bottom:16px; }
+.rv-anon-toggle-left { display:flex;align-items:center;gap:10px; }
+.rv-anon-toggle-icon { width:36px;height:36px;border-radius:10px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;color:var(--gray-500); }
+.rv-anon-toggle-label { font-size:13.5px;font-weight:700;color:var(--gray-900); }
+.rv-anon-toggle-desc { font-size:11.5px;color:var(--gray-500);margin-top:1px; }
+.rv-toggle { position:relative;width:44px;height:24px;flex-shrink:0; }
+.rv-toggle input { opacity:0;width:0;height:0;position:absolute; }
+.rv-toggle-track { position:absolute;inset:0;border-radius:12px;background:var(--gray-300);transition:background .2s;cursor:pointer; }
+.rv-toggle input:checked + .rv-toggle-track { background:#10B981; }
+.rv-toggle-thumb { position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s; }
+.rv-toggle input:checked ~ .rv-toggle-thumb { transform:translateX(20px); }
+.rv-anon-preview { display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:#F8FAFC;border:1px dashed var(--gray-300);margin-bottom:20px;font-size:12px;color:var(--gray-600); }
+.rv-anon-preview i { color:var(--gray-400);flex-shrink:0; }
+.rv-write-cta { width:100%;padding:13px;border-radius:14px;background:var(--pink);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .18s; }
+.rv-write-cta:hover { opacity:.9; }
 .rv-card-stars { display:flex;gap:2px;margin-left:auto;flex-shrink:0; }
 .rv-card-star { color:#F59E0B;font-size:13px; }
 .rv-text { font-size:13px;color:var(--gray-700);line-height:1.65; }
@@ -1319,6 +1344,41 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
   </section>
 </main>
 
+<!-- WRITE REVIEW MODAL -->
+<div class="rv-write-modal" id="writeReviewModal" onclick="if(event.target===this)closeWriteReview()">
+  <div class="rv-write-sheet">
+    <div class="rv-write-sheet-handle"></div>
+    <div class="rv-write-sheet-title">Viết đánh giá trường</div>
+    <div class="rv-write-sheet-sub">Chia sẻ trải nghiệm của bạn để giúp các sinh viên khoá sau</div>
+
+    <div class="rv-anon-toggle-row">
+      <div class="rv-anon-toggle-left">
+        <div class="rv-anon-toggle-icon" id="rvAnonIcon">
+          <i data-lucide="user-round-x" width="18" height="18"></i>
+        </div>
+        <div>
+          <div class="rv-anon-toggle-label">Đăng ẩn danh</div>
+          <div class="rv-anon-toggle-desc" id="rvAnonDesc">Tên bạn sẽ không hiển thị công khai</div>
+        </div>
+      </div>
+      <label class="rv-toggle">
+        <input type="checkbox" id="rvAnonCheck" checked onchange="onAnonToggle(this.checked)">
+        <div class="rv-toggle-track"></div>
+        <div class="rv-toggle-thumb"></div>
+      </label>
+    </div>
+
+    <div class="rv-anon-preview" id="rvAnonPreview">
+      <i data-lucide="eye-off" width="14" height="14"></i>
+      <span id="rvAnonPreviewText">Sẽ hiển thị là: <strong>Sinh viên ẩn danh</strong> · Sinh viên đã xác thực qua MoMo</span>
+    </div>
+
+    <button class="rv-write-cta" onclick="closeWriteReview();showToast('Chức năng đang phát triển - sẽ ra mắt sớm!')">
+      <i data-lucide="pencil" width="15" height="15"></i> Tiếp tục viết đánh giá
+    </button>
+  </div>
+</div>
+
 <!-- STUDENT PASS VERIFICATION MODAL (MULTI-STEP) -->
 <div class="auth-overlay" id="authModal">
   <div class="auth-card">
@@ -1895,9 +1955,9 @@ const REVIEWS_BY_UNIV = {
       { label: 'Chi phí sinh hoạt', score: 4.4 }
     ],
     items: [
-      { author: 'Tuấn N.', initials: 'T', tag: 'Kỹ thuật Điện', rating: 5, date: 'Tháng 6/2026', text: 'TDTU có khuôn viên đẹp và hiện đại bậc nhất TP.HCM. Phòng lab thực hành được trang bị máy móc mới, wifi campus phủ sóng toàn bộ các tòa. Cantin khu F giá sinh viên, ngon và đa dạng món. Mình rất hài lòng với môi trường học tập ở đây!', helpful: 42 },
-      { author: 'Hương T.', initials: 'H', tag: 'Quản trị Kinh doanh', rating: 4, date: 'Tháng 5/2026', text: 'Thư viện rộng, sách và tài liệu đầy đủ. Giảng viên khoa Kinh tế nhiệt tình, chú trọng thực hành thực tế. Khu vực quanh trường có nhiều quán ăn giá rẻ, phù hợp với sinh viên. Chỉ hơi xa trung tâm một chút nhưng không quá bất tiện.', helpful: 31 },
-      { author: 'Phúc L.', initials: 'P', tag: 'Công nghệ Thông tin', rating: 5, date: 'Tháng 4/2026', text: 'CLB IT và các hackathon nội bộ rất sôi động, tạo cơ hội kết nối với doanh nghiệp từ sớm. Lab máy tính mở cửa đến 9 giờ tối, rất tiện cho sinh viên làm project. Đội ngũ giảng viên IT cập nhật công nghệ mới liên tục.', helpful: 58 }
+      { author: 'Tuấn N.', initials: 'T', tag: 'Kỹ thuật Điện', rating: 5, date: 'Tháng 6/2026', anon: false, text: 'TDTU có khuôn viên đẹp và hiện đại bậc nhất TP.HCM. Phòng lab thực hành được trang bị máy móc mới, wifi campus phủ sóng toàn bộ các tòa. Cantin khu F giá sinh viên, ngon và đa dạng món. Mình rất hài lòng với môi trường học tập ở đây!', helpful: 42 },
+      { author: 'Hương T.', initials: 'H', tag: 'Quản trị Kinh doanh', rating: 4, date: 'Tháng 5/2026', anon: true, text: 'Thư viện rộng, sách và tài liệu đầy đủ. Giảng viên khoa Kinh tế nhiệt tình, chú trọng thực hành thực tế. Khu vực quanh trường có nhiều quán ăn giá rẻ, phù hợp với sinh viên. Chỉ hơi xa trung tâm một chút nhưng không quá bất tiện.', helpful: 31 },
+      { author: 'Phúc L.', initials: 'P', tag: 'Công nghệ Thông tin', rating: 5, date: 'Tháng 4/2026', anon: true, text: 'CLB IT và các hackathon nội bộ rất sôi động, tạo cơ hội kết nối với doanh nghiệp từ sớm. Lab máy tính mở cửa đến 9 giờ tối, rất tiện cho sinh viên làm project. Đội ngũ giảng viên IT cập nhật công nghệ mới liên tục.', helpful: 58 }
     ]
   },
   hcmut: {
@@ -1910,9 +1970,9 @@ const REVIEWS_BY_UNIV = {
       { label: 'Chi phí sinh hoạt', score: 4.3 }
     ],
     items: [
-      { author: 'Hùng Đ.', initials: 'H', tag: 'Cơ khí', rating: 5, date: 'Tháng 6/2026', text: 'BKU là ngôi trường kỹ thuật đầu ngành. Giảng viên toàn tiến sĩ, giáo sư đầu ngành, rất nghiêm khắc nhưng thực sự chất lượng. Áp lực học cao nhưng ra trường rất được các công ty kỹ thuật săn đón. Điểm trừ là cơ sở tại Thủ Đức hơi xa trung tâm.', helpful: 87 },
-      { author: 'Thu N.', initials: 'T', tag: 'Điện - Điện tử', rating: 4, date: 'Tháng 5/2026', text: 'Lab thực hành hiện đại, đặc biệt phòng thí nghiệm Điện tử mới được đầu tư máy oscilloscope thế hệ mới. Chương trình học nặng nhưng thực chiến. Cantin và khu ăn uống quanh trường phong phú, giá hợp lý.', helpful: 45 },
-      { author: 'Khải P.', initials: 'K', tag: 'Khoa học Máy tính', rating: 4, date: 'Tháng 3/2026', text: 'Vào BKU học CNTT khá khắc nghiệt ở năm 1-2 với các môn Toán - Lý. Nhưng từ năm 3 trở đi chuyên ngành rất thú vị và thực tế. Cộng đồng alumni mạnh, nhiều mentor sẵn sàng hỗ trợ đàn em.', helpful: 39 }
+      { author: 'Hùng Đ.', initials: 'H', tag: 'Cơ khí', rating: 5, date: 'Tháng 6/2026', anon: true, text: 'BKU là ngôi trường kỹ thuật đầu ngành. Giảng viên toàn tiến sĩ, giáo sư đầu ngành, rất nghiêm khắc nhưng thực sự chất lượng. Áp lực học cao nhưng ra trường rất được các công ty kỹ thuật săn đón. Điểm trừ là cơ sở tại Thủ Đức hơi xa trung tâm.', helpful: 87 },
+      { author: 'Thu N.', initials: 'T', tag: 'Điện - Điện tử', rating: 4, date: 'Tháng 5/2026', anon: false, text: 'Lab thực hành hiện đại, đặc biệt phòng thí nghiệm Điện tử mới được đầu tư máy oscilloscope thế hệ mới. Chương trình học nặng nhưng thực chiến. Cantin và khu ăn uống quanh trường phong phú, giá hợp lý.', helpful: 45 },
+      { author: 'Khải P.', initials: 'K', tag: 'Khoa học Máy tính', rating: 4, date: 'Tháng 3/2026', anon: true, text: 'Vào BKU học CNTT khá khắc nghiệt ở năm 1-2 với các môn Toán - Lý. Nhưng từ năm 3 trở đi chuyên ngành rất thú vị và thực tế. Cộng đồng alumni mạnh, nhiều mentor sẵn sàng hỗ trợ đàn em.', helpful: 39 }
     ]
   },
   ueh: {
@@ -1925,9 +1985,9 @@ const REVIEWS_BY_UNIV = {
       { label: 'Chi phí sinh hoạt', score: 4.2 }
     ],
     items: [
-      { author: 'Lan V.', initials: 'L', tag: 'Tài chính - Ngân hàng', rating: 5, date: 'Tháng 6/2026', text: 'UEH là top 1 kinh tế ở phía Nam. Giảng viên Tài chính - Ngân hàng có nhiều thầy cô từng công tác tại NHNN, VCB, Vietcombank rất thực chiến. Cơ sở 1 trên đường Đinh Tiên Hoàng rất thuận tiện đi lại.', helpful: 63 },
-      { author: 'Đức H.', initials: 'Đ', tag: 'Quản trị Kinh doanh', rating: 5, date: 'Tháng 5/2026', text: 'Hệ sinh thái doanh nghiệp xung quanh UEH rất phong phú, nhiều cơ hội internship ngay từ năm 2. Career Fair của trường hàng năm quy tụ hàng trăm công ty lớn. Địa điểm trung tâm quận 3 rất thuận tiện.', helpful: 71 },
-      { author: 'Ngọc P.', initials: 'N', tag: 'Marketing', rating: 4, date: 'Tháng 4/2026', text: 'Học Marketing tại UEH rất cập nhật digital và xu hướng mới. Tuy nhiên phòng học ở một số tòa hơi cũ. Điểm cộng lớn là khu vực quanh trường quận 3 có vô số quán cà phê đẹp để học nhóm.', helpful: 28 }
+      { author: 'Lan V.', initials: 'L', tag: 'Tài chính - Ngân hàng', rating: 5, date: 'Tháng 6/2026', anon: true, text: 'UEH là top 1 kinh tế ở phía Nam. Giảng viên Tài chính - Ngân hàng có nhiều thầy cô từng công tác tại NHNN, VCB, Vietcombank rất thực chiến. Cơ sở 1 trên đường Đinh Tiên Hoàng rất thuận tiện đi lại.', helpful: 63 },
+      { author: 'Đức H.', initials: 'Đ', tag: 'Quản trị Kinh doanh', rating: 5, date: 'Tháng 5/2026', anon: false, text: 'Hệ sinh thái doanh nghiệp xung quanh UEH rất phong phú, nhiều cơ hội internship ngay từ năm 2. Career Fair của trường hàng năm quy tụ hàng trăm công ty lớn. Địa điểm trung tâm quận 3 rất thuận tiện.', helpful: 71 },
+      { author: 'Ngọc P.', initials: 'N', tag: 'Marketing', rating: 4, date: 'Tháng 4/2026', anon: true, text: 'Học Marketing tại UEH rất cập nhật digital và xu hướng mới. Tuy nhiên phòng học ở một số tòa hơi cũ. Điểm cộng lớn là khu vực quanh trường quận 3 có vô số quán cà phê đẹp để học nhóm.', helpful: 28 }
     ]
   },
   dut: {
@@ -1940,8 +2000,8 @@ const REVIEWS_BY_UNIV = {
       { label: 'Chi phí sinh hoạt', score: 4.7 }
     ],
     items: [
-      { author: 'Nam N.', initials: 'N', tag: 'Xây dựng', rating: 4, date: 'Tháng 5/2026', text: 'DUT là trường kỹ thuật hàng đầu miền Trung. Chi phí sinh hoạt ở Đà Nẵng rất phải chăng so với TP.HCM và Hà Nội. Khuôn viên trường đẹp, gần biển, không khí học tập cực tốt.', helpful: 34 },
-      { author: 'Mai T.', initials: 'M', tag: 'Kiến trúc', rating: 5, date: 'Tháng 4/2026', text: 'Khoa Kiến trúc DUT rất mạnh, xưởng mô hình hiện đại. Đà Nẵng là thành phố đáng sống nhất, sinh viên ngoại tỉnh sẽ rất thích nghi nhanh. Học bổng và hỗ trợ sinh viên khó khăn của trường cũng tốt.', helpful: 47 }
+      { author: 'Nam N.', initials: 'N', tag: 'Xây dựng', rating: 4, date: 'Tháng 5/2026', anon: true, text: 'DUT là trường kỹ thuật hàng đầu miền Trung. Chi phí sinh hoạt ở Đà Nẵng rất phải chăng so với TP.HCM và Hà Nội. Khuôn viên trường đẹp, gần biển, không khí học tập cực tốt.', helpful: 34 },
+      { author: 'Mai T.', initials: 'M', tag: 'Kiến trúc', rating: 5, date: 'Tháng 4/2026', anon: false, text: 'Khoa Kiến trúc DUT rất mạnh, xưởng mô hình hiện đại. Đà Nẵng là thành phố đáng sống nhất, sinh viên ngoại tỉnh sẽ rất thích nghi nhanh. Học bổng và hỗ trợ sinh viên khó khăn của trường cũng tốt.', helpful: 47 }
     ]
   }
 };
@@ -2692,17 +2752,25 @@ function renderStudentReviews(univId) {
 
   const avatarPalette = ['#6366F1','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#14B8A6'];
   const cards = data.items.map((r, i) => {
-    const avatarBg = avatarPalette[i % avatarPalette.length];
+    const isAnon = r.anon !== false;
+    const avatarEl = isAnon
+      ? `<div class="rv-avatar anon"><i data-lucide="user-round" width="18" height="18"></i></div>`
+      : `<div class="rv-avatar" style="background:${avatarPalette[i % avatarPalette.length]}">${r.initials}</div>`;
+    const displayName = isAnon ? 'Sinh viên ẩn danh' : r.author;
+    const tagEl = isAnon
+      ? `<div class="rv-tag">Sinh viên đã xác thực qua MoMo</div>`
+      : `<div class="rv-tag">${r.tag}</div>`;
+
     return `
     <div class="rv-card">
       <div class="rv-card-head">
-        <div class="rv-avatar" style="background:${avatarBg}">${r.initials}</div>
+        ${avatarEl}
         <div class="rv-meta">
           <div class="rv-author-row">
-            <span class="rv-author">${r.author}</span>
+            <span class="rv-author${isAnon ? ' rv-author-anon' : ''}">${displayName}</span>
             <span class="rv-verified"><i data-lucide="shield-check" width="11" height="11"></i> Đã xác thực</span>
           </div>
-          <div class="rv-tag">${r.tag}</div>
+          ${tagEl}
         </div>
         <div class="rv-card-stars">${starsHtml(r.rating, 13)}</div>
       </div>
@@ -2739,11 +2807,43 @@ function renderStudentReviews(univId) {
 function onWriteReview() {
   const loggedEl = document.getElementById('navLoggedState');
   if (loggedEl && loggedEl.style.display !== 'none') {
-    showToast('Chức năng viết đánh giá đang trong quá trình phát triển!');
+    openWriteReview();
   } else {
     doSocialLogin('google');
-    setTimeout(() => showToast('Đăng nhập thành công! Giờ bạn có thể viết đánh giá.'), 600);
+    setTimeout(() => openWriteReview(), 700);
   }
+}
+
+function openWriteReview() {
+  const modal = document.getElementById('writeReviewModal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeWriteReview() {
+  document.getElementById('writeReviewModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function onAnonToggle(isAnon) {
+  const icon = document.getElementById('rvAnonIcon');
+  const desc = document.getElementById('rvAnonDesc');
+  const preview = document.getElementById('rvAnonPreview');
+  const previewText = document.getElementById('rvAnonPreviewText');
+
+  if (isAnon) {
+    icon.innerHTML = '<i data-lucide="user-round-x" width="18" height="18"></i>';
+    desc.textContent = 'Tên bạn sẽ không hiển thị công khai';
+    preview.style.background = '#F8FAFC';
+    previewText.innerHTML = 'Sẽ hiển thị là: <strong>Sinh viên ẩn danh</strong> · Sinh viên đã xác thực qua MoMo';
+  } else {
+    icon.innerHTML = '<i data-lucide="user-round" width="18" height="18"></i>';
+    desc.textContent = 'Tên rút gọn của bạn sẽ hiển thị cùng đánh giá';
+    preview.style.background = '#FFF0F8';
+    previewText.innerHTML = 'Sẽ hiển thị là: <strong>An N.</strong> · Sinh viên đã xác thực qua MoMo';
+  }
+  if (window.lucide) lucide.createIcons();
 }
 
 // ============================================================
