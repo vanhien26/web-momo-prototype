@@ -252,6 +252,11 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .detail-hero-stat-lbl { font-size: 11px; color: var(--gray-500); margin-top: 1px; }
 .detail-hero-stat-sep { width: 1px; background: var(--gray-200); align-self: stretch; }
 .detail-hero-actions { display: none; }
+.detail-hero-usps { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.detail-hero-usp { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--gray-600); line-height: 1.4; }
+.detail-hero-usp::before { content: ''; flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; background: #FFF0F8; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.detail-hero-usp-dot { flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; background: #FFF0F8; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.detail-hero-usp-dot svg { display: block; }
 .detail-hero-gallery-wrap { position: relative; }
 .detail-hero-share { position: absolute; top: 10px; right: 10px; z-index: 5; display: flex; align-items: center; gap: 5px; padding: 6px 12px; border: none; border-radius: 99px; font-size: 12px; font-weight: 700; color: var(--gray-700); background: rgba(255,255,255,.9); backdrop-filter: blur(6px); cursor: pointer; transition: all .15s; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 .detail-hero-share:hover { background: #fff; }
@@ -2576,6 +2581,18 @@ const MERCHANTS_BY_UNIV = {
   ]
 };
 
+const USP_MAP = {
+  tdtu:   ['Top 401-500 QS World University Rankings 2025', 'Học phí ổn định - cam kết không tăng trong suốt khóa học', '100% chương trình đạt kiểm định AUN-QA', 'Khuôn viên xanh 120.000m² - cơ sở vật chất hiện đại bậc nhất TP.HCM'],
+  hcmut:  ['Top 3 trường kỹ thuật hàng đầu Việt Nam', 'Hơn 80% sinh viên có việc làm ngay sau tốt nghiệp', 'Đối tác chiến lược với 200+ doanh nghiệp công nghệ', 'Học bổng toàn phần dành cho sinh viên xuất sắc'],
+  vnu:    ['Thành viên Đại học Quốc gia - hệ thống uy tín số 1 Việt Nam', '3 cơ sở: Cầu Giấy · Xuân Thủy · Hòa Lạc', 'Chương trình chất lượng cao & liên kết quốc tế', 'Tỷ lệ có việc làm sau 12 tháng tốt nghiệp đạt 95%+'],
+  ueh:    ['Top 1 kinh tế - quản trị miền Nam', 'Liên kết đào tạo với 100+ doanh nghiệp đối tác', 'Học bổng doanh nghiệp lên đến 100% học phí', 'Chương trình CLC giảng dạy 100% bằng tiếng Anh'],
+  hcmus:  ['Thành viên ĐHQG TP.HCM - tốp đầu khoa học tự nhiên', 'Tỷ lệ nghiên cứu sinh và học bổng sau đại học cao', 'Phòng thí nghiệm trọng điểm quốc gia tại campus Thủ Đức', 'Hợp tác nghiên cứu với ĐH Paris, NUS, KAIST'],
+  ftu:    ['Trường chuyên ngành ngoại thương & kinh tế quốc tế số 1', '2 cơ sở Hà Nội & TP.HCM - mạng lưới toàn quốc', 'Sinh viên thành thạo ít nhất 1 ngoại ngữ chuyên ngành', 'Tỷ lệ du học & học bổng quốc tế cao nhất nhóm kinh tế'],
+  rmit:   ['Bằng tốt nghiệp công nhận 100 quốc gia trên toàn cầu', 'Giảng dạy 100% tiếng Anh bởi giảng viên quốc tế', 'Career Hub - kết nối trực tiếp với 500+ nhà tuyển dụng', 'Campus hiện đại tại trung tâm TP.HCM & Hà Nội'],
+  fpt:    ['Đào tạo CNTT & kinh tế số được FPT Corporation bảo lãnh việc làm', 'Học kỳ thực tập doanh nghiệp 6 tháng bắt buộc', 'Hệ sinh thái FPT: 45.000+ nhân viên, cơ hội toàn cầu', '5 campus trải dài Hà Nội - Đà Nẵng - TP.HCM - Cần Thơ'],
+};
+const USP_DEFAULT = ['Được công nhận bởi Bộ Giáo dục & Đào tạo Việt Nam', 'Chương trình đào tạo cập nhật theo chuẩn quốc tế', 'Hỗ trợ sinh viên từ nhập học đến ra trường'];
+
 const REVIEWS_BY_UNIV = {
   tdtu: {
     overall: 4.7, count: 1284,
@@ -3685,12 +3702,20 @@ function renderUnivHero(u) {
 
   // Stats row
   const statsEl = document.getElementById('heroStats');
-  if (statsEl) statsEl.innerHTML = `
-    <div class="detail-hero-stat"><div class="detail-hero-stat-val">${u.students || '—'}</div><div class="detail-hero-stat-lbl">Sinh viên</div></div>
-    <div class="detail-hero-stat-sep"></div>
-    <div class="detail-hero-stat"><div class="detail-hero-stat-val">${u.typeName || '—'}</div><div class="detail-hero-stat-lbl">Loại hình</div></div>
-    <div class="detail-hero-stat-sep"></div>
-    <div class="detail-hero-stat"><div class="detail-hero-stat-val">${u.cityName || '—'}</div><div class="detail-hero-stat-lbl">Khu vực</div></div>`;
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div class="detail-hero-stat"><div class="detail-hero-stat-val">${u.students || '—'}</div><div class="detail-hero-stat-lbl">Sinh viên</div></div>
+      <div class="detail-hero-stat-sep"></div>
+      <div class="detail-hero-stat"><div class="detail-hero-stat-val">${u.typeName || '—'}</div><div class="detail-hero-stat-lbl">Loại hình</div></div>
+      <div class="detail-hero-stat-sep"></div>
+      <div class="detail-hero-stat"><div class="detail-hero-stat-val">${u.cityName || '—'}</div><div class="detail-hero-stat-lbl">Khu vực</div></div>`;
+    // USPs
+    const usps = USP_MAP[u.id] || USP_DEFAULT;
+    const checkSvg = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#EB2F96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const uspHtml = usps.map(t => `<li class="detail-hero-usp"><span class="detail-hero-usp-dot">${checkSvg}</span><span>${t}</span></li>`).join('');
+    document.getElementById('heroUsps')?.remove();
+    statsEl.insertAdjacentHTML('afterend', `<ul class="detail-hero-usps" id="heroUsps">${uspHtml}</ul>`);
+  }
 
   // Photo mosaic: 1 main (top full-width) + 2 small below
   const gallery = document.getElementById('heroGallery');
