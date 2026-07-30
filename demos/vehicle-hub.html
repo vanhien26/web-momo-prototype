@@ -372,6 +372,21 @@ body {
 .hero-title em { font-style: normal; color: var(--pink-400); }
 .hero-desc { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.6); max-width: 100%; margin-bottom: 28px; }
 .hero-service-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.hero-usp {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.hero-usp li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.75);
+}
+.usp-check {
+  flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(34,197,94,.2); color: #4ade80;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
 .hero-service-pill {
   display: flex; align-items: center; gap: 6px;
   padding: 7px 14px; border-radius: 999px;
@@ -384,11 +399,32 @@ body {
 .hero-service-pill .pill-icon { display: flex; align-items: center; }
 .hero-service-pill .pill-icon svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 
+/* ── PLATE MOTIVATION ── */
+.plate-motivation {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 4px;
+}
+.pm-title {
+  font-size: 15px; font-weight: 800; color: #fff;
+  margin-bottom: 6px; letter-spacing: -.01em;
+}
+.pm-items {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.pm-item {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,.5);
+}
+.pm-item svg { stroke: rgba(255,255,255,.35); flex-shrink: 0; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.pm-sep { color: rgba(255,255,255,.2); font-size: 11px; }
+
 /* ── PLATE PANEL ── */
 .plate-panel {
   background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 20px; padding: 28px 24px 22px; backdrop-filter: blur(8px);
+  border-radius: 20px; overflow: hidden; backdrop-filter: blur(8px);
 }
+#plateInputArea { padding: 16px 20px 20px; }
 .plate-panel-label {
   font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
   color: rgba(255,255,255,.35); margin-bottom: 14px;
@@ -544,12 +580,154 @@ body {
 .hub-dash--demo .hub-dash-tile-action { display: none; }
 @keyframes skel-pulse { 0%,100%{opacity:.4} 50%{opacity:.85} }
 @keyframes plate-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+@keyframes plate-glow { 0%,100%{box-shadow:0 0 0 0 rgba(235,47,150,0)} 40%{box-shadow:0 0 0 4px rgba(235,47,150,.35)} }
+.plate-box.is-triggered { animation: plate-glow .6s ease 2; }
+.plate-panel-label.is-triggered { color: var(--pink-400); }
 .skel-bar {
   display: inline-block; height: 18px; width: 72px; border-radius: 6px;
   background: var(--gray-200); animation: skel-pulse 1.4s ease-in-out infinite;
   vertical-align: middle;
 }
 .hub-dash--preview { display: none; } /* ẩn hoàn toàn trước khi submit — entry cards đã đủ hướng dẫn */
+
+/* ── UNIFIED RESULT SECTIONS ── */
+/* ── UNIFIED RESULT LAYOUT ── */
+.ur-sections { display: flex; flex-direction: column; gap: 12px; }
+
+/* Status summary banner */
+.ur-summary {
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.ur-summary.is-alert { background: #fff5f5; border: 1.5px solid #fecaca; }
+.ur-summary.is-ok    { background: #f0fdf4; border: 1.5px solid #bbf7d0; }
+.ur-summary-icon {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.ur-summary.is-alert .ur-summary-icon { background: #fee2e2; color: #dc2626; }
+.ur-summary.is-ok    .ur-summary-icon { background: #dcfce7; color: #16a34a; }
+.ur-summary-icon svg { width: 20px; height: 20px; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ur-summary-body { flex: 1; min-width: 0; }
+.ur-summary-title {
+  font-size: 14px; font-weight: 800; line-height: 1.3;
+}
+.ur-summary.is-alert .ur-summary-title { color: #991b1b; }
+.ur-summary.is-ok    .ur-summary-title { color: #166534; }
+.ur-summary-sub { font-size: 12px; margin-top: 2px; }
+.ur-summary.is-alert .ur-summary-sub { color: #dc2626; }
+.ur-summary.is-ok    .ur-summary-sub  { color: #16a34a; }
+
+/* Main section wrapper (phạt nguội) */
+.ur-main-section {
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: 16px; overflow: hidden;
+}
+.ur-main-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--gray-150, #efefef);
+}
+.ur-section-icon {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.ur-section-icon svg { width: 16px; height: 16px; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.ur-section-icon.ok    { background: #f0fdf4; color: #16a34a; }
+.ur-section-icon.alert { background: #fef2f2; color: #ef4444; }
+.ur-section-icon.blue  { background: #eff6ff; color: #2563eb; }
+.ur-section-icon.gray  { background: var(--gray-100); color: var(--gray-500); }
+.ur-section-title {
+  font-size: 13px; font-weight: 700; color: var(--gray-700); letter-spacing: .01em;
+}
+.ur-section-badge {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  border-radius: 999px; padding: 3px 10px;
+}
+.ur-section-badge.ok    { background: #f0fdf4; color: #16a34a; }
+.ur-section-badge.alert { background: #fef2f2; color: #ef4444; }
+.ur-section-badge.blue  { background: #eff6ff; color: #2563eb; }
+.ur-section-badge.gray  { background: var(--gray-100); color: var(--gray-500); }
+.ur-main-body { padding: 12px 16px 14px; }
+.ur-section-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+.ur-section-note { font-size: 11px; color: var(--gray-400); margin-top: 6px; }
+
+/* Violation cards */
+.ur-violations { display: flex; flex-direction: column; gap: 8px; }
+.ur-violation {
+  border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;
+  background: #fff;
+}
+.ur-v-main { display: flex; align-items: stretch; }
+.ur-v-bar { width: 4px; flex: none; background: #f59e0b; }
+.ur-v-bar.is-red { background: #ef4444; }
+.ur-v-body { flex: 1; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; }
+.ur-v-info { flex: 1; min-width: 0; }
+.ur-v-type { font-size: 13.5px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px; }
+.ur-v-meta { font-size: 11px; color: var(--gray-500); display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+.ur-v-meta svg { display: inline; flex-shrink: 0; }
+.ur-v-unit { font-size: 11px; color: var(--gray-500); display: flex; align-items: center; gap: 4px; font-weight: 600; }
+.ur-v-unit svg { display: inline; flex-shrink: 0; }
+.ur-v-fine-block { text-align: right; flex-shrink: 0; }
+.ur-v-fine { font-size: 13px; font-weight: 900; color: var(--gray-900); white-space: nowrap; }
+.ur-v-fine-label { font-size: 10px; color: var(--gray-400); margin-top: 1px; }
+.ur-v-footer {
+  border-top: 1px solid var(--gray-100); background: var(--gray-50);
+  padding: 8px 14px;
+}
+.ur-v-blog {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; color: var(--pink-500); font-weight: 600; text-decoration: none;
+}
+.ur-v-blog svg { width: 11px; height: 11px; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; flex-shrink: 0; }
+.ur-v-blog:hover { text-decoration: underline; }
+
+/* CTA buttons */
+.ur-v-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.ur-btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: #fff;
+  background: var(--pink-500); border-radius: 999px;
+  padding: 10px 20px; text-decoration: none; transition: background .15s;
+}
+.ur-btn-primary:hover { background: var(--pink-600); }
+.ur-btn-primary svg { width: 13px; height: 13px; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.ur-btn-ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--gray-700);
+  border: 1px solid var(--gray-300); background: #fff; border-radius: 999px;
+  padding: 9px 16px; text-decoration: none; transition: border-color .15s;
+}
+.ur-btn-ghost:hover { border-color: var(--gray-500); }
+.ur-btn-ghost svg { width: 13px; height: 13px; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+
+/* Mini 2-col cards (Đăng kiểm + Định giá) */
+.ur-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ur-mini-card {
+  border: 1px solid var(--gray-200); border-radius: 14px;
+  background: #fff; padding: 14px; display: flex; flex-direction: column; gap: 8px;
+  text-decoration: none;
+}
+.ur-mini-card:hover { border-color: var(--gray-400); }
+.ur-mini-head { display: flex; align-items: center; gap: 8px; }
+.ur-mini-icon {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.ur-mini-icon svg { width: 15px; height: 15px; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ur-mini-icon.blue  { background: #eff6ff; color: #2563eb; }
+.ur-mini-icon.gray  { background: var(--gray-100); color: var(--gray-500); }
+.ur-mini-icon.pink  { background: #fdf2f8; color: var(--pink-500); }
+.ur-mini-label { font-size: 12px; font-weight: 700; color: var(--gray-700); }
+.ur-mini-desc { font-size: 11.5px; color: var(--gray-500); line-height: 1.45; flex: 1; }
+.ur-mini-cta {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 700; text-decoration: none;
+  margin-top: auto;
+}
+.ur-mini-cta.blue { color: #2563eb; }
+.ur-mini-cta.pink { color: var(--pink-500); }
+.ur-mini-cta svg { width: 12px; height: 12px; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── PLATE RESULT SECTION ── */
 .prs-wrap {
@@ -560,18 +738,167 @@ body {
 .prs-inner {
   max-width: var(--content); margin: 0 auto; padding: 20px 20px 24px;
 }
-.prs-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  margin-bottom: 16px;
+/* ── KẾT QUẢ TRA CỨU ── */
+.vr-wrap { display: flex; flex-direction: column; gap: 16px; }
+
+/* Top header */
+.vr-head { display: flex; align-items: flex-start; gap: 14px; }
+.vr-car-icon {
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+  background: #fdf2f8; display: flex; align-items: center; justify-content: center;
 }
-.prs-plate-tag {
-  font-size: 13px; font-weight: 900; letter-spacing: .06em;
-  background: #F5D629; color: var(--gray-900); border-radius: 6px; padding: 2px 10px;
+.vr-car-icon svg { width: 28px; height: 28px; fill: none; stroke: var(--pink-500); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.vr-head-body { flex: 1; min-width: 0; }
+.vr-head-label { font-size: 11px; font-weight: 600; color: var(--gray-500); margin-bottom: 2px; }
+.vr-plate-big {
+  font-size: 28px; font-weight: 900; letter-spacing: .06em; color: var(--gray-900);
+  line-height: 1.1;
 }
-.prs-service-label {
-  font-size: 12px; font-weight: 600; color: var(--gray-500);
-  background: var(--gray-100); border-radius: 999px; padding: 3px 10px;
+.vr-head-meta { font-size: 11.5px; color: var(--gray-400); margin-top: 4px; }
+.vr-head-right { flex-shrink: 0; margin-top: 2px; }
+.vr-status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; border-radius: 999px;
+  padding: 6px 14px; border: 1.5px solid;
 }
+.vr-status-pill.ok    { color: #16a34a; border-color: #bbf7d0; background: #f0fdf4; }
+.vr-status-pill.alert { color: #dc2626; border-color: #fecaca; background: #fef2f2; }
+.vr-status-pill svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.vr-reset {
+  font-size: 11px; color: var(--gray-500); background: none; border: 1px solid var(--gray-200);
+  border-radius: 999px; cursor: pointer; font-family: inherit; font-weight: 600;
+  padding: 5px 12px; display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 6px; transition: color .15s, border-color .15s;
+}
+.vr-reset:hover { color: var(--gray-800); border-color: var(--gray-400); }
+.vr-reset svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Vehicle info card */
+.vr-info-card {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 16px;
+  display: grid; grid-template-columns: 1fr 1px 1fr;
+}
+.vr-info-col { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.vr-info-divider { background: var(--gray-150, #eee); }
+.vr-info-icon {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.vr-info-icon.pink { background: #fdf2f8; }
+.vr-info-icon.yellow { background: #fffbeb; }
+.vr-info-icon svg { width: 22px; height: 22px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.vr-info-icon.pink svg { stroke: var(--pink-500); }
+.vr-info-icon.yellow svg { stroke: #d97706; }
+.vr-plate-prefix {
+  font-size: 13px; font-weight: 900; color: #d97706;
+  background: #fef3c7; border-radius: 6px; padding: 3px 8px;
+  letter-spacing: .04em;
+}
+.vr-info-body {}
+.vr-info-sub { font-size: 11px; color: var(--gray-500); margin-bottom: 2px; font-weight: 500; }
+.vr-info-val { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+
+/* Violations section */
+.vr-section-head {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.vr-section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.vr-section-dot.red { background: #ef4444; }
+.vr-section-dot.ok  { background: #22c55e; }
+.vr-section-dot.blue { background: #3b82f6; }
+.vr-section-dot.gray { background: var(--gray-400); }
+.vr-section-title { font-size: 16px; font-weight: 800; color: var(--gray-900); }
+.vr-count-pill {
+  font-size: 11px; font-weight: 800; background: #ef4444; color: #fff;
+  border-radius: 999px; padding: 1px 8px; min-width: 22px; text-align: center;
+}
+
+/* Violation cards */
+.vr-violations { display: flex; flex-direction: column; gap: 10px; }
+.vr-violation {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 14px;
+  overflow: hidden; display: flex; align-items: stretch;
+}
+.vr-v-bar { width: 5px; flex-shrink: 0; }
+.vr-v-bar.red    { background: #ef4444; }
+.vr-v-bar.amber  { background: #f59e0b; }
+.vr-v-content {
+  flex: 1; padding: 14px 14px 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.vr-v-icon {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.vr-v-icon.red   { background: #fef2f2; }
+.vr-v-icon.amber { background: #fffbeb; }
+.vr-v-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.vr-v-icon.red svg   { stroke: #ef4444; }
+.vr-v-icon.amber svg { stroke: #d97706; }
+.vr-v-info { flex: 1; min-width: 0; }
+.vr-v-title { font-size: 14px; font-weight: 800; color: var(--gray-900); margin-bottom: 5px; }
+.vr-v-meta { font-size: 11.5px; color: var(--gray-500); display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+.vr-v-meta svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; flex-shrink: 0; }
+.vr-v-unit { font-size: 11.5px; color: var(--gray-500); display: flex; align-items: center; gap: 5px; }
+.vr-v-unit svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; flex-shrink: 0; }
+.vr-v-right { text-align: right; flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
+.vr-v-fine-block { text-align: right; }
+.vr-v-fine { font-size: 13px; font-weight: 800; color: #dc2626; white-space: nowrap; }
+.vr-v-fine-label { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+.vr-v-chevron { color: var(--gray-300); }
+.vr-v-chevron svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Payment CTA bar */
+.vr-pay-bar {
+  background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 16px;
+  padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+}
+.vr-pay-icon {
+  width: 40px; height: 40px; border-radius: 12px; background: var(--pink-500);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.vr-pay-icon svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.vr-pay-body { flex: 1; min-width: 0; }
+.vr-pay-title { font-size: 13px; font-weight: 800; color: var(--gray-900); }
+.vr-pay-sub { font-size: 11.5px; color: var(--gray-500); margin-top: 1px; }
+.vr-pay-btn {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  font-size: 13px; font-weight: 800; color: #fff; background: var(--pink-500);
+  border-radius: 999px; padding: 10px 18px; text-decoration: none;
+  transition: background .15s; white-space: nowrap;
+}
+.vr-pay-btn:hover { background: var(--pink-600); }
+.vr-pay-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Other services row */
+.vr-services { display: flex; flex-direction: column; gap: 10px; }
+.vr-service {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 14px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; text-decoration: none;
+  transition: border-color .15s, background .12s;
+}
+.vr-service:hover { border-color: var(--gray-400); background: var(--gray-50); }
+.vr-svc-icon {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.vr-svc-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.vr-svc-icon.blue  { background: #eff6ff; }
+.vr-svc-icon.blue svg { stroke: #2563eb; }
+.vr-svc-icon.pink  { background: #fdf2f8; }
+.vr-svc-icon.pink svg { stroke: var(--pink-500); }
+.vr-svc-body { flex: 1; min-width: 0; }
+.vr-svc-label { font-size: 13.5px; font-weight: 800; color: var(--gray-900); }
+.vr-svc-sub { font-size: 11.5px; color: var(--gray-500); margin-top: 2px; }
+.vr-svc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.vr-svc-badge {
+  font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 10px;
+}
+.vr-svc-badge.blue { background: #eff6ff; color: #2563eb; }
+.vr-svc-badge.gray { background: var(--gray-100); color: var(--gray-600); }
+.vr-svc-chevron svg { width: 15px; height: 15px; fill: none; stroke: var(--gray-400); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
 .prs-reset {
   font-size: 11.5px; color: var(--gray-500); background: none; border: 1px solid var(--gray-200);
   border-radius: 999px; cursor: pointer; font-family: inherit; font-weight: 600;
@@ -2081,43 +2408,27 @@ body {
   <div class="hero-inner">
     <div class="hero-content">
       <h1 class="hero-title">Mọi thứ về chiếc xe<br><em>của bạn, một nơi.</em></h1>
-      <p class="hero-desc">Từ hàng ngày đến sự cố - giá xăng, phạt nguội, đăng kiểm, bảo hiểm. Chủ xe cần gì, MoMo có đó.</p>
-      <div class="hero-service-pills">
-        <a class="hero-service-pill" href="#bao-hiem"><span class="pill-icon"><i data-lucide="shield" width="14" height="14"></i></span>Bảo hiểm xe</a>
-        <a class="hero-service-pill" href="#phat-nguoi"><span class="pill-icon"><i data-lucide="alert-circle" width="14" height="14"></i></span>Phạt nguội</a>
-        <a class="hero-service-pill" href="#dang-kiem"><span class="pill-icon"><i data-lucide="clipboard-check" width="14" height="14"></i></span>Đăng kiểm</a>
-        <a class="hero-service-pill" href="/tien-ich-giao-thong/bao-duong"><span class="pill-icon"><i data-lucide="wrench" width="14" height="14"></i></span>Bảo dưỡng xe</a>
-        <a class="hero-service-pill" href="/epass/tinh-phi-etc"><span class="pill-icon"><i data-lucide="layout-grid" width="14" height="14"></i></span>Phí ETC</a>
-        <a class="hero-service-pill" href="/epass"><span class="pill-icon"><i data-lucide="credit-card" width="14" height="14"></i></span>ePass</a>
-        <a class="hero-service-pill" href="#gia-xang"><span class="pill-icon"><i data-lucide="fuel" width="14" height="14"></i></span>Giá xăng</a>
-        <a class="hero-service-pill" href="/tram-sac"><span class="pill-icon"><i data-lucide="zap" width="14" height="14"></i></span>Trạm sạc EV</a>
-        <a class="hero-service-pill" href="#cuu-ho"><span class="pill-icon"><i data-lucide="truck" width="14" height="14"></i></span>Cứu hộ xe</a>
-        <a class="hero-service-pill" href="/tien-ich-giao-thong/bai-do-xe"><span class="pill-icon"><i data-lucide="parking-circle" width="14" height="14"></i></span>Bãi đỗ xe</a>
-        <a class="hero-service-pill" href="#chi-phi-xe"><span class="pill-icon"><i data-lucide="wallet" width="14" height="14"></i></span>Chi phí nuôi xe</a>
-      </div>
+      <ul class="hero-usp">
+        <li><span class="usp-check">✓</span>Tra phạt nguội theo biển số — không CAPTCHA, kết quả ngay</li>
+        <li><span class="usp-check">✓</span>Tính phí ETC từng tuyến + liên kết ePass qua trạm tự động</li>
+        <li><span class="usp-check">✓</span>Giá xăng cập nhật mỗi kỳ điều hành · Tìm cây xăng MoMo gần bạn</li>
+        <li><span class="usp-check">✓</span>Mua bảo hiểm xe, đặt lịch bảo dưỡng, gọi cứu hộ — tất cả trong MoMo</li>
+      </ul>
     </div>
 
     <div class="plate-panel">
-      <div class="plate-entry-cards" id="plateEntryCards">
-        <button class="pec-card" type="button" data-use="gia-xang" onclick="selectUseCase(this)">
-          <i data-lucide="fuel" width="16" height="16"></i>
-          <span class="pec-label">Giá xăng hôm nay</span>
-        </button>
-        <button class="pec-card pec-active" type="button" data-use="dang-kiem" onclick="selectUseCase(this)">
-          <i data-lucide="clipboard-check" width="16" height="16"></i>
-          <span class="pec-label">Tra đăng kiểm</span>
-        </button>
-        <button class="pec-card" type="button" data-use="phat-nguoi" onclick="selectUseCase(this)">
-          <i data-lucide="alert-circle" width="16" height="16"></i>
-          <span class="pec-label">Kiểm tra phạt nguội</span>
-        </button>
-        <button class="pec-card" type="button" data-use="bao-hiem" onclick="selectUseCase(this)">
-          <i data-lucide="shield-check" width="16" height="16"></i>
-          <span class="pec-label">Tra bảo hiểm</span>
-        </button>
+      <div class="plate-motivation">
+        <div class="pm-title">Xe bạn đang ổn không?</div>
+        <div class="pm-items">
+          <span class="pm-item"><i data-lucide="alert-circle" width="12" height="12"></i> Phạt nguội</span>
+          <span class="pm-sep">·</span>
+          <span class="pm-item"><i data-lucide="clipboard-check" width="12" height="12"></i> Đăng kiểm</span>
+          <span class="pm-sep">·</span>
+          <span class="pm-item"><i data-lucide="trending-down" width="12" height="12"></i> Định giá</span>
+        </div>
       </div>
       <div id="plateInputArea">
-        <div class="plate-panel-label" id="platePanelLabel">Nhập biển số để tra đăng kiểm</div>
+        <div class="plate-panel-label" id="platePanelLabel">Nhập biển số để kiểm tra xe</div>
         <div class="vtype-toggle" id="vtypeToggle">
           <button class="vtype-btn active" id="vtype-oto" onclick="setVtype('oto')">
             <i data-lucide="car" width="15" height="15"></i>
@@ -2403,28 +2714,28 @@ body {
     <div class="station-grid">
       <div class="station-card" onclick="toast('Chỉ đường tới Petrolimex 101...')">
         <div class="st-head">
-          <div class="st-logo" style="background:#E8232A">PL</div>
+          <div class="st-logo" style="background:#fff1f1;padding:0"><img src="https://homepage.momocdn.net/img/iconholder-260730132529.png" width="32" height="32" alt="Cây xăng" style="display:block"></div>
           <div><div class="st-name">Petrolimex 101</div><div class="st-dist">0.4 km · Mở 24/7</div></div>
         </div>
         <div class="st-addr">101 Nguyễn Thị Thập, Q.7, TP.HCM</div>
       </div>
       <div class="station-card" onclick="toast('Chỉ đường tới PV Oil Lê Văn Lương...')">
         <div class="st-head">
-          <div class="st-logo" style="background:#006DB8">PV</div>
+          <div class="st-logo" style="background:#fff1f1;padding:0"><img src="https://homepage.momocdn.net/img/iconholder-260730132529.png" width="32" height="32" alt="Cây xăng" style="display:block"></div>
           <div><div class="st-name">PV Oil Lê Văn Lương</div><div class="st-dist">1.1 km · Mở 24/7</div></div>
         </div>
         <div class="st-addr">288 Lê Văn Lương, Q.7, TP.HCM</div>
       </div>
       <div class="station-card" onclick="toast('Chỉ đường tới Garage Tuấn Auto...')">
         <div class="st-head">
-          <div class="st-logo" style="background:#2E7D32;display:flex;align-items:center;justify-content:center;color:#fff"><i data-lucide="wrench" width="18" height="18"></i></div>
+          <div class="st-logo" style="background:#f0fdf4;padding:0"><img src="https://homepage.momocdn.net/img/logo-260730132528.png" width="32" height="32" alt="Garage" style="display:block"></div>
           <div><div class="st-name">Garage Tuấn Auto</div><div class="st-dist">1.8 km · T2 - T7</div></div>
         </div>
         <div class="st-addr">45 Trần Xuân Soạn, Q.7, TP.HCM</div>
       </div>
       <div class="station-card" onclick="toast('Chỉ đường tới Petrolimex Huỳnh Tấn Phát...')">
         <div class="st-head">
-          <div class="st-logo" style="background:#E8232A">PL</div>
+          <div class="st-logo" style="background:#fff1f1;padding:0"><img src="https://homepage.momocdn.net/img/iconholder-260730132529.png" width="32" height="32" alt="Cây xăng" style="display:block"></div>
           <div><div class="st-name">Petrolimex HTP</div><div class="st-dist">2.3 km · Mở 24/7</div></div>
         </div>
         <div class="st-addr">500 Huỳnh Tấn Phát, Q.7, TP.HCM</div>
@@ -3179,133 +3490,156 @@ const USE_CASE_LABELS = {
       return `<div class="prs-icon ${type}">${icons[type] || icons.ok}</div>`;
     }
 
-    function renderResult(plate, data, useCase, vtype) {
+    const PLATE_REGION = {
+      '11':'Hà Nội','12':'Hà Nội','14':'Quảng Ninh','15':'Hải Phòng','16':'Hải Phòng',
+      '17':'Thái Bình','18':'Nam Định','19':'Hà Nam','20':'Thái Nguyên','21':'Yên Bái',
+      '22':'Tuyên Quang','23':'Hà Giang','24':'Cao Bằng','25':'Lạng Sơn','26':'Bắc Ninh',
+      '27':'Hải Dương','28':'Hưng Yên','29':'Hà Nội','30':'Hà Nội','31':'Hà Nội',
+      '32':'Hà Nội','33':'Hà Nội','34':'Hải Dương','35':'Ninh Bình','36':'Thanh Hoá',
+      '37':'Nghệ An','38':'Hà Tĩnh','43':'Đà Nẵng','47':'Đắk Lắk','48':'Đắk Nông',
+      '49':'Lâm Đồng','50':'TP. HCM','51':'TP. HCM','52':'TP. HCM','53':'TP. HCM',
+      '54':'TP. HCM','55':'TP. HCM','56':'TP. HCM','57':'TP. HCM','58':'TP. HCM',
+      '59':'TP. HCM','60':'Đồng Nai','61':'Bình Dương','62':'Long An','63':'Tiền Giang',
+      '64':'Vĩnh Long','65':'Cần Thơ','66':'Đồng Tháp','67':'An Giang','68':'Kiên Giang',
+      '69':'Cà Mau','70':'Tây Ninh','71':'Bến Tre','72':'Bà Rịa-Vũng Tàu',
+      '73':'Bình Phước','74':'Bình Định','75':'Thừa Thiên Huế','76':'Quảng Ngãi',
+      '77':'Phú Yên','78':'Khánh Hoà','79':'Khánh Hoà',
+    };
+    function getRegion(plate) {
+      const prefix = plate.replace(/[^0-9]/g,'').slice(0,2);
+      return PLATE_REGION[prefix] || '';
+    }
+
+    function renderResult(plate, data, vtype) {
       vtype = vtype || currentVtype;
-      const { violationCount, dkRemain, mockData } = data;
-      const serviceLabel = USE_CASE_NAMES[useCase] || '';
-      const resetBtn = `<button class="prs-reset" onclick="resetPlate()">${licon('RotateCcw', 11, 2.5)} Đổi xe</button>`;
+      const { violationCount, mockData } = data;
+      const region = getRegion(plate);
+      const vtypeLabel = vtype === 'xemay' ? 'Xe máy' : 'Ô tô con';
+      const vtypeIcon  = vtype === 'xemay' ? licon('Bike', 22, 1.8) : licon('Car', 22, 1.8);
 
-      let cardHtml = '';
+      // timestamp mock
+      const now = new Date();
+      const ts = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} • ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+      const platePrefix = plate.replace(/[^a-zA-Z0-9]/g,'').slice(0,3).toUpperCase();
 
-      if (useCase === 'phat-nguoi') {
-        if (violationCount === 0) {
-          cardHtml = `
-            <div class="prs-card">
-              <div class="prs-status-block">
-                ${prsIcon('ok')}
-                <div>
-                  <div class="prs-title ok">Không có vi phạm</div>
-                  <div class="prs-sub">Biển số <strong>${plate}</strong> không có vi phạm đang chờ xử lý trong hệ thống.</div>
-                </div>
+      // ── Status pill ──
+      const statusPill = violationCount === 0
+        ? `<span class="vr-status-pill ok">${licon('CheckCircle2', 13, 2.2)} Không có vi phạm mới</span>`
+        : `<span class="vr-status-pill alert">${licon('AlertCircle', 13, 2.2)} ${violationCount} vi phạm chờ xử lý</span>`;
+
+      // ── Violations ──
+      let violationsHtml = '';
+      let payBarHtml = '';
+      if (violationCount > 0) {
+        const violations = mockData ? mockData.violations : [];
+        const vCards = violations.map(v => {
+          const fine = v.fine ? (v.fine[vtype] || v.fine.oto) : null;
+          const sev = v.severity || 'amber';
+          const vIcon = sev === 'red' ? licon('FileText', 20, 1.8) : licon('Gauge', 20, 1.8);
+          return `
+          <div class="vr-violation">
+            <div class="vr-v-bar ${sev}"></div>
+            <div class="vr-v-content">
+              <div class="vr-v-icon ${sev}">${vIcon}</div>
+              <div class="vr-v-info">
+                <div class="vr-v-title">${v.type}</div>
+                <div class="vr-v-meta">${licon('Calendar', 11, 2)} ${v.date}${v.time ? ' '+v.time : ''} &nbsp;·&nbsp; ${licon('MapPin', 11, 2)} ${v.road}</div>
+                ${v.unit ? `<div class="vr-v-unit">${licon('Building2', 11, 2)} ${v.unit}</div>` : ''}
               </div>
-              <div class="prs-footer">
-                <span class="prs-note">Kết quả chỉ mang tính tham khảo, cập nhật theo dữ liệu CSGT.</span>
-                <a class="prs-cta" href="/phat-nguoi">Xem thêm về phạt nguội ${licon('ChevronRight', 13, 2.5)}</a>
+              <div class="vr-v-right">
+                ${fine ? `<div class="vr-v-fine-block"><div class="vr-v-fine">${fine}đ</div><div class="vr-v-fine-label">Mức phạt tham khảo</div></div>` : ''}
+                <span class="vr-v-chevron">${licon('ChevronRight', 16, 2.5)}</span>
               </div>
-            </div>`;
-        } else {
-          const violations = mockData ? mockData.violations : [
-            { type: 'Vượt tốc độ', severity: 'amber', date: '10/06/2026', time: '09:15', road: 'Không rõ tuyến đường' }
-          ];
-          const vItems = violations.map(v => `
-            <div class="prs-v-item">
-              <div class="prs-v-dot ${v.severity || 'amber'}"></div>
-              <div>
-                <div class="prs-v-type">${v.type}</div>
-                <div class="prs-v-meta">${licon('Calendar', 12, 2)} ${v.date} ${v.time || ''} &nbsp;·&nbsp; ${licon('MapPin', 12, 2)} ${v.road}</div>
-              </div>
-            </div>`).join('');
-          cardHtml = `
-            <div class="prs-card">
-              <div class="prs-status-block">
-                ${prsIcon('alert')}
-                <div>
-                  <div class="prs-title alert">Phát hiện ${violationCount} vi phạm chưa xử lý</div>
-                  <div class="prs-sub">Biển số <strong>${plate}</strong> có vi phạm trong hệ thống CSGT.</div>
-                </div>
-              </div>
-              <div class="prs-violations">
-                <div class="prs-violations-title">Chi tiết vi phạm</div>
-                ${vItems}
-              </div>
-              <div class="prs-footer">
-                <span class="prs-note">Nộp phạt hoặc đến trực tiếp cơ quan CSGT để xử lý.</span>
-                <a class="prs-cta-btn" href="/phat-nguoi/ha-noi">${licon('ExternalLink', 13, 2.5)} Xem chi tiết &amp; nộp phạt</a>
-              </div>
-            </div>`;
-        }
-      } else if (useCase === 'dang-kiem') {
-        if (vtype === 'xemay') {
-          cardHtml = `
-            <div class="prs-card">
-              <div class="prs-status-block">
-                ${prsIcon('info')}
-                <div>
-                  <div class="prs-title">Xe máy chưa bắt buộc đăng kiểm</div>
-                  <div class="prs-sub">Hiện tại, xe máy chưa có quy định đăng kiểm định kỳ tại Việt Nam.</div>
-                </div>
-              </div>
-              <div class="prs-footer">
-                <span class="prs-note">Thông tin theo quy định hiện hành của Bộ GTVT.</span>
-                <a class="prs-cta" href="/tien-ich-giao-thong/dang-kiem">Tìm hiểu về đăng kiểm ${licon('ChevronRight', 13, 2.5)}</a>
-              </div>
-            </div>`;
-        } else if (dkRemain >= 30) {
-          const expDate = (() => {
-            const d = new Date(); d.setDate(d.getDate() + dkRemain);
-            return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-          })();
-          cardHtml = `
-            <div class="prs-card">
-              <div class="prs-status-block">
-                ${prsIcon('ok')}
-                <div>
-                  <div class="prs-title ok">Đăng kiểm còn hiệu lực</div>
-                  <div class="prs-sub">Biển số <strong>${plate}</strong> đã qua đăng kiểm và còn hiệu lực.</div>
-                  <div class="prs-remain ok">Còn ${dkRemain} ngày &mdash; hết hạn ${expDate}</div>
-                </div>
-              </div>
-              <div class="prs-footer">
-                <span class="prs-note">Nhớ gia hạn trước khi hết hạn để tránh bị phạt.</span>
-                <a class="prs-cta" href="/tien-ich-giao-thong/dang-kiem">Tìm điểm đăng kiểm ${licon('ChevronRight', 13, 2.5)}</a>
-              </div>
-            </div>`;
-        } else {
-          const isExpired = dkRemain <= 0;
-          const expDate = (() => {
-            const d = new Date(); d.setDate(d.getDate() + dkRemain);
-            return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-          })();
-          const type = isExpired ? 'alert' : 'warn';
-          const title = isExpired ? 'Đăng kiểm đã hết hạn' : 'Đăng kiểm sắp hết hạn';
-          const sub = isExpired
-            ? `Biển số <strong>${plate}</strong> đã hết hạn đăng kiểm — cần gia hạn ngay.`
-            : `Biển số <strong>${plate}</strong> còn ${dkRemain} ngày — cần gia hạn sớm.`;
-          cardHtml = `
-            <div class="prs-card">
-              <div class="prs-status-block">
-                ${prsIcon(type)}
-                <div>
-                  <div class="prs-title ${type}">${title}</div>
-                  <div class="prs-sub">${sub}</div>
-                  ${!isExpired ? `<div class="prs-remain ${type}">Hết hạn: ${expDate}</div>` : ''}
-                </div>
-              </div>
-              <div class="prs-footer">
-                <span class="prs-note">Đăng kiểm tại các trung tâm đăng kiểm toàn quốc.</span>
-                <a class="prs-cta-btn" href="/tien-ich-giao-thong/dang-kiem">${licon('CalendarClock', 13, 2.5)} Đặt lịch đăng kiểm</a>
-              </div>
-            </div>`;
-        }
+            </div>
+          </div>`;
+        }).join('');
+        violationsHtml = `
+          <div>
+            <div class="vr-section-head">
+              <span class="vr-section-dot red"></span>
+              <span class="vr-section-title">Thông tin vi phạm</span>
+              <span class="vr-count-pill">${violationCount}</span>
+            </div>
+            <div class="vr-violations">${vCards}</div>
+          </div>`;
+        payBarHtml = `
+          <div class="vr-pay-bar">
+            <div class="vr-pay-icon">${licon('ShieldCheck', 20, 2)}</div>
+            <div class="vr-pay-body">
+              <div class="vr-pay-title">Nộp phạt nhanh chóng, an toàn</div>
+              <div class="vr-pay-sub">Thanh toán trực tuyến qua MoMo chỉ với vài bước đơn giản</div>
+            </div>
+            <a class="vr-pay-btn" href="/phat-nguoi-nop-qua-momo">${licon('CreditCard', 13, 2.5)} Nộp phạt qua MoMo</a>
+          </div>`;
       }
 
+      // ── Other services ──
+      const dangKiemSub = vtype === 'xemay' ? 'Xe máy chưa bắt buộc đăng kiểm định kỳ' : 'Mở MoMo để xem hạn đăng kiểm và trạng thái';
+      const servicesHtml = `
+        <div class="vr-services">
+          <div class="vr-service" style="cursor:default">
+            <div class="vr-svc-icon blue">${licon('ClipboardCheck', 20, 1.8)}</div>
+            <div class="vr-svc-body">
+              <div class="vr-svc-label">Đăng kiểm</div>
+              <div class="vr-svc-sub">${dangKiemSub}</div>
+            </div>
+            <div class="vr-svc-right">
+              <span class="vr-svc-badge blue">Mở MoMo App</span>
+              <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
+            </div>
+          </div>
+          <a class="vr-service" href="/tien-ich-giao-thong/dinh-gia-xe">
+            <div class="vr-svc-icon pink">${licon('TrendingDown', 20, 1.8)}</div>
+            <div class="vr-svc-body">
+              <div class="vr-svc-label">Định giá xe</div>
+              <div class="vr-svc-sub">Chọn hãng, dòng xe, năm sản xuất để ước tính giá trị</div>
+            </div>
+            <div class="vr-svc-right">
+              <span class="vr-svc-badge gray">Nhập thêm</span>
+              <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
+            </div>
+          </a>
+        </div>`;
+
       prsInner.innerHTML = `
-        <div class="prs-header">
-          <span class="prs-plate-tag">${plate}</span>
-          <span class="prs-service-label">${serviceLabel}</span>
-          ${resetBtn}
-        </div>
-        ${cardHtml}`;
+        <div class="vr-wrap">
+          <div class="vr-head">
+            <div class="vr-car-icon">${vtypeIcon}</div>
+            <div class="vr-head-body">
+              <div class="vr-head-label">Kết quả tra cứu</div>
+              <div class="vr-plate-big">${plate}</div>
+              <div class="vr-head-meta">Cập nhật lần cuối: ${ts}</div>
+            </div>
+            <div class="vr-head-right">
+              ${statusPill}
+              <div style="text-align:right; margin-top:6px">
+                <button class="vr-reset" onclick="resetPlate()">${licon('RotateCcw', 10, 2.5)} Đổi xe</button>
+              </div>
+            </div>
+          </div>
+          <div class="vr-info-card">
+            <div class="vr-info-col">
+              <div class="vr-info-icon pink">${vtypeIcon}</div>
+              <div class="vr-info-body">
+                <div class="vr-info-sub">Loại phương tiện</div>
+                <div class="vr-info-val">${vtypeLabel}</div>
+              </div>
+            </div>
+            <div class="vr-info-divider"></div>
+            <div class="vr-info-col">
+              <div class="vr-info-icon yellow" style="font-size:0">
+                <span class="vr-plate-prefix">${platePrefix}</span>
+              </div>
+              <div class="vr-info-body">
+                <div class="vr-info-sub">Biển số xe${region ? ' · '+region : ''}</div>
+                <div class="vr-info-val">${plate}</div>
+              </div>
+            </div>
+          </div>
+          ${violationsHtml}
+          ${payBarHtml}
+          ${servicesHtml}
+        </div>`;
 
       prsWrap.style.display = '';
       if (window.lucide) lucide.createIcons();
@@ -3396,7 +3730,7 @@ const USE_CASE_LABELS = {
       }
       const plate = smartFormatPlate(raw);
       localStorage.setItem(SAVED_KEY, raw);
-      renderResult(plate, getPlateData(raw), activeUseCase, currentVtype);
+      renderResult(plate, getPlateData(raw), currentVtype);
       // Sync biển số xuống section đăng kiểm và auto-search
       const dkInput = document.getElementById('dkPlate');
       if (dkInput) { dkInput.value = plate; if (typeof dkSearch === 'function') dkSearch(); }
@@ -3421,7 +3755,7 @@ const USE_CASE_LABELS = {
       plateInput.value = formatted;
       const province = detectProvince(saved);
       if (province) { plateProvince.textContent = province; plateProvince.classList.add('is-visible'); }
-      renderResult(formatted, getPlateData(saved), activeUseCase, currentVtype);
+      renderResult(formatted, getPlateData(saved), currentVtype);
     }
   }());
 
@@ -4351,6 +4685,32 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeNavSi
   var el = document.getElementById('gs-date');
   if(el){ var d=new Date(); el.textContent=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
 })();
+
+// ── BSX TRIGGER — service pills focus plate input ──
+document.querySelectorAll('[data-bsx-trigger]').forEach(pill => {
+  pill.addEventListener('click', function(e) {
+    e.preventDefault();
+    const hint = this.dataset.bsxTrigger;
+    const label = document.getElementById('platePanelLabel');
+    const box   = document.getElementById('plateBox');
+    const input = document.getElementById('plateInput');
+    const panel = document.querySelector('.plate-panel');
+
+    if (label) {
+      label.textContent = hint;
+      label.classList.add('is-triggered');
+      setTimeout(() => label.classList.remove('is-triggered'), 1200);
+    }
+    if (box) {
+      box.classList.remove('is-triggered');
+      void box.offsetWidth; // reflow để restart animation
+      box.classList.add('is-triggered');
+      setTimeout(() => box.classList.remove('is-triggered'), 1300);
+    }
+    panel && panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => input && input.focus(), 300);
+  });
+});
 </script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 
 ## 1. Kiến Trúc & Điểm Cắm (Entry Points)
 
-Dự án ưu tiên tốc độ thử nghiệm với mô hình **Static HTML Self-contained** (mỗi demo là một file độc lập, không build step) kết hợp **Next.js App Router** cho các mô-đun phức tạp.
+Dự án ưu tiên tốc độ thử nghiệm với mô hình **Static HTML Self-contained** (mỗi demo là một file độc lập, không build step) kết hợp một **React shell cho `/lab`** trong `apps/prototypes`.
 
 ```
 web-momo-prototype/
@@ -27,7 +27,7 @@ web-momo-prototype/
 │   ├── bao-hiem-o-to.html
 │   └── ...
 ├── apps/
-│   └── seo-geo-project/        # Next.js 15 App (SEO/GEO Project System)
+│   └── prototypes/             # Next.js React shell cho /lab
 ├── vercel.json                 # Cấu hình Clean URL Rewrites cho Production (Vercel)
 └── .devserver.js               # Local Dev Server (Node.js) giả lập URL routing từ vercel.json
 ```
@@ -39,8 +39,7 @@ web-momo-prototype/
 | **MoSpark Landing** | `/` (`index.html`) | Trang Brand & Pitching chính thức của MoSpark Web Growth Platform cho Leadership & PMs. |
 | **Prototype Store** | `/lab` (`lab.html`) | Hub điều hướng tập trung toàn bộ danh mục prototypes, tools, child pages và activity logs. |
 | **Device Viewer** | `/viewer.html` | Đóng khung xem demo theo tỉ lệ thiết bị (Mobile / Tablet / Desktop). |
-| **Next.js App** | `apps/seo-geo-project` | Ứng dụng Next.js 15 quản lý dự án SEO/GEO chuyên sâu. |
-
+| **React Lab Shell** | `apps/prototypes` | Shell React cho `/lab`, cùng nguồn registry với static store. |
 ---
 
 ## 2. Danh Mục Prototype (Prototype Catalog)
@@ -127,14 +126,6 @@ Các trang sản phẩm, hub chuyên ngành và phễu dịch vụ của MoMo:
    - **Prototype Store:** `http://localhost:3000/lab`
    - **MoSpark Pitch Landing:** `http://localhost:3000/`
    - **Mỗi clean URL:** `http://localhost:3000/<route-name>` (Ví dụ: `http://localhost:3000/plg-project`)
-
-3. **Khởi chạy ứng dụng Next.js (nếu phát triển module `apps/seo-geo-project`):**
-   ```bash
-   cd apps/seo-geo-project
-   npm install
-   npm run dev
-   ```
-   Truy cập tại `http://localhost:3001`.
 
 ---
 

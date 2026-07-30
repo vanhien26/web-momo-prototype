@@ -6,11 +6,12 @@
 
 ## 1. KIẾN TRÚC TỔNG QUAN
 
-**Đây là static HTML prototype store** - không có build step, không có framework. Mỗi demo là một file `.html` độc lập với inline CSS + JS.
+**Đây là hệ song hành giữa static HTML prototype store và Next.js React shell**. Mỗi demo tĩnh là một file `.html` độc lập với inline CSS + JS, còn `/lab` chạy trong app React ở `apps/prototypes`.
 
 ```
 lab.html          ← Trang điều hướng chính (Prototype Store)
 index.html        ← Homepage marketing
+apps/prototypes/  ← Next.js React shell cho `/lab`
 assets/
   store.js        ← Registry toàn bộ prototypes + sidebar logic (QUAN TRỌNG NHẤT)
   store.css       ← CSS cho lab.html sidebar/layout
@@ -26,7 +27,7 @@ vercel.json       ← URL rewrite rules (production routing)
 
 ## 2. DEV SERVER
 
-**Dùng `preview_start` với name `node-devserver`** (port 3000) - đây là server chính.
+**Dùng `preview_start` với name `node-devserver`** (port 3000) cho static routes. App React của `/lab` chạy riêng trong `apps/prototypes` ở port 3001.
 
 - Serve toàn bộ file tĩnh từ project root
 - URL routing theo `vercel.json` rewrite (xem mục 4)
