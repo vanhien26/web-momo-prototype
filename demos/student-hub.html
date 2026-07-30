@@ -223,6 +223,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
   .detail-hero-gallery-wrap { order: -1; }
   .detail-hero-gallery { grid-template-rows: 220px 140px; }
   .detail-hero-name { font-size: 22px; }
+  .detail-hero-rating-row { flex-wrap: wrap; }
 }
 @media (max-width: 480px) {
   .detail-hero-gallery { grid-template-rows: 180px 110px; }
@@ -231,10 +232,20 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 }
 .detail-hero-status { display: none; }
 @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
-.detail-hero-name { font-family: 'MoMoTrustDisplay', sans-serif; font-size: 28px; font-weight: 900; color: var(--gray-900); line-height: 1.25; margin-bottom: 8px; }
-.detail-hero-addr { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.detail-hero-name-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.detail-hero-name { font-family: 'MoMoTrustDisplay', sans-serif; font-size: 26px; font-weight: 900; color: var(--gray-900); line-height: 1.25; }
+.detail-hero-verified { flex-shrink: 0; margin-top: 5px; width: 22px; height: 22px; border-radius: 50%; background: #EB2F96; display: flex; align-items: center; justify-content: center; }
+.detail-hero-verified svg { stroke: #fff; }
+.detail-hero-addr { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
 .detail-hero-addr a { color: #EB2F96; font-weight: 600; text-decoration: none; }
 .detail-hero-addr a:hover { text-decoration: underline; }
+.detail-hero-rating-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.detail-hero-stars { display: flex; gap: 1px; }
+.detail-hero-rating-score { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.detail-hero-rating-count { font-size: 12px; color: var(--gray-400); }
+.detail-hero-rating-sep { width: 1px; height: 14px; background: var(--gray-200); }
+.detail-hero-review-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 8px; border: 1.5px solid #EB2F96; font-size: 12px; font-weight: 700; color: #EB2F96; background: #fff; cursor: pointer; transition: all .15s; text-decoration: none; }
+.detail-hero-review-btn:hover { background: #FFF0F8; }
 .detail-hero-stats { display: flex; gap: 24px; margin-bottom: 20px; }
 .detail-hero-stat { display: flex; flex-direction: column; }
 .detail-hero-stat-val { font-size: 15px; font-weight: 800; color: var(--gray-900); }
@@ -1230,16 +1241,20 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
     <div class="detail-hero-layout">
       <!-- LEFT: text -->
       <div class="detail-hero-left">
-        <h1 class="detail-hero-name" id="heroTitle">Trường Đại Học Tôn Đức Thắng (TDTU)</h1>
+        <div class="detail-hero-name-row">
+          <h1 class="detail-hero-name" id="heroTitle">Trường Đại Học Tôn Đức Thắng (TDTU)</h1>
+          <span class="detail-hero-verified">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+        </div>
         <div class="detail-hero-addr">
           <i data-lucide="map-pin" width="13" height="13"></i>
           <span id="heroAddr">19 Nguyễn Hữu Thọ, Quận 7, TP.HCM</span>
           <span>·</span>
           <a href="javascript:scrollToDetailSec('merchantsSec',null)">Xem bản đồ</a>
         </div>
-        <div class="detail-hero-stats" id="heroStats">
-          <!-- Rendered by JS -->
-        </div>
+        <div class="detail-hero-rating-row" id="heroRatingRow"><!-- Rendered by JS --></div>
+        <div class="detail-hero-stats" id="heroStats"><!-- Rendered by JS --></div>
         <!-- Campus switcher -->
         <div id="heroCampusSwitcher" style="display:none;margin-top:16px"></div>
       </div>
@@ -3648,6 +3663,25 @@ function renderUnivHero(u) {
   const addrEl = document.getElementById('heroAddr');
   if (titleEl) titleEl.textContent = u.fullName || u.name;
   if (addrEl) addrEl.textContent = u.address || '';
+
+  // Rating row
+  const rv = REVIEWS_BY_UNIV[u.id] || REVIEWS_BY_UNIV['tdtu'];
+  const ratingEl = document.getElementById('heroRatingRow');
+  if (ratingEl && rv) {
+    const stars = Array.from({length: 5}, (_, i) => {
+      const filled = i < Math.floor(rv.overall);
+      return `<span style="color:${filled ? '#F59E0B' : '#E5E7EB'};font-size:14px">★</span>`;
+    }).join('');
+    ratingEl.innerHTML = `
+      <div class="detail-hero-stars">${stars}</div>
+      <span class="detail-hero-rating-score">${rv.overall}</span>
+      <span class="detail-hero-rating-count">(${rv.count.toLocaleString()} đánh giá)</span>
+      <span class="detail-hero-rating-sep"></span>
+      <button class="detail-hero-review-btn" onclick="scrollToDetailSec('reviewSec',null);setTimeout(()=>document.querySelector('.rv-write-btn')?.click(),400)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Đánh giá ngay
+      </button>`;
+  }
 
   // Stats row
   const statsEl = document.getElementById('heroStats');
