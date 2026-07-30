@@ -610,6 +610,28 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .tuition-pay-btn { width:100%;padding:13px;border-radius:14px;background:#fff;color:#6366F1;font-size:14px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .18s; }
 .tuition-pay-btn:hover { opacity:.92; }
 
+/* University Quick View Modal */
+.univ-qv-modal { background:#fff; border-radius:20px; max-width:420px; width:100%; overflow:hidden; box-shadow:0 24px 56px rgba(15,23,42,.22); animation:popIn .2s ease-out; position:relative; }
+.univ-qv-close { position:absolute; top:12px; right:12px; z-index:10; width:32px; height:32px; border-radius:50%; background:rgba(15,23,42,.5); backdrop-filter:blur(4px); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.univ-qv-close:hover { background:rgba(15,23,42,.75); }
+.univ-qv-banner { height:200px; overflow:hidden; position:relative; background:var(--gray-100); }
+.univ-qv-banner img { width:100%; height:100%; object-fit:cover; }
+.univ-qv-body { padding:20px 22px 22px; }
+.univ-qv-pill { display:inline-block; font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; }
+.univ-qv-name { font-size:20px; font-weight:900; color:var(--gray-900); margin-bottom:3px; }
+.univ-qv-fullname { font-size:12px; color:var(--gray-500); margin-bottom:12px; }
+.univ-qv-meta-row { display:flex; gap:16px; font-size:12px; color:var(--gray-500); margin-bottom:14px; flex-wrap:wrap; }
+.univ-qv-meta-row span { display:flex; align-items:center; gap:4px; }
+.univ-qv-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.univ-qv-stat { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:10px; padding:10px 12px; text-align:center; }
+.univ-qv-stat-val { font-size:15px; font-weight:900; color:var(--gray-900); }
+.univ-qv-stat-label { font-size:10px; color:var(--gray-400); margin-top:2px; }
+.univ-qv-desc { font-size:12.5px; color:var(--gray-600); line-height:1.6; margin-bottom:18px; }
+.univ-qv-actions { display:flex; gap:10px; }
+.univ-qv-btn-primary { flex:1; padding:12px; border-radius:12px; background:#1D4ED8; color:#fff; font-size:14px; font-weight:800; border:none; cursor:pointer; transition:background .15s; }
+.univ-qv-btn-primary:hover { background:#1E40AF; }
+.univ-qv-btn-secondary { padding:12px 18px; border-radius:12px; background:var(--gray-100); color:var(--gray-600); font-size:14px; font-weight:700; border:none; cursor:pointer; }
+
 /* Tuition mode tabs */
 .tuition-mode-row { display:flex;gap:8px;margin-bottom:20px; }
 .tuition-mode-btn { display:flex;align-items:center;gap:6px;padding:8px 18px;border-radius:20px;border:1.5px solid var(--gray-200);background:#fff;font-size:13px;font-weight:700;color:var(--gray-500);cursor:pointer;transition:all .15s; }
@@ -1094,6 +1116,26 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
     <div class="campus-modal-footer">
       <i data-lucide="map-pin" width="12" height="12" style="display:inline;vertical-align:middle;margin-right:3px"></i>
       Mỗi cơ sở có bản đồ tiện ích & địa điểm ăn uống riêng
+    </div>
+  </div>
+</div>
+
+<!-- UNIVERSITY QUICK VIEW MODAL -->
+<div class="campus-overlay" id="univQvOverlay" onclick="if(event.target===this)closeUnivQuickView()" style="display:none">
+  <div class="univ-qv-modal" id="univQvModal">
+    <button class="univ-qv-close" onclick="closeUnivQuickView()"><i data-lucide="x" width="18" height="18"></i></button>
+    <div class="univ-qv-banner" id="univQvBanner"></div>
+    <div class="univ-qv-body">
+      <div class="univ-qv-pill" id="univQvPill"></div>
+      <div class="univ-qv-name" id="univQvName"></div>
+      <div class="univ-qv-fullname" id="univQvFullname"></div>
+      <div class="univ-qv-meta-row" id="univQvMeta"></div>
+      <div class="univ-qv-stats" id="univQvStats"></div>
+      <div class="univ-qv-desc" id="univQvDesc"></div>
+      <div class="univ-qv-actions">
+        <button class="univ-qv-btn-primary" id="univQvEnroll">Nhập học ngay</button>
+        <button class="univ-qv-btn-secondary" onclick="closeUnivQuickView()">Đóng</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2887,7 +2929,9 @@ function renderUnivGrid() {
         <span class="univ-type-pill" style="background:${pill.bg};color:${pill.color}">${u.typeName}</span>
         <div class="univ-img-overlay">
           <span class="univ-metrics-chip">⭐ ${rating} &nbsp;|&nbsp; 👥 ${svCount}</span>
-          ${hasCampuses ? '<span class="univ-quickview-btn" style="background:rgba(109,40,217,.75)"><i data-lucide="git-branch" width="13" height="13"></i> ' + u.campuses.length + ' CS</span>' : '<span class="univ-quickview-btn"><i data-lucide="eye" width="13" height="13"></i></span>'}
+          <span class="univ-quickview-btn${hasCampuses ? '" style="background:rgba(109,40,217,.75)"' : '"'} onclick="event.stopPropagation();event.preventDefault();openUnivQuickView('${u.id}')">
+            ${hasCampuses ? '<i data-lucide="git-branch" width="13" height="13"></i> ' + u.campuses.length + ' CS' : '<i data-lucide="eye" width="13" height="13"></i>'}
+          </span>
         </div>
       </div>
       <div class="univ-body">
@@ -3073,6 +3117,48 @@ function switchHeroCampus(univId, campusId) {
   }
   renderCampusMerchants(univId);
   if (window.lucide) lucide.createIcons();
+}
+
+// ============================================================
+// UNIVERSITY QUICK VIEW MODAL
+// ============================================================
+function openUnivQuickView(univId) {
+  const u = UNIVERSITIES.find(x => x.id === univId);
+  if (!u) return;
+  const pillMap = { 'cong-lap': { bg:'#D1FAE5', color:'#065F46' }, 'dan-lap': { bg:'#FEF3C7', color:'#92400E' }, 'quoc-te': { bg:'#EDE9FE', color:'#5B21B6' } };
+  const pill = pillMap[u.type] || pillMap['cong-lap'];
+  const acadData = ACADEMIC_BY_UNIV[u.id];
+  const fee = acadData ? (acadData.creditPrice / 1000).toFixed(0) + 'K/TC' : '--';
+  const fmt = n => n.toLocaleString('vi-VN');
+  const campusInfo = u.campuses && u.campuses.length > 1
+    ? `<span><i data-lucide="git-branch" width="12" height="12"></i> ${u.campuses.length} cơ sở</span>`
+    : `<span><i data-lucide="map-pin" width="12" height="12"></i> ${u.cityName}</span>`;
+
+  document.getElementById('univQvBanner').innerHTML = `<img src="${u.banner}" alt="${u.name}" loading="lazy">`;
+  document.getElementById('univQvPill').textContent = u.typeName;
+  document.getElementById('univQvPill').style.cssText = `background:${pill.bg};color:${pill.color}`;
+  document.getElementById('univQvName').textContent = u.name;
+  document.getElementById('univQvFullname').textContent = u.fullName;
+  document.getElementById('univQvMeta').innerHTML = `
+    ${campusInfo}
+    <span><i data-lucide="users" width="12" height="12"></i> ${u.students}</span>
+    <span><i data-lucide="calendar" width="12" height="12"></i> Năm thành lập: ${u.founded || '--'}</span>`;
+  document.getElementById('univQvStats').innerHTML = `
+    <div class="univ-qv-stat"><div class="univ-qv-stat-val">${fee}</div><div class="univ-qv-stat-label">Học phí/TC</div></div>
+    <div class="univ-qv-stat"><div class="univ-qv-stat-val">${u.students.replace(' Sinh viên','')}</div><div class="univ-qv-stat-label">Sinh viên</div></div>
+    <div class="univ-qv-stat"><div class="univ-qv-stat-val">${u.campuses && u.campuses.length > 1 ? u.campuses.length + ' CS' : u.cityName}</div><div class="univ-qv-stat-label">${u.campuses && u.campuses.length > 1 ? 'Cơ sở' : 'Thành phố'}</div></div>`;
+  document.getElementById('univQvDesc').textContent = u.description || `${u.fullName} là một trong những trường đại học hàng đầu tại ${u.cityName}, cung cấp chương trình đào tạo chất lượng cao với học phí ${fee} mỗi tín chỉ.`;
+  const enrollBtn = document.getElementById('univQvEnroll');
+  enrollBtn.onclick = () => { closeUnivQuickView(); if (u.campuses && u.campuses.length > 1) openCampusPicker(univId); else selectUniversity(univId); };
+
+  document.getElementById('univQvOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeUnivQuickView() {
+  document.getElementById('univQvOverlay').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 // ============================================================
