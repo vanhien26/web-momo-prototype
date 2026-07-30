@@ -214,8 +214,21 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 
 /* DETAIL VIEW STYLES */
 /* ===== AIRBNB-STYLE DETAIL HERO ===== */
-.detail-hero { padding: 32px 0 0; background: #fff; }
-.detail-hero-layout { display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: center; }
+.detail-hero { padding-top: 28px; background: #fff; }
+.detail-hero-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; align-items: start; }
+.detail-hero-left { min-width: 0; }
+.detail-hero-gallery-wrap { min-width: 0; }
+@media (max-width: 860px) {
+  .detail-hero-layout { grid-template-columns: 1fr; gap: 20px; }
+  .detail-hero-gallery-wrap { order: -1; }
+  .detail-hero-gallery { grid-template-rows: 220px 140px; }
+  .detail-hero-name { font-size: 22px; }
+}
+@media (max-width: 480px) {
+  .detail-hero-gallery { grid-template-rows: 180px 110px; }
+  .detail-hero-name { font-size: 20px; }
+  .detail-hero-stats { gap: 16px; }
+}
 .detail-hero-status { display: none; }
 @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
 .detail-hero-name { font-family: 'MoMoTrustDisplay', sans-serif; font-size: 28px; font-weight: 900; color: var(--gray-900); line-height: 1.25; margin-bottom: 8px; }
@@ -3651,18 +3664,20 @@ function renderUnivHero(u) {
   const gallery = document.getElementById('heroGallery');
   if (!gallery) return;
   const FALLBACKS = [
-    'https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=400&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&auto=format&fit=crop&q=80',
   ];
   const photos = u.photos && u.photos.length >= 3 ? u.photos : [u.banner || FALLBACKS[0], FALLBACKS[1], FALLBACKS[2]];
+  const fb1 = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&auto=format&fit=crop&q=80';
+  const fb2 = 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&auto=format&fit=crop&q=80';
   gallery.innerHTML = `
     <div class="detail-gallery-main">
-      <img src="${photos[0]}" alt="${u.name}" loading="eager">
+      <img src="${photos[0]}" alt="${u.name}" loading="eager" onerror="this.src='https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80'">
     </div>
-    <div class="detail-gallery-cell"><img src="${photos[1]}" alt="${u.name} campus" loading="lazy"></div>
+    <div class="detail-gallery-cell"><img src="${photos[1]}" alt="${u.name} campus" loading="lazy" onerror="this.src='${fb1}'"></div>
     <div class="detail-gallery-cell">
-      <img src="${photos[2]}" alt="${u.name} campus" loading="lazy">
+      <img src="${photos[2]}" alt="${u.name} campus" loading="lazy" onerror="this.src='${fb2}'">
       <div class="detail-gallery-count" onclick="openToolModal('Xem tất cả ảnh ${u.name}')">
         <i data-lucide="image" width="12" height="12"></i> Xem tất cả ảnh
       </div>
