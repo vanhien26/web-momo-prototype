@@ -94,6 +94,10 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .nav-search-inp:focus { background: #fff; border-color: var(--gray-400); box-shadow: 0 0 0 3px rgba(15,23,42,0.08); }
 .nav-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); pointer-events: none; }
 
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-link { display: flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--gray-600); text-decoration: none; transition: all .15s; white-space: nowrap; }
+.nav-link:hover { background: var(--gray-100); color: var(--gray-900); }
+.nav-link.active { background: var(--gray-100); color: var(--gray-900); font-weight: 700; }
 .nav-user { display: flex; align-items: center; gap: 8px; }
 /* Social login - guest state */
 .nav-login-btn { display: flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 700; color: var(--gray-800); cursor: pointer; transition: all .15s; white-space: nowrap; }
@@ -972,17 +976,15 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
         <div class="nav-logo-text">Student <em>Hub</em></div>
       </a>
 
-      <!-- CUSTOM UNIV SELECTOR -->
-      <div class="nav-univ-dropdown" id="navUnivDropdown">
-        <button class="nav-univ-trigger" id="navUnivTrigger" onclick="toggleUnivDropdown()">
-          <i data-lucide="school" width="14" height="14"></i>
-          <span id="navUnivLabel">Tất cả các trường</span>
-          <i data-lucide="chevron-down" width="13" height="13" id="navUnivChevron"></i>
-        </button>
-        <div class="nav-univ-menu" id="navUnivMenu">
-          <!-- Rendered dynamically by renderNavUnivDropdown() -->
-        </div>
-      </div>
+      <!-- NAV LINKS -->
+      <nav class="nav-links" id="navLinks">
+        <a class="nav-link" id="navLinkRanking" href="javascript:showRankingView()">
+          <i data-lucide="bar-chart-2" width="14" height="14"></i> Bảng Xếp Hạng
+        </a>
+        <a class="nav-link" id="navLinkGuide" href="javascript:openToolModal('Cẩm Nang Sinh Viên')">
+          <i data-lucide="book-open" width="14" height="14"></i> Cẩm Nang
+        </a>
+      </nav>
     </div>
 
     <div class="nav-user" id="navUserArea">
@@ -3023,14 +3025,13 @@ function renderNavUnivDropdown() {
 // VIEW SWITCHING LOGIC
 function showDirectoryView(pushUrl) {
   currentUnivId = null;
-  setNavUnivLabel('Tất cả các trường');
   document.getElementById('directoryView').style.display = 'block';
   document.getElementById('detailView').style.display = 'none';
   document.getElementById('rankingView').style.display = 'none';
-  document.getElementById('bcCurrent').textContent = 'Danh Mục Các Trường Đại Học';
+  document.getElementById('bcCurrent').textContent = 'Danh Sách Trường Đại Học';
   document.getElementById('bcAction').innerHTML = '';
+  setNavActiveLink('');
   renderFilterChips();
-  renderNavUnivDropdown();
   renderUnivGrid();
   switchLifePillar('nhaphoc');
   if (pushUrl !== false) history.pushState({ view: 'directory' }, '', '/student-hub');
@@ -4277,12 +4278,19 @@ const RANK_ICONS = {
   student: 'message-circle'
 };
 
+function setNavActiveLink(id) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
 function showRankingView() {
   document.getElementById('directoryView').style.display = 'none';
   document.getElementById('detailView').style.display = 'none';
   document.getElementById('rankingView').style.display = 'block';
   document.getElementById('bcCurrent').textContent = 'Bảng Xếp Hạng Trường Đại Học';
-  document.getElementById('bcAction').innerHTML = `<button class="btn-back-dir" onclick="showDirectoryView()"><i data-lucide="arrow-left" width="12" height="12"></i> Danh sách trường</button>`;
+  document.getElementById('bcAction').innerHTML = '';
+  setNavActiveLink('navLinkRanking');
   history.pushState({ view: 'ranking' }, '', '/student-hub/ranking');
   currentRankFilter = 'overall';
   renderRankingPage();
