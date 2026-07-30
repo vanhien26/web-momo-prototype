@@ -742,6 +742,7 @@ body {
 .vr-wrap { display: flex; flex-direction: column; gap: 16px; }
 
 /* Top header */
+/* ── Vehicle Result Header ── */
 .vr-head { display: flex; align-items: flex-start; gap: 14px; }
 .vr-car-icon {
   width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
@@ -754,8 +755,15 @@ body {
   font-size: 28px; font-weight: 900; letter-spacing: .06em; color: var(--gray-900);
   line-height: 1.1;
 }
-.vr-head-meta { font-size: 11.5px; color: var(--gray-400); margin-top: 4px; }
-.vr-head-right { flex-shrink: 0; margin-top: 2px; }
+.vr-vehicle-model { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-top: 4px; }
+.vr-head-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.vr-htag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; color: var(--gray-600);
+  background: var(--gray-100); border-radius: 999px; padding: 3px 10px;
+}
+.vr-htag svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.vr-head-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-top: 2px; }
 .vr-status-pill {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; font-weight: 700; border-radius: 999px;
@@ -768,35 +776,20 @@ body {
   font-size: 11px; color: var(--gray-500); background: none; border: 1px solid var(--gray-200);
   border-radius: 999px; cursor: pointer; font-family: inherit; font-weight: 600;
   padding: 5px 12px; display: inline-flex; align-items: center; gap: 4px;
-  margin-top: 6px; transition: color .15s, border-color .15s;
+  transition: color .15s, border-color .15s;
 }
 .vr-reset:hover { color: var(--gray-800); border-color: var(--gray-400); }
 .vr-reset svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Vehicle info card */
-.vr-info-card {
-  background: #fff; border: 1px solid var(--gray-200); border-radius: 16px;
-  display: grid; grid-template-columns: 1fr 1px 1fr;
-}
-.vr-info-col { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
-.vr-info-divider { background: var(--gray-150, #eee); }
-.vr-info-icon {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.vr-info-icon.pink { background: #fdf2f8; }
-.vr-info-icon.yellow { background: #fffbeb; }
-.vr-info-icon svg { width: 22px; height: 22px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.vr-info-icon.pink svg { stroke: var(--pink-500); }
-.vr-info-icon.yellow svg { stroke: #d97706; }
+/* Vehicle info card (legacy grid — hidden, replaced by tags) */
+.vr-info-card { display: none; }
 .vr-plate-prefix {
   font-size: 13px; font-weight: 900; color: #d97706;
-  background: #fef3c7; border-radius: 6px; padding: 3px 8px;
-  letter-spacing: .04em;
+  background: #fef3c7; border-radius: 6px; padding: 3px 8px; letter-spacing: .04em;
 }
-.vr-info-body {}
 .vr-info-sub { font-size: 11px; color: var(--gray-500); margin-bottom: 2px; font-weight: 500; }
 .vr-info-val { font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.vr-head-ts { font-size: 11px; color: var(--gray-400); }
 
 /* Violations section */
 .vr-section-head {
@@ -3522,12 +3515,42 @@ const USE_CASE_LABELS = {
       return PLATE_REGION[prefix] || '';
     }
 
+    // Mock vehicle catalog keyed by plate (for demo plates) + hash-based fallback
+    const MOCK_VEHICLES = {
+      '29A12345': { brand:'Toyota', model:'Fortuner 2.7 4x4 AT', year:2022, color:'Trắng ngọc trai' },
+      '51G88888': { brand:'Honda', model:'CR-V 1.5L Turbo', year:2021, color:'Xanh dương' },
+      '30F12345': { brand:'Mazda', model:'CX-5 Premium 2.0', year:2023, color:'Đỏ pha lê' },
+    };
+    const BRANDS_POOL = [
+      {b:'Toyota', models:['Vios 1.5G CVT','Camry 2.5Q','Fortuner 2.7 4x4','Innova Cross 2.0']},
+      {b:'Honda',  models:['City 1.5RS CVT','CR-V 1.5L Turbo','HR-V L CVT','Civic RS']},
+      {b:'Hyundai',models:['Accent 1.4AT','Tucson 2.0 AWD','Santa Fe Premium','Creta 1.5 Turbo']},
+      {b:'Mazda',  models:['Mazda3 2.0 Premium','CX-5 2.0 Luxury','CX-8 2.5 Premium']},
+      {b:'KIA',    models:['Morning 1.0 AT','Seltos 1.4 Turbo','Sportage 2.0 Premium']},
+      {b:'Ford',   models:['Ranger XLT 2.0','Everest Titanium+','Territory Titanium']},
+    ];
+    const COLORS_POOL = ['Trắng ngọc trai','Đen ánh kim','Bạc titan','Xám anthracite','Đỏ pha lê','Xanh dương navy'];
+
+    function getMockVehicle(plate, vtype) {
+      const key = plate.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+      if (MOCK_VEHICLES[key]) return MOCK_VEHICLES[key];
+      if (vtype === 'xemay') {
+        const h = hashPlate(plate);
+        const xeModels = ['Honda Wave Alpha','Yamaha Exciter 155','Honda SH 160i','Yamaha NVX 155','Honda Air Blade 125'];
+        return { brand: h%2===0?'Honda':'Yamaha', model: xeModels[h%xeModels.length], year: 2019+(h%6), color: COLORS_POOL[h%COLORS_POOL.length] };
+      }
+      const h = hashPlate(plate);
+      const pool = BRANDS_POOL[h % BRANDS_POOL.length];
+      return { brand: pool.b, model: pool.models[h % pool.models.length], year: 2019+(h%6), color: COLORS_POOL[h%COLORS_POOL.length] };
+    }
+
     function renderResult(plate, data, vtype) {
       vtype = vtype || currentVtype;
       const { violationCount, mockData } = data;
       const region = getRegion(plate);
       const vtypeLabel = vtype === 'xemay' ? 'Xe máy' : 'Ô tô con';
       const vtypeIcon  = vtype === 'xemay' ? licon('Bike', 22, 1.8) : licon('Car', 22, 1.8);
+      const vehicle = getMockVehicle(plate, vtype);
 
       // timestamp mock
       const now = new Date();
@@ -3625,32 +3648,18 @@ const USE_CASE_LABELS = {
             <div class="vr-head-body">
               <div class="vr-head-label">Kết quả tra cứu</div>
               <div class="vr-plate-big">${plate}</div>
-              <div class="vr-head-meta">Cập nhật lần cuối: ${ts}</div>
+              <div class="vr-vehicle-model">${vehicle.brand} ${vehicle.model} · ${vehicle.year}</div>
+              <div class="vr-head-tags">
+                <span class="vr-htag">${licon('Car', 11, 2)} ${vtypeLabel}</span>
+                <span class="vr-htag">${licon('MapPin', 11, 2)} ${region||platePrefix}</span>
+                <span class="vr-htag">${licon('Palette', 11, 2)} ${vehicle.color}</span>
+                <span class="vr-htag">${licon('Calendar', 11, 2)} ${vehicle.year}</span>
+              </div>
             </div>
             <div class="vr-head-right">
               ${statusPill}
-              <div style="text-align:right; margin-top:6px">
-                <button class="vr-reset" onclick="resetPlate()">${licon('RotateCcw', 10, 2.5)} Đổi xe</button>
-              </div>
-            </div>
-          </div>
-          <div class="vr-info-card">
-            <div class="vr-info-col">
-              <div class="vr-info-icon pink">${vtypeIcon}</div>
-              <div class="vr-info-body">
-                <div class="vr-info-sub">Loại phương tiện</div>
-                <div class="vr-info-val">${vtypeLabel}</div>
-              </div>
-            </div>
-            <div class="vr-info-divider"></div>
-            <div class="vr-info-col">
-              <div class="vr-info-icon yellow" style="font-size:0">
-                <span class="vr-plate-prefix">${platePrefix}</span>
-              </div>
-              <div class="vr-info-body">
-                <div class="vr-info-sub">Biển số xe${region ? ' · '+region : ''}</div>
-                <div class="vr-info-val">${plate}</div>
-              </div>
+              <button class="vr-reset" onclick="resetPlate()">${licon('RotateCcw', 10, 2.5)} Đổi xe</button>
+              <span class="vr-head-ts">Cập nhật: ${ts}</span>
             </div>
           </div>
           ${violationsHtml}
