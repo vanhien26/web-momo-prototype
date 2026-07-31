@@ -544,16 +544,36 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .transit-stop-label { font-size: 10px; color: var(--gray-400); white-space: nowrap; margin: 0 4px; }
 
 /* Map Modal */
-.transit-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 9000; align-items: center; justify-content: center; padding: 20px; }
+.transit-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 9000; align-items: center; justify-content: center; padding: 16px; }
 .transit-modal-overlay.open { display: flex; }
-.transit-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 780px; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,.22); }
-.transit-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--gray-100); flex-shrink: 0; }
-.transit-modal-title { font-size: 15px; font-weight: 800; color: var(--gray-900); }
-.transit-modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--gray-100); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gray-500); }
-.transit-modal-map { flex: 1; min-height: 380px; background: var(--gray-100); }
-.transit-modal-footer { padding: 14px 22px; border-top: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px; background: #fff; }
+.transit-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 900px; height: 86vh; max-height: 680px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,.25); }
+.transit-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--gray-100); flex-shrink: 0; gap: 12px; }
+.transit-modal-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.transit-modal-badge { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; flex-shrink: 0; }
+.transit-modal-title { font-size: 14px; font-weight: 800; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.transit-modal-sub { font-size: 12px; color: var(--gray-500); margin-top: 1px; }
+.transit-modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--gray-100); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gray-500); flex-shrink: 0; }
+/* 2-col body */
+.transit-modal-body { display: grid; grid-template-columns: 260px 1fr; flex: 1; overflow: hidden; }
+.transit-modal-stops { display: flex; flex-direction: column; border-right: 1px solid var(--gray-100); overflow: hidden; }
+.transit-stops-tabs { display: flex; border-bottom: 1px solid var(--gray-100); flex-shrink: 0; }
+.transit-stops-tab { flex: 1; padding: 10px; font-size: 12px; font-weight: 700; color: var(--gray-500); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+.transit-stops-tab.active { color: #EB2F96; border-bottom-color: #EB2F96; }
+.transit-stops-list { flex: 1; overflow-y: auto; padding: 12px 0; }
+.transit-stop-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 16px; position: relative; }
+.transit-stop-item:not(:last-child)::after { content: ''; position: absolute; left: 22px; top: 28px; bottom: -8px; width: 2px; background: var(--gray-200); }
+.transit-stop-icon { width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #ccc; background: #fff; flex-shrink: 0; margin-top: 3px; z-index: 1; position: relative; }
+.transit-stop-icon.first { border-color: #3B82F6; background: #3B82F6; }
+.transit-stop-icon.last { border-color: #EB2F96; background: #EB2F96; }
+.transit-stop-icon.campus { border-color: #EB2F96; width: 14px; height: 14px; }
+.transit-stop-name { font-size: 12px; color: var(--gray-700); line-height: 1.4; }
+.transit-stop-name.highlight { font-weight: 700; color: #EB2F96; }
+.transit-stop-name.origin { font-weight: 700; color: #3B82F6; }
+.transit-modal-map { background: var(--gray-100); }
+.transit-modal-footer { padding: 12px 18px; border-top: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px; background: #fff; }
 .transit-footer-info { font-size: 12px; color: var(--gray-500); }
 .transit-footer-info strong { color: var(--gray-900); font-size: 14px; }
+@media (max-width: 640px) { .transit-modal-body { grid-template-columns: 1fr; } .transit-modal-stops { max-height: 180px; border-right: none; border-bottom: 1px solid var(--gray-100); } }
 
 @media (max-width: 860px) { .transit-layout { grid-template-columns: 1fr; } .transit-form { position: static; } }
 /* ── END TRANSIT ── */
@@ -1915,15 +1935,44 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
   <div class="transit-modal-overlay" id="transitMapModal" onclick="closeTransitMap(event)">
     <div class="transit-modal">
       <div class="transit-modal-header">
-        <div class="transit-modal-title" id="transitMapTitle">Bản đồ tuyến đường</div>
-        <button class="transit-modal-close" onclick="document.getElementById('transitMapModal').style.display='none'">
-          <i data-lucide="x" width="16" height="16"></i>
-        </button>
+        <div class="transit-modal-header-left">
+          <div class="transit-modal-badge" id="transitModalBadge">36</div>
+          <div>
+            <div class="transit-modal-title" id="transitMapTitle">Tuyến 36 - Đầm Sen - Nguyễn Văn Linh</div>
+            <div class="transit-modal-sub" id="transitMapSub">18 phút · 8 điểm dừng · 7.000đ/lượt</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <a id="transitBusMapLink" href="https://map.busmap.vn/hcm/route/36" target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;background:var(--gray-100);color:var(--gray-700);font-size:12px;font-weight:700;text-decoration:none">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            BusMap
+          </a>
+          <button class="transit-modal-close" onclick="document.getElementById('transitMapModal').classList.remove('open')">
+            <i data-lucide="x" width="16" height="16"></i>
+          </button>
+        </div>
       </div>
-      <div class="transit-modal-map">
-        <iframe id="transitMapFrame" src="" frameborder="0" allowfullscreen loading="lazy"
-          style="width:100%;height:100%;border:0;border-radius:0 0 18px 18px"></iframe>
+
+      <div class="transit-modal-body">
+        <!-- LEFT: Stop list -->
+        <div class="transit-modal-stops">
+          <div class="transit-stops-tabs">
+            <button class="transit-stops-tab active" onclick="switchStopsTab('go',this)">Lượt đi</button>
+            <button class="transit-stops-tab" onclick="switchStopsTab('back',this)">Lượt về</button>
+          </div>
+          <div class="transit-stops-list" id="transitStopsList">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+
+        <!-- RIGHT: Map -->
+        <div class="transit-modal-map">
+          <iframe id="transitMapFrame" src="" frameborder="0" allowfullscreen loading="lazy"
+            style="width:100%;height:100%;border:0"></iframe>
+        </div>
       </div>
+
       <div class="transit-modal-footer" id="transitMapFooter">
         <!-- rendered by JS -->
       </div>
@@ -3083,26 +3132,118 @@ function renderTransitRoutes() {
   if (window.lucide) lucide.createIcons();
 }
 
-function openTransitMap(univId, area, routeNum, routeName, mapsUrl, time, fare) {
+// Stop data for major routes (lượt đi)
+const ROUTE_STOPS = {
+  '36': {
+    go: ['Bến xe Đầm Sen','Lũy Bán Bích','Nguyễn Thị Nhỏ','Bà Hom','Kinh Dương Vương','An Lạc','Nguyễn Văn Linh (Bình Chánh)','Nguyễn Văn Linh (Q.7)','TDTU - Tôn Đức Thắng'],
+    back: ['TDTU - Tôn Đức Thắng','Nguyễn Văn Linh (Q.7)','Nguyễn Văn Linh (Bình Chánh)','An Lạc','Kinh Dương Vương','Bà Hom','Nguyễn Thị Nhỏ','Lũy Bán Bích','Bến xe Đầm Sen'],
+  },
+  '14': {
+    go: ['Bến Thành','Lê Lai','Trần Hưng Đạo','Nguyễn Trãi (Q.5)','Nguyễn Trãi (Q.1)','Hùng Vương','Lê Hồng Phong','Hòa Bình','Phú Mỹ Hưng','TDTU - Nguyễn Hữu Thọ'],
+    back: ['TDTU - Nguyễn Hữu Thọ','Phú Mỹ Hưng','Hòa Bình','Lê Hồng Phong','Hùng Vương','Nguyễn Trãi (Q.1)','Nguyễn Trãi (Q.5)','Trần Hưng Đạo','Lê Lai','Bến Thành'],
+  },
+  '50': {
+    go: ['Bến xe Miền Tây','An Lạc','Bình Điền','Nguyễn Văn Linh','KCN Tân Thuận','Huỳnh Tấn Phát','Phú Thuận','Lê Văn Lương','TDTU - Cổng chính'],
+    back: ['TDTU - Cổng chính','Lê Văn Lương','Phú Thuận','Huỳnh Tấn Phát','KCN Tân Thuận','Nguyễn Văn Linh','Bình Điền','An Lạc','Bến xe Miền Tây'],
+  },
+  '38': {
+    go: ['Bến xe Quận 8','Phạm Thế Hiển','Cao Lỗ','Tạ Quang Bửu','Trần Xuân Soạn','Lê Văn Lương','Nguyễn Hữu Thọ','TDTU'],
+    back: ['TDTU','Nguyễn Hữu Thọ','Lê Văn Lương','Trần Xuân Soạn','Tạ Quang Bửu','Cao Lỗ','Phạm Thế Hiển','Bến xe Quận 8'],
+  },
+  '195': {
+    go: ['Nhà Bè - Hiệp Phước','Long Thới','Phước Kiển','Nguyễn Hữu Thọ','KCN Tân Thuận','TDTU'],
+    back: ['TDTU','KCN Tân Thuận','Nguyễn Hữu Thọ','Phước Kiển','Long Thới','Nhà Bè - Hiệp Phước'],
+  },
+  '1': {
+    go: ['Bến Thành','Đinh Tiên Hoàng','Đinh Bộ Lĩnh','Bạch Đằng','Bình Triệu','Xa lộ Hà Nội'],
+    back: ['Xa lộ Hà Nội','Bình Triệu','Bạch Đằng','Đinh Bộ Lĩnh','Đinh Tiên Hoàng','Bến Thành'],
+  },
+  '3': {
+    go: ['Bến xe Miền Đông','Đinh Bộ Lĩnh','Bạch Đằng','Lê Lợi','Cộng Hòa','Tân Bình'],
+    back: ['Tân Bình','Cộng Hòa','Lê Lợi','Bạch Đằng','Đinh Bộ Lĩnh','Bến xe Miền Đông'],
+  },
+  '65': {
+    go: ['Bến xe Miền Đông','Đinh Bộ Lĩnh','Xô Viết Nghệ Tĩnh','Bến Bình Đông','Phạm Thế Hiển','Bến xe Quận 8'],
+    back: ['Bến xe Quận 8','Phạm Thế Hiển','Bến Bình Đông','Xô Viết Nghệ Tĩnh','Đinh Bộ Lĩnh','Bến xe Miền Đông'],
+  },
+  '102': {
+    go: ['ĐH Bách Khoa','Võ Văn Ngân','Linh Tây','Phạm Văn Đồng','Hồ Chí Minh (BT)','Ngô Tất Tố','Đinh Tiên Hoàng','Bến Bạch Đằng','Nhà Bè'],
+    back: ['Nhà Bè','Bến Bạch Đằng','Đinh Tiên Hoàng','Ngô Tất Tố','Hồ Chí Minh (BT)','Phạm Văn Đồng','Linh Tây','Võ Văn Ngân','ĐH Bách Khoa'],
+  },
+  '20': {
+    go: ['Bến xe Miền Tây','Kinh Dương Vương','Hậu Giang','Bến Bình Đông','Hoàng Diệu','Khánh Hội','Nguyễn Tất Thành'],
+    back: ['Nguyễn Tất Thành','Khánh Hội','Hoàng Diệu','Bến Bình Đông','Hậu Giang','Kinh Dương Vương','Bến xe Miền Tây'],
+  },
+};
+
+// State for modal tab
+let transitModalState = { tab: 'go', routeNum: '36', campusStop: '' };
+
+function switchStopsTab(tab, btn) {
+  transitModalState.tab = tab;
+  document.querySelectorAll('.transit-stops-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderStopsList();
+}
+
+function renderStopsList() {
+  const list = document.getElementById('transitStopsList');
+  if (!list) return;
+  const stops = (ROUTE_STOPS[transitModalState.routeNum] || {})[transitModalState.tab] || [];
+  const campus = transitModalState.campusStop;
+  list.innerHTML = stops.map((s, i) => {
+    const isFirst = i === 0;
+    const isLast = i === stops.length - 1;
+    const isCampus = s.includes(campus) || s.toLowerCase().includes('tdtu') || s.toLowerCase().includes('đh') || isLast;
+    let iconClass = 'transit-stop-icon';
+    if (isFirst) iconClass += ' first';
+    else if (isLast || isCampus) iconClass += ' last';
+    let nameClass = 'transit-stop-name';
+    if (isFirst) nameClass += ' origin';
+    else if (isLast || isCampus) nameClass += ' highlight';
+    return `<div class="transit-stop-item">
+      <div class="${iconClass}"></div>
+      <div class="${nameClass}">${s}</div>
+    </div>`;
+  }).join('');
+}
+
+function openTransitMap(univId, area, routeNum, routeName, _unused, time, fare) {
   const campus = CAMPUS_COORDS[univId] || CAMPUS_COORDS.tdtu;
-  const areaCoord = AREA_COORDS[area] || AREA_COORDS.q7;
   const modal = document.getElementById('transitMapModal');
-  document.getElementById('transitMapTitle').textContent = `Tuyến ${routeNum} - ${transitState.areaLabel} → ${campus.name.replace('Trường ','').replace('Đại Học','ĐH')}`;
-  // Use directions embed - fallback to maps search since embed API key needed
-  const embedUrl = `https://maps.google.com/maps?q=${campus.lat},${campus.lng}&t=m&z=14&ie=UTF8&iwloc=&output=embed`;
-  document.getElementById('transitMapFrame').src = embedUrl;
+
+  // Header
+  const routeData = (BUS_ROUTES[univId] || BUS_ROUTES_DEFAULT)[area]?.find(r => r.num === routeNum)
+    || { color: '#2563EB', bg: '#EFF6FF' };
+  document.getElementById('transitModalBadge').textContent = routeNum;
+  document.getElementById('transitModalBadge').style.cssText = `background:${routeData.bg};color:${routeData.color};width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0`;
+  document.getElementById('transitMapTitle').textContent = `Tuyến ${routeNum} - ${routeName}`;
+  document.getElementById('transitMapSub').textContent = `${time} phút · ${fare.toLocaleString('vi-VN')}đ/lượt`;
+
+  // BusMap link
+  const bmLink = document.getElementById('transitBusMapLink');
+  if (bmLink) bmLink.href = `https://map.busmap.vn/hcm/route/${routeNum}`;
+
+  // BusMap embed iframe
+  document.getElementById('transitMapFrame').src = `https://map.busmap.vn/hcm/route/${routeNum}`;
+
+  // Stops list
+  transitModalState.routeNum = routeNum;
+  transitModalState.campusStop = campus.name.split(' ').pop();
+  transitModalState.tab = 'go';
+  document.querySelectorAll('.transit-stops-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+  renderStopsList();
+
+  // Footer
   document.getElementById('transitMapFooter').innerHTML = `
     <div class="transit-footer-info">
-      <strong>${time} phút</strong> từ ${transitState.areaLabel} đến ${campus.name.replace('Trường Đại Học ','ĐH ')} · Giá vé <strong>${fare.toLocaleString('vi-VN')}đ</strong>
+      <strong>${time} phút</strong> từ ${transitState.areaLabel} · <strong>${fare.toLocaleString('vi-VN')}đ</strong>/lượt · Mua vé không cần tiền lẻ
     </div>
-    <div style="display:flex;gap:8px">
-      <a href="https://maps.google.com/maps/dir/${areaCoord.lat},${areaCoord.lng}/${campus.lat},${campus.lng}/@${campus.lat},${campus.lng},13z/data=!4m2!4m1!3e3" target="_blank" rel="noopener"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;background:var(--gray-900);color:#fff;font-size:12px;font-weight:700;text-decoration:none">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Mở Google Maps
-      </a>
-      <button class="transit-momo-btn" onclick="openToolModal('Mua vé xe buýt tuyến ${routeNum} qua MoMo')">Mua vé qua MoMo</button>
-    </div>`;
+    <button class="transit-momo-btn" onclick="openToolModal('Mua vé xe buýt tuyến ${routeNum} qua MoMo')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Mua vé qua MoMo
+    </button>`;
+
   modal.classList.add('open');
   if (window.lucide) lucide.createIcons();
 }
