@@ -328,6 +328,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .m-img-box img { width: 100%; height: 100%; object-fit: cover; }
 .m-badge-dist { position: absolute; top: 10px; left: 10px; background: rgba(15,23,42,0.75); backdrop-filter: blur(4px); color: #fff; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
 .m-badge-vts { position: absolute; top: 10px; right: 10px; background: var(--gray-900); color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
+.m-sme-badge { position: absolute; top: 10px; right: 10px; background: #EB2F96; color: #fff; font-size: 9.5px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: .3px; }
 
 .m-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
 .m-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
@@ -1133,6 +1134,8 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .rv-anon-preview i { color:var(--gray-400);flex-shrink:0; }
 .rv-write-cta { width:100%;padding:13px;border-radius:14px;background:var(--pink);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .18s; }
 .rv-write-cta:hover { opacity:.9; }
+.rv-suggest-chip { font-size:12px;font-weight:500;color:var(--gray-600);background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:99px;padding:5px 12px;cursor:pointer;transition:all .15s; }
+.rv-suggest-chip.selected { background:#FFF0F9;border-color:var(--pink);color:var(--pink);font-weight:700; }
 .rv-card-stars { display:flex;gap:2px;margin-left:auto;flex-shrink:0; }
 .rv-card-star { color:#F59E0B;font-size:13px; }
 .rv-text { font-size:13px;color:var(--gray-700);line-height:1.65; }
@@ -1502,12 +1505,18 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
           <i data-lucide="map-pin" width="13" height="13"></i>
           <span id="heroAddr">19 Nguyễn Hữu Thọ, Quận 7, TP.HCM</span>
           <span>·</span>
-          <a href="javascript:scrollToDetailSec('merchantsSec',null)">Xem bản đồ</a>
+          <a href="javascript:void(0)" onclick="openMerchantMap(null)" id="heroMapLink">Xem bản đồ</a>
+          <span>·</span>
+          <a href="javascript:void(0)" id="heroWebsiteLink" target="_blank" rel="noopener" style="display:none"></a>
         </div>
         <div class="detail-hero-rating-row" id="heroRatingRow"><!-- Rendered by JS --></div>
         <div class="detail-hero-stats" id="heroStats"><!-- Rendered by JS --></div>
         <!-- Campus switcher -->
         <div id="heroCampusSwitcher" style="display:none;margin-top:16px"></div>
+        <!-- School highlights inline -->
+        <div id="heroHighlights" style="display:none;margin-top:14px"></div>
+        <!-- Study abroad + website row -->
+        <div id="heroInfoStrip" style="display:none;margin-top:10px"></div>
       </div>
       <!-- RIGHT: photo mosaic -->
       <div class="detail-hero-gallery-wrap">
@@ -1527,7 +1536,7 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
       <a class="detail-nav-link active" onclick="scrollToDetailSec('toolsSec',this)">Tổng quan</a>
       <a class="detail-nav-link" onclick="scrollToDetailSec('giftSec',this)">Ưu đãi</a>
       <a class="detail-nav-link" onclick="scrollToDetailSec('newsSec',this)">Tin tức</a>
-      <a class="detail-nav-link" onclick="scrollToDetailSec('schoolInfoSec',this)">Thông tin</a>
+      <a class="detail-nav-link" onclick="document.getElementById('detailHero').scrollIntoView({behavior:'smooth'});this.closest('.detail-nav-inner').querySelectorAll('.detail-nav-link').forEach(l=>l.classList.remove('active'));this.classList.add('active')">Thông tin</a>
       <a class="detail-nav-link" onclick="scrollToDetailSec('facultySec',this)">Ngành học</a>
       <a class="detail-nav-link" onclick="scrollToDetailSec('scholarSec',this)">Học bổng</a>
       <a class="detail-nav-link" onclick="scrollToDetailSec('merchantsSec',this)">Tiện ích</a>
@@ -1778,26 +1787,19 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 
   <!-- MERCHANT EXPLORATION SECTION -->
   <section class="merchant-sec wrap" id="merchantsSec">
-    <div class="sec-h"><i data-lucide="store" width="20" height="20" style="color:#EB2F96"></i> Hệ Sinh Thái Địa Điểm Sinh Hoạt Quanh Trường</div>
-    <div class="sec-sub" id="merchantSecSub">Khám phá địa điểm ăn uống, tiện lợi, in ấn và dịch vụ sinh viên quanh campus - bấm card để xem bản đồ</div>
+    <div class="sec-h"><i data-lucide="map-pin" width="20" height="20" style="color:#EB2F96"></i> Tiện Ích 5km Quanh Trường</div>
+    <div class="sec-sub" id="merchantSecSub">7 nhóm địa điểm sinh viên cần nhất · Đối tác MoMo SME chấp nhận thanh toán không tiền mặt</div>
 
-    <!-- FILTER CHIPS -->
+    <!-- 7 GROUP TABS -->
     <div class="m-filter-row" id="merchantFilterRow">
-      <button class="m-filter-chip active" onclick="filterMerchants('all',this)">
-        <i data-lucide="grid-3x3" width="13" height="13"></i> Tất Cả <span class="m-filter-count" id="fCount-all">5</span>
-      </button>
-      <button class="m-filter-chip" onclick="filterMerchants('campus',this)">
-        <i data-lucide="building-2" width="13" height="13"></i> Trong Campus
-      </button>
-      <button class="m-filter-chip" onclick="filterMerchants('fnb',this)">
-        <i data-lucide="coffee" width="13" height="13"></i> Cafe & Trà Sữa
-      </button>
-      <button class="m-filter-chip" onclick="filterMerchants('food',this)">
-        <i data-lucide="utensils" width="13" height="13"></i> Ăn Uống
-      </button>
-      <button class="m-filter-chip" onclick="filterMerchants('print',this)">
-        <i data-lucide="printer" width="13" height="13"></i> In Ấn & Văn Phòng
-      </button>
+      <button class="m-filter-chip active" onclick="filterMerchants('all',this)">🗺️ Tất cả</button>
+      <button class="m-filter-chip" onclick="filterMerchants('nha-tro',this)">🏠 Nhà trọ</button>
+      <button class="m-filter-chip" onclick="filterMerchants('food',this)">🍜 Quán ăn</button>
+      <button class="m-filter-chip" onclick="filterMerchants('fnb',this)">☕ Cà phê</button>
+      <button class="m-filter-chip" onclick="filterMerchants('xe-buyt',this)">🚌 Xe buýt</button>
+      <button class="m-filter-chip" onclick="filterMerchants('mua-sam',this)">🛒 Mua sắm</button>
+      <button class="m-filter-chip" onclick="filterMerchants('giai-tri',this)">🎬 Giải trí</button>
+      <button class="m-filter-chip" onclick="filterMerchants('tieng-anh',this)">📚 Tiếng Anh</button>
       <button class="m-show-map-btn" onclick="openMerchantMap(null)">
         <i data-lucide="map" width="14" height="14"></i> Xem Bản Đồ
       </button>
@@ -2274,6 +2276,48 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
   </section>
 </main>
 
+<!-- MAJOR DETAIL OVERLAY -->
+<div class="map-overlay" id="majorDetailOverlay">
+  <div class="map-overlay-head">
+    <button class="map-back-btn" onclick="closeMajorDetail()">
+      <i data-lucide="arrow-left" width="14" height="14"></i> Quay lại
+    </button>
+    <div>
+      <div class="map-overlay-title" id="majorDetailTitle">Chi tiết ngành</div>
+      <div class="map-overlay-sub" id="majorDetailSub"></div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px 20px 40px" id="majorDetailBody"></div>
+</div>
+
+<!-- SCHOLARSHIP DETAIL OVERLAY -->
+<div class="map-overlay" id="scholarDetailOverlay">
+  <div class="map-overlay-head">
+    <button class="map-back-btn" onclick="closeScholarDetail()">
+      <i data-lucide="arrow-left" width="14" height="14"></i> Quay lại
+    </button>
+    <div>
+      <div class="map-overlay-title" id="scholarDetailTitle">Chi tiết học bổng</div>
+      <div class="map-overlay-sub" id="scholarDetailSub"></div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px 20px 40px" id="scholarDetailBody"></div>
+</div>
+
+<!-- JOB DETAIL OVERLAY -->
+<div class="map-overlay" id="jobDetailOverlay">
+  <div class="map-overlay-head">
+    <button class="map-back-btn" onclick="closeJobDetail()">
+      <i data-lucide="arrow-left" width="14" height="14"></i> Quay lại
+    </button>
+    <div>
+      <div class="map-overlay-title" id="jobDetailTitle">Chi tiết công việc</div>
+      <div class="map-overlay-sub" id="jobDetailSub"></div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px 20px 40px" id="jobDetailBody"></div>
+</div>
+
 <!-- WRITE REVIEW MODAL -->
 <div class="rv-write-modal" id="writeReviewModal" onclick="if(event.target===this)closeWriteReview()">
   <div class="rv-write-sheet">
@@ -2301,6 +2345,24 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
     <div class="rv-anon-preview" id="rvAnonPreview">
       <i data-lucide="eye-off" width="14" height="14"></i>
       <span id="rvAnonPreviewText">Sẽ hiển thị là: <strong>Sinh viên ẩn danh</strong> · Sinh viên đã xác thực qua MoMo</span>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Chọn nhanh điểm nổi bật:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="rvTagChips">
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">👩‍🏫 Giảng viên nhiệt tình</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">🏛️ Cơ sở vật chất tốt</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">📚 Thư viện hiện đại</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">🎓 Học phí hợp lý</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">💼 Nhiều cơ hội việc làm</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">🌐 Môi trường quốc tế</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">🍜 Canteen ngon rẻ</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">🚌 Giao thông thuận tiện</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">😤 Thủ tục hành chính rườm rà</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">⚡ Wifi chậm</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">📋 Chương trình học nặng</button>
+        <button class="rv-suggest-chip" onclick="toggleRvChip(this)">🏆 Phong trào sinh viên sôi nổi</button>
+      </div>
     </div>
 
     <button class="rv-write-cta" onclick="closeWriteReview();showToast('Chức năng đang phát triển - sẽ ra mắt sớm!')">
@@ -3032,26 +3094,50 @@ const UNIVERSITIES = [
   }
 ];
 
-// CAMPUS MERCHANTS DATA PER UNIVERSITY
+// CAMPUS MERCHANTS DATA PER UNIVERSITY — 7 nhóm: nha-tro, food, fnb, xe-buyt, mua-sam, giai-tri, tieng-anh
+// sme: true = đối tác MoMo SME (hiện badge)
 const MERCHANTS_BY_UNIV = {
   tdtu: [
-    { id: 'cantin-tdtu', name: 'Căn Tin TDTU (Khu F)', cat: 'campus', dist: 'Trong Campus · 20m', hours: '6:30 - 20:00', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: 'Khu F, 19 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7283, lng: 106.7074 },
-    { id: 'phuclong-nth', name: 'Phúc Long Nguyễn Hữu Thọ', cat: 'fnb', dist: 'Cổng 1 · 80m', hours: '7:00 - 22:00', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '37 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7290, lng: 106.7082 },
-    { id: 'comtam-bacuong', name: 'Cơm Tấm Ba Cường', cat: 'food', dist: 'Cổng 1 · 120m', hours: '6:00 - 14:00', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '52 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7278, lng: 106.7090 },
-    { id: 'circlek-cong1', name: 'Circle K Cổng 1 TDTU', cat: 'campus', dist: 'Cổng 1 · 50m', hours: '24/7', img: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '21 Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7288, lng: 106.7068 },
-    { id: 'highlands-tdtu', name: 'Highlands Coffee TDTU', cat: 'fnb', dist: 'Cổng 2 · 100m', hours: '7:00 - 22:30', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '3 D1, Tân Phong, Q.7 (đối diện cổng 2)', lat: 10.7270, lng: 106.7080 },
-    { id: 'in-an-tdtu', name: 'In Ấn Nguyễn Hữu Thọ', cat: 'print', dist: 'Cổng 1 · 60m', hours: '7:00 - 21:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '29B Nguyễn Hữu Thọ, Tân Phong, Q.7', lat: 10.7292, lng: 106.7065 }
+    // Nhà trọ
+    { id: 'nhatro-tdtu-1', name: 'Nhà Trọ Hữu Nghị', cat: 'nha-tro', dist: '300m từ cổng', hours: '24/7', img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&auto=format&fit=crop&q=80', rating: '4.6', addr: '48 Nguyễn Hữu Thọ, Q.7', lat: 10.7295, lng: 106.7095, price: '2.5 - 3.5tr/th', sme: true },
+    { id: 'nhatro-tdtu-2', name: 'KTX Sinh Viên D7 (Tư nhân)', cat: 'nha-tro', dist: '450m từ cổng', hours: '24/7', img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&auto=format&fit=crop&q=80', rating: '4.5', addr: '15 Nguyễn Thị Thập, Q.7', lat: 10.7300, lng: 106.7100, price: '1.8 - 2.8tr/th' },
+    // Quán ăn
+    { id: 'comtam-bacuong', name: 'Cơm Tấm Ba Cường', cat: 'food', dist: 'Cổng 1 · 120m', hours: '6:00 - 14:00', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '52 Nguyễn Hữu Thọ, Q.7', lat: 10.7278, lng: 106.7090, sme: true },
+    { id: 'cantin-tdtu', name: 'Căn Tin TDTU (Khu F)', cat: 'food', dist: 'Trong Campus · 20m', hours: '6:30 - 20:00', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: 'Khu F, 19 Nguyễn Hữu Thọ, Q.7', lat: 10.7283, lng: 106.7074 },
+    // Cà phê
+    { id: 'phuclong-nth', name: 'Phúc Long Nguyễn Hữu Thọ', cat: 'fnb', dist: 'Cổng 1 · 80m', hours: '7:00 - 22:00', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '37 Nguyễn Hữu Thọ, Q.7', lat: 10.7290, lng: 106.7082 },
+    { id: 'highlands-tdtu', name: 'Highlands Coffee TDTU', cat: 'fnb', dist: 'Cổng 2 · 100m', hours: '7:00 - 22:30', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '3 D1, Tân Phong, Q.7', lat: 10.7270, lng: 106.7080, sme: true },
+    // Xe buýt
+    { id: 'buyt-tdtu-1', name: 'Trạm Xe Buýt 36 (Cổng 1)', cat: 'xe-buyt', dist: 'Cổng 1 · 50m', hours: '5:30 - 21:00', img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '19 Nguyễn Hữu Thọ, Q.7', lat: 10.7286, lng: 106.7070, route: 'Tuyến 36 - Đầm Sen' },
+    { id: 'buyt-tdtu-2', name: 'Trạm Xe Buýt 50 (D1)', cat: 'xe-buyt', dist: '200m từ cổng 2', hours: '5:30 - 21:30', img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80', rating: '4.6', addr: 'Đường D1, Q.7 (gần TDTU)', lat: 10.7268, lng: 106.7078, route: 'Tuyến 50 - Bến xe Miền Tây' },
+    // Mua sắm
+    { id: 'circlek-cong1', name: 'Circle K Cổng 1 TDTU', cat: 'mua-sam', dist: 'Cổng 1 · 50m', hours: '24/7', img: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '21 Nguyễn Hữu Thọ, Q.7', lat: 10.7288, lng: 106.7068, sme: true },
+    { id: 'in-an-tdtu', name: 'In Ấn & VPP Nguyễn Hữu Thọ', cat: 'mua-sam', dist: 'Cổng 1 · 60m', hours: '7:00 - 21:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '29B Nguyễn Hữu Thọ, Q.7', lat: 10.7292, lng: 106.7065, sme: true },
+    // Giải trí
+    { id: 'cgv-pmh', name: 'CGV Crescent Mall (Phú Mỹ Hưng)', cat: 'giai-tri', dist: '1.2km từ trường', hours: '9:00 - 23:00', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '101 Tôn Dật Tiên, Q.7', lat: 10.7327, lng: 106.7100 },
+    { id: 'cyber-tdtu', name: 'Cyber Game Zone Q7', cat: 'giai-tri', dist: '350m từ cổng', hours: '8:00 - 23:00', img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=80', rating: '4.5', addr: '60B Nguyễn Hữu Thọ, Q.7', lat: 10.7302, lng: 106.7089, sme: true },
+    // Tiếng Anh
+    { id: 'ielts-tdtu', name: 'IELTS Advantage Center Q7', cat: 'tieng-anh', dist: '500m từ trường', hours: '8:00 - 21:00', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '75 Hoàng Văn Thái, Q.7', lat: 10.7258, lng: 106.7055, sme: true },
+    { id: 'vus-q7', name: 'VUS - Anh Văn Hội Việt Mỹ Q7', cat: 'tieng-anh', dist: '700m từ trường', hours: '8:30 - 21:30', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=80', rating: '4.6', addr: '93 Hoàng Văn Thái, Q.7', lat: 10.7252, lng: 106.7048 },
   ],
   hcmut: [
-    { id: 'cantin-bk', name: 'Căn Tin Bách Khoa (Nhà C6)', cat: 'campus', dist: 'Trong Campus · 30m', hours: '6:30 - 19:30', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: 'Nhà C6, 268 Lý Thường Kiệt, Q.10', lat: 10.7731, lng: 106.6589 },
-    { id: 'in-do-an-bk', name: 'In Ấn Đồ Án Bách Khoa', cat: 'print', dist: 'Cổng Tô Hiến Thành', hours: '7:00 - 22:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '12 Tô Hiến Thành, Q.10 (cổng phụ BK)', lat: 10.7740, lng: 106.6600 },
-    { id: 'passio-lythaito', name: 'Passio Coffee Lý Thường Kiệt', cat: 'fnb', dist: 'Cổng Lý Thường Kiệt · 50m', hours: '6:30 - 21:00', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '270B Lý Thường Kiệt, Q.10', lat: 10.7725, lng: 106.6578 },
-    { id: 'comtam-bk', name: 'Cơm Tấm Cô Ba Q10', cat: 'food', dist: 'Cổng phụ · 80m', hours: '6:00 - 13:30', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '8 Tô Hiến Thành, Q.10', lat: 10.7745, lng: 106.6610 }
+    { id: 'nhatro-bk-1', name: 'Phòng trọ sinh viên BK', cat: 'nha-tro', dist: '200m Cổng chính', hours: '24/7', img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&auto=format&fit=crop&q=80', rating: '4.5', addr: '10 Tô Hiến Thành, Q.10', lat: 10.7742, lng: 106.6602, price: '2.2 - 3.2tr/th', sme: true },
+    { id: 'comtam-bk', name: 'Cơm Tấm Cô Ba Q10', cat: 'food', dist: 'Cổng phụ · 80m', hours: '6:00 - 13:30', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '8 Tô Hiến Thành, Q.10', lat: 10.7745, lng: 106.6610, sme: true },
+    { id: 'cantin-bk', name: 'Căn Tin Bách Khoa (Nhà C6)', cat: 'food', dist: 'Trong Campus · 30m', hours: '6:30 - 19:30', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: 'Nhà C6, 268 Lý Thường Kiệt, Q.10', lat: 10.7731, lng: 106.6589 },
+    { id: 'passio-lythaito', name: 'Passio Coffee Lý Thường Kiệt', cat: 'fnb', dist: 'Cổng · 50m', hours: '6:30 - 21:00', img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '270B Lý Thường Kiệt, Q.10', lat: 10.7725, lng: 106.6578, sme: true },
+    { id: 'buyt-bk-1', name: 'Trạm Xe Buýt số 1 - Lý Thường Kiệt', cat: 'xe-buyt', dist: 'Cổng chính · 30m', hours: '5:30 - 21:00', img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '268 Lý Thường Kiệt, Q.10', lat: 10.7728, lng: 106.6584, route: 'Tuyến 1 - Bến Thành' },
+    { id: 'in-do-an-bk', name: 'In Ấn Đồ Án Bách Khoa', cat: 'mua-sam', dist: 'Cổng Tô Hiến Thành · 20m', hours: '7:00 - 22:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '12 Tô Hiến Thành, Q.10', lat: 10.7740, lng: 106.6600, sme: true },
+    { id: 'lotte-q10', name: 'Lotte Cinema Q10', cat: 'giai-tri', dist: '600m từ cổng', hours: '9:00 - 23:00', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '469 Lý Thường Kiệt, Q.10', lat: 10.7768, lng: 106.6549 },
+    { id: 'ielts-bk', name: 'IDP IELTS Q10', cat: 'tieng-anh', dist: '400m từ trường', hours: '8:00 - 21:00', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '287A Lý Thường Kiệt, Q.10', lat: 10.7720, lng: 106.6570 },
   ],
   ueh: [
-    { id: 'cantin-ueh', name: 'Căn Tin UEH Nguyễn Đình Chiểu', cat: 'campus', dist: 'Cơ sở A · trong campus', hours: '7:00 - 19:00', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '59C Nguyễn Đình Chiểu, Q.3 (Cơ sở A)', lat: 10.7745, lng: 106.6916 },
-    { id: 'highlands-ueh', name: 'Highlands UEH Cơ sở B', cat: 'fnb', dist: 'Cơ sở B · 40m', hours: '7:00 - 22:30', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '17 Phạm Ngọc Thạch, Q.3 (gần cơ sở B)', lat: 10.7752, lng: 106.6908 },
-    { id: 'in-an-ueh', name: 'In Ấn & Photocopy UEH', cat: 'print', dist: 'Ngay cổng phụ · 30m', hours: '7:00 - 21:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '61 Nguyễn Đình Chiểu, Q.3', lat: 10.7738, lng: 106.6925 }
+    { id: 'nhatro-ueh', name: 'Nhà Trọ Nguyễn Đình Chiểu', cat: 'nha-tro', dist: '250m từ cơ sở A', hours: '24/7', img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&auto=format&fit=crop&q=80', rating: '4.4', addr: '65 Nguyễn Đình Chiểu, Q.3', lat: 10.7748, lng: 106.6930, price: '3.0 - 4.5tr/th' },
+    { id: 'cantin-ueh', name: 'Căn Tin UEH Nguyễn Đình Chiểu', cat: 'food', dist: 'Cơ sở A · trong campus', hours: '7:00 - 19:00', img: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '59C Nguyễn Đình Chiểu, Q.3', lat: 10.7745, lng: 106.6916 },
+    { id: 'highlands-ueh', name: 'Highlands Coffee UEH', cat: 'fnb', dist: 'Cơ sở B · 40m', hours: '7:00 - 22:30', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80', rating: '4.9', addr: '17 Phạm Ngọc Thạch, Q.3', lat: 10.7752, lng: 106.6908, sme: true },
+    { id: 'buyt-ueh', name: 'Trạm Xe Buýt Nguyễn Đình Chiểu', cat: 'xe-buyt', dist: 'Cổng A · 60m', hours: '5:30 - 21:00', img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80', rating: '4.6', addr: 'Nguyễn Đình Chiểu, Q.3', lat: 10.7743, lng: 106.6912, route: 'Tuyến 2 - Bến Thành' },
+    { id: 'in-an-ueh', name: 'In Ấn & Photocopy UEH', cat: 'mua-sam', dist: 'Cổng phụ · 30m', hours: '7:00 - 21:00', img: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '61 Nguyễn Đình Chiểu, Q.3', lat: 10.7738, lng: 106.6925, sme: true },
+    { id: 'cgv-q3', name: 'CGV Hoàng Văn Thụ (Q.3)', cat: 'giai-tri', dist: '800m từ trường', hours: '9:00 - 23:00', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80', rating: '4.8', addr: '103 Hoàng Văn Thụ, Q.1', lat: 10.7815, lng: 106.6874 },
+    { id: 'ielts-ueh', name: 'IDP IELTS Q.3', cat: 'tieng-anh', dist: '300m từ trường', hours: '8:00 - 21:00', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=80', rating: '4.7', addr: '33 Lê Duẩn, Q.1', lat: 10.7792, lng: 106.6923 },
   ]
 };
 
@@ -3549,7 +3635,7 @@ function renderJobsGrid() {
       if (t === 'Gần trường') return `<span class="job-badge job-badge-dist"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${j.dist}</span>`;
       return `<span class="job-badge job-badge-type">${t}</span>`;
     }).join('');
-    return `<div class="job-card" onclick="openToolModal('Xem việc làm: ${j.title}')">
+    return `<div class="job-card" onclick="openJobDetail('${j.id}')">
       <div class="job-icon" style="background:${j.iconBg};color:${j.iconColor}">
         <i data-lucide="${j.icon}" width="22" height="22"></i>
       </div>
@@ -3561,7 +3647,7 @@ function renderJobsGrid() {
       <div class="job-right">
         <div class="job-salary">${salDisplay}</div>
         <div class="job-salary-unit">${j.hoursPerWeek ? j.hoursPerWeek + ' giờ/tuần' : 'Linh hoạt'}</div>
-        <button class="job-apply-btn" onclick="event.stopPropagation();openToolModal('Apply: ${j.title}')">Apply ngay</button>
+        <button class="job-apply-btn" onclick="event.stopPropagation();openJobDetail('${j.id}')">Xem chi tiết</button>
       </div>
     </div>`;
   }).join('');
@@ -4033,6 +4119,7 @@ let currentRankFilter = 'overall';
 
 let currentUnivFilter = 'all';
 let currentUnivId = null;
+let currentGiftTab = 'all';
 let currentPillarKey = 'nhaphoc';
 let userCoinsVal = 450;
 
@@ -4496,19 +4583,24 @@ function renderCampusMerchants(univId) {
       const oh = parseInt(p[0]); const ch = parseInt(p[1]);
       return hourNow >= oh && hourNow < ch;
     })();
+    const catEmoji = { 'nha-tro':'🏠','food':'🍜','fnb':'☕','xe-buyt':'🚌','mua-sam':'🛒','giai-tri':'🎬','tieng-anh':'📚' }[m.cat] || '📍';
+    const extraInfo = m.price ? `<div style="font-size:11px;font-weight:700;color:#EB2F96;margin-top:3px">${m.price}</div>` :
+                     m.route ? `<div style="font-size:11px;color:#2563EB;font-weight:600;margin-top:3px">🚌 ${m.route}</div>` : '';
     return `
     <div class="m-card" onclick="openMerchantMap('${m.id}')">
       <div class="m-img-box">
         <img src="${m.img}" alt="${m.name}" loading="lazy">
         <span class="m-dist-badge"><i data-lucide="map-pin" width="11" height="11"></i> ${m.dist}</span>
+        ${m.sme ? `<span class="m-sme-badge">MoMo SME</span>` : ''}
         <span class="m-map-hint"><i data-lucide="map" width="11" height="11"></i> Xem bản đồ</span>
       </div>
       <div class="m-body">
         <div class="m-title-row">
-          <div class="m-name">${m.name}</div>
+          <div class="m-name">${catEmoji} ${m.name}</div>
           <div class="m-rating"><i data-lucide="star" width="12" height="12"></i> ${m.rating}</div>
         </div>
         <div class="m-desc"><i data-lucide="map-pin" width="11" height="11" style="flex-shrink:0;color:var(--gray-400);margin-right:3px"></i>${m.addr}</div>
+        ${extraInfo}
         <div class="m-footer">
           <div class="m-hours ${isOpen ? 'open' : ''}"><i data-lucide="${isOpen ? 'clock' : 'clock-off'}" width="11" height="11"></i> ${isOpen ? 'Đang mở · ' : 'Đã đóng · '}${m.hours}</div>
           <div class="m-view-map"><i data-lucide="navigation" width="11" height="11"></i> Chỉ đường</div>
@@ -4731,6 +4823,41 @@ function renderUnivHero(u) {
     const uspHtml = usps.map(t => `<li class="detail-hero-usp"><span class="detail-hero-usp-dot">${checkSvg}</span><span>${t}</span></li>`).join('');
     const methodsInsert = document.getElementById('heroMethods');
     (methodsInsert || statsEl).insertAdjacentHTML('afterend', `<ul class="detail-hero-usps" id="heroUsps">${uspHtml}</ul>`);
+  }
+
+  // Website link in addr bar
+  const websiteLink = document.getElementById('heroWebsiteLink');
+  if (websiteLink && u.website) {
+    websiteLink.href = u.website;
+    websiteLink.textContent = u.website.replace('https://','');
+    websiteLink.style.display = 'inline';
+  } else if (websiteLink) {
+    websiteLink.style.display = 'none';
+  }
+
+  // School highlights inline (below USPs) — compact dot list
+  const highlightsEl = document.getElementById('heroHighlights');
+  if (highlightsEl && u.highlights && u.highlights.length) {
+    highlightsEl.style.display = 'block';
+    highlightsEl.innerHTML = `
+      <div style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Điểm nổi bật</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;">
+        ${u.highlights.map(h => `<div style="font-size:12px;color:var(--gray-700);display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#EB2F96;font-size:10px;margin-top:3px;flex-shrink:0">●</span>${h}</div>`).join('')}
+      </div>`;
+  } else if (highlightsEl) {
+    highlightsEl.style.display = 'none';
+  }
+
+  // Study abroad info strip
+  const infoStrip = document.getElementById('heroInfoStrip');
+  if (infoStrip && u.studyAbroad) {
+    infoStrip.style.display = 'flex';
+    infoStrip.style.cssText = 'display:flex;align-items:flex-start;gap:8px;margin-top:10px;background:#EFF6FF;border-radius:10px;padding:10px 12px;border:1px solid #BFDBFE;';
+    infoStrip.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span style="font-size:11.5px;color:#1E40AF;line-height:1.5"><b>Du học & Trao đổi:</b> ${u.studyAbroad}</span>`;
+  } else if (infoStrip) {
+    infoStrip.style.display = 'none';
   }
 
   // Photo mosaic: 1 main (top full-width) + 2 small below
@@ -5445,7 +5572,7 @@ function renderScholarships(univId, filter) {
           <i data-lucide="clock" width="12" height="12"></i>
           Hạn nộp: ${s.deadline}${s.urgent ? ' · Sắp hết hạn!' : ''}
         </div>
-        <button class="scholar-apply-btn" onclick="showToast('Xem chi tiết học bổng: ${s.name.replace(/'/g, '')}')">Xem chi tiết</button>
+        <button class="scholar-apply-btn" onclick="openScholarDetail(${data.scholarships.indexOf(s)})">Xem chi tiết</button>
       </div>
     </div>`).join('');
 
@@ -5491,7 +5618,10 @@ function renderFaculties(univId) {
           <div class="faculty-name">${f.name}</div>
           <div class="faculty-meta">${f.abbr} · ${f.students} · ${totalCredits} TC được liệt kê</div>
         </div>
-        <i data-lucide="chevron-down" width="18" height="18" class="faculty-chevron"></i>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <button onclick="event.stopPropagation();openMajorDetail(${fi})" style="font-size:11px;font-weight:700;color:#EB2F96;background:#FFF0F9;border:1.5px solid #FBCFE8;border-radius:99px;padding:4px 10px;cursor:pointer;white-space:nowrap">Lộ trình & Lương</button>
+          <i data-lucide="chevron-down" width="18" height="18" class="faculty-chevron"></i>
+        </div>
       </div>
       <div class="faculty-body">
         <table class="course-table">
@@ -5649,6 +5779,10 @@ function openWriteReview() {
 function closeWriteReview() {
   document.getElementById('writeReviewModal').classList.remove('open');
   document.body.style.overflow = '';
+}
+
+function toggleRvChip(el) {
+  el.classList.toggle('selected');
 }
 
 function onAnonToggle(isAnon) {
@@ -5809,7 +5943,7 @@ calcBudget();
 // ============================================================
 // GIFT / VOUCHER SECTION
 // ============================================================
-const GIFT_DATA = [
+var GIFT_DATA = [
   { id: 'g1', cat: 'hoc-phi', icon: '🎓', iconBg: '#FFF0F8', name: 'Giảm học phí 200.000đ', partner: 'Thanh toán qua MoMo', desc: 'Áp dụng khi đóng học phí kỳ học trực tiếp qua cổng trường liên kết MoMo. Tối đa 1 lần/kỳ.', code: 'SVHOCPHI', exp: 'HSD: 31/12/2026', tagColor: '#EB2F96' },
   { id: 'g2', cat: 'hoc-phi', icon: '💳', iconBg: '#EFF6FF', name: 'Hoàn tiền 5% lệ phí thi', partner: 'Đến 50.000đ', desc: 'Hoàn 5% khi nộp lệ phí thi, đăng ký môn học bổ sung qua MoMo. Áp dụng đến 100.000đ chi tiêu.', code: 'SVLETHI24', exp: 'HSD: 31/08/2026', tagColor: '#2563EB' },
   { id: 'g3', cat: 'an-uong', icon: '🍜', iconBg: '#FFF7ED', name: 'Giảm 30.000đ đặt đồ ăn', partner: 'ShopeeFood · Baemin', desc: 'Đặt đồ ăn qua MoMo, giảm ngay 30.000đ cho đơn từ 80.000đ. Áp dụng 2 lần/tuần/tài khoản.', code: 'SVANUONG30', exp: 'HSD: 30/09/2026', tagColor: '#EA580C' },
@@ -5819,8 +5953,6 @@ const GIFT_DATA = [
   { id: 'g7', cat: 'giai-tri', icon: '🎬', iconBg: '#FDF4FF', name: 'Vé phim 50.000đ/vé', partner: 'CGV · Lotte · BHD', desc: 'Mua vé phim qua MoMo chỉ 50.000đ/vé (Thứ 2-5). Áp dụng cho suất 2D tiêu chuẩn, tối đa 2 vé.', code: 'SVPHIM50K', exp: 'HSD: 31/12/2026', tagColor: '#9333EA' },
   { id: 'g8', cat: 'giai-tri', icon: '🎮', iconBg: '#ECFDF5', name: 'Nạp game giảm 10%', partner: 'Steam · Garena · VNG', desc: 'Nạp thẻ game hoặc mua gói ứng dụng qua MoMo, hoàn tiền 10% vào ví. Tối đa 50.000đ/lần.', code: 'SVGAME10', exp: 'HSD: 30/11/2026', tagColor: '#10B981' },
 ];
-
-let currentGiftTab = 'all';
 
 function renderGiftSection(univId) {
   const grid = document.getElementById('giftGrid');
@@ -5859,7 +5991,7 @@ function copyGiftCode(code, el) {
 // ============================================================
 // NEWS / EVENTS SECTION
 // ============================================================
-const NEWS_BASE = [
+var NEWS_BASE = [
   { cat: 'Thông báo', title: 'Lịch thi cuối kỳ học kỳ II năm học 2025-2026', date: '28/07/2026', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=80' },
   { cat: 'Học bổng', title: 'Học bổng Chính phủ Nhật Bản MEXT 2026 - Hạn nộp 15/08', date: '20/07/2026', img: 'https://images.unsplash.com/photo-1480664226761-406c5ae77c90?w=400&auto=format&fit=crop&q=80' },
   { cat: 'Tuyển dụng', title: 'Job Fair 2026 - 200+ doanh nghiệp, 5.000+ vị trí thực tập', date: '15/07/2026', img: 'https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=400&auto=format&fit=crop&q=80' },
@@ -5939,7 +6071,7 @@ function renderSchoolInfoSection(univId) {
 // ============================================================
 // FAQ SECTION
 // ============================================================
-const FAQ_DATA = [
+var FAQ_DATA = [
   {
     q: 'Nợ môn với điểm dưới 5.0 thì phải làm gì?',
     a: 'Bạn sẽ phải <strong>đăng ký học lại</strong> môn đó vào kỳ gần nhất có lịch. Điểm học lại sẽ thay thế điểm cũ (chỉ tính điểm cao hơn ở một số trường). Lưu ý: nếu môn đó là <strong>môn học tiên quyết</strong>, bạn cần pass trước khi đăng ký môn kế tiếp. Dùng MoMo để đóng lệ phí học lại ngay tại cổng đăng ký.'
@@ -6001,6 +6133,246 @@ function toggleFaq(i) {
   const wasOpen = item.classList.contains('open');
   document.querySelectorAll('.faq-item.open').forEach(x => x.classList.remove('open'));
   if (!wasOpen) item.classList.add('open');
+}
+
+/* ---- MAJOR DETAIL OVERLAY ---- */
+var MAJOR_EXTRA = {
+  'CNTT': {
+    salary: { entry: '12-18 triệu/th', mid: '25-40 triệu/th', senior: '50-80 triệu/th' },
+    langReq: 'TOEIC 550+ hoặc IELTS 5.5 (chuẩn tốt nghiệp)',
+    roadmap: [
+      { sem: 'HK1-2', label: 'Nền tảng', topics: ['Toán cao cấp', 'Vật lý', 'Lập trình C/C++', 'Tiếng Anh 1-2'] },
+      { sem: 'HK3-4', label: 'Cơ sở ngành', topics: ['Cấu trúc dữ liệu', 'Giải thuật', 'Hệ điều hành', 'Mạng máy tính'] },
+      { sem: 'HK5-6', label: 'Chuyên sâu', topics: ['Lập trình web', 'CSDL nâng cao', 'AI cơ bản', 'Bảo mật thông tin'] },
+      { sem: 'HK7-8', label: 'Đồ án & Thực tập', topics: ['Đồ án chuyên ngành', 'Thực tập doanh nghiệp', 'Khóa luận tốt nghiệp'] },
+    ],
+    careers: ['Software Engineer', 'Backend/Frontend Developer', 'Data Analyst', 'DevOps Engineer', 'AI/ML Engineer'],
+  },
+  'default': {
+    salary: { entry: '8-15 triệu/th', mid: '18-30 triệu/th', senior: '35-60 triệu/th' },
+    langReq: 'TOEIC 450+ hoặc B1 tương đương',
+    roadmap: [
+      { sem: 'HK1-2', label: 'Đại cương', topics: ['Lý luận chính trị', 'Toán', 'Ngoại ngữ 1-2', 'Kỹ năng mềm'] },
+      { sem: 'HK3-4', label: 'Cơ sở ngành', topics: ['Môn cơ sở chuyên ngành', 'Thực hành cơ bản'] },
+      { sem: 'HK5-6', label: 'Chuyên ngành', topics: ['Môn tự chọn', 'Seminar', 'Nghiên cứu khoa học'] },
+      { sem: 'HK7-8', label: 'Đồ án & Tốt nghiệp', topics: ['Thực tập tốt nghiệp', 'Khóa luận / Báo cáo'] },
+    ],
+    careers: ['Chuyên viên ngành', 'Nghiên cứu viên', 'Quản lý dự án'],
+  }
+};
+
+function openMajorDetail(facultyIndex) {
+  const data = getAcadData(currentUnivId);
+  const f = data.faculties[facultyIndex];
+  if (!f) return;
+  const extra = MAJOR_EXTRA[f.abbr] || MAJOR_EXTRA['default'];
+
+  document.getElementById('majorDetailTitle').textContent = f.name;
+  document.getElementById('majorDetailSub').textContent = f.abbr + ' · ' + f.students;
+
+  const roadmapHtml = extra.roadmap.map(r => `
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="flex-shrink:0;width:70px;text-align:center">
+        <div style="font-size:10px;font-weight:800;color:#6B7280;background:#F3F4F6;border-radius:8px;padding:4px 6px;line-height:1.4">${r.sem}</div>
+      </div>
+      <div style="flex:1;border-left:2px solid #E5E7EB;padding-left:12px">
+        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:5px">${r.label}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${r.topics.map(t => `<span style="font-size:11.5px;color:#374151;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:2px 9px">${t}</span>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('majorDetailBody').innerHTML = `
+    <div style="background:${f.color};border-radius:16px;padding:16px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start">
+      <div style="background:${f.iconColor};border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i data-lucide="${f.icon}" width="22" height="22" style="color:#fff"></i>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:800;color:#111827">${f.name}</div>
+        <div style="font-size:12px;color:#6B7280;margin-top:2px">${f.abbr} · ${f.students} · ${f.courses.reduce((s,c)=>s+c.credits,0)} TC được liệt kê</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:22px">
+      <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="route" width="16" height="16" style="color:#EB2F96"></i> Lộ trình học 4 năm
+      </div>
+      ${roadmapHtml}
+    </div>
+
+    <div style="background:#ECFDF5;border-radius:14px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:800;color:#065F46;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="languages" width="14" height="14"></i> Chuẩn đầu ra Ngoại ngữ
+      </div>
+      <div style="font-size:13px;color:#047857">${extra.langReq}</div>
+    </div>
+
+    <div style="background:#EFF6FF;border-radius:14px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:800;color:#1E3A8A;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="banknote" width="14" height="14"></i> Mức lương tham khảo sau tốt nghiệp
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="text-align:center;background:#fff;border-radius:10px;padding:10px 8px;border:1px solid #BFDBFE">
+          <div style="font-size:10px;font-weight:700;color:#6B7280;margin-bottom:4px">Fresher</div>
+          <div style="font-size:13px;font-weight:800;color:#2563EB">${extra.salary.entry}</div>
+        </div>
+        <div style="text-align:center;background:#fff;border-radius:10px;padding:10px 8px;border:1px solid #BFDBFE">
+          <div style="font-size:10px;font-weight:700;color:#6B7280;margin-bottom:4px">Mid-level</div>
+          <div style="font-size:13px;font-weight:800;color:#2563EB">${extra.salary.mid}</div>
+        </div>
+        <div style="text-align:center;background:#fff;border-radius:10px;padding:10px 8px;border:1px solid #BFDBFE">
+          <div style="font-size:10px;font-weight:700;color:#6B7280;margin-bottom:4px">Senior</div>
+          <div style="font-size:13px;font-weight:800;color:#2563EB">${extra.salary.senior}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#FFF7ED;border-radius:14px;padding:14px 16px">
+      <div style="font-size:12px;font-weight:800;color:#92400E;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="briefcase" width="14" height="14"></i> Vị trí nghề nghiệp phổ biến
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${extra.careers.map(c => `<span style="font-size:12px;font-weight:600;color:#92400E;background:#FEF3C7;border-radius:99px;padding:4px 12px">${c}</span>`).join('')}
+      </div>
+    </div>
+
+    <div style="margin-top:20px;padding:14px 16px;background:#FFF0F9;border-radius:14px;border:1px solid #FBCFE8">
+      <div style="font-size:12px;color:#BE185D;line-height:1.6">
+        <i data-lucide="info" width="13" height="13" style="vertical-align:middle;margin-right:4px"></i>
+        Mức lương tham khảo từ khảo sát thị trường. Mức thực tế phụ thuộc doanh nghiệp, kỹ năng và khu vực.
+      </div>
+    </div>`;
+
+  document.getElementById('majorDetailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeMajorDetail() {
+  document.getElementById('majorDetailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ---- SCHOLARSHIP DETAIL OVERLAY ---- */
+function openScholarDetail(idx) {
+  const data = getAcadData(currentUnivId);
+  const s = data.scholarships[idx];
+  if (!s) return;
+  const typeLabel = { school: 'Từ Trường', enterprise: 'Doanh Nghiệp', government: 'Nhà Nước' };
+  const typeBg = { school: '#ECFDF5', enterprise: '#EFF6FF', government: '#FEF3C7' };
+  const typeColor = { school: '#065F46', enterprise: '#1E3A8A', government: '#92400E' };
+
+  document.getElementById('scholarDetailTitle').textContent = s.name;
+  document.getElementById('scholarDetailSub').textContent = typeLabel[s.type] + ' · Hạn: ' + s.deadline;
+
+  document.getElementById('scholarDetailBody').innerHTML = `
+    <div style="background:linear-gradient(135deg,#EB2F96 0%,#F472B6 100%);border-radius:16px;padding:20px;margin-bottom:20px;color:#fff">
+      <div style="font-size:28px;font-weight:900">${s.amount}</div>
+      <div style="font-size:14px;opacity:.85;margin-top:2px">${s.amountSub}</div>
+      <div style="margin-top:12px;display:inline-block;background:rgba(255,255,255,.2);border-radius:99px;padding:4px 14px;font-size:12px;font-weight:700">${typeLabel[s.type]}</div>
+    </div>
+
+    <div style="background:${typeBg[s.type]};border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:${typeColor[s.type]};margin-bottom:8px">Điều kiện xét duyệt</div>
+      <div style="font-size:13px;color:${typeColor[s.type]};line-height:1.7">${s.criteria}</div>
+    </div>
+
+    <div style="background:${s.urgent ? '#FEF2F2' : '#F9FAFB'};border-radius:14px;padding:14px 16px;margin-bottom:14px;border:1px solid ${s.urgent ? '#FECACA' : '#E5E7EB'}">
+      <div style="font-size:12px;font-weight:800;color:${s.urgent ? '#B91C1C' : '#374151'};margin-bottom:6px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="clock" width="14" height="14"></i> Hạn nộp hồ sơ
+      </div>
+      <div style="font-size:16px;font-weight:800;color:${s.urgent ? '#DC2626' : '#111827'}">${s.deadline}</div>
+      ${s.urgent ? '<div style="font-size:11.5px;color:#EF4444;margin-top:4px;font-weight:600">⚠️ Sắp hết hạn - Nộp ngay!</div>' : ''}
+    </div>
+
+    <div style="background:#F9FAFB;border-radius:14px;padding:14px 16px;margin-bottom:20px">
+      <div style="font-size:12px;font-weight:800;color:#374151;margin-bottom:10px">Hồ sơ thường cần</div>
+      ${['Đơn xin học bổng (theo mẫu trường)', 'Bảng điểm học kỳ gần nhất (có chứng thực)', 'Hộ khẩu + CCCD (nếu xét diện chính sách)', 'Giấy xác nhận sinh viên', 'Thư giới thiệu (nếu có)'].map(doc => `
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px">
+          <i data-lucide="check-circle" width="14" height="14" style="color:#10B981;flex-shrink:0;margin-top:1px"></i>
+          <span style="font-size:12.5px;color:#374151">${doc}</span>
+        </div>`).join('')}
+    </div>
+
+    <button onclick="showToast('Mở app MoMo để thanh toán học phí và nhận thông báo học bổng!')" style="width:100%;background:#EB2F96;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <i data-lucide="bell" width="16" height="16"></i> Nhận thông báo qua MoMo
+    </button>`;
+
+  document.getElementById('scholarDetailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeScholarDetail() {
+  document.getElementById('scholarDetailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ---- JOB DETAIL OVERLAY ---- */
+function openJobDetail(jobId) {
+  const job = JOBS_DATA.find(j => j.id === jobId);
+  if (!job) return;
+  const typeLbl = { parttime: 'Part-time', intern: 'Thực tập', freelance: 'Freelance' };
+  const typeBg = { parttime: '#EFF6FF', intern: '#ECFDF5', freelance: '#FFF7ED' };
+  const typeColor = { parttime: '#1E3A8A', intern: '#065F46', freelance: '#92400E' };
+
+  const salaryDisplay = job.salaryHour ? job.salaryHour.toLocaleString('vi-VN') + 'đ/giờ' :
+                        job.salaryMonth ? job.salaryMonth.toLocaleString('vi-VN') + 'đ/tháng' : 'Thỏa thuận';
+  const typeKey = job.type === 'part-time' ? 'parttime' : job.type;
+
+  document.getElementById('jobDetailTitle').textContent = job.title;
+  document.getElementById('jobDetailSub').textContent = job.employer + ' · ' + (typeLbl[typeKey] || job.type);
+
+  document.getElementById('jobDetailBody').innerHTML = `
+    <div style="background:${typeBg[typeKey] || '#F9FAFB'};border-radius:16px;padding:18px;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:800;color:#111827;margin-bottom:4px">${job.title}</div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:10px">${job.employer}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:${typeColor[typeKey] || '#374151'};background:#fff;border-radius:99px;padding:4px 12px;border:1.5px solid ${typeColor[typeKey] || '#E5E7EB'}">${typeLbl[typeKey] || job.type}</span>
+        <span style="font-size:12px;font-weight:700;color:#EB2F96;background:#FFF0F9;border-radius:99px;padding:4px 12px;border:1.5px solid #FBCFE8">${salaryDisplay}</span>
+        <span style="font-size:12px;color:#374151;background:#fff;border-radius:99px;padding:4px 12px;border:1px solid #E5E7EB">⏰ ${job.hoursPerWeek ? job.hoursPerWeek + 'h/tuần' : 'Linh hoạt'}</span>
+      </div>
+    </div>
+
+    <div style="background:#F9FAFB;border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#374151;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="map-pin" width="14" height="14" style="color:#EB2F96"></i> Địa điểm làm việc
+      </div>
+      <div style="font-size:13px;color:#374151">${job.employer}</div>
+      <div style="font-size:11.5px;color:#6B7280;margin-top:3px">📍 ${job.dist || 'Gần trường'} từ campus</div>
+    </div>
+
+    <div style="background:#F9FAFB;border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#374151;margin-bottom:10px">Yêu cầu công việc</div>
+      ${(job.requirements || ['Chăm chỉ, học hỏi nhanh', 'Có thể làm việc linh hoạt theo ca', 'Thân thiện, có tinh thần trách nhiệm']).map(r => `
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <span style="color:#EB2F96;font-size:13px">●</span>
+          <span style="font-size:12.5px;color:#374151">${r}</span>
+        </div>`).join('')}
+    </div>
+
+    <div style="background:#F0FDF4;border-radius:14px;padding:14px 16px;margin-bottom:20px">
+      <div style="font-size:12px;font-weight:800;color:#065F46;margin-bottom:8px">Quyền lợi</div>
+      ${(job.benefits || ['Lương theo giờ, thanh toán đúng hạn', 'Linh hoạt ca làm việc', 'Môi trường thân thiện']).map(b => `
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <i data-lucide="check-circle" width="14" height="14" style="color:#10B981;flex-shrink:0;margin-top:1px"></i>
+          <span style="font-size:12.5px;color:#065F46">${b}</span>
+        </div>`).join('')}
+    </div>
+
+    <button onclick="showToast('Liên hệ nhà tuyển dụng qua MoMo - tính năng đang phát triển!')" style="width:100%;background:#EB2F96;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <i data-lucide="send" width="16" height="16"></i> Ứng tuyển ngay
+    </button>`;
+
+  document.getElementById('jobDetailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeJobDetail() {
+  document.getElementById('jobDetailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 </script>
