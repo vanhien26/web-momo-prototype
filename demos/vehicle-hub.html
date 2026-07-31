@@ -877,6 +877,43 @@ body {
 
 /* Payment CTA bar (legacy, hidden) */
 .vr-pay-bar { display: none; }
+
+/* Clean state — no violation */
+.vr-clean-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1.5px solid #86efac; border-radius: 14px;
+  padding: 18px 16px 16px; display: flex; align-items: flex-start; gap: 14px;
+}
+.vr-clean-icon {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: #fff; border: 1.5px solid #86efac;
+  display: flex; align-items: center; justify-content: center;
+}
+.vr-clean-icon svg { width: 22px; height: 22px; fill: none; stroke: #16a34a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.vr-clean-body { flex: 1; min-width: 0; }
+.vr-clean-title { font-size: 15px; font-weight: 800; color: #087a55; margin-bottom: 3px; }
+.vr-clean-sub { font-size: 12.5px; color: #166534; line-height: 1.5; margin-bottom: 14px; }
+.vr-clean-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.vr-clean-cta-main {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; background: #16a34a; color: #fff;
+  border-radius: 9px; font-size: 13px; font-weight: 700;
+  text-decoration: none; border: none; cursor: pointer; font-family: inherit;
+  transition: background .15s;
+}
+.vr-clean-cta-main:hover { background: #15803d; }
+.vr-clean-cta-main svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.vr-clean-cta-sec {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12.5px; font-weight: 700; color: #166534;
+  text-decoration: none; padding: 9px 0;
+}
+.vr-clean-cta-sec:hover { text-decoration: underline; }
+.vr-clean-price-tag {
+  display: inline-flex; align-items: center;
+  font-size: 10.5px; font-weight: 700; color: #fff;
+  background: #16a34a; border-radius: 999px; padding: 2px 8px; margin-left: 4px; letter-spacing: .3px;
+}
 .vr-pay-single {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   padding: 11px 20px;
@@ -3588,6 +3625,21 @@ const USE_CASE_LABELS = {
         ? `<span class="vr-status-pill ok">${licon('CheckCircle2', 13, 2.2)} Không có vi phạm mới</span>`
         : `<span class="vr-status-pill alert">${licon('AlertCircle', 13, 2.2)} ${violationCount} vi phạm chờ xử lý</span>`;
 
+      // ── Clean state (no violation) ──
+      const insUrl = vtype === 'xemay' ? '/bao-hiem/tnds-xe-may' : '/bao-hiem/tnds-oto';
+      const cleanHtml = violationCount === 0 ? `
+        <div class="vr-clean-card">
+          <div class="vr-clean-icon">${licon('ShieldCheck', 22, 2)}</div>
+          <div class="vr-clean-body">
+            <div class="vr-clean-title">Chúc mừng! Xe bạn không có vi phạm nào</div>
+            <div class="vr-clean-sub">Xe sạch hồ sơ — hãy giữ vững thành tích này. Bảo hiểm TNDS bắt buộc giúp bạn an tâm lái xe mà không lo chi phí bồi thường khi có tai nạn.</div>
+            <div class="vr-clean-actions">
+              <a class="vr-clean-cta-main" href="${insUrl}">${licon('ShieldCheck', 13, 2.5)} Mua bảo hiểm TNDS <span class="vr-clean-price-tag">${vtype === 'xemay' ? '9K/năm' : 'từ 479K/năm'}</span></a>
+              <a class="vr-clean-cta-sec" href="/tien-ich-giao-thong/dinh-gia-xe">Định giá xe ${licon('ChevronRight', 12, 2.5)}</a>
+            </div>
+          </div>
+        </div>` : '';
+
       // ── Violations ──
       let violationsHtml = '';
       let payBarHtml = '';
@@ -3697,6 +3749,7 @@ const USE_CASE_LABELS = {
               <span class="vr-head-ts">Cập nhật: ${ts}</span>
             </div>
           </div>
+          ${cleanHtml}
           ${violationsHtml}
           ${payBarHtml}
           ${servicesHtml}
