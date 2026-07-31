@@ -756,6 +756,7 @@ body {
   line-height: 1.1;
 }
 .vr-vehicle-model { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-top: 4px; }
+.vr-head-sub { font-size: 13px; font-weight: 500; color: var(--gray-500); margin-top: 5px; }
 .vr-head-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .vr-htag {
   display: inline-flex; align-items: center; gap: 4px;
@@ -893,6 +894,8 @@ body {
 .vr-svc-icon.blue svg { stroke: #2563eb; }
 .vr-svc-icon.pink  { background: #fdf2f8; }
 .vr-svc-icon.pink svg { stroke: var(--pink-500); }
+.vr-svc-icon.green { background: #f0fdf4; }
+.vr-svc-icon.green svg { stroke: #16a34a; }
 .vr-svc-body { flex: 1; min-width: 0; }
 .vr-svc-label { font-size: 13.5px; font-weight: 800; color: var(--gray-900); }
 .vr-svc-sub { font-size: 11.5px; color: var(--gray-500); margin-top: 2px; }
@@ -3614,10 +3617,12 @@ const USE_CASE_LABELS = {
       }
 
       // ── Other services ──
-      const dangKiemSub = vtype === 'xemay' ? 'Xe máy chưa bắt buộc đăng kiểm định kỳ' : 'Mở MoMo để xem hạn đăng kiểm và trạng thái';
+      const dangKiemSub = vtype === 'xemay'
+        ? 'Xe máy chưa bắt buộc đăng kiểm định kỳ — nhưng hãy kiểm tra ngay nếu xe trên 5 năm'
+        : 'Biết trước hạn đăng kiểm, tránh bị phạt 800K–4 triệu vì quá hạn. Xem lịch trực tiếp trong MoMo';
       const servicesHtml = `
         <div class="vr-services">
-          <div class="vr-service" style="cursor:default">
+          <div class="vr-service" style="cursor:pointer">
             <div class="vr-svc-icon blue">${licon('ClipboardCheck', 20, 1.8)}</div>
             <div class="vr-svc-body">
               <div class="vr-svc-label">Đăng kiểm</div>
@@ -3632,10 +3637,21 @@ const USE_CASE_LABELS = {
             <div class="vr-svc-icon pink">${licon('TrendingDown', 20, 1.8)}</div>
             <div class="vr-svc-body">
               <div class="vr-svc-label">Định giá xe</div>
-              <div class="vr-svc-sub">Chọn hãng, dòng xe, năm sản xuất để ước tính giá trị</div>
+              <div class="vr-svc-sub">Muốn bán xe không biết giá hợp lý? Nhập hãng, đời xe để ước tính giá thị trường ngay</div>
             </div>
             <div class="vr-svc-right">
               <span class="vr-svc-badge gray">Nhập thêm</span>
+              <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
+            </div>
+          </a>
+          <a class="vr-service" href="/epass/nap-tien-epass">
+            <div class="vr-svc-icon green">${licon('Milestone', 20, 1.8)}</div>
+            <div class="vr-svc-body">
+              <div class="vr-svc-label">ETC / ePass</div>
+              <div class="vr-svc-sub">Tài khoản ETC sắp hết tiền? Nạp ngay qua MoMo — không cần ra trạm, không bị chặn cầu đường</div>
+            </div>
+            <div class="vr-svc-right">
+              <span class="vr-svc-badge" style="background:#f0fdf4;color:#16a34a">Nạp ngay</span>
               <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
             </div>
           </a>
@@ -3648,13 +3664,7 @@ const USE_CASE_LABELS = {
             <div class="vr-head-body">
               <div class="vr-head-label">Kết quả tra cứu</div>
               <div class="vr-plate-big">${plate}</div>
-              <div class="vr-vehicle-model">${vehicle.brand} ${vehicle.model} · ${vehicle.year}</div>
-              <div class="vr-head-tags">
-                <span class="vr-htag">${licon('Car', 11, 2)} ${vtypeLabel}</span>
-                <span class="vr-htag">${licon('MapPin', 11, 2)} ${region||platePrefix}</span>
-                <span class="vr-htag">${licon('Palette', 11, 2)} ${vehicle.color}</span>
-                <span class="vr-htag">${licon('Calendar', 11, 2)} ${vehicle.year}</span>
-              </div>
+              <div class="vr-head-sub">${vtypeLabel} · ${region||platePrefix}</div>
             </div>
             <div class="vr-head-right">
               ${statusPill}
