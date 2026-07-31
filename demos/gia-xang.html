@@ -211,15 +211,18 @@ h1.page-title {
 }
 .stations-all:hover { text-decoration: underline; }
 .stations-row {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+  background: var(--gray-100); border-top: 1px solid var(--gray-100);
 }
 .stations-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
 .stn-card {
-  background: var(--white); border-radius: var(--r-lg);
-  border: 1px solid var(--gray-100);
-  padding: 12px 14px; display: flex; align-items: center; gap: 10px;
-  cursor: pointer; transition: border-color .15s, box-shadow .15s;
+  background: var(--white);
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+  cursor: pointer; transition: background .15s;
+  text-decoration: none; color: inherit;
 }
+.stn-card:hover { background: var(--gray-50); }
+@media(max-width:640px) { .stations-row { grid-template-columns: 1fr; } }
 .stn-card:hover { border-color: var(--pink-200, #fbcfe8); box-shadow: var(--shadow-m); }
 .stn-logo {
   width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
@@ -232,7 +235,15 @@ h1.page-title {
 .stn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .stn-dist { font-size: 12px; font-weight: 700; color: var(--gray-600); }
 .stn-nav { font-size: 11px; font-weight: 700; color: var(--pink-500); }
-.stn-addr { font-size: 11.5px; color: var(--gray-400); margin-top: 3px; line-height: 1.4; }
+.stn-addr { font-size: 11.5px; color: var(--gray-400); margin-top: 2px; line-height: 1.4; }
+.stn-top-row { display: flex; align-items: flex-start; gap: 10px; }
+.stn-dist-badge { flex-shrink: 0; font-size: 11px; font-weight: 700; color: var(--gray-500); background: var(--gray-100); padding: 3px 8px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
+.stn-meta-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.stn-tag { font-size: 11px; font-weight: 600; color: var(--gray-500); background: var(--gray-50); border: 1px solid var(--gray-200); padding: 2px 7px; border-radius: 5px; white-space: nowrap; }
+.stn-tag-open { color: var(--green-500); background: var(--green-50); border-color: #bbf7d0; }
+.stn-tag-momo { color: var(--pink-500); background: var(--pink-50); border-color: var(--pink-100,#fce7f3); }
+.stn-view-all { display: block; padding: 14px 18px; font-size: 13px; font-weight: 700; color: var(--pink-500); text-decoration: none; border-top: 1px solid var(--gray-100); text-align: center; background: var(--white); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.stn-view-all:hover { background: var(--pink-50); }
 /* Empty state */
 .stn-empty-state {
   display: flex; align-items: center; gap: 16px;
@@ -515,8 +526,8 @@ h1.page-title {
 /* FAQ */
 .section { padding: 40px 0 8px; }
 .section-eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink-500); margin-bottom: 8px; }
-.section-title { font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 22px; }
-.faq-list { max-width: 760px; }
+.section-title { font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 22px; text-align: center; }
+.faq-list { max-width: 760px; margin: 0 auto; }
 .faq-item { background: var(--white); border-radius: var(--r-md); box-shadow: var(--shadow-s); margin-bottom: 10px; overflow: hidden; }
 .faq-q {
   width: 100%; text-align: left; padding: 16px 20px;
@@ -691,14 +702,11 @@ h1.page-title {
 /* 2-col content layout */
 .gz-layout {
   max-width: var(--content); margin: 0 auto; padding: 24px 20px 40px;
-  display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start;
+  display: flex; flex-direction: column; gap: 18px;
 }
-.gz-main { display: flex; flex-direction: column; gap: 18px; }
-.gz-sidebar { display: flex; flex-direction: column; gap: 14px; }
+.gz-main { display: contents; }
 @media(max-width:980px) {
-  .gz-layout { grid-template-columns: 1fr; padding: 16px 16px 32px; }
-  .gz-main, .gz-sidebar { min-width: 0; width: 100%; box-sizing: border-box; }
-  .gz-sb-card, .gz-payment-cta, .gz-next-cycle { min-width: 0; width: 100%; box-sizing: border-box; max-width: 100%; }
+  .gz-layout { padding: 16px 16px 32px; }
   .gz-notify-bar { min-width: 0; box-sizing: border-box; }
 }
 @media(max-width:640px) { .gz-layout { padding: 12px 12px 28px; gap: 14px; } }
@@ -717,7 +725,7 @@ h1.page-title {
 .gz-tab.active { color: var(--pink-500); border-bottom-color: var(--pink-500); }
 
 /* Regional price table */
-.gz-region-table { width: 100%; border-collapse: collapse; overflow-x: auto; display: block; }
+.gz-region-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .gz-region-table thead tr { background: var(--gray-50); }
 .gz-region-table th {
   padding: 10px 14px; font-size: 11px; font-weight: 700; color: var(--gray-400);
@@ -1040,7 +1048,6 @@ h1.page-title {
     <div class="gz-hero-content">
       <div class="gz-crumbs">
         <a href="/">Trang chủ</a><span>›</span>
-        <a href="#">Tiện ích</a><span>›</span>
         <a href="/tien-ich-giao-thong">Tiện ích giao thông</a><span>›</span>
         <strong>Giá xăng dầu</strong>
       </div>
@@ -1114,209 +1121,175 @@ h1.page-title {
   </div>
 </div>
 
-<!-- 2-COL CONTENT -->
+<!-- CONTENT -->
 <div class="gz-layout">
 
-  <!-- LEFT MAIN -->
+  <!-- Price table card -->
   <div class="gz-main">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="gz-tab-bar" style="padding:0 20px">
+      <button class="gz-tab active" onclick="switchPriceTab('khu-vuc',this)">Bảng giá theo khu vực</button>
+    </div>
+    <div id="priceTablePanel" style="overflow-x:auto;width:100%"></div>
+  </div>
+  </div>
 
-    <!-- Price table card -->
-    <div class="card">
-      <div class="gz-tab-bar">
-        <button class="gz-tab active" onclick="switchPriceTab('khu-vuc',this)">Bảng giá theo khu vực</button>
+  <!-- Regional prices -->
+  <div class="gz-sb-card">
+    <div style="padding:14px 16px 10px">
+      <div class="gz-sb-title">Giá xăng theo vùng</div>
+    </div>
+    <div class="gz-kv-tabs" id="kvTabs">
+      <button class="gz-kv-tab active" onclick="switchKV(this,1)">Vùng 1</button>
+      <button class="gz-kv-tab" onclick="switchKV(this,2)">Vùng 2</button>
+      <button class="gz-kv-tab" onclick="switchKV(this,3)">Vùng 3</button>
+      <button class="gz-kv-tab" onclick="switchKV(this,4)">Vùng 4</button>
+    </div>
+    <div class="gz-kv-list" id="kvPriceList"><!-- rendered by JS --></div>
+    <div class="gz-kv-footer">
+      <a href="#">Xem tất cả <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+  </div>
+
+  <!-- Station finder -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="stations-head">
+      <div>
+        <div class="stations-title">Cây xăng gần bạn</div>
+        <div class="stations-sub">1.200+ điểm Petrolimex, PV Oil toàn quốc · thanh toán MoMo, tích điểm MoXe</div>
       </div>
-      <div id="priceTablePanel" style="overflow-x:auto"></div>
-      <div class="gz-table-footer">
-        <a href="#">Xem chi tiết tất cả khu vực →</a>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <button class="stn-locate-btn" onclick="toast('Đang xác định vị trí...')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          Vị trí của tôi
+        </button>
+        <a class="stations-all" href="/cay-xang">Xem tất cả →</a>
       </div>
     </div>
-
-    <!-- Trend chart card -->
-    <div class="card">
-      <div class="gz-trend-head">
-        <div class="card-title">Biến động giá xăng RON 95-III (Vùng 1)</div>
-        <div class="gz-time-tabs">
-          <button class="gz-tt" onclick="setTimePeriod(this,7)">7 ngày</button>
-          <button class="gz-tt active" onclick="setTimePeriod(this,30)">30 ngày</button>
-          <button class="gz-tt" onclick="setTimePeriod(this,90)">90 ngày</button>
-          <button class="gz-tt" onclick="setTimePeriod(this,365)">1 năm</button>
+    <div class="stations-row">
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-top-row">
+          <div class="stn-logo" style="background:#E8232A">PL</div>
+          <div class="stn-info">
+            <div class="stn-name">Petrolimex 101</div>
+            <div class="stn-addr">101 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM</div>
+          </div>
+          <span class="stn-dist-badge">0.4 km</span>
         </div>
-      </div>
-      <div class="gz-chart-area">
-        <div class="trend-legend" style="margin-bottom:10px">
-          <span class="tl-item"><span class="tl-dot" style="background:#EB2F96"></span>RON 95-III</span>
-          <span class="tl-item"><span class="tl-dot" style="background:#2563EB"></span>Diesel 0.05S</span>
+        <div class="stn-meta-row">
+          <span class="stn-tag stn-tag-open">Đang mở · 24/7</span>
+          <span class="stn-tag">RON 95 · E5 · Diesel</span>
+          <span class="stn-tag stn-tag-momo">MoMo</span>
         </div>
-        <div class="trend-chart">
-          <svg viewBox="0 0 640 170" style="width:100%;height:100%" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="tg1" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#EB2F96" stop-opacity=".18"/>
-                <stop offset="100%" stop-color="#EB2F96" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <line x1="0" y1="42" x2="640" y2="42" stroke="#F0EBF4" stroke-width="1"/>
-            <line x1="0" y1="84" x2="640" y2="84" stroke="#F0EBF4" stroke-width="1"/>
-            <line x1="0" y1="126" x2="640" y2="126" stroke="#F0EBF4" stroke-width="1"/>
-            <path d="M0,96 L71,88 L142,76 L213,92 L284,70 L355,63 L426,75 L497,55 L568,46 L640,38" fill="none" stroke="#EB2F96" stroke-width="2.5" stroke-linejoin="round"/>
-            <path d="M0,96 L71,88 L142,76 L213,92 L284,70 L355,63 L426,75 L497,55 L568,46 L640,38 L640,170 L0,170Z" fill="url(#tg1)"/>
-            <circle cx="640" cy="38" r="4.5" fill="#EB2F96"/>
-            <path d="M0,130 L71,126 L142,132 L213,122 L284,128 L355,118 L426,112 L497,120 L568,110 L640,104" fill="none" stroke="#2563EB" stroke-width="2" stroke-linejoin="round" opacity=".8"/>
-            <circle cx="640" cy="104" r="4" fill="#2563EB"/>
-            <text x="6" y="36" font-size="10" fill="#A09AA5">24.000</text>
-            <text x="6" y="80" font-size="10" fill="#A09AA5">22.000</text>
-            <text x="6" y="122" font-size="10" fill="#A09AA5">20.000</text>
-          </svg>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-top-row">
+          <div class="stn-logo" style="background:#006DB8">PV</div>
+          <div class="stn-info">
+            <div class="stn-name">PV Oil Lê Văn Lương</div>
+            <div class="stn-addr">288 Lê Văn Lương, Phường Tân Quy, Quận 7, TP.HCM</div>
+          </div>
+          <span class="stn-dist-badge">1.1 km</span>
         </div>
-        <div class="trend-x" style="margin-top:8px"><span>10/04</span><span>24/04</span><span>08/05</span><span>22/05</span><span>05/06</span><span>19/06</span><span>26/06</span></div>
-      </div>
-      <a class="gz-chart-link" href="#">Xem lịch sử giá chi tiết →</a>
+        <div class="stn-meta-row">
+          <span class="stn-tag stn-tag-open">Đang mở · 05:00–22:00</span>
+          <span class="stn-tag">RON 95 · E5 · Diesel</span>
+          <span class="stn-tag stn-tag-momo">MoMo</span>
+        </div>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-top-row">
+          <div class="stn-logo" style="background:#FBCE07;color:#d00">SH</div>
+          <div class="stn-info">
+            <div class="stn-name">Shell Nguyễn Hữu Thọ</div>
+            <div class="stn-addr">1200 Nguyễn Hữu Thọ, Phường Phước Kiển, Huyện Nhà Bè, TP.HCM</div>
+          </div>
+          <span class="stn-dist-badge">2.3 km</span>
+        </div>
+        <div class="stn-meta-row">
+          <span class="stn-tag stn-tag-open">Đang mở · 06:00–22:00</span>
+          <span class="stn-tag">RON 95 · V-Power · Diesel</span>
+        </div>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-top-row">
+          <div class="stn-logo" style="background:#E8232A">PL</div>
+          <div class="stn-info">
+            <div class="stn-name">Petrolimex Nguyễn Văn Linh</div>
+            <div class="stn-addr">725 Nguyễn Văn Linh, Phường Tân Hưng, Quận 7, TP.HCM</div>
+          </div>
+          <span class="stn-dist-badge">3.1 km</span>
+        </div>
+        <div class="stn-meta-row">
+          <span class="stn-tag stn-tag-open">Đang mở · 24/7</span>
+          <span class="stn-tag">RON 95 · E5 · Diesel · Dầu hỏa</span>
+          <span class="stn-tag stn-tag-momo">MoMo</span>
+        </div>
+      </a>
     </div>
+    <a class="stn-view-all" href="/cay-xang">Xem tất cả cây xăng gần bạn →</a>
+  </div>
 
-    <!-- Calculator (giữ nguyên) -->
-    <div class="util-calc-wrap">
-      <div class="util-calc-head">
-        <div>
-          <h3>Tính tiền đổ xăng</h3>
-          <p>Nhập số lít hoặc số tiền để biết chính xác chi phí theo giá hôm nay.</p>
-        </div>
-      </div>
-      <div class="calculator-layout">
-        <div class="input-panel">
-          <div class="field-group">
-            <div class="field-label"><span class="field-label-main">Loại nhiên liệu</span></div>
-            <div class="pills-grid" id="fuelPills">
-              <button class="pill-btn active" data-price="22240" onclick="setFuel(this)">RON 95-III</button>
-              <button class="pill-btn" data-price="21870" onclick="setFuel(this)">RON 95-II</button>
-              <button class="pill-btn" data-price="21100" onclick="setFuel(this)">E5 RON 92</button>
-              <button class="pill-btn" data-price="19940" onclick="setFuel(this)">Diesel</button>
-            </div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">
-              <span class="field-label-main" id="calcInputLabel">Số lít cần đổ</span>
-              <span class="field-value" id="calcFieldValue">45 lít</span>
-            </div>
-            <div class="money-input-row">
-              <input id="calcInput" type="number" inputmode="decimal" value="45" min="0" oninput="calc()">
-              <span class="unit-tag" id="calcUnitTag">lít</span>
-            </div>
-            <div class="chip-row" id="calcChips">
-              <button class="chip-btn" onclick="setChip(20)">20 lít</button>
-              <button class="chip-btn active" onclick="setChip(45)">45 lít</button>
-              <button class="chip-btn" onclick="setChip(60)">60 lít</button>
-              <button class="chip-btn" onclick="setChip(70)">70 lít</button>
-            </div>
-          </div>
-          <div class="field-group">
-            <div class="field-label"><span class="field-label-main">Chế độ tính</span></div>
-            <div class="mode-toggle">
-              <button class="mode-btn active" id="modeLit" onclick="setMode('lit')">Nhập lít</button>
-              <button class="mode-btn" id="modeMoney" onclick="setMode('money')">Nhập tiền</button>
-            </div>
-          </div>
-          <p class="inline-note">Giá bán lẻ Vùng 1, kỳ điều hành 10/07/2026. Giá thực tế có thể chênh nhỏ.</p>
-        </div>
-        <div class="result-panel">
-          <div class="result-hero">
-            <span class="result-hero-label" id="crLabel">Thành tiền</span>
-            <div class="result-hero-value" id="crValue">1.000.800<small>đ</small></div>
-          </div>
-          <div class="result-details">
-            <div class="result-row"><span>Đơn giá</span><strong id="crUnitPrice">22.240đ/lít</strong></div>
-            <div class="result-row"><span id="crQtyLabel">Số lít</span><strong id="crQty">45 lít</strong></div>
-            <div class="result-row"><span>Loại xăng</span><strong id="crFuelName">RON 95-III</strong></div>
-          </div>
-          <div class="insight-box" id="crNote">Thanh toán qua <em>Ví Trả Sau hoàn 10%</em> tại cây xăng đối tác Petrolimex, PV Oil.</div>
-        </div>
+  <!-- Calculator -->
+  <div class="util-calc-wrap">
+    <div class="util-calc-head">
+      <div>
+        <h3>Tính tiền đổ xăng</h3>
+        <p>Nhập số lít hoặc số tiền để biết chính xác chi phí theo giá hôm nay.</p>
       </div>
     </div>
-
-    <!-- Notification bar -->
-    <div class="gz-notify-bar">
-      <div class="gz-notify-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </div>
-      <div class="gz-notify-body">
-        <strong>Nhận thông báo giá xăng dầu</strong>
-        <p>Cập nhật giá xăng dầu mới nhất và biến động giá qua Zalo, App Push mỗi tuần.</p>
-      </div>
-      <button class="gz-notify-btn" onclick="toast('Đăng ký thành công! Bạn sẽ nhận thông báo qua Zalo.')">Đăng ký ngay</button>
-    </div>
-
-  </div><!-- /gz-main -->
-
-  <!-- RIGHT SIDEBAR -->
-  <aside class="gz-sidebar">
-
-    <!-- Station finder -->
-    <div class="gz-sb-card">
-      <div style="padding:14px 16px 12px">
-        <div class="gz-sb-title">Tìm cây xăng gần bạn</div>
-        <div class="gz-station-inp-row">
-          <input type="text" placeholder="Nhập vị trí của bạn">
-          <button class="gz-station-pin-btn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-          </button>
-        </div>
-        <div class="gz-brand-row">
-          <div class="gz-brand-chip" onclick="toast('Lọc theo Petrolimex')">
-            <span style="font-size:10px;font-weight:800;color:#E8232A">PL</span>
-            <span style="font-size:9px;display:block;color:var(--gray-500)">Petrolimex</span>
-          </div>
-          <div class="gz-brand-chip" onclick="toast('Lọc theo PV Oil')">
-            <span style="font-size:10px;font-weight:800;color:#006DB8">PV</span>
-            <span style="font-size:9px;display:block;color:var(--gray-500)">PVOIL</span>
-          </div>
-          <div class="gz-brand-chip" onclick="toast('Lọc theo Mipec')">
-            <span style="font-size:10px;font-weight:800;color:#E67E22">MI</span>
-            <span style="font-size:9px;display:block;color:var(--gray-500)">mipec</span>
-          </div>
-          <div class="gz-brand-chip" onclick="toast('Xem tất cả thương hiệu')">
-            <span style="font-size:18px">⚙️</span>
-            <span style="font-size:9px;display:block;color:var(--gray-500)">Tất cả</span>
+    <div class="calculator-layout">
+      <div class="input-panel">
+        <div class="field-group">
+          <div class="field-label"><span class="field-label-main">Loại nhiên liệu</span></div>
+          <div class="pills-grid" id="fuelPills">
+            <button class="pill-btn active" data-price="22240" onclick="setFuel(this)">RON 95-III</button>
+            <button class="pill-btn" data-price="21870" onclick="setFuel(this)">RON 95-II</button>
+            <button class="pill-btn" data-price="21100" onclick="setFuel(this)">E5 RON 92</button>
+            <button class="pill-btn" data-price="19940" onclick="setFuel(this)">Diesel</button>
           </div>
         </div>
-        <a class="gz-find-station-btn" href="/cay-xang">Xem cây xăng gần bạn →</a>
+        <div class="field-group">
+          <div class="field-label">
+            <span class="field-label-main" id="calcInputLabel">Số lít cần đổ</span>
+            <span class="field-value" id="calcFieldValue">45 lít</span>
+          </div>
+          <div class="money-input-row">
+            <input id="calcInput" type="number" inputmode="decimal" value="45" min="0" oninput="calc()">
+            <span class="unit-tag" id="calcUnitTag">lít</span>
+          </div>
+          <div class="chip-row" id="calcChips">
+            <button class="chip-btn" onclick="setChip(20)">20 lít</button>
+            <button class="chip-btn active" onclick="setChip(45)">45 lít</button>
+            <button class="chip-btn" onclick="setChip(60)">60 lít</button>
+            <button class="chip-btn" onclick="setChip(70)">70 lít</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label"><span class="field-label-main">Chế độ tính</span></div>
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="modeLit" onclick="setMode('lit')">Nhập lít</button>
+            <button class="mode-btn" id="modeMoney" onclick="setMode('money')">Nhập tiền</button>
+          </div>
+        </div>
+        <p class="inline-note">Giá bán lẻ Vùng 1, kỳ điều hành 10/07/2026. Giá thực tế có thể chênh nhỏ.</p>
+      </div>
+      <div class="result-panel">
+        <div class="result-hero">
+          <span class="result-hero-label" id="crLabel">Thành tiền</span>
+          <div class="result-hero-value" id="crValue">1.000.800<small>đ</small></div>
+        </div>
+        <div class="result-details">
+          <div class="result-row"><span>Đơn giá</span><strong id="crUnitPrice">22.240đ/lít</strong></div>
+          <div class="result-row"><span id="crQtyLabel">Số lít</span><strong id="crQty">45 lít</strong></div>
+          <div class="result-row"><span>Loại xăng</span><strong id="crFuelName">RON 95-III</strong></div>
+        </div>
+        <div class="insight-box" id="crNote">Thanh toán qua <em>Ví Trả Sau hoàn 10%</em> tại cây xăng đối tác Petrolimex, PV Oil.</div>
       </div>
     </div>
+  </div>
 
-    <!-- Payment CTA -->
-    <div class="gz-payment-cta">
-      <div class="gz-pc-eyebrow">THANH TOÁN KHÔNG TIỀN MẶT</div>
-      <div class="gz-pc-h">Thanh toán xăng dầu không tiền mặt</div>
-      <p class="gz-pc-desc">Thanh toán nhanh, hoàn tiền lên đến 2% tại hơn 5.000 cây xăng trên toàn quốc.</p>
-      <button class="gz-pc-pay-btn" onclick="toast('Mở MoMo thanh toán...')">Thanh toán ngay</button>
-    </div>
 
-    <!-- Regional prices -->
-    <div class="gz-sb-card">
-      <div style="padding:14px 16px 10px">
-        <div class="gz-sb-title">Giá xăng trong khu vực</div>
-      </div>
-      <div class="gz-kv-tabs" id="kvTabs">
-        <button class="gz-kv-tab active" onclick="switchKV(this,1)">Vùng 1</button>
-        <button class="gz-kv-tab" onclick="switchKV(this,2)">Vùng 2</button>
-        <button class="gz-kv-tab" onclick="switchKV(this,3)">Vùng 3</button>
-        <button class="gz-kv-tab" onclick="switchKV(this,4)">Vùng 4</button>
-      </div>
-      <div class="gz-kv-list" id="kvPriceList"><!-- rendered by JS --></div>
-      <div class="gz-kv-footer">
-        <a href="#">Xem tất cả <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>
-      </div>
-    </div>
-
-    <!-- Next cycle -->
-    <div class="gz-next-cycle">
-      <div class="gz-nc-label">Dự kiến kỳ điều hành tiếp theo</div>
-      <div class="gz-nc-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      </div>
-      <div class="gz-nc-date">15h00 Thứ Năm, ngày 26/06/2026</div>
-      <div class="gz-nc-sub">Còn 2 ngày nữa</div>
-    </div>
-
-  </aside><!-- /gz-sidebar -->
 
 </div><!-- /gz-layout -->
 
@@ -1343,252 +1316,8 @@ h1.page-title {
   </div>
 </div>
 
-<!-- DUMMY elements to keep old JS working (hidden) -->
-<div style="display:none">
-  <div id="gasTable"></div>
-  <tbody id="histBody"></tbody>
-</div>
-
-<!-- PLACEHOLDER: old stations section removed, integrated into sidebar above -->
-        </div>
-        <div class="region-tabs">
-          <button class="grt on" onclick="setRegion(this, 1)">Vùng 1 · Đồng bằng</button>
-          <button class="grt" onclick="setRegion(this, 2)">Vùng 2 · Miền núi, hải đảo</button>
-        </div>
-        <div id="gasTable"></div>
-      </div>
-
-      <!-- trend -->
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Xu hướng giá 90 ngày</div>
-          <div class="card-note">10 kỳ điều hành gần nhất</div>
-        </div>
-        <div class="trend-body">
-          <div class="trend-legend">
-            <span class="tl-item"><span class="tl-dot" style="background:#EB2F96"></span>RON 95-III</span>
-            <span class="tl-item"><span class="tl-dot" style="background:#2563EB"></span>Diesel 0.05S</span>
-          </div>
-          <div class="trend-chart">
-            <svg viewBox="0 0 640 170" style="width:100%;height:100%" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="tg1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#EB2F96" stop-opacity=".18"/>
-                  <stop offset="100%" stop-color="#EB2F96" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <!-- grid lines -->
-              <line x1="0" y1="42" x2="640" y2="42" stroke="#F0EBF4" stroke-width="1"/>
-              <line x1="0" y1="84" x2="640" y2="84" stroke="#F0EBF4" stroke-width="1"/>
-              <line x1="0" y1="126" x2="640" y2="126" stroke="#F0EBF4" stroke-width="1"/>
-              <!-- RON95 -->
-              <path d="M0,96 L71,88 L142,76 L213,92 L284,70 L355,63 L426,75 L497,55 L568,46 L640,38" fill="none" stroke="#EB2F96" stroke-width="2.5" stroke-linejoin="round"/>
-              <path d="M0,96 L71,88 L142,76 L213,92 L284,70 L355,63 L426,75 L497,55 L568,46 L640,38 L640,170 L0,170Z" fill="url(#tg1)"/>
-              <circle cx="640" cy="38" r="4.5" fill="#EB2F96"/>
-              <!-- Diesel -->
-              <path d="M0,130 L71,126 L142,132 L213,122 L284,128 L355,118 L426,112 L497,120 L568,110 L640,104" fill="none" stroke="#2563EB" stroke-width="2" stroke-dasharray="1 0" stroke-linejoin="round" opacity=".8"/>
-              <circle cx="640" cy="104" r="4" fill="#2563EB"/>
-              <!-- labels -->
-              <text x="6" y="36" font-size="10" fill="#A09AA5">24.000</text>
-              <text x="6" y="80" font-size="10" fill="#A09AA5">22.000</text>
-              <text x="6" y="122" font-size="10" fill="#A09AA5">20.000</text>
-            </svg>
-          </div>
-          <div class="trend-x"><span>10/04</span><span>24/04</span><span>08/05</span><span>22/05</span><span>05/06</span><span>19/06</span><span>26/06</span></div>
-        </div>
-      </div>
-
-      <!-- history -->
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Lịch sử điều hành giá · RON 95-III</div>
-          <div class="card-note">Vùng 1</div>
-        </div>
-        <table class="hist-table">
-          <thead>
-            <tr><th>Kỳ điều hành</th><th>Giá sau điều chỉnh</th><th>Thay đổi</th></tr>
-          </thead>
-          <tbody id="histBody"></tbody>
-        </table>
-      </div>
-
-      <!-- CALCULATOR — Utilities Tool UI -->
-      <div class="util-calc-wrap">
-        <div class="util-calc-head">
-          <div>
-            <h3>Tính tiền đổ xăng</h3>
-            <p>Nhập số lít hoặc số tiền để biết chính xác chi phí theo giá hôm nay.</p>
-          </div>
-        </div>
-        <div class="calculator-layout">
-          <div class="input-panel">
-            <div class="field-group">
-              <div class="field-label">
-                <span class="field-label-main">Loại nhiên liệu</span>
-              </div>
-              <div class="pills-grid" id="fuelPills">
-                <button class="pill-btn active" data-price="22240" onclick="setFuel(this)">RON 95-III</button>
-                <button class="pill-btn" data-price="21870" onclick="setFuel(this)">RON 95-II</button>
-                <button class="pill-btn" data-price="21100" onclick="setFuel(this)">E5 RON 92</button>
-                <button class="pill-btn" data-price="19940" onclick="setFuel(this)">Diesel</button>
-              </div>
-            </div>
-            <div class="field-group">
-              <div class="field-label">
-                <span class="field-label-main" id="calcInputLabel">Số lít cần đổ</span>
-                <span class="field-value" id="calcFieldValue">45 lít</span>
-              </div>
-              <div class="money-input-row">
-                <input id="calcInput" type="number" inputmode="decimal" value="45" min="0" oninput="calc()">
-                <span class="unit-tag" id="calcUnitTag">lít</span>
-              </div>
-              <div class="chip-row" id="calcChips">
-                <button class="chip-btn" onclick="setChip(20)">20 lít</button>
-                <button class="chip-btn active" onclick="setChip(45)">45 lít</button>
-                <button class="chip-btn" onclick="setChip(60)">60 lít</button>
-                <button class="chip-btn" onclick="setChip(70)">70 lít</button>
-              </div>
-            </div>
-            <div class="field-group">
-              <div class="field-label"><span class="field-label-main">Chế độ tính</span></div>
-              <div class="mode-toggle">
-                <button class="mode-btn active" id="modeLit" onclick="setMode('lit')">Nhập lít</button>
-                <button class="mode-btn" id="modeMoney" onclick="setMode('money')">Nhập tiền</button>
-              </div>
-            </div>
-            <p class="inline-note">Kết quả tính theo giá bán lẻ Vùng 1 kỳ điều hành 26/06/2026. Giá thực tế có thể chênh lệch nhỏ tùy cây xăng.</p>
-          </div>
-          <div class="result-panel">
-            <div class="result-hero">
-              <span class="result-hero-label" id="crLabel">Thành tiền</span>
-              <div class="result-hero-value" id="crValue">1.000.800<small>đ</small></div>
-            </div>
-            <div class="result-details">
-              <div class="result-row"><span>Đơn giá</span><strong id="crUnitPrice">22.240đ/lít</strong></div>
-              <div class="result-row"><span id="crQtyLabel">Số lít</span><strong id="crQty">45 lít</strong></div>
-              <div class="result-row"><span>Loại xăng</span><strong id="crFuelName">RON 95-III</strong></div>
-            </div>
-            <div class="insight-box" id="crNote">Thanh toán qua <em>Ví Trả Sau hoàn 10%</em> tại cây xăng đối tác Petrolimex, PV Oil.</div>
-          </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- STATIONS SECTION -->
-  <div class="stations-section">
-    <div class="stations-head">
-      <div>
-        <div class="stations-title" id="stn-title">Tìm cây xăng gần đây</div>
-        <div id="stn-sub" class="stations-sub">1.200+ điểm Petrolimex, PV Oil toàn quốc - thanh toán MoMo, tích điểm MoXe</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
-        <button id="stn-locate-btn" class="stn-locate-btn" onclick="detectLocation()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-          Vị trí của tôi
-        </button>
-        <a class="stations-all" href="/cay-xang">Xem tất cả →</a>
-      </div>
-    </div>
-
-    <!-- Luôn hiển thị - khoảng cách ẩn khi chưa detect -->
-    <div id="stn-list" class="stations-row">
-      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Petrolimex 101')">
-        <div class="stn-logo" style="background:#E8232A">PL</div>
-        <div class="stn-info">
-          <div class="stn-name">Petrolimex 101</div>
-          <div class="stn-addr">101 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM</div>
-        </div>
-        <div class="stn-right">
-          <span class="stn-dist stn-dist-val" style="display:none">0.4 km</span>
-          <span class="stn-nav">Chỉ đường →</span>
-        </div>
-      </div>
-      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới PV Oil Lê Văn Lương')">
-        <div class="stn-logo" style="background:#006DB8">PV</div>
-        <div class="stn-info">
-          <div class="stn-name">PV Oil Lê Văn Lương</div>
-          <div class="stn-addr">288 Lê Văn Lương, Phường Tân Quy, Quận 7, TP.HCM</div>
-        </div>
-        <div class="stn-right">
-          <span class="stn-dist stn-dist-val" style="display:none">1.1 km</span>
-          <span class="stn-nav">Chỉ đường →</span>
-        </div>
-      </div>
-      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Petrolimex Huỳnh Tấn Phát')">
-        <div class="stn-logo" style="background:#E8232A">PL</div>
-        <div class="stn-info">
-          <div class="stn-name">Petrolimex Huỳnh Tấn Phát</div>
-          <div class="stn-addr">500 Huỳnh Tấn Phát, Phường Bình Thuận, Quận 7, TP.HCM</div>
-        </div>
-        <div class="stn-right">
-          <span class="stn-dist stn-dist-val" style="display:none">2.3 km</span>
-          <span class="stn-nav">Chỉ đường →</span>
-        </div>
-      </div>
-      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Shell Nguyễn Hữu Thọ')">
-        <div class="stn-logo" style="background:#FBCE07;color:#d00">SH</div>
-        <div class="stn-info">
-          <div class="stn-name">Shell Nguyễn Hữu Thọ</div>
-          <div class="stn-addr">1200 Nguyễn Hữu Thọ, Phường Phước Kiển, Huyện Nhà Bè, TP.HCM</div>
-        </div>
-        <div class="stn-right">
-          <span class="stn-dist stn-dist-val" style="display:none">3.1 km</span>
-          <span class="stn-nav">Chỉ đường →</span>
-        </div>
-      </div>
-      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới Petrolimex Nguyễn Văn Linh')">
-        <div class="stn-logo" style="background:#E8232A">PL</div>
-        <div class="stn-info">
-          <div class="stn-name">Petrolimex Nguyễn Văn Linh</div>
-          <div class="stn-addr">725 Nguyễn Văn Linh, Phường Tân Hưng, Quận 7, TP.HCM</div>
-        </div>
-        <div class="stn-right">
-          <span class="stn-dist stn-dist-val" style="display:none">3.8 km</span>
-          <span class="stn-nav">Chỉ đường →</span>
-        </div>
-      </div>
-      <div class="stn-card" onclick="toast('Mở Google Maps chỉ đường tới PV Oil Phú Mỹ Hưng')">
-        <div class="stn-logo" style="background:#006DB8">PV</div>
-        <div class="stn-info">
-          <div class="stn-name">PV Oil Phú Mỹ Hưng</div>
-          <div class="stn-addr">18 Nguyễn Lương Bằng, Phường Phú Mỹ, Quận 7, TP.HCM</div>
-        </div>
-        <div class="stn-right">
-          <span class="stn-dist stn-dist-val" style="display:none">4.5 km</span>
-          <span class="stn-nav">Chỉ đường →</span>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <section class="section">
-    <h2 class="section-title">Về giá xăng dầu</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Giá xăng được điều chỉnh khi nào?</button>
-        <div class="faq-a">Theo Nghị định 80/2023, giá xăng dầu được điều hành định kỳ vào thứ Năm hàng tuần. Nếu trùng ngày nghỉ lễ, kỳ điều hành được dời sang ngày làm việc tiếp theo. MoMo cập nhật bảng giá ngay khi liên Bộ Công Thương - Tài chính công bố.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Vùng 1 và Vùng 2 khác nhau thế nào?</button>
-        <div class="faq-a">Vùng 1 là các địa bàn gần cảng, kho đầu mối (đa số thành phố lớn, đồng bằng). Vùng 2 là địa bàn xa cảng, chi phí vận chuyển cao hơn (miền núi, hải đảo) - giá bán lẻ Vùng 2 được cộng tối đa 2% so với giá cơ sở.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Nên đổ RON 95 hay E5 RON 92?</button>
-        <div class="faq-a">Theo khuyến cáo của nhà sản xuất xe: xe đời mới, động cơ tỷ số nén cao nên dùng RON 95. E5 RON 92 (xăng sinh học pha 5% ethanol) phù hợp đa số xe máy và ô tô phổ thông, giá thấp hơn khoảng 1.100đ/lít. Kiểm tra sách hướng dẫn xe của bạn để chọn đúng loại.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Thanh toán xăng qua MoMo ở đâu?</button>
-        <div class="faq-a">MoMo hợp tác với hơn 1.200 cây xăng Petrolimex và PV Oil trên toàn quốc. Bạn quét QR tại cột bơm hoặc quầy thu ngân, chọn nguồn tiền Ví MoMo hoặc Ví Trả Sau. Giao dịch bằng Ví Trả Sau được hoàn 10% (tối đa 20.000đ) và tích điểm hạng MoXe.</div>
-      </div>
-    </div>
-  </section>
-</div>
-
+<!-- hidden dummy to satisfy JS refs -->
+<div style="display:none"><div id="gasTable"></div><table><tbody id="histBody"></tbody></table></div>
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="footer-inner">
