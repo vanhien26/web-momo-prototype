@@ -1970,16 +1970,9 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
             <div class="transit-modal-sub" id="transitMapSub">18 phút · 8 điểm dừng · 7.000đ/lượt</div>
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <a id="transitBusMapLink" href="https://map.busmap.vn/hcm/route/36" target="_blank" rel="noopener"
-            style="display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;background:var(--gray-100);color:var(--gray-700);font-size:12px;font-weight:700;text-decoration:none">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            BusMap
-          </a>
-          <button class="transit-modal-close" onclick="document.getElementById('transitMapModal').classList.remove('open')">
-            <i data-lucide="x" width="16" height="16"></i>
-          </button>
-        </div>
+        <button class="transit-modal-close" onclick="document.getElementById('transitMapModal').classList.remove('open')">
+          <i data-lucide="x" width="16" height="16"></i>
+        </button>
       </div>
 
       <div class="transit-modal-body">
@@ -1994,9 +1987,10 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
           </div>
         </div>
 
-        <!-- RIGHT: Route diagram -->
-        <div class="transit-modal-map" id="transitRouteDiagram">
-          <!-- rendered by JS -->
+        <!-- RIGHT: Google Maps -->
+        <div class="transit-modal-map">
+          <iframe id="transitMapFrame" src="" frameborder="0" allowfullscreen loading="lazy"
+            style="width:100%;height:100%;border:0"></iframe>
         </div>
       </div>
 
@@ -3353,8 +3347,10 @@ function openTransitMap(univId, area, routeNum, routeName, _unused, time, fare) 
   document.querySelectorAll('.transit-stops-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
   renderStopsList();
 
-  // Route diagram (right)
-  renderRouteDiagram(routeNum, routeName, transitState.areaLabel, campus.name.replace('Trường Đại Học ','ĐH ').replace('Trường ĐH ','ĐH '), routeData.color, routeData.bg, time, fare);
+  // Google Maps transit directions embed
+  const areaCoord = AREA_COORDS[area] || AREA_COORDS.q7;
+  const mapsUrl = `https://maps.google.com/maps?saddr=${areaCoord.lat},${areaCoord.lng}&daddr=${campus.lat},${campus.lng}&dirflg=r&output=embed`;
+  document.getElementById('transitMapFrame').src = mapsUrl;
 
   // Footer
   document.getElementById('transitMapFooter').innerHTML = `
