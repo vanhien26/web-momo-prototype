@@ -569,11 +569,39 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
 .transit-stop-name { font-size: 12px; color: var(--gray-700); line-height: 1.4; }
 .transit-stop-name.highlight { font-weight: 700; color: #EB2F96; }
 .transit-stop-name.origin { font-weight: 700; color: #3B82F6; }
-.transit-modal-map { background: var(--gray-100); }
+.transit-modal-map { background: #F8FAFC; overflow-y: auto; }
 .transit-modal-footer { padding: 12px 18px; border-top: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px; background: #fff; }
 .transit-footer-info { font-size: 12px; color: var(--gray-500); }
 .transit-footer-info strong { color: var(--gray-900); font-size: 14px; }
-@media (max-width: 640px) { .transit-modal-body { grid-template-columns: 1fr; } .transit-modal-stops { max-height: 180px; border-right: none; border-bottom: 1px solid var(--gray-100); } }
+@media (max-width: 640px) { .transit-modal-body { grid-template-columns: 1fr; } .transit-modal-stops { max-height: 200px; border-right: none; border-bottom: 1px solid var(--gray-100); } }
+
+/* Route diagram (right panel) */
+.rdiag { padding: 24px 20px; display: flex; flex-direction: column; gap: 0; height: 100%; box-sizing: border-box; }
+.rdiag-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.rdiag-num { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; flex-shrink: 0; }
+.rdiag-route-name { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.rdiag-route-sub { font-size: 11px; color: var(--gray-500); margin-top: 1px; }
+.rdiag-journey { display: flex; flex-direction: column; flex: 1; }
+.rdiag-endpoint { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.rdiag-ep-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.rdiag-ep-label { font-size: 13px; font-weight: 700; }
+.rdiag-ep-sublabel { font-size: 11px; color: var(--gray-500); margin-top: 1px; }
+.rdiag-line-seg { display: flex; align-items: stretch; gap: 12px; padding: 0; }
+.rdiag-line-track { display: flex; flex-direction: column; align-items: center; width: 16px; flex-shrink: 0; }
+.rdiag-track-bar { flex: 1; width: 3px; background: linear-gradient(to bottom, #3B82F6, #EB2F96); border-radius: 2px; min-height: 60px; }
+.rdiag-mid-stops { flex: 1; padding: 8px 0; display: flex; flex-direction: column; gap: 6px; }
+.rdiag-mid-stop { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--gray-600); }
+.rdiag-mid-dot { width: 7px; height: 7px; border-radius: 50%; background: #D1D5DB; flex-shrink: 0; }
+.rdiag-time-badge { display: inline-flex; align-items: center; gap: 4px; background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; padding: 3px 9px; font-size: 11px; font-weight: 700; color: var(--gray-700); width: fit-content; margin: 4px 0 4px 28px; }
+.rdiag-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
+.rdiag-stat { text-align: center; }
+.rdiag-stat-val { font-size: 18px; font-weight: 900; color: var(--gray-900); }
+.rdiag-stat-lbl { font-size: 10px; color: var(--gray-500); margin-top: 2px; text-transform: uppercase; letter-spacing: .4px; }
+.rdiag-busmap-btn { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 10px; background: #fff; border: 1.5px solid var(--gray-200); border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--gray-700); text-decoration: none; margin-top: 14px; transition: all .15s; }
+.rdiag-busmap-btn:hover { border-color: #059669; color: #059669; background: #F0FDF4; }
+.rdiag-busmap-logo { width: 18px; height: 18px; border-radius: 4px; background: #059669; display: inline-flex; align-items: center; justify-content: center; }
+/* city-grid bg */
+.transit-modal-map { background-image: linear-gradient(rgba(203,213,225,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(203,213,225,.35) 1px,transparent 1px); background-size: 28px 28px; }
 
 @media (max-width: 860px) { .transit-layout { grid-template-columns: 1fr; } .transit-form { position: static; } }
 /* ── END TRANSIT ── */
@@ -1966,10 +1994,9 @@ i[data-lucide] { display: inline-flex; align-items: center; justify-content: cen
           </div>
         </div>
 
-        <!-- RIGHT: Map -->
-        <div class="transit-modal-map">
-          <iframe id="transitMapFrame" src="" frameborder="0" allowfullscreen loading="lazy"
-            style="width:100%;height:100%;border:0"></iframe>
+        <!-- RIGHT: Route diagram -->
+        <div class="transit-modal-map" id="transitRouteDiagram">
+          <!-- rendered by JS -->
         </div>
       </div>
 
@@ -3208,36 +3235,131 @@ function renderStopsList() {
   }).join('');
 }
 
+function renderRouteDiagram(routeNum, routeName, areaLabel, campusName, color, bg, time, fare) {
+  const stops = (ROUTE_STOPS[routeNum] || {}).go || [];
+  const midStops = stops.slice(1, -1);
+  const origin = stops[0] || areaLabel;
+  const dest = stops[stops.length - 1] || campusName;
+  // Show up to 4 mid stops
+  const shownMids = midStops.slice(0, 4);
+  const hiddenCount = midStops.length - shownMids.length;
+
+  // Next bus schedule mock
+  const now = new Date();
+  const nextTimes = [0, 8, 16, 25].map(d => {
+    const t = new Date(now.getTime() + d * 60000);
+    return `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+  });
+
+  const midHtml = shownMids.map(s => `<div class="rdiag-mid-stop"><span class="rdiag-mid-dot"></span>${s}</div>`).join('')
+    + (hiddenCount > 0 ? `<div class="rdiag-mid-stop" style="color:var(--gray-400);font-style:italic">+${hiddenCount} trạm nữa...</div>` : '');
+
+  const diagram = document.getElementById('transitRouteDiagram');
+  if (!diagram) return;
+  diagram.innerHTML = `<div class="rdiag">
+    <div class="rdiag-header">
+      <div class="rdiag-num" style="background:${bg};color:${color}">${routeNum}</div>
+      <div>
+        <div class="rdiag-route-name">Tuyến ${routeNum} - ${routeName}</div>
+        <div class="rdiag-route-sub">Tần suất · Giá vé ${fare.toLocaleString('vi-VN')}đ/lượt</div>
+      </div>
+    </div>
+
+    <div class="rdiag-journey">
+      <!-- Origin -->
+      <div class="rdiag-endpoint">
+        <div class="rdiag-ep-dot" style="background:#3B82F6;width:16px;height:16px;border-radius:50%"></div>
+        <div>
+          <div class="rdiag-ep-label" style="color:#2563EB">${origin}</div>
+          <div class="rdiag-ep-sublabel">Điểm xuất phát · ${areaLabel}</div>
+        </div>
+      </div>
+
+      <!-- Track + mid stops -->
+      <div class="rdiag-line-seg">
+        <div class="rdiag-line-track">
+          <div class="rdiag-track-bar" style="background:linear-gradient(to bottom,#3B82F6,${color})"></div>
+        </div>
+        <div class="rdiag-mid-stops">${midHtml}</div>
+      </div>
+
+      <div class="rdiag-time-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ${time} phút di chuyển
+      </div>
+
+      <!-- Destination -->
+      <div class="rdiag-endpoint" style="margin-top:4px">
+        <div class="rdiag-ep-dot" style="background:#EB2F96;width:16px;height:16px;border-radius:50%"></div>
+        <div>
+          <div class="rdiag-ep-label" style="color:#EB2F96">${dest}</div>
+          <div class="rdiag-ep-sublabel">Điểm đến · ${campusName}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rdiag-stats">
+      <div class="rdiag-stat">
+        <div class="rdiag-stat-val">${time}<span style="font-size:12px;font-weight:500;color:var(--gray-500)"> phút</span></div>
+        <div class="rdiag-stat-lbl">Thời gian</div>
+      </div>
+      <div class="rdiag-stat">
+        <div class="rdiag-stat-val">${stops.length}<span style="font-size:12px;font-weight:500;color:var(--gray-500)"> trạm</span></div>
+        <div class="rdiag-stat-lbl">Điểm dừng</div>
+      </div>
+      <div class="rdiag-stat">
+        <div class="rdiag-stat-val">${(fare/1000).toFixed(0)}K<span style="font-size:12px;font-weight:500;color:var(--gray-500)">đ</span></div>
+        <div class="rdiag-stat-lbl">Giá vé</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:12px 14px;background:#fff;border:1px solid var(--gray-200);border-radius:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Chuyến kế tiếp</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${nextTimes.map((t,i) => `<div style="padding:5px 12px;border-radius:7px;font-size:12px;font-weight:700;${i===0?`background:${bg};color:${color};`:'background:var(--gray-100);color:var(--gray-700);'}">${t}${i===0?' · Sắp đến':''}</div>`).join('')}
+      </div>
+    </div>
+
+    <a class="rdiag-busmap-btn" href="https://map.busmap.vn/hcm/route/${routeNum}" target="_blank" rel="noopener">
+      <span class="rdiag-busmap-logo">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </span>
+      Xem toàn bộ lộ trình trên BusMap
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+  </div>`;
+}
+
 function openTransitMap(univId, area, routeNum, routeName, _unused, time, fare) {
   const campus = CAMPUS_COORDS[univId] || CAMPUS_COORDS.tdtu;
   const modal = document.getElementById('transitMapModal');
+  const routesByArea = BUS_ROUTES[univId] || BUS_ROUTES_DEFAULT;
+  const areaRoutes = routesByArea[area] || routesByArea.q7 || [];
+  const routeData = areaRoutes.find(r => r.num === routeNum) || { color: '#2563EB', bg: '#EFF6FF' };
 
   // Header
-  const routeData = (BUS_ROUTES[univId] || BUS_ROUTES_DEFAULT)[area]?.find(r => r.num === routeNum)
-    || { color: '#2563EB', bg: '#EFF6FF' };
-  document.getElementById('transitModalBadge').textContent = routeNum;
-  document.getElementById('transitModalBadge').style.cssText = `background:${routeData.bg};color:${routeData.color};width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0`;
+  const badge = document.getElementById('transitModalBadge');
+  badge.textContent = routeNum;
+  badge.style.cssText = `background:${routeData.bg};color:${routeData.color};width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0`;
   document.getElementById('transitMapTitle').textContent = `Tuyến ${routeNum} - ${routeName}`;
   document.getElementById('transitMapSub').textContent = `${time} phút · ${fare.toLocaleString('vi-VN')}đ/lượt`;
-
-  // BusMap link
   const bmLink = document.getElementById('transitBusMapLink');
   if (bmLink) bmLink.href = `https://map.busmap.vn/hcm/route/${routeNum}`;
 
-  // BusMap embed iframe
-  document.getElementById('transitMapFrame').src = `https://map.busmap.vn/hcm/route/${routeNum}`;
-
-  // Stops list
+  // Stops list (left)
   transitModalState.routeNum = routeNum;
   transitModalState.campusStop = campus.name.split(' ').pop();
   transitModalState.tab = 'go';
   document.querySelectorAll('.transit-stops-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
   renderStopsList();
 
+  // Route diagram (right)
+  renderRouteDiagram(routeNum, routeName, transitState.areaLabel, campus.name.replace('Trường Đại Học ','ĐH ').replace('Trường ĐH ','ĐH '), routeData.color, routeData.bg, time, fare);
+
   // Footer
   document.getElementById('transitMapFooter').innerHTML = `
     <div class="transit-footer-info">
-      <strong>${time} phút</strong> từ ${transitState.areaLabel} · <strong>${fare.toLocaleString('vi-VN')}đ</strong>/lượt · Mua vé không cần tiền lẻ
+      <strong>${time} phút</strong> từ ${transitState.areaLabel} đến ${campus.name.replace('Trường Đại Học ','ĐH ')} · <strong>${fare.toLocaleString('vi-VN')}đ</strong>/lượt
     </div>
     <button class="transit-momo-btn" onclick="openToolModal('Mua vé xe buýt tuyến ${routeNum} qua MoMo')">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
