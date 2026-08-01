@@ -4231,7 +4231,7 @@ function renderUnivGrid() {
       : '';
     const clickHandler = hasCampuses
       ? `event.preventDefault(); openCampusPicker('${u.id}')`
-      : `event.preventDefault(); selectUniversity('${u.id}')`;
+      : ``;
     return `
     <a class="univ-card" href="/student-hub/${u.id}" onclick="${clickHandler}">
       <div class="univ-banner">
@@ -4510,15 +4510,7 @@ function closeCampusPicker() {
 
 function selectCampus(univId, campusId) {
   closeCampusPicker();
-  // For now: select the university with campus info noted
-  // In a full implementation, campusId could switch the merchant data
-  const u = UNIVERSITIES.find(x => x.id === univId);
-  const campus = u && u.campuses ? u.campuses.find(c => c.id === campusId) : null;
-  if (campus) {
-    // Override address for this session
-    u._activeCampus = campus;
-  }
-  selectUniversity(univId);
+  window.location.href = '/student-hub/' + univId + (campusId ? '?campus=' + campusId : '');
 }
 
 // UNIV DROPDOWN HELPERS
@@ -4547,15 +4539,14 @@ function onUnivSelectChange(val) {
   document.getElementById('navUnivMenu').classList.remove('open');
   if (!val) {
     setNavUnivLabel('Tất cả các trường');
-    showDirectoryView();
+    window.location.href = '/student-hub';
   } else {
     const u = UNIVERSITIES.find(x => x.id === val);
-    setNavUnivLabel(u ? u.shortName || u.name : val.toUpperCase());
     // If multi-campus, show picker
     if (u && u.campuses && u.campuses.length > 1) {
       openCampusPicker(val);
     } else {
-      selectUniversity(val);
+      window.location.href = '/student-hub/' + val;
     }
   }
 }
