@@ -378,7 +378,7 @@ body { background: var(--gray-50); min-height: 100vh; }
       <option value="14">IONIQ 6 (14kWh/100km)</option>
       <option value="16">BYD Atto 3 (16kWh/100km)</option>
     </select>
-    <button id="calcBtn" class="btn-calc" onclick="applyRoute()" disabled>Tính chi phí →</button>
+    <button id="calcBtn" class="btn-calc" onclick="applyRoute()">Tính chi phí →</button>
     <span class="rd-km" id="rdKm"></span>
   </div>
 </div>
@@ -408,8 +408,13 @@ body { background: var(--gray-50); min-height: 100vh; }
   </div>
 
   <div class="calc-layout">
-    <p class="disclaimer" style="font-size:11px;color:var(--gray-400);line-height:1.5">Giá xăng RON 95: 21.900đ/L · Giá điện V-Green: 3.858đ/kWh · Phí ETC ước tính theo tuyến cao tốc phổ biến.</p>
-    <div class="result-panel">
+    <div id="emptyState" style="display:none;padding:48px 20px;text-align:center;background:#fff;border:1px solid var(--gray-100);border-radius:16px">
+      <div style="font-size:36px;margin-bottom:12px">🗺️</div>
+      <div style="font-size:15px;font-weight:800;color:var(--gray-900);margin-bottom:6px">Chọn điểm đi và điểm đến</div>
+      <div style="font-size:13px;color:var(--gray-400);line-height:1.5">Gõ tên tỉnh/thành phố hoặc chọn nhanh từ các tuyến phổ biến bên trên</div>
+    </div>
+    <p class="disclaimer" id="disclaimer" style="font-size:11px;color:var(--gray-400);line-height:1.5;display:none">Giá xăng E10 RON 95-III: 22.850đ/L · Giá điện V-Green: 3.858đ/kWh · Phí ETC ước tính theo tuyến cao tốc phổ biến.</p>
+    <div class="result-panel" id="resultPanel" style="display:none">
       <!-- Chi phí -->
       <div class="rcard">
         <div class="rcard-head">
@@ -461,7 +466,7 @@ body { background: var(--gray-50); min-height: 100vh; }
 </div>
 
 <script>
-const GAS_PRICE = 21900;
+const GAS_PRICE = 22850;
 const EV_PRICE  = 3858;
 
 const CITIES = {
@@ -663,6 +668,12 @@ function selectVehicle(v) {
 }
 
 function updateCalc() {
+  const hasRoute = S.km > 0;
+  document.getElementById('emptyState').style.display  = hasRoute ? 'none' : 'block';
+  document.getElementById('resultPanel').style.display  = hasRoute ? '' : 'none';
+  document.getElementById('disclaimer').style.display   = hasRoute ? '' : 'none';
+  if (!hasRoute) return;
+
   const cons   = parseFloat(document.getElementById('modelSelect').value) || 8;
   const evCons = parseFloat(document.getElementById('evSelect').value) || 15;
   const km = S.km;
@@ -770,8 +781,7 @@ function computeAndRender(fromCity, toCity) {
 function onRouteInput() {
   const from = document.getElementById('inpFrom').value.trim();
   const to   = document.getElementById('inpTo').value.trim();
-  const valid = CITIES[from] && CITIES[to] && from !== to;
-  document.getElementById('calcBtn').disabled = !valid;
+  if (CITIES[from] && CITIES[to] && from !== to) computeAndRender(from, to);
 }
 
 function applyRoute() {
@@ -821,7 +831,11 @@ function quickRoute(from, to, chipEl) {
   selectVehicle(vehicle);
 
   if (fromCity && toCity) computeAndRender(fromCity, toCity);
-  else updateCalc();
+  else {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('resultPanel').style.display = 'none';
+    document.getElementById('disclaimer').style.display = 'none';
+  }
 })();
 
   // ── lucide helpers ──
