@@ -4080,6 +4080,17 @@ function renderModelDetail(brandId, modelSlug) {
   const fuelLabel = m.type==='ev'?'Điện':(m.type==='hybrid'?'Xăng/Điện':(m.variants&&m.variants[0].fuel)||'Xăng');
   const _seatsM = m.desc&&m.desc.match(/(\d+)\s*chỗ/);
   const seatsLabel = m.variants?`${m.variants[0].seats} chỗ`:(_seatsM?`${_seatsM[1]} chỗ`:(m.type==='truck'?'2-5 chỗ':m.type==='mpv'?'7 chỗ':'5 chỗ'));
+
+  // E10 compatibility (hero pills + utils section)
+  const _isEV_e10 = m.type === 'ev' || (b.fuels.includes('điện') && b.fuels.length===1);
+  const _fuel_e10 = _isEV_e10 ? 'điện' : (m.variants && m.variants[0] && m.variants[0].fuel === 'Dầu' ? 'diesel' : 'xăng');
+  const e10 = (function(model, fuelT, ev) {
+    if (ev || fuelT === 'điện') return {status:'na'};
+    if (fuelT === 'diesel') return {status:'na'};
+    if (model.e10 === false) return {status:'no', badge:'Không tương thích', color:'#DC2626', bg:'#FEF2F2', detail:'Hãng không khuyến nghị dùng E10. Kiểm tra sổ tay để chắc chắn.'};
+    return {status:'ok', badge:'Tương thích E10', color:'#15803D', bg:'#F0FDF4', detail: model.e10Note || 'Xe tương thích xăng E10 (Ethanol 10%). Tiết kiệm hơn RON 95-III khoảng 5-8%.'};
+  })(m, _fuel_e10, _isEV_e10);
+
   const hero = `<div class="md-hero" style="--brand:${b.color}">
     <div class="md-hero-ghost">${m.name.toUpperCase()}</div>
     <div class="wrap">
@@ -4095,6 +4106,8 @@ function renderModelDetail(brandId, modelSlug) {
             <span class="md-pill">${typeLabel}</span>
             <span class="md-pill">${seatsLabel}</span>
             <span class="md-pill">${fuelLabel}</span>
+            ${e10.status==='ok'?'<span class="md-pill" style="background:rgba(34,197,94,.18);color:#4ADE80;border-color:rgba(34,197,94,.3)">E10 ✓</span>':''}
+            ${e10.status==='no'?'<span class="md-pill" style="background:rgba(239,68,68,.18);color:#FCA5A5;border-color:rgba(239,68,68,.3)">Không dùng E10</span>':''}
           </div>
         </div>
         <div class="md-hero-img">
@@ -4381,19 +4394,8 @@ function renderModelDetail(brandId, modelSlug) {
     </div>`;
 
   // Utilities inline
-  const isEV = b.fuels.includes('điện') && b.fuels.length === 1;
-  const fuelType = isEV ? 'điện' : (m.variants && m.variants[0] && m.variants[0].fuel === 'Dầu' ? 'diesel' : 'xăng');
-
-  // E10 compatibility
-  function getE10Status(model, fuelT, ev) {
-    if (ev || fuelT === 'điện') return {status:'na', badge:'Không áp dụng', color:'var(--gray-400)', bg:'var(--gray-100)', detail:'Xe điện không dùng xăng.'};
-    if (fuelT === 'diesel') return {status:'na', badge:'Không áp dụng', color:'var(--gray-400)', bg:'var(--gray-100)', detail:'Xe diesel không dùng xăng E10.'};
-    // Xe xăng: check model-level override, default compatible
-    if (model.e10 === false) return {status:'no', badge:'Không tương thích', color:'#DC2626', bg:'#FEF2F2', detail:'Hãng không khuyến nghị dùng E10 cho dòng xe này. Kiểm tra sổ tay để chắc chắn.'};
-    const note = model.e10Note || 'Xe tương thích xăng E10 (Ethanol 10%). Tiết kiệm hơn RON 95-III khoảng 5-8%.';
-    return {status:'ok', badge:'Tương thích E10', color:'#15803D', bg:'#F0FDF4', detail: note};
-  }
-  const e10 = getE10Status(m, fuelType, isEV);
+  const isEV = _isEV_e10;
+  const fuelType = _fuel_e10;
   const utilSection = `
     <div class="d-section" id="md-utils">
       <div class="d-section-head">
