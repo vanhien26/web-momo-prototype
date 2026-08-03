@@ -4383,6 +4383,17 @@ function renderModelDetail(brandId, modelSlug) {
   // Utilities inline
   const isEV = b.fuels.includes('điện') && b.fuels.length === 1;
   const fuelType = isEV ? 'điện' : (m.variants && m.variants[0] && m.variants[0].fuel === 'Dầu' ? 'diesel' : 'xăng');
+
+  // E10 compatibility
+  function getE10Status(model, fuelT, ev) {
+    if (ev || fuelT === 'điện') return {status:'na', badge:'Không áp dụng', color:'var(--gray-400)', bg:'var(--gray-100)', detail:'Xe điện không dùng xăng.'};
+    if (fuelT === 'diesel') return {status:'na', badge:'Không áp dụng', color:'var(--gray-400)', bg:'var(--gray-100)', detail:'Xe diesel không dùng xăng E10.'};
+    // Xe xăng: check model-level override, default compatible
+    if (model.e10 === false) return {status:'no', badge:'Không tương thích', color:'#DC2626', bg:'#FEF2F2', detail:'Hãng không khuyến nghị dùng E10 cho dòng xe này. Kiểm tra sổ tay để chắc chắn.'};
+    const note = model.e10Note || 'Xe tương thích xăng E10 (Ethanol 10%). Tiết kiệm hơn RON 95-III khoảng 5-8%.';
+    return {status:'ok', badge:'Tương thích E10', color:'#15803D', bg:'#F0FDF4', detail: note};
+  }
+  const e10 = getE10Status(m, fuelType, isEV);
   const utilSection = `
     <div class="d-section" id="md-utils">
       <div class="d-section-head">
@@ -4430,6 +4441,14 @@ function renderModelDetail(brandId, modelSlug) {
               `}
             </div>
           `}
+          ${fuelType === 'xăng' ? `
+          <div style="margin:10px 0 4px;padding:10px 12px;background:${e10.bg};border-radius:10px;display:flex;align-items:flex-start;gap:10px">
+            <span style="font-size:15px;margin-top:1px">${e10.status==='ok'?'✅':e10.status==='no'?'❌':'➖'}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:700;color:${e10.color};margin-bottom:3px">${e10.badge}</div>
+              <div style="font-size:11.5px;color:var(--gray-600);line-height:1.5">${e10.detail}</div>
+            </div>
+          </div>` : ''}
           <div class="util-quick">
             <button class="util-quick-btn" onclick="demoLookup('fuel')">Tìm ${isEV ? 'trạm sạc' : 'cây xăng'} gần nhất</button>
           </div>
