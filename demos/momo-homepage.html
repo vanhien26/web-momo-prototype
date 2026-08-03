@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MoMo - Tài chính thông minh hơn, cuộc sống tốt hơn</title>
+<link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 800;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+
+:root{
+  --pink:#C8007A;--pink-dim:rgba(200,0,122,.15);--pink-border:rgba(200,0,122,.3);
+  --teal:#00C47A;--ink:#0D0A14;--muted:#667085;--canvas:#F5F5F9;--line:#E4E7EC;
+  --hero-bg:linear-gradient(140deg,#0D0A14 0%,#1A0D28 55%,#0D101A 100%);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+.d{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif}
+a{text-decoration:none;color:inherit}
+img{max-width:100%}
+
+/* Lucide baseline */
+svg.lucide{display:block;flex-shrink:0}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(255,255,255,.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);transition:box-shadow .2s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.08)}
+.nav-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-logo span{font-size:18px;font-weight:800;letter-spacing:-.02em}
+/* ─ Level 1 links ─ */
+.nav-links{display:flex;align-items:center;gap:4px;margin:0 auto;padding:0 24px}
+.nav-item{position:relative}
+.nav-item > a, .nav-item > button{display:flex;align-items:center;gap:4px;padding:8px 12px;font-size:14px;color:var(--muted);font-weight:500;transition:color .15s;background:none;border:none;cursor:pointer;border-radius:8px;white-space:nowrap}
+.nav-item > a:hover, .nav-item > button:hover{color:var(--ink);background:rgba(0,0,0,.04)}
+.nav-item.active > a, .nav-item.active > button{color:var(--ink)}
+.nav-chevron{width:14px;height:14px;stroke:currentColor;stroke-width:2;transition:transform .2s;flex-shrink:0}
+.nav-item:hover .nav-chevron{transform:rotate(180deg)}
+/* ─ Dropdown shared ─ */
+.nav-dropdown{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.12);opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;transform:translateX(-50%) translateY(-4px);z-index:300;padding:8px}
+.nav-item:hover .nav-dropdown{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+/* ─ Mega dropdown (Sản phẩm) ─ */
+.nav-mega{width:680px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;padding:16px}
+.mega-col{padding:8px}
+.mega-col-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding:4px 8px 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.mega-item{display:flex;align-items:flex-start;gap:10px;padding:8px;border-radius:10px;transition:background .12s;cursor:pointer}
+.mega-item:hover{background:var(--canvas)}
+.mega-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mega-icon svg{width:16px;height:16px}
+.mega-item-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.mega-item-desc{font-size:12px;color:var(--muted);line-height:1.4}
+/* ─ Simple list dropdown (Công cụ / Doanh nghiệp / Về MoMo) ─ */
+.nav-list{min-width:200px;padding:8px}
+.nav-list-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:13px;color:var(--ink);font-weight:500;transition:background .12s;cursor:pointer;white-space:nowrap}
+.nav-list-item:hover{background:var(--canvas)}
+.nav-list-item svg{width:16px;height:16px;stroke:var(--muted);flex-shrink:0}
+.nav-list-sep{height:1px;background:var(--line);margin:6px 0}
+/* ─ Right actions ─ */
+.nav-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-search-btn{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--muted)}
+.nav-search-btn:hover{border-color:#bbb;color:var(--ink);background:var(--canvas)}
+.nav-search-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2}
+.nav-login{padding:8px 16px;font-size:13px;font-weight:600;color:var(--ink);border-radius:999px;border:1.5px solid var(--line);transition:all .15s;background:none;cursor:pointer}
+.nav-login:hover{border-color:#ccc;background:var(--canvas)}
+.nav-cta{background:var(--pink);color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:700;transition:background .15s;border:none;cursor:pointer}
+.nav-cta:hover{background:#a50064}
+
+/* ── SEARCH OVERLAY ── */
+.search-overlay{position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;pointer-events:none}
+.search-overlay.open{pointer-events:auto}
+.search-backdrop{position:absolute;inset:0;background:rgba(13,10,20,.5);backdrop-filter:blur(4px);opacity:0;transition:opacity .2s}
+.search-overlay.open .search-backdrop{opacity:1}
+.search-box{position:relative;background:#fff;padding:16px 40px 28px;transform:translateY(-100%);transition:transform .25s cubic-bezier(.32,1,.5,1);z-index:1;box-shadow:0 12px 40px rgba(0,0,0,.14)}
+.search-overlay.open .search-box{transform:translateY(0)}
+.search-input-wrap{display:flex;align-items:center;gap:12px;border:2px solid var(--pink);border-radius:14px;padding:10px 16px;background:#fff;max-width:760px;margin:0 auto}
+.search-input-wrap svg{flex-shrink:0;stroke:var(--pink);width:20px;height:20px}
+.search-input{flex:1;border:none;outline:none;font-size:16px;font-weight:500;color:var(--ink);background:transparent;font-family:inherit}
+.search-input::placeholder{color:#aaa}
+.search-clear{width:28px;height:28px;border-radius:50%;background:var(--line);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.search-clear:hover{background:#ddd}
+.search-clear svg{width:13px;height:13px;stroke:var(--muted)}
+/* suggestions */
+.search-suggests{max-width:760px;margin:20px auto 0;display:flex;flex-direction:column;gap:16px}
+.search-suggest-group{display:flex;flex-direction:column;gap:8px}
+.search-suggest-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.search-chips{display:flex;gap:7px;flex-wrap:wrap}
+.search-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .14s}
+.search-chip:hover{border-color:var(--pink);color:var(--pink);background:#FFF5FB}
+.search-chip svg{width:14px;height:14px;stroke:currentColor}
+.search-results{max-width:760px;margin:8px auto 0;display:none}
+.search-results.has-results{display:block}
+.search-result-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .12s}
+.search-result-item:hover{background:var(--canvas)}
+.search-result-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.search-result-icon svg{width:16px;height:16px;stroke:#fff}
+.search-result-name{font-size:14px;font-weight:600;color:var(--ink)}
+.search-result-desc{font-size:12px;color:var(--muted)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;background:var(--hero-bg);display:flex;align-items:center;padding:100px 40px 80px;gap:60px;overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;top:-120px;right:-160px;width:640px;height:640px;background:radial-gradient(circle,rgba(200,0,122,.18) 0%,transparent 65%);pointer-events:none}
+.hero-text{flex:1;max-width:560px;position:relative;z-index:1}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--pink-dim);border:1px solid var(--pink-border);border-radius:999px;padding:5px 14px;margin-bottom:24px}
+.hero-eyebrow-dot{width:6px;height:6px;background:var(--pink);border-radius:50%;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-eyebrow span{font-size:12px;color:#FF99CC;font-weight:600}
+.hero-h1{font-size:54px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:20px}
+.hero-h1 em{font-style:normal;color:var(--pink)}
+.hero-sub{font-size:17px;color:rgba(255,255,255,.62);line-height:1.72;max-width:460px;margin-bottom:36px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--pink);color:#fff;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;transition:all .2s}
+.btn-primary:hover{background:#a50064;transform:translateY(-1px)}
+.btn-primary svg{stroke:#fff}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px;font-weight:600;border:1px solid rgba(255,255,255,.15);transition:all .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+.btn-ghost svg{stroke:#fff}
+.hero-trust{display:flex;gap:24px;flex-wrap:wrap}
+.hero-trust-item{display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(255,255,255,.48)}
+.hero-trust-item svg{stroke:var(--teal);flex-shrink:0}
+
+/* ── HERO VISUAL ── */
+.hero-visual{flex-shrink:0;width:380px;height:480px;position:relative;z-index:1}
+.phone{width:210px;height:420px;background:linear-gradient(180deg,#1C1828 0%,#0D0A14 100%);border-radius:34px;border:2px solid rgba(255,255,255,.14);box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);overflow:hidden;animation:float-phone 4.2s ease-in-out infinite}
+@keyframes float-phone{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-10px)}}
+.phone-notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:56px;height:5px;background:rgba(255,255,255,.12);border-radius:999px}
+.phone-inner{padding:26px 14px 14px;height:100%}
+.phone-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.phone-greeting{font-size:10px;color:rgba(255,255,255,.45);margin-bottom:2px}
+.phone-name{font-size:13px;font-weight:700;color:#fff}
+.phone-bell{width:30px;height:30px;background:rgba(200,0,122,.25);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.phone-bell svg{width:13px;height:13px;stroke:rgba(255,255,255,.8);stroke-width:2}
+.balance-card{background:linear-gradient(135deg,#C8007A,#FF3399);border-radius:14px;padding:14px;margin-bottom:11px}
+.balance-label{font-size:9px;color:rgba(255,255,255,.7);margin-bottom:3px}
+.balance-value{font-size:19px;font-weight:900;color:#fff;letter-spacing:-.02em}
+.balance-updated{font-size:8px;color:rgba(255,255,255,.55);margin-top:2px}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+.qa-item{text-align:center}
+.qa-icon{background:rgba(255,255,255,.07);border-radius:10px;padding:7px;margin-bottom:3px;display:flex;align-items:center;justify-content:center}
+.qa-icon svg{width:14px;height:14px;stroke:rgba(255,255,255,.6);stroke-width:2}
+.qa-label{font-size:7px;color:rgba(255,255,255,.45)}
+.spend-chart{background:rgba(255,255,255,.04);border-radius:10px;padding:9px}
+.spend-title{font-size:8px;color:rgba(255,255,255,.35);margin-bottom:5px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:26px}
+.bar{flex:1;border-radius:2px}
+
+/* floating cards */
+.fc{position:absolute;backdrop-filter:blur(20px);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 16px;color:#fff}
+.fc-label{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.fc-value{font-size:18px;font-weight:800;line-height:1;margin-bottom:2px}
+.fc-sub{font-size:10px;color:rgba(255,255,255,.5)}
+.fc-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:999px;margin-top:7px}
+.fc-badge svg{width:9px;height:9px;stroke-width:2.5}
+.badge-teal{background:rgba(0,196,122,.18);color:#00C47A}
+.badge-teal svg{stroke:#00C47A}
+.badge-pink{background:rgba(255,51,153,.15);color:#FF66B2}
+.badge-pink svg{stroke:#FF66B2}
+.fc-1{top:20px;right:0;width:162px;animation:float-a 3.6s ease-in-out infinite}
+.fc-2{bottom:60px;right:0;width:162px;animation:float-b 4.5s ease-in-out infinite .8s}
+.fc-3{bottom:10px;left:0;width:152px;animation:float-c 3.9s ease-in-out infinite 1.5s}
+@keyframes float-a{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes float-b{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes float-c{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+
+/* ── TRUST BAR ── */
+.trust-bar{background:#fff;border-bottom:1px solid var(--line);padding:28px 40px;display:flex;justify-content:center;gap:56px;flex-wrap:wrap}
+.trust-item{text-align:center}
+.trust-num{font-size:26px;font-weight:900;color:var(--pink);letter-spacing:-.02em;line-height:1}
+.trust-lbl{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ── SECTION DEFAULTS ── */
+.sec{padding:80px 40px}
+.sec-center{text-align:center;margin-bottom:48px}
+.eyebrow{font-size:11px;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.sec-h2{font-size:38px;font-weight:900;line-height:1.15;letter-spacing:-.02em;margin-bottom:16px}
+.sec-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:480px;margin:0 auto}
+
+/* ── PRODUCT SHOWCASE (Revolut-style) ── */
+.pshow-tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.pshow-tab{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .18s}
+.pshow-tab svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;flex-shrink:0}
+.pshow-tab:hover{border-color:#ccc;color:var(--ink)}
+.pshow-tab.on{border-color:var(--pink);background:var(--pink);color:#fff}
+/* panel */
+.pshow-panels{position:relative;min-height:460px}
+.pshow-panel{display:none;gap:64px;align-items:center;max-width:1020px;margin:0 auto}
+.pshow-panel.on{display:flex}
+/* left text */
+.pshow-text{flex:1;min-width:0}
+.pshow-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.pshow-eyebrow-dot{width:7px;height:7px;border-radius:50%}
+.pshow-h3{font-size:34px;font-weight:900;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:14px}
+.pshow-desc{font-size:15px;color:var(--muted);line-height:1.72;margin-bottom:28px}
+/* stats row */
+.pshow-stats{display:flex;gap:28px;margin-bottom:28px;flex-wrap:wrap}
+.pshow-stat-val{font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1;margin-bottom:3px;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif}
+.pshow-stat-lbl{font-size:11px;color:var(--muted);font-weight:500}
+/* feature bullets */
+.pshow-feats{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.pshow-feat{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink);line-height:1.5}
+.pshow-feat-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.pshow-feat-icon svg{width:12px;height:12px;stroke:#fff;stroke-width:2.5}
+.pshow-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:12px;font-size:14px;font-weight:700;color:#fff;border:none;cursor:pointer;transition:opacity .15s}
+.pshow-btn:hover{opacity:.88}
+/* right visual */
+.pshow-visual{flex-shrink:0;width:320px;position:relative}
+.pshow-phone{width:220px;min-height:380px;border-radius:32px;border:2px solid rgba(0,0,0,.08);box-shadow:0 24px 60px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);overflow:hidden;margin:0 auto;position:relative}
+.pshow-phone-bar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.pshow-phone-title{font-size:13px;font-weight:700;color:#fff}
+.pshow-phone-body{padding:16px}
+/* glow behind phone */
+.pshow-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:280px;height:280px;border-radius:50%;filter:blur(60px);opacity:.25;pointer-events:none;z-index:-1}
+
+/* ── ONBOARDING ── */
+.steps{display:flex;position:relative;max-width:900px;margin:0 auto}
+.steps::before{content:'';position:absolute;top:30px;left:calc(16.67%);right:calc(16.67%);height:2px;background:linear-gradient(90deg,var(--pink),#FF66B2);z-index:0}
+.step{flex:1;text-align:center;padding:0 20px;position:relative;z-index:1}
+.step-num{width:60px;height:60px;border-radius:50%;background:var(--pink);color:#fff;font-size:22px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 0 0 6px rgba(200,0,122,.14)}
+.step-title{font-size:15px;font-weight:700;margin-bottom:7px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── PLG TOOLS ── */
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:960px;margin:0 auto}
+.tool-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column}
+.tool-icon{width:48px;height:48px;background:var(--pink-dim);border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.tool-icon svg{width:22px;height:22px;stroke:var(--pink);stroke-width:1.75}
+.tool-name{font-size:16px;font-weight:700;margin-bottom:8px}
+.tool-desc{font-size:13px;color:var(--muted);line-height:1.6;flex:1}
+.tool-link{font-size:13px;font-weight:700;color:var(--pink);margin-top:16px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.tool-link svg{width:13px;height:13px;stroke:var(--pink);stroke-width:2.5;transition:transform .15s}
+.tool-card:hover .tool-link svg{transform:translateX(2px)}
+
+/* ── AUTHORITY ── */
+.auth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;max-width:960px;margin:0 auto}
+.auth-item{text-align:center}
+.auth-icon{width:76px;height:76px;background:#fff;border:1px solid var(--line);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.auth-icon svg{width:28px;height:28px;stroke:var(--pink);stroke-width:1.5}
+.auth-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.auth-desc{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* ── APP CTA ── */
+.app-cta-sec{background:var(--hero-bg);padding:80px 40px;text-align:center}
+.cta-phone-icon{width:72px;height:72px;background:var(--pink-dim);border:1px solid var(--pink-border);border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.cta-phone-icon svg{width:32px;height:32px;stroke:var(--pink);stroke-width:1.5}
+.dl-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+.dl-btn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--ink);padding:13px 24px;border-radius:12px;font-weight:700;font-size:14px;transition:all .2s}
+.dl-btn:hover{background:var(--canvas);transform:translateY(-2px)}
+.dl-btn svg{width:22px;height:22px;stroke:var(--ink);stroke-width:1.75;flex-shrink:0}
+.dl-btn-txt-sm{font-size:10px;color:var(--muted);font-weight:400}
+.dl-btn-txt-lg{font-size:14px;font-weight:800;line-height:1}
+.cta-checks{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.cta-check{font-size:13px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:6px}
+.cta-check svg{stroke:var(--teal);width:14px;height:14px;stroke-width:2.5;flex-shrink:0}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);color:rgba(255,255,255,.45);padding:52px 40px 32px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-col-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:13px;color:rgba(255,255,255,.45);transition:color .15s}
+.footer-links a:hover{color:rgba(255,255,255,.8)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px}
+
+/* ── QUICK ACTIONS (Alipay/GoPay pattern) ── */
+.qa-sec{background:#fff;padding:32px 40px;border-bottom:1px solid var(--line)}
+.qa-grid{display:flex;max-width:960px;margin:0 auto}
+.qa-action{flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;padding:10px 6px;border-radius:16px;text-decoration:none;color:inherit;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.qa-action:hover{background:var(--canvas)}
+.qa-circle{width:54px;height:54px;border-radius:50%;background:var(--canvas);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qa-circle svg{width:21px;height:21px;stroke:var(--pink);stroke-width:1.75}
+.qa-action:hover .qa-circle{background:var(--pink-dim)}
+.qa-label{font-size:11px;font-weight:600;color:var(--ink);text-align:center;line-height:1.3}
+.qa-more .qa-circle{background:var(--pink-dim)}
+.qa-more .qa-circle svg{stroke:var(--pink)}
+
+/* ── PROMOTIONS (Paytm/Alipay pattern) ── */
+.promo-sec{background:var(--canvas);padding:48px 40px}
+.promo-head{max-width:960px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between}
+.promo-track{display:flex;gap:14px;max-width:960px;margin:0 auto;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px}
+.promo-track::-webkit-scrollbar{display:none}
+.promo-card{flex-shrink:0;width:280px;border-radius:20px;padding:22px;scroll-snap-align:start;position:relative;overflow:hidden;color:#fff}
+.promo-partner{font-size:10px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.promo-offer{font-size:26px;font-weight:900;line-height:1.1;margin-bottom:6px;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif}
+.promo-desc{font-size:12px;opacity:.78;line-height:1.5;margin-bottom:16px}
+.promo-cta{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;background:rgba(255,255,255,.2);padding:5px 12px;border-radius:999px;cursor:pointer}
+.promo-cta svg{width:11px;height:11px;stroke:#fff;stroke-width:2.5}
+.promo-deco{position:absolute;right:-16px;bottom:-24px;opacity:.08;font-size:110px;line-height:1;pointer-events:none;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;font-weight:900}
+.promo-dots{display:flex;gap:6px;justify-content:center;margin-top:20px}
+.promo-dot{width:6px;height:6px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .2s}
+.promo-dot.on{width:20px;border-radius:3px;background:var(--pink)}
+
+/* ── PARTNERS (GoPay/OVO pattern) ── */
+.partners-sec{background:#fff;padding:56px 40px}
+.partners-wrap{max-width:960px;margin:0 auto}
+.partners-logos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:32px}
+.partner-chip{display:flex;align-items:center;gap:8px;background:var(--canvas);border:1px solid var(--line);border-radius:12px;padding:9px 16px;font-size:13px;font-weight:700;color:var(--ink);transition:all .15s;cursor:default}
+.partner-chip:hover{border-color:var(--pink);background:#fff}
+.partner-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.partners-more{text-align:center;margin-top:20px;font-size:13px;color:var(--muted)}
+.partners-more strong{color:var(--pink)}
+
+/* ── MOMO XU / REWARDS (OVO Points/TrueMoney pattern) ── */
+.xu-sec{background:linear-gradient(135deg,#C8007A 0%,#FF2288 50%,#C8007A 100%);padding:56px 40px;overflow:hidden;position:relative}
+.xu-sec::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
+.xu-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:48px;flex-wrap:wrap;position:relative;z-index:1}
+.xu-text{flex:1;min-width:280px;color:#fff}
+.xu-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.65);margin-bottom:10px}
+.xu-title{font-size:32px;font-weight:900;line-height:1.15;margin-bottom:10px;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif}
+.xu-sub{font-size:15px;color:rgba(255,255,255,.72);line-height:1.65;max-width:380px}
+.xu-cta{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--pink);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;margin-top:24px;transition:all .2s}
+.xu-cta svg{stroke:var(--pink);width:14px;height:14px;stroke-width:2.5}
+.xu-cta:hover{background:var(--canvas);transform:translateY(-1px)}
+.xu-visual{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0}
+.xu-coin{width:90px;height:90px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.xu-coin svg{width:22px;height:22px;stroke:rgba(255,255,255,.8);stroke-width:1.75}
+.xu-coin-val{font-size:15px;font-weight:900;color:#fff;font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif;line-height:1}
+.xu-coin-lbl{font-size:9px;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.xu-coin.featured{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35)}
+
+/* ── REVEAL ── */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.rv.vis{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .nav-mega{width:520px;grid-template-columns:1fr 1fr}
+  .mega-col:last-child{display:none}
+  .pshow-panel.on{flex-direction:column}
+  .pshow-visual{width:100%;display:flex;justify-content:center}
+}
+@media(max-width:900px){
+  .nav{padding:0 20px}
+  .nav-links{display:none}
+  .hero{padding:80px 20px 60px;flex-direction:column;gap:40px}
+  .hero-visual{display:none}
+  .hero-h1{font-size:38px}
+  .trust-bar{padding:20px;gap:28px}
+  .qa-sec{padding:24px 16px}
+  .qa-label{font-size:10px}
+  .promo-sec{padding:40px 20px}
+  .sec{padding:60px 20px}
+  .sec-h2{font-size:30px}
+  .prod-grid{grid-template-columns:repeat(2,1fr)}
+  .partners-sec{padding:48px 20px}
+  .steps{flex-direction:column;gap:28px}
+  .steps::before{display:none}
+  .xu-sec{padding:48px 20px}
+  .xu-visual{grid-template-columns:1fr 1fr}
+  .tools-grid{grid-template-columns:1fr}
+  .auth-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:480px){
+  .prod-grid{grid-template-columns:1fr}
+  .qa-circle{width:46px;height:46px}
+  .qa-circle svg{width:18px;height:18px}
+  .xu-visual{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <!-- Logo -->
+  <div class="nav-logo">
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" width="32" height="32" alt="MoMo logo">
+    <span class="d">MoMo</span>
+  </div>
+
+  <!-- Level 1 menu -->
+  <div class="nav-links">
+
+    <!-- Sản phẩm — mega dropdown -->
+    <div class="nav-item">
+      <button>Sản phẩm <svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-mega">
+        <div class="mega-col">
+          <div class="mega-col-title">Thanh toán</div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#FFF0F8"><i data-lucide="send" style="color:#C8007A"></i></div>
+            <div><div class="mega-item-name">Chuyển tiền</div><div class="mega-item-desc">Chuyển nhanh tới mọi ngân hàng, ví</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#F0F9FF"><i data-lucide="file-text" style="color:#0284C7"></i></div>
+            <div><div class="mega-item-name">Hóa đơn & Dịch vụ</div><div class="mega-item-desc">Điện, nước, internet, truyền hình</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#F0FDF4"><i data-lucide="smartphone" style="color:#16A34A"></i></div>
+            <div><div class="mega-item-name">Nạp điện thoại</div><div class="mega-item-desc">Nạp tiền, mua data tất cả nhà mạng</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#FFFBEB"><i data-lucide="ticket" style="color:#D97706"></i></div>
+            <div><div class="mega-item-name">Mua vé</div><div class="mega-item-desc">Phim, sự kiện, xe khách, máy bay</div></div>
+          </div>
+        </div>
+        <div class="mega-col">
+          <div class="mega-col-title">Tài chính</div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#FFF0F8"><i data-lucide="credit-card" style="color:#C8007A"></i></div>
+            <div><div class="mega-item-name">Vay nhanh</div><div class="mega-item-desc">Vay tới 30 triệu, giải ngân 30 giây</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#F0FDF4"><i data-lucide="piggy-bank" style="color:#16A34A"></i></div>
+            <div><div class="mega-item-name">Tiết kiệm</div><div class="mega-item-desc">Gửi tiết kiệm lãi suất lên đến 7%/năm</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#EFF6FF"><i data-lucide="trending-up" style="color:#3B82F6"></i></div>
+            <div><div class="mega-item-name">Ví trả sau</div><div class="mega-item-desc">Mua trước trả sau, lãi 0% tháng đầu</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#FDF4FF"><i data-lucide="bar-chart-2" style="color:#9333EA"></i></div>
+            <div><div class="mega-item-name">CIC Score</div><div class="mega-item-desc">Kiểm tra điểm tín dụng miễn phí</div></div>
+          </div>
+        </div>
+        <div class="mega-col">
+          <div class="mega-col-title">Bảo hiểm & Tiện ích</div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#FFF7ED"><i data-lucide="shield" style="color:#EA580C"></i></div>
+            <div><div class="mega-item-name">Bảo hiểm xe máy</div><div class="mega-item-desc">Bắt buộc & tự nguyện, giá từ 66K/năm</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#FFF7ED"><i data-lucide="car" style="color:#EA580C"></i></div>
+            <div><div class="mega-item-name">Bảo hiểm ô tô</div><div class="mega-item-desc">So sánh gói, mua online trong 5 phút</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#F0FDF4"><i data-lucide="heart-pulse" style="color:#16A34A"></i></div>
+            <div><div class="mega-item-name">Bảo hiểm y tế</div><div class="mega-item-desc">BHYT, sức khỏe cá nhân & gia đình</div></div>
+          </div>
+          <div class="mega-item">
+            <div class="mega-icon" style="background:#F8FAFC"><i data-lucide="alert-triangle" style="color:#64748B"></i></div>
+            <div><div class="mega-item-name">Phạt nguội</div><div class="mega-item-desc">Tra cứu & nộp phạt vi phạm giao thông</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Công cụ tài chính -->
+    <div class="nav-item">
+      <button>Công cụ <svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-list">
+        <div class="nav-list-item"><i data-lucide="calculator"></i>Máy tính lãi vay</div>
+        <div class="nav-list-item"><i data-lucide="compare-arrows"></i>So sánh bảo hiểm</div>
+        <div class="nav-list-item"><i data-lucide="trending-up"></i>Tính lãi tiết kiệm</div>
+        <div class="nav-list-sep"></div>
+        <div class="nav-list-item"><i data-lucide="bar-chart-2"></i>CIC Score miễn phí</div>
+        <div class="nav-list-item"><i data-lucide="map-pin"></i>Điểm chấp nhận MoMo</div>
+      </div>
+    </div>
+
+    <!-- Doanh nghiệp -->
+    <div class="nav-item">
+      <button>Doanh nghiệp <svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-list">
+        <div class="nav-list-item"><i data-lucide="store"></i>Trở thành đối tác</div>
+        <div class="nav-list-item"><i data-lucide="qr-code"></i>Nhận thanh toán QR</div>
+        <div class="nav-list-item"><i data-lucide="layers"></i>MoMo for Business</div>
+        <div class="nav-list-sep"></div>
+        <div class="nav-list-item"><i data-lucide="code-2"></i>API & Tích hợp</div>
+      </div>
+    </div>
+
+    <!-- Về MoMo -->
+    <div class="nav-item">
+      <button>Về MoMo <svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-list">
+        <div class="nav-list-item"><i data-lucide="info"></i>Giới thiệu</div>
+        <div class="nav-list-item"><i data-lucide="newspaper"></i>Tin tức & Blog</div>
+        <div class="nav-list-item"><i data-lucide="briefcase"></i>Tuyển dụng</div>
+        <div class="nav-list-sep"></div>
+        <div class="nav-list-item"><i data-lucide="headphones"></i>Hỗ trợ & CSKH</div>
+        <div class="nav-list-item"><i data-lucide="shield-check"></i>Chính sách bảo mật</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right actions -->
+  <div class="nav-actions">
+    <button class="nav-search-btn" id="navSearchBtn" aria-label="Tìm kiếm">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    </button>
+    <button class="nav-cta">Tải MoMo miễn phí</button>
+  </div>
+</nav>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-backdrop" id="searchBackdrop"></div>
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Tìm dịch vụ, tính năng, câu hỏi..." autocomplete="off">
+      <button class="search-clear" id="searchClose" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Suggested / results area -->
+    <div class="search-suggests" id="searchSuggests">
+      <div class="search-suggest-group">
+        <div class="search-suggest-label">Tìm kiếm phổ biến</div>
+        <div class="search-chips">
+          <button class="search-chip" onclick="fillSearch('Vay nhanh')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Vay nhanh</button>
+          <button class="search-chip" onclick="fillSearch('Bảo hiểm xe máy')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Bảo hiểm xe máy</button>
+          <button class="search-chip" onclick="fillSearch('Tiết kiệm')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 7V4H5v3"/><path d="M3 7h18l-1 12H4L3 7z"/><path d="M12 12v5"/></svg>Tiết kiệm</button>
+          <button class="search-chip" onclick="fillSearch('Phạt nguội')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Phạt nguội</button>
+          <button class="search-chip" onclick="fillSearch('Chuyển tiền')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Chuyển tiền</button>
+          <button class="search-chip" onclick="fillSearch('CIC Score')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>CIC Score</button>
+        </div>
+      </div>
+      <div class="search-suggest-group">
+        <div class="search-suggest-label">Danh mục</div>
+        <div class="search-chips">
+          <button class="search-chip" onclick="fillSearch('Tài chính cá nhân')">Tài chính cá nhân</button>
+          <button class="search-chip" onclick="fillSearch('Thanh toán')">Thanh toán</button>
+          <button class="search-chip" onclick="fillSearch('Bảo hiểm')">Bảo hiểm</button>
+          <button class="search-chip" onclick="fillSearch('Tiện ích')">Tiện ích</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      <span>45 triệu người Việt tin dùng MoMo</span>
+    </div>
+    <h1 class="hero-h1 d">
+      Tài chính<br>thông minh hơn,<br>cuộc sống <em>tốt hơn</em>
+    </h1>
+    <p class="hero-sub">Vay tiền, mua bảo hiểm, tiết kiệm và thanh toán - quản lý toàn bộ tài chính cá nhân trong một ứng dụng. Được cấp phép và giám sát bởi Ngân hàng Nhà nước Việt Nam.</p>
+    <div class="hero-actions">
+      <a href="#download" class="btn-primary">
+        <i data-lucide="smartphone"></i>
+        Tải MoMo miễn phí
+      </a>
+      <a href="#products" class="btn-ghost">
+        Xem dịch vụ
+        <i data-lucide="arrow-right"></i>
+      </a>
+    </div>
+    <div class="hero-trust">
+      <div class="hero-trust-item"><i data-lucide="check-circle-2"></i> Cấp phép NHNN</div>
+      <div class="hero-trust-item"><i data-lucide="check-circle-2"></i> Bảo mật SSL 256-bit</div>
+      <div class="hero-trust-item"><i data-lucide="check-circle-2"></i> 10 năm uy tín</div>
+    </div>
+  </div>
+
+  <!-- HERO VISUAL -->
+  <div class="hero-visual">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-inner">
+        <div class="phone-header">
+          <div>
+            <div class="phone-greeting">Xin chào,</div>
+            <div class="phone-name">Minh Anh</div>
+          </div>
+          <div class="phone-bell"><i data-lucide="bell"></i></div>
+        </div>
+        <div class="balance-card">
+          <div class="balance-label">Số dư ví MoMo</div>
+          <div class="balance-value d">2.450.000 đ</div>
+          <div class="balance-updated">Cập nhật vừa xong</div>
+        </div>
+        <div class="quick-actions">
+          <div class="qa-item">
+            <div class="qa-icon"><i data-lucide="credit-card"></i></div>
+            <div class="qa-label">Nạp tiền</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-icon"><i data-lucide="banknote"></i></div>
+            <div class="qa-label">Vay tiền</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-icon"><i data-lucide="shield"></i></div>
+            <div class="qa-label">Bảo hiểm</div>
+          </div>
+        </div>
+        <div class="spend-chart">
+          <div class="spend-title">Chi tiêu tháng này</div>
+          <div class="bars">
+            <div class="bar" style="background:rgba(200,0,122,.35);height:40%"></div>
+            <div class="bar" style="background:rgba(200,0,122,.35);height:62%"></div>
+            <div class="bar" style="background:rgba(200,0,122,.35);height:48%"></div>
+            <div class="bar" style="background:rgba(200,0,122,.35);height:78%"></div>
+            <div class="bar" style="background:#C8007A;height:58%"></div>
+            <div class="bar" style="background:rgba(200,0,122,.2);height:28%"></div>
+            <div class="bar" style="background:rgba(200,0,122,.15);height:18%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating cards -->
+    <div class="fc fc-1">
+      <div class="fc-label">Vay Nhanh</div>
+      <div class="fc-value d">10.000.000đ</div>
+      <div class="fc-sub">Lãi từ 1.5%/tháng</div>
+      <div class="fc-badge badge-teal">
+        <i data-lucide="check"></i> Đã duyệt
+      </div>
+    </div>
+
+    <div class="fc fc-2">
+      <div class="fc-label">BH Xe Máy</div>
+      <div class="fc-value d">350.000đ</div>
+      <div class="fc-sub">Bảo vệ 365 ngày</div>
+      <div class="fc-badge badge-pink">
+        <i data-lucide="shield-check"></i> Đang bảo vệ
+      </div>
+    </div>
+
+    <div class="fc fc-3">
+      <div class="fc-label">Tiết Kiệm</div>
+      <div class="fc-value d">50.000.000đ</div>
+      <div class="fc-sub">Lãi 7%/năm</div>
+      <div class="fc-badge badge-teal">
+        <i data-lucide="trending-up"></i> +291K/tháng
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item">
+    <div class="trust-num d">45M+</div>
+    <div class="trust-lbl">Người dùng tin tưởng</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num d">10+</div>
+    <div class="trust-lbl">Năm hoạt động uy tín</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num d">NHNN</div>
+    <div class="trust-lbl">Được cấp phép & giám sát</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num d">4.8 / 5</div>
+    <div class="trust-lbl">Đánh giá trên App Store</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num d">50+</div>
+    <div class="trust-lbl">Dịch vụ tài chính</div>
+  </div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="qa-sec">
+  <div class="qa-grid">
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="send"></i></div>
+      <span class="qa-label">Chuyển tiền</span>
+    </a>
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="smartphone"></i></div>
+      <span class="qa-label">Nạp điện thoại</span>
+    </a>
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="receipt"></i></div>
+      <span class="qa-label">Hóa đơn</span>
+    </a>
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="ticket"></i></div>
+      <span class="qa-label">Mua vé</span>
+    </a>
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="banknote"></i></div>
+      <span class="qa-label">Vay tiền</span>
+    </a>
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="piggy-bank"></i></div>
+      <span class="qa-label">Tiết kiệm</span>
+    </a>
+    <a class="qa-action" href="#">
+      <div class="qa-circle"><i data-lucide="shield-check"></i></div>
+      <span class="qa-label">Bảo hiểm</span>
+    </a>
+    <a class="qa-action qa-more" href="#">
+      <div class="qa-circle"><i data-lucide="grid-2x2"></i></div>
+      <span class="qa-label">Xem thêm</span>
+    </a>
+  </div>
+</div>
+
+<!-- PROMOTIONS -->
+<section class="promo-sec">
+  <div class="promo-head rv">
+    <div>
+      <div class="eyebrow" style="margin-bottom:4px">Ưu đãi dành riêng</div>
+      <div class="sec-h2 d" style="font-size:26px;margin:0">Khuyến mãi hôm nay</div>
+    </div>
+    <a href="#" style="font-size:13px;font-weight:700;color:var(--pink);display:flex;align-items:center;gap:4px">
+      Xem tất cả <i data-lucide="arrow-right"></i>
+    </a>
+  </div>
+  <div class="promo-track" id="promo-track">
+    <div class="promo-card" style="background:linear-gradient(135deg,#059669,#10B981)">
+      <div class="promo-partner">Hóa đơn & Dịch vụ</div>
+      <div class="promo-offer">Hoàn 50.000đ</div>
+      <div class="promo-desc">Khi thanh toán hóa đơn điện, nước, internet lần đầu qua MoMo.</div>
+      <div class="promo-cta">Nhận ngay <i data-lucide="arrow-right"></i></div>
+      <div class="promo-deco">50K</div>
+    </div>
+    <div class="promo-card" style="background:linear-gradient(135deg,#C8007A,#FF3399)">
+      <div class="promo-partner">Vay Nhanh</div>
+      <div class="promo-offer">Lãi 0% tháng đầu</div>
+      <div class="promo-desc">Vay tối đa 10 triệu, hoàn toàn miễn lãi 30 ngày đầu tiên.</div>
+      <div class="promo-cta">Vay ngay <i data-lucide="arrow-right"></i></div>
+      <div class="promo-deco">0%</div>
+    </div>
+    <div class="promo-card" style="background:linear-gradient(135deg,#7C3AED,#A855F7)">
+      <div class="promo-partner">Bảo hiểm xe máy</div>
+      <div class="promo-offer">1 tháng miễn phí</div>
+      <div class="promo-desc">Mua bảo hiểm xe máy 1 năm, tặng thêm 1 tháng bảo vệ miễn phí.</div>
+      <div class="promo-cta">Mua ngay <i data-lucide="arrow-right"></i></div>
+      <div class="promo-deco">BH</div>
+    </div>
+    <div class="promo-card" style="background:linear-gradient(135deg,#1D4ED8,#3B82F6)">
+      <div class="promo-partner">Tiết kiệm</div>
+      <div class="promo-offer">Lãi 7%/năm</div>
+      <div class="promo-desc">Gửi tiết kiệm kỳ hạn 6 tháng, nhận lãi suất ưu đãi cho khách mới.</div>
+      <div class="promo-cta">Gửi ngay <i data-lucide="arrow-right"></i></div>
+      <div class="promo-deco">7%</div>
+    </div>
+  </div>
+  <div class="promo-dots rv" id="promo-dots">
+    <div class="promo-dot on"></div>
+    <div class="promo-dot"></div>
+    <div class="promo-dot"></div>
+    <div class="promo-dot"></div>
+  </div>
+</section>
+
+<!-- PRODUCTS – Revolut-style showcase -->
+<section id="products" class="sec" style="background:var(--canvas)">
+  <div class="sec-center rv">
+    <div class="eyebrow">Hệ sinh thái tài chính</div>
+    <h2 class="sec-h2 d">Mọi nhu cầu tài chính,<br>một ứng dụng</h2>
+    <p class="sec-sub">Từ vay tiền đến bảo hiểm, từ tiết kiệm đến thanh toán - MoMo có đủ giải pháp cho mọi giai đoạn cuộc sống.</p>
+  </div>
+
+  <!-- Tab pills -->
+  <div class="pshow-tabs rv" id="pshow-tabs">
+    <button class="pshow-tab on" data-tab="loan"><i data-lucide="banknote"></i> Vay & Tín dụng</button>
+    <button class="pshow-tab" data-tab="insurance"><i data-lucide="shield-check"></i> Bảo hiểm</button>
+    <button class="pshow-tab" data-tab="saving"><i data-lucide="piggy-bank"></i> Tiết kiệm</button>
+    <button class="pshow-tab" data-tab="payment"><i data-lucide="qr-code"></i> Thanh toán</button>
+    <button class="pshow-tab" data-tab="utility"><i data-lucide="zap"></i> Tiện ích</button>
+  </div>
+
+  <!-- Showcase panels -->
+  <div class="pshow-panels rv" id="pshow-panels">
+
+    <!-- VAY & TÍN DỤNG -->
+    <div class="pshow-panel on" data-panel="loan">
+      <div class="pshow-text">
+        <div class="pshow-eyebrow" style="color:#C8007A"><span class="pshow-eyebrow-dot" style="background:#C8007A"></span>Vay & Tín dụng</div>
+        <h3 class="pshow-h3">Vay nhanh,<br>giải ngân trong ngày</h3>
+        <p class="pshow-desc">Không cần thế chấp tài sản, không cần gặp trực tiếp. Duyệt vay tự động qua AI scoring dựa trên lịch sử giao dịch MoMo của bạn.</p>
+        <div class="pshow-stats">
+          <div><div class="pshow-stat-val" style="color:#C8007A">30 triệu</div><div class="pshow-stat-lbl">Hạn mức tối đa</div></div>
+          <div><div class="pshow-stat-val" style="color:#C8007A">30 giây</div><div class="pshow-stat-lbl">Thời gian duyệt</div></div>
+          <div><div class="pshow-stat-val" style="color:#C8007A">1.5%</div><div class="pshow-stat-lbl">Lãi/tháng từ</div></div>
+        </div>
+        <ul class="pshow-feats">
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#C8007A"><i data-lucide="check"></i></span>Vay Nhanh - giải ngân trong 24h, không thế chấp</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#C8007A"><i data-lucide="check"></i></span>Ví Trả Sau - mua trước trả sau, lãi 0% tháng đầu</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#C8007A"><i data-lucide="check"></i></span>Kiểm tra điểm CIC miễn phí, tăng cơ hội được duyệt</li>
+        </ul>
+        <button class="pshow-btn" style="background:#C8007A">Xem điều kiện vay <i data-lucide="arrow-right"></i></button>
+      </div>
+      <div class="pshow-visual">
+        <div class="pshow-glow" style="background:#C8007A"></div>
+        <div class="pshow-phone" style="background:linear-gradient(160deg,#1A0010,#0D0A14)">
+          <div class="pshow-phone-bar" style="background:rgba(200,0,122,.2)">
+            <span class="pshow-phone-title">Vay Nhanh</span>
+            <i data-lucide="x" style="color:rgba(255,255,255,.5);width:14px;height:14px"></i>
+          </div>
+          <div class="pshow-phone-body">
+            <div style="text-align:center;padding:12px 0 18px">
+              <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px">Hạn mức của bạn</div>
+              <div style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-.02em">15.000.000<span style="font-size:14px;font-weight:600">đ</span></div>
+              <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,196,122,.15);color:#00C47A;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;margin-top:8px"><i data-lucide="check-circle" style="width:11px;height:11px;stroke:#00C47A"></i>Đã duyệt</div>
+            </div>
+            <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:10px">
+              <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px">Kỳ hạn</div>
+              <div style="display:flex;gap:6px">
+                <div style="flex:1;background:#C8007A;border-radius:8px;padding:6px;text-align:center;font-size:11px;font-weight:700;color:#fff">3 tháng</div>
+                <div style="flex:1;background:rgba(255,255,255,.08);border-radius:8px;padding:6px;text-align:center;font-size:11px;color:rgba(255,255,255,.5)">6 tháng</div>
+                <div style="flex:1;background:rgba(255,255,255,.08);border-radius:8px;padding:6px;text-align:center;font-size:11px;color:rgba(255,255,255,.5)">12 tháng</div>
+              </div>
+            </div>
+            <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:11px;color:rgba(255,255,255,.4)">Trả/tháng</span><span style="font-size:13px;font-weight:700;color:#fff">5.225.000đ</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:rgba(255,255,255,.4)">Lãi suất</span><span style="font-size:13px;font-weight:700;color:#fff">1.5%/tháng</span></div>
+            </div>
+            <div style="background:#C8007A;border-radius:10px;padding:11px;text-align:center;font-size:13px;font-weight:700;color:#fff">Vay ngay</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BẢO HIỂM -->
+    <div class="pshow-panel" data-panel="insurance">
+      <div class="pshow-text">
+        <div class="pshow-eyebrow" style="color:#059669"><span class="pshow-eyebrow-dot" style="background:#059669"></span>Bảo hiểm</div>
+        <h3 class="pshow-h3">Bảo vệ toàn diện,<br>mua trong 2 phút</h3>
+        <p class="pshow-desc">So sánh và mua bảo hiểm xe máy, ô tô, sức khỏe ngay trên MoMo. Giấy tờ số cấp tức thì, bồi thường nhanh chóng.</p>
+        <div class="pshow-stats">
+          <div><div class="pshow-stat-val" style="color:#059669">66K</div><div class="pshow-stat-lbl">BH xe máy từ/năm</div></div>
+          <div><div class="pshow-stat-val" style="color:#059669">48h</div><div class="pshow-stat-lbl">Bồi thường trong</div></div>
+          <div><div class="pshow-stat-val" style="color:#059669">3+</div><div class="pshow-stat-lbl">Loại bảo hiểm</div></div>
+        </div>
+        <ul class="pshow-feats">
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#059669"><i data-lucide="check"></i></span>BH xe máy bắt buộc & tự nguyện, cấp giấy tờ số ngay</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#059669"><i data-lucide="check"></i></span>BH ô tô vật chất - so sánh gói từ nhiều công ty bảo hiểm</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#059669"><i data-lucide="check"></i></span>BH y tế cá nhân & gia đình từ 70.000đ/tháng</li>
+        </ul>
+        <button class="pshow-btn" style="background:#059669">Xem gói bảo hiểm <i data-lucide="arrow-right"></i></button>
+      </div>
+      <div class="pshow-visual">
+        <div class="pshow-glow" style="background:#059669"></div>
+        <div class="pshow-phone" style="background:linear-gradient(160deg,#001A0D,#0A1210)">
+          <div class="pshow-phone-bar" style="background:rgba(5,150,105,.2)">
+            <span class="pshow-phone-title">Bảo hiểm</span>
+            <i data-lucide="x" style="color:rgba(255,255,255,.5);width:14px;height:14px"></i>
+          </div>
+          <div class="pshow-phone-body">
+            <div style="background:linear-gradient(135deg,#059669,#10B981);border-radius:14px;padding:14px;margin-bottom:10px">
+              <div style="font-size:10px;color:rgba(255,255,255,.7);margin-bottom:4px">BH Xe Máy - Đang bảo vệ</div>
+              <div style="font-size:18px;font-weight:900;color:#fff">Honda Wave Alpha</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:2px">29B-12345 · Hết hạn: 12/2025</div>
+              <div style="display:flex;justify-content:space-between;margin-top:10px">
+                <div><div style="font-size:10px;color:rgba(255,255,255,.6)">Phí bảo hiểm</div><div style="font-size:14px;font-weight:700;color:#fff">350.000đ</div></div>
+                <div style="text-align:right"><div style="font-size:10px;color:rgba(255,255,255,.6)">Trạng thái</div><div style="font-size:12px;font-weight:700;color:#A7F3D0">● Đang bảo vệ</div></div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:8px">Gói phù hợp cho bạn</div>
+            <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+              <div><div style="font-size:12px;font-weight:600;color:#fff">BH Sức khỏe cơ bản</div><div style="font-size:10px;color:rgba(255,255,255,.4)">Từ 70.000đ/tháng</div></div>
+              <div style="background:#059669;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#fff">Xem</div>
+            </div>
+            <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-size:12px;font-weight:600;color:#fff">BH Ô tô vật chất</div><div style="font-size:10px;color:rgba(255,255,255,.4)">Từ 1.2 triệu/năm</div></div>
+              <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:5px 10px;font-size:11px;color:rgba(255,255,255,.6)">Xem</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIẾT KIỆM -->
+    <div class="pshow-panel" data-panel="saving">
+      <div class="pshow-text">
+        <div class="pshow-eyebrow" style="color:#2563EB"><span class="pshow-eyebrow-dot" style="background:#2563EB"></span>Tiết kiệm</div>
+        <h3 class="pshow-h3">Tiền sinh lời<br>mỗi ngày bạn ngủ</h3>
+        <p class="pshow-desc">Gửi tiết kiệm kỳ hạn hoặc linh hoạt với lãi suất cạnh tranh nhất thị trường. Rút trước hạn không mất phí, gia hạn tự động.</p>
+        <div class="pshow-stats">
+          <div><div class="pshow-stat-val" style="color:#2563EB">7%</div><div class="pshow-stat-lbl">Lãi suất/năm tối đa</div></div>
+          <div><div class="pshow-stat-val" style="color:#2563EB">1 ngày</div><div class="pshow-stat-lbl">Kỳ hạn ngắn nhất</div></div>
+          <div><div class="pshow-stat-val" style="color:#2563EB">0đ</div><div class="pshow-stat-lbl">Phí rút trước hạn</div></div>
+        </div>
+        <ul class="pshow-feats">
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#2563EB"><i data-lucide="check"></i></span>Kỳ hạn từ 1 ngày đến 12 tháng, chọn linh hoạt theo nhu cầu</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#2563EB"><i data-lucide="check"></i></span>Lãi suất cạnh tranh, hiển thị minh bạch trước khi gửi</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#2563EB"><i data-lucide="check"></i></span>Gia hạn tự động, không cần lo đáo hạn thủ công</li>
+        </ul>
+        <button class="pshow-btn" style="background:#2563EB">Gửi tiết kiệm ngay <i data-lucide="arrow-right"></i></button>
+      </div>
+      <div class="pshow-visual">
+        <div class="pshow-glow" style="background:#2563EB"></div>
+        <div class="pshow-phone" style="background:linear-gradient(160deg,#020B1A,#0A1020)">
+          <div class="pshow-phone-bar" style="background:rgba(37,99,235,.2)">
+            <span class="pshow-phone-title">Tiết kiệm</span>
+            <i data-lucide="x" style="color:rgba(255,255,255,.5);width:14px;height:14px"></i>
+          </div>
+          <div class="pshow-phone-body">
+            <div style="text-align:center;padding:8px 0 16px">
+              <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px">Tổng tiết kiệm</div>
+              <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-.02em">50.000.000<span style="font-size:13px;font-weight:600">đ</span></div>
+              <div style="font-size:12px;color:#60A5FA;margin-top:4px">+42.000đ lãi hôm nay</div>
+            </div>
+            <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <span style="font-size:11px;color:rgba(255,255,255,.5)">Kỳ hạn 6 tháng</span>
+                <span style="background:rgba(37,99,235,.3);color:#93C5FD;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px">7.0%/năm</span>
+              </div>
+              <div style="display:flex;gap:4px;margin-bottom:6px">
+                <div style="height:4px;flex:3;background:#2563EB;border-radius:999px"></div>
+                <div style="height:4px;flex:1;background:rgba(255,255,255,.1);border-radius:999px"></div>
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,.3)">Còn 47 ngày · Đáo hạn: 15/08/2025</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+              <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:10px">
+                <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:3px">Lãi nhận được</div>
+                <div style="font-size:14px;font-weight:700;color:#fff">1.750.000đ</div>
+              </div>
+              <div style="background:#2563EB;border-radius:10px;padding:10px;text-align:center;cursor:pointer">
+                <div style="font-size:11px;font-weight:700;color:#fff">+ Gửi thêm</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THANH TOÁN -->
+    <div class="pshow-panel" data-panel="payment">
+      <div class="pshow-text">
+        <div class="pshow-eyebrow" style="color:#0891B2"><span class="pshow-eyebrow-dot" style="background:#0891B2"></span>Thanh toán</div>
+        <h3 class="pshow-h3">Thanh toán mọi nơi,<br>mọi lúc, không tiền mặt</h3>
+        <p class="pshow-desc">Quét QR, chuyển tiền, thanh toán hóa đơn hay mua vé - tất cả trong một ứng dụng. Được chấp nhận tại hơn 500.000 điểm trên toàn quốc.</p>
+        <div class="pshow-stats">
+          <div><div class="pshow-stat-val" style="color:#0891B2">500K+</div><div class="pshow-stat-lbl">Điểm chấp nhận</div></div>
+          <div><div class="pshow-stat-val" style="color:#0891B2">5 giây</div><div class="pshow-stat-lbl">Chuyển tiền tức thì</div></div>
+          <div><div class="pshow-stat-val" style="color:#0891B2">0đ</div><div class="pshow-stat-lbl">Phí chuyển tiền</div></div>
+        </div>
+        <ul class="pshow-feats">
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#0891B2"><i data-lucide="check"></i></span>Chuyển tiền miễn phí tới mọi ngân hàng, ví điện tử</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#0891B2"><i data-lucide="check"></i></span>Thanh toán QR tại Shopee, Grab, CGV, Highlands và 500K+ nơi</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#0891B2"><i data-lucide="check"></i></span>Trả hóa đơn điện, nước, internet tự động mỗi tháng</li>
+        </ul>
+        <button class="pshow-btn" style="background:#0891B2">Khám phá thanh toán <i data-lucide="arrow-right"></i></button>
+      </div>
+      <div class="pshow-visual">
+        <div class="pshow-glow" style="background:#0891B2"></div>
+        <div class="pshow-phone" style="background:linear-gradient(160deg,#001018,#061520)">
+          <div class="pshow-phone-bar" style="background:rgba(8,145,178,.2)">
+            <span class="pshow-phone-title">Chuyển tiền</span>
+            <i data-lucide="x" style="color:rgba(255,255,255,.5);width:14px;height:14px"></i>
+          </div>
+          <div class="pshow-phone-body">
+            <div style="text-align:center;padding:8px 0 16px">
+              <div style="width:48px;height:48px;border-radius:50%;background:rgba(8,145,178,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><i data-lucide="user" style="width:22px;height:22px;stroke:#38BDF8"></i></div>
+              <div style="font-size:13px;font-weight:700;color:#fff">Nguyễn Văn A</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.4)">0901 234 567</div>
+            </div>
+            <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center">
+              <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:6px">Số tiền chuyển</div>
+              <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-.02em">500.000<span style="font-size:14px">đ</span></div>
+              <div style="display:flex;gap:6px;justify-content:center;margin-top:10px">
+                <span style="background:rgba(255,255,255,.08);border-radius:999px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.5)">100K</span>
+                <span style="background:rgba(255,255,255,.08);border-radius:999px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.5)">200K</span>
+                <span style="background:#0891B2;border-radius:999px;padding:4px 10px;font-size:11px;color:#fff;font-weight:600">500K</span>
+                <span style="background:rgba(255,255,255,.08);border-radius:999px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.5)">1M</span>
+              </div>
+            </div>
+            <div style="background:#0891B2;border-radius:10px;padding:12px;text-align:center;font-size:13px;font-weight:700;color:#fff">Chuyển ngay · Miễn phí</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIỆN ÍCH -->
+    <div class="pshow-panel" data-panel="utility">
+      <div class="pshow-text">
+        <div class="pshow-eyebrow" style="color:#7C3AED"><span class="pshow-eyebrow-dot" style="background:#7C3AED"></span>Tiện ích</div>
+        <h3 class="pshow-h3">Cuộc sống số,<br>mọi việc xử lý xong trong app</h3>
+        <p class="pshow-desc">Từ tra cứu phạt nguội đến mua vé xem phim, từ nạp điện thoại đến đặt vé máy bay - MoMo xử lý hết để bạn tập trung vào điều quan trọng hơn.</p>
+        <div class="pshow-stats">
+          <div><div class="pshow-stat-val" style="color:#7C3AED">50+</div><div class="pshow-stat-lbl">Dịch vụ tiện ích</div></div>
+          <div><div class="pshow-stat-val" style="color:#7C3AED">1 phút</div><div class="pshow-stat-lbl">Hoàn tất giao dịch</div></div>
+          <div><div class="pshow-stat-val" style="color:#7C3AED">24/7</div><div class="pshow-stat-lbl">Hỗ trợ liên tục</div></div>
+        </div>
+        <ul class="pshow-feats">
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#7C3AED"><i data-lucide="check"></i></span>Tra cứu & nộp phạt vi phạm giao thông trực tuyến</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#7C3AED"><i data-lucide="check"></i></span>Nạp điện thoại tất cả nhà mạng, mua data gói cước</li>
+          <li class="pshow-feat"><span class="pshow-feat-icon" style="background:#7C3AED"><i data-lucide="check"></i></span>Mua vé phim CGV, BHD, Cinestar - chọn ghế ngay trên app</li>
+        </ul>
+        <button class="pshow-btn" style="background:#7C3AED">Khám phá tiện ích <i data-lucide="arrow-right"></i></button>
+      </div>
+      <div class="pshow-visual">
+        <div class="pshow-glow" style="background:#7C3AED"></div>
+        <div class="pshow-phone" style="background:linear-gradient(160deg,#0D0814,#100A1C)">
+          <div class="pshow-phone-bar" style="background:rgba(124,58,237,.2)">
+            <span class="pshow-phone-title">Phạt nguội</span>
+            <i data-lucide="x" style="color:rgba(255,255,255,.5);width:14px;height:14px"></i>
+          </div>
+          <div class="pshow-phone-body">
+            <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:10px">
+              <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:6px">Biển số xe</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="background:rgba(124,58,237,.3);border-radius:8px;padding:8px 12px;font-size:15px;font-weight:900;color:#fff;letter-spacing:.08em;flex:1;text-align:center">51G-12345</div>
+                <div style="background:#7C3AED;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;color:#fff">Tra cứu</div>
+              </div>
+            </div>
+            <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:12px;margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <span style="font-size:11px;font-weight:700;color:#FCA5A5">Vi phạm tìm thấy</span>
+                <span style="background:rgba(239,68,68,.2);color:#FCA5A5;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px">1 lỗi</span>
+              </div>
+              <div style="font-size:12px;color:#fff;margin-bottom:3px">Vượt đèn đỏ - Nguyễn Trãi</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.4)">15/03/2025 · 1.000.000đ</div>
+            </div>
+            <div style="background:#7C3AED;border-radius:10px;padding:11px;text-align:center;font-size:13px;font-weight:700;color:#fff">Nộp phạt qua MoMo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners-sec">
+  <div class="partners-wrap">
+    <div class="sec-center rv" style="margin-bottom:0">
+      <div class="eyebrow">Hệ sinh thái đối tác</div>
+      <h2 class="sec-h2 d">Được chấp nhận tại<br>500.000+ điểm bán</h2>
+      <p class="sec-sub">Từ siêu thị, rạp phim, đến F&B và thương mại điện tử - MoMo có mặt khắp nơi bạn cần.</p>
+    </div>
+    <div class="partners-logos rv">
+      <div class="partner-chip"><span class="partner-dot" style="background:#EE4D2D"></span>Shopee</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#00B14F"></span>Grab</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#E31837"></span>CGV</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#009A44"></span>VinMart</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#E60028"></span>Lotte Mart</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#0066B3"></span>Tiki</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#F57224"></span>Lazada</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#E4002B"></span>KFC</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#6B3A2A"></span>Highlands Coffee</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#E31837"></span>Circle K</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#0078D4"></span>Phúc Long</div>
+      <div class="partner-chip"><span class="partner-dot" style="background:#FF6B35"></span>Shopee Food</div>
+    </div>
+    <p class="partners-more rv">và <strong>499.988+ đối tác</strong> khác trên toàn quốc</p>
+  </div>
+</section>
+
+<!-- ONBOARDING -->
+<section id="onboarding" class="sec" style="background:#fff">
+  <div class="sec-center rv">
+    <div class="eyebrow">Bắt đầu dễ dàng</div>
+    <h2 class="sec-h2 d">3 bước đơn giản để<br>kiểm soát tài chính</h2>
+    <p class="sec-sub">Từ tải ứng dụng đến giao dịch đầu tiên, chỉ mất 5 phút.</p>
+  </div>
+  <div class="steps rv">
+    <div class="step">
+      <div class="step-num d">1</div>
+      <div class="step-title">Tải ứng dụng MoMo</div>
+      <div class="step-desc">Có sẵn trên App Store và Google Play. Miễn phí, không phí ẩn.</div>
+    </div>
+    <div class="step">
+      <div class="step-num d">2</div>
+      <div class="step-title">Xác minh danh tính (eKYC)</div>
+      <div class="step-desc">Chụp CCCD và xác thực khuôn mặt. Hoàn tất trong 2 phút, theo chuẩn NHNN.</div>
+    </div>
+    <div class="step">
+      <div class="step-num d">3</div>
+      <div class="step-title">Khám phá dịch vụ tài chính</div>
+      <div class="step-desc">Nạp tiền, vay, mua bảo hiểm hoặc gửi tiết kiệm - tất cả trong ứng dụng.</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:48px" class="rv">
+    <a href="#download" class="btn-primary" style="display:inline-flex">
+      Tải MoMo ngay - Miễn phí
+      <i data-lucide="arrow-right"></i>
+    </a>
+  </div>
+</section>
+
+<!-- MOMO XU / REWARDS -->
+<section class="xu-sec">
+  <div class="xu-inner">
+    <div class="xu-text">
+      <div class="xu-eyebrow">MoMo Xu - Chương trình tích điểm</div>
+      <div class="xu-title">Mỗi giao dịch,<br>một phần thưởng</div>
+      <p class="xu-sub">Tích MoMo Xu với mỗi lần thanh toán, chuyển tiền hoặc mua bảo hiểm. Đổi Xu lấy tiền mặt, voucher và ưu đãi độc quyền.</p>
+      <a href="#" class="xu-cta">
+        <i data-lucide="gift"></i>
+        Xem cách tích Xu
+      </a>
+    </div>
+    <div class="xu-visual rv">
+      <div class="xu-coin featured">
+        <i data-lucide="send"></i>
+        <span class="xu-coin-val">+50</span>
+        <span class="xu-coin-lbl">Xu</span>
+      </div>
+      <div class="xu-coin">
+        <i data-lucide="receipt"></i>
+        <span class="xu-coin-val">+100</span>
+        <span class="xu-coin-lbl">Xu</span>
+      </div>
+      <div class="xu-coin">
+        <i data-lucide="shield-check"></i>
+        <span class="xu-coin-val">+200</span>
+        <span class="xu-coin-lbl">Xu</span>
+      </div>
+      <div class="xu-coin featured">
+        <i data-lucide="piggy-bank"></i>
+        <span class="xu-coin-val">+500</span>
+        <span class="xu-coin-lbl">Xu</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLG TOOLS -->
+<section id="tools" class="sec" style="background:var(--canvas)">
+  <div class="sec-center rv">
+    <div class="eyebrow">Công cụ tài chính miễn phí</div>
+    <h2 class="sec-h2 d">Tự tính toán trước<br>khi quyết định</h2>
+    <p class="sec-sub">Ra quyết định tài chính sáng suốt hơn với bộ công cụ tính toán chuyên sâu - hoàn toàn miễn phí.</p>
+  </div>
+  <div class="tools-grid rv">
+    <div class="tool-card">
+      <div class="tool-icon"><i data-lucide="calculator"></i></div>
+      <div class="tool-name">Máy tính lãi vay</div>
+      <div class="tool-desc">Tính lãi suất, kỳ hạn và số tiền trả hàng tháng. So sánh nhiều kịch bản vay để chọn phương án tối ưu nhất.</div>
+      <div class="tool-link">Dùng ngay <i data-lucide="arrow-right"></i></div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon"><i data-lucide="clipboard-list"></i></div>
+      <div class="tool-name">So sánh phí bảo hiểm</div>
+      <div class="tool-desc">So sánh gói bảo hiểm xe máy, ô tô và y tế. Tìm mức phí phù hợp với nhu cầu và ngân sách của bạn.</div>
+      <div class="tool-link">So sánh <i data-lucide="arrow-right"></i></div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon"><i data-lucide="trending-up"></i></div>
+      <div class="tool-name">Tính lãi tiết kiệm</div>
+      <div class="tool-desc">Dự tính lãi suất tích lũy theo kỳ hạn và số tiền gửi. Lập kế hoạch tiết kiệm dài hạn hiệu quả.</div>
+      <div class="tool-link">Tính ngay <i data-lucide="arrow-right"></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHORITY -->
+<section class="sec" style="background:#fff">
+  <div class="sec-center rv">
+    <div class="eyebrow">Được công nhận</div>
+    <h2 class="sec-h2 d">Đơn vị Fintech<br>được tin tưởng nhất</h2>
+  </div>
+  <div class="auth-grid rv">
+    <div class="auth-item">
+      <div class="auth-icon"><i data-lucide="landmark"></i></div>
+      <div class="auth-name">NHNN Cấp Phép</div>
+      <div class="auth-desc">Giấy phép hoạt động dịch vụ trung gian thanh toán số 027/GP-NHNN do NHNN Việt Nam cấp</div>
+    </div>
+    <div class="auth-item">
+      <div class="auth-icon"><i data-lucide="award"></i></div>
+      <div class="auth-name">Top 10 Fintech VN</div>
+      <div class="auth-desc">Được vinh danh bởi Vietnam FinTech Alliance và các tổ chức tài chính quốc tế uy tín</div>
+    </div>
+    <div class="auth-item">
+      <div class="auth-icon"><i data-lucide="lock-keyhole"></i></div>
+      <div class="auth-name">ISO 27001:2022</div>
+      <div class="auth-desc">Chứng nhận quản lý bảo mật thông tin quốc tế. Dữ liệu của bạn được bảo vệ ở mức cao nhất</div>
+    </div>
+    <div class="auth-item">
+      <div class="auth-icon"><i data-lucide="star"></i></div>
+      <div class="auth-name">4.8/5 Sao</div>
+      <div class="auth-desc">Hàng triệu đánh giá 5 sao từ người dùng thật trên App Store và Google Play Store</div>
+    </div>
+  </div>
+</section>
+
+<!-- APP DOWNLOAD CTA -->
+<section id="download" class="app-cta-sec">
+  <div style="max-width:580px;margin:0 auto" class="rv">
+    <div class="cta-phone-icon"><i data-lucide="smartphone"></i></div>
+    <h2 class="sec-h2 d" style="color:#fff;margin-bottom:14px">Bắt đầu hành trình<br>tài chính của bạn</h2>
+    <p style="font-size:16px;color:rgba(255,255,255,.55);line-height:1.72;max-width:440px;margin:0 auto">Tải MoMo miễn phí và trải nghiệm siêu ứng dụng tài chính được 45 triệu người Việt tin dùng mỗi ngày.</p>
+    <div class="dl-buttons">
+      <a href="#" class="dl-btn">
+        <i data-lucide="apple"></i>
+        <div>
+          <div class="dl-btn-txt-sm">Tải trên</div>
+          <div class="dl-btn-txt-lg">App Store</div>
+        </div>
+      </a>
+      <a href="#" class="dl-btn">
+        <i data-lucide="play"></i>
+        <div>
+          <div class="dl-btn-txt-sm">Tải trên</div>
+          <div class="dl-btn-txt-lg">Google Play</div>
+        </div>
+      </a>
+    </div>
+    <div class="cta-checks">
+      <span class="cta-check"><i data-lucide="check-circle-2"></i> Miễn phí</span>
+      <span class="cta-check"><i data-lucide="check-circle-2"></i> Không phí ẩn</span>
+      <span class="cta-check"><i data-lucide="check-circle-2"></i> Bảo mật tuyệt đối</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="max-width:1160px;margin:0 auto">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" width="26" height="26" alt="MoMo">
+          <span class="d" style="font-size:16px;font-weight:800;color:#fff">MoMo</span>
+        </div>
+        <p style="font-size:12px;line-height:1.8;max-width:220px">Công ty CP Dịch vụ Di động Trực tuyến (M_Service). 181-185 Đường Thành Thái, P.12, Q.10, TP.HCM.</p>
+        <p style="font-size:11px;margin-top:10px;color:rgba(255,255,255,.3)">GP số 027/GP-NHNN</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Sản phẩm</div>
+        <div class="footer-links">
+          <a href="#">Vay Nhanh</a>
+          <a href="#">Ví Trả Sau</a>
+          <a href="#">Bảo Hiểm Xe Máy</a>
+          <a href="#">Bảo Hiểm Y Tế</a>
+          <a href="#">Tiết Kiệm</a>
+          <a href="#">Điểm CIC</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Công cụ</div>
+        <div class="footer-links">
+          <a href="#">Máy tính lãi vay</a>
+          <a href="#">So sánh bảo hiểm</a>
+          <a href="#">Tính lãi tiết kiệm</a>
+          <a href="#">Kiểm tra phạt nguội</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Hỗ trợ</div>
+        <div class="footer-links">
+          <a href="#">Trung tâm trợ giúp</a>
+          <a href="#">Chính sách bảo mật</a>
+          <a href="#">Điều khoản sử dụng</a>
+          <a href="#">Liên hệ</a>
+          <a href="#">Blog</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 M_Service. Giấy phép số 027/GP-NHNN.</span>
+      <span>Được giám sát bởi Ngân hàng Nhà nước Việt Nam.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+// ── SEARCH OVERLAY ──
+const SEARCH_DATA = [
+  { name:'Vay Nhanh', desc:'Vay tới 30 triệu, giải ngân trong ngày', color:'#C8007A', icon:'banknote', tab:'loan' },
+  { name:'Ví Trả Sau', desc:'Mua trước trả sau, hạn mức 30 triệu, lãi 0% tháng đầu', color:'#D97706', icon:'credit-card', tab:'loan' },
+  { name:'CIC Score', desc:'Kiểm tra điểm tín dụng miễn phí', color:'#059669', icon:'bar-chart-2', tab:'loan' },
+  { name:'BH Xe Máy', desc:'Bảo hiểm xe máy bắt buộc & tự nguyện từ 66.000đ/năm', color:'#059669', icon:'shield-check', tab:'insurance' },
+  { name:'BH Ô Tô', desc:'Bảo hiểm ô tô vật chất - so sánh gói từ nhiều công ty', color:'#059669', icon:'car', tab:'insurance' },
+  { name:'BH Y Tế', desc:'Bảo hiểm sức khỏe cá nhân & gia đình từ 70.000đ/tháng', color:'#7C3AED', icon:'heart-pulse', tab:'insurance' },
+  { name:'Tiết Kiệm', desc:'Lãi suất tới 7%/năm, rút trước hạn miễn phí', color:'#2563EB', icon:'piggy-bank', tab:'saving' },
+  { name:'Chuyển Tiền', desc:'Miễn phí tới mọi ngân hàng, ví điện tử', color:'#0891B2', icon:'send', tab:'payment' },
+  { name:'Thanh Toán QR', desc:'Quét mã QR tại 500.000+ điểm chấp nhận', color:'#0891B2', icon:'qr-code', tab:'payment' },
+  { name:'Hóa Đơn', desc:'Điện, nước, internet, truyền hình tự động', color:'#0891B2', icon:'receipt', tab:'payment' },
+  { name:'Phạt Nguội', desc:'Tra cứu và nộp phạt vi phạm giao thông', color:'#7C3AED', icon:'car', tab:'utility' },
+  { name:'Nạp Điện Thoại', desc:'Tất cả nhà mạng, mua data gói cước', color:'#C8007A', icon:'smartphone', tab:'utility' },
+  { name:'Mua Vé', desc:'Vé phim CGV, BHD, xe khách, máy bay', color:'#D97706', icon:'ticket', tab:'utility' },
+];
+
+const overlay = document.getElementById('searchOverlay');
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const searchSuggests = document.getElementById('searchSuggests');
+
+function openSearch() {
+  overlay.classList.add('open');
+  setTimeout(() => searchInput.focus(), 250);
+  document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+  overlay.classList.remove('open');
+  searchInput.value = '';
+  searchResults.innerHTML = '';
+  searchResults.classList.remove('has-results');
+  searchSuggests.style.display = '';
+  document.body.style.overflow = '';
+}
+function fillSearch(q) {
+  searchInput.value = q;
+  searchInput.dispatchEvent(new Event('input'));
+  searchInput.focus();
+}
+
+document.getElementById('navSearchBtn').addEventListener('click', openSearch);
+document.getElementById('searchClose').addEventListener('click', closeSearch);
+document.getElementById('searchBackdrop').addEventListener('click', closeSearch);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) {
+    searchResults.innerHTML = '';
+    searchResults.classList.remove('has-results');
+    searchSuggests.style.display = '';
+    return;
+  }
+  searchSuggests.style.display = 'none';
+  const hits = SEARCH_DATA.filter(d =>
+    d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q)
+  );
+  if (!hits.length) {
+    searchResults.innerHTML = `<div style="padding:16px 12px;font-size:14px;color:var(--muted)">Không tìm thấy kết quả cho "<strong>${searchInput.value}</strong>"</div>`;
+  } else {
+    searchResults.innerHTML = hits.map(d => `
+      <div class="search-result-item" onclick="goToProduct('${d.tab}')">
+        <div class="search-result-icon" style="background:${d.color}"><i data-lucide="${d.icon}"></i></div>
+        <div><div class="search-result-name">${d.name}</div><div class="search-result-desc">${d.desc}</div></div>
+      </div>`).join('');
+    lucide.createIcons();
+  }
+  searchResults.classList.add('has-results');
+});
+
+function goToProduct(tab) {
+  closeSearch();
+  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => {
+    const t = document.querySelector(`.pshow-tab[data-tab="${tab}"]`);
+    if (t) t.click();
+  }, 600);
+}
+
+// Nav scroll shadow
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 10);
+});
+
+// Promo carousel dots sync
+const track = document.getElementById('promo-track');
+const dots = document.querySelectorAll('#promo-dots .promo-dot');
+if (track) {
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / 294);
+    dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+  });
+  dots.forEach((d, i) => d.addEventListener('click', () => {
+    track.scrollTo({ left: i * 294, behavior: 'smooth' });
+  }));
+}
+
+// Category filter
+// Product showcase tabs
+document.querySelectorAll('.pshow-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const key = tab.dataset.tab;
+    document.querySelectorAll('.pshow-tab').forEach(t => t.classList.remove('on'));
+    document.querySelectorAll('.pshow-panel').forEach(p => p.classList.remove('on'));
+    tab.classList.add('on');
+    document.querySelector(`.pshow-panel[data-panel="${key}"]`).classList.add('on');
+    lucide.createIcons();
+  });
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

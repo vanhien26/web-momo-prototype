@@ -929,6 +929,24 @@ const PROTOTYPES = [
       },
     ],
   },
+  {
+    id: 'momo-homepage',
+    name: 'MoMo HomePage',
+    category: 'Other',
+    pinned: true,
+    navIcon: '🏠',
+    ownerGroup: 'Web Platform',
+    maturity: 'Concept',
+    description: 'Concept trang chủ momo.vn với định hướng Financial Authority + New User Onboarding. Hero dark với floating financial status cards, trust bar, product ecosystem, 3-step onboarding journey, PLG tools và app download CTA.',
+    jtbd: 'Thuyết phục new user tải app và hiểu ngay MoMo là nền tảng tài chính toàn diện đáng tin cậy.',
+    northStar: 'New User Install -> eKYC -> First Transaction',
+    loop: 'Land -> Trust (45M users, NHNN) -> Product Discovery -> Download',
+    hypothesis: 'Financial Authority positioning kết hợp onboarding flow rõ ràng giúp tăng conversion từ organic traffic sang app install.',
+    value: 'Demo cấu trúc homepage mới: Financial Command Center hero, 6 financial products, 3-step journey, 3 PLG tools, authority section.',
+    gate: 'Đo hero CTA click rate, product card engagement, onboarding section scroll depth và download button click.',
+    src: 'demos/momo-homepage.html',
+    address: 'web-momo-prototype.vercel.app/momo-homepage',
+  },
 ];
 
 // ─── Color maps ───────────────────────────────────────────────────────────────
@@ -1091,7 +1109,7 @@ const GROUP_ITEM_ORDER = {
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
   Platform: ['student-hub', 'vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-rap', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
-  Other: [],
+  Other: ['momo-homepage'],
 };
 
 const GROUP_SUMMARY = {
@@ -1304,7 +1322,7 @@ function renderNav() {
         const isActive = activeProtoId === p.id && !activeToolId;
         return `<div class="proto-nav-group">
           <button class="proto-nav-btn${isActive ? ' active' : ''}" data-id="${p.id}">
-            <span class="nav-index">★</span>
+            <span class="nav-index">${p.navIcon || '★'}</span>
             <span class="proto-nav-label">
               <strong>${p.name}</strong>
               <small>${p.navTagline || displayGroupName(p.category)}</small>
