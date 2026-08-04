@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoMo – Chọn quà trước, tải app sau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+const ICONS = {
+  download:        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  check:           '<polyline points="20 6 9 17 4 12"/>',
+  'check-circle':  '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  users:           '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  star:            '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  'building-2':    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  crown:           '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
+  gift:            '<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>',
+  smartphone:      '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  'user-round-plus':'<path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/>',
+  'shield-check':  '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
+  send:            '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  receipt:         '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17V7"/>',
+  banknote:        '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="12" cy="15" r="2"/>',
+  shield:          '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  'piggy-bank':    '<path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"/><path d="M2 9v1c0 1.1.9 2 2 2h1"/>',
+  film:            '<rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>',
+  lock:            '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  wallet:          '<path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>',
+  zap:             '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  plus:            '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  'arrow-right':   '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  'arrow-down':    '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+  'chevron-down':  '<polyline points="6 9 12 15 18 9"/>',
+  apple:           '<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"/><path d="M10 2c1 .5 2 2 2 5"/>',
+  play:            '<polygon points="5 3 19 12 5 21 5 3"/>',
+  'qr-code':       '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="4" y="4" width="5" height="5" fill="currentColor" stroke="none"/><rect x="15" y="4" width="5" height="5" fill="currentColor" stroke="none"/><rect x="4" y="15" width="5" height="5" fill="currentColor" stroke="none"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="18" y1="14" x2="21" y2="14"/><line x1="14" y1="18" x2="16" y2="18"/><line x1="18" y1="18" x2="21" y2="18"/><line x1="16" y1="16" x2="18" y2="16"/>',
+  'x':             '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  'trash-2':       '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',
+  calculator:      '<rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="12" y1="10" x2="14" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="12" y1="14" x2="14" y2="14"/><line x1="16" y1="14" x2="16" y2="18"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="12" y1="18" x2="14" y2="18"/>',
+  'refresh-cw':    '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  bus:             '<path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/>',
+  wifi:            '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  'shopping-bag':  '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  'shopping-cart': '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+  utensils:        '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/>',
+  car:             '<path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-2"/><circle cx="9" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M3 9h18"/>',
+  'book-open':     '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  'heart-pulse':   '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l1.5-3 2 4.5 1.5-3h6.78"/>',
+  store:           '<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>',
+  'bike':          '<circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/>',
+};
+function icon(name, size=20, color='currentColor') {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0">${ICONS[name]||''}</svg>`;
+}
+function createIcons() {
+  document.querySelectorAll('[data-lucide]').forEach(el => {
+    const name = el.getAttribute('data-lucide');
+    const style = el.getAttribute('style') || '';
+    const size = parseInt((style.match(/width:\s*(\d+)px/)||[,'20'])[1]);
+    const color = (style.match(/color:\s*([^;]+)/)||[,'currentColor'])[1].trim();
+    el.replaceWith(document.createRange().createContextualFragment(icon(name,size,color)));
+  });
+}
+</script>
+<style>
+:root {
+  --pink:#E8005A; --pink-light:#FF4D8B; --pink-blush:#FFF0F7; --pink-soft:#FFD6E8;
+  --gold:#FFB800; --gold-light:#FFF3C4;
+  --dark:#1A0A12; --muted:#8C5070; --white:#FFFFFF; --surface:#FDF8FB;
+  --border:rgba(232,0,90,0.12); --border-gray:#F0E8EE;
+  --green:#059669; --green-light:#ECFDF5; --green-soft:#A7F3D0;
+  --radius-sm:10px; --radius-md:16px; --radius-lg:24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Be Vietnam Pro',sans-serif;color:var(--dark);background:var(--white);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+svg{display:block}
+
+/* ─── SEGMENT BAR ─────────────────────── */
+.segment-bar{background:var(--dark);padding:8px 20px;display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none}
+.segment-bar::-webkit-scrollbar{display:none}
+.segment-label{font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap;letter-spacing:.08em;text-transform:uppercase}
+.seg-pill{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);white-space:nowrap;transition:all .2s;background:transparent}
+.seg-pill:hover{border-color:var(--pink);color:var(--pink)}
+.seg-pill.active{background:var(--pink);border-color:var(--pink);color:white}
+
+/* ─── URGENCY BANNER ──────────────────── */
+.urgency-banner{background:linear-gradient(90deg,#1A0A12,#3D1026,#1A0A12);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:10px}
+.ub-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;animation:pulse 2s infinite}
+.ub-text{font-size:13px;font-weight:600;color:rgba(255,255,255,.9)}
+.ub-text em{font-style:normal;color:var(--gold);font-weight:800}
+.ub-badge{font-size:11px;font-weight:700;color:var(--gold);padding:3px 10px;border-radius:20px;border:1px solid rgba(255,184,0,.4);white-space:nowrap}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* ─── NAV ─────────────────────────────── */
+.nav{height:64px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:0;flex-shrink:0}
+.nav-logo img{height:36px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1;justify-content:center}
+.nav-link{font-size:13px;font-weight:600;color:var(--muted);padding:8px 14px;border-radius:8px;transition:all .18s;white-space:nowrap}
+.nav-link:hover{color:var(--dark);background:var(--surface)}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-install-link{font-size:13px;color:var(--muted);font-weight:600;padding:8px 12px;border-radius:8px;transition:all .18s}
+.nav-install-link:hover{color:var(--dark);background:var(--surface)}
+.nav-cta{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:white;background:var(--pink);padding:9px 18px;border-radius:22px;transition:all .2s;box-shadow:0 2px 10px rgba(232,0,90,.3)}
+.nav-cta:hover{background:var(--pink-light);box-shadow:0 4px 16px rgba(232,0,90,.4);transform:translateY(-1px)}
+@media(max-width:768px){
+  .nav{padding:0 20px;height:56px}
+  .nav-links{display:none}
+  .nav-install-link{display:none}
+}
+
+/* ─── HERO ─────────────────────────────── */
+.hero{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px;padding:60px 64px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,var(--pink-blush) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 10% 80%,var(--gold-light) 0%,transparent 60%);pointer-events:none}
+.seg-congnhan .hero::before{background:radial-gradient(ellipse 60% 60% at 80% 50%,#FFF3E8 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 10% 80%,#FFE8C4 0%,transparent 60%)}
+.seg-sinhvien .hero::before{background:radial-gradient(ellipse 60% 60% at 80% 50%,#F3EEFF 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 10% 80%,#E8DFFF 0%,transparent 60%)}
+.seg-tinhthanh .hero::before{background:radial-gradient(ellipse 60% 60% at 80% 50%,#EDFFF3 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 10% 80%,#D4F5E0 0%,transparent 60%)}
+
+.hero-content{position:relative;z-index:1}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--pink);margin-bottom:20px;padding:6px 12px;background:var(--pink-blush);border-radius:20px;border:1px solid var(--pink-soft)}
+.hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--pink);animation:pulse 2s infinite}
+.hero-headline{font-size:clamp(34px,4.5vw,56px);font-weight:900;line-height:1.1;letter-spacing:-1.5px;color:var(--dark);margin-bottom:18px}
+.hero-headline em{font-style:normal;color:var(--pink);position:relative;display:inline-block}
+.hero-headline em::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:3px;background:var(--gold);border-radius:2px}
+.hero-sub{font-size:17px;line-height:1.6;color:var(--muted);margin-bottom:28px;max-width:420px}
+.hero-sub strong{color:var(--dark);font-weight:700}
+
+/* Primary CTA: scroll to vouchers */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:15px 26px;background:var(--pink);color:white;font-weight:800;font-size:15px;border-radius:14px;transition:all .2s;box-shadow:0 4px 20px rgba(232,0,90,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,0,90,.45)}
+.hero-secondary{margin-top:14px;font-size:13px;color:var(--muted)}
+.hero-secondary a{color:var(--pink);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.hero-reassure{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.reassure-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--muted);padding:5px 10px;background:var(--surface);border-radius:20px;border:1px solid var(--border)}
+
+/* ─── HERO VISUAL: CARD STACK ─────────── */
+.hero-visual{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;height:400px}
+.card-stack{position:relative;width:300px;height:360px}
+.voucher-card{position:absolute;width:270px;height:160px;border-radius:var(--radius-lg);padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.15);will-change:transform}
+.voucher-card::before{content:'';position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(-45deg,rgba(255,255,255,0) 0px,rgba(255,255,255,0) 8px,rgba(255,255,255,.04) 8px,rgba(255,255,255,.04) 9px);pointer-events:none}
+.vc-1{background:linear-gradient(135deg,#E8005A,#FF4D8B);color:white;transform:rotate(-8deg) translate(-20px,60px);z-index:1}
+.vc-2{background:linear-gradient(135deg,#1A0A12,#4A1A30);color:white;transform:rotate(-2deg) translate(10px,30px);z-index:2}
+.vc-3{background:linear-gradient(135deg,#FFB800,#FF8C00);color:#1A0A12;transform:rotate(5deg) translate(40px,10px);z-index:3}
+.card-stack:hover .vc-1{transform:rotate(-12deg) translate(-60px,80px)}
+.card-stack:hover .vc-2{transform:rotate(-1deg) translate(0,20px)}
+.card-stack:hover .vc-3{transform:rotate(8deg) translate(60px,0)}
+.vc-brand{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7}
+.vc-value{font-size:42px;font-weight:900;letter-spacing:-2px;line-height:1}
+.vc-value span{font-size:16px;font-weight:600;letter-spacing:0}
+.vc-label{font-size:11px;opacity:.6;margin-top:2px}
+.vc-footer{display:flex;justify-content:space-between;align-items:flex-end}
+.vc-type{font-size:12px;font-weight:600;opacity:.8}
+.vc-exp{font-size:10px;opacity:.5}
+.float-badge{position:absolute;border-radius:20px;padding:8px 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.1);animation:float 4s ease-in-out infinite;white-space:nowrap}
+.fb-1{top:20px;right:-20px;background:white;color:var(--dark);animation-delay:0s}
+.fb-2{bottom:80px;left:-30px;background:var(--gold);color:#1A0A12;animation-delay:1.5s}
+.fb-3{bottom:20px;right:-10px;background:var(--green-light);color:var(--green);animation-delay:.8s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ─── SOCIAL PROOF BAR ─────────────────── */
+.proof-bar{background:var(--dark);padding:20px 64px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap}
+.proof-item{display:flex;align-items:center;gap:12px;padding:12px 32px;flex:1;min-width:180px;max-width:280px;border-right:1px solid rgba(255,255,255,.08)}
+.proof-item:last-child{border-right:none}
+.proof-icon{width:40px;height:40px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08)}
+.proof-value{font-size:18px;font-weight:900;color:white;letter-spacing:-.5px;line-height:1}
+.proof-label{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;margin-top:2px}
+
+/* ─── SECTION SHARED ───────────────────── */
+.section{padding:80px 64px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--pink);margin-bottom:12px}
+.section-title{font-size:clamp(26px,3.5vw,40px);font-weight:900;letter-spacing:-1px;color:var(--dark);margin-bottom:12px;line-height:1.15}
+.section-sub{font-size:16px;color:var(--muted);line-height:1.6;max-width:560px}
+
+/* ─── VOUCHER STORE ────────────────────── */
+.vouchers-section{background:linear-gradient(145deg,#1A0A12 0%,#2D0640 55%,#1A0A12 100%);border-top:none;border-bottom:none}
+.vouchers-section .section-eyebrow{color:rgba(255,255,255,.5)}
+.vouchers-section .section-title{color:#fff}
+.vouchers-section .section-sub{color:rgba(255,255,255,.6)}
+.vouchers-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;gap:20px}
+.vouchers-header .section-sub{margin:0}
+.voucher-count-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);font-size:13px;font-weight:700;padding:8px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.2);white-space:nowrap;flex-shrink:0}
+.vouchers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0}
+@media(max-width:640px){.vouchers-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* Gift card — compact white */
+.gift-card{background:#fff;border-radius:14px;border:2px solid transparent;padding:13px 13px 11px;cursor:pointer;position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:155px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .2s cubic-bezier(.34,1.56,.64,1),border-color .15s,background .15s,box-shadow .2s}
+.gift-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.18)}
+.gift-card.selected{border-color:var(--pink);background:#FFF0F7}
+
+/* Check circle */
+.gc-check-circle{width:22px;height:22px;border-radius:50%;border:2px solid #D1D5DB;display:flex;align-items:center;justify-content:center;transition:all .2s cubic-bezier(.34,1.56,.64,1);background:white;flex-shrink:0}
+.gift-card.selected .gc-check-circle{background:var(--pink);border-color:var(--pink)}
+
+/* Top row */
+.gc-top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:4px}
+.gc-tag-pill{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:3px 7px;border-radius:20px;background:#F3F4F6;color:#6B7280;white-space:nowrap;line-height:1.4}
+
+/* Middle: icon + name */
+.gc-mid{display:flex;flex-direction:column;gap:3px;margin:8px 0 4px}
+.gc-icon-box{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;flex-shrink:0}
+.gc-name{font-size:12px;font-weight:700;color:#1A0A12;line-height:1.3}
+.gc-cat{font-size:10px;color:#9CA3AF;margin-top:1px}
+
+/* Value pill */
+.gc-val-pill{display:inline-flex;align-items:center;gap:3px;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:800;background:#FFF0F7;color:var(--pink);border:1px solid #FDD0E5;width:fit-content;transition:background .15s,color .15s,border-color .15s}
+.gift-card.selected .gc-val-pill{background:var(--pink);color:#fff;border-color:var(--pink)}
+
+/* ─── STICKY CLAIM BAR ─────────────────── */
+.claim-bar{
+  position:fixed;bottom:-100px;left:50%;transform:translateX(-50%);
+  background:var(--dark);color:white;
+  border-radius:20px;padding:14px 20px;
+  display:flex;align-items:center;gap:16px;
+  box-shadow:0 8px 40px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.08);
+  z-index:200;min-width:360px;max-width:520px;width:calc(100% - 40px);
+  transition:bottom .4s cubic-bezier(.34,1.56,.64,1);
+}
+.claim-bar.visible{bottom:24px}
+.claim-summary{flex:1;display:flex;flex-direction:column;gap:2px}
+.claim-count{font-size:14px;font-weight:700}
+.claim-value{font-size:12px;color:var(--gold);font-weight:600}
+.claim-clear{padding:6px;border-radius:8px;color:rgba(255,255,255,.4);transition:color .2s}
+.claim-clear:hover{color:rgba(255,255,255,.8)}
+.claim-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:var(--pink);color:white;font-weight:800;font-size:14px;border-radius:12px;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.claim-cta:hover{background:var(--pink-light);transform:scale(1.02)}
+
+/* ─── TRY-BEFORE TOOL ──────────────────── */
+.try-section{background:white;border-top:1px solid var(--border-gray)}
+.try-inner{max-width:800px;margin:0 auto}
+.try-header{text-align:center;margin-bottom:40px}
+.try-header .section-sub{margin:0 auto}
+.try-card{background:var(--surface);border:1px solid var(--border-gray);border-radius:var(--radius-lg);padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.try-left{}
+.try-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:10px}
+.try-input-row{display:flex;gap:8px;margin-bottom:16px}
+.try-input{flex:1;padding:12px 16px;border:1.5px solid var(--border-gray);border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;color:var(--dark);background:white;outline:none;transition:border-color .2s}
+.try-input:focus{border-color:var(--pink)}
+.try-chips{display:flex;gap:6px;flex-wrap:wrap}
+.try-chip{font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;border:1px solid var(--border-gray);color:var(--muted);background:white;transition:all .2s}
+.try-chip:hover,.try-chip.active{background:var(--pink-blush);border-color:var(--pink-soft);color:var(--pink)}
+.try-right{display:flex;flex-direction:column;gap:12px}
+.try-compare-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:12px;border:1px solid var(--border-gray)}
+.try-compare-row.highlight{background:var(--green-light);border-color:var(--green-soft)}
+.try-compare-label{font-size:13px;font-weight:600;color:var(--muted)}
+.try-compare-label strong{color:var(--dark);display:block;font-size:12px;font-weight:700}
+.try-compare-fee{font-size:20px;font-weight:900;letter-spacing:-.5px}
+.try-compare-row.highlight .try-compare-fee{color:var(--green)}
+.try-compare-row:not(.highlight) .try-compare-fee{color:var(--muted)}
+.try-saving-note{font-size:13px;color:var(--green);font-weight:600;text-align:center;padding:10px;background:var(--green-light);border-radius:10px}
+.try-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--pink);color:white;font-weight:800;font-size:14px;border-radius:12px;transition:all .2s;margin-top:4px}
+.try-cta:hover{background:var(--pink-light)}
+
+/* ─── ONBOARDING STEPS ─────────────────── */
+.steps-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.steps-header{text-align:center;margin-bottom:56px}
+.steps-header .section-sub{margin:0 auto}
+.steps-track{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:start;max-width:820px;margin:0 auto}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px}
+.step-icon-wrap{width:76px;height:76px;border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;position:relative;transition:transform .3s cubic-bezier(.34,1.56,.64,1);flex-shrink:0}
+.step:hover .step-icon-wrap{transform:scale(1.08) rotate(-3deg)}
+.step-1 .step-icon-wrap{background:var(--gold-light);border:2px solid #FFE58A}
+.step-2 .step-icon-wrap{background:var(--pink-blush);border:2px solid var(--pink-soft)}
+.step-3 .step-icon-wrap{background:var(--green-light);border:2px solid var(--green-soft)}
+.step-1 .step-icon-wrap svg{color:#D97706}
+.step-2 .step-icon-wrap svg{color:var(--pink)}
+.step-3 .step-icon-wrap svg{color:var(--green)}
+.step-num{position:absolute;top:-8px;right:-8px;width:22px;height:22px;background:var(--dark);color:white;font-size:11px;font-weight:800;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.step-title{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:6px;letter-spacing:-.3px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.55}
+.step-detail{margin-top:10px;font-size:11px;font-weight:600;color:var(--pink);background:var(--pink-blush);padding:4px 10px;border-radius:20px;display:inline-block}
+.step-connector{display:flex;align-items:center;padding-top:26px}
+.step-connector svg{width:40px;height:20px;color:var(--pink-soft)}
+
+/* eKYC callout */
+.ekyc-callout{max-width:600px;margin:40px auto 0;background:white;border-radius:var(--radius-md);border:1px solid var(--border);padding:20px 24px;display:flex;align-items:flex-start;gap:16px}
+.ekyc-icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;background:var(--pink-blush);display:flex;align-items:center;justify-content:center}
+.ekyc-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.ekyc-desc{font-size:13px;color:var(--muted);line-height:1.55}
+.ekyc-checklist{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.ekyc-check{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--green);background:var(--green-light);padding:3px 10px;border-radius:20px}
+
+/* ─── APP FEATURES ─────────────────────── */
+.features-section{background:white}
+.features-header{text-align:center;margin-bottom:40px}
+.features-header .section-sub{margin:0 auto}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto}
+.feature-card{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:24px;border-radius:var(--radius-md);border:1px solid var(--border-gray);background:var(--surface);transition:all .2s}
+.feature-card:hover{border-color:var(--pink-soft);box-shadow:0 4px 20px rgba(232,0,90,.08);transform:translateY(-2px)}
+.fc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.fc-name{font-size:15px;font-weight:800;color:var(--dark);letter-spacing:-.3px}
+.fc-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ─── TRUST ────────────────────────────── */
+.trust-section{background:var(--dark);color:white;padding:64px}
+.trust-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.trust-badges-col .section-eyebrow{color:var(--gold)}
+.trust-badges-col .section-title{color:white}
+.trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.trust-badge{padding:20px;border-radius:var(--radius-md);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.tb-icon{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.tb-title{font-size:14px;font-weight:700;color:white;margin-bottom:4px}
+.tb-desc{font-size:12px;color:rgba(255,255,255,.45);line-height:1.5}
+.faq-col .section-eyebrow{color:rgba(255,255,255,.4)}
+.faq-list{margin-top:28px}
+.faq-item{border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
+.faq-item:first-child{border-top:1px solid rgba(255,255,255,.08)}
+.faq-q{width:100%;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600;color:rgba(255,255,255,.85);text-align:left}
+.faq-q-icon{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.faq-item.open .faq-q-icon{background:var(--pink);border-color:var(--pink);transform:rotate(45deg)}
+.faq-a{font-size:13px;color:rgba(255,255,255,.45);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:16px}
+
+/* ─── FOOTER CTA ───────────────────────── */
+.footer-cta{text-align:center;padding:80px 40px;background:var(--pink-blush);border-top:1px solid var(--border)}
+.footer-cta-title{font-size:clamp(28px,4vw,48px);font-weight:900;color:var(--dark);letter-spacing:-1.5px;margin-bottom:16px;line-height:1.1}
+.footer-cta-title em{font-style:normal;color:var(--pink)}
+.footer-cta-sub{font-size:16px;color:var(--muted);margin-bottom:40px}
+.download-row{display:flex;align-items:flex-start;justify-content:center;gap:40px;flex-wrap:wrap}
+.dl-btn-pair{display:flex;gap:12px}
+.dl-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;background:var(--dark);color:white;border-radius:14px;font-weight:700;font-size:14px;transition:all .2s}
+.dl-btn:hover{transform:translateY(-2px);background:#2D1020}
+.dl-btn-android{background:var(--pink)}
+.dl-btn-android:hover{background:#C5004A}
+.dl-btn-text-group{text-align:left}
+.dl-btn-small{font-size:10px;opacity:.6;font-weight:500;display:block}
+.dl-btn-big{font-size:14px;font-weight:700;display:block;line-height:1.2}
+.qr-block{display:flex;flex-direction:column;align-items:center;gap:10px}
+.qr-or{font-size:12px;color:var(--muted);font-weight:500;align-self:center}
+.qr-frame{width:120px;height:120px;border-radius:16px;border:2px solid var(--border);background:white;display:flex;align-items:center;justify-content:center}
+.qr-caption{font-size:12px;color:var(--muted);font-weight:600;text-align:center}
+
+/* ─── RESPONSIVE ───────────────────────── */
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;padding:40px 20px;gap:40px}
+  .hero-visual{order:-1;height:280px}
+  .card-stack{transform:scale(.82)}
+  .section{padding:56px 20px}
+  .steps-track{grid-template-columns:1fr;gap:28px}
+  .step-connector{display:none}
+  .trust-inner{grid-template-columns:1fr;gap:40px}
+  .trust-section{padding:56px 20px}
+  .trust-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .footer-cta{padding:56px 20px}
+  .proof-bar{padding:16px 20px;flex-direction:column}
+  .proof-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:12px 0;min-width:unset;width:100%;max-width:unset}
+  .proof-item:last-child{border-bottom:none}
+  .vouchers-header{flex-direction:column;align-items:flex-start}
+  .try-card{grid-template-columns:1fr}
+  .dl-btn-pair{flex-direction:column}
+  .download-row{gap:24px}
+  .claim-bar{min-width:unset;border-radius:16px 16px 0 0;bottom:-100px}
+  .claim-bar.visible{bottom:0}
+}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.fade-up{opacity:1;transform:none}}
+
+/* ─── SURVEY OVERLAY ───────────────────── */
+.survey-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;
+  transition:transform .55s cubic-bezier(.76,0,.24,1),opacity .4s ease;
+}
+.survey-overlay.exit{
+  transform:translateY(-100%);
+  opacity:0;
+  pointer-events:none;
+}
+.survey-logo{display:flex;align-items:center;gap:10px;margin-bottom:48px}
+.survey-logo-mark{width:44px;height:44px;background:var(--pink);border-radius:13px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:22px;letter-spacing:-1px}
+.survey-logo-text{font-weight:800;font-size:22px;color:white;letter-spacing:-.5px}
+.survey-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.35);margin-bottom:14px;text-align:center}
+.survey-title{font-size:clamp(26px,4vw,42px);font-weight:900;color:white;text-align:center;line-height:1.15;letter-spacing:-1px;margin-bottom:10px}
+.survey-sub{font-size:15px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:48px;line-height:1.5}
+.survey-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:720px}
+.survey-card{
+  background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:var(--radius-lg);
+  padding:28px 24px 24px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:14px;
+  cursor:pointer;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.survey-card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(135deg,rgba(232,0,90,.12) 0%,transparent 60%);
+  opacity:0;transition:opacity .2s;
+}
+.survey-card:hover{
+  border-color:rgba(232,0,90,.5);
+  transform:translateY(-4px) scale(1.01);
+  box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(232,0,90,.2);
+}
+.survey-card:hover::before{opacity:1}
+.survey-card:active{transform:scale(.98)}
+.sc-emoji{font-size:36px;line-height:1}
+.sc-label{font-size:18px;font-weight:800;color:white;letter-spacing:-.4px}
+.sc-hook{font-size:13px;color:rgba(255,255,255,.5);line-height:1.5;font-weight:500}
+.sc-arrow{position:absolute;top:20px;right:20px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:0}
+.survey-card:hover .sc-arrow{opacity:1;border-color:rgba(232,0,90,.5);background:rgba(232,0,90,.15)}
+/* Picked animation */
+.survey-card.picked{
+  border-color:var(--pink);
+  background:rgba(232,0,90,.15);
+  transform:scale(1.03);
+  box-shadow:0 0 0 4px rgba(232,0,90,.25);
+}
+.survey-card.picked::before{opacity:1}
+@media(max-width:560px){
+  .survey-cards{grid-template-columns:1fr;max-width:340px}
+  .survey-title{font-size:24px}
+  .survey-overlay{justify-content:flex-start;padding-top:48px;overflow-y:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ① SURVEY OVERLAY -->
+<div class="survey-overlay" id="surveyOverlay">
+  <div class="survey-logo">
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="44" style="display:block">
+  </div>
+  <div class="survey-eyebrow">Chào mừng bạn đến với MoMo</div>
+  <h1 class="survey-title">Bạn là ai để chúng tôi<br>chọn quà phù hợp?</h1>
+  <p class="survey-sub">Chọn một — ưu đãi và tính năng sẽ được cá nhân hoá cho bạn</p>
+  <div class="survey-cards">
+    <button class="survey-card" data-seg="tinhthanh">
+      <div class="sc-emoji">🏡</div>
+      <div class="sc-label">Người ở tỉnh / Nông thôn</div>
+      <div class="sc-hook">Tra phạt nguội, đặt vé xe khách về quê, nạp thẻ - không cần ra quầy hay có tài khoản ngân hàng</div>
+      <div class="sc-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </button>
+    <button class="survey-card" data-seg="sinhvien">
+      <div class="sc-emoji">🎓</div>
+      <div class="sc-label">Học sinh - Sinh viên</div>
+      <div class="sc-hook">Gói data 4G, vé CGV, voucher TikTok Shop - tự lập tài chính lần đầu không lo thiếu tiền</div>
+      <div class="sc-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </button>
+    <button class="survey-card" data-seg="giadinh">
+      <div class="sc-emoji">👨‍👩‍👧</div>
+      <div class="sc-label">Người đi làm / Gia đình</div>
+      <div class="sc-hook">Tích lũy Túi Thần Tài, thanh toán điện nước học phí - quản lý chi tiêu gia đình trong một app</div>
+      <div class="sc-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </button>
+    <button class="survey-card" data-seg="congnhan">
+      <div class="sc-emoji">🏭</div>
+      <div class="sc-label">Công nhân / Lao động KCN</div>
+      <div class="sc-hook">Tính lương Net-Gross, kiểm tra CIC tín dụng, thẻ quà siêu thị - không cần đến ngân hàng</div>
+      <div class="sc-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </button>
+  </div>
+</div>
+
+<!-- ② SEGMENT SWITCHER (dev only) -->
+<div class="segment-bar" id="segmentBar" style="display:none">
+  <span class="segment-label">Segment (dev):</span>
+  <button class="seg-pill" data-seg="tinhthanh">🏡 Tỉnh thành (49.1%)</button>
+  <button class="seg-pill" data-seg="sinhvien">🎓 HSSV (38%)</button>
+  <button class="seg-pill" data-seg="giadinh">👨‍👩‍👧 Gia đình (27.6%)</button>
+  <button class="seg-pill" data-seg="congnhan">🏭 Công nhân (24.5%)</button>
+</div>
+
+<!-- ② URGENCY BANNER -->
+<div class="urgency-banner">
+  <span class="ub-dot"></span>
+  <span class="ub-text">Ưu đãi chào mừng kết thúc <em>31/08/2026</em></span>
+  <span class="ub-badge">Còn 28 ngày</span>
+</div>
+
+<!-- ③ NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="#">
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" alt="MoMo" height="36">
+  </a>
+  <div class="nav-links">
+    <a href="#vouchers" class="nav-link">Ưu đãi</a>
+    <a href="#try-section" class="nav-link">Tính năng</a>
+    <a href="#download" class="nav-link">Tải App</a>
+    <a href="#trust" class="nav-link">Hỗ trợ</a>
+  </div>
+  <div class="nav-right">
+    <a href="#download" class="nav-install-link">Tải miễn phí</a>
+    <a href="#vouchers" class="nav-cta">
+      <i data-lucide="gift" style="width:14px;height:14px"></i>
+      Chọn quà
+    </a>
+  </div>
+</nav>
+
+<!-- ④ HERO: Experience-first -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      <span id="hero-eyebrow-text">Trải nghiệm trước, cài đặt sau</span>
+    </div>
+    <h1 class="hero-headline" id="hero-headline">
+      Chọn quà<br>bạn muốn,<br><em>tải app</em><br>khi sẵn sàng
+    </h1>
+    <p class="hero-sub" id="hero-sub">
+      Duyệt và chọn quà bên dưới. <strong>Không cần tải app ngay</strong> - xem xong, thích thì tải, quà tự vào tài khoản.
+    </p>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <a href="#vouchers" class="btn-primary">
+        <i data-lucide="gift" style="width:18px;height:18px"></i>
+        Xem và chọn quà
+      </a>
+    </div>
+    <p class="hero-secondary">
+      Đã sẵn sàng? <a href="#download">Tải App ngay</a>
+    </p>
+    <div class="hero-reassure">
+      <span class="reassure-pill"><i data-lucide="check" style="width:12px;height:12px;color:#22C55E"></i> Không cần tải app để xem</span>
+      <span class="reassure-pill"><i data-lucide="check" style="width:12px;height:12px;color:#22C55E"></i> Miễn phí hoàn toàn</span>
+      <span class="reassure-pill"><i data-lucide="check" style="width:12px;height:12px;color:#22C55E"></i> NHNN cấp phép</span>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="card-stack">
+      <div class="voucher-card vc-1">
+        <div class="vc-brand">MoMo × Grab</div>
+        <div><div class="vc-value">30K<span>đ</span></div><div class="vc-label">Voucher đặt xe</div></div>
+        <div class="vc-footer"><span class="vc-type">GrabCar/GrabBike</span><span class="vc-exp">HSD: 30/09/2026</span></div>
+      </div>
+      <div class="voucher-card vc-2">
+        <div class="vc-brand">MoMo × Shopee</div>
+        <div><div class="vc-value">50K<span>đ</span></div><div class="vc-label">Voucher mua sắm</div></div>
+        <div class="vc-footer"><span class="vc-type">Shopee Mall</span><span class="vc-exp">HSD: 30/09/2026</span></div>
+      </div>
+      <div class="voucher-card vc-3">
+        <div class="vc-brand">MoMo Cashback</div>
+        <div><div class="vc-value">20K<span>đ</span></div><div class="vc-label">Hoàn tiền chuyển khoản</div></div>
+        <div class="vc-footer"><span class="vc-type">Chuyển tiền</span><span class="vc-exp">HSD: 30/09/2026</span></div>
+      </div>
+    </div>
+    <div class="float-badge fb-1">🎁 <span>200K+ quà tặng</span></div>
+    <div class="float-badge fb-2">⚡ <span>Chọn trước, tải sau</span></div>
+    <div class="float-badge fb-3">✓ <span>Không cần tài khoản NH</span></div>
+  </div>
+</section>
+
+<!-- ⑤ SOCIAL PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-item">
+    <div class="proof-icon"><i data-lucide="users" style="width:20px;height:20px;color:#FFB800"></i></div>
+    <div><div class="proof-value">31 triệu</div><div class="proof-label">Người dùng tại Việt Nam</div></div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-icon"><i data-lucide="star" style="width:20px;height:20px;color:#FFB800"></i></div>
+    <div><div class="proof-value">4.8★</div><div class="proof-label">Điểm App Store & Google Play</div></div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-icon"><i data-lucide="building-2" style="width:20px;height:20px;color:#FFB800"></i></div>
+    <div><div class="proof-value">NHNN</div><div class="proof-label">Được Ngân hàng Nhà nước cấp phép</div></div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-icon"><i data-lucide="crown" style="width:20px;height:20px;color:#FFB800"></i></div>
+    <div><div class="proof-value">#1</div><div class="proof-label">Ví điện tử phổ biến nhất Việt Nam</div></div>
+  </div>
+</div>
+
+<!-- ⑥ VOUCHER STORE – interactive, select first -->
+<section class="section vouchers-section" id="vouchers">
+  <div class="section-inner">
+    <div class="vouchers-header fade-up">
+      <div>
+        <div class="section-eyebrow" id="vouchers-eyebrow">Kho quà tặng của bạn</div>
+        <h2 class="section-title" id="vouchers-title">Chọn quà bạn muốn nhận</h2>
+        <p class="section-sub" id="vouchers-sub">Nhấn vào thẻ để chọn quà. Chọn xong, tải MoMo để nhận toàn bộ - tự động, không cần nhập mã.</p>
+      </div>
+      <div class="voucher-count-badge" id="voucher-count">
+        <i data-lucide="gift" style="width:14px;height:14px"></i>
+        <span id="vc-label-text">6 quà · 200K+ giá trị</span>
+      </div>
+    </div>
+    <div class="vouchers-grid" id="vouchers-grid"></div>
+  </div>
+</section>
+
+<!-- ⑦ TRY BEFORE INSTALL – transfer fee tool -->
+<section class="section try-section" id="try-section">
+  <div class="section-inner try-inner">
+    <div class="try-header fade-up">
+      <div class="section-eyebrow">Thử trước khi tải</div>
+      <h2 class="section-title">Chuyển tiền qua MoMo: miễn phí</h2>
+      <p class="section-sub">Tính phí chuyển tiền để thấy bạn tiết kiệm được bao nhiêu khi dùng MoMo thay vì ngân hàng.</p>
+    </div>
+    <div class="try-card fade-up">
+      <div class="try-left">
+        <div class="try-label">Số tiền cần chuyển</div>
+        <div class="try-input-row">
+          <input class="try-input" id="tryAmount" type="text" value="500.000" inputmode="numeric" />
+          <span style="font-size:14px;font-weight:700;color:var(--muted);align-self:center;white-space:nowrap">đ</span>
+        </div>
+        <div class="try-chips">
+          <button class="try-chip" data-val="200000">200K</button>
+          <button class="try-chip active" data-val="500000">500K</button>
+          <button class="try-chip" data-val="1000000">1 triệu</button>
+          <button class="try-chip" data-val="2000000">2 triệu</button>
+          <button class="try-chip" data-val="5000000">5 triệu</button>
+        </div>
+      </div>
+      <div class="try-right">
+        <div class="try-compare-row highlight">
+          <div>
+            <div class="try-compare-label"><strong>MoMo</strong>Chuyển liên ngân hàng</div>
+          </div>
+          <div class="try-compare-fee" id="momoFee">0đ</div>
+        </div>
+        <div class="try-compare-row">
+          <div>
+            <div class="try-compare-label"><strong>Ngân hàng thông thường</strong>Internet Banking</div>
+          </div>
+          <div class="try-compare-fee" id="bankFee">—</div>
+        </div>
+        <div class="try-saving-note" id="savingNote">Tiết kiệm <strong id="savingAmt">—</strong> mỗi lần chuyển</div>
+        <a href="#download" class="try-cta">
+          <i data-lucide="download" style="width:16px;height:16px"></i>
+          Tải MoMo để chuyển miễn phí
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑧ ONBOARDING STEPS – simplified to 3, focus on claiming -->
+<section class="section steps-section">
+  <div class="section-inner">
+    <div class="steps-header fade-up">
+      <div class="section-eyebrow">Sau khi chọn xong</div>
+      <h2 class="section-title">3 bước để nhận quà</h2>
+      <p class="section-sub">Từ lúc nhấn tải đến khi quà vào tài khoản – không cần liên hệ hỗ trợ, không cần nhập mã.</p>
+    </div>
+    <div class="steps-track">
+      <div class="step step-1 fade-up">
+        <div class="step-icon-wrap">
+          <i data-lucide="smartphone" style="width:32px;height:32px"></i>
+          <div class="step-num">1</div>
+        </div>
+        <div class="step-title">Tải MoMo</div>
+        <p class="step-desc">App Store hoặc Google Play. Đăng ký bằng số điện thoại + OTP, dưới 2 phút.</p>
+        <span class="step-detail">Miễn phí · 25MB</span>
+      </div>
+      <div class="step-connector">
+        <svg viewBox="0 0 40 20" fill="none"><path d="M2 10 Q10 3 20 10 Q30 17 38 10" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" fill="none" stroke-linecap="round"/><path d="M33 6 L38 10 L33 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="step step-2 fade-up" style="transition-delay:.1s">
+        <div class="step-icon-wrap">
+          <i data-lucide="shield-check" style="width:32px;height:32px"></i>
+          <div class="step-num">2</div>
+        </div>
+        <div class="step-title">Xác minh danh tính</div>
+        <p class="step-desc">Chụp CCCD + selfie trong app. eKYC tự động xét duyệt trong 3-5 phút.</p>
+        <span class="step-detail">~3 phút · Chỉ cần CCCD</span>
+      </div>
+      <div class="step-connector">
+        <svg viewBox="0 0 40 20" fill="none"><path d="M2 10 Q10 3 20 10 Q30 17 38 10" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" fill="none" stroke-linecap="round"/><path d="M33 6 L38 10 L33 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="step step-3 fade-up" style="transition-delay:.2s">
+        <div class="step-icon-wrap">
+          <i data-lucide="gift" style="width:32px;height:32px"></i>
+          <div class="step-num">3</div>
+        </div>
+        <div class="step-title">Quà vào tự động</div>
+        <p class="step-desc">Toàn bộ quà bạn đã chọn xuất hiện trong mục Ưu đãi. Không cần nhập mã.</p>
+        <span class="step-detail">Tự động · Tất cả quà đã chọn</span>
+      </div>
+    </div>
+    <div class="ekyc-callout fade-up">
+      <div class="ekyc-icon"><i data-lucide="shield-check" style="width:22px;height:22px;color:#E8005A"></i></div>
+      <div>
+        <div class="ekyc-title">Về bước xác minh danh tính (eKYC)</div>
+        <div class="ekyc-desc">Bắt buộc theo quy định NHNN để kích hoạt đầy đủ tính năng ví. Thông tin chỉ dùng để xác minh, không lưu ảnh sau khi duyệt.</div>
+        <div class="ekyc-checklist">
+          <span class="ekyc-check"><i data-lucide="check" style="width:11px;height:11px;color:#059669"></i> Chỉ cần CCCD/CMND còn hiệu lực</span>
+          <span class="ekyc-check"><i data-lucide="check" style="width:11px;height:11px;color:#059669"></i> Không cần đến quầy</span>
+          <span class="ekyc-check"><i data-lucide="check" style="width:11px;height:11px;color:#059669"></i> Kết quả trong 3-5 phút</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑨ APP FEATURES -->
+<section class="section features-section">
+  <div class="section-inner">
+    <div class="features-header fade-up">
+      <div class="section-eyebrow">Sau khi vào MoMo</div>
+      <h2 class="section-title">Một app, mọi nhu cầu tài chính</h2>
+      <p class="section-sub">MoMo không chỉ là nơi nhận quà – đây là nền tảng tài chính đầy đủ cho cuộc sống hàng ngày.</p>
+    </div>
+    <div class="features-grid" id="features-grid"></div>
+  </div>
+</section>
+
+<!-- ⑩ TRUST + FAQ -->
+<section class="trust-section" id="trust">
+  <div class="trust-inner">
+    <div class="trust-badges-col fade-up">
+      <div class="section-eyebrow">An toàn &amp; Bảo mật</div>
+      <h2 class="section-title" style="color:white;font-size:28px">MoMo được 31 triệu người Việt tin dùng</h2>
+      <div class="trust-grid">
+        <div class="trust-badge">
+          <div class="tb-icon"><i data-lucide="building-2" style="width:20px;height:20px;color:#FFB800"></i></div>
+          <div class="tb-title">NHNN cấp phép</div>
+          <div class="tb-desc">Ví điện tử được Ngân hàng Nhà nước Việt Nam cấp phép hoạt động.</div>
+        </div>
+        <div class="trust-badge">
+          <div class="tb-icon"><i data-lucide="lock" style="width:20px;height:20px;color:#FFB800"></i></div>
+          <div class="tb-title">Mã hoá 256-bit</div>
+          <div class="tb-desc">Giao dịch được bảo vệ bởi chuẩn mã hoá ngân hàng quốc tế.</div>
+        </div>
+        <div class="trust-badge">
+          <div class="tb-icon"><i data-lucide="wallet" style="width:20px;height:20px;color:#FFB800"></i></div>
+          <div class="tb-title">Tải &amp; dùng miễn phí</div>
+          <div class="tb-desc">Không ẩn phí, không mất chi phí cài đặt hoặc đăng ký.</div>
+        </div>
+        <div class="trust-badge">
+          <div class="tb-icon"><i data-lucide="zap" style="width:20px;height:20px;color:#FFB800"></i></div>
+          <div class="tb-title">Quà tự động</div>
+          <div class="tb-desc">Quà vào tài khoản tức thì sau eKYC. Không cần nhập mã.</div>
+        </div>
+      </div>
+    </div>
+    <div class="faq-col fade-up" style="transition-delay:.15s">
+      <div class="section-eyebrow">Câu hỏi thường gặp</div>
+      <h2 class="section-title" style="color:white;font-size:24px">Bạn đang thắc mắc?</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Tôi phải làm gì để nhận quà?<span class="faq-q-icon"><i data-lucide="plus" style="width:12px;height:12px;color:rgba(255,255,255,0.5)"></i></span></button>
+          <div class="faq-a">Chọn quà bạn muốn trên trang này, sau đó tải MoMo, đăng ký tài khoản và hoàn tất eKYC. Toàn bộ quà đã chọn tự động vào mục Ưu đãi.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">eKYC là gì? Có khó không?<span class="faq-q-icon"><i data-lucide="plus" style="width:12px;height:12px;color:rgba(255,255,255,0.5)"></i></span></button>
+          <div class="faq-a">eKYC là xác minh danh tính điện tử bắt buộc theo NHNN. Chỉ cần chụp CCCD và selfie trong app – hệ thống tự duyệt trong 3-5 phút, không cần đến quầy.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Tôi đã có tài khoản MoMo có nhận được không?<span class="faq-q-icon"><i data-lucide="plus" style="width:12px;height:12px;color:rgba(255,255,255,0.5)"></i></span></button>
+          <div class="faq-a">Chương trình này dành riêng cho người đăng ký mới lần đầu. Nếu bạn đã có tài khoản, hãy kiểm tra mục Ưu đãi trong App.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Cần có tài khoản ngân hàng không?<span class="faq-q-icon"><i data-lucide="plus" style="width:12px;height:12px;color:rgba(255,255,255,0.5)"></i></span></button>
+          <div class="faq-a">Không cần. Bạn có thể đăng ký và nhận quà chỉ với số điện thoại. Tài khoản ngân hàng chỉ cần khi muốn nạp/rút tiền sau đó.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Quà có hết hạn không?<span class="faq-q-icon"><i data-lucide="plus" style="width:12px;height:12px;color:rgba(255,255,255,0.5)"></i></span></button>
+          <div class="faq-a">Có. Mỗi voucher có hạn từ 30-90 ngày kể từ khi nhận. Hạn sử dụng hiển thị ngay trên thẻ trong mục Ưu đãi.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑪ FOOTER CTA + DOWNLOAD -->
+<section class="footer-cta" id="download">
+  <h2 class="footer-cta-title fade-up">
+    Đã chọn xong?<br>Tải MoMo để <em id="footer-highlight">nhận quà</em>
+  </h2>
+  <p class="footer-cta-sub fade-up" id="footer-sub">Miễn phí, an toàn. Quà tự vào tài khoản sau khi đăng ký.</p>
+  <div class="download-row fade-up">
+    <div class="dl-btn-pair">
+      <a href="#" class="dl-btn">
+        <i data-lucide="apple" style="width:22px;height:22px"></i>
+        <div class="dl-btn-text-group"><span class="dl-btn-small">Tải trên</span><span class="dl-btn-big">App Store</span></div>
+      </a>
+      <a href="#" class="dl-btn dl-btn-android">
+        <i data-lucide="play" style="width:22px;height:22px"></i>
+        <div class="dl-btn-text-group"><span class="dl-btn-small">Tải trên</span><span class="dl-btn-big">Google Play</span></div>
+      </a>
+    </div>
+    <span class="qr-or">hoặc</span>
+    <div class="qr-block">
+      <div class="qr-frame"><i data-lucide="qr-code" style="width:80px;height:80px;color:#1A0A12"></i></div>
+      <span class="qr-caption">Quét QR để tải trực tiếp</span>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY CLAIM BAR -->
+<div class="claim-bar" id="claimBar">
+  <div class="claim-summary">
+    <span class="claim-count">🎁 Bạn đã chọn <strong id="claimCount">0</strong> quà</span>
+    <span class="claim-value" id="claimValue"></span>
+  </div>
+  <button class="claim-clear" id="claimClear" title="Bỏ chọn tất cả">
+    <i data-lucide="trash-2" style="width:16px;height:16px;color:rgba(255,255,255,0.4)"></i>
+  </button>
+  <a href="#download" class="claim-cta">
+    Tải App để nhận
+    <i data-lucide="arrow-right" style="width:16px;height:16px"></i>
+  </a>
+</div>
+
+<script>
+// ─── SEGMENT DATA ─────────────────────────────────────────────────────────
+const SEGMENTS = {
+  tinhthanh:{
+    eyebrow:'Ưu đãi dành cho người ở tỉnh & nông thôn',
+    headline:['Tra phạt nguội,','đặt vé xe về quê –','<em>không cần</em>','ra quầy'],
+    sub:'Mọi thứ trong điện thoại: nạp thẻ, thanh toán hoá đơn, chuyển tiền. <strong>Không cần tài khoản ngân hàng</strong>.',
+    vouchersEyebrow:'Gói quà cho người tỉnh & nông thôn', vouchersTitle:'Chọn quà thiết thực cho bạn',
+    vouchersSub:'Lọc từ nhu cầu thực tế: nạp thẻ, thanh toán tiện ích, đặt vé xe khách về quê.',
+    vcLabel:'6 quà · 180K+ giá trị', footerHighlight:'quà của bạn',
+    footerSub:'Không cần tài khoản ngân hàng. Chỉ cần số điện thoại.',
+    vouchers:[
+      {id:'t_nap',  theme:'gc-theme-dark',   icon:'smartphone', iconBg:'#EFF6FF', iconColor:'#2563EB', brand:'MoMo Nạp điện thoại',    cat:'Viễn thông',          tag:'Dùng nhiều nhất',value:'50K', unit:'đ', desc:'Nạp bất kỳ mạng: Viettel, Mobifone, Vietnamobile',condition:'Nạp từ 50.000đ', exp:'HSD: 30/09/2026'},
+      {id:'t_dien', theme:'gc-theme-green',  icon:'zap', iconBg:'#FEF9C3', iconColor:'#CA8A04', brand:'MoMo Thanh toán điện',    cat:'Hoá đơn tiện ích',    tag:'Tiết kiệm',     value:'30K', unit:'đ', desc:'Thanh toán điện, nước, internet tại nhà',        condition:'HĐ từ 100.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'t_vexe', theme:'gc-theme-violet', icon:'bus', iconBg:'#F0FDF4', iconColor:'#16A34A', brand:'MoMo × Vé xe khách',      cat:'Về quê',              tag:'Lễ & Tết',      value:'50K', unit:'đ', desc:'Đặt vé xe khách liên tỉnh không cần xếp hàng',  condition:'Vé từ 150.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'t_ck',   theme:'gc-theme-pink',   icon:'send', iconBg:'#FFF0F7', iconColor:'#E8005A', brand:'MoMo Chuyển tiền',        cat:'Gửi tiền về nhà',     tag:'Miễn phí',      value:'3 lần',unit:'', desc:'Chuyển khoản liên ngân hàng miễn phí hoàn toàn', condition:'3 GD đầu tiên',   exp:'HSD: 30/09/2026'},
+      {id:'t_coop', theme:'gc-theme-gold',   icon:'shopping-cart', iconBg:'#FFF7ED', iconColor:'#EA580C', brand:'MoMo × Co.opmart',        cat:'Siêu thị địa phương', tag:'Gần bạn',       value:'40K', unit:'đ', desc:'Mua sắm tại Co.opmart & siêu thị tỉnh',         condition:'Đơn từ 150.000đ', exp:'HSD: 30/09/2026'},
+      {id:'t_bh',   theme:'gc-theme-teal',   icon:'bike', iconBg:'#F5F3FF', iconColor:'#7C3AED', brand:'MoMo Bảo hiểm xe máy',   cat:'Bảo hiểm bắt buộc',   tag:'Tiết kiệm 20%', value:'Giảm',unit:'20%',desc:'Mua bảo hiểm xe máy bắt buộc, giao giấy tận nơi',condition:'Mua lần đầu',    exp:'HSD: 30/09/2026'},
+    ]
+  },
+  sinhvien:{
+    eyebrow:'Ưu đãi dành cho học sinh - sinh viên',
+    headline:['Gói data,','vé phim, TikTok Shop –','<em>tự lập tài chính</em>','không lo thiếu tiền'],
+    sub:'Tiêu thông minh từ đầu: gói data 4G, voucher mua sắm, vé giải trí. <strong>Chọn trước, tải app sau</strong>.',
+    vouchersEyebrow:'Gói quà Học sinh - Sinh viên', vouchersTitle:'Chọn quà cho tuổi teen & sinh viên',
+    vouchersSub:'Data 4G đầy, vé phim cuối tuần, voucher TikTok Shop – lọc từ nhu cầu Gen Z thực tế.',
+    vcLabel:'6 quà · 230K+ giá trị', footerHighlight:'quà Gen Z',
+    footerSub:'Không cần thẻ tín dụng. Chỉ cần số điện thoại.',
+    vouchers:[
+      {id:'s_data',  theme:'gc-theme-teal',   icon:'wifi', iconBg:'#EFF6FF', iconColor:'#2563EB', brand:'MoMo × Gói Data 4G',     cat:'Viễn thông',          tag:'Hot nhất',      value:'1 tháng',unit:'data',desc:'Đăng ký gói data 4G không giới hạn 1 tháng',  condition:'Các mạng lớn',    exp:'HSD: 30/09/2026'},
+      {id:'s_cgv',   theme:'gc-theme-dark',   icon:'film', iconBg:'#1C1917', iconColor:'#FFF', brand:'MoMo × CGV',              cat:'Giải trí cuối tuần',  tag:'Viral',         value:'2 vé', unit:'',   desc:'Vé xem phim CGV cho 2 người bất kỳ suất nào',  condition:'Suất T7 & CN',    exp:'HSD: 30/09/2026'},
+      {id:'s_tiktok',theme:'gc-theme-pink',   icon:'shopping-bag', iconBg:'#111827', iconColor:'#FFF', brand:'MoMo × TikTok Shop',      cat:'Mua sắm online',      tag:'Gen Z',         value:'80K', unit:'đ',   desc:'Voucher mua sắm toàn bộ TikTok Shop',           condition:'Đơn từ 200.000đ', exp:'HSD: 30/09/2026'},
+      {id:'s_food',  theme:'gc-theme-gold',   icon:'utensils', iconBg:'#FFF7ED', iconColor:'#EA580C', brand:'MoMo × ShopeeFood',       cat:'Ăn uống',             tag:'Giao ký túc xá',value:'50K', unit:'đ',   desc:'Giao đồ ăn đến ký túc xá & trường học',        condition:'Đơn từ 60.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'s_grab',  theme:'gc-theme-violet', icon:'car', iconBg:'#F0FDF4', iconColor:'#16A34A', brand:'MoMo × Grab',             cat:'Di chuyển',           tag:'Đi học',        value:'40K', unit:'đ',   desc:'GrabBike & GrabCar đến trường hoặc về nhà',    condition:'Đơn từ 30.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'s_nap',   theme:'gc-theme-green',  icon:'smartphone', iconBg:'#EFF6FF', iconColor:'#2563EB', brand:'MoMo Nạp điện thoại',     cat:'Luôn kết nối',        tag:'Miễn phí',      value:'30K', unit:'đ',   desc:'Nạp thẻ bất kỳ mạng di động tức thì',          condition:'Nạp từ 50.000đ',  exp:'HSD: 30/09/2026'},
+    ]
+  },
+  giadinh:{
+    eyebrow:'Ưu đãi dành cho người đi làm & gia đình',
+    headline:['Học phí, điện nước,','Túi Thần Tài –','<em>một app</em> lo hết'],
+    sub:'Điện nước, học phí, bảo hiểm, tiết kiệm – <strong>chi tiêu gia đình thông minh hơn</strong> trong một ứng dụng.',
+    vouchersEyebrow:'Gói quà Người đi làm & Gia đình', vouchersTitle:'Chọn quà phù hợp với bạn',
+    vouchersSub:'Lọc cho nhóm 30-40 tuổi: tích lũy, tiện ích, bảo vệ gia đình.',
+    vcLabel:'6 quà · 200K+ giá trị', footerHighlight:'quà gia đình',
+    footerSub:'Miễn phí hoàn toàn. Quà tự vào sau khi đăng ký.',
+    vouchers:[
+      {id:'g_ttt',   theme:'gc-theme-gold',   icon:'piggy-bank', iconBg:'#FEF9C3', iconColor:'#B45309', brand:'MoMo Túi Thần Tài',       cat:'Tích lũy',            tag:'Sinh lời',      value:'Lãi suất',unit:'cao',desc:'Tích lũy linh hoạt, rút bất kỳ lúc nào',    condition:'Gửi từ 50.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'g_dien',  theme:'gc-theme-green',  icon:'zap', iconBg:'#FEF9C3', iconColor:'#CA8A04', brand:'MoMo Thanh toán tiện ích', cat:'Điện, Nước, Gas',     tag:'Tiết kiệm',     value:'30K', unit:'đ',   desc:'Thanh toán điện nước gas internet tại nhà',    condition:'HĐ từ 100.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'g_hocphi',theme:'gc-theme-violet', icon:'book-open', iconBg:'#EFF6FF', iconColor:'#2563EB', brand:'MoMo Học phí',             cat:'Giáo dục',            tag:'Ưu tiên',       value:'50K', unit:'đ',   desc:'Đóng học phí trường học, trung tâm ngoại ngữ', condition:'HP từ 500.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'g_bh',    theme:'gc-theme-teal',   icon:'shield-check', iconBg:'#F0FDF4', iconColor:'#16A34A', brand:'MoMo Bảo hiểm nhân thọ',  cat:'Bảo vệ gia đình',     tag:'Quan trọng',    value:'Miễn',unit:'phí', desc:'Bảo hiểm sức khoẻ & tai nạn cho cả gia đình', condition:'Kích hoạt lần đầu',exp:'HSD: 30/09/2026'},
+      {id:'g_shopee',theme:'gc-theme-dark',   icon:'shopping-bag', iconBg:'#FFF0F7', iconColor:'#E8005A', brand:'MoMo × Shopee',            cat:'Mua sắm gia đình',    tag:'Tiết kiệm',     value:'60K', unit:'đ',   desc:'Voucher Shopee Mall – hàng gia dụng, thực phẩm',condition:'Đơn từ 200.000đ', exp:'HSD: 30/09/2026'},
+      {id:'g_ck',    theme:'gc-theme-pink',   icon:'send', iconBg:'#FFF0F7', iconColor:'#E8005A', brand:'MoMo Chuyển tiền',         cat:'Gửi tiền',            tag:'Miễn phí',      value:'3 lần',unit:'',   desc:'Chuyển khoản liên ngân hàng miễn phí',         condition:'3 GD đầu tiên',   exp:'HSD: 30/09/2026'},
+    ]
+  },
+  congnhan:{
+    eyebrow:'Ưu đãi dành cho công nhân & lao động KCN',
+    headline:['Tính lương net-gross,','kiểm tra CIC –','<em>không cần</em>','đến ngân hàng'],
+    sub:'Từ lương thực nhận đến tín dụng cá nhân – <strong>mọi thứ rõ ràng trên điện thoại</strong>. Không qua trung gian.',
+    vouchersEyebrow:'Gói quà Công nhân & Lao động', vouchersTitle:'Chọn quà thiết thực cho bạn',
+    vouchersSub:'Lọc từ nhu cầu thực tế tại KCN: ăn ca, siêu thị, chuyển tiền về quê, bảo vệ sức khoẻ.',
+    vcLabel:'6 quà · 190K+ giá trị', footerHighlight:'gói quà công nhân',
+    footerSub:'Không cần tài khoản ngân hàng. Nhận lương qua MoMo không mất phí.',
+    vouchers:[
+      {id:'c_baemin',theme:'gc-theme-gold',   icon:'utensils', iconBg:'#ECFDF5', iconColor:'#059669', brand:'MoMo × Baemin',           cat:'Ăn ca',               tag:'Thiết thực',    value:'50K', unit:'đ',   desc:'Đặt cơm ca, đồ ăn giao tận cổng KCN',          condition:'Đơn từ 60.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'c_win',   theme:'gc-theme-teal',   icon:'store', iconBg:'#EFF6FF', iconColor:'#2563EB', brand:'MoMo × WinMart+',          cat:'Siêu thị KCN',        tag:'Khu CN',        value:'50K', unit:'đ',   desc:'Voucher mua sắm siêu thị WinMart+ gần KCN',    condition:'Đơn từ 150.000đ', exp:'HSD: 30/09/2026'},
+      {id:'c_ck',    theme:'gc-theme-pink',   icon:'send', iconBg:'#FFF0F7', iconColor:'#E8005A', brand:'MoMo Gửi tiền về quê',     cat:'Chuyển tiền',         tag:'Miễn phí',      value:'3 lần',unit:'',   desc:'Gửi tiền về gia đình miễn phí hoàn toàn',      condition:'3 GD đầu tiên',   exp:'HSD: 30/09/2026'},
+      {id:'c_nap',   theme:'gc-theme-dark',   icon:'smartphone', iconBg:'#EFF6FF', iconColor:'#2563EB', brand:'MoMo Nạp điện thoại',     cat:'Viễn thông',          tag:'Dùng nhiều',    value:'30K', unit:'đ',   desc:'Nạp thẻ Viettel, Mobifone tức thì',            condition:'Nạp từ 50.000đ',  exp:'HSD: 30/09/2026'},
+      {id:'c_bh',    theme:'gc-theme-violet', icon:'heart-pulse', iconBg:'#FFF0F7', iconColor:'#E8005A', brand:'MoMo Bảo hiểm tai nạn',   cat:'Sức khoẻ',            tag:'Bảo vệ bạn',    value:'Miễn',unit:'phí', desc:'Bảo hiểm tai nạn lao động 1 tháng miễn phí',   condition:'Kích hoạt lần đầu',exp:'HSD: 30/09/2026'},
+      {id:'c_dien',  theme:'gc-theme-green',  icon:'zap', iconBg:'#FEF9C3', iconColor:'#CA8A04', brand:'MoMo Thanh toán điện',     cat:'Tiện ích nhà trọ',    tag:'Tiết kiệm',     value:'20K', unit:'đ',   desc:'Thanh toán điện nước nhà trọ không cần tiền mặt',condition:'HĐ từ 50.000đ', exp:'HSD: 30/09/2026'},
+    ]
+  }
+};
+
+const APP_FEATURES = [
+  {icon:'send',        color:'#EFF6FF', iconColor:'#2563EB', name:'Chuyển tiền',      desc:'Chuyển đến bất kỳ ngân hàng nào, miễn phí và tức thì.'},
+  {icon:'receipt',     color:'#F0FDF4', iconColor:'#16A34A', name:'Thanh toán hoá đơn', desc:'Điện, nước, internet, học phí – trong 30 giây.'},
+  {icon:'banknote',    color:'#FFF7ED', iconColor:'#EA580C', name:'Vay Nhanh',         desc:'Vay tiền không cần tài sản thế chấp, giải ngân trong ngày.'},
+  {icon:'shield',      color:'#F5F3FF', iconColor:'#7C3AED', name:'Bảo hiểm xe',       desc:'Mua bảo hiểm xe máy, ô tô bắt buộc ngay trên app.'},
+  {icon:'piggy-bank',  color:'#ECFEFF', iconColor:'#0E7490', name:'Tiết kiệm',          desc:'Gửi tiết kiệm lãi suất cạnh tranh, rút linh hoạt.'},
+  {icon:'film',        color:'#FFF0F7', iconColor:'#E8005A', name:'Mua vé xem phim',    desc:'Đặt vé CGV, BHD Stars, Galaxy ngay trong MoMo.'},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────
+let selected = new Set();
+let currentVouchers = [];
+
+// ─── RENDER FEATURES ──────────────────────────────────────────────────────
+function renderFeatures() {
+  document.getElementById('features-grid').innerHTML = APP_FEATURES.map(f => `
+    <div class="feature-card fade-up">
+      <div class="fc-icon" style="background:${f.color}">${icon(f.icon,24,f.iconColor)}</div>
+      <div class="fc-name">${f.name}</div>
+      <div class="fc-desc">${f.desc}</div>
+    </div>`).join('');
+}
+
+// ─── RENDER VOUCHERS ──────────────────────────────────────────────────────
+function renderVouchers(vouchers) {
+  currentVouchers = vouchers;
+  document.getElementById('vouchers-grid').innerHTML = vouchers.map(v => `
+    <div class="gift-card${selected.has(v.id)?' selected':''}" onclick="toggleVoucher('${v.id}')" data-id="${v.id}">
+      <div class="gc-top-row">
+        <span class="gc-tag-pill">${v.tag}</span>
+        <div class="gc-check-circle">${selected.has(v.id)?icon('check',11,'white'):''}</div>
+      </div>
+      <div class="gc-mid">
+        <div class="gc-icon-box" style="background:${v.iconBg||'#F3F4F6'}">${icon(v.icon,18,v.iconColor||'#6B7280')}</div>
+        <div class="gc-name">${v.brand}</div>
+        <div class="gc-cat">${v.cat}</div>
+      </div>
+      <div class="gc-val-pill">${v.value}${v.unit?' '+v.unit:''}</div>
+    </div>`).join('');
+}
+
+// ─── TOGGLE VOUCHER SELECTION ─────────────────────────────────────────────
+function toggleVoucher(id) {
+  if (selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  // Update single card without full re-render
+  const card = document.querySelector(`.gift-card[data-id="${id}"]`);
+  if (card) {
+    const isSel = selected.has(id);
+    card.classList.toggle('selected', isSel);
+    const circle = card.querySelector('.gc-check-circle');
+    if (circle) circle.innerHTML = isSel ? icon('check',11,'white') : '';
+    const pill = card.querySelector('.gc-val-pill');
+    if (pill) pill.style.cssText = '';
+  }
+  updateClaimBar();
+}
+
+// ─── CLAIM BAR ────────────────────────────────────────────────────────────
+function updateClaimBar() {
+  const bar = document.getElementById('claimBar');
+  const count = selected.size;
+  document.getElementById('claimCount').textContent = count;
+  // Calculate total value (rough)
+  const sel = currentVouchers.filter(v => selected.has(v.id));
+  const totalK = sel.reduce((sum,v) => {
+    const n = parseInt(v.value.replace(/[^0-9]/g,''));
+    return sum + (isNaN(n) ? 0 : (v.unit==='đ' ? n : 0));
+  }, 0);
+  document.getElementById('claimValue').textContent = totalK > 0 ? `• ${totalK.toLocaleString('vi-VN')}đ giá trị` : '';
+  bar.classList.toggle('visible', count > 0);
+}
+
+// ─── CLEAR SELECTION ─────────────────────────────────────────────────────
+document.getElementById('claimClear').addEventListener('click', () => {
+  selected.clear();
+  document.querySelectorAll('.gift-card.selected').forEach(c => {
+    c.classList.remove('selected');
+    c.querySelector('.gc-cta-text').textContent = 'Chọn nhận';
+  });
+  updateClaimBar();
+});
+
+// ─── TRY TOOL ─────────────────────────────────────────────────────────────
+const BANK_FEES = [
+  {max:500000, fee:1100},
+  {max:2000000, fee:1650},
+  {max:5000000, fee:3300},
+  {max:10000000, fee:5500},
+  {max:Infinity, fee:11000},
+];
+function calcBankFee(amount) {
+  return (BANK_FEES.find(r => amount <= r.max) || BANK_FEES[BANK_FEES.length-1]).fee;
+}
+function fmt(n) { return n.toLocaleString('vi-VN') + 'đ'; }
+function updateTryTool() {
+  const raw = document.getElementById('tryAmount').value.replace(/[^0-9]/g,'');
+  const amt = parseInt(raw) || 0;
+  const bankFee = calcBankFee(amt);
+  document.getElementById('momoFee').textContent = '0đ';
+  document.getElementById('bankFee').textContent = amt > 0 ? fmt(bankFee) : '—';
+  document.getElementById('savingAmt').textContent = amt > 0 ? fmt(bankFee) : '—';
+}
+document.getElementById('tryAmount').addEventListener('input', e => {
+  const raw = e.target.value.replace(/[^0-9]/g,'');
+  const num = parseInt(raw)||0;
+  e.target.value = num > 0 ? num.toLocaleString('vi-VN') : '';
+  document.querySelectorAll('.try-chip').forEach(c => c.classList.toggle('active', parseInt(c.dataset.val)===num));
+  updateTryTool();
+});
+document.querySelectorAll('.try-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const val = parseInt(chip.dataset.val);
+    document.getElementById('tryAmount').value = val.toLocaleString('vi-VN');
+    document.querySelectorAll('.try-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    updateTryTool();
+  });
+});
+updateTryTool();
+
+// ─── SEGMENT ──────────────────────────────────────────────────────────────
+function applySegment(seg) {
+  const d = SEGMENTS[seg];
+  document.body.className = document.body.className.replace(/seg-\w+/g,'').trim();
+  if (seg!=='default') document.body.classList.add('seg-'+seg);
+  document.getElementById('hero-eyebrow-text').textContent = d.eyebrow;
+  document.getElementById('hero-headline').innerHTML = d.headline.join('<br>');
+  document.getElementById('hero-sub').innerHTML = d.sub;
+  document.getElementById('vouchers-eyebrow').textContent = d.vouchersEyebrow;
+  document.getElementById('vouchers-title').textContent = d.vouchersTitle;
+  document.getElementById('vouchers-sub').textContent = d.vouchersSub;
+  document.getElementById('vc-label-text').textContent = d.vcLabel;
+  document.getElementById('footer-highlight').textContent = d.footerHighlight;
+  document.getElementById('footer-sub').textContent = d.footerSub;
+  selected.clear();
+  renderVouchers(d.vouchers);
+  updateClaimBar();
+  createIcons();
+  observeFadeUps();
+}
+
+// ─── FAQ ──────────────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if (!open) item.classList.add('open');
+}
+
+// ─── SCROLL REVEAL ────────────────────────────────────────────────────────
+function observeFadeUps() {
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+  },{threshold:.1});
+  document.querySelectorAll('.fade-up:not(.visible)').forEach(el=>obs.observe(el));
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+const LS_KEY = 'momo_welcome_seg';
+
+function revealPage(seg) {
+  renderFeatures();
+  applySegment(SEGMENTS[seg] ? seg : 'tinhthanh');
+  createIcons();
+  observeFadeUps();
+}
+
+function dismissSurvey(seg, animate) {
+  localStorage.setItem(LS_KEY, seg);
+  const overlay = document.getElementById('surveyOverlay');
+  if (animate) {
+    overlay.classList.add('exit');
+    overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+  } else {
+    overlay.remove();
+  }
+  revealPage(seg);
+}
+
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  const isDev = params.get('dev') === '1';
+  const urlSeg = params.get('segment');
+
+  // Dev mode: reset localStorage, show segment switcher
+  if (isDev) {
+    localStorage.removeItem(LS_KEY);
+    document.getElementById('segmentBar').style.display = 'flex';
+  }
+
+  const saved = localStorage.getItem(LS_KEY);
+
+  // Nếu đã pick trước đó (hoặc URL inject segment) → skip survey
+  if (saved && !isDev) {
+    dismissSurvey(saved, false);
+    return;
+  }
+  if (urlSeg && SEGMENTS[urlSeg] && !isDev) {
+    dismissSurvey(urlSeg, false);
+    return;
+  }
+
+  // Chưa pick → hiện survey, setup handlers
+  document.querySelectorAll('.survey-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const seg = card.dataset.seg;
+      // Picked animation rồi exit
+      card.classList.add('picked');
+      setTimeout(() => dismissSurvey(seg, true), 300);
+    });
+  });
+
+  // Dev segment switcher (chỉ active khi ?dev=1)
+  document.querySelectorAll('.seg-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const s = btn.dataset.seg;
+      revealPage(s);
+      document.querySelectorAll('.seg-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const url = new URL(window.location);
+      url.searchParams.set('segment', s);
+      window.history.replaceState({}, '', url);
+    });
+  });
+}
+init();
+</script>
+</body>
+</html>
