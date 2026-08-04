@@ -405,6 +405,25 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .oc-ctas{display:flex;gap:8px;padding:14px 24px;flex-wrap:wrap;border-top:1px solid var(--gray-100)}
 .oc-cta{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;border:1.5px solid var(--gray-200);color:var(--gray-700);background:var(--white);transition:.12s;white-space:nowrap}
 .oc-cta:hover{border-color:var(--pink-400);color:var(--pink-600);background:var(--pink-50)}
+/* ── OWNER DASHBOARD ── */
+.oc-owner-stack{display:flex;flex-direction:column;gap:14px}
+.oc-insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.oc-insight-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:18px 20px}
+.oc-insight-eyebrow{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);margin-bottom:10px}
+.oc-insight-title{font-size:17px;font-weight:900;color:var(--gray-900);line-height:1.2;margin-bottom:4px}
+.oc-insight-sub{font-size:12px;color:var(--gray-500);line-height:1.4;margin-bottom:12px}
+.oc-insight-cta{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--pink-500);text-decoration:none}
+.oc-insight-cta:hover{text-decoration:underline}
+.oc-lookup-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.oc-lookup-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:16px 18px}
+.oc-lookup-label{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-400);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.oc-lookup-input{width:100%;height:38px;border:1.5px solid var(--gray-200);border-radius:9px;padding:0 12px;font-size:13.5px;font-weight:700;color:var(--gray-900);font-family:inherit;outline:none;background:var(--gray-50);letter-spacing:.03em;text-transform:uppercase;box-sizing:border-box}
+.oc-lookup-input::placeholder{text-transform:none;letter-spacing:0;font-weight:400;color:var(--gray-300)}
+.oc-lookup-input:focus{border-color:var(--pink-400);background:var(--white);box-shadow:0 0 0 3px rgba(235,47,150,.08)}
+.oc-lookup-btn{margin-top:8px;width:100%;height:36px;background:var(--gray-900);border:none;border-radius:8px;font-size:12px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;transition:.12s;display:flex;align-items:center;justify-content:center;gap:5px}
+.oc-lookup-btn:hover{background:var(--pink-500)}
+.oc-calc-divider{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);display:flex;align-items:center;gap:10px}
+.oc-calc-divider::before,.oc-calc-divider::after{content:'';flex:1;height:1px;background:var(--gray-150,#E8E8E8)}
 @media(max-width:640px){
   .oc-km-row{flex-wrap:wrap}
   .oc-km-val{min-width:auto;font-size:18px}
@@ -412,6 +431,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   .oc-row-right{width:100%;justify-content:space-between;margin-left:0;padding-left:42px}
   .oc-row-hint{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .cost-tiles{grid-template-columns:repeat(2,1fr)}
+  .oc-insight-grid,.oc-lookup-row{grid-template-columns:1fr}
 }
 
 /* ── VALUATION SECTION ── */
@@ -3885,13 +3905,20 @@ function findModelBySlug(slug) {
 }
 
 /* ── OWNERSHIP CALC ── */
-function buildOwnershipCalc(b, m, brandId) {
+function doLookup(type) {
+  const input = document.getElementById('oc-' + type + '-input');
+  const bienso = (input ? input.value : '').trim().replace(/\s+/g,'');
+  if (!bienso) { input && input.focus(); return; }
+  window.location.href = '/tien-ich-giao-thong/' + type + '?bienso=' + encodeURIComponent(bienso);
+}
+
+function buildOwnershipCalc(b, m, brandId, e10info) {
   const typeToFuelRate = {suv:9,mpv:10,sedan:7.5,ev:15,pickup:12,coupe:8};
   const isEV = m.type === 'ev' || (m.ownership && m.ownership.fuelType === 'điện');
   const ow = m.ownership || {
     fuelRate: typeToFuelRate[m.type] || 8,
     fuelType: isEV ? 'điện' : 'xăng',
-    fuelPrice: isEV ? 3858 : 20003,
+    fuelPrice: isEV ? 3858 : 22850,
     insureAnnual: (m.monthly ? m.monthly.bh * 12 * 1000 : 7440000),
     maintPer5k: (m.monthly ? Math.round(m.monthly.maint * 12 / 24 * 5000 / 1500 * 1000) : 1200000),
     roadFeeAnnual: (m.monthly ? m.monthly.reg * 12 * 1000 : 1560000),
@@ -3904,7 +3931,71 @@ function buildOwnershipCalc(b, m, brandId) {
   const fuelLabel = isEV ? 'Chi phí sạc điện' : 'Nhiên liệu';
   const fuelLink = isEV ? '/tram-sac' : '/gia-xang';
   const fuelLinkText = isEV ? 'Xem giá điện →' : 'Giá xăng →';
-  return `<div class="oc-wrap">
+
+  // E10 insight card (xăng only)
+  const e10 = e10info || {status:'na'};
+  let e10Card = '';
+  if (e10.status === 'ok' || e10.status === 'no') {
+    const ok = e10.status === 'ok';
+    const cardBg = ok ? '#F0FDF4' : '#FEF2F2';
+    const cardBorder = ok ? '#BBF7D0' : '#FECACA';
+    const badgeBg = ok ? '#DCFCE7' : '#FEE2E2';
+    const badgeColor = ok ? '#15803D' : '#DC2626';
+    const badgeText = ok ? 'Dùng được E10' : 'Không dùng E10';
+    const iconSvg = ok
+      ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${badgeColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+      : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${badgeColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+    const detailText = e10.detail || '';
+    const savingBox = ok
+      ? `<div style="margin-top:10px;font-size:11px;color:#166534;background:#DCFCE7;border-radius:7px;padding:7px 10px;line-height:1.5">Tiết kiệm ~5-8% so với RON 95-III · khoảng <strong>50.000-80.000đ/tháng</strong> với 1.500km</div>`
+      : `<div style="margin-top:10px;font-size:11px;color:#991B1B;background:#FEE2E2;border-radius:7px;padding:7px 10px;line-height:1.5">Hãng không khuyến nghị xăng E10. Kiểm tra sổ tay bảo dưỡng trước khi đổ.</div>`;
+    e10Card = `<div class="oc-insight-card" style="border-color:${cardBorder};background:${cardBg}">
+      <div class="oc-insight-eyebrow">Xăng E10</div>
+      <div style="display:inline-flex;align-items:center;gap:7px;background:${badgeBg};border-radius:9px;padding:6px 12px;margin-bottom:8px">
+        ${iconSvg}
+        <span style="font-size:14px;font-weight:900;color:${badgeColor}">${badgeText}</span>
+      </div>
+      <div style="font-size:12px;color:${ok?'#166534':'#991B1B'};line-height:1.5">${detailText}</div>
+      ${savingBox}
+    </div>`;
+  }
+
+  // Định giá card
+  const pMin = m.price ? m.price[0] : null;
+  const pMax = m.price ? m.price[1] : null;
+  const priceDisplay = pMin
+    ? `${(pMin/1000).toLocaleString('vi-VN')} - ${(pMax/1000).toLocaleString('vi-VN')} triệu`
+    : 'Tra cứu xe cũ';
+  const valuationCard = `<div class="oc-insight-card">
+    <div class="oc-insight-eyebrow">Giá thị trường</div>
+    <div class="oc-insight-title">${priceDisplay}</div>
+    <div class="oc-insight-sub">Giá mới niêm yết · xe đã qua sử dụng phụ thuộc năm SX, km, tình trạng thực tế</div>
+    <a class="oc-insight-cta" href="/tien-ich-giao-thong/dinh-gia-xe?brand=${brandId}&model=${m.slug}">Định giá xe cũ →</a>
+  </div>`;
+
+  const insightSection = e10Card
+    ? `<div class="oc-insight-grid">${e10Card}${valuationCard}</div>`
+    : valuationCard;
+
+  // Lookup cards
+  const lookupCards = `<div class="oc-lookup-row">
+    <div class="oc-lookup-card">
+      <div class="oc-lookup-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Tra phạt nguội</div>
+      <input class="oc-lookup-input" id="oc-phat-nguoi-input" placeholder="Biển số xe (VD: 51A-12345)" maxlength="12">
+      <button class="oc-lookup-btn" onclick="doLookup('phat-nguoi')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Kiểm tra ngay</button>
+    </div>
+    <div class="oc-lookup-card">
+      <div class="oc-lookup-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M14 8H9a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1"/></svg>Tra hạn đăng kiểm</div>
+      <input class="oc-lookup-input" id="oc-dang-kiem-input" placeholder="Biển số xe (VD: 51A-12345)" maxlength="12">
+      <button class="oc-lookup-btn" onclick="doLookup('dang-kiem')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Kiểm tra ngay</button>
+    </div>
+  </div>`;
+
+  return `<div class="oc-owner-stack">
+    ${insightSection}
+    ${lookupCards}
+    <div class="oc-calc-divider">Chi phí ước tính / tháng</div>
+    <div class="oc-wrap">
     <div class="oc-km-section">
       <div class="oc-km-label">Bạn đi bao nhiêu km / tháng?</div>
       <div class="oc-km-row">
@@ -3991,6 +4082,7 @@ function buildOwnershipCalc(b, m, brandId) {
       <a class="oc-cta" href="/tien-ich-giao-thong/dang-kiem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M14 8H9a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1"/></svg> Đặt lịch đăng kiểm</a>
       <a class="oc-cta" href="/tien-ich-giao-thong/bai-do-xe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 12h4a2 2 0 0 0 0-4h-4v8"/></svg> Tìm bãi đỗ xe</a>
     </div>
+  </div>
   </div>`;
 }
 
@@ -4167,7 +4259,7 @@ function renderModelDetail(brandId, modelSlug) {
         <div class="section-h">Nuôi ${b.name} ${m.name} tốn bao nhiêu / tháng?</div>
         <div class="section-sub">Điều chỉnh km thực tế · cập nhật giá ${m.ownership&&m.ownership.fuelType==='điện'?'điện':'xăng'} ${new Date().toLocaleDateString('vi',{day:'2-digit',month:'2-digit',year:'numeric'})}</div>
       </div>
-      ${buildOwnershipCalc(b, m, id)}
+      ${buildOwnershipCalc(b, m, id, e10)}
       <div style="margin-top:20px">${renderModelInsight(b, m, id)}</div>
     </div>`;
 
