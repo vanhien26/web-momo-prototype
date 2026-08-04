@@ -824,8 +824,7 @@ const PROTOTYPES = [
   {
     id: 'product-roadmap',
     name: 'Product Roadmap 2026',
-    category: 'MoSpark',
-    pinned: true,
+    category: 'MoMo',
     navTagline: 'Roadmap',
     maturity: 'Static',
     description: 'Roadmap các dự án Web Platform theo từng giai đoạn trong năm 2026 (H1, H2...), bắt đầu từ Phase 1 - Foundation & Core Builders đã hoàn thành trong H1/2026.',
@@ -930,11 +929,33 @@ const PROTOTYPES = [
     ],
   },
   {
+    id: 'dich-vu',
+    name: 'Trang Dịch Vụ',
+    category: 'Other',
+    navHidden: true,
+    ownerGroup: 'Web Platform',
+    maturity: 'Concept',
+    description: 'Trang liệt kê toàn bộ dịch vụ MoMo theo category: Thanh toán, Hóa đơn, Tài chính, Bảo hiểm, Giải trí, Tiện ích. Có search và category tabs.',
+    src: 'demos/dich-vu.html',
+    address: 'web-momo-prototype.vercel.app/dich-vu',
+  },
+  {
+    id: 'welcome',
+    name: 'Welcome - Trang Cửa Ngõ',
+    category: 'Other',
+    navHidden: true,
+    ownerGroup: 'Web Platform',
+    maturity: 'Concept',
+    description: 'Gateway landing page momo.vn/welcome: educate new user quy trình 3 bước web→app, hiển thị kho quà tặng tùy chỉnh theo segment (?segment=congnhan/sinhvien/tinhthanh). Có Trust Badges và FAQ.',
+    jtbd: 'Rút ngắn nghi ngờ và giải thích rõ quy trình nhận quà để chuyển đổi organic traffic → app install.',
+    northStar: 'New User Install → eKYC → First Transaction',
+    src: 'demos/welcome.html',
+    address: 'web-momo-prototype.vercel.app/welcome',
+  },
+  {
     id: 'momo-homepage',
     name: 'MoMo HomePage',
-    category: 'Other',
-    pinned: true,
-    navIcon: '🏠',
+    category: 'MoMo',
     ownerGroup: 'Web Platform',
     maturity: 'Concept',
     description: 'Concept trang chủ momo.vn với định hướng Financial Authority + New User Onboarding. Hero dark với floating financial status cards, trust bar, product ecosystem, 3-step onboarding journey, PLG tools và app download CTA.',
@@ -946,12 +967,17 @@ const PROTOTYPES = [
     gate: 'Đo hero CTA click rate, product card engagement, onboarding section scroll depth và download button click.',
     src: 'demos/momo-homepage.html',
     address: 'web-momo-prototype.vercel.app/momo-homepage',
+    tools: [
+      { id: 'dich-vu', name: 'Trang Dịch Vụ', category: 'Child Page', description: 'Trang liệt kê toàn bộ dịch vụ MoMo theo category.', src: 'demos/dich-vu.html' },
+      { id: 'welcome', name: 'Welcome - Cửa Ngõ', category: 'Child Page', description: 'Gateway landing page chào đón người dùng mới, cá nhân hóa theo segment.', src: 'demos/welcome.html' },
+    ],
   },
 ];
 
 // ─── Color maps ───────────────────────────────────────────────────────────────
 
 const CAT_COLOR = {
+  'MoMo':       { bg: '#fff0f7', text: '#a50064' },
   'MoSpark':    { bg: '#fff0f7', text: '#a50064' },
   'MiniWeb':    { bg: '#eef2ff', text: '#4338ca' },
   'Widget':     { bg: '#eff6ff', text: '#1d4ed8' },
@@ -982,6 +1008,7 @@ const CAT_COLOR = {
 };
 
 const GROUP_LABEL = {
+  MoMo: 'MoMo',
   MoSpark: 'MoSpark Platform',
   MiniWeb: 'Mini Web Overview',
   Widget: 'Utilities Tool',
@@ -993,11 +1020,12 @@ function displayGroupName(groupName) {
   return GROUP_LABEL[groupName] || groupName;
 }
 
-const GROUP_ORDER = ['MiniWeb', 'Platform', 'Widget', 'MoSpark', 'Other'];
+const GROUP_ORDER = ['MoMo', 'MiniWeb', 'Platform', 'Widget', 'MoSpark', 'Other'];
 const GROUP_DOT_COLORS = {
-  MiniWeb: '#60a5fa', MoSpark: '#f472b6', Widget: '#34d399', Platform: '#fb923c', Other: '#9ca3af',
+  MoMo: '#E8005A', MiniWeb: '#60a5fa', MoSpark: '#f472b6', Widget: '#34d399', Platform: '#fb923c', Other: '#9ca3af',
 };
 const GROUP_META = {
+  MoMo:     { eyebrow: 'MoMo',              title: 'MoMo',                  desc: 'Roadmap và các trang chính của momo.vn: Homepage, Dịch vụ, Welcome gateway.',       chipCls: 'pill-pink'  },
   MoSpark:  { eyebrow: 'MoSpark Platform',  title: 'AI & Content Tools',    desc: 'GenAI orchestration, landing page builder, SEO/GEO scoring và content management.', chipCls: 'pill-pink'  },
   Widget:   { eyebrow: 'Utilities Tool',    title: 'Financial Calculators', desc: 'PLG tools, calculators và checker phục vụ organic SEO và user engagement.',         chipCls: 'pill-green' },
   Platform: { eyebrow: 'Platform',          title: 'Product Screens',       desc: 'Full-flow prototypes: Phạt Nguội, Cinema, eSIM, Dịch vụ công và Onboarding.',       chipCls: 'pill-amber' },
@@ -1105,14 +1133,21 @@ function getWidgetCluster(protoId) {
 }
 
 const GROUP_ITEM_ORDER = {
+  MoMo: ['product-roadmap', 'momo-homepage'],
   MoSpark: ['orchestrator', 'genai-image', 'agentic-hub', 'merchant-page-builder', 'ads-manager', 'widget-manager', 'seo-geo-dashboard', 'seo-geo-project', 'mospark-activity-log', 'microsite-manager', 'seo-geo-score', 'chatbot'],
   MiniWeb: ['mini-web-overview'],
   Widget: ['utilities-flow', 'financial'],
   Platform: ['student-hub', 'vehicle-hub', 'phat-nguoi', 'hang-xe-may', 'bao-hiem-o-to', 'dang-kiem', 'tra-cuu-dang-kiem', 'esim-du-lich', 'dia-diem-du-lich', 'epass', 'ota', 'cinema', 'cinema-now-showing', 'cinema-coming-soon', 'cinema-series-list', 'cinema-top-phim', 'cinema-series', 'cinema-rap', 'cinema-actors', 'cinema-person', 'dich-vu-cong', 'news', 'blog-category', 'merchant', 'payments'],
-  Other: ['momo-homepage'],
+  Other: [],
 };
 
 const GROUP_SUMMARY = {
+  MoMo: {
+    eyebrow: 'MoMo',
+    title: 'MoMo',
+    description: 'Roadmap platform và các trang bề mặt chính của momo.vn: Homepage, Trang Dịch Vụ và Welcome gateway cho người dùng mới.',
+    examples: 'Product Roadmap 2026 · MoMo HomePage · Trang Dịch Vụ · Welcome - Cửa Ngõ',
+  },
   MoSpark: {
     eyebrow: 'MoSpark Platform',
     title: 'MoSpark Platform',
