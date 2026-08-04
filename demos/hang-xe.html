@@ -3922,19 +3922,13 @@ function findModelBySlug(slug) {
 /* ── OWNERSHIP CALC ── */
 function ocLookup(type) {
   const inputId = type === 'plate' ? 'oc-phat-nguoi-input' : 'oc-dang-kiem-input';
-  const resultId = type === 'plate' ? 'oc-plate-result' : 'oc-reg-result';
   const input = document.getElementById(inputId);
   const bienso = (input ? input.value : '').trim();
   if (!bienso) { input && input.focus(); return; }
-  const el = document.getElementById(resultId);
-  if (!el) return;
-  const demos = {
-    plate: {cls:'util-result-ok', html:'<strong>Không có vi phạm</strong> - Biển số này chưa ghi nhận phạt nguội. Kiểm tra lần cuối: hôm nay.'},
-    reg:   {cls:'util-result-warn', html:'<strong>Hạn đăng kiểm: 15/09/2026</strong> - Còn 66 ngày. Nên đặt lịch trước 2 tuần để tránh chờ đợi.'},
-  };
-  const d = demos[type];
-  el.className = 'util-result show ' + d.cls;
-  el.innerHTML = d.html;
+  const dest = type === 'plate'
+    ? '/phat-nguoi?bienso=' + encodeURIComponent(bienso)
+    : '/tien-ich-giao-thong/dang-kiem?bienso=' + encodeURIComponent(bienso);
+  window.location.href = dest;
 }
 
 function buildOwnershipCalc(b, m, brandId, e10info) {
@@ -4014,7 +4008,6 @@ function buildOwnershipCalc(b, m, brandId, e10info) {
         <input class="oc-lookup-input" id="oc-phat-nguoi-input" placeholder="VD: 51A-12345" maxlength="12" onkeydown="if(event.key==='Enter')ocLookup('plate')">
         <button class="oc-lookup-go" onclick="ocLookup('plate')">Tra</button>
       </div>
-      <div class="util-result" id="oc-plate-result"></div>
     </div>
     <div class="oc-lookup-item">
       <div class="oc-lookup-item-label">
@@ -4025,7 +4018,6 @@ function buildOwnershipCalc(b, m, brandId, e10info) {
         <input class="oc-lookup-input" id="oc-dang-kiem-input" placeholder="VD: 51A-12345" maxlength="12" onkeydown="if(event.key==='Enter')ocLookup('reg')">
         <button class="oc-lookup-go" onclick="ocLookup('reg')">Tra</button>
       </div>
-      <div class="util-result" id="oc-reg-result"></div>
     </div>
   </div>`;
 

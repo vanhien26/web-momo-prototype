@@ -485,3 +485,17 @@
     });
   });
 })();
+
+// Auto-fill + submit from URL param ?bienso=XXX (dùng khi redirect từ trang khác)
+(function() {
+  const params = new URLSearchParams(location.search);
+  const bienso = params.get('bienso');
+  if (!bienso) return;
+  const input = document.querySelector('[data-plate-input]');
+  if (!input) return;
+  input.value = bienso.toUpperCase();
+  const form = input.closest('[data-lookup-form]');
+  if (form) {
+    setTimeout(() => form.dispatchEvent(new Event('submit')), 200);
+  }
+})();
