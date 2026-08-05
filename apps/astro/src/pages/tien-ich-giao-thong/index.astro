@@ -2136,6 +2136,106 @@ body {
 @media (max-width: 860px) { .tp-route-grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 540px) { .tp-route-grid { grid-template-columns: 1fr; } }
 
+/* ── ANIMATION KEYFRAMES ─────────────────────────────── */
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-fade-right {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes plate-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(235,47,150,.0); }
+  50%      { box-shadow: 0 0 0 6px rgba(235,47,150,.18); }
+}
+@keyframes count-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes wave-draw {
+  from { stroke-dashoffset: 1600; opacity: 0; }
+  to   { stroke-dashoffset: 0;    opacity: 1; }
+}
+@keyframes pin-bob {
+  0%,100% { transform: translateY(0) scale(1); }
+  35%     { transform: translateY(-6px) scale(1.08); }
+  65%     { transform: translateY(-2px) scale(1.03); }
+}
+@keyframes beam-in {
+  from { opacity: 0; transform: scale(.88); filter: blur(6px); }
+  to   { opacity: 1; transform: scale(1);   filter: blur(0); }
+}
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spring-pop {
+  0%   { opacity: 0; transform: scale(.7) translateY(14px); }
+  60%  { transform: scale(1.06) translateY(-3px); }
+  80%  { transform: scale(.97) translateY(1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes shimmer-once {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes road-car {
+  from { left: -32px; }
+  to   { left: calc(100% + 32px); }
+}
+
+/* Hero staggered entry */
+.hero-eyebrow { animation: hero-fade-right .5s ease both .1s; }
+.hero-title    { animation: hero-fade-up .6s cubic-bezier(.22,1,.36,1) both .2s; }
+.hero-usp li:nth-child(1) { animation: hero-fade-right .45s ease both .35s; }
+.hero-usp li:nth-child(2) { animation: hero-fade-right .45s ease both .45s; }
+.hero-usp li:nth-child(3) { animation: hero-fade-right .45s ease both .55s; }
+.hero-usp li:nth-child(4) { animation: hero-fade-right .45s ease both .65s; }
+.plate-panel               { animation: beam-in .6s cubic-bezier(.22,1,.36,1) both .3s; }
+
+/* Hero pill hover */
+.hero-service-pill { transition: transform .18s cubic-bezier(.22,1,.36,1), border-color .15s, background .15s, color .15s; }
+.hero-service-pill:hover { transform: translateY(-2px) scale(1.03); }
+
+/* Section eyebrow reveal */
+.section-eyebrow { opacity: 0; animation: none; }
+.section-eyebrow.is-visible { animation: hero-fade-right .45s ease both; }
+
+/* Section title reveal */
+.section-title { opacity: 0; animation: none; }
+.section-title.is-visible { animation: slide-up-fade .55s cubic-bezier(.22,1,.36,1) both; }
+
+/* Feature cards spring pop */
+.fc-card { opacity: 0; }
+.fc-card.is-visible { animation: spring-pop .5s cubic-bezier(.22,1,.36,1) both; }
+
+/* Section cards generic */
+[data-anim="slide-up"] { opacity: 0; transform: translateY(20px); transition: opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1); }
+[data-anim="slide-up"].is-visible { opacity: 1; transform: translateY(0); }
+
+/* Stat cell count-pop */
+.stat-cell.did-count .stat-num { animation: count-pop .4s cubic-bezier(.22,1,.36,1); }
+
+/* Road car easter egg */
+.road-car-wrap {
+  position: relative; height: 0; overflow: visible; pointer-events: none;
+}
+.road-car {
+  position: absolute; top: -18px;
+  font-size: 20px; line-height: 1;
+  animation: road-car 4s linear infinite;
+  will-change: left;
+}
+
+/* Plate pulse on result */
+.plate-box.has-result { animation: plate-pulse 1.5s ease-in-out 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+}
+
 /* ── TRIP SEARCH WIDGET ──────────────────── */
 /* ── TRIP PLANNER WIDGET (1-row search bar) ── */
 .tp-widget {
@@ -4934,6 +5034,158 @@ window.confirmAddVehicle = function() {
 document.getElementById('consentSheet').addEventListener('click', function(e) {
   if (e.target === this) closeConsentSheet();
 });
+
+/* ── ANIMATION CHOREOGRAPHY ──────────────────────────────────── */
+(function initAnimations() {
+
+  /* 1. Scroll-triggered reveal — section eyebrows, titles, [data-anim] */
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      revealObs.unobserve(entry.target);
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.section-eyebrow, .section-title, [data-anim="slide-up"]')
+    .forEach(el => revealObs.observe(el));
+
+  /* 2. Feature cards — staggered spring-pop */
+  const cardObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const cards = entry.target.querySelectorAll('.fc-card');
+      cards.forEach((card, i) => {
+        setTimeout(() => card.classList.add('is-visible'), i * 80);
+      });
+      cardObs.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+
+  const fcGrid = document.getElementById('fcGrid');
+  if (fcGrid) cardObs.observe(fcGrid);
+
+  /* 3. Stats bar — count-up animation */
+  const statTargets = [
+    { el: null, end: 1.2, suffix: 'M+', decimals: 1 },
+    { el: null, end: 63,  suffix: '',   decimals: 0 },
+    { el: null, end: 10,  suffix: '+',  decimals: 0 },
+    { el: null, end: 0,   suffix: 'đ',  decimals: 0 },
+  ];
+  const statEls = document.querySelectorAll('.stat-num');
+  statEls.forEach((el, i) => { if (statTargets[i]) statTargets[i].el = el; });
+
+  function countUp(el, end, suffix, decimals, cell) {
+    const duration = 1200;
+    const start = performance.now();
+    const startVal = 0;
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const val = startVal + (end - startVal) * ease;
+      const display = decimals > 0 ? val.toFixed(decimals) : Math.round(val);
+      el.innerHTML = display + '<em>' + suffix + '</em>';
+      if (p < 1) requestAnimationFrame(step);
+      else { cell.classList.add('did-count'); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  let statsDone = false;
+  const statsObs = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting || statsDone) return;
+    statsDone = true;
+    statTargets.forEach(({ el, end, suffix, decimals }, i) => {
+      if (!el) return;
+      const cell = el.closest('.stat-cell');
+      setTimeout(() => countUp(el, end, suffix, decimals, cell), i * 120);
+    });
+    statsObs.disconnect();
+  }, { threshold: 0.4 });
+
+  const statsBar = document.querySelector('.stats-bar');
+  if (statsBar) statsObs.observe(statsBar);
+
+  /* 4. Wave SVG path draw on load */
+  const wavePath = document.querySelector('.hero-wave path');
+  if (wavePath) {
+    const len = wavePath.getTotalLength ? wavePath.getTotalLength() : 1600;
+    wavePath.style.cssText = `stroke:#F7F5FA;stroke-width:1;stroke-dasharray:${len};stroke-dashoffset:${len};fill:#F7F5FA;animation:wave-draw 1.2s cubic-bezier(.22,1,.36,1) .4s both`;
+  }
+
+  /* 5. Plate box pulse on result */
+  const origRender = window.renderResult;
+  if (typeof origRender === 'function') {
+    window.renderResult = function(...args) {
+      origRender.apply(this, args);
+      const pb = document.getElementById('plateBox');
+      if (pb) {
+        pb.classList.remove('has-result');
+        void pb.offsetWidth;
+        pb.classList.add('has-result');
+      }
+    };
+  }
+
+  /* 6. Section cards with [data-anim] — auto-tag utility section items */
+  document.querySelectorAll('.section.section--anim .card, .util-card, .tp-route-card')
+    .forEach(el => {
+      if (!el.dataset.anim) el.setAttribute('data-anim', 'slide-up');
+      revealObs.observe(el);
+    });
+
+  /* 7. Road car easter egg on stats bar hover */
+  const statsBarInner = document.querySelector('.stats-bar-inner');
+  if (statsBarInner) {
+    let carAdded = false;
+    statsBarInner.addEventListener('mouseenter', () => {
+      if (carAdded) return;
+      carAdded = true;
+      const wrap = document.createElement('div');
+      wrap.className = 'road-car-wrap';
+      const car = document.createElement('div');
+      car.className = 'road-car';
+      car.textContent = '🚗';
+      wrap.appendChild(car);
+      statsBar.insertBefore(wrap, statsBarInner);
+      setTimeout(() => { wrap.remove(); carAdded = false; }, 5000);
+    });
+  }
+
+  /* 8. Pin-bob on hover for station cards */
+  document.addEventListener('mouseover', e => {
+    const card = e.target.closest('.stn-card, .parking-spot, .rescue-card');
+    if (card && !card._pinBob) {
+      card._pinBob = true;
+      card.style.animation = 'pin-bob .55s cubic-bezier(.22,1,.36,1)';
+      card.addEventListener('animationend', () => {
+        card.style.animation = '';
+        card._pinBob = false;
+      }, { once: true });
+    }
+  });
+
+  /* 9. Stagger-reveal for brand chips */
+  const brandObs = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    document.querySelectorAll('.brand-chip').forEach((chip, i) => {
+      chip.style.opacity = '0';
+      chip.style.transform = 'translateY(10px)';
+      chip.style.transition = `opacity .35s ease ${i*40}ms, transform .35s cubic-bezier(.22,1,.36,1) ${i*40}ms`;
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          chip.style.opacity = '';
+          chip.style.transform = '';
+        }, i * 40);
+      });
+    });
+    brandObs.disconnect();
+  }, { threshold: 0.2 });
+
+  const brandStrip = document.querySelector('.brand-row');
+  if (brandStrip) brandObs.observe(brandStrip);
+
+})();
 </script>
 
 </VehicleHub>
