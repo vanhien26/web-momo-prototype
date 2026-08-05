@@ -1078,6 +1078,30 @@ body {
 .vr-svc-icon.pink svg { stroke: var(--pink-500); }
 .vr-svc-icon.green { background: #f0fdf4; }
 .vr-svc-icon.green svg { stroke: #16a34a; }
+.vr-svc-icon.amber { background: #fffbeb; }
+.vr-svc-icon.amber svg { stroke: #d97706; }
+.vr-svc-icon.purple { background: #f5f3ff; }
+.vr-svc-icon.purple svg { stroke: #7c3aed; }
+.vr-svc-badge.amber { background: #fffbeb; color: #d97706; }
+.vr-svc-badge.purple { background: #f5f3ff; color: #7c3aed; }
+
+/* Result panel entry animation */
+@keyframes vr-result-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vr-wrap > * {
+  animation: vr-result-in .4s cubic-bezier(.22,1,.36,1) both;
+}
+.vr-wrap > *:nth-child(1) { animation-delay: 0ms; }
+.vr-wrap > *:nth-child(2) { animation-delay: 60ms; }
+.vr-wrap > *:nth-child(3) { animation-delay: 120ms; }
+.vr-wrap > *:nth-child(4) { animation-delay: 180ms; }
+.vr-wrap > *:nth-child(5) { animation-delay: 240ms; }
+.vr-service {
+  transition: background .12s, transform .2s cubic-bezier(.22,1,.36,1);
+}
+.vr-service:hover { background: var(--gray-50); transform: translateX(3px); }
 .vr-svc-body { flex: 1; min-width: 0; }
 .vr-svc-label { font-size: 13.5px; font-weight: 800; color: var(--gray-900); }
 .vr-svc-sub { font-size: 11.5px; color: var(--gray-500); margin-top: 2px; }
@@ -3780,8 +3804,15 @@ const USE_CASE_LABELS = {
       return { brand: pool.b, model: pool.models[h % pool.models.length], year: 2019+(h%6), color: COLORS_POOL[h%COLORS_POOL.length] };
     }
 
+    function detectVtype(plate) {
+      // Xe máy: 2 số + 1 chữ + 1 số + dấu phân cách + 4-5 số  (vd: 51G1-12345, 29K1-99999)
+      // Ô tô:   2 số + 1 chữ + dấu phân cách + 5 số            (vd: 29A-12345, 51G-88888)
+      const raw = plate.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+      return /^\d{2}[A-Z]\d{1}\d{4,5}$/.test(raw) ? 'xemay' : 'oto';
+    }
+
     function renderResult(plate, data, vtype) {
-      vtype = vtype || currentVtype;
+      vtype = detectVtype(plate) !== 'oto' ? 'xemay' : (vtype || currentVtype);
       const { violationCount, mockData } = data;
       const region = getRegion(plate);
       const vtypeLabel = vtype === 'xemay' ? 'Xe máy' : 'Ô tô con';
@@ -3870,6 +3901,36 @@ const USE_CASE_LABELS = {
       const dangKiemSub = vtype === 'xemay'
         ? 'Xe máy chưa bắt buộc đăng kiểm định kỳ — nhưng hãy kiểm tra ngay nếu xe trên 5 năm'
         : 'Biết trước hạn đăng kiểm, tránh bị phạt 800K–4 triệu vì quá hạn. Xem lịch trực tiếp trong MoMo';
+
+      // Bảo hiểm rows — phân theo loại xe
+      const insOtoRow = vtype !== 'xemay' ? `
+          <a class="vr-service" href="/bao-hiem-o-to">
+            <div class="vr-svc-icon amber">${licon('ShieldCheck', 20, 1.8)}</div>
+            <div class="vr-svc-body">
+              <div class="vr-svc-label">Bảo hiểm ô tô</div>
+              <div class="vr-svc-sub">TNDS bắt buộc từ 479K/năm · Bảo hiểm vật chất thân xe từ 9 công ty hàng đầu — so sánh và mua ngay</div>
+            </div>
+            <div class="vr-svc-right">
+              <span class="vr-svc-badge amber">Mua ngay</span>
+              <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
+            </div>
+          </a>` : '';
+
+      const insXemayRow = `
+          <a class="vr-service" href="/bao-hiem/tnds-xe-may">
+            <div class="vr-svc-icon purple">${licon('Shield', 20, 1.8)}</div>
+            <div class="vr-svc-body">
+              <div class="vr-svc-label">Bảo hiểm xe máy${vtype !== 'xemay' ? ' (TNDS)' : ''}</div>
+              <div class="vr-svc-sub">${vtype === 'xemay'
+                ? 'TNDS bắt buộc từ 66K/năm — kiểm tra hạn bảo hiểm và gia hạn nhanh qua MoMo'
+                : 'Có xe máy trong nhà? Mua TNDS xe máy từ 66K/năm, xử lý hoàn toàn trên MoMo'}</div>
+            </div>
+            <div class="vr-svc-right">
+              <span class="vr-svc-badge purple">${vtype === 'xemay' ? 'Gia hạn ngay' : 'Mua ngay'}</span>
+              <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
+            </div>
+          </a>`;
+
       const servicesHtml = `
         <div class="vr-services">
           <div class="vr-service" style="cursor:pointer">
@@ -3883,6 +3944,8 @@ const USE_CASE_LABELS = {
               <span class="vr-svc-chevron">${licon('ChevronRight', 15, 2.5)}</span>
             </div>
           </div>
+          ${insOtoRow}
+          ${insXemayRow}
           <a class="vr-service" href="/tien-ich-giao-thong/dinh-gia-xe">
             <div class="vr-svc-icon pink">${licon('TrendingDown', 20, 1.8)}</div>
             <div class="vr-svc-body">
