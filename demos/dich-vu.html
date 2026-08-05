@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tất cả dịch vụ - MoMo</title>
+<link rel="shortcut icon" type="image/svg+xml" href="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg">
+<style>
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Regular.otf') format('opentype');font-weight:400;font-display:swap}
+@font-face{font-family:'MoMoTrustSans';src:url('../assets/fonts/momo-trust/MoMoTrustSans-Medium.otf') format('opentype');font-weight:500 800;font-display:swap}
+@font-face{font-family:'MoMoTrustDisplay';src:url('../assets/fonts/momo-trust/MoMoTrustDisplay.otf') format('opentype');font-weight:400 900;font-display:swap}
+
+:root{
+  --pink:#C8007A;--ink:#0D0A14;--muted:#667085;--canvas:#F7F8FA;--line:#E4E7EC;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'MoMoTrustSans',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased}
+.d{font-family:'MoMoTrustDisplay','MoMoTrustSans',sans-serif}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(255,255,255,.95);backdrop-filter:blur(32px) saturate(180%);border-bottom:1px solid rgba(0,0,0,.06);transition:box-shadow .2s}
+.nav.scrolled{box-shadow:0 1px 24px rgba(0,0,0,.07)}
+.nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-logo span{font-size:17px;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
+.nav-links{display:flex;align-items:center;gap:2px;margin:0 auto;padding:0 32px}
+.nav-item{position:relative}
+.nav-item>a,.nav-item>button{display:flex;align-items:center;gap:5px;padding:8px 14px;font-size:14px;color:#4B5563;font-weight:500;background:none;border:none;cursor:pointer;border-radius:10px;white-space:nowrap;letter-spacing:-.01em;transition:color .15s,background .15s}
+.nav-item>a:hover,.nav-item>button:hover{color:#111;background:rgba(0,0,0,.05)}
+.nav-chevron{width:14px;height:14px;stroke:currentColor;stroke-width:2;transition:transform .2s}
+.nav-item:hover .nav-chevron{transform:rotate(180deg)}
+.nav-dropdown{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(-4px);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.12);opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:300}
+.nav-item:hover .nav-dropdown{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.nav-mega{width:680px;display:grid;grid-template-columns:1fr 1fr 1fr;padding:16px;gap:0}
+.mega-col-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding:4px 8px 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.mega-item{display:flex;align-items:flex-start;gap:10px;padding:8px;border-radius:10px;transition:background .12s;cursor:pointer}
+.mega-item:hover{background:var(--canvas)}
+.mega-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mega-icon svg{width:16px;height:16px}
+.mega-item-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.mega-item-desc{font-size:12px;color:var(--muted);line-height:1.4}
+.nav-list{min-width:200px;padding:8px}
+.nav-list-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:13px;color:var(--ink);font-weight:500;transition:background .12s;cursor:pointer;white-space:nowrap}
+.nav-list-item:hover{background:var(--canvas)}
+.nav-list-item svg{width:16px;height:16px;stroke:var(--muted)}
+.nav-list-sep{height:1px;background:var(--line);margin:6px 0}
+.nav-actions{display:flex;align-items:center;gap:6px}
+.nav-search-btn{width:38px;height:38px;border-radius:10px;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6B7280;transition:all .15s}
+.nav-search-btn:hover{color:#111;background:rgba(0,0,0,.06)}
+.nav-search-btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2}
+.nav-cta{background:var(--pink);color:#fff;padding:10px 22px;border-radius:999px;font-size:13.5px;font-weight:700;border:none;cursor:pointer;box-shadow:0 2px 12px rgba(200,0,122,.3);letter-spacing:-.01em;transition:all .15s}
+.nav-cta:hover{background:#a50064;box-shadow:0 4px 16px rgba(200,0,122,.4);transform:translateY(-1px)}
+
+/* SEARCH OVERLAY */
+.search-overlay{position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;pointer-events:none}
+.search-overlay.open{pointer-events:auto}
+.search-backdrop{position:absolute;inset:0;background:rgba(13,10,20,.5);backdrop-filter:blur(4px);opacity:0;transition:opacity .2s}
+.search-overlay.open .search-backdrop{opacity:1}
+.search-box{position:relative;background:#fff;padding:16px 40px 28px;transform:translateY(-100%);transition:transform .25s cubic-bezier(.32,1,.5,1);z-index:1;box-shadow:0 12px 40px rgba(0,0,0,.14)}
+.search-overlay.open .search-box{transform:translateY(0)}
+.search-input-wrap{display:flex;align-items:center;gap:12px;border:2px solid var(--pink);border-radius:14px;padding:10px 16px;max-width:760px;margin:0 auto}
+.search-input-wrap svg{flex-shrink:0;stroke:var(--pink);width:20px;height:20px}
+.search-input{flex:1;border:none;outline:none;font-size:16px;font-weight:500;color:var(--ink);background:transparent;font-family:inherit}
+.search-input::placeholder{color:#aaa}
+.search-clear{width:28px;height:28px;border-radius:50%;background:var(--line);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.search-clear:hover{background:#ddd}
+.search-clear svg{width:13px;height:13px;stroke:var(--muted)}
+.search-suggests{max-width:760px;margin:20px auto 0}
+.search-suggest-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.search-chips{display:flex;gap:7px;flex-wrap:wrap}
+.search-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .14s}
+.search-chip:hover{border-color:var(--pink);color:var(--pink);background:#FFF5FB}
+.search-results{max-width:760px;margin:8px auto 0;display:none}
+.search-results.has-results{display:block}
+.search-result-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .12s}
+.search-result-item:hover{background:var(--canvas)}
+.search-result-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.search-result-name{font-size:14px;font-weight:600;color:var(--ink)}
+.search-result-desc{font-size:12px;color:var(--muted)}
+
+/* DOWNLOAD MODAL */
+.dl-modal-backdrop{position:fixed;inset:0;z-index:600;background:rgba(13,10,20,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.dl-modal-backdrop.open{opacity:1;pointer-events:auto}
+.dl-modal{background:#fff;border-radius:24px;width:100%;max-width:780px;max-height:92vh;overflow:hidden;display:flex;transform:translateY(20px) scale(.97);transition:transform .25s cubic-bezier(.32,1,.5,1);box-shadow:0 32px 80px rgba(0,0,0,.22)}
+.dl-modal-backdrop.open .dl-modal{transform:none}
+.dl-modal-left{width:260px;flex-shrink:0;background:linear-gradient(160deg,#A0005F,#C8007A 40%,#FF3399);display:flex;flex-direction:column;padding:28px 24px;position:relative}
+.dl-modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dl-modal-close svg{width:13px;height:13px;stroke:#fff;stroke-width:2.5}
+.dl-modal-gift{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.dl-modal-gift svg{width:22px;height:22px;stroke:#fff}
+.dl-modal-title{font-size:19px;font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-.02em;line-height:1.2}
+.dl-modal-subtitle{font-size:12px;color:rgba(255,255,255,.75);line-height:1.55;flex:1}
+.dl-qr-code{width:96px;height:96px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;margin:16px auto 8px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.dl-qr-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.75);text-align:center;margin-bottom:10px}
+.dl-qr-stores{display:flex;flex-direction:column;gap:6px;width:100%}
+.dl-qr-store{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);font-size:11px;font-weight:600;color:#fff;cursor:pointer;transition:background .15s}
+.dl-qr-store:hover{background:rgba(255,255,255,.25)}
+.dl-qr-store svg{width:13px;height:13px;stroke:#fff}
+.dl-mobile-btns{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.dl-mobile-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:12px;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:opacity .15s;text-decoration:none}
+.dl-modal-right{flex:1;overflow-y:auto;padding:24px}
+.dl-step{display:flex;align-items:flex-start;gap:12px;padding-bottom:16px;position:relative}
+.dl-step:not(:last-child)::before{content:'';position:absolute;left:15px;top:34px;bottom:0;width:1.5px;background:var(--line)}
+.dl-step-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;border:2px solid transparent}
+.dl-step-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.dl-step-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.dl-step-reward{display:inline-flex;align-items:center;gap:4px;background:#FFF5FB;color:#C8007A;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;margin-top:5px}
+
+/* PAGE */
+.page-body{padding-top:68px;min-height:100vh}
+.breadcrumb{background:#fff;border-bottom:1px solid var(--line);padding:0 48px}
+.breadcrumb-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;gap:8px;height:44px;font-size:13px;color:var(--muted)}
+.breadcrumb a{color:var(--muted);font-weight:500;transition:color .15s}
+.breadcrumb a:hover{color:var(--ink)}
+.breadcrumb-sep{opacity:.4}
+
+/* HERO */
+.page-hero{background:#fff;border-bottom:1px solid var(--line);padding:44px 48px 0}
+.page-hero-inner{max-width:1160px;margin:0 auto}
+.hero-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:32px}
+.hero-eyebrow{font-size:11.5px;font-weight:700;color:var(--pink);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.hero-title{font-size:34px;font-weight:900;letter-spacing:-.035em;line-height:1.1;margin-bottom:8px}
+.hero-sub{font-size:15px;color:var(--muted);line-height:1.55;max-width:460px}
+.hero-stats{display:flex;gap:24px;flex-shrink:0}
+.hero-stat{text-align:right}
+.hero-stat-num{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.hero-stat-num span{color:var(--pink)}
+.hero-stat-label{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:3px}
+.hero-search{position:relative;max-width:520px;margin-bottom:32px}
+.hero-search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:#9CA3AF;stroke-width:2;pointer-events:none}
+#svcSearch{width:100%;height:50px;border-radius:14px;border:1.5px solid var(--line);background:#fff;padding:0 16px 0 46px;font-size:14.5px;color:var(--ink);outline:none;box-shadow:0 2px 8px rgba(0,0,0,.06);font-family:inherit;transition:border-color .15s,box-shadow .15s}
+#svcSearch:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(200,0,122,.08)}
+#svcSearch::placeholder{color:#B0B7C3}
+
+/* FEATURED STRIP - removed */
+
+/* CAT TABS */
+.cat-tabs-wrap{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:68px;z-index:90}
+.cat-tabs{max-width:1160px;margin:0 auto;display:flex;gap:0;overflow-x:auto;scrollbar-width:none;padding:0 48px}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:13px 16px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;font-family:inherit}
+.cat-tab svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;opacity:.55;transition:opacity .15s}
+.cat-tab.on{color:var(--pink);border-bottom-color:var(--pink)}
+.cat-tab.on svg{opacity:1}
+.cat-tab:hover:not(.on){color:var(--ink)}
+
+/* CONTENT */
+.content{max-width:1160px;margin:0 auto;padding:32px 48px 80px}
+.cat-section,.coming-section{margin-bottom:44px}
+.cat-section.hidden{display:none}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.cat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cat-icon svg{width:18px;height:18px;stroke-width:1.8}
+.cat-name{font-size:16px;font-weight:700;letter-spacing:-.02em}
+.cat-count{font-size:11.5px;font-weight:500;color:var(--muted);background:var(--canvas);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+.cat-see-all{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--pink);cursor:pointer;background:none;border:none;padding:4px 0;transition:opacity .15s}
+.cat-see-all:hover{opacity:.7}
+
+/* SVC GRID */
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:10px}
+.svc-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 14px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;text-align:center;text-decoration:none;position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,0,122,.05),transparent);opacity:0;transition:opacity .2s;pointer-events:none}
+.svc-card:hover{border-color:rgba(200,0,122,.28);box-shadow:0 6px 24px rgba(200,0,122,.1);transform:translateY(-3px)}
+.svc-card:hover::before{opacity:1}
+.svc-card.hidden{display:none}
+.svc-icon{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s}
+.svc-icon svg{width:25px;height:25px;stroke-width:1.7}
+.svc-card:hover .svc-icon{transform:scale(1.08)}
+.svc-name{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3;transition:color .15s}
+.svc-card:hover .svc-name{color:var(--pink)}
+.svc-desc{font-size:11px;color:var(--muted);line-height:1.4;display:none}
+.svc-card:hover .svc-desc{display:block}
+.svc-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.03em}
+.svc-badge.new{background:#ECFDF3;color:#059669}
+.svc-badge.hot{background:#FEF3F2;color:#D92D20}
+.svc-badge.soon{background:#FFFBEB;color:#B45309}
+.svc-users{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:3px}
+.svc-users svg{width:10px;height:10px;stroke:var(--muted);stroke-width:2}
+
+/* COMING SOON */
+.coming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.coming-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px}
+.coming-card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.55}
+.coming-card-icon svg{width:20px;height:20px;stroke-width:1.8}
+.coming-card-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.coming-card-desc{font-size:11.5px;color:var(--muted);line-height:1.4}
+.soon-pill{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#FFFBEB;color:#B45309;margin-top:6px;letter-spacing:.03em}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px}
+.empty svg{width:48px;height:48px;stroke:var(--line);stroke-width:1.5;margin:0 auto 12px;display:block}
+
+/* FOOTER */
+.page-footer{background:#fff;border-top:1px solid var(--line);padding:32px 48px;text-align:center}
+.page-footer p{font-size:12px;color:var(--muted);line-height:1.8}
+
+@media(max-width:768px){
+  .nav{padding:0 20px}.nav-links{display:none}
+  .breadcrumb,.page-hero{padding-left:20px;padding-right:20px}
+  .featured-strip-inner,.cat-tabs{padding-left:20px;padding-right:20px}
+  .content{padding:24px 20px 60px}
+  .hero-top{flex-direction:column;align-items:flex-start;gap:16px}
+  .hero-stats{justify-content:flex-start}
+  .hero-stat{text-align:left}
+  .hero-title{font-size:26px}
+  .svc-grid{grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px}
+  .coming-grid{grid-template-columns:1fr}
+  .page-footer{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a class="nav-logo" href="/momo-homepage">
+    <img src="https://homepage.momocdn.net/fileuploads/svg/momo-file-240411162904.svg" width="32" height="32" alt="MoMo">
+    <span class="d">MoMo</span>
+  </a>
+  <div class="nav-links">
+    <div class="nav-item">
+      <button>Sản phẩm<svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-mega">
+        <div style="padding:8px">
+          <div class="mega-col-title">Thanh toán</div>
+          <div class="mega-item"><div class="mega-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div><div class="mega-item-name">Chuyển tiền</div><div class="mega-item-desc">Tới mọi ngân hàng, ví điện tử</div></div></div>
+          <div class="mega-item"><div class="mega-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div><div><div class="mega-item-name">Hóa đơn & Dịch vụ</div><div class="mega-item-desc">Điện, nước, internet, truyền hình</div></div></div>
+          <div class="mega-item"><div class="mega-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="mega-item-name">Nạp điện thoại</div><div class="mega-item-desc">Tất cả nhà mạng, mua data</div></div></div>
+        </div>
+        <div style="padding:8px">
+          <div class="mega-col-title">Tài chính</div>
+          <div class="mega-item"><div class="mega-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div><div class="mega-item-name">Vay tiền nhanh</div><div class="mega-item-desc">Vay tới 30 triệu, giải ngân 30s</div></div></div>
+          <div class="mega-item"><div class="mega-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8.5 3.1 1 3.5 0 1.4.5 3.2 2 4.1V21h4v-2h4v2h4v-2.1c1.5-.9 2-2.7 2-4.1 0-1.3-.5-2.5-2-3.5 1-1.1 1-2.5 1-3.5-.5-.3-1-1.4-2-1.8z"/></svg></div><div><div class="mega-item-name">Tiết kiệm</div><div class="mega-item-desc">Lãi suất lên đến 7%/năm</div></div></div>
+          <div class="mega-item"><div class="mega-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="mega-item-name">CIC Score</div><div class="mega-item-desc">Kiểm tra điểm tín dụng miễn phí</div></div></div>
+        </div>
+        <div style="padding:8px">
+          <div class="mega-col-title">Bảo hiểm & Tiện ích</div>
+          <div class="mega-item"><div class="mega-icon" style="background:#FFF7ED"><svg viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div><div class="mega-item-name">Bảo hiểm xe máy</div><div class="mega-item-desc">Bắt buộc & tự nguyện từ 66K/năm</div></div></div>
+          <div class="mega-item"><div class="mega-icon" style="background:#FEF3F2"><svg viewBox="0 0 24 24" fill="none" stroke="#D92D20" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="mega-item-name">Phạt nguội</div><div class="mega-item-desc">Tra cứu & nộp phạt vi phạm</div></div></div>
+          <div class="mega-item"><div class="mega-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><div><div class="mega-item-name">eSIM du lịch</div><div class="mega-item-desc">Kết nối quốc tế không cần đổi SIM</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <button>Công cụ<svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-list">
+        <div class="nav-list-item"><i data-lucide="calculator"></i>Máy tính lãi vay</div>
+        <div class="nav-list-item"><i data-lucide="trending-up"></i>Tính lãi tiết kiệm</div>
+        <div class="nav-list-item"><i data-lucide="bar-chart-2"></i>CIC Score miễn phí</div>
+        <div class="nav-list-sep"></div>
+        <div class="nav-list-item"><i data-lucide="map-pin"></i>Điểm chấp nhận MoMo</div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <button>Doanh nghiệp<svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-list">
+        <div class="nav-list-item"><i data-lucide="store"></i>Trở thành đối tác</div>
+        <div class="nav-list-item"><i data-lucide="qr-code"></i>Nhận thanh toán QR</div>
+        <div class="nav-list-sep"></div>
+        <div class="nav-list-item"><i data-lucide="code-2"></i>API & Tích hợp</div>
+      </div>
+    </div>
+    <div class="nav-item">
+      <button>Về MoMo<svg class="nav-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown nav-list">
+        <div class="nav-list-item"><i data-lucide="info"></i>Giới thiệu</div>
+        <div class="nav-list-item"><i data-lucide="newspaper"></i>Tin tức & Blog</div>
+        <div class="nav-list-item"><i data-lucide="briefcase"></i>Tuyển dụng</div>
+        <div class="nav-list-sep"></div>
+        <div class="nav-list-item"><i data-lucide="headphones"></i>Hỗ trợ & CSKH</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-search-btn" id="navSearchBtn"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg></button>
+    <button class="nav-cta" onclick="openDlModal()">Tải MoMo miễn phí</button>
+  </div>
+</nav>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-backdrop" id="searchBackdrop"></div>
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Tìm dịch vụ, tính năng..." autocomplete="off">
+      <button class="search-clear" id="searchClose"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="search-suggests" id="searchSuggests">
+      <div class="search-suggest-label">Tìm kiếm phổ biến</div>
+      <div class="search-chips">
+        <button class="search-chip" onclick="fillSearch('Vay nhanh')">Vay nhanh</button>
+        <button class="search-chip" onclick="fillSearch('Bảo hiểm xe máy')">BH xe máy</button>
+        <button class="search-chip" onclick="fillSearch('Tiết kiệm')">Tiết kiệm</button>
+        <button class="search-chip" onclick="fillSearch('Chuyển tiền')">Chuyển tiền</button>
+        <button class="search-chip" onclick="fillSearch('Phạt nguội')">Phạt nguội</button>
+      </div>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- DOWNLOAD MODAL -->
+<div class="dl-modal-backdrop" id="dlModal">
+  <div class="dl-modal">
+    <div class="dl-modal-left">
+      <button class="dl-modal-close" id="dlModalClose"><svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="dl-modal-gift"><i data-lucide="gift"></i></div>
+      <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:4px 10px;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px;align-self:flex-start">
+        <span style="font-size:10px;color:rgba(255,255,255,.7);font-weight:500">Mã ưu đãi</span>
+        <span style="font-size:13px;font-weight:900;color:#fff;letter-spacing:.05em">CHAOMOMO</span>
+      </div>
+      <div class="dl-modal-title">Tân binh MoMo nhận quà</div>
+      <div class="dl-modal-subtitle">Nạp điện thoại, trả hóa đơn, xem phim... tổng <strong style="color:#fff">500.000đ</strong> đang chờ bạn!</div>
+      <div id="dlDesktop" style="display:flex;flex-direction:column;align-items:center;width:100%">
+        <div class="dl-qr-code"><svg width="96" height="96" viewBox="0 0 74 74" fill="none"><rect x="4" y="4" width="22" height="22" rx="3" fill="#C8007A"/><rect x="8" y="8" width="14" height="14" rx="1" fill="#fff"/><rect x="11" y="11" width="8" height="8" rx="1" fill="#C8007A"/><rect x="48" y="4" width="22" height="22" rx="3" fill="#C8007A"/><rect x="52" y="8" width="14" height="14" rx="1" fill="#fff"/><rect x="55" y="11" width="8" height="8" rx="1" fill="#C8007A"/><rect x="4" y="48" width="22" height="22" rx="3" fill="#C8007A"/><rect x="8" y="52" width="14" height="14" rx="1" fill="#fff"/><rect x="11" y="55" width="8" height="8" rx="1" fill="#C8007A"/><rect x="30" y="4" width="5" height="5" rx="1" fill="#C8007A"/><rect x="38" y="4" width="5" height="5" rx="1" fill="#C8007A"/><rect x="4" y="30" width="5" height="5" rx="1" fill="#C8007A"/><rect x="30" y="30" width="5" height="5" rx="1" fill="#C8007A"/><rect x="38" y="30" width="5" height="5" rx="1" fill="#C8007A"/><rect x="46" y="30" width="5" height="5" rx="1" fill="#C8007A"/><rect x="62" y="30" width="5" height="5" rx="1" fill="#C8007A"/><rect x="30" y="46" width="5" height="5" rx="1" fill="#C8007A"/><rect x="54" y="46" width="5" height="5" rx="1" fill="#C8007A"/><rect x="32" y="32" width="10" height="10" rx="3" fill="#C8007A"/><rect x="34" y="34" width="6" height="6" rx="1" fill="#fff"/></svg></div>
+        <div class="dl-qr-label">Quét mã để tải MoMo</div>
+        <div class="dl-qr-stores">
+          <div class="dl-qr-store"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7"/></svg>App Store</div>
+          <div class="dl-qr-store"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Google Play</div>
+        </div>
+      </div>
+      <div class="dl-mobile-btns" id="dlMobile" style="display:none">
+        <a href="#" class="dl-mobile-btn" style="background:rgba(0,0,0,.6);color:#fff">App Store</a>
+        <a href="#" class="dl-mobile-btn" style="background:rgba(1,135,95,.8);color:#fff">Google Play</a>
+      </div>
+    </div>
+    <div class="dl-modal-right">
+      <div class="dl-step"><div class="dl-step-num" style="background:#FFF0F8;color:#C8007A;border-color:#FFCCE8">1</div><div style="flex:1;padding-top:4px"><div class="dl-step-name">Đăng ký tài khoản MoMo</div><div class="dl-step-desc">Dùng số điện thoại trùng với số đăng ký Internet Banking.</div></div></div>
+      <div class="dl-step"><div class="dl-step-num" style="background:linear-gradient(135deg,#C8007A,#FF3399);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(200,0,122,.3)">2</div><div style="flex:1;padding-top:4px"><div class="dl-step-name">Nhập mã <span style="color:#C8007A;font-family:monospace;font-weight:900">CHAOMOMO</span></div><div class="dl-step-desc">Nhập trong phần "Ưu đãi" hoặc khi được nhắc.</div></div></div>
+      <div class="dl-step"><div class="dl-step-num" style="background:#FFF0F8;color:#C8007A;border-color:#FFCCE8">3</div><div style="flex:1;padding-top:4px"><div class="dl-step-name">Xác thực tài khoản MoMo</div><div class="dl-step-desc">Chụp CCCD và khuôn mặt. Hoàn tất trong 2 phút.</div></div></div>
+      <div class="dl-step"><div class="dl-step-num" style="background:#FFF0F8;color:#C8007A;border-color:#FFCCE8">4</div><div style="flex:1;padding-top:4px"><div class="dl-step-name">Liên kết ngân hàng & Nạp tiền</div><div class="dl-step-desc">Nạp tối thiểu 10.000đ để kích hoạt quà.</div></div></div>
+      <div class="dl-step"><div class="dl-step-num" style="background:linear-gradient(135deg,#C8007A,#FF3399);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(200,0,122,.3)">5</div><div style="flex:1;padding-top:4px"><div class="dl-step-name">Nhận trọn bộ quà 500.000đ!</div><div class="dl-step-desc">Xem trong mục <strong>"Quà của tôi"</strong> và dùng ngay!</div><div class="dl-step-reward"><i data-lucide="gift"></i>Thẻ nạp · Data 4G/5G · Hóa đơn · Phim</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page-body">
+  <div class="breadcrumb"><div class="breadcrumb-inner"><a href="/momo-homepage">Trang chủ</a><span class="breadcrumb-sep">/</span><span style="color:var(--ink);font-weight:600">Tất cả dịch vụ</span></div></div>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="hero-top">
+        <div>
+          <div class="hero-eyebrow">Siêu ứng dụng tài chính</div>
+          <h1 class="hero-title d">Tất cả dịch vụ</h1>
+          <p class="hero-sub">Từ chuyển tiền, thanh toán đến vay vốn, bảo hiểm - mọi nhu cầu tài chính trong một ứng dụng.</p>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hero-stat-num">41<span>+</span></div><div class="hero-stat-label">Dịch vụ & tính năng</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">45<span>tr</span></div><div class="hero-stat-label">Người dùng tại VN</div></div>
+        </div>
+      </div>
+      <div class="hero-search">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="svcSearch" placeholder="Tìm dịch vụ bạn cần...">
+      </div>
+    </div>
+  </div>
+
+  <!-- CAT TABS với icon -->
+  <div class="cat-tabs-wrap">
+    <div class="cat-tabs" id="catTabs">
+      <button class="cat-tab on" data-cat="all"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Tất cả</button>
+      <button class="cat-tab" data-cat="payment"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Thanh toán</button>
+      <button class="cat-tab" data-cat="bills"><svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Hóa đơn</button>
+      <button class="cat-tab" data-cat="finance"><svg viewBox="0 0 24 24" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tài chính</button>
+      <button class="cat-tab" data-cat="insurance"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Bảo hiểm</button>
+      <button class="cat-tab" data-cat="entertainment"><svg viewBox="0 0 24 24" fill="none"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Giải trí & Vé</button>
+      <button class="cat-tab" data-cat="utility"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93L4.93 19.07M4.93 4.93l14.14 14.14"/></svg>Tiện ích</button>
+    </div>
+  </div>
+
+  <div class="content" id="mainContent">
+
+    <!-- THANH TOÁN -->
+    <div class="cat-section" id="sec-payment" data-cat="payment">
+      <div class="cat-header"><div class="cat-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><span class="cat-name">Thanh toán & Ví</span><span class="cat-count">7 dịch vụ</span><button class="cat-see-all" onclick="openDlModal()">Dùng ngay →</button></div>
+      <div class="svc-grid">
+        <a class="svc-card" data-name="chuyển tiền ngân hàng ví miễn phí" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><span class="svc-name">Chuyển tiền</span><span class="svc-desc">Miễn phí tới mọi ngân hàng</span><span class="svc-users"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>40tr+ người dùng</span></a>
+        <a class="svc-card" data-name="nạp tiền ví điện tử atm" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="svc-name">Nạp tiền ví</span><span class="svc-desc">ATM, Internet Banking, QR</span></a>
+        <a class="svc-card" data-name="rút tiền về ngân hàng" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div><span class="svc-name">Rút tiền</span><span class="svc-desc">Về ngân hàng trong vài giây</span></a>
+        <a class="svc-card" data-name="thanh toán qr quét mã không chạm" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg></div><span class="svc-name">Quét QR</span><span class="svc-desc">Thanh toán không chạm</span></a>
+        <a class="svc-card" data-name="yêu cầu tiền nhận tiền bạn bè" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF7EC"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div><span class="svc-name">Yêu cầu tiền</span><span class="svc-desc">Gửi yêu cầu, nhận tự động</span></a>
+        <a class="svc-card" data-name="chia tiền nhóm bạn bè đi chơi" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><span class="svc-name">Chia tiền nhóm</span><span class="svc-desc">Tự động tính & nhắc nợ</span><span class="svc-badge new">Mới</span></a>
+        <a class="svc-card" data-name="momo pay thanh toán online thương mại" data-cat="payment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg></div><span class="svc-name">MoMo Pay</span><span class="svc-desc">Checkout 1-click trên web/app</span></a>
+      </div>
+    </div>
+
+    <!-- HÓA ĐƠN -->
+    <div class="cat-section" id="sec-bills" data-cat="bills">
+      <div class="cat-header"><div class="cat-icon" style="background:#FFF7EC"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span class="cat-name">Nạp thẻ & Hóa đơn</span><span class="cat-count">8 dịch vụ</span><button class="cat-see-all" onclick="openDlModal()">Dùng ngay →</button></div>
+      <div class="svc-grid">
+        <a class="svc-card" data-name="nạp điện thoại nạp thẻ nhà mạng viettel mobi" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><span class="svc-name">Nạp điện thoại</span><span class="svc-desc">Viettel, Mobi, Vina, GTel...</span><span class="svc-badge hot">Hot</span></a>
+        <a class="svc-card" data-name="hóa đơn điện evn điện lực" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#FFFBEB"><svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span class="svc-name">Hóa đơn điện</span><span class="svc-desc">EVN, điện lực toàn quốc</span></a>
+        <a class="svc-card" data-name="hóa đơn nước cấp thoát nước sạch" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></div><span class="svc-name">Hóa đơn nước</span><span class="svc-desc">Cấp nước 63 tỉnh thành</span></a>
+        <a class="svc-card" data-name="hóa đơn internet wifi vnpt fpt viettel" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/></svg></div><span class="svc-name">Internet / Wifi</span><span class="svc-desc">VNPT, Viettel, FPT...</span></a>
+        <a class="svc-card" data-name="hóa đơn truyền hình cáp vtvcab sctv" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg></div><span class="svc-name">Truyền hình</span><span class="svc-desc">VTVcab, SCTV, K+...</span></a>
+        <a class="svc-card" data-name="học phí giáo dục trường đại học" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><span class="svc-name">Học phí</span><span class="svc-desc">200+ trường đại học, phổ thông</span></a>
+        <a class="svc-card" data-name="phí chung cư quản lý nhà tòa nhà" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF7EC"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="svc-name">Phí chung cư</span><span class="svc-desc">Quản lý, dịch vụ tòa nhà</span></a>
+        <a class="svc-card" data-name="mua thẻ game nạp game garena vng" data-cat="bills" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="3"/><line x1="8" y1="12" x2="12" y2="12"/><line x1="10" y1="10" x2="10" y2="14"/><circle cx="16" cy="12" r="1"/><circle cx="18.5" cy="10" r="1"/></svg></div><span class="svc-name">Nạp game</span><span class="svc-desc">Garena, VNG, Nexon...</span></a>
+      </div>
+    </div>
+
+    <!-- TÀI CHÍNH -->
+    <div class="cat-section" id="sec-finance" data-cat="finance">
+      <div class="cat-header"><div class="cat-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><span class="cat-name">Tài chính</span><span class="cat-count">6 dịch vụ</span><button class="cat-see-all" onclick="openDlModal()">Khám phá →</button></div>
+      <div class="svc-grid">
+        <a class="svc-card" data-name="vay tiền nhanh vay online tín chấp" data-cat="finance" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><span class="svc-name">Vay Nhanh</span><span class="svc-desc">Tới 30tr, giải ngân 30 giây</span><span class="svc-badge hot">Hot</span></a>
+        <a class="svc-card" data-name="ví trả sau mua trước trả sau bnpl hạn mức" data-cat="finance" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF7EC"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div><span class="svc-name">Ví Trả Sau</span><span class="svc-desc">Mua trước, lãi 0% tháng đầu</span></a>
+        <a class="svc-card" data-name="tiết kiệm gửi lãi suất ngân hàng" data-cat="finance" onclick="openDlModal()"><div class="svc-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8.5 3.1 1 3.5 0 1.4.5 3.2 2 4.1V21h4v-2h4v2h4v-2.1c1.5-.9 2-2.7 2-4.1 0-1.3-.5-2.5-2-3.5 1-1.1 1-2.5 1-3.5-.5-.3-1-1.4-2-1.8z"/></svg></div><span class="svc-name">Tiết Kiệm</span><span class="svc-desc">Lãi suất tới 7%/năm</span></a>
+        <a class="svc-card" data-name="chứng khoán đầu tư cổ phiếu etf" data-cat="finance" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><span class="svc-name">Chứng Khoán</span><span class="svc-desc">Mua cổ phiếu, ETF trong app</span><span class="svc-badge soon">Sắp ra</span></a>
+        <a class="svc-card" data-name="cic score điểm tín dụng kiểm tra" data-cat="finance" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="svc-name">CIC Score</span><span class="svc-desc">Điểm tín dụng miễn phí</span><span class="svc-badge new">Mới</span></a>
+        <a class="svc-card" data-name="liên kết ngân hàng tài khoản 40 ngân hàng" data-cat="finance" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><line x1="3" y1="22" x2="21" y2="22"/><polygon points="12 2 20 7 4 7 12 2"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/></svg></div><span class="svc-name">Liên kết NH</span><span class="svc-desc">40+ ngân hàng được hỗ trợ</span></a>
+      </div>
+    </div>
+
+    <!-- BẢO HIỂM -->
+    <div class="cat-section" id="sec-insurance" data-cat="insurance">
+      <div class="cat-header"><div class="cat-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="cat-name">Bảo hiểm</span><span class="cat-count">5 dịch vụ</span><button class="cat-see-all" onclick="openDlModal()">So sánh gói →</button></div>
+      <div class="svc-grid">
+        <a class="svc-card" data-name="bảo hiểm xe máy bắt buộc tự nguyện" data-cat="insurance" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M8 17.5h7M5.5 15L7 10l3-2h7l2 4.5"/></svg></div><span class="svc-name">BH Xe Máy</span><span class="svc-desc">Từ 66.000đ/năm, cấp ngay</span><span class="svc-badge hot">Phổ biến</span></a>
+        <a class="svc-card" data-name="bảo hiểm ô tô xe hơi vật chất so sánh" data-cat="insurance" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v9h-2M7 17h10"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></div><span class="svc-name">BH Ô Tô</span><span class="svc-desc">So sánh 10+ gói, mua 5 phút</span></a>
+        <a class="svc-card" data-name="bảo hiểm sức khỏe y tế bhyt gia đình" data-cat="insurance" onclick="openDlModal()"><div class="svc-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><span class="svc-name">BH Sức Khỏe</span><span class="svc-desc">BHYT, sức khỏe cá nhân & GĐ</span></a>
+        <a class="svc-card" data-name="bảo hiểm tai nạn cá nhân 24/7" data-cat="insurance" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF7EC"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="svc-name">BH Tai Nạn</span><span class="svc-desc">Bảo vệ 24/7, bồi thường nhanh</span></a>
+        <a class="svc-card" data-name="bảo hiểm nhân thọ đầu tư dài hạn" data-cat="insurance" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 018 0v2"/></svg></div><span class="svc-name">BH Nhân Thọ</span><span class="svc-desc">Đầu tư + bảo vệ dài hạn</span></a>
+      </div>
+    </div>
+
+    <!-- GIẢI TRÍ -->
+    <div class="cat-section" id="sec-entertainment" data-cat="entertainment">
+      <div class="cat-header"><div class="cat-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><span class="cat-name">Giải trí & Vé</span><span class="cat-count">6 dịch vụ</span><button class="cat-see-all" onclick="openDlModal()">Xem ưu đãi →</button></div>
+      <div class="svc-grid">
+        <a class="svc-card" data-name="vé phim rạp chiếu phim cgv bhd lotte" data-cat="entertainment" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 2l-4 5-4-5"/><line x1="2" y1="12" x2="22" y2="12"/></svg></div><span class="svc-name">Vé phim</span><span class="svc-desc">CGV, BHD, Lotte, Galaxy...</span><span class="svc-badge hot">Ưu đãi -20%</span></a>
+        <a class="svc-card" data-name="vé xe khách bus đường dài toàn quốc" data-cat="entertainment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><rect x="1" y="3" width="22" height="16" rx="2"/><path d="M1 9h22M1 15h22"/><circle cx="5.5" cy="19" r="2"/><circle cx="18.5" cy="19" r="2"/></svg></div><span class="svc-name">Vé xe khách</span><span class="svc-desc">1000+ tuyến toàn quốc</span></a>
+        <a class="svc-card" data-name="vé máy bay flight đặt vé vietjet vietnam airlines" data-cat="entertainment" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div><span class="svc-name">Vé máy bay</span><span class="svc-desc">VN Airlines, Vietjet, Bamboo</span></a>
+        <a class="svc-card" data-name="vé sự kiện concert festival show live" data-cat="entertainment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF7EC"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><span class="svc-name">Vé sự kiện</span><span class="svc-desc">Concert, festival, thể thao</span></a>
+        <a class="svc-card" data-name="đặt phòng khách sạn hotel resort homestay" data-cat="entertainment" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><path d="M3 22V7a2 2 0 012-2h14a2 2 0 012 2v15"/><path d="M7 22v-6a2 2 0 012-2h6a2 2 0 012 2v6"/><path d="M3 11h18"/></svg></div><span class="svc-name">Đặt phòng</span><span class="svc-desc">Khách sạn, resort, homestay</span></a>
+        <a class="svc-card" data-name="momo mall mua sắm online thương mại điện tử" data-cat="entertainment" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div><span class="svc-name">MoMo Mall</span><span class="svc-desc">Mua sắm, hoàn tiền 5%</span><span class="svc-badge new">Mới</span></a>
+      </div>
+    </div>
+
+    <!-- TIỆN ÍCH -->
+    <div class="cat-section" id="sec-utility" data-cat="utility">
+      <div class="cat-header"><div class="cat-icon" style="background:#FEF3F2"><svg viewBox="0 0 24 24" fill="none" stroke="#D92D20" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93L4.93 19.07M4.93 4.93l14.14 14.14"/></svg></div><span class="cat-name">Tiện ích</span><span class="cat-count">6 dịch vụ</span><button class="cat-see-all" onclick="openDlModal()">Dùng ngay →</button></div>
+      <div class="svc-grid">
+        <a class="svc-card" data-name="tra phạt nguội vi phạm giao thông xe phạt" data-cat="utility" onclick="openDlModal()"><div class="svc-icon" style="background:#FEF3F2"><svg viewBox="0 0 24 24" fill="none" stroke="#D92D20" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="svc-name">Tra phạt nguội</span><span class="svc-desc">Tra cứu & nộp phạt trực tuyến</span><span class="svc-badge hot">Hot</span></a>
+        <a class="svc-card" data-name="esim du lịch nước ngoài roaming quốc tế 140" data-cat="utility" onclick="openDlModal()"><div class="svc-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><span class="svc-name">eSIM du lịch</span><span class="svc-desc">140+ quốc gia, mua 2 phút</span><span class="svc-badge new">Mới</span></a>
+        <a class="svc-card" data-name="dịch vụ công hành chính nhà nước khai sinh bhxh" data-cat="utility" onclick="openDlModal()"><div class="svc-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><line x1="3" y1="22" x2="21" y2="22"/><polygon points="12 2 20 7 4 7 12 2"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/></svg></div><span class="svc-name">Dịch vụ công</span><span class="svc-desc">Khai sinh, BHXH, hộ khẩu...</span></a>
+        <a class="svc-card" data-name="đặt đồ ăn giao đồ ăn food shopeefood grab" data-cat="utility" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><span class="svc-name">Đặt đồ ăn</span><span class="svc-desc">ShopeeFood, GrabFood...</span></a>
+        <a class="svc-card" data-name="đăng kiểm xe ô tô kiểm định nhắc lịch" data-cat="utility" onclick="openDlModal()"><div class="svc-icon" style="background:#F0FFF8"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span class="svc-name">Đăng kiểm xe</span><span class="svc-desc">Nhắc lịch, tra cứu kết quả</span></a>
+        <a class="svc-card" data-name="voucher deal ưu đãi giảm giá coupon hàng ngàn" data-cat="utility" onclick="openDlModal()"><div class="svc-icon" style="background:#FFF0F8"><svg viewBox="0 0 24 24" fill="none" stroke="#C8007A" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div><span class="svc-name">Voucher & Deal</span><span class="svc-desc">Hàng ngàn ưu đãi mỗi ngày</span><span class="svc-badge hot">Hot</span></a>
+      </div>
+    </div>
+
+    <!-- COMING SOON (Revolut-pattern) -->
+    <div class="coming-section" id="sec-coming">
+      <div class="cat-header"><div class="cat-icon" style="background:#FFFBEB"><svg viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="cat-name" style="color:var(--muted)">Sắp ra mắt</span><span class="cat-count">3 tính năng</span></div>
+      <div class="coming-grid">
+        <div class="coming-card"><div class="coming-card-icon" style="background:#F5F3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="coming-card-name">Chứng khoán</div><div class="coming-card-desc">Mua cổ phiếu, ETF ngay trong MoMo. Ra mắt Q3 2026.</div><div class="soon-pill">Sắp ra mắt</div></div></div>
+        <div class="coming-card"><div class="coming-card-icon" style="background:#FEF3F2"><svg viewBox="0 0 24 24" fill="none" stroke="#D92D20" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg></div><div><div class="coming-card-name">BHXH - Bảo hiểm xã hội</div><div class="coming-card-desc">Tra cứu quá trình đóng BHXH, nộp trực tuyến.</div><div class="soon-pill">Sắp ra mắt</div></div></div>
+        <div class="coming-card"><div class="coming-card-icon" style="background:#F0F9FF"><svg viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div><div class="coming-card-name">Nội dung số</div><div class="coming-card-desc">Đăng ký Netflix, Spotify, YouTube Premium qua MoMo.</div><div class="soon-pill">Sắp ra mắt</div></div></div>
+      </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="empty" id="emptyState" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px">Không tìm thấy "<span id="emptyQuery"></span>"</p>
+      <p style="font-size:13px;color:var(--muted)">Thử tìm bằng từ khác, hoặc <button onclick="document.getElementById('svcSearch').value='';filterSvcs()" style="color:var(--pink);font-weight:600;background:none;border:none;cursor:pointer;font-size:13px;font-family:inherit">xem tất cả dịch vụ</button></p>
+    </div>
+  </div>
+
+  <footer class="page-footer"><p>MoMo được cấp phép và giám sát bởi Ngân hàng Nhà nước Việt Nam<br>© 2025 M_Service JSC. Tất cả quyền được bảo lưu.</p></footer>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+// NAV SCROLL
+window.addEventListener('scroll',()=>document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>10));
+
+// DOWNLOAD MODAL
+const dlModal=document.getElementById('dlModal');
+const isMobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<600;
+function openDlModal(){dlModal.classList.add('open');document.body.style.overflow='hidden';const d=document.getElementById('dlDesktop'),m=document.getElementById('dlMobile');if(isMobile()){d.style.display='none';m.style.display='flex';}else{d.style.display='flex';m.style.display='none';}lucide.createIcons();}
+function closeDlModal(){dlModal.classList.remove('open');document.body.style.overflow='';}
+document.getElementById('dlModalClose').addEventListener('click',closeDlModal);
+dlModal.addEventListener('click',e=>{if(e.target===dlModal)closeDlModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDlModal();closeSearch();}});
+
+// SEARCH OVERLAY
+const SEARCH_DATA=[
+  {name:'Chuyển tiền',desc:'Miễn phí tới mọi ngân hàng, ví điện tử',color:'#C8007A',icon:'send'},
+  {name:'Vay Nhanh',desc:'Vay tới 30 triệu, giải ngân 30 giây',color:'#C8007A',icon:'banknote'},
+  {name:'Ví Trả Sau',desc:'Mua trước trả sau, hạn mức 30 triệu',color:'#D97706',icon:'credit-card'},
+  {name:'CIC Score',desc:'Kiểm tra điểm tín dụng miễn phí',color:'#7C3AED',icon:'shield'},
+  {name:'BH Xe Máy',desc:'Bảo hiểm xe máy từ 66.000đ/năm',color:'#059669',icon:'shield-check'},
+  {name:'BH Ô Tô',desc:'So sánh gói bảo hiểm ô tô vật chất',color:'#0284C7',icon:'car'},
+  {name:'BH Sức Khỏe',desc:'Bảo hiểm y tế cá nhân & gia đình',color:'#7C3AED',icon:'heart-pulse'},
+  {name:'Tiết Kiệm',desc:'Lãi suất tới 7%/năm',color:'#2563EB',icon:'piggy-bank'},
+  {name:'Phạt Nguội',desc:'Tra cứu và nộp phạt vi phạm giao thông',color:'#D92D20',icon:'alert-circle'},
+  {name:'Nạp Điện Thoại',desc:'Tất cả nhà mạng, mua data gói cước',color:'#C8007A',icon:'smartphone'},
+  {name:'eSIM Du Lịch',desc:'Kết nối quốc tế, 140+ quốc gia',color:'#0284C7',icon:'globe'},
+  {name:'Vé Phim',desc:'CGV, BHD, Lotte Cinema - ưu đãi -20%',color:'#7C3AED',icon:'film'},
+];
+const overlay=document.getElementById('searchOverlay');
+const navInput=document.getElementById('searchInput');
+const searchResults=document.getElementById('searchResults');
+const searchSuggests=document.getElementById('searchSuggests');
+function openSearch(){overlay.classList.add('open');setTimeout(()=>navInput.focus(),250);document.body.style.overflow='hidden';}
+function closeSearch(){overlay.classList.remove('open');navInput.value='';searchResults.innerHTML='';searchResults.classList.remove('has-results');searchSuggests.style.display='';document.body.style.overflow='';}
+function fillSearch(q){navInput.value=q;navInput.dispatchEvent(new Event('input'));navInput.focus();}
+document.getElementById('navSearchBtn').addEventListener('click',openSearch);
+document.getElementById('searchClose').addEventListener('click',closeSearch);
+document.getElementById('searchBackdrop').addEventListener('click',closeSearch);
+navInput.addEventListener('input',()=>{
+  const q=navInput.value.trim().toLowerCase();
+  if(!q){searchResults.innerHTML='';searchResults.classList.remove('has-results');searchSuggests.style.display='';return;}
+  searchSuggests.style.display='none';
+  const hits=SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q));
+  searchResults.innerHTML=hits.length
+    ?hits.map(d=>`<div class="search-result-item"><div class="search-result-icon" style="background:${d.color}"><i data-lucide="${d.icon}" style="width:16px;height:16px;stroke:#fff;stroke-width:2"></i></div><div><div class="search-result-name">${d.name}</div><div class="search-result-desc">${d.desc}</div></div></div>`).join('')
+    :`<div style="padding:16px 12px;font-size:14px;color:var(--muted)">Không tìm thấy kết quả cho "<strong>${navInput.value}</strong>"</div>`;
+  if(hits.length)lucide.createIcons();
+  searchResults.classList.add('has-results');
+});
+
+// PAGE FILTER
+const tabs=document.querySelectorAll('.cat-tab');
+const sections=document.querySelectorAll('.cat-section');
+const coming=document.getElementById('sec-coming');
+const svcSearch=document.getElementById('svcSearch');
+const emptyState=document.getElementById('emptyState');
+const cards=document.querySelectorAll('.svc-card');
+
+tabs.forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    tabs.forEach(t=>t.classList.remove('on'));
+    tab.classList.add('on');
+    svcSearch.value='';
+    cards.forEach(c=>c.classList.remove('hidden'));
+    emptyState.style.display='none';
+    const cat=tab.dataset.cat;
+    sections.forEach(sec=>sec.classList.toggle('hidden',cat!=='all'&&sec.dataset.cat!==cat));
+    coming.style.display=cat==='all'?'':'none';
+    if(cat!=='all'){
+      const target=document.getElementById('sec-'+cat);
+      if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),50);
+    }
+  });
+});
+
+function filterSvcs(){
+  const q=svcSearch.value.trim().toLowerCase();
+  tabs.forEach(t=>t.classList.remove('on'));
+  if(!q){tabs[0].classList.add('on');cards.forEach(c=>c.classList.remove('hidden'));sections.forEach(s=>s.classList.remove('hidden'));coming.style.display='';emptyState.style.display='none';return;}
+  coming.style.display='none';
+  let any=false;
+  cards.forEach(c=>{const m=(c.dataset.name||'').toLowerCase().includes(q);c.classList.toggle('hidden',!m);if(m)any=true;});
+  sections.forEach(sec=>sec.classList.toggle('hidden',[...sec.querySelectorAll('.svc-card')].every(c=>c.classList.contains('hidden'))));
+  emptyState.style.display=any?'none':'block';
+  if(!any)document.getElementById('emptyQuery').textContent=svcSearch.value.trim();
+}
+svcSearch.addEventListener('input',filterSvcs);
+
+function scrollToSection(id){
+  tabs.forEach(t=>t.classList.remove('on'));
+  const secId=id.replace('sec-','');
+  const tab=document.querySelector(`.cat-tab[data-cat="${secId}"]`);
+  if(tab)tab.classList.add('on');
+  sections.forEach(s=>s.classList.remove('hidden'));
+  coming.style.display='';
+  const target=document.getElementById(id);
+  if(target)setTimeout(()=>{const top=target.getBoundingClientRect().top+window.scrollY-140;window.scrollTo({top,behavior:'smooth'});},50);
+}
+</script>
+</body>
+</html>

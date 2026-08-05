@@ -591,6 +591,8 @@ const PROTOTYPES = [
     name: 'Tiện Ích Giao Thông',
     category: 'Platform',
     ownerGroup: 'Tiện ích Giao Thông',
+    type: 'astro',
+    astroHref: 'http://localhost:3001/tien-ich-giao-thong',
     maturity: 'Concept',
     description: 'Mini App quản lý phương tiện toàn diện: tra phạt nguội không CAPTCHA, nạp ePass Auto-Topup, kiểm tra bảo hiểm/đăng kiểm, tìm cây xăng M4B đối tác và hạng MoXe loyalty. Hai Web Widget SEO: Giá xăng phân vùng và Phạt nguội lookup.',
     jtbd: 'Quản lý xe thông minh, hành trình không gián đoạn - tra phạt, nạp ETC, gia hạn bảo hiểm và tìm cây xăng trong một surface duy nhất',
@@ -674,6 +676,62 @@ const PROTOTYPES = [
         src: '/tien-ich-giao-thong/hang-xe',
         address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/hang-xe',
         description: 'Hub hãng xe: 10 thương hiệu phổ biến (Toyota, Honda, VinFast…), chi tiết từng hãng gồm bảo hiểm thân vỏ, ước tính chi phí vận hành hàng tháng, nhà bảo hiểm phù hợp nhất và tình huống bồi thường hay gặp.',
+      },
+      {
+        id: 'hang-xe-may',
+        name: 'Hãng Xe Máy · Chi tiết',
+        category: 'Child Page',
+        src: '/tien-ich-giao-thong/hang-xe-may',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/hang-xe-may',
+        description: 'Hub hãng xe máy: Honda, Yamaha, SYM, Suzuki, Piaggio. Chi tiết từng hãng gồm dòng xe phổ biến, chi phí bảo dưỡng và bảo hiểm xe máy.',
+      },
+      {
+        id: 'rua-xe',
+        name: 'Tiệm Rửa Xe Gần Bạn',
+        category: 'Child Page',
+        src: '/tien-ich-giao-thong/rua-xe',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/rua-xe',
+        description: 'Finder: split list + Leaflet map, tiệm rửa xe ô tô & xe máy TP.HCM. Filter theo loại xe, xem giờ mở cửa, bảng giá, gọi ngay hoặc chỉ đường.',
+      },
+      {
+        id: 'dinh-gia-xe',
+        name: 'Định Giá Xe Cũ',
+        category: 'Child Page',
+        src: '/tien-ich-giao-thong/dinh-gia-xe',
+        address: 'web-momo-prototype.vercel.app/tien-ich-giao-thong/dinh-gia-xe',
+        description: 'Tool định giá xe cũ: nhập hãng/model/năm/km → tra giá thị trường, so sánh mua/bán, gợi ý mức giá hợp lý và CTA bảo hiểm.',
+      },
+      {
+        id: 'phat-nguoi',
+        name: 'Tra Phạt Nguội',
+        category: 'Child Page',
+        src: '/phat-nguoi',
+        address: 'web-momo-prototype.vercel.app/phat-nguoi',
+        description: 'PLG SEO flagship: tra phạt nguội không CAPTCHA bằng biển số xe, xem chi tiết vi phạm, nộp phạt qua MoMo. Sub-pages: Hà Nội, Giải đáp, Nộp qua MoMo.',
+      },
+      {
+        id: 'tra-cuu-dang-kiem',
+        name: 'Tra Cứu Đăng Kiểm',
+        category: 'Child Page',
+        src: '/tra-cuu-dang-kiem',
+        address: 'web-momo-prototype.vercel.app/tra-cuu-dang-kiem',
+        description: 'Lookup đăng kiểm theo biển số: hiển thị hạn đăng kiểm, chu kỳ kiểm định, số ngày còn lại và CTA đặt lịch.',
+      },
+      {
+        id: 'epass',
+        name: 'ePass & Tự Động Nạp',
+        category: 'Child Page',
+        src: '/epass',
+        address: 'web-momo-prototype.vercel.app/epass',
+        description: 'Hub ePass: quản lý tài khoản ETC, kích hoạt Auto-Topup từ ví MoMo, xem lịch sử giao dịch và tính phí theo tuyến đường.',
+      },
+      {
+        id: 'tinh-phi-etc',
+        name: 'Tính Phí ETC Theo Tuyến',
+        category: 'Child Page',
+        src: '/epass/tinh-phi-etc',
+        address: 'web-momo-prototype.vercel.app/epass/tinh-phi-etc',
+        description: 'Calculator phí ETC: chọn tuyến cao tốc, loại xe (nhóm 1-5), tính tổng phí một chiều/khứ hồi, so sánh tiết kiệm so với vé tiền mặt.',
       },
     ],
   },
@@ -1567,10 +1625,37 @@ function buildLabDirectory() {
       <div class="lab-card-grid">${pinnedItems.map(p => buildProtoCard(p, 'pill-pink')).join('')}</div>
     </div>` : '';
 
+  // ── Astro section ──────────────────────────────────────────
+  const astroItems = PROTOTYPES.filter(p => p.type === 'astro');
+  const astroSection = astroItems.length ? `
+    <div class="lab-section lab-section-astro" data-group="Astro">
+      <div class="lab-section-intro">
+        <p class="lab-section-eyebrow">Astro · Next.js <span class="lab-section-cnt">${astroItems.length}</span></p>
+        <h2 class="lab-section-title">Astro Projects</h2>
+        <p class="lab-section-desc">Prototype đã migrate sang Astro — routing thực, component reuse, design system chuẩn.</p>
+      </div>
+      <div class="lab-card-grid">${astroItems.map(p => {
+        const children = (p.tools || []).filter(t => t.type === 'astro' || t.astroHref);
+        const chipsHtml = children.length ? `<div class="proto-chips">${children.map(t => `<a class="child-pill pill-blue" href="${t.astroHref || t.src}" target="_blank">${t.name}</a>`).join('')}</div>` : '';
+        return `<div class="proto-card proto-card-astro" data-astro-href="${p.astroHref || p.src}" data-search="${p.name.toLowerCase()}">
+          <div class="proto-card-head">
+            <div class="proto-card-head-left">
+              <span class="proto-card-name">${p.name}</span>
+              <span class="proto-card-astro-badge">Astro</span>
+            </div>
+            <div class="proto-card-head-right">
+              <button class="proto-card-arrow" data-astro-href="${p.astroHref || p.src}" tabindex="-1">↗</button>
+            </div>
+          </div>
+          ${chipsHtml}
+        </div>`;
+      }).join('')}</div>
+    </div>` : '';
+
   const sections = GROUP_ORDER.map(groupName => {
     const desiredOrder = GROUP_ITEM_ORDER[groupName] || [];
     const groupItems = PROTOTYPES
-      .filter(p => p.category === groupName && !p.pinned && !p.navHidden)
+      .filter(p => p.category === groupName && !p.pinned && !p.navHidden && p.type !== 'astro')
       .slice()
       .sort((a, b) => {
         const ia = desiredOrder.indexOf(a.id), ib = desiredOrder.indexOf(b.id);
@@ -1621,7 +1706,7 @@ function buildLabDirectory() {
         <div class="lab-chips" id="labFilterChips">${filterChips}</div>
       </div>
 
-      <div class="lab-body" id="labBody">${pinnedSection}${sections}</div>
+      <div class="lab-body" id="labBody">${astroSection}${pinnedSection}${sections}</div>
       <p class="lab-empty" id="labEmpty" style="display:none">Không tìm thấy prototype nào.</p>
       ${buildLabActivityDashboard()}
     </div>`;
@@ -2037,6 +2122,13 @@ function previewSrc(src) {
 }
 
 function wireHome(ws) {
+  ws.querySelectorAll('[data-astro-href]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      window.open(el.dataset.astroHref, '_blank');
+    });
+  });
+
   ws.querySelectorAll('[data-open-proto]').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.openTool) selectTool(btn.dataset.openProto, btn.dataset.openTool);
