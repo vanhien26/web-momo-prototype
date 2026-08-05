@@ -1,0 +1,24 @@
+---
+import HangXeApp from '../../../../components/HangXeApp.astro';
+import { BRANDS, BRAND_LIST } from '../../../../data/hang-xe-data.js';
+
+export function getStaticPaths() {
+  const paths: { params: { brand: string; model: string } }[] = [];
+  BRAND_LIST.forEach(brandId => {
+    const b = BRANDS[brandId];
+    if (!b) return;
+    b.models.forEach((m: any) => {
+      if (m.slug) paths.push({ params: { brand: brandId, model: m.slug } });
+    });
+  });
+  return paths;
+}
+
+const { brand, model } = Astro.params;
+const b = BRANDS[brand];
+const m = b?.models?.find((x: any) => x.slug === model);
+const brandName = b?.name ?? brand;
+const modelName = m?.name ?? model;
+---
+
+<HangXeApp title={`${brandName} ${modelName} - Chi Tiết Dòng Xe | MoMo`} />

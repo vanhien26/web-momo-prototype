@@ -1,0 +1,1718 @@
+---
+import VehicleHub from '../../layouts/VehicleHub.astro';
+import '../../styles/proto-themes.css';
+
+const rawCss = `
+html, body { overflow: auto !important; height: auto !important; }
+body { display: block !important; }
+#navSearch, .nav-search { display: none !important; }
+.nav-search-icon-btn, .nav-menu-btn { display: none !important; }
+.site-nav { background: rgba(255,255,255,.97) !important; transition: none !important; }
+.site-nav:has(.nav-item:hover) { background: rgba(255,255,255,.97) !important; border-bottom-color: rgba(0,0,0,.06) !important; box-shadow: 0 1px 3px rgba(0,0,0,.04) !important; }
+.site-nav:has(.nav-item:hover) .nav-trigger { color: #6b7280 !important; }
+.site-nav:has(.nav-item:hover) .nav-item:hover .nav-trigger { color: #1c1c1e !important; }
+.site-nav:has(.nav-item:hover) .nav-back { color: #9ca3af !important; }
+.site-nav:has(.nav-item:hover) .nav-sep { background: #e5e7eb !important; }
+.site-nav:has(.nav-item:hover) .logo-text { color: #1c1c1e !important; }
+.site-nav:has(.nav-item:hover) .logo-text em { color: #eb2f96 !important; }
+
+:root {
+  --bg:        #F7F5FA;
+  --white:     #FFFFFF;
+  --pink-500:  #EB2F96;
+  --pink-600:  #C22181;
+  --pink-400:  #F472B6;
+  --pink-50:   #FFF0F8;
+  --pink-100:  #FFD6EE;
+  --gray-900:  #1C171A;
+  --gray-700:  #3D3040;
+  --gray-600:  #5C5060;
+  --gray-500:  #7A6E7F;
+  --gray-400:  #A09AA5;
+  --gray-300:  #C8C3CC;
+  --gray-200:  #E5E0E9;
+  --gray-100:  #F0EBF4;
+  --gray-50:   #F7F3FA;
+  --amber-500: #D97706;
+  --amber-50:  #FFFBEB;
+  --green-500: #16A34A;
+  --green-50:  #F0FDF4;
+  --blue-50:   #EFF6FF;
+  --blue-500:  #2563EB;
+  --red-500:   #DC2626;
+  --red-50:    #FEF2F2;
+  --shadow-s:  0 1px 3px rgba(28,23,26,.08), 0 1px 2px rgba(28,23,26,.06);
+  --shadow-m:  0 4px 12px rgba(28,23,26,.1), 0 2px 4px rgba(28,23,26,.06);
+  --shadow-l:  0 8px 28px rgba(28,23,26,.14), 0 4px 8px rgba(28,23,26,.06);
+  --r-sm:      8px;
+  --r-md:      12px;
+  --r-lg:      16px;
+  --r-xl:      20px;
+  --content:   1240px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { overflow-x: hidden; }
+html { background: var(--bg); scroll-behavior: smooth; }
+body {
+  font-family: 'MoMoTrustSans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--gray-900); min-height: 100vh;
+}
+
+/* ── SITE NAV (Mega Menu) ── */
+.site-nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--gray-200);box-shadow:0 1px 3px rgba(0,0,0,.06);transition:background .2s,border-color .2s,box-shadow .2s}
+.site-nav:has(.nav-item:hover){background:#1a2535;border-bottom-color:transparent;box-shadow:none}
+.site-nav:has(.nav-item:hover) .nav-trigger{color:rgba(255,255,255,.6)}
+.site-nav:has(.nav-item:hover) .nav-item:hover .nav-trigger{color:#fff}
+.site-nav:has(.nav-item:hover) .nav-back{color:rgba(255,255,255,.9)}
+.site-nav:has(.nav-item:hover) .nav-back:hover{color:#fff;background:rgba(255,255,255,.12)}
+.site-nav:has(.nav-item:hover) .nav-sep{background:rgba(255,255,255,.15)}
+.site-nav:has(.nav-item:hover) .logo-text{color:#fff}
+.site-nav:has(.nav-item:hover) .logo-text em{color:rgba(255,255,255,.7)}
+.nav-inner{max-width:var(--content);margin:0 auto;height:56px;padding:0 20px;display:flex;align-items:center;gap:16px;overflow:visible}
+.nav-left{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.nav-back{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--gray-400);text-decoration:none;padding:5px 8px;border-radius:7px;transition:color .15s,background .15s}
+.nav-back:hover{color:var(--gray-700);background:var(--gray-100)}
+.nav-sep{width:1px;height:18px;background:var(--gray-200);flex-shrink:0}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-icon{width:32px;height:32px;border-radius:9px;overflow:hidden;flex-shrink:0}
+.logo-icon img{width:100%;height:100%;display:block}
+.logo-text{font-size:14px;font-weight:800;color:var(--gray-900)}
+.logo-text em{color:var(--pink-500);font-style:normal}
+.nav-links{display:flex;gap:0;margin-left:8px}
+.nav-item{position:static}
+.nav-trigger{display:inline-flex;align-items:center;gap:5px;height:56px;padding:0 14px;font-size:13px;font-weight:600;color:var(--gray-600);background:none;border:none;cursor:pointer;text-decoration:none;white-space:nowrap;transition:color .15s;font-family:inherit}
+.nav-trigger:hover,.nav-item:hover .nav-trigger{color:var(--gray-900)}
+.nav-trigger svg{transition:transform .2s;flex:none}
+.nav-item:hover .nav-trigger svg{transform:rotate(180deg)}
+.mega{position:absolute;top:100%;left:0;right:0;z-index:400;background:#1a2535;border-radius:0 0 20px 20px;padding:0;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 20px 48px rgba(0,0,0,.28)}
+.nav-item:hover .mega{opacity:1;transform:translateY(0);pointer-events:auto}
+.mega-header{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;margin-bottom:24px;opacity:.9;transition:opacity .12s}
+.mega-header:hover{opacity:1}
+.mega-header svg{flex:none}
+.mega-body{max-width:1152px;margin:0 auto;padding:28px 20px 36px}
+.mega-cols{display:flex;gap:48px}
+.mega-col{display:flex;flex-direction:column;gap:0;min-width:140px}
+.mega-col-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.04em;margin-bottom:10px}
+.mega-item{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:15px;font-weight:500;color:rgba(255,255,255,.85);text-decoration:none;transition:color .12s;white-space:nowrap}
+.mega-item:hover{color:#fff}
+@media(max-width:768px){
+  .nav-inner{height:48px;padding:0 12px;gap:8px}
+  .nav-back span{display:none}
+  .nav-sep{display:none}
+  .logo-text{display:block;font-size:12.5px}
+  .logo-icon{width:28px;height:28px}
+  .nav-links{display:none}
+  .mega{display:none}
+  .nav-search{display:none}
+  .nav-search-icon-btn{display:flex!important;margin-left:auto}
+  .nav-menu-btn{display:flex!important;align-items:center;justify-content:center;width:36px;height:36px;border:1.5px solid var(--gray-200);border-radius:9px;background:#fff;color:var(--gray-700);flex-shrink:0;cursor:pointer}
+
+  /* ── NAV SIDEBAR ── */
+  .nav-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:800;backdrop-filter:blur(2px)}
+  .nav-sidebar-overlay.open{display:block}
+  .nav-sidebar{position:fixed;top:0;right:0;width:280px;height:100dvh;background:#fff;z-index:900;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+  .nav-sidebar.open{transform:translateX(0)}
+  .nav-sidebar-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--gray-100);flex:none}
+  .nav-sidebar-logo{font-size:13px;font-weight:800;color:var(--gray-900)}
+  .nav-sidebar-logo em{color:var(--pink-500);font-style:normal}
+  .nav-sidebar-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--gray-200);background:#fff;display:grid;place-items:center;color:var(--gray-500);cursor:pointer}
+  .nav-sidebar-body{flex:1;padding:8px 0 24px;overflow-y:auto}
+  .nav-sidebar-section{padding:12px 16px 4px}
+  .nav-sidebar-section-label{font-size:10.5px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .nav-sidebar-link{display:flex;align-items:center;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--gray-700);text-decoration:none;transition:.12s;gap:8px}
+  .nav-sidebar-link:hover{background:var(--gray-50);color:var(--gray-900)}
+  .nav-sidebar-divider{height:1px;background:var(--gray-100);margin:8px 16px}
+}
+.nav-menu-btn{display:none}
+.nav-sidebar{display:none}
+.nav-sidebar-overlay{display:none}
+
+/* ── NAV SEARCH ── */
+.nav-momo-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0}
+.nav-momo-icon{width:32px;height:32px;border-radius:9px;overflow:hidden;flex-shrink:0}
+.nav-momo-icon img{width:100%;height:100%;display:block}
+.nav-search{position:relative;margin-left:auto;flex-shrink:0}
+.nav-search-box{display:flex;align-items:center;gap:7px;height:34px;padding:0 10px 0 11px;background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:9px;cursor:text;min-width:200px;transition:border-color .18s,background .18s,min-width .25s cubic-bezier(.4,0,.2,1),box-shadow .18s}
+.nav-search-box:focus-within{border-color:var(--pink-500);background:#fff;box-shadow:0 0 0 3px rgba(235,47,150,.12);min-width:260px}
+.nav-search-box svg{flex-shrink:0;color:var(--gray-400);transition:color .15s}
+.nav-search-box:focus-within svg{color:var(--pink-500)}
+.nav-search-inp{flex:1;border:none;background:none;outline:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--gray-900);min-width:0}
+.nav-search-inp::placeholder{color:var(--gray-400)}
+.nav-search-kbd{font-size:10px;font-weight:700;color:var(--gray-400);background:var(--gray-200);border-radius:4px;padding:1px 5px;flex-shrink:0;font-family:inherit;pointer-events:none;transition:opacity .15s}
+.nav-search-box:focus-within .nav-search-kbd{opacity:0}
+.site-nav:has(.nav-item:hover) .nav-search-box{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
+.site-nav:has(.nav-item:hover) .nav-search-inp{color:#fff}
+.site-nav:has(.nav-item:hover) .nav-search-inp::placeholder{color:rgba(255,255,255,.38)}
+.site-nav:has(.nav-item:hover) .nav-search-box svg{color:rgba(255,255,255,.4)}
+.site-nav:has(.nav-item:hover) .nav-search-kbd{background:rgba(255,255,255,.12);color:rgba(255,255,255,.4)}
+.site-nav:has(.nav-item:hover) .nav-search-box:focus-within{background:rgba(255,255,255,.12);border-color:rgba(235,47,150,.6)}
+.nav-search-drop{position:absolute;top:calc(100% + 10px);right:0;width:320px;max-height:400px;overflow-y:auto;background:#fff;border:1px solid var(--gray-200);border-radius:14px;box-shadow:0 12px 40px rgba(28,23,26,.16),0 2px 8px rgba(28,23,26,.07);z-index:600;display:none;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--gray-200) transparent}
+.nav-search-drop.open{display:flex}
+.nsd-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);padding:12px 14px 6px;flex-shrink:0}
+.nsd-item{display:flex;align-items:center;gap:11px;padding:9px 14px;cursor:pointer;text-decoration:none;transition:background .12s}
+.nsd-item:hover,.nsd-item.nsd-active{background:var(--gray-50)}
+.nsd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.nsd-info{flex:1;min-width:0}
+.nsd-model{font-size:13.5px;font-weight:700;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nsd-brand{font-size:11.5px;color:var(--gray-500);margin-top:1px}
+.nsd-type{font-size:10px;font-weight:700;letter-spacing:.03em;padding:3px 7px;border-radius:5px;flex-shrink:0;background:var(--gray-100);color:var(--gray-600)}
+.nsd-type.ev{background:#F0FFF4;color:#16A34A}
+.nsd-type.motorbike{background:#EFF6FF;color:#2563EB}
+.nsd-divider{height:1px;background:var(--gray-100);margin:4px 0;flex-shrink:0}
+.nsd-empty{padding:28px 14px;text-align:center;font-size:13px;color:var(--gray-400)}
+.nsd-empty strong{display:block;font-size:14px;font-weight:700;color:var(--gray-600);margin-bottom:4px}
+.nav-search-icon-btn{display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:none;border:1.5px solid var(--gray-200);color:var(--gray-600);cursor:pointer;flex-shrink:0;transition:background .15s,color .15s}
+.nav-search-icon-btn:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-search-overlay{display:none;position:sticky;top:56px;left:0;right:0;z-index:199;padding:8px 12px 10px;background:#fff;border-bottom:1px solid var(--gray-200);box-shadow:0 4px 12px rgba(28,23,26,.08)}
+.nav-search-overlay.open{display:block}
+.nav-search-overlay .nav-search-box{width:100%;min-width:0;border-color:var(--pink-500);background:#fff;box-shadow:0 0 0 3px rgba(235,47,150,.1)}
+.nav-search-overlay .nav-search-drop{position:static;width:100%;margin-top:8px;max-height:320px;border-radius:10px}
+
+/* ── BREADCRUMB ── */
+.breadcrumb-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:10px 0;position:sticky;top:56px;z-index:100}
+.bc-inner{display:flex;align-items:center;gap:4px;font-size:12.5px}
+.bc-link{color:var(--gray-400);font-weight:600;text-decoration:none;transition:.15s}
+.bc-link:hover{color:var(--pink-500)}
+.bc-sep{color:var(--gray-300);margin:0 3px}
+.bc-current{color:var(--gray-900);font-weight:700}
+.crumbs strong { color: var(--gray-900); font-weight: 600; }
+
+/* ── HEADER BLOCK ────────────────────────── */
+.page-head { max-width: var(--content); margin: 0 auto; padding: 20px 20px 0; }
+.page-eyebrow {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--pink-500); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-500); animation: pulse 2s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+h1.page-title {
+  font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif;
+  font-size: 34px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 10px; line-height: 1.15;
+}
+.page-sub { font-size: 14px; color: var(--gray-500); line-height: 1.6; max-width: 640px; }
+.page-sub strong { color: var(--gray-900); }
+
+/* ── LAYOUT ──────────────────────────────── */
+.page-wrap { max-width: var(--content); margin: 0 auto; padding: 24px 20px 0; }
+.main-grid { display: flex; flex-direction: column; gap: 18px; }
+.col { display: flex; flex-direction: column; gap: 18px; }
+/* ── STATIONS SECTION ────────────────────── */
+.stations-section { padding: 20px 0 0; }
+.stations-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 18px 20px 14px;
+}
+.stations-title { font-size: 15px; font-weight: 800; color: var(--gray-900); }
+.stations-sub { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
+.stations-all {
+  font-size: 13px; font-weight: 700; color: var(--pink-500);
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.stations-all:hover { text-decoration: underline; }
+.stn-list { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--white); border-top: 1px solid var(--gray-100); }
+@media(max-width:720px) { .stn-list { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width:480px) { .stn-list { grid-template-columns: 1fr; } }
+.stn-card {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 14px 16px; background: var(--white);
+  text-decoration: none; color: inherit; transition: background .15s;
+  border-right: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100);
+}
+.stn-card:nth-child(3n) { border-right: none; }
+@media(max-width:720px) { .stn-card:nth-child(3n) { border-right: 1px solid var(--gray-100); } .stn-card:nth-child(2n) { border-right: none; } }
+@media(max-width:480px) { .stn-card { border-right: none; } }
+.stn-card:hover { background: var(--gray-50); }
+.stn-logo {
+  width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900; color: #fff; letter-spacing: .5px;
+}
+.stn-info { flex: 1; min-width: 0; overflow: hidden; }
+.stn-name { font-size: 12.5px; font-weight: 700; color: var(--gray-900); line-height: 1.35; }
+.stn-addr { font-size: 11px; color: var(--gray-400); margin-top: 2px; line-height: 1.4; }
+.stn-dist-badge { flex-shrink: 0; font-size: 11px; font-weight: 700; color: var(--gray-500); background: var(--gray-100); padding: 3px 7px; border-radius: 20px; white-space: nowrap; align-self: flex-start; margin-top: 1px; }
+.stn-view-all { display: block; padding: 13px 20px; font-size: 13px; font-weight: 700; color: var(--pink-500); text-decoration: none; border-top: 1px solid var(--gray-100); text-align: center; background: var(--white); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.stn-view-all:hover { background: var(--pink-50); }
+
+.card {
+  background: var(--white); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-s); overflow: hidden;
+}
+.card-head {
+  padding: 16px 22px 14px; border-bottom: 1px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.card-title { font-size: 15px; font-weight: 800; }
+.card-note { font-size: 11.5px; color: var(--gray-400); }
+
+/* region tabs */
+.region-tabs { display: flex; gap: 8px; padding: 16px 22px 0; }
+.grt {
+  font-size: 12.5px; font-weight: 700; padding: 7px 16px; border-radius: 20px;
+  border: 1.5px solid var(--gray-200); background: none; cursor: pointer;
+  color: var(--gray-500); transition: all .15s; font-family: inherit;
+}
+.grt.on { border-color: var(--pink-500); background: var(--pink-50); color: var(--pink-500); }
+
+/* price rows */
+.gas-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; border-bottom: 1px solid var(--gray-100);
+}
+.gas-row:last-child { border-bottom: none; }
+.gr-left { display: flex; align-items: center; gap: 12px; }
+.gr-swatch { width: 10px; height: 34px; border-radius: 4px; flex-shrink: 0; }
+.gr-name { font-size: 14.5px; font-weight: 700; }
+.gr-sub { font-size: 11.5px; color: var(--gray-400); }
+.gr-right { display: flex; align-items: center; gap: 14px; }
+.gr-price { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.gr-unit { font-size: 11px; color: var(--gray-400); font-weight: 400; }
+.gr-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.gr-badge.down { background: var(--green-50); color: var(--green-500); }
+.gr-badge.up { background: var(--red-50); color: var(--red-500); }
+.gr-badge.same { background: var(--gray-100); color: var(--gray-400); }
+
+/* history table */
+.hist-table { width: 100%; border-collapse: collapse; }
+.hist-table th {
+  text-align: left; padding: 11px 22px;
+  font-size: 11px; font-weight: 700; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: .6px;
+  background: var(--gray-50); border-bottom: 1px solid var(--gray-100);
+  white-space: nowrap;
+}
+.hist-table td {
+  padding: 12px 22px; font-size: 13px; border-bottom: 1px solid var(--gray-100);
+  font-variant-numeric: tabular-nums;
+}
+.hist-table tr:last-child td { border-bottom: none; }
+.hist-table tr:hover td { background: var(--gray-50); }
+.hist-table .num { font-weight: 700; }
+.ht-delta { font-size: 11.5px; font-weight: 700; }
+.ht-delta.down { color: var(--green-500); }
+.ht-delta.up { color: var(--red-500); }
+.ht-delta.same { color: var(--gray-400); }
+
+/* trend chart */
+.trend-body { padding: 20px 22px; }
+.trend-legend { display: flex; gap: 18px; margin-bottom: 14px; }
+.tl-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--gray-600); }
+.tl-dot { width: 10px; height: 10px; border-radius: 3px; }
+.trend-chart { height: 180px; }
+.trend-x { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--gray-400); margin-top: 8px; }
+
+/* ── UTILITIES TOOL CALCULATOR ─────────────── */
+.util-calc-wrap {
+  background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+  border: 1px solid rgba(28,23,26,.08);
+  border-radius: 28px;
+  box-shadow: 0 18px 38px rgba(28,23,26,.05);
+  overflow: hidden;
+}
+.util-calc-head {
+  padding: 24px 28px 0;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+}
+.util-calc-kicker {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--pink-500); margin-bottom: 5px; display: block;
+}
+.util-calc-head h3 { font-size: 19px; font-weight: 800; margin: 0 0 5px; line-height: 1.2; }
+.util-calc-head p { font-size: 12px; color: var(--gray-500); margin: 0; line-height: 1.6; }
+.intent-chip {
+  font-size: 10px; font-weight: 700; background: var(--amber-50); color: #b45309;
+  padding: 5px 10px; border-radius: 20px; white-space: nowrap; flex: none; margin-top: 4px;
+}
+.jtbd-frame {
+  margin: 14px 28px 18px;
+  padding: 16px 20px 16px 56px;
+  background: radial-gradient(circle at top right, rgba(235,47,150,.12), transparent 60%),
+              linear-gradient(135deg, var(--pink-50) 0%, #fff8fb 100%);
+  border-radius: 16px; border: 1px solid var(--pink-100);
+  position: relative; overflow: hidden;
+}
+.jtbd-frame::before {
+  content: '\\201C'; position: absolute; top: -10px; left: 12px;
+  font-size: 80px; font-weight: 900; color: var(--pink-100);
+  font-family: Georgia, serif; line-height: 1; pointer-events: none;
+}
+.jtbd-kicker {
+  display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--pink-500);
+  background: rgba(255,255,255,.8); padding: 4px 10px; border-radius: 999px;
+  margin-bottom: 8px; position: relative; z-index: 1;
+}
+.jtbd-frame p { margin: 0; font-size: 13px; line-height: 1.7; color: var(--gray-700); position: relative; z-index: 1; }
+.jtbd-frame b { color: var(--pink-500); font-weight: 700; }
+.calculator-layout {
+  display: grid; grid-template-columns: minmax(0,1.16fr) minmax(300px,.84fr);
+  gap: 20px; padding: 0 28px 28px;
+}
+.input-panel { display: flex; flex-direction: column; gap: 18px; }
+.field-group { display: flex; flex-direction: column; gap: 8px; }
+.field-label {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: 11.5px; font-weight: 700; color: var(--gray-500);
+  text-transform: uppercase; letter-spacing: .6px;
+}
+.field-label-main { color: var(--gray-500); }
+.field-value { font-size: 12px; font-weight: 800; color: var(--pink-500); text-transform: none; letter-spacing: 0; }
+.pills-grid { display: flex; gap: 7px; flex-wrap: wrap; }
+.pill-btn {
+  font-size: 12.5px; font-weight: 600; padding: 7px 14px; border-radius: 20px;
+  border: 1.5px solid var(--gray-200); background: none; cursor: pointer;
+  color: var(--gray-600); transition: all .15s; font-family: inherit;
+}
+.pill-btn:hover { border-color: var(--pink-500); color: var(--pink-500); }
+.pill-btn.active { border-color: var(--pink-500); background: var(--pink-50); color: var(--pink-500); }
+.money-input-row {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border: 1.5px solid var(--gray-200); border-radius: 20px;
+  padding: 10px 14px; transition: border-color .15s, box-shadow .15s;
+}
+.money-input-row:focus-within { border-color: var(--pink-500); box-shadow: 0 0 0 4px var(--pink-100); }
+.money-input-row input {
+  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+  font-size: 18px; font-weight: 700; color: var(--gray-900); font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.unit-tag { font-size: 13px; font-weight: 700; color: var(--gray-400); }
+.mode-toggle {
+  display: flex; border: 1.5px solid var(--gray-200); border-radius: var(--r-sm);
+  overflow: hidden; flex-shrink: 0; align-self: flex-start; margin-top: 2px;
+}
+.mode-btn {
+  font-size: 12px; font-weight: 700; padding: 8px 14px; border: none; background: none;
+  color: var(--gray-500); cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.mode-btn.active { background: var(--pink-500); color: #fff; }
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip-btn {
+  padding: 6px 12px; border: 1px solid var(--gray-200); background: #fff;
+  border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--gray-500);
+  cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap;
+}
+.chip-btn:hover { border-color: var(--pink-500); color: var(--pink-500); }
+.chip-btn.active { border-color: var(--pink-500); background: var(--pink-50); color: var(--pink-500); }
+.inline-note { font-size: 11px; color: var(--gray-400); line-height: 1.55; margin-top: 4px; }
+/* Result panel */
+.result-panel {
+  background: linear-gradient(180deg, #f6f8fd 0%, #eef3fa 100%);
+  border-radius: 22px; padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.result-hero {
+  padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,.84);
+}
+.result-hero-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+  color: #143c8b; margin-bottom: 10px; display: block;
+}
+.result-hero-value {
+  font-size: 42px; font-weight: 900; color: #143c8b;
+  line-height: .95; letter-spacing: -.04em; font-variant-numeric: tabular-nums;
+}
+.result-hero-value small { font-size: 18px; font-weight: 500; letter-spacing: 0; opacity: .65; }
+.result-details {
+  border-radius: 16px; background: rgba(255,255,255,.78); overflow: hidden;
+}
+.result-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-size: 11.5px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(28,23,26,.07); color: var(--gray-600);
+}
+.result-row:last-child { border-bottom: 0; }
+.result-row strong { color: var(--gray-900); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+.insight-box {
+  background: var(--pink-50); border-radius: 10px;
+  padding: 10px 12px; font-size: 11px; color: var(--pink-500); line-height: 1.6;
+}
+.insight-box em { font-style: normal; font-weight: 700; }
+@media(max-width:860px) {
+  .calculator-layout { grid-template-columns: 1fr; }
+  .util-calc-head { flex-wrap: wrap; }
+}
+
+/* side widgets */
+.next-cycle {
+  background: linear-gradient(120deg, #0B0A12 0%, #171226 100%);
+  border-radius: var(--r-lg); padding: 22px; position: relative; overflow: hidden;
+}
+.next-cycle::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 90% at 85% 15%, rgba(235,47,150,.16) 0%, transparent 60%);
+  pointer-events: none;
+}
+.nc-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--pink-400); margin-bottom: 10px; position: relative; }
+.nc-date { font-size: 24px; font-weight: 800; color: #fff; position: relative; }
+.nc-count { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 4px; position: relative; }
+.nc-count strong { color: #fff; }
+.nc-cta {
+  display: inline-block; margin-top: 16px; padding: 10px 20px;
+  background: var(--pink-500); color: #fff; border: none; border-radius: var(--r-md);
+  font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; position: relative;
+  transition: background .15s;
+}
+.nc-cta:hover { background: var(--pink-600); }
+
+.station-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 22px; border-bottom: 1px solid var(--gray-100);
+  cursor: pointer; transition: background .12s;
+}
+.station-item:last-child { border-bottom: none; }
+.station-item:hover { background: var(--gray-50); }
+.st-logo {
+  width: 36px; height: 36px; border-radius: var(--r-sm); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff;
+}
+.st-name { font-size: 13px; font-weight: 700; }
+.st-addr { font-size: 11.5px; color: var(--gray-400); }
+.st-dist { margin-left: auto; font-size: 12px; color: var(--gray-400); white-space: nowrap; flex-shrink: 0; }
+
+.w2a-box {
+  background: var(--pink-50); border: 1px dashed var(--pink-100);
+  border-radius: var(--r-lg); padding: 20px 22px;
+}
+.w2a-box strong { display: block; font-size: 14px; font-weight: 800; color: var(--pink-600); margin-bottom: 6px; }
+.w2a-box p { font-size: 12.5px; color: var(--gray-600); line-height: 1.6; margin-bottom: 14px; }
+.w2a-btn {
+  padding: 10px 20px; background: var(--pink-500); color: #fff; border: none;
+  border-radius: var(--r-md); font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: background .15s;
+}
+.w2a-btn:hover { background: var(--pink-600); }
+
+/* FAQ */
+.section { padding: 40px 0 8px; }
+.section-eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink-500); margin-bottom: 8px; }
+.section-title { font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 22px; text-align: center; }
+.faq-list { max-width: 760px; margin: 0 auto; }
+.faq-item { background: var(--white); border-radius: var(--r-md); box-shadow: var(--shadow-s); margin-bottom: 10px; overflow: hidden; }
+.faq-q {
+  width: 100%; text-align: left; padding: 16px 20px;
+  font-size: 14px; font-weight: 700; color: var(--gray-900);
+  background: none; border: none; cursor: pointer; font-family: inherit;
+  display: flex; justify-content: space-between; align-items: center; gap: 14px;
+}
+.faq-q::after { content: '+'; font-size: 18px; color: var(--gray-400); font-weight: 400; flex-shrink: 0; }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a { display: none; padding: 0 20px 16px; font-size: 13.5px; color: var(--gray-600); line-height: 1.7; }
+.faq-item.open .faq-a { display: block; }
+
+/* ── FOOTER ──────────────────────────────── */
+.site-footer { background: var(--gray-900); margin-top: 56px; }
+.footer-inner { max-width: var(--content); margin: 0 auto; padding: 40px 20px 28px; }
+.footer-cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 30px; }
+.footer-brand { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+.footer-brand em { color: var(--pink-400); font-style: normal; }
+.footer-about { font-size: 12.5px; color: rgba(255,255,255,.45); line-height: 1.65; max-width: 280px; }
+.footer-col h4 { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 14px; }
+.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,.65); text-decoration: none; margin-bottom: 9px; }
+.footer-col a:hover { color: var(--pink-400); }
+.footer-legal {
+  border-top: 1px solid rgba(255,255,255,.08); padding-top: 18px;
+  font-size: 11.5px; color: rgba(255,255,255,.3);
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+
+/* toast */
+#toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--gray-900); color: #fff; font-size: 13px; font-weight: 600;
+  padding: 11px 22px; border-radius: 24px; box-shadow: var(--shadow-l);
+  transition: transform .25s; z-index: 500; pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media(max-width: 980px) {
+  .main-grid { grid-template-columns: 1fr; }
+  h1.page-title { font-size: 27px; }
+  .footer-cols { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width: 560px) {
+  h1.page-title { font-size: 23px; }
+  .gr-price { font-size: 18px; }
+  .hist-table th, .hist-table td { padding: 10px 12px; font-size: 12px; }
+  .footer-cols { grid-template-columns: 1fr; }
+  .section-title { font-size: 21px; }
+
+  /* card header: stack title + note on mobile */
+  .card-head { flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 16px 12px; }
+  .card-title { font-size: 14px; }
+  .card-note { font-size: 11px; }
+
+  /* region tabs: tighter padding so pills fit on one line */
+  .region-tabs { padding: 12px 16px 0; gap: 6px; }
+  .grt { font-size: 12px; padding: 6px 12px; white-space: nowrap; }
+
+  /* price rows: tighter padding on mobile */
+  .gas-row { padding: 13px 16px; }
+  .gr-name { font-size: 13.5px; }
+  .gr-sub { font-size: 11px; }
+  .gr-price { font-size: 19px; }
+
+  /* stations section: stack header vertically */
+  .stations-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .stations-head > div:last-child { width: 100%; display: flex; align-items: center; gap: 10px; }
+  .stn-locate-btn { flex: 1; justify-content: center; }
+  .stations-title { font-size: 16px; }
+  .stations-sub { font-size: 11.5px; }
+
+  /* station cards: prevent overflow */
+  .stn-card { overflow: hidden; }
+  .stn-info { overflow: hidden; min-width: 0; }
+}
+.mega-item svg{flex-shrink:0;opacity:.7;transition:opacity .12s}.mega-item:hover svg{opacity:1}
+
+/* ── GIA-XANG REVAMP ── */
+/* Hero */
+.gz-hero { background: #fff; border-bottom: 1px solid var(--gray-100); }
+.gz-hero-inner {
+  max-width: var(--content); margin: 0 auto; padding: 28px 20px 32px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.gz-hero-content { flex: 1; min-width: 0; }
+.gz-crumbs { font-size: 12px; color: var(--gray-400); margin-bottom: 14px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.gz-crumbs a { color: var(--gray-400); text-decoration: none; transition: color .15s; }
+.gz-crumbs a:hover { color: var(--pink-500); }
+.gz-crumbs strong { color: var(--gray-700); font-weight: 600; }
+.gz-crumbs span { color: var(--gray-300); }
+.gz-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+  color: var(--pink-500); background: var(--pink-50); border: 1px solid var(--pink-100);
+  border-radius: 999px; padding: 4px 12px; margin-bottom: 12px;
+}
+.gz-title {
+  font-family: 'MoMoTrustDisplay','MoMoTrustSans',sans-serif;
+  font-size: 38px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 10px;
+}
+.gz-sub { font-size: 14px; color: var(--gray-500); line-height: 1.6; margin-bottom: 20px; max-width: 520px; }
+.gz-meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gz-region-picker {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--gray-50); border: 1.5px solid var(--gray-200); border-radius: 10px;
+  padding: 8px 12px; cursor: pointer;
+}
+.gz-region-picker svg { width: 14px; height: 14px; fill: none; stroke: var(--pink-500); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.gz-region-picker select {
+  border: none; outline: none; background: transparent; font-size: 13px; font-weight: 700;
+  color: var(--gray-900); font-family: inherit; cursor: pointer;
+}
+.gz-update-time {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--gray-400); font-weight: 500;
+}
+.gz-update-time svg { width: 13px; height: 13px; fill: none; stroke: var(--gray-400); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.gz-hero-visual {
+  flex-shrink: 0; width: 340px; height: 220px;
+  background: linear-gradient(135deg, #fff0f8 0%, #ffe4f2 50%, #ffd6ee 100%);
+  border-radius: 20px; overflow: hidden; position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.gz-station-svg { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); }
+@media(max-width:860px) { .gz-hero-inner { flex-direction: column; } .gz-hero-visual { width: 100%; height: 160px; } .gz-title { font-size: 28px; } }
+@media(max-width:640px) { .gz-hero-inner { padding: 20px 16px 24px; } .gz-hero-visual { display: none; } .gz-title { font-size: 24px; } .gz-sub { margin-bottom: 14px; } }
+
+/* Price strip */
+.gz-price-strip { background: #fff; border-bottom: 1px solid var(--gray-100); }
+.gz-ps-inner {
+  max-width: var(--content); margin: 0 auto; padding: 0 20px;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+}
+.gz-price-card {
+  padding: 16px 16px 18px; border-right: 1px solid var(--gray-100);
+  cursor: pointer; position: relative;
+  transition: background .15s, box-shadow .15s;
+}
+.gz-price-card:last-child { border-right: none; }
+.gz-price-card:hover { background: var(--gray-50); }
+.gz-price-card.active {
+  background: var(--pink-50);
+  box-shadow: inset 0 -3px 0 var(--pink-500);
+}
+.gz-price-card.active .gz-pc-name { color: var(--pink-600); }
+.gz-price-card.active .gz-pc-price { color: var(--pink-600); }
+.gz-price-card.active .gz-pc-price span { color: var(--pink-400); }
+.gz-price-card.active .gz-pc-vs { color: var(--pink-300); }
+.gz-pc-icon {
+  width: 32px; height: 32px; border-radius: 8px; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gz-pc-icon svg { width: 16px; height: 16px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gz-pc-name { font-size: 11.5px; font-weight: 700; color: var(--gray-500); margin-bottom: 6px; line-height: 1.3; transition: color .15s; }
+.gz-pc-price { font-size: 22px; font-weight: 900; color: var(--gray-900); font-variant-numeric: tabular-nums; letter-spacing: -.03em; transition: color .15s; }
+.gz-pc-price span { font-size: 12px; font-weight: 500; color: var(--gray-400); }
+.gz-pc-delta { font-size: 11.5px; font-weight: 700; margin-top: 4px; }
+.gz-pc-delta.down { color: var(--green-500); }
+.gz-pc-delta.up { color: var(--red-500); }
+.gz-pc-delta.same { color: var(--gray-400); }
+.gz-pc-vs { font-size: 10.5px; color: var(--gray-400); margin-top: 1px; transition: color .15s; }
+.gz-pc-spark { margin-top: 10px; height: 28px; width: 100%; overflow: visible; display: block; }
+.gz-pc-spark polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.gz-pc-spark .spark-fill { opacity: .12; }
+.gz-pc-spark .spark-dot { r: 2; }
+@media(max-width:860px) { .gz-ps-inner { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:640px) {
+  .gz-ps-inner { display: flex; overflow-x: auto; padding: 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .gz-ps-inner::-webkit-scrollbar { display: none; }
+  .gz-price-card { flex-shrink: 0; min-width: 140px; border-right: 1px solid var(--gray-100); border-top: none; padding: 14px 14px 16px; }
+  .gz-price-card:last-child { border-right: none; }
+  .gz-price-card.active { box-shadow: inset 0 -3px 0 var(--pink-500); }
+}
+
+/* Active column highlight in price table */
+.gz-region-table th.gz-col-active { color: var(--pink-500); background: var(--pink-50); }
+.gz-region-table td.gz-col-active { background: var(--pink-50); }
+
+/* Cycle info bar */
+.gz-cycle-bar {
+  max-width: var(--content); margin: 0 auto; padding: 8px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-size: 12px; color: var(--gray-500); border-top: 1px solid var(--gray-100);
+}
+.gz-cycle-bar span { display: flex; align-items: center; gap: 5px; }
+.gz-cycle-bar svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.gz-cycle-bar a { color: var(--gray-500); text-decoration: none; }
+
+/* 2-col content layout */
+.gz-layout {
+  max-width: var(--content); margin: 0 auto; padding: 24px 20px 40px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.gz-main { display: contents; }
+@media(max-width:980px) {
+  .gz-layout { padding: 16px 16px 32px; }
+  .gz-notify-bar { min-width: 0; box-sizing: border-box; }
+}
+@media(max-width:640px) { .gz-layout { padding: 12px 12px 28px; gap: 14px; } }
+
+/* Price table tabs */
+.gz-tab-bar {
+  display: flex; border-bottom: 1px solid var(--gray-100);
+  padding: 0 20px;
+}
+.gz-tab {
+  font-size: 12.5px; font-weight: 700; padding: 14px 16px;
+  border: none; background: none; cursor: pointer; color: var(--gray-500);
+  border-bottom: 2.5px solid transparent; margin-bottom: -1px; font-family: inherit;
+  text-transform: uppercase; letter-spacing: .5px; transition: color .15s;
+}
+.gz-tab.active { color: var(--pink-500); border-bottom-color: var(--pink-500); }
+
+/* Regional price table */
+.gz-region-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.gz-region-table thead tr { background: var(--gray-50); }
+.gz-region-table th {
+  padding: 10px 14px; font-size: 11px; font-weight: 700; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--gray-100);
+  white-space: nowrap; text-align: right;
+}
+.gz-region-table th:first-child { text-align: left; }
+.gz-region-table td {
+  padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--gray-100);
+  text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--gray-900);
+}
+.gz-region-table td:first-child { text-align: left; font-weight: 700; }
+.gz-region-table tr:last-child td { border-bottom: none; }
+.gz-region-table tr:hover td { background: var(--gray-50); }
+.gz-rt-region { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.gz-rt-city { font-size: 11px; color: var(--gray-400); font-weight: 500; margin-top: 1px; }
+.gz-rt-delta { font-size: 10.5px; color: var(--green-500); font-weight: 600; display: block; }
+.gz-rt-delta.up { color: var(--red-500); }
+.gz-table-footer { padding: 12px 20px; border-top: 1px solid var(--gray-100); }
+.gz-table-footer a { font-size: 13px; font-weight: 700; color: var(--pink-500); text-decoration: none; }
+.gz-table-footer a:hover { text-decoration: underline; }
+
+/* Trend chart card */
+.gz-trend-head { padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.gz-time-tabs { display: flex; gap: 4px; }
+.gz-tt { font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 6px; border: 1.5px solid var(--gray-200); background: none; cursor: pointer; color: var(--gray-500); font-family: inherit; transition: all .15s; }
+.gz-tt.active { background: var(--pink-500); color: #fff; border-color: var(--pink-500); }
+.gz-chart-area { padding: 8px 20px 0; }
+.gz-chart-link { display: block; padding: 12px 20px; font-size: 13px; font-weight: 700; color: var(--pink-500); text-decoration: none; border-top: 1px solid var(--gray-100); margin-top: 8px; }
+.gz-chart-link:hover { text-decoration: underline; }
+
+/* Notification bar */
+.gz-notify-bar {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: var(--r-lg);
+  padding: 16px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.gz-notify-icon {
+  width: 44px; height: 44px; border-radius: 12px; background: var(--amber-50);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.gz-notify-icon svg { width: 22px; height: 22px; fill: none; stroke: var(--amber-500); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gz-notify-body { flex: 1; min-width: 180px; }
+.gz-notify-body strong { font-size: 14px; font-weight: 700; color: var(--gray-900); display: block; margin-bottom: 2px; }
+.gz-notify-body p { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+.gz-notify-btn { flex-shrink: 0; padding: 10px 20px; background: var(--pink-500); color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; white-space: nowrap; }
+.gz-notify-btn:hover { background: var(--pink-600); }
+
+/* Sidebar cards */
+.gz-sb-card { background: #fff; border-radius: var(--r-lg); box-shadow: var(--shadow-s); overflow: hidden; }
+.gz-sb-head { padding: 14px 16px 10px; }
+.gz-sb-title { font-size: 14px; font-weight: 800; color: var(--gray-900); margin-bottom: 12px; }
+.gz-station-inp-row {
+  display: flex; align-items: center; gap: 0;
+  border: 1.5px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;
+}
+.gz-station-inp-row input {
+  flex: 1; border: none; outline: none; font-size: 13px; color: var(--gray-900); font-family: inherit;
+  padding: 9px 12px; background: transparent;
+}
+.gz-station-inp-row input::placeholder { color: var(--gray-400); }
+.gz-station-pin-btn {
+  background: var(--pink-500); border: none; cursor: pointer; padding: 9px 14px; color: #fff;
+  display: flex; align-items: center;
+}
+.gz-station-pin-btn svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gz-brand-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.gz-brand-chip {
+  flex: 1; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 7px 8px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color .15s;
+  font-size: 11px; font-weight: 700; color: var(--gray-600); text-align: center;
+}
+.gz-brand-chip:hover { border-color: var(--pink-500); color: var(--pink-500); }
+.gz-brand-chip img { width: 28px; height: 20px; object-fit: contain; }
+.gz-find-station-btn {
+  display: block; width: 100%; padding: 11px; background: var(--pink-500); color: #fff;
+  border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: inherit; text-align: center; text-decoration: none; transition: background .15s;
+}
+.gz-find-station-btn:hover { background: var(--pink-600); }
+
+/* Payment CTA */
+.gz-payment-cta {
+  background: linear-gradient(135deg,#fff0f8,#ffd6ee);
+  border-radius: var(--r-lg); padding: 18px 16px; position: relative; overflow: hidden;
+  border: 1px solid var(--pink-100);
+}
+.gz-pc-eyebrow { font-size: 11px; font-weight: 700; color: var(--pink-500); margin-bottom: 6px; }
+.gz-pc-h { font-size: 14px; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; line-height: 1.3; }
+.gz-pc-desc { font-size: 12px; color: var(--gray-600); line-height: 1.55; margin-bottom: 14px; max-width: 200px; }
+.gz-pc-pay-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: var(--pink-500); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+.gz-pc-pay-btn:hover { background: var(--pink-600); }
+.gz-pc-phone { position: absolute; right: 0; bottom: 0; width: 100px; height: 110px; overflow: hidden; opacity: .7; }
+
+/* Sidebar regional prices */
+.gz-kv-tabs { display: flex; gap: 4px; padding: 0 16px 10px; border-bottom: 1px solid var(--gray-100); }
+.gz-kv-tab { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 6px; border: 1.5px solid var(--gray-200); background: none; cursor: pointer; color: var(--gray-500); font-family: inherit; transition: all .15s; }
+.gz-kv-tab.active { background: var(--pink-50); color: var(--pink-500); border-color: var(--pink-200,#fbcfe8); }
+.gz-kv-list { padding: 0 16px 14px; }
+.gz-kv-summary { display: flex; align-items: baseline; gap: 6px; padding: 12px 0 10px; border-bottom: 1px solid var(--gray-100); margin-bottom: 10px; }
+.gz-kv-summary-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+.gz-kv-summary-price { font-size: 22px; font-weight: 900; color: var(--gray-900); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.gz-kv-summary-unit { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+.gz-kv-cities { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; }
+.gz-kv-city-item { font-size: 13px; color: var(--gray-700); font-weight: 500; padding: 6px 0; display: flex; align-items: center; gap: 6px; }
+.gz-kv-city-item::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--gray-300); flex-shrink:0; }
+/* keep old selectors for compat */
+.gz-kv-row { display: none; }
+.gz-kv-city { display: none; }
+.gz-kv-price { display: none; }
+.gz-kv-footer { padding: 10px 16px; border-top: 1px solid var(--gray-100); }
+.gz-kv-footer a { font-size: 13px; font-weight: 700; color: var(--pink-500); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+.gz-kv-footer a:hover { text-decoration: underline; }
+
+/* Next cycle dark card */
+.gz-next-cycle {
+  background: linear-gradient(120deg,#0B0A12,#171226); border-radius: var(--r-lg);
+  padding: 18px 16px; position: relative; overflow: hidden;
+}
+.gz-next-cycle::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 90% at 85% 15%, rgba(235,47,150,.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+.gz-nc-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--pink-400); margin-bottom: 8px; position: relative; }
+.gz-nc-icon { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; position: relative; }
+.gz-nc-icon svg { width: 15px; height: 15px; fill: none; stroke: rgba(255,255,255,.5); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gz-nc-date { font-size: 16px; font-weight: 800; color: #fff; position: relative; line-height: 1.3; }
+.gz-nc-sub { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 4px; position: relative; }
+
+/* FAQ in new layout */
+.gz-faq-wrap { max-width: var(--content); margin: 0 auto; padding: 0 20px 48px; }
+@media(max-width:640px) {
+  .gz-faq-wrap { padding: 0 12px 32px; }
+  .gz-cycle-bar { padding: 8px 12px; }
+  .gz-sb-card { border-radius: 14px; }
+  .gz-payment-cta { border-radius: 14px; }
+  .gz-next-cycle { border-radius: 14px; }
+  .gz-notify-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .gz-notify-btn { width: 100%; text-align: center; }
+  .gz-tab { padding: 12px 10px; font-size: 11.5px; }
+  .gz-tab-bar { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
+  .gz-tab-bar::-webkit-scrollbar { display: none; }
+  .gz-trend-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .gz-kv-tabs { overflow-x: auto; scrollbar-width: none; }
+  .gz-kv-tabs::-webkit-scrollbar { display: none; }
+}
+</style>
+`;
+---
+
+<VehicleHub title="Giá Xăng Dầu Hôm Nay - E10 RON 95, E5 RON 92, Diesel | MoMo" description="Cập nhật giá xăng dầu mới nhất tại Việt Nam theo kỳ điều hành. Giá E10 RON 95-III, E5 RON 92, Dầu diesel vùng 1 và vùng 2." theme="energy">
+<Fragment set:html={`<style>${rawCss}</style>`} />
+<div class="nav-search-overlay" id="mobileSearchOverlay">
+  <div class="nav-search-box">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="mobileSearchInp" class="nav-search-inp" type="text" placeholder="Tìm xe của bạn..." autocomplete="off" spellcheck="false">
+    <button onclick="closeMobileSearch()" style="background:none;border:none;cursor:pointer;color:var(--gray-400);padding:0;display:flex;align-items:center;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-search-drop" id="mobileSearchDrop"></div>
+</div>
+
+<!-- MOBILE NAV SIDEBAR -->
+<div class="nav-sidebar-overlay" id="navOverlay" onclick="closeNavSidebar()"></div>
+<div class="nav-sidebar" id="navSidebar">
+  <div class="nav-sidebar-top">
+    <span class="nav-sidebar-logo">Tiện Ích <em>Giao Thông</em></span>
+    <button class="nav-sidebar-close" onclick="closeNavSidebar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-sidebar-body">
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Di chuyển</div>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/gia-xang">Giá xăng dầu hôm nay</a>
+      <a class="nav-sidebar-link" href="/cay-xang">Tìm cây xăng gần đây</a>
+      <a class="nav-sidebar-link" href="/tram-sac">Trạm sạc xe điện</a>
+      <a class="nav-sidebar-link" href="/epass/tinh-phi-etc">Tính phí ETC theo tuyến</a>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Bảo hiểm</div>
+      <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm TNDS bắt buộc</a>
+      <a class="nav-sidebar-link" href="/bao-hiem-o-to">Bảo hiểm thân vỏ</a>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Pháp lý &amp; Bảo dưỡng</div>
+      <a class="nav-sidebar-link" href="/phat-nguoi">Tra phạt nguội</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/dang-kiem">Kiểm tra đăng kiểm</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/bao-duong">Lịch bảo dưỡng xe</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/cuu-ho">Cứu hộ khẩn cấp</a>
+    </div>
+    <div class="nav-sidebar-divider"></div>
+    <div class="nav-sidebar-section">
+      <div class="nav-sidebar-section-label">Xe của tôi</div>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong#ho-so-xe">Hồ sơ phương tiện</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong#chi-phi-xe">Chi phí nuôi xe / năm</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/hang-xe">Nhãn xe &amp; Dòng xe</a>
+      <a class="nav-sidebar-link" href="/epass">ePass &amp; Tự động nạp</a>
+      <a class="nav-sidebar-link" href="/tien-ich-giao-thong/bai-do-xe">Tìm bãi đỗ xe</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="gz-hero">
+  <div class="gz-hero-inner">
+    <div class="gz-hero-content">
+      <div class="gz-crumbs">
+        <a href="/">Trang chủ</a><span>›</span>
+        <a href="/tien-ich-giao-thong">Tiện ích giao thông</a><span>›</span>
+        <strong>Giá xăng dầu</strong>
+      </div>
+      <div class="gz-eyebrow">Tiện ích giao thông</div>
+      <h1 class="gz-title">Giá xăng dầu hôm nay</h1>
+      <p class="gz-sub">Cập nhật giá xăng dầu mới nhất tại Việt Nam theo thời gian thực.</p>
+      <div class="gz-meta-row">
+        <div class="gz-region-picker">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          <select id="heroRegion" onchange="onHeroRegionChange(this.value)">
+            <option value="1">Hà Nội (Vùng 1)</option>
+            <option value="2">Miền núi (Vùng 2)</option>
+          </select>
+        </div>
+        <div class="gz-update-time">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Cập nhật lần cuối: 08:30 · 31/07/2026
+        </div>
+      </div>
+    </div>
+    <div class="gz-hero-visual">
+      <svg class="gz-station-svg" width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ground -->
+        <rect x="0" y="170" width="300" height="30" fill="#f5c0dc" rx="4"/>
+        <!-- Roof -->
+        <rect x="30" y="60" width="200" height="12" rx="4" fill="#EB2F96"/>
+        <rect x="20" y="56" width="220" height="10" rx="3" fill="#c22181"/>
+        <!-- Pillars -->
+        <rect x="50" y="72" width="12" height="98" rx="3" fill="#e8e0f0"/>
+        <rect x="198" y="72" width="12" height="98" rx="3" fill="#e8e0f0"/>
+        <!-- MoMo sign on roof -->
+        <rect x="100" y="30" width="100" height="32" rx="6" fill="#EB2F96"/>
+        <text x="150" y="51" text-anchor="middle" font-size="16" font-weight="900" fill="white" font-family="Arial">momo</text>
+        <!-- Fuel pumps -->
+        <rect x="70" y="110" width="36" height="60" rx="6" fill="#fff" stroke="#e8e0f0" stroke-width="1.5"/>
+        <rect x="76" y="118" width="24" height="16" rx="3" fill="#EB2F96" opacity=".15"/>
+        <rect x="80" y="120" width="16" height="4" rx="2" fill="#EB2F96"/>
+        <rect x="80" y="126" width="16" height="4" rx="2" fill="#EB2F96" opacity=".5"/>
+        <rect x="84" y="138" width="8" height="24" rx="3" fill="#e0d8ea"/>
+        <rect x="152" y="110" width="36" height="60" rx="6" fill="#fff" stroke="#e8e0f0" stroke-width="1.5"/>
+        <rect x="158" y="118" width="24" height="16" rx="3" fill="#EB2F96" opacity=".15"/>
+        <rect x="162" y="120" width="16" height="4" rx="2" fill="#EB2F96"/>
+        <rect x="162" y="126" width="16" height="4" rx="2" fill="#EB2F96" opacity=".5"/>
+        <rect x="166" y="138" width="8" height="24" rx="3" fill="#e0d8ea"/>
+        <!-- Car -->
+        <rect x="190" y="142" width="80" height="28" rx="8" fill="#fff" stroke="#e8e0f0" stroke-width="1.5"/>
+        <rect x="200" y="130" width="58" height="18" rx="6" fill="#fff" stroke="#e8e0f0" stroke-width="1.5"/>
+        <circle cx="208" cy="170" r="8" fill="#5C5060"/>
+        <circle cx="208" cy="170" r="4" fill="#e8e0f0"/>
+        <circle cx="252" cy="170" r="8" fill="#5C5060"/>
+        <circle cx="252" cy="170" r="4" fill="#e8e0f0"/>
+        <!-- Pink accents -->
+        <circle cx="270" cy="40" r="18" fill="#EB2F96" opacity=".08"/>
+        <circle cx="20" cy="120" r="12" fill="#EB2F96" opacity=".06"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE STRIP -->
+<div class="gz-price-strip">
+  <div class="gz-ps-inner" id="priceStrip"><!-- rendered by JS --></div>
+  <div class="gz-cycle-bar">
+    <span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Cập nhật mới nhất: 15h00 ngày 31/07/2026 · Liên Bộ Công Thương - Tài Chính
+    </span>
+    <span id="countdownBadge" style="display:inline-flex;align-items:center;gap:5px;font-weight:700;color:var(--gray-700)">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span id="countdownText">Đang tính...</span>
+    </span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="gz-layout">
+
+  <!-- Price table card -->
+  <div class="gz-main">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="gz-tab-bar" style="padding:0 20px">
+      <button class="gz-tab active" onclick="switchPriceTab('khu-vuc',this)">Bảng giá theo khu vực</button>
+    </div>
+    <div id="priceTablePanel" style="overflow-x:auto;width:100%"></div>
+  </div>
+  </div>
+
+  <!-- Regional prices -->
+  <div class="gz-sb-card">
+    <div style="padding:14px 16px 10px">
+      <div class="gz-sb-title">Giá xăng theo vùng</div>
+    </div>
+    <div class="gz-kv-tabs" id="kvTabs">
+      <button class="gz-kv-tab active" onclick="switchKV(this,1)">Vùng 1 (đồng bằng)</button>
+      <button class="gz-kv-tab" onclick="switchKV(this,2)">Vùng 2 (miền núi)</button>
+    </div>
+    <div class="gz-kv-list" id="kvPriceList"><!-- rendered by JS --></div>
+    <div class="gz-kv-footer">
+      <a href="#">Xem tất cả <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+  </div>
+
+  <!-- Station finder -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="stations-head">
+      <div>
+        <div class="stations-title">Cây xăng gần bạn</div>
+        <div class="stations-sub">1.200+ điểm Petrolimex, PV Oil · thanh toán MoMo, tích điểm MoXe</div>
+      </div>
+      <a class="stations-all" href="/cay-xang">Xem tất cả →</a>
+    </div>
+    <div class="stn-list">
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#E8232A">PL</div>
+        <div class="stn-info">
+          <div class="stn-name">Petrolimex 101 - Nguyễn Thị Thập</div>
+          <div class="stn-addr">101 Nguyễn Thị Thập, Tân Phú, Quận 7, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">0.4 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#006DB8">PV</div>
+        <div class="stn-info">
+          <div class="stn-name">PV Oil Lê Văn Lương</div>
+          <div class="stn-addr">288 Lê Văn Lương, Tân Quy, Quận 7, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">1.1 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#E8232A">PL</div>
+        <div class="stn-info">
+          <div class="stn-name">Petrolimex Nguyễn Văn Linh</div>
+          <div class="stn-addr">725 Nguyễn Văn Linh, Tân Hưng, Quận 7, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">1.8 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#FBCE07;color:#d00">SH</div>
+        <div class="stn-info">
+          <div class="stn-name">Shell Nguyễn Hữu Thọ</div>
+          <div class="stn-addr">1200 Nguyễn Hữu Thọ, Phước Kiển, Nhà Bè, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">2.3 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#006DB8">PV</div>
+        <div class="stn-info">
+          <div class="stn-name">PV Oil Huỳnh Tấn Phát</div>
+          <div class="stn-addr">450 Huỳnh Tấn Phát, Bình Thuận, Quận 7, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">2.7 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#E8232A">PL</div>
+        <div class="stn-info">
+          <div class="stn-name">Petrolimex Khánh Hội</div>
+          <div class="stn-addr">185 Bến Vân Đồn, Phường 6, Quận 4, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">3.5 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#CC0000">MI</div>
+        <div class="stn-info">
+          <div class="stn-name">Mipec Nguyễn Thị Minh Khai</div>
+          <div class="stn-addr">320 Nguyễn Thị Minh Khai, Phường 5, Quận 3, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">4.2 km</span>
+      </a>
+      <a class="stn-card" href="/cay-xang">
+        <div class="stn-logo" style="background:#E8232A">PL</div>
+        <div class="stn-info">
+          <div class="stn-name">Petrolimex Điện Biên Phủ</div>
+          <div class="stn-addr">92 Điện Biên Phủ, Phường Đa Kao, Quận 1, TP.HCM</div>
+        </div>
+        <span class="stn-dist-badge">5.0 km</span>
+      </a>
+    </div>
+    <a class="stn-view-all" href="/cay-xang">Xem tất cả cây xăng gần bạn →</a>
+  </div>
+
+  <!-- Calculator -->
+  <div class="util-calc-wrap">
+    <div class="util-calc-head">
+      <div>
+        <h3>Tính tiền đổ xăng</h3>
+        <p>Nhập số lít hoặc số tiền để biết chính xác chi phí theo giá hôm nay.</p>
+      </div>
+    </div>
+    <div class="calculator-layout">
+      <div class="input-panel">
+        <div class="field-group">
+          <div class="field-label"><span class="field-label-main">Loại nhiên liệu</span></div>
+          <div class="pills-grid" id="fuelPills">
+            <button class="pill-btn active" data-price="22850" onclick="setFuel(this)">E10 RON 95-III</button>
+            <button class="pill-btn" data-price="22380" onclick="setFuel(this)">E5 RON 92-II</button>
+            <button class="pill-btn" data-price="27620" onclick="setFuel(this)">DO 0,05S-II</button>
+            <button class="pill-btn" data-price="29720" onclick="setFuel(this)">DO 0,001S-V</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">
+            <span class="field-label-main" id="calcInputLabel">Số lít cần đổ</span>
+            <span class="field-value" id="calcFieldValue">45 lít</span>
+          </div>
+          <div class="money-input-row">
+            <input id="calcInput" type="number" inputmode="decimal" value="45" min="0" oninput="calc()">
+            <span class="unit-tag" id="calcUnitTag">lít</span>
+          </div>
+          <div class="chip-row" id="calcChips">
+            <button class="chip-btn" onclick="setChip(20)">20 lít</button>
+            <button class="chip-btn active" onclick="setChip(45)">45 lít</button>
+            <button class="chip-btn" onclick="setChip(60)">60 lít</button>
+            <button class="chip-btn" onclick="setChip(70)">70 lít</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label"><span class="field-label-main">Chế độ tính</span></div>
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="modeLit" onclick="setMode('lit')">Nhập lít</button>
+            <button class="mode-btn" id="modeMoney" onclick="setMode('money')">Nhập tiền</button>
+          </div>
+        </div>
+        <p class="inline-note">Giá bán lẻ Vùng 1, kỳ điều hành 31/07/2026. Giá thực tế có thể chênh nhỏ.</p>
+      </div>
+      <div class="result-panel">
+        <div class="result-hero">
+          <span class="result-hero-label" id="crLabel">Thành tiền</span>
+          <div class="result-hero-value" id="crValue">1.000.800<small>đ</small></div>
+        </div>
+        <div class="result-details">
+          <div class="result-row"><span>Đơn giá</span><strong id="crUnitPrice">22.240đ/lít</strong></div>
+          <div class="result-row"><span id="crQtyLabel">Số lít</span><strong id="crQty">45 lít</strong></div>
+          <div class="result-row"><span>Loại xăng</span><strong id="crFuelName">RON 95-III</strong></div>
+        </div>
+        <div class="insight-box" id="crNote">Thanh toán qua <em>Ví Trả Sau hoàn 10%</em> tại cây xăng đối tác Petrolimex, PV Oil.</div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div><!-- /gz-layout -->
+
+<!-- FAQ -->
+<div class="gz-faq-wrap">
+  <h2 class="section-title">Về giá xăng dầu</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Giá xăng được điều chỉnh khi nào?</button>
+      <div class="faq-a">Theo Nghị định 80/2023, giá xăng dầu được điều hành định kỳ vào thứ Năm hàng tuần. Nếu trùng ngày nghỉ lễ, kỳ điều hành được dời sang ngày làm việc tiếp theo. MoMo cập nhật bảng giá ngay khi liên Bộ Công Thương - Tài chính công bố.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Vùng 1 và Vùng 2 khác nhau thế nào?</button>
+      <div class="faq-a">Vùng 1 là các địa bàn gần cảng, kho đầu mối (đa số thành phố lớn, đồng bằng). Vùng 2 là địa bàn xa cảng, chi phí vận chuyển cao hơn (miền núi, hải đảo) - giá bán lẻ Vùng 2 được cộng tối đa 2% so với giá cơ sở.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Nên đổ E10 RON 95 hay E5 RON 92?</button>
+      <div class="faq-a">Từ 01/06/2026, xăng RON 95 đã được thay thế bởi E10 RON 95 (pha 10% ethanol) trên toàn quốc. E10 RON 95-III phù hợp xe đời mới, động cơ tỷ số nén cao. E5 RON 92-II (pha 5% ethanol) phù hợp đa số xe máy và ô tô phổ thông, giá thấp hơn khoảng 470đ/lít. Kiểm tra sách hướng dẫn xe của bạn để chọn đúng loại.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Thanh toán xăng qua MoMo ở đâu?</button>
+      <div class="faq-a">MoMo hợp tác với hơn 1.200 cây xăng Petrolimex và PV Oil trên toàn quốc. Bạn quét QR tại cột bơm hoặc quầy thu ngân, chọn nguồn tiền Ví MoMo hoặc Ví Trả Sau. Giao dịch bằng Ví Trả Sau được hoàn 10% (tối đa 20.000đ) và tích điểm hạng MoXe.</div>
+    </div>
+  </div>
+</div>
+
+<!-- hidden dummy to satisfy JS refs -->
+<div style="display:none"><div id="gasTable"></div><table><tbody id="histBody"></tbody></table></div>
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-cols">
+      <div>
+        <div class="footer-brand">MoMo <em>Xe & Giao Thông</em></div>
+        <p class="footer-about">Bộ tiện ích cho chủ xe trên MoMo: tra phạt nguội, giá xăng dầu, nạp ePass, bảo hiểm xe và mạng lưới cây xăng đối tác toàn quốc.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tiện ích</h4>
+        <a href="/tien-ich-giao-thong#tra-phat-nguoi">Tra phạt nguội</a>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá xăng hôm nay</a>
+        <a href="/tien-ich-giao-thong#epass">Nạp ePass</a>
+        <a href="/tien-ich-giao-thong#bao-hiem">Bảo hiểm TNDS</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tra cứu phổ biến</h4>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá xăng E10 RON 95 hôm nay</a>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá xăng E5 RON 92</a>
+        <a href="/tien-ich-giao-thong/gia-xang">Giá dầu Diesel hôm nay</a>
+        <a href="/tien-ich-giao-thong#tra-phat-nguoi">Phạt nguội TP.HCM</a>
+      </div>
+      <div class="footer-col">
+        <h4>MoMo</h4>
+        <a href="#" onclick="toast('Về MoMo...');return false">Về chúng tôi</a>
+        <a href="#" onclick="toast('Điều khoản...');return false">Điều khoản sử dụng</a>
+        <a href="#" onclick="toast('Bảo mật...');return false">Chính sách bảo mật</a>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span>© 2026 M_Service. Prototype nội bộ - Research Spec, không phải production.</span>
+      <span>Dữ liệu demo. Giá và thông tin chỉ mang tính minh họa.</span>
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script is:inline>
+  /* ── data ── */
+  const GAS = {
+    1: [
+      { name: 'E10 RON 95-III', sub: 'Xăng sinh học E10', color: '#EB2F96', price: 22850, change: '▲ 1.420đ', dir: 'up' },
+      { name: 'E5 RON 92-II',   sub: 'Xăng sinh học E5',  color: '#16A34A', price: 22380, change: '▲ 1.300đ', dir: 'up' },
+      { name: 'DO 0,05S-II',    sub: 'Dầu diesel phổ thông', color: '#2563EB', price: 27620, change: '▲ 1.860đ', dir: 'up' },
+      { name: 'DO 0,001S-V',    sub: 'Dầu diesel cao cấp',   color: '#7C3AED', price: 29720, change: '▲ 1.950đ', dir: 'up' },
+      { name: 'Dầu hỏa 2-K',   sub: 'Kerosene',             color: '#D97706', price: 27400, change: '▲ 1.780đ', dir: 'up' },
+    ],
+    2: [
+      { name: 'E10 RON 95-III', sub: 'Vùng 2', color: '#EB2F96', price: 23300, change: '▲ 1.420đ', dir: 'up' },
+      { name: 'E5 RON 92-II',   sub: 'Vùng 2', color: '#16A34A', price: 22820, change: '▲ 1.300đ', dir: 'up' },
+      { name: 'DO 0,05S-II',    sub: 'Vùng 2', color: '#2563EB', price: 28170, change: '▲ 1.860đ', dir: 'up' },
+      { name: 'DO 0,001S-V',    sub: 'Vùng 2', color: '#7C3AED', price: 30310, change: '▲ 1.950đ', dir: 'up' },
+      { name: 'Dầu hỏa 2-K',   sub: 'Vùng 2', color: '#D97706', price: 27940, change: '▲ 1.780đ', dir: 'up' },
+    ],
+  };
+
+  const HISTORY = [
+    { date: '26/06/2026', price: '22.240', delta: '▼ 170', dir: 'down' },
+    { date: '19/06/2026', price: '22.410', delta: '▼ 230', dir: 'down' },
+    { date: '12/06/2026', price: '22.640', delta: '▼ 310', dir: 'down' },
+    { date: '05/06/2026', price: '22.950', delta: '▲ 180', dir: 'up' },
+    { date: '29/05/2026', price: '22.770', delta: '▼ 420', dir: 'down' },
+    { date: '22/05/2026', price: '23.190', delta: '▲ 250', dir: 'up' },
+    { date: '15/05/2026', price: '22.940', delta: '▼ 190', dir: 'down' },
+    { date: '08/05/2026', price: '23.130', delta: '▲ 360', dir: 'up' },
+    { date: '24/04/2026', price: '22.770', delta: '▼ 280', dir: 'down' },
+    { date: '10/04/2026', price: '23.050', delta: '▲ 410', dir: 'up' },
+  ];
+
+  /* ── render ── */
+  const fmt = n => n.toLocaleString('vi-VN');
+
+  function renderGas(region) {
+    document.getElementById('gasTable').innerHTML = GAS[region].map(g => `
+      <div class="gas-row">
+        <div class="gr-left">
+          <div class="gr-swatch" style="background:${g.color}"></div>
+          <div><div class="gr-name">${g.name}</div><div class="gr-sub">${g.sub}</div></div>
+        </div>
+        <div class="gr-right">
+          <span class="gr-badge ${g.dir}">${g.change}</span>
+          <span class="gr-price">${fmt(g.price)}<span class="gr-unit"> đ/lít</span></span>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderHistory() {
+    document.getElementById('histBody').innerHTML = HISTORY.map(h => `
+      <tr>
+        <td>${h.date}</td>
+        <td class="num">${h.price} đ/lít</td>
+        <td><span class="ht-delta ${h.dir}">${h.delta}đ</span></td>
+      </tr>`).join('');
+  }
+
+  /* ── calculator ── */
+  let calcMode = 'lit';
+  let fuelPrice = 22850;
+  let fuelName = 'E10 RON 95-III';
+
+  function setFuel(btn) {
+    document.querySelectorAll('#fuelPills .pill-btn').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    fuelPrice = +btn.dataset.price;
+    fuelName = btn.textContent.trim();
+    document.getElementById('crFuelName').textContent = fuelName;
+    document.getElementById('crUnitPrice').textContent = fmt(fuelPrice) + 'đ/lít';
+    calc();
+  }
+
+  function setChip(val) {
+    document.getElementById('calcInput').value = val;
+    document.querySelectorAll('.chip-row .chip-btn').forEach(b => {
+      const bVal = calcMode === 'lit' ? +b.textContent : +b.textContent.replace(/\D/g,'') * 1000;
+      b.classList.toggle('active', +b.onclick?.toString().match(/\d+/)?.[0] === val);
+    });
+    // simpler: match text
+    document.querySelectorAll('#calcChips .chip-btn').forEach(b => {
+      const num = +b.getAttribute('onclick').match(/\d+/)[0];
+      b.classList.toggle('active', num === val);
+    });
+    calc();
+  }
+
+  function setMode(mode) {
+    calcMode = mode;
+    document.getElementById('modeLit').classList.toggle('active', mode === 'lit');
+    document.getElementById('modeMoney').classList.toggle('active', mode === 'money');
+    const input = document.getElementById('calcInput');
+    const chips = document.getElementById('calcChips');
+    if (mode === 'lit') {
+      document.getElementById('calcInputLabel').textContent = 'Số lít cần đổ';
+      document.getElementById('calcUnitTag').textContent = 'lít';
+      document.getElementById('crLabel').textContent = 'Thành tiền';
+      document.getElementById('crQtyLabel').textContent = 'Số lít';
+      input.value = 45;
+      chips.innerHTML = `
+        <button class="chip-btn" onclick="setChip(20)">20 lít</button>
+        <button class="chip-btn active" onclick="setChip(45)">45 lít</button>
+        <button class="chip-btn" onclick="setChip(60)">60 lít</button>
+        <button class="chip-btn" onclick="setChip(70)">70 lít</button>`;
+    } else {
+      document.getElementById('calcInputLabel').textContent = 'Số tiền muốn đổ';
+      document.getElementById('calcUnitTag').textContent = 'đ';
+      document.getElementById('crLabel').textContent = 'Số lít nhận được';
+      document.getElementById('crQtyLabel').textContent = 'Số tiền';
+      input.value = 200000;
+      chips.innerHTML = `
+        <button class="chip-btn" onclick="setChip(100000)">100k</button>
+        <button class="chip-btn active" onclick="setChip(200000)">200k</button>
+        <button class="chip-btn" onclick="setChip(500000)">500k</button>
+        <button class="chip-btn" onclick="setChip(1000000)">1 triệu</button>`;
+    }
+    calc();
+  }
+
+  function calc() {
+    const v = parseFloat(document.getElementById('calcInput').value) || 0;
+    const crValue = document.getElementById('crValue');
+    const crNote = document.getElementById('crNote');
+    const crQty = document.getElementById('crQty');
+    const fieldVal = document.getElementById('calcFieldValue');
+    if (calcMode === 'lit') {
+      const total = Math.round(v * fuelPrice);
+      crValue.innerHTML = `${fmt(total)}<small>đ</small>`;
+      crQty.textContent = v + ' lít';
+      fieldVal.textContent = v + ' lít';
+      crNote.innerHTML = `Thanh toán qua <em>Ví Trả Sau hoàn 10%</em> tại cây xăng đối tác Petrolimex, PV Oil.`;
+    } else {
+      const liters = v / fuelPrice;
+      crValue.innerHTML = `${liters.toFixed(2).replace('.', ',')}<small> lít</small>`;
+      crQty.textContent = fmt(v) + 'đ';
+      fieldVal.textContent = fmt(v) + 'đ';
+      crNote.innerHTML = `Thanh toán qua <em>Ví Trả Sau hoàn 10%</em> được hoàn lại khoảng ${fmt(Math.round(v * 0.1 > 20000 ? 20000 : v * 0.1))}đ.`;
+    }
+  }
+
+  /* ── misc ── */
+  function setRegion(btn, region) {
+    document.querySelectorAll('.grt').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+    renderGas(region);
+  }
+
+  function toggleFaq(btn) {
+    btn.closest('.faq-item').classList.toggle('open');
+  }
+
+  let toastTimer;
+  function detectLocation() {
+    const btn = document.getElementById('stn-locate-btn');
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Đang xác định...';
+    btn.disabled = true;
+    setTimeout(() => {
+      document.getElementById('stn-title').textContent = 'Gần bạn nhất';
+      document.getElementById('stn-sub').textContent = 'Quận 7, TP.HCM · Sắp xếp theo khoảng cách';
+      document.querySelectorAll('.stn-dist-val').forEach(el => el.style.display = '');
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg> Quận 7';
+      btn.classList.add('located');
+      btn.disabled = false;
+    }, 1200);
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  /* ── price strip data ── */
+  const STRIP_DATA = [
+    { name:'E10 RON 95-III', price:22850, delta:+1420, pct:'+6,63%', icon:'Fuel',  color:'#EB2F96', bg:'#fdf2f8',
+      history:[21430,21780,22050,22770,22950,22640,22410,22240,21430,22850] },
+    { name:'E5 RON 92-II',   price:22380, delta:+1300, pct:'+6,16%', icon:'Leaf',  color:'#16A34A', bg:'#f0fdf4',
+      history:[20960,21310,21580,22300,22480,22170,21940,21770,20960,22380] },
+    { name:'DO 0,05S-II',    price:27620, delta:+1860, pct:'+7,22%', icon:'Truck', color:'#2563EB', bg:'#eff6ff',
+      history:[26100,26450,26700,27240,27480,27020,26780,26580,26100,27620] },
+    { name:'DO 0,001S-V',    price:29720, delta:+1950, pct:'+7,02%', icon:'Truck', color:'#7C3AED', bg:'#f5f3ff',
+      history:[28100,28510,28800,29380,29580,29120,28870,28650,28100,29720] },
+    { name:'Dầu hỏa 2-K',   price:27400, delta:+1780, pct:'+6,95%', icon:'Flame', color:'#D97706', bg:'#fffbeb',
+      history:[25820,26170,26430,27020,27220,26770,26520,26310,25820,27400] },
+  ];
+
+  /* ── sparkline SVG helper ── */
+  function buildSparkline(prices, color) {
+    const W = 100, H = 28, pad = 3;
+    const min = Math.min(...prices), max = Math.max(...prices);
+    const range = max - min || 1;
+    const pts = prices.map((p, i) => {
+      const x = pad + (i / (prices.length - 1)) * (W - pad * 2);
+      const y = H - pad - ((p - min) / range) * (H - pad * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const ptsStr = pts.join(' ');
+    const lastPt = pts[pts.length - 1];
+    const [lx, ly] = lastPt.split(',');
+    const fillPts = `${pad},${H} ` + ptsStr + ` ${(W-pad).toFixed(1)},${H}`;
+    return `<svg class="gz-pc-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <polygon class="spark-fill" points="${fillPts}" fill="${color}"/>
+      <polyline points="${ptsStr}" stroke="${color}" stroke-width="1.5"/>
+      <circle class="spark-dot" cx="${lx}" cy="${ly}" r="2.5" fill="${color}"/>
+    </svg>`;
+  }
+
+  /* ── countdown to next kỳ điều hành (every Thursday 15:00 VN time) ── */
+  function getNextKyDieuHanh() {
+    const now = new Date();
+    // Vietnam is UTC+7
+    const vnNow = new Date(now.getTime() + 7 * 3600000);
+    const day = vnNow.getUTCDay(); // 0=Sun,4=Thu
+    let daysUntilThu = (4 - day + 7) % 7;
+    // If today is Thursday and before 15:00, next is today; if after, next week
+    if (day === 4) {
+      const h = vnNow.getUTCHours(), m = vnNow.getUTCMinutes();
+      if (h > 15 || (h === 15 && m >= 5)) daysUntilThu = 7;
+      else daysUntilThu = 0;
+    } else if (daysUntilThu === 0) {
+      daysUntilThu = 7;
+    }
+    const next = new Date(vnNow);
+    next.setUTCDate(next.getUTCDate() + daysUntilThu);
+    next.setUTCHours(15, 0, 0, 0);
+    return new Date(next.getTime() - 7 * 3600000); // back to UTC
+  }
+
+  function updateCountdown() {
+    const el = document.getElementById('countdownText');
+    if (!el) return;
+    const diff = getNextKyDieuHanh() - new Date();
+    if (diff <= 0) { el.textContent = 'Đang cập nhật...'; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    el.textContent = d > 0
+      ? `Kỳ tiếp theo: ${d} ngày ${h}h${String(m).padStart(2,'0')}p`
+      : `Kỳ tiếp theo: ${h}h ${String(m).padStart(2,'0')}p ${String(s).padStart(2,'0')}s`;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ── CountUp animation helper ── */
+  function animateCount(el, target, duration) {
+    const start = performance.now();
+    const from = 0;
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      const val = Math.round(from + (target - from) * ease);
+      el.textContent = val.toLocaleString('vi-VN');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  const KV_DATA = {
+    1: [
+      {city:'Hà Nội',          price:22850},
+      {city:'Hải Phòng',       price:22850},
+      {city:'TP. Hồ Chí Minh', price:22850},
+      {city:'Đà Nẵng',         price:22850},
+      {city:'Cần Thơ',         price:22850},
+      {city:'Bình Dương',      price:22850},
+      {city:'Đồng Nai',        price:22850},
+      {city:'Bắc Ninh',        price:22850},
+    ],
+    2: [
+      {city:'Hà Giang',      price:23300},
+      {city:'Cao Bằng',      price:23300},
+      {city:'Lạng Sơn',      price:23300},
+      {city:'Lai Châu',      price:23300},
+      {city:'Điện Biên',     price:23300},
+      {city:'Sơn La',        price:23300},
+      {city:'Hòa Bình',      price:23300},
+      {city:'Phú Thọ',       price:23300},
+    ],
+  };
+
+  const REGION_TABLE = [
+    { region:'Vùng 1', city:'Hà Nội, TP.HCM, Đà Nẵng và 60 tỉnh đồng bằng', r95:22850, e5:22380, do05:27620, do001:29720, dh:27400, d:+1420 },
+    { region:'Vùng 2', city:'Hà Giang, Cao Bằng, Lạng Sơn và các tỉnh miền núi, hải đảo',  r95:23300, e5:22820, do05:28170, do001:30310, dh:27940, d:+1420 },
+  ];
+
+  function renderPriceStrip() {
+    const el = document.getElementById('priceStrip');
+    if (!el) return;
+    el.innerHTML = STRIP_DATA.map((f, i) => {
+      const dir = f.delta < 0 ? 'down' : f.delta > 0 ? 'up' : 'same';
+      const arrow = f.delta < 0 ? '↓' : f.delta > 0 ? '↑' : '→';
+      return `<div class="gz-price-card${i===0?' active':''}" onclick="selectFuelCard(this,${i})">
+        <div class="gz-pc-icon" style="background:${f.bg}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${f.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${licon(f.icon,16,2).replace(/<svg[^>]*>/,'').replace('</svg>','')}</svg>
+        </div>
+        <div class="gz-pc-name">${f.name}</div>
+        <div class="gz-pc-price"><span class="gz-count" data-target="${f.price}" data-delay="${i * 80}">0</span> <span>đ/lít</span></div>
+        <div class="gz-pc-delta ${dir}">${arrow} ${Math.abs(f.delta)}đ (${f.pct})</div>
+        <div class="gz-pc-vs">So với kỳ trước</div>
+        ${buildSparkline(f.history, f.color)}
+      </div>`;
+    }).join('');
+    // Animate counts with stagger
+    el.querySelectorAll('.gz-count').forEach(span => {
+      const target = parseInt(span.dataset.target);
+      const delay = parseInt(span.dataset.delay) || 0;
+      setTimeout(() => animateCount(span, target, 900), delay);
+    });
+  }
+
+  function selectFuelCard(el, idx) {
+    document.querySelectorAll('.gz-price-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    // Highlight matching column in price table
+    document.querySelectorAll('.gz-region-table th, .gz-region-table td').forEach(cell => cell.classList.remove('gz-col-active'));
+    document.querySelectorAll(`.gz-region-table th:nth-child(${idx+2}), .gz-region-table td:nth-child(${idx+2})`).forEach(cell => cell.classList.add('gz-col-active'));
+  }
+
+  function renderPriceTable() {
+    const el = document.getElementById('priceTablePanel');
+    if (!el) return;
+    el.innerHTML = `<table class="gz-region-table">
+      <thead><tr>
+        <th>Khu vực</th>
+        <th>E10 RON 95-III</th>
+        <th>E5 RON 92-II</th>
+        <th>DO 0,05S-II</th>
+        <th>DO 0,001S-V</th>
+        <th>Dầu hỏa 2-K</th>
+      </tr></thead>
+      <tbody>${REGION_TABLE.map(r => `<tr>
+        <td><div class="gz-rt-region">${r.region}</div><div class="gz-rt-city">${r.city}</div></td>
+        <td>${fmt(r.r95)}<span class="gz-rt-delta">↑ ${Math.abs(r.d)}</span></td>
+        <td>${fmt(r.e5)}<span class="gz-rt-delta">↑ 1.300</span></td>
+        <td>${fmt(r.do05)}<span class="gz-rt-delta">↑ 1.860</span></td>
+        <td>${fmt(r.do001)}<span class="gz-rt-delta">↑ 1.950</span></td>
+        <td>${fmt(r.dh)}<span class="gz-rt-delta">↑ 1.780</span></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }
+
+  function renderKVPrices(v) {
+    const el = document.getElementById('kvPriceList');
+    if (!el) return;
+    const data = KV_DATA[v];
+    const commonPrice = data[0].price;
+    const allSame = data.every(c => c.price === commonPrice);
+    if (allSame) {
+      el.innerHTML = `
+        <div class="gz-kv-summary">
+          <span class="gz-kv-summary-label">Giá E10 RON 95-III</span>
+          <span class="gz-kv-summary-price">${fmt(commonPrice)}</span>
+          <span class="gz-kv-summary-unit">đ/lít</span>
+        </div>
+        <div class="gz-kv-cities">
+          ${data.map(c => `<div class="gz-kv-city-item">${c.city}</div>`).join('')}
+        </div>`;
+    } else {
+      el.innerHTML = `<div class="gz-kv-cities" style="grid-template-columns:1fr auto;gap:0">
+        ${data.map(c => `
+          <div class="gz-kv-city-item">${c.city}</div>
+          <div style="font-size:13px;font-weight:700;padding:6px 0;font-variant-numeric:tabular-nums">${fmt(c.price)} đ/lít</div>
+        `).join('')}
+      </div>`;
+    }
+  }
+
+  function switchKV(btn, v) {
+    document.querySelectorAll('.gz-kv-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderKVPrices(v);
+  }
+
+  function switchPriceTab(tab, btn) {
+    document.querySelectorAll('.gz-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'cay-xang') {
+      document.getElementById('priceTablePanel').innerHTML = `<div style="padding:24px 20px;text-align:center;color:var(--gray-400);font-size:13px">Tính năng đang phát triển — Xem giá theo từng cây xăng sẽ ra mắt sớm.</div>`;
+    } else {
+      renderPriceTable();
+    }
+  }
+
+  function setTimePeriod(btn) {
+    document.querySelectorAll('.gz-tt').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function onHeroRegionChange(v) { /* future: re-fetch data */ }
+
+  renderGas(1);
+  renderHistory();
+  calc();
+  renderPriceTable();
+  renderKVPrices(1);
+
+  // ── lucide helpers ──
+  function licon(name, size, sw) {
+    if (!window.lucide || !window.lucide[name]) return '';
+    const children = window.lucide[name].map(([tag, attrs]) => {
+      const a = Object.entries(attrs).map(([k,v]) => `${k}="${v}"`).join(' ');
+      return `<${tag} ${a}/>`;
+    }).join('');
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${size||16}" height="${size||16}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2}" stroke-linecap="round" stroke-linejoin="round">${children}</svg>`;
+  }
+  window.addEventListener('load', () => {
+    lucide.createIcons();
+    document.querySelectorAll('.mega-item[data-micon]').forEach(el => {
+      if(!el.querySelector('svg'))el.insertAdjacentHTML('afterbegin',licon(el.dataset.micon,15,1.8));
+    });
+    renderPriceStrip();
+  });
+
+/* ── NAV VEHICLE SEARCH ── */
+(function() {
+  const VEHICLE_DATA = [
+    {brand:'toyota',label:'Toyota',color:'#EB0A1E',cat:'Ô tô',models:[{name:'Fortuner',slug:'fortuner',type:'SUV'},{name:'Camry',slug:'camry',type:'Sedan'},{name:'Corolla Cross',slug:'corolla-cross',type:'Crossover'},{name:'Innova Cross',slug:'innova-cross',type:'MPV'}]},
+    {brand:'honda',label:'Honda',color:'#CC0000',cat:'Ô tô',models:[{name:'CR-V',slug:'cr-v',type:'SUV'},{name:'City',slug:'city',type:'Sedan'},{name:'Civic',slug:'civic',type:'Sedan'},{name:'HR-V',slug:'hr-v',type:'Crossover'}]},
+    {brand:'hyundai',label:'Hyundai',color:'#002C5F',cat:'Ô tô',models:[{name:'Tucson',slug:'tucson',type:'SUV'},{name:'Ioniq 6',slug:'ioniq-6',type:'EV'}]},
+    {brand:'kia',label:'Kia',color:'#05141F',cat:'Ô tô',models:[{name:'Seltos',slug:'seltos',type:'Crossover'},{name:'Sorento',slug:'sorento',type:'SUV'}]},
+    {brand:'vinfast',label:'VinFast',color:'#009EDB',cat:'Ô tô',models:[{name:'VF 8',slug:'vf-8',type:'EV'},{name:'VF 6',slug:'vf-6',type:'EV'}]},
+    {brand:'honda-may',label:'Honda',color:'#CC0000',cat:'Xe máy',models:[{name:'Wave Alpha',slug:'wave-alpha',type:'Xe số'},{name:'Vision',slug:'vision',type:'Tay ga'},{name:'Air Blade',slug:'air-blade',type:'Tay ga'},{name:'SH 160i',slug:'sh-160i',type:'Tay ga'}]},
+    {brand:'yamaha-may',label:'Yamaha',color:'#003087',cat:'Xe máy',models:[{name:'NVX 155',slug:'nvx-155',type:'Tay ga'},{name:'Exciter 150',slug:'exciter-150',type:'Côn tay'}]},
+  ];
+  const INDEX = [];
+  VEHICLE_DATA.forEach(b => b.models.forEach(m => {
+    INDEX.push({brand:b.brand,brandLabel:b.label,color:b.color,cat:b.cat,name:m.name,slug:m.slug,type:m.type,
+      search:(b.label+' '+m.name+' '+m.slug+' '+b.label.toLowerCase().replace(/[^a-z0-9]/g,'')+m.name.toLowerCase().replace(/[^a-z0-9]/g,'')).toLowerCase()});
+  }));
+  const inp = document.getElementById('navSearchInp');
+  const drop = document.getElementById('navSearchDrop');
+  let blurTimer = null;
+  function getUrl(item){return item.cat==='Xe máy'?'/tien-ich-giao-thong/hang-xe-may':'/tien-ich-giao-thong/hang-xe/'+item.brand+'/'+item.slug;}
+  function renderTo(cont,results){
+    if(!results.length){cont.innerHTML='<div class="nsd-empty"><strong>Không tìm thấy xe</strong>Thử tên khác</div>';return;}
+    const g={};results.forEach(r=>{if(!g[r.cat])g[r.cat]=[];g[r.cat].push(r);});
+    let h='';Object.entries(g).forEach(([c,its],i)=>{if(i>0)h+='<div class="nsd-divider"></div>';h+=`<div class="nsd-section-label">${c}</div>`;its.forEach(r=>{const tc=r.type==='EV'?'ev':r.cat==='Xe máy'?'motorbike':'';h+=`<a class="nsd-item" href="${getUrl(r)}"><span class="nsd-dot" style="background:${r.color}"></span><span class="nsd-info"><span class="nsd-model">${r.name}</span><span class="nsd-brand">${r.brandLabel}</span></span><span class="nsd-type ${tc}">${r.type}</span></a>`;});});
+    cont.innerHTML=h;
+  }
+  function showEmpty(){
+    drop.innerHTML='<div class="nsd-section-label">Phổ biến nhất</div>'+
+      ['toyota|fortuner|Fortuner|SUV|#EB0A1E|Ô tô','honda|city|City|Sedan|#CC0000|Ô tô','vinfast|vf-8|VF 8|EV|#009EDB|Ô tô',
+       'honda-may|air-blade|Air Blade|Tay ga|#CC0000|Xe máy','yamaha-may|nvx-155|NVX 155|Tay ga|#003087|Xe máy']
+      .map(s=>{const [brand,slug,name,type,color,cat]=s.split('|');const isMoto=cat==='Xe máy';const url=isMoto?'/tien-ich-giao-thong/hang-xe-may':`/tien-ich-giao-thong/hang-xe/${brand}/${slug}`;const tc=type==='EV'?'ev':isMoto?'motorbike':'';
+        return `<a class="nsd-item" href="${url}"><span class="nsd-dot" style="background:${color}"></span><span class="nsd-info"><span class="nsd-model">${name}</span><span class="nsd-brand">${brand.replace('-may','').charAt(0).toUpperCase()+brand.replace('-may','').slice(1)}</span></span><span class="nsd-type ${tc}">${type}</span></a>`;
+      }).join('');
+  }
+  inp.addEventListener('input',()=>{const q=inp.value.trim().toLowerCase();if(!q){showEmpty();drop.classList.add('open');return;}renderTo(drop,INDEX.filter(r=>r.search.includes(q)).slice(0,12));drop.classList.add('open');});
+  inp.addEventListener('focus',()=>{clearTimeout(blurTimer);if(!inp.value.trim())showEmpty();drop.classList.add('open');});
+  inp.addEventListener('blur',()=>{blurTimer=setTimeout(()=>drop.classList.remove('open'),160);});
+  inp.addEventListener('keydown',e=>{if(e.key==='Escape'){drop.classList.remove('open');inp.blur();}});
+  document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==inp&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();inp.focus();}});
+  const mOv=document.getElementById('mobileSearchOverlay'),mInp=document.getElementById('mobileSearchInp'),mDrop=document.getElementById('mobileSearchDrop');
+  mInp.addEventListener('input',()=>{const q=mInp.value.trim().toLowerCase();if(!q){mDrop.classList.remove('open');return;}renderTo(mDrop,INDEX.filter(r=>r.search.includes(q)).slice(0,10));mDrop.classList.add('open');});
+  window.toggleMobileSearch=function(){const o=mOv.classList.contains('open');if(o){closeMobileSearch();}else{mOv.classList.add('open');mDrop.classList.remove('open');mInp.value='';setTimeout(()=>mInp.focus(),60);}};
+  window.closeMobileSearch=function(){mOv.classList.remove('open');mDrop.classList.remove('open');mInp.value='';};
+})();
+window.openNavSidebar=function(){document.getElementById('navSidebar').classList.add('open');document.getElementById('navOverlay').classList.add('open');};
+window.closeNavSidebar=function(){document.getElementById('navSidebar').classList.remove('open');document.getElementById('navOverlay').classList.remove('open');};
+</script>
+
+<script>
+import { gsap, ScrollTrigger } from '../../lib/gsap';
+
+// Price strip cards stagger in on load
+gsap.from('.gz-price-card', {
+  opacity: 0, y: 14, duration: 0.4, stagger: 0.07, ease: 'power2.out', delay: 0.2,
+});
+
+// Each card in gz-layout scrolls in independently
+gsap.utils.toArray<HTMLElement>('.gz-layout > *').forEach((el, i) => {
+  gsap.from(el, {
+    opacity: 0, y: 18, duration: 0.45, ease: 'power2.out',
+    scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+  });
+});
+
+// Table rows slide in when table enters viewport
+ScrollTrigger.create({
+  trigger: '.gz-layout > .card:first-child',
+  start: 'top 85%',
+  once: true,
+  onEnter: () => {
+    gsap.from('.gz-region-table tr', {
+      opacity: 0, x: -8, duration: 0.3, stagger: 0.05, ease: 'power2.out',
+    });
+  },
+});
+</script>
+</VehicleHub>
