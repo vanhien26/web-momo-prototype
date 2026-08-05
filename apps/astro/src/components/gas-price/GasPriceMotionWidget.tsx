@@ -1,83 +1,132 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Fuel, ArrowDownRight, ArrowUpRight, Calculator, Sparkles, RefreshCw, CheckCircle2, TrendingDown } from 'lucide-react';
+import { Fuel, ArrowDownRight, ArrowUpRight, Calculator, Sparkles, CheckCircle2, TrendingDown } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
 
 interface GasType {
   id: string;
   name: string;
   price: number;
-  change: number; // negative for reduction, positive for increase
+  change: number;
   unit: string;
-  color: string;
   popular?: boolean;
 }
 
 const GAS_TYPES: GasType[] = [
-  { id: 'ron95', name: 'Xăng RON 95-III', price: 22850, change: -420, unit: 'đ/lít', color: '#eb2f96', popular: true },
-  { id: 'e5ron92', name: 'Xăng E5 RON 92', price: 22380, change: -380, unit: 'đ/lít', color: '#16a34a' },
-  { id: 'diesel', name: 'Dầu Diesel 0.05S', price: 20650, change: +150, unit: 'đ/lít', color: '#2563eb' },
+  { id: 'ron95', name: 'Xăng RON 95-III', price: 22850, change: -420, unit: 'đ/lít', popular: true },
+  { id: 'e5ron92', name: 'Xăng E5 RON 92', price: 22380, change: -380, unit: 'đ/lít' },
+  { id: 'diesel', name: 'Dầu Diesel 0.05S', price: 20650, change: +150, unit: 'đ/lít' },
 ];
 
 export default function GasPriceMotionWidget() {
   const [selectedGas, setSelectedGas] = useState<GasType>(GAS_TYPES[0]);
-  const [amount, setAmount] = useState<number>(100000); // 100,000 VND default
-  const [tankCapacity, setTankCapacity] = useState<number>(50); // 50L for full tank
+  const [amount, setAmount] = useState<number>(100000);
+  const [tankCapacity] = useState<number>(50);
 
   const calculatedLiters = (amount / selectedGas.price).toFixed(2);
   const fullTankCost = (selectedGas.price * tankCapacity).toLocaleString('vi-VN');
 
-  const handleQuickAmount = (val: number) => {
-    setAmount(val);
-  };
-
   const handleFullTank = () => {
-    const total = selectedGas.price * tankCapacity;
-    setAmount(total);
+    setAmount(selectedGas.price * tankCapacity);
     fireConfetti();
   };
 
   return (
-    <div className="w-full max-w-[1240px] mx-auto my-8 px-4 font-sans">
+    <div style={{ maxWidth: '1240px', margin: '32px auto', padding: '0 20px', fontFamily: "'MoMoTrustSans', -apple-system, sans-serif" }}>
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden"
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        style={{
+          background: '#ffffff',
+          borderRadius: '20px',
+          border: '1px solid #e5e0e9',
+          boxShadow: '0 8px 30px rgba(28,23,26,0.08)',
+          overflow: 'hidden'
+        }}
       >
-        {/* Widget Header */}
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center text-pink-400">
-              <Fuel className="w-6 h-6 animate-pulse" />
+        {/* Header */}
+        <div style={{
+          background: 'linear-gradient(135deg, #1c171a 0%, #2d242d 100%)',
+          padding: '20px 24px',
+          color: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '12px',
+              background: 'rgba(235,47,150,0.2)',
+              border: '1px solid rgba(235,47,150,0.4)',
+              color: '#f472b6',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <Fuel style={{ width: '24px', height: '24px' }} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-black tracking-tight text-white">Bảng Giá Xăng &amp; Công Cụ Tính Tiền Xăng</h2>
-                <span className="bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Motion Enabled
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+                  Bảng Giá Xăng &amp; Công Cụ Tính Tiền Xăng
+                </h2>
+                <span style={{
+                  background: 'rgba(235,47,150,0.25)',
+                  color: '#ffd6ee',
+                  border: '1px solid rgba(235,47,150,0.4)',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '20px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  <Sparkles style={{ width: '12px', height: '12px' }} /> Motion Interactive
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">Cập nhật kỳ điều chỉnh mới nhất · Tự động tính số lít &amp; tiền đổ xăng</p>
+              <p style={{ fontSize: '12px', color: '#c8c3cc', margin: '4px 0 0' }}>
+                Cập nhật kỳ điều chỉnh mới nhất · Tự động tính số lít &amp; tiền đổ xăng
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-            <TrendingDown className="w-4 h-4" /> Kỳ điều hành 31/07: Giá xăng giảm đến 420đ/lít
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '12px',
+            fontWeight: 700,
+            color: '#4ade80',
+            background: 'rgba(22,163,74,0.15)',
+            padding: '6px 12px',
+            borderRadius: '8px',
+            border: '1px solid rgba(22,163,74,0.3)'
+          }}>
+            <TrendingDown style={{ width: '15px', height: '15px' }} /> Kỳ 31/07: Giá xăng giảm tới 420đ/lít
           </div>
         </div>
 
-        {/* Main Widget Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+        {/* Content Layout Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 0 }}>
           
-          {/* Left 2 Cols: Gas Cards Selection */}
-          <div className="lg:col-span-2 p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">1. Chọn loại nhiên liệu</h3>
-              <span className="text-xs text-slate-400">Giá áp dụng Vùng 1 (Hà Nội, TP.HCM,...)</span>
+          {/* Left Selection Area */}
+          <div style={{ padding: '24px', borderRight: '1px solid #f0ebf4' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '12px', fontWeight: 800, color: '#7a6e7f', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
+                1. Chọn loại nhiên liệu
+              </h3>
+              <span style={{ fontSize: '11.5px', color: '#a09aa5' }}>Vùng 1 (Hà Nội, TP.HCM,...)</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Fuel Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '20px' }}>
               {GAS_TYPES.map((gas) => {
                 const isSelected = selectedGas.id === gas.id;
                 return (
@@ -86,35 +135,50 @@ export default function GasPriceMotionWidget() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedGas(gas)}
-                    className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-pink-500 bg-pink-50/30 shadow-md'
-                        : 'border-slate-200 bg-white hover:border-slate-300'
-                    }`}
+                    style={{
+                      position: 'relative',
+                      padding: '14px',
+                      borderRadius: '14px',
+                      border: isSelected ? '2px solid #eb2f96' : '1.5px solid #e5e0e9',
+                      background: isSelected ? '#fff0f8' : '#ffffff',
+                      boxShadow: isSelected ? '0 4px 12px rgba(235,47,150,0.12)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
                   >
                     {gas.popular && (
-                      <span className="absolute -top-2.5 right-3 bg-pink-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
-                        Phổ biến nhất
+                      <span style={{
+                        position: 'absolute',
+                        top: '-10px',
+                        right: '10px',
+                        background: '#eb2f96',
+                        color: '#ffffff',
+                        fontSize: '9.5px',
+                        fontWeight: 800,
+                        padding: '2px 7px',
+                        borderRadius: '10px'
+                      }}>
+                        Phổ biến
                       </span>
                     )}
 
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-slate-500">{gas.name}</span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-pink-600" />}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#5c5060' }}>{gas.name}</span>
+                      {isSelected && <CheckCircle2 style={{ width: '15px', height: '15px', color: '#eb2f96' }} />}
                     </div>
 
-                    <div className="text-2xl font-black text-slate-900 tracking-tight">
-                      {gas.price.toLocaleString('vi-VN')} <span className="text-xs font-semibold text-slate-500">{gas.unit}</span>
+                    <div style={{ fontSize: '18px', fontWeight: 900, color: '#1c171a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                      {gas.price.toLocaleString('vi-VN')} <span style={{ fontSize: '11px', fontWeight: 600, color: '#7a6e7f' }}>{gas.unit}</span>
                     </div>
 
-                    <div className="mt-2 flex items-center gap-1 text-xs font-bold">
+                    <div style={{ marginTop: '8px' }}>
                       {gas.change < 0 ? (
-                        <span className="text-emerald-600 flex items-center bg-emerald-50 px-2 py-0.5 rounded-md">
-                          <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" /> Giảm {Math.abs(gas.change)}đ
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', padding: '2px 6px', borderRadius: '6px', background: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: 700 }}>
+                          <ArrowDownRight style={{ width: '12px', height: '12px' }} /> Giảm {Math.abs(gas.change)}đ
                         </span>
                       ) : (
-                        <span className="text-rose-600 flex items-center bg-rose-50 px-2 py-0.5 rounded-md">
-                          <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" /> Tăng {gas.change}đ
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', padding: '2px 6px', borderRadius: '6px', background: '#ffe4e6', color: '#e11d48', fontSize: '11px', fontWeight: 700 }}>
+                          <ArrowUpRight style={{ width: '12px', height: '12px' }} /> Tăng {gas.change}đ
                         </span>
                       )}
                     </div>
@@ -123,82 +187,125 @@ export default function GasPriceMotionWidget() {
               })}
             </div>
 
-            {/* Quick Presets */}
-            <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">2. Chọn số tiền dự định đổ</h3>
-              <div className="flex flex-wrap items-center gap-2">
+            {/* Amount Presets */}
+            <div>
+              <h3 style={{ fontSize: '12px', fontWeight: 800, color: '#7a6e7f', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 12px' }}>
+                2. Chọn số tiền dự định đổ
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {[50000, 100000, 200000, 500000].map((preset) => (
                   <button
                     key={preset}
-                    onClick={() => handleQuickAmount(preset)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                      amount === preset
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                        : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
-                    }`}
+                    type="button"
+                    onClick={() => setAmount(preset)}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '10px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: amount === preset ? '1.5px solid #1c171a' : '1.5px solid #e5e0e9',
+                      background: amount === preset ? '#1c171a' : '#f7f5fa',
+                      color: amount === preset ? '#ffffff' : '#3d3040',
+                      transition: 'all 0.15s ease'
+                    }}
                   >
                     {preset.toLocaleString('vi-VN')}đ
                   </button>
                 ))}
 
                 <button
+                  type="button"
                   onClick={handleFullTank}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-pink-600 hover:bg-pink-700 text-white transition-all shadow-sm flex items-center gap-1.5"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '8px 14px',
+                    borderRadius: '10px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: '#eb2f96',
+                    color: '#ffffff',
+                    boxShadow: '0 2px 8px rgba(235,47,150,0.3)',
+                    transition: 'all 0.15s ease'
+                  }}
                 >
-                  <Sparkles className="w-3.5 h-3.5" /> Đầy bình ({tankCapacity}L)
+                  <Sparkles style={{ width: '13px', height: '13px' }} /> Đầy bình ({tankCapacity}L)
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Right Col: Live Calculation Animated Display */}
-          <div className="p-6 bg-slate-50 flex flex-col justify-between space-y-6">
+          {/* Right Live Result Calculation */}
+          <div style={{ background: '#faf8fc', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '20px' }}>
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                  <Calculator className="w-4 h-4 text-pink-600" /> Kết Quả Ước Tính
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <h3 style={{ fontSize: '13.5px', fontWeight: 800, color: '#1c171a', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Calculator style={{ width: '16px', height: '16px', color: '#eb2f96' }} /> Kết Quả Ước Tính
                 </h3>
-                <span className="text-xs text-slate-400 font-semibold">{selectedGas.name}</span>
+                <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#7a6e7f' }}>{selectedGas.name}</span>
               </div>
 
-              {/* Liters Big Display */}
-              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm text-center relative overflow-hidden">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Số Lít Xăng Nhận Được</span>
-                
+              {/* Liters Card */}
+              <div style={{ background: '#ffffff', padding: '20px', borderRadius: '14px', border: '1px solid #e5e0e9', textAlign: 'center', boxShadow: '0 2px 8px rgba(28,23,26,0.04)' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#a09aa5', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
+                  Số Lít Xăng Nhận Được
+                </span>
+
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`${selectedGas.id}-${amount}`}
-                    initial={{ scale: 0.8, opacity: 0 }}
+                    initial={{ scale: 0.85, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
+                    exit={{ scale: 0.85, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-4xl font-black text-pink-600 tracking-tight"
+                    style={{ fontSize: '36px', fontWeight: 900, color: '#eb2f96', letterSpacing: '-0.03em', lineHeight: 1.1 }}
                   >
-                    {calculatedLiters} <span className="text-lg font-bold text-slate-700">Lít</span>
+                    {calculatedLiters} <span style={{ fontSize: '16px', fontWeight: 700, color: '#3d3040' }}>Lít</span>
                   </motion.div>
                 </AnimatePresence>
 
-                <p className="text-xs text-slate-500 mt-2">
-                  Ứng với số tiền: <strong className="text-slate-900">{amount.toLocaleString('vi-VN')}đ</strong>
+                <p style={{ fontSize: '12px', color: '#5c5060', margin: '8px 0 0' }}>
+                  Số tiền thanh toán: <strong style={{ color: '#1c171a', fontWeight: 800 }}>{amount.toLocaleString('vi-VN')}đ</strong>
                 </p>
               </div>
 
-              {/* Full tank cost estimate */}
-              <div className="mt-4 p-4 rounded-xl bg-pink-50/60 border border-pink-100 flex items-center justify-between">
+              {/* Full tank estimation */}
+              <div style={{ marginTop: '14px', padding: '12px 14px', borderRadius: '12px', background: '#fff0f8', border: '1px solid #ffd6ee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <span className="text-xs font-bold text-pink-900 block">Ước tính đổ đầy bình ({tankCapacity}L)</span>
-                  <span className="text-[11px] text-pink-700">Dành cho bình xăng ô tô 50L</span>
+                  <strong style={{ fontSize: '12px', color: '#c22181', display: 'block' }}>Đổ đầy bình ({tankCapacity}L)</strong>
+                  <span style={{ fontSize: '11px', color: '#7a6e7f' }}>Dành cho bình xăng ô tô 50L</span>
                 </div>
-                <span className="text-base font-black text-pink-700">{fullTankCost}đ</span>
+                <span style={{ fontSize: '15px', fontWeight: 900, color: '#c22181' }}>{fullTankCost}đ</span>
               </div>
             </div>
 
-            {/* Action CTA */}
+            {/* Trigger Confetti CTA Button */}
             <button
+              type="button"
               onClick={handleFullTank}
-              className="w-full py-3 px-4 bg-pink-600 hover:bg-pink-700 active:scale-95 text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '12px',
+                background: '#eb2f96',
+                color: '#ffffff',
+                fontSize: '13px',
+                fontWeight: 800,
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(235,47,150,0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.15s ease'
+              }}
             >
-              <Fuel className="w-4 h-4" /> Mô phỏng bơm xăng &amp; Bắn pháo hoa
+              <Fuel style={{ width: '16px', height: '16px' }} /> Mô phỏng bơm xăng &amp; Bắn pháo hoa 🎉
             </button>
           </div>
 
