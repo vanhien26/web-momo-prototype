@@ -347,22 +347,76 @@ body {
 .hero {
   background: #0B0A12;
   position: relative; overflow: hidden;
+  padding-bottom: 0;
 }
 .hero::before {
   content: ''; position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 70% 60% at 15% 40%, rgba(235,47,150,.14) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 70% at 85% 25%, rgba(37,99,235,.12) 0%, transparent 60%),
-    radial-gradient(ellipse 45% 55% at 60% 95%, rgba(139,92,246,.08) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 70% at 10% 40%, rgba(235,47,150,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 90% 20%, rgba(37,99,235,.14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 55% 100%, rgba(139,92,246,.10) 0%, transparent 55%);
+  pointer-events: none;
 }
+/* speed-line decorations */
 .hero::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 42px; height: 4px;
-  background: repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 46px, transparent 46px 90px);
+  content: ''; position: absolute;
+  top: 0; right: -60px; width: 420px; height: 100%;
+  background:
+    repeating-linear-gradient(
+      108deg,
+      transparent 0, transparent 38px,
+      rgba(235,47,150,.06) 38px, rgba(235,47,150,.06) 40px
+    );
+  pointer-events: none;
 }
 .hero-inner {
   position: relative; max-width: var(--content); margin: 0 auto;
-  padding: 56px 20px 72px;
+  padding: 64px 20px 80px;
   display: grid; grid-template-columns: 1fr 440px; gap: 48px; align-items: center;
+}
+/* wave divider */
+.hero-wave {
+  position: relative; line-height: 0; margin-top: -2px;
+}
+.hero-wave svg { display: block; width: 100%; }
+/* dark stats bar */
+.stats-bar {
+  background: #0B0A12;
+  padding: 36px 20px;
+}
+.stats-bar-inner {
+  max-width: var(--content); margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: rgba(255,255,255,.08);
+  border-radius: 16px; overflow: hidden;
+}
+.stat-cell {
+  padding: 28px 24px;
+  background: rgba(255,255,255,.03);
+  display: flex; flex-direction: column; gap: 6px;
+  transition: background .2s;
+}
+.stat-cell:hover { background: rgba(235,47,150,.07); }
+.stat-num {
+  font-size: 36px; font-weight: 900; color: #fff;
+  letter-spacing: -.03em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-num em { font-style: normal; color: var(--pink-400); font-size: .6em; vertical-align: super; }
+.stat-label { font-size: 13px; color: rgba(255,255,255,.45); font-weight: 500; }
+.stat-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 700; color: #4ade80;
+  background: rgba(74,222,128,.1); border-radius: 4px;
+  padding: 2px 7px; margin-top: 2px; width: fit-content;
+}
+@media(max-width:860px) {
+  .stats-bar-inner { grid-template-columns: repeat(2,1fr); }
+}
+@media(max-width:480px) {
+  .stats-bar-inner { grid-template-columns: 1fr 1fr; }
+  .stat-num { font-size: 28px; }
+  .stat-cell { padding: 20px 16px; }
 }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
@@ -1227,15 +1281,18 @@ body {
 .page-wrap { max-width: var(--content); margin: 0 auto; padding: 0 20px; }
 .section { padding: 56px 0 8px; }
 .section-eyebrow {
-  font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--pink-500); margin-bottom: 8px;
+  font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--pink-500); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.section-eyebrow::before {
+  content: ''; display: inline-block; width: 24px; height: 2px; background: var(--pink-500); border-radius: 2px;
 }
 .section-title {
   font-family: 'MoMoTrustDisplay', 'MoMoTrustSans', sans-serif;
-  font-size: 28px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 8px;
+  font-size: 34px; font-weight: 900; letter-spacing: -.02em; margin-bottom: 10px; line-height: 1.1;
 }
-.section-desc { font-size: 14px; color: var(--gray-500); max-width: 560px; line-height: 1.6; }
-.section-head { margin-bottom: 26px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.section-desc { font-size: 14.5px; color: var(--gray-500); max-width: 520px; line-height: 1.65; }
+.section-head { margin-bottom: 32px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
 .section-more { font-size: 13px; font-weight: 700; color: var(--pink-500); cursor: pointer; white-space: nowrap; text-decoration: none; }
 
 /* cluster groups (kept for other sections) */
@@ -2500,7 +2557,39 @@ body {
       </div>
     </div>
   </div>
+  <!-- wave divider -->
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 C240,72 480,20 720,40 C960,60 1200,8 1440,48 L1440,72 L0,72 Z" fill="#F7F5FA"/>
+    </svg>
+  </div>
 </section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div class="stat-cell">
+      <div class="stat-num">1.2<em>M+</em></div>
+      <div class="stat-label">Lượt tra cứu phạt nguội</div>
+      <div class="stat-tag">↑ Mỗi tháng</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">63</div>
+      <div class="stat-label">Tỉnh thành phủ sóng</div>
+      <div class="stat-tag">Toàn quốc</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">10<em>+</em></div>
+      <div class="stat-label">Dịch vụ trong một nơi</div>
+      <div class="stat-tag">Không cần nhiều app</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">0đ</div>
+      <div class="stat-label">Phí sử dụng tất cả tính năng</div>
+      <div class="stat-tag">Miễn phí hoàn toàn</div>
+    </div>
+  </div>
+</div>
 
 <!-- PLATE RESULT SECTION -->
 <div id="plateResultSection" class="prs-wrap" style="display:none" aria-live="polite">
@@ -2562,6 +2651,7 @@ body {
   <section class="section" id="tinh-nang">
     <div class="section-head">
       <div>
+        <p class="section-eyebrow">Tính năng nổi bật</p>
         <h2 class="section-title">Từ pháp lý đến hành trình</h2>
         <p class="section-desc">Ba nhóm việc mà mọi người có xe đều cần - MoMo lo trọn, không cần mở nhiều app.</p>
       </div>
@@ -2635,6 +2725,7 @@ body {
   <section class="section" id="gia-xang">
     <div class="section-head">
       <div>
+        <p class="section-eyebrow">Cập nhật mỗi kỳ điều hành</p>
         <h2 class="section-title">Giá xăng dầu hôm nay</h2>
         <p class="section-desc">Kỳ điều hành gần nhất: 15:00 ngày 31/07/2026 theo Bộ Công Thương.</p>
       </div>
@@ -2950,6 +3041,7 @@ body {
     <div class="section-head">
       <div>
 
+        <p class="section-eyebrow">Câu hỏi thường gặp</p>
         <h2 class="section-title">Về phạt nguội & tiện ích xe</h2>
       </div>
     </div>
