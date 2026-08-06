@@ -3779,7 +3779,7 @@ const USE_CASE_LABELS = {
     };
     function getRegion(plate) {
       const prefix = plate.replace(/[^0-9]/g,'').slice(0,2);
-      return PLATE_REGION[prefix] || '';
+      return PLATE_REGION[prefix] || PROVINCE_MAP[prefix] || '';
     }
 
     // Mock vehicle catalog keyed by plate (for demo plates) + hash-based fallback
@@ -3812,14 +3812,15 @@ const USE_CASE_LABELS = {
     }
 
     function detectVtype(plate) {
-      // Xe máy: 2 số + 1 chữ + 1 số + dấu phân cách + 4-5 số  (vd: 51G1-12345, 29K1-99999)
-      // Ô tô:   2 số + 1 chữ + dấu phân cách + 5 số            (vd: 29A-12345, 51G-88888)
+      // Xemay mới (9 ký tự): 2số + 1chữ + 1số + 5số  (vd: 51G1-12345)
+      // Ô tô (8 ký tự):      2số + 1chữ + 5số         (vd: 51A-12345) — KHÔNG match bằng regex
+      // Xe máy cũ (8 ký tự): 2số + 1chữ + 1số + 4số  — giữ nguyên vtype user chọn
       const raw = plate.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
-      return /^\d{2}[A-Z]\d{1}\d{4,5}$/.test(raw) ? 'xemay' : 'oto';
+      return raw.length === 9 ? 'xemay' : 'oto';
     }
 
     function renderResult(plate, data, vtype) {
-      vtype = detectVtype(plate) !== 'oto' ? 'xemay' : (vtype || currentVtype);
+      vtype = detectVtype(plate) === 'xemay' ? 'xemay' : (vtype || currentVtype);
       const { violationCount, mockData } = data;
       const region = getRegion(plate);
       const vtypeLabel = vtype === 'xemay' ? 'Xe máy' : 'Ô tô con';
