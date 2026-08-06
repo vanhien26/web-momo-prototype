@@ -76,20 +76,6 @@ export default function GasPriceMotionWidget() {
                 <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
                   Bảng Giá Xăng &amp; Công Cụ Tính Tiền Xăng
                 </h2>
-                <span style={{
-                  background: 'rgba(235,47,150,0.25)',
-                  color: '#ffd6ee',
-                  border: '1px solid rgba(235,47,150,0.4)',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: '20px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}>
-                  <Sparkles style={{ width: '12px', height: '12px' }} /> Motion Interactive
-                </span>
               </div>
               <p style={{ fontSize: '12px', color: '#c8c3cc', margin: '4px 0 0' }}>
                 Cập nhật kỳ điều chỉnh mới nhất · Tự động tính số lít &amp; tiền đổ xăng

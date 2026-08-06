@@ -44,6 +44,7 @@ export const ChartContainer = React.forwardRef<
       <div
         data-chart={chartId}
         ref={ref}
+        style={{ width: "100%", height: "100%", minHeight: "260px", display: "flex", justifyContent: "center", fontSize: "12px", ...props.style }}
         className={cn(
           "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-slate-500 [&_.recharts-cartesian-grid_line]:stroke-slate-200 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-slate-300 [&_.recharts-dot[aria-selected=true]]:stroke-slate-900 [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-slate-200 [&_.recharts-radial-bar-background-sector]:fill-slate-100 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-slate-100 [&_.recharts-reference-line_[stroke='#ccc']]:stroke-slate-300 [&_.recharts-sector[aria-selected=true]]:stroke-slate-900 [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
           className
