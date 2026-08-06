@@ -843,12 +843,11 @@ function doConfirm(){
 let toastTimer;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
 function licon(name,size,sw){
-  if(!window.lucide||!window.lucide[name])return'';
-  const children=window.lucide[name].map(([tag,attrs])=>{const a=Object.entries(attrs).map(([k,v])=>`${k}="${v}"`).join(' ');return`<${tag} ${a}/>`;}).join('');
-  return`<svg xmlns="http://www.w3.org/2000/svg" width="${size||18}" height="${size||18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2}" stroke-linecap="round" stroke-linejoin="round">${children}</svg>`;
+  const kebab = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+  return `<i data-lucide="${kebab}" style="width:${size||18}px;height:${size||18}px;display:inline-flex;align-items:center;justify-content:center"></i>`;
 }
-window.addEventListener('load',()=>{
-  if(window.lucide)lucide.createIcons();
+
+function initIcons(){
   const set=(id,icon,sz,sw)=>{const el=document.getElementById(id);if(el)el.innerHTML=licon(icon,sz,sw);};
   set('edu-icon-cal','CalendarDays',18,2);set('edu-icon-doc','FileText',18,2);set('edu-icon-fee','Wallet',18,2);
   set('cv-i1','Bike',14,2);set('cv-i2','Car',14,2);set('cv-i3','Car',14,2);set('cv-i4','Car',14,2);
@@ -859,10 +858,24 @@ window.addEventListener('load',()=>{
   set('hb-i1','MapPin',12,2.5);set('hb-i2','Wallet',12,2.5);set('hb-i3','BellRing',12,2.5);
   set('hc-i1','Check',11,2.5);set('hc-i2','Check',11,2.5);
   set('hero-cta-icon','CalendarCheck',15,2);
+
+  if(window.lucide){
+    lucide.createIcons();
+  }
+}
+
+if(document.readyState==='complete'||document.readyState==='interactive'){
+  setTimeout(initIcons,50);
+}
+document.addEventListener('DOMContentLoaded',initIcons);
+window.addEventListener('load',initIcons);
+document.addEventListener('astro:page-load',initIcons);
+
+window.addEventListener('load',()=>{
   // demo prefill
-  document.getElementById('plateInput').value='51A-12345';state.plate='51A-12345';
-  document.getElementById('yearInput').value='2021';state.year=2021;
-  document.getElementById('lastInspInput').value='2025-09';state.lastInsp='2025-09';
+  const pInput=document.getElementById('plateInput'); if(pInput) { pInput.value='51A-12345'; state.plate='51A-12345'; }
+  const yInput=document.getElementById('yearInput'); if(yInput) { yInput.value='2021'; state.year=2021; }
+  const lInput=document.getElementById('lastInspInput'); if(lInput) { lInput.value='2025-09'; state.lastInsp='2025-09'; }
   recalcArc();updateStep1Btn();
 });
 </script>
