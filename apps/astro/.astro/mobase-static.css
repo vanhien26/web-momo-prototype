@@ -1,0 +1,855 @@
+/*
+ * mobase-static.css — v0.2.112 compat
+ * Extracted from @momo-webplatform/mobase bundle.
+ * Use in static HTML by linking this file. No build step, no Tailwind required.
+ * Source: https://adminweb.momocdn.net/mobase/components
+ * -----------------------------------------------------------
+ * Usage: <link rel="stylesheet" href="/assets/mobase-static.css">
+ * Then use .mb-* classes directly on HTML elements.
+ */
+
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --mb-pink-50:  #fdf2f8;
+  --mb-pink-100: #fce7f3;
+  --mb-pink-200: #fbcfe8;
+  --mb-pink-300: #f9a8d4;
+  --mb-pink-400: #f472b6;
+  --mb-pink-500: #EB2F96; /* MoMo brand pink — product UI */
+  --mb-pink-600: #db2777;
+
+  --mb-gray-50:  #f9fafb;
+  --mb-gray-100: #f3f4f6;
+  --mb-gray-200: #e5e7eb;
+  --mb-gray-300: #d1d5db;
+  --mb-gray-400: #9ca3af;
+  --mb-gray-500: #6b7280;
+  --mb-gray-700: #374151;
+  --mb-gray-900: #111827;
+
+  --mb-green-500: #22c55e;
+  --mb-yellow-500: #eab308;
+  --mb-red-500: #ef4444;
+  --mb-red-300: #fca5a5;
+  --mb-blue-700: #1d4ed8;
+  --mb-blue-50:  #eff6ff;
+
+  --mb-radius-sm: 0.375rem;
+  --mb-radius:    0.5rem;   /* rounded-lg */
+  --mb-radius-md: 0.625rem; /* --radius from globals */
+  --mb-radius-full: 9999px;
+
+  --mb-ring-pink: 0 0 0 2px var(--mb-pink-500);
+  --mb-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --mb-shadow:    0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --mb-shadow-md: 0 8px 18px rgb(15 23 42 / 0.08);
+}
+
+/* ─── Base Reset (scoped) ────────────────────────────────────── */
+.mb-btn, .mb-checkbox, .mb-toggle, .mb-input, .mb-select-trigger,
+.mb-radio, .mb-badge, .mb-spinner, .mb-slider, .mb-tab-trigger {
+  font-family: inherit;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BUTTON
+   <button class="mb-btn mb-btn--primary">Label</button>
+   Variants: --primary --secondary --outline --tonal --danger --transparent
+   Sizes (add): --sm  --lg
+   States: disabled attr
+   ══════════════════════════════════════════════════════════════ */
+.mb-btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             0.375rem;
+  white-space:     nowrap;
+  border-radius:   var(--mb-radius);
+  border:          1px solid transparent;
+  font-size:       0.875rem;
+  font-weight:     700;
+  line-height:     1;
+  cursor:          pointer;
+  transition:      background-color 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+  outline:         none;
+  /* default size */
+  height:   2.5rem;
+  padding:  0 1rem;
+}
+.mb-btn:focus-visible { box-shadow: var(--mb-ring-pink); }
+.mb-btn:disabled      { cursor: not-allowed; pointer-events: none; }
+
+/* Variants */
+.mb-btn--primary   { background: var(--mb-pink-500); color: #fff; }
+.mb-btn--primary:hover                    { background: var(--mb-pink-600); }
+.mb-btn--primary:disabled                 { background: var(--mb-pink-300); }
+
+.mb-btn--secondary { background: #fff; color: var(--mb-gray-900); border-color: var(--mb-gray-300); }
+.mb-btn--secondary:hover                  { background: var(--mb-gray-100); }
+.mb-btn--secondary:disabled               { background: #fff; color: var(--mb-gray-400); }
+
+.mb-btn--outline   { background: #fff; color: var(--mb-pink-500); border-color: var(--mb-pink-500); }
+.mb-btn--outline:hover                    { background: var(--mb-pink-50); }
+.mb-btn--outline:disabled                 { background: #fff; color: var(--mb-pink-300); border-color: var(--mb-pink-300); }
+
+.mb-btn--tonal     { background: var(--mb-pink-100); color: var(--mb-pink-500); }
+.mb-btn--tonal:hover                      { background: var(--mb-pink-200); }
+.mb-btn--tonal:disabled                   { background: var(--mb-gray-200); color: var(--mb-gray-400); }
+
+.mb-btn--danger    { background: var(--mb-red-500); color: #fff; }
+.mb-btn--danger:hover                     { background: #dc2626; }
+.mb-btn--danger:disabled                  { background: var(--mb-red-300); }
+
+.mb-btn--transparent { background: transparent; color: var(--mb-gray-900); border-color: transparent; }
+.mb-btn--transparent:hover                { background: var(--mb-gray-100); }
+.mb-btn--transparent:disabled             { background: transparent; color: var(--mb-gray-400); }
+
+/* Sizes */
+.mb-btn--sm { height: 2rem;  padding: 0 0.75rem; font-size: 0.875rem; border-radius: var(--mb-radius-sm); }
+.mb-btn--lg { height: 3rem;  padding: 0 1rem;    font-size: 1rem; }
+
+/* Loading state */
+.mb-btn--loading { pointer-events: none; opacity: 0.75; }
+.mb-btn--loading::before {
+  content: '';
+  display: inline-block;
+  width:  1rem; height: 1rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: mb-spin 0.6s linear infinite;
+  margin-right: 0.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEXT BUTTON
+   <button class="mb-text-btn mb-text-btn--primary">Link</button>
+   ══════════════════════════════════════════════════════════════ */
+.mb-text-btn {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.25rem;
+  background:  transparent;
+  border:      none;
+  cursor:      pointer;
+  font-size:   0.875rem;
+  font-weight: 600;
+  padding:     0.375rem 0.5rem;
+  border-radius: var(--mb-radius-sm);
+  transition:  background 0.15s, text-decoration 0.15s;
+}
+.mb-text-btn--primary   { color: var(--mb-pink-500); }
+.mb-text-btn--primary:hover   { background: var(--mb-pink-50); text-decoration: underline; }
+.mb-text-btn--secondary { color: var(--mb-gray-700); }
+.mb-text-btn--secondary:hover { background: var(--mb-blue-50); color: #1d4ed8; text-decoration: underline; }
+.mb-text-btn:disabled   { color: var(--mb-gray-400); pointer-events: none; }
+
+/* ══════════════════════════════════════════════════════════════
+   TEXT INPUT
+   <div class="mb-input-wrap">
+     <label class="mb-input-label">Label</label>
+     <input class="mb-input" placeholder="...">
+     <span class="mb-input-hint">Hint text</span>
+   </div>
+   Error state: add .mb-input--error to .mb-input-wrap
+   ══════════════════════════════════════════════════════════════ */
+.mb-input-wrap { position: relative; display: flex; flex-direction: column; gap: 0.25rem; }
+
+.mb-input-label {
+  position:   absolute;
+  top:        -0.5rem;
+  left:       0.5rem;
+  z-index:    1;
+  background: #fff;
+  padding:    0 0.375rem;
+  font-size:  0.75rem;
+  color:      var(--mb-gray-500);
+  line-height: 1;
+  pointer-events: none;
+}
+.mb-input--error .mb-input-label { color: var(--mb-red-500); }
+
+.mb-input {
+  display:      block;
+  width:        100%;
+  height:       2.75rem; /* h-11 */
+  padding:      0.75rem 0.875rem;
+  font-size:    0.875rem;
+  font-family:  inherit;
+  color:        var(--mb-gray-900);
+  background:   #fff;
+  border:       1px solid var(--mb-gray-300);
+  border-radius: var(--mb-radius);
+  outline:      none;
+  transition:   border-color 0.15s, box-shadow 0.15s;
+}
+.mb-input::placeholder       { color: var(--mb-gray-500); }
+.mb-input:hover              { box-shadow: 0 0 0 1px var(--mb-gray-400); }
+.mb-input:focus              { border-color: var(--mb-pink-500); box-shadow: 0 0 0 1px var(--mb-gray-400); }
+.mb-input:disabled           { background: var(--mb-gray-50); border-color: var(--mb-gray-200); pointer-events: none; }
+.mb-input--error .mb-input   { border-color: var(--mb-red-500); box-shadow: 0 0 0 1px var(--mb-red-500); }
+.mb-input--lg .mb-input      { height: 3rem; font-size: 1rem; }
+
+.mb-input-hint {
+  display:     flex;
+  align-items: center;
+  gap:         0.25rem;
+  font-size:   0.75rem;
+  color:       var(--mb-gray-500);
+  margin-top:  0.125rem;
+}
+.mb-input--error .mb-input-hint { color: var(--mb-red-500); }
+
+/* ══════════════════════════════════════════════════════════════
+   TEXT AREA
+   <div class="mb-input-wrap">
+     <label class="mb-input-label">Label</label>
+     <textarea class="mb-textarea"></textarea>
+   </div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-textarea {
+  display:       block;
+  width:         100%;
+  min-height:    6rem;
+  padding:       0.75rem 0.875rem;
+  font-size:     0.875rem;
+  font-family:   inherit;
+  color:         var(--mb-gray-900);
+  background:    #fff;
+  border:        1px solid var(--mb-gray-300);
+  border-radius: var(--mb-radius);
+  outline:       none;
+  resize:        vertical;
+  transition:    border-color 0.15s, box-shadow 0.15s;
+}
+.mb-textarea::placeholder { color: var(--mb-gray-500); }
+.mb-textarea:hover        { box-shadow: 0 0 0 1px var(--mb-gray-400); }
+.mb-textarea:focus        { border-color: var(--mb-pink-500); box-shadow: 0 0 0 1px var(--mb-gray-400); }
+.mb-textarea:disabled     { background: var(--mb-gray-50); border-color: var(--mb-gray-200); pointer-events: none; }
+
+/* ══════════════════════════════════════════════════════════════
+   SELECT
+   <div class="mb-input-wrap">
+     <label class="mb-input-label">Label</label>
+     <select class="mb-select">
+       <option>Option</option>
+     </select>
+   </div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-select {
+  display:          block;
+  width:            100%;
+  height:           2.75rem;
+  padding:          0 2.25rem 0 0.875rem;
+  font-size:        0.875rem;
+  font-family:      inherit;
+  color:            var(--mb-gray-900);
+  background:       #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+  border:           1px solid var(--mb-gray-300);
+  border-radius:    var(--mb-radius);
+  outline:          none;
+  -webkit-appearance: none;
+  appearance:       none;
+  cursor:           pointer;
+  transition:       border-color 0.15s, box-shadow 0.15s;
+}
+.mb-select:hover   { box-shadow: 0 0 0 1px var(--mb-gray-400); }
+.mb-select:focus   { border-color: var(--mb-pink-500); box-shadow: 0 0 0 1px var(--mb-gray-400); }
+.mb-select:disabled { background-color: var(--mb-gray-50); border-color: var(--mb-gray-200); pointer-events: none; color: var(--mb-gray-400); }
+
+/* ══════════════════════════════════════════════════════════════
+   CHECKBOX
+   <label class="mb-checkbox-wrap">
+     <input type="checkbox" class="mb-checkbox">
+     <span>Label text</span>
+   </label>
+   ══════════════════════════════════════════════════════════════ */
+.mb-checkbox-wrap {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.5rem;
+  cursor:      pointer;
+  font-size:   0.875rem;
+  color:       var(--mb-gray-900);
+  user-select: none;
+}
+.mb-checkbox-wrap input[type="checkbox"] { display: none; }
+
+.mb-checkbox {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  width:           1rem; height: 1rem; /* medium */
+  border:          2px solid var(--mb-gray-300);
+  border-radius:   0.25rem;
+  background:      #fff;
+  transition:      background 0.15s, border-color 0.15s;
+  cursor:          pointer;
+  position:        relative;
+}
+.mb-checkbox--lg { width: 1.25rem; height: 1.25rem; }
+
+.mb-checkbox::after {
+  content: '';
+  display: block;
+  width: 0.35rem; height: 0.6rem;
+  border: 2px solid transparent;
+  border-top: none; border-left: none;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.1s;
+  margin-top: -2px;
+}
+.mb-checkbox--checked {
+  background:    var(--mb-pink-500);
+  border-color:  var(--mb-pink-500);
+}
+.mb-checkbox--checked::after {
+  border-color: #fff;
+  transform: rotate(45deg) scale(1);
+}
+.mb-checkbox--indeterminate {
+  background: var(--mb-pink-500);
+  border-color: var(--mb-pink-500);
+}
+.mb-checkbox--indeterminate::after {
+  width: 0.5rem; height: 0; border-top: 2px solid #fff;
+  transform: rotate(0) scale(1); margin-top: 0;
+}
+.mb-checkbox-wrap:has(input:disabled) .mb-checkbox,
+.mb-checkbox--disabled {
+  background:   var(--mb-gray-100);
+  border-color: var(--mb-gray-300);
+  cursor:       not-allowed;
+}
+
+/* Native checkbox override (for actual <input type="checkbox"> usage) */
+input[type="checkbox"].mb-checkbox-native {
+  -webkit-appearance: none; appearance: none;
+  width: 1rem; height: 1rem;
+  border: 2px solid var(--mb-gray-300);
+  border-radius: 0.25rem;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+input[type="checkbox"].mb-checkbox-native:checked {
+  background: var(--mb-pink-500);
+  border-color: var(--mb-pink-500);
+}
+input[type="checkbox"].mb-checkbox-native:checked::after {
+  content: '';
+  position: absolute; top: 1px; left: 4px;
+  width: 4px; height: 7px;
+  border: 2px solid #fff; border-top: none; border-left: none;
+  transform: rotate(45deg);
+}
+input[type="checkbox"].mb-checkbox-native:disabled {
+  background: var(--mb-gray-100); border-color: var(--mb-gray-300); cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RADIO GROUP
+   <label class="mb-radio-wrap">
+     <input type="radio" class="mb-radio-native" name="group">
+     <span>Option label</span>
+   </label>
+   ══════════════════════════════════════════════════════════════ */
+.mb-radio-wrap {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.5rem;
+  cursor:      pointer;
+  font-size:   0.875rem;
+  color:       var(--mb-gray-900);
+  user-select: none;
+}
+input[type="radio"].mb-radio-native {
+  -webkit-appearance: none; appearance: none;
+  width: 1rem; height: 1rem;
+  border: 2px solid var(--mb-gray-300);
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+}
+input[type="radio"].mb-radio-native:checked {
+  border-color: var(--mb-pink-500);
+  background: var(--mb-pink-500);
+}
+input[type="radio"].mb-radio-native:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.35rem; height: 0.35rem;
+  border-radius: 50%;
+  background: #fff;
+}
+input[type="radio"].mb-radio-native:disabled {
+  background: var(--mb-gray-100); border-color: var(--mb-gray-300); cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOGGLE SWITCH
+   <label class="mb-toggle-wrap">
+     <input type="checkbox" class="mb-toggle-native">
+     <span class="mb-toggle-track">
+       <span class="mb-toggle-thumb"></span>
+     </span>
+     <span>Label</span>
+   </label>
+   ══════════════════════════════════════════════════════════════ */
+.mb-toggle-wrap {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.5rem;
+  cursor:      pointer;
+  font-size:   0.875rem;
+  color:       var(--mb-gray-900);
+  user-select: none;
+}
+.mb-toggle-wrap input[type="checkbox"] { display: none; }
+
+.mb-toggle-track {
+  display:        inline-flex;
+  align-items:    center;
+  width:          2.5rem; /* w-10 */
+  height:         1.25rem; /* h-5 */
+  border-radius:  var(--mb-radius-full);
+  background:     var(--mb-gray-400);
+  border:         2px solid transparent;
+  padding:        0.125rem;
+  transition:     background 0.2s;
+  flex-shrink:    0;
+  cursor:         pointer;
+}
+.mb-toggle-thumb {
+  width:          1rem; height: 1rem;
+  border-radius:  var(--mb-radius-full);
+  background:     #fff;
+  box-shadow:     var(--mb-shadow-sm);
+  transition:     transform 0.2s;
+}
+input[type="checkbox"]:checked ~ .mb-toggle-track,
+.mb-toggle-track--on   { background: var(--mb-pink-500); }
+input[type="checkbox"]:checked ~ .mb-toggle-track .mb-toggle-thumb,
+.mb-toggle-track--on .mb-toggle-thumb { transform: translateX(1.25rem); }
+.mb-toggle-wrap:has(input:disabled) .mb-toggle-track,
+.mb-toggle-track--disabled { opacity: 0.2; cursor: not-allowed; }
+
+/* ══════════════════════════════════════════════════════════════
+   TABS
+   <div class="mb-tabs">
+     <div class="mb-tabs-list" role="tablist">
+       <button class="mb-tab-trigger mb-tab--active" role="tab">Tab 1</button>
+       <button class="mb-tab-trigger" role="tab">Tab 2</button>
+     </div>
+     <div class="mb-tab-content">Content</div>
+   </div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-tabs { width: 100%; }
+
+.mb-tabs-list {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  height:          2.5rem;
+  background:      var(--mb-gray-100);
+  border-radius:   var(--mb-radius);
+  padding:         0.25rem;
+  gap:             0.125rem;
+}
+.mb-tab-trigger {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  height:          2rem;
+  padding:         0 0.75rem;
+  border-radius:   0.375rem;
+  font-size:       0.875rem;
+  font-weight:     500;
+  color:           var(--mb-gray-500);
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  white-space:     nowrap;
+  transition:      background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.mb-tab-trigger:hover { color: var(--mb-gray-900); }
+.mb-tab-trigger.mb-tab--active,
+.mb-tab-trigger[aria-selected="true"] {
+  background:  #fff;
+  color:       var(--mb-gray-900);
+  box-shadow:  var(--mb-shadow-sm);
+  font-weight: 600;
+}
+.mb-tab-trigger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mb-tab-content {
+  margin-top: 0.5rem;
+  outline: none;
+}
+.mb-tab-content[hidden] { display: none; }
+
+/* ══════════════════════════════════════════════════════════════
+   CALLOUT
+   <div class="mb-callout mb-callout--success">
+     <span class="mb-callout-icon">✓</span>
+     <div>
+       <strong class="mb-callout-title">Title</strong>
+       <p class="mb-callout-body">Description text.</p>
+     </div>
+   </div>
+   Variants: --success  --warning  --error  --info  (default: --info)
+   ══════════════════════════════════════════════════════════════ */
+.mb-callout {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           0.75rem;
+  width:         100%;
+  border-left:   4px solid var(--mb-gray-200);
+  background:    #fff;
+  border-radius: 0.375rem;
+  padding:       1rem 1.25rem;
+  color:         var(--mb-gray-900);
+  box-shadow:    var(--mb-shadow-sm);
+}
+.mb-callout--success { border-left-color: var(--mb-green-500); }
+.mb-callout--warning { border-left-color: var(--mb-yellow-500); }
+.mb-callout--error   { border-left-color: var(--mb-red-500); }
+.mb-callout--info    { border-left-color: #3b82f6; }
+
+.mb-callout-icon {
+  flex-shrink: 0;
+  font-size:   1rem;
+  margin-top:  0.1rem;
+}
+.mb-callout--success .mb-callout-icon { color: var(--mb-green-500); }
+.mb-callout--warning .mb-callout-icon { color: var(--mb-yellow-500); }
+.mb-callout--error   .mb-callout-icon { color: var(--mb-red-500); }
+.mb-callout--info    .mb-callout-icon { color: #3b82f6; }
+
+.mb-callout-title {
+  display:     block;
+  font-size:   0.875rem;
+  font-weight: 700;
+  color:       var(--mb-gray-900);
+  margin:      0 0 0.25rem;
+}
+.mb-callout-body {
+  font-size:   0.875rem;
+  color:       var(--mb-gray-700);
+  margin:      0;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BADGE
+   <span class="mb-badge">Label</span>
+   Variants: --secondary  --outline  --danger
+   ══════════════════════════════════════════════════════════════ */
+.mb-badge {
+  display:       inline-flex;
+  align-items:   center;
+  border-radius: var(--mb-radius-full);
+  border:        1px solid transparent;
+  padding:       0.2rem 0.625rem;
+  font-size:     0.75rem;
+  font-weight:   700;
+  line-height:   1;
+  white-space:   nowrap;
+  /* default = pink/primary */
+  background:    var(--mb-pink-500);
+  color:         rgba(255,255,255,0.9);
+}
+.mb-badge--secondary { background: var(--mb-gray-200); color: var(--mb-gray-900); border-color: transparent; }
+.mb-badge--outline   { background: transparent; color: var(--mb-gray-900); border-color: var(--mb-gray-300); }
+.mb-badge--danger    { background: var(--mb-red-500); color: rgba(255,255,255,0.9); }
+.mb-badge--success   { background: #dcfce7; color: #15803d; }
+.mb-badge--warning   { background: #fef9c3; color: #854d0e; }
+
+/* ══════════════════════════════════════════════════════════════
+   PROGRESS BAR
+   <div class="mb-progress">
+     <div class="mb-progress-bar" style="width:60%"></div>
+   </div>
+   Variants on .mb-progress-bar: --success  --disabled
+   ══════════════════════════════════════════════════════════════ */
+.mb-progress {
+  position:      relative;
+  width:         100%;
+  height:        0.5rem;
+  overflow:      hidden;
+  border-radius: var(--mb-radius-full);
+  background:    var(--mb-gray-200);
+}
+.mb-progress-bar {
+  height:        100%;
+  border-radius: var(--mb-radius-full);
+  background:    var(--mb-pink-500);
+  transition:    width 0.3s ease;
+}
+.mb-progress-bar--success  { background: #16a34a; }
+.mb-progress-bar--disabled { background: var(--mb-gray-400); }
+
+/* ══════════════════════════════════════════════════════════════
+   SLIDER
+   Uses native <input type="range"> styled to match Mobase
+   <input type="range" class="mb-slider" min="0" max="100" value="40">
+   ══════════════════════════════════════════════════════════════ */
+.mb-slider {
+  -webkit-appearance: none;
+  appearance:         none;
+  width:              100%;
+  height:             0.5rem;
+  border-radius:      var(--mb-radius-full);
+  background:         var(--mb-gray-200);
+  outline:            none;
+  cursor:             pointer;
+  transition:         opacity 0.15s;
+}
+.mb-slider::-webkit-slider-runnable-track { height: 0.5rem; border-radius: var(--mb-radius-full); }
+.mb-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width:         1.25rem; height: 1.25rem;
+  border-radius: 50%;
+  background:    var(--mb-pink-500);
+  border:        2px solid #fff;
+  box-shadow:    0 0 0 1px var(--mb-pink-500), 0 2px 6px rgba(0,0,0,0.15);
+  margin-top:    -0.375rem;
+  cursor:        pointer;
+  transition:    box-shadow 0.15s;
+}
+.mb-slider:focus::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(235,47,150,0.25); }
+.mb-slider:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ══════════════════════════════════════════════════════════════
+   SPINNER
+   <span class="mb-spinner"></span>
+   Sizes: --sm  --lg
+   ══════════════════════════════════════════════════════════════ */
+.mb-spinner {
+  display:       inline-block;
+  width:         1.25rem; height: 1.25rem;
+  border:        2px solid var(--mb-gray-200);
+  border-top-color: var(--mb-pink-500);
+  border-radius: 50%;
+  animation:     mb-spin 0.6s linear infinite;
+  flex-shrink:   0;
+}
+.mb-spinner--sm { width: 1rem;    height: 1rem; }
+.mb-spinner--lg { width: 1.75rem; height: 1.75rem; border-width: 3px; }
+.mb-spinner--white { border-color: rgba(255,255,255,0.3); border-top-color: #fff; }
+
+@keyframes mb-spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════════════════════════
+   SKELETON
+   <div class="mb-skeleton" style="width:200px;height:1rem"></div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-skeleton {
+  border-radius: 0.375rem;
+  background:    var(--mb-gray-200);
+  animation:     mb-pulse 1.5s ease-in-out infinite;
+}
+.mb-skeleton--circle { border-radius: 50%; }
+.mb-skeleton--text   { height: 0.875rem; border-radius: 0.25rem; }
+
+@keyframes mb-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ACCORDION
+   <div class="mb-accordion">
+     <div class="mb-accordion-item">
+       <button class="mb-accordion-trigger">Title <span class="mb-accordion-icon">▾</span></button>
+       <div class="mb-accordion-content">Content text</div>
+     </div>
+   </div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-accordion { border-bottom: 1px solid var(--mb-gray-200); }
+.mb-accordion-item { border-top: 1px solid var(--mb-gray-200); }
+.mb-accordion-trigger {
+  display:        flex;
+  align-items:    center;
+  justify-content: space-between;
+  width:          100%;
+  padding:        1rem 0;
+  font-size:      0.875rem;
+  font-weight:    600;
+  color:          var(--mb-gray-900);
+  background:     none;
+  border:         none;
+  cursor:         pointer;
+  text-align:     left;
+  transition:     color 0.15s;
+}
+.mb-accordion-trigger:hover { color: var(--mb-pink-500); }
+.mb-accordion-icon { transition: transform 0.2s; font-style: normal; }
+.mb-accordion-item.mb-open .mb-accordion-icon { transform: rotate(180deg); }
+.mb-accordion-content {
+  display:     none;
+  padding:     0 0 1rem;
+  font-size:   0.875rem;
+  color:       var(--mb-gray-700);
+  line-height: 1.6;
+}
+.mb-accordion-item.mb-open .mb-accordion-content { display: block; }
+
+/* ══════════════════════════════════════════════════════════════
+   CARD (utility)
+   <div class="mb-card">…</div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-card {
+  background:    #fff;
+  border:        1px solid var(--mb-gray-200);
+  border-radius: var(--mb-radius-md);
+  padding:       1.5rem;
+  box-shadow:    var(--mb-shadow-sm);
+}
+.mb-card-title {
+  font-size:   1.125rem;
+  font-weight: 700;
+  color:       var(--mb-gray-900);
+  margin:      0 0 0.25rem;
+}
+.mb-card-desc {
+  font-size:  0.875rem;
+  color:      var(--mb-gray-500);
+  margin:     0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOOLTIP (CSS-only, hover)
+   <span class="mb-tooltip-wrap">
+     <button>Hover me</button>
+     <span class="mb-tooltip">Tooltip text</span>
+   </span>
+   ══════════════════════════════════════════════════════════════ */
+.mb-tooltip-wrap { position: relative; display: inline-flex; }
+.mb-tooltip {
+  position:      absolute;
+  bottom:        calc(100% + 6px);
+  left:          50%;
+  transform:     translateX(-50%);
+  background:    var(--mb-gray-900);
+  color:         #fff;
+  font-size:     0.75rem;
+  font-weight:   500;
+  padding:       0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  white-space:   nowrap;
+  pointer-events: none;
+  opacity:       0;
+  transition:    opacity 0.15s;
+  z-index:       10000;
+}
+.mb-tooltip-wrap:hover .mb-tooltip { opacity: 1; }
+.mb-tooltip::after {
+  content:      '';
+  position:     absolute;
+  top:          100%; left: 50%;
+  transform:    translateX(-50%);
+  border:       4px solid transparent;
+  border-top-color: var(--mb-gray-900);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STEPPER (Progress Steps)
+   <div class="mb-stepper">
+     <div class="mb-step mb-step--done"><span class="mb-step-dot">✓</span><span class="mb-step-label">Step 1</span></div>
+     <div class="mb-step mb-step--active"><span class="mb-step-dot">2</span><span class="mb-step-label">Step 2</span></div>
+     <div class="mb-step"><span class="mb-step-dot">3</span><span class="mb-step-label">Step 3</span></div>
+   </div>
+   ══════════════════════════════════════════════════════════════ */
+.mb-stepper {
+  display:  flex;
+  align-items: center;
+  gap:      0;
+  width:    100%;
+}
+.mb-step {
+  display:    flex;
+  align-items: center;
+  flex:       1;
+  position:   relative;
+}
+.mb-step:not(:last-child)::after {
+  content:    '';
+  flex:       1;
+  height:     1px;
+  background: var(--mb-gray-200);
+  margin:     0 0.5rem;
+}
+.mb-step--done:not(:last-child)::after  { background: var(--mb-pink-500); }
+.mb-step--active:not(:last-child)::after { background: var(--mb-gray-200); }
+
+.mb-step-dot {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  width:           2rem; height: 2rem;
+  border-radius:   50%;
+  font-size:       0.8rem;
+  font-weight:     700;
+  border:          2px solid var(--mb-gray-300);
+  background:      #fff;
+  color:           var(--mb-gray-400);
+}
+.mb-step--done .mb-step-dot   { background: var(--mb-pink-500); border-color: var(--mb-pink-500); color: #fff; }
+.mb-step--active .mb-step-dot { border-color: var(--mb-pink-500); color: var(--mb-pink-500); background: var(--mb-pink-50); }
+
+.mb-step-label {
+  font-size:   0.75rem;
+  font-weight: 500;
+  color:       var(--mb-gray-400);
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+.mb-step--done .mb-step-label   { color: var(--mb-gray-700); }
+.mb-step--active .mb-step-label { color: var(--mb-pink-500); font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════════
+   DIVIDER
+   <hr class="mb-divider">
+   ══════════════════════════════════════════════════════════════ */
+.mb-divider {
+  border: none;
+  border-top: 1px solid var(--mb-gray-200);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   UTILITY HELPERS
+   ══════════════════════════════════════════════════════════════ */
+.mb-label {
+  display:     block;
+  font-size:   0.875rem;
+  font-weight: 600;
+  color:       var(--mb-gray-900);
+  margin-bottom: 0.375rem;
+}
+.mb-hint {
+  font-size:  0.75rem;
+  color:      var(--mb-gray-500);
+  margin-top: 0.25rem;
+}
+.mb-error-text {
+  font-size:  0.75rem;
+  color:      var(--mb-red-500);
+  margin-top: 0.25rem;
+}
+.mb-required::after {
+  content: ' *';
+  color: var(--mb-red-500);
+}
