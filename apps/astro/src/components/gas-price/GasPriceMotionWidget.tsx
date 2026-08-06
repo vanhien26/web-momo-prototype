@@ -314,7 +314,7 @@ export default function GasPriceMotionWidget() {
                 <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b' }}>{selectedGas.name}</span>
               </div>
 
-              {/* Liters Card */}
+              {/* Liters Card with bklit-ui Capacity Meter */}
               <div style={{ background: '#ffffff', padding: '20px', borderRadius: '14px', border: '1px solid #e2e8f0', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', marginBottom: '14px' }}>
                 <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
                   Số Lít Xăng Nhận Được
@@ -324,6 +324,21 @@ export default function GasPriceMotionWidget() {
                 </div>
                 <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '8px' }}>
                   Với {amount.toLocaleString('vi-VN')}đ @ {selectedGas.price.toLocaleString('vi-VN')}đ/lít
+                </div>
+
+                {/* bklit-ui Fill Capacity Gauge */}
+                <div style={{ marginTop: '14px', textAlign: 'left' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, color: '#475569', marginBottom: '4px' }}>
+                    <span>Tỷ lệ nạp đầy bình ({tankCapacity}L):</span>
+                    <span style={{ color: '#eb2f96', fontWeight: 800 }}>{Math.min(100, Math.round(((amount / selectedGas.price) / tankCapacity) * 100))}%</span>
+                  </div>
+                  <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                    <motion.div
+                      animate={{ width: `${Math.min(100, Math.round(((amount / selectedGas.price) / tankCapacity) * 100))}%` }}
+                      transition={{ duration: 0.3 }}
+                      style={{ height: '100%', background: 'linear-gradient(90deg, #eb2f96 0%, #f472b6 100%)', borderRadius: '999px' }}
+                    />
+                  </div>
                 </div>
               </div>
 

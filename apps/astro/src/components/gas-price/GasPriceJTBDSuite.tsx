@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  TrendingDown, Calendar, Sparkles, Bike, Car, Zap, Fuel,
-  ArrowRight, BellRing, ShieldCheck, Check, Info
+  TrendingDown, Bike, Car, Zap, Fuel,
+  ArrowRight, BellRing, ShieldCheck, Info, CheckCircle2
 } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
 
@@ -25,7 +25,7 @@ const VEHICLE_PRESETS: VehiclePreset[] = [
 ];
 
 export default function GasPriceJTBDSuite() {
-  const [selectedVehicle, setSelectedVehicle] = useState<VehiclePreset>(VEHICLE_PRESETS[0]);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehiclePreset>(VEHICLE_PRESETS[6]); // Default Mazda CX-5
   const [dailyKm, setDailyKm] = useState<number>(30);
   const [subscribed, setSubscribed] = useState<boolean>(false);
 
@@ -46,6 +46,11 @@ export default function GasPriceJTBDSuite() {
   const monthlySavings = monthlyGasCost - monthlyEvCost;
   const savingsPct = Math.round((monthlySavings / monthlyGasCost) * 100);
 
+  // bklit UI proportional bar widths
+  const maxCost = Math.max(monthlyGasCost, monthlyEvCost, 1);
+  const gasPct = Math.min(100, Math.round((monthlyGasCost / maxCost) * 100));
+  const evPct = Math.min(100, Math.round((monthlyEvCost / maxCost) * 100));
+
   const handleSelectVehicle = (v: VehiclePreset) => {
     setSelectedVehicle(v);
     fireConfetti();
@@ -59,7 +64,7 @@ export default function GasPriceJTBDSuite() {
   return (
     <div style={{ maxWidth: '1240px', margin: '24px auto', padding: '0 20px', fontFamily: "'MoMoTrustSans', -apple-system, sans-serif", display: 'flex', flexDirection: 'column', gap: '16px' }}>
       
-      {/* 1. FORECAST BAR - MINIMALIST STRIP */}
+      {/* 1. FORECAST STRIP */}
       <section style={{ width: '100%' }}>
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -149,10 +154,10 @@ export default function GasPriceJTBDSuite() {
         </motion.div>
       </section>
 
-      {/* 2 & 3. TWO CLEAN MINIMALIST CARDS */}
+      {/* 2 & 3. TWO ENHANCED CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
         
-        {/* CARD A: VEHICLE TANK LOOKUP */}
+        {/* TOOL 2: TRA CỨU TIỀN ĐỔ ĐẦY BÌNH */}
         <section>
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -178,13 +183,13 @@ export default function GasPriceJTBDSuite() {
                 </div>
                 <div>
                   <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                    Tra Cứu Tiền Đổ Đầy Bình
+                    Tra Cứu Tiền Đổ Đầy Bình theo Dòng Xe
                   </h2>
-                  <span style={{ fontSize: '11.5px', color: '#64748b' }}>Chọn xe của bạn để xem tổng chi phí</span>
+                  <span style={{ fontSize: '11.5px', color: '#64748b' }}>Chọn xe của bạn để tính tổng tiền nạp đầy vòi</span>
                 </div>
               </div>
 
-              {/* Minimal Tags */}
+              {/* Vehicle Selector Pills */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
                 {VEHICLE_PRESETS.map((v) => {
                   const isSelected = selectedVehicle.name === v.name;
@@ -194,30 +199,33 @@ export default function GasPriceJTBDSuite() {
                       type="button"
                       onClick={() => handleSelectVehicle(v)}
                       style={{
-                        padding: '5px 10px',
+                        padding: '6px 12px',
                         borderRadius: '8px',
                         fontSize: '11.5px',
                         fontWeight: 700,
                         cursor: 'pointer',
-                        border: isSelected ? '1px solid #eb2f96' : '1px solid #e2e8f0',
+                        border: isSelected ? '1.5px solid #eb2f96' : '1px solid #e2e8f0',
                         background: isSelected ? '#fff0f8' : '#f8fafc',
                         color: isSelected ? '#eb2f96' : '#475569',
-                        transition: 'all 0.15s ease'
+                        transition: 'all 0.15s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
                       }}
                     >
-                      {v.name} ({v.tankLiters}L)
+                      {v.name} <span style={{ opacity: 0.75, fontSize: '10.5px' }}>({v.tankLiters}L)</span>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Clean Result Box */}
-              <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '16px', border: '1px solid #e2e8f0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    {selectedVehicle.name} · {selectedVehicle.tankLiters} Lít
+              {/* bklit-ui Visual Card Container */}
+              <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '16px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a' }}>
+                    {selectedVehicle.name}
                   </span>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#eb2f96' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#eb2f96', background: '#fff0f8', border: '1px solid #ffd6ee', padding: '2px 8px', borderRadius: '6px' }}>
                     {selectedVehicle.popularGas}
                   </span>
                 </div>
@@ -225,25 +233,43 @@ export default function GasPriceJTBDSuite() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedVehicle.name}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.15 }}
-                    style={{ fontSize: '26px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}
                   >
-                    {fullTankCost.toLocaleString('vi-VN')} <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>đ</span>
+                    <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
+                      {fullTankCost.toLocaleString('vi-VN')} <span style={{ fontSize: '14px', fontWeight: 700, color: '#64748b' }}>VNĐ</span>
+                    </div>
                   </motion.div>
                 </AnimatePresence>
+
+                {/* bklit UI Capacity Bar Meter */}
+                <div style={{ marginTop: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '4px' }}>
+                    <span>Dung tích bình: {selectedVehicle.tankLiters} Lít</span>
+                    <span>100% Đầy vòi</span>
+                  </div>
+                  <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: '100%' }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      style={{ height: '100%', background: 'linear-gradient(90deg, #eb2f96 0%, #f472b6 100%)', borderRadius: '999px' }}
+                    />
+                  </div>
+                </div>
+
               </div>
             </div>
 
-            <div style={{ marginTop: '12px', fontSize: '11px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Info style={{ width: '12px', height: '12px', flexShrink: 0 }} /> Ước tính khi cạn bình đến đầy vòi bơm.
+            <div style={{ marginTop: '14px', fontSize: '11px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Info style={{ width: '12px', height: '12px', flexShrink: 0 }} /> Giá tính theo niêm yết kỳ mới nhất của Tập đoàn Xăng dầu Petrolimex.
             </div>
           </motion.div>
         </section>
 
-        {/* CARD B: EV VS GAS COMPARISON */}
+        {/* TOOL 3: SO SÁNH TIÊU HAO XE XĂNG VS XE ĐIỆN WITH BKLIT-UI VISUAL BARS */}
         <section>
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -269,16 +295,16 @@ export default function GasPriceJTBDSuite() {
                 </div>
                 <div>
                   <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                    So Sánh Tiêu Hao: Xe Xăng vs Xe Điện
+                    So Sánh Ngân Sách Tiêu Hao: Xe Xăng vs Xe Điện
                   </h2>
-                  <span style={{ fontSize: '11.5px', color: '#64748b' }}>Ước tính ngân sách nhiên liệu hàng tháng</span>
+                  <span style={{ fontSize: '11.5px', color: '#64748b' }}>Ước tính ngân sách nhiên liệu trung bình hàng tháng</span>
                 </div>
               </div>
 
-              {/* Slider */}
-              <div style={{ marginBottom: '14px' }}>
+              {/* Distance Slider */}
+              <div style={{ marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Quãng đường đi:</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Quãng đường di chuyển:</span>
                   <span style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', fontVariantNumeric: 'tabular-nums' }}>
                     {dailyKm} km/ngày ({monthlyKm.toLocaleString('vi-VN')} km/tháng)
                   </span>
@@ -290,43 +316,57 @@ export default function GasPriceJTBDSuite() {
                   step="5"
                   value={dailyKm}
                   onChange={(e) => setDailyKm(Number(e.target.value))}
-                  style={{ width: '100%', accentColor: '#0f172a', cursor: 'pointer' }}
+                  style={{ width: '100%', accentColor: '#16a34a', cursor: 'pointer', height: '6px' }}
                 />
               </div>
 
-              {/* Minimal Grid Comparison */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-                <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '12px', border: '1px solid #e2e8f0' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Fuel style={{ width: '12px', height: '12px' }} /> Xe Xăng
-                  </span>
-                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
-                    {monthlyGasCost.toLocaleString('vi-VN')} <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748b' }}>đ</span>
+              {/* bklit-ui Visual Proportional Comparison Bars */}
+              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
+                
+                {/* Bar 1: Gas Vehicle */}
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 700, color: '#475569', marginBottom: '4px' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Fuel style={{ width: '13px', height: '13px', color: '#eb2f96' }} /> Xe Xăng</span>
+                    <span style={{ fontWeight: 800, color: '#0f172a' }}>{monthlyGasCost.toLocaleString('vi-VN')}đ/tháng</span>
+                  </div>
+                  <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                    <motion.div
+                      animate={{ width: `${gasPct}%` }}
+                      transition={{ duration: 0.3 }}
+                      style={{ height: '100%', background: '#eb2f96', borderRadius: '999px' }}
+                    />
                   </div>
                 </div>
 
-                <div style={{ background: '#f0fdf4', borderRadius: '10px', padding: '12px', border: '1px solid #bbf7d0' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Zap style={{ width: '12px', height: '12px' }} /> Xe Điện
-                  </span>
-                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#16a34a', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
-                    {monthlyEvCost.toLocaleString('vi-VN')} <span style={{ fontSize: '11px', fontWeight: 600, color: '#15803d' }}>đ</span>
+                {/* Bar 2: EV Vehicle */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 700, color: '#16a34a', marginBottom: '4px' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Zap style={{ width: '13px', height: '13px', color: '#16a34a' }} /> Xe Điện</span>
+                    <span style={{ fontWeight: 800, color: '#16a34a' }}>{monthlyEvCost.toLocaleString('vi-VN')}đ/tháng</span>
+                  </div>
+                  <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                    <motion.div
+                      animate={{ width: `${evPct}%` }}
+                      transition={{ duration: 0.3 }}
+                      style={{ height: '100%', background: '#16a34a', borderRadius: '999px' }}
+                    />
                   </div>
                 </div>
+
               </div>
 
-              {/* Minimal Savings Banner */}
-              <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '10px 14px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: '#475569', fontWeight: 700 }}>Tiết kiệm được với xe điện:</span>
-                <span style={{ fontSize: '13px', fontWeight: 900, color: '#16a34a', fontVariantNumeric: 'tabular-nums' }}>
+              {/* bklit-ui Savings Metric Banner */}
+              <div style={{ background: '#f0fdf4', borderRadius: '10px', padding: '10px 14px', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: '#166534', fontWeight: 700 }}>Tiết kiệm được với xe điện:</span>
+                <span style={{ fontSize: '13px', fontWeight: 900, color: '#15803d', fontVariantNumeric: 'tabular-nums' }}>
                   {monthlySavings.toLocaleString('vi-VN')}đ (-{savingsPct}%)
                 </span>
               </div>
             </div>
 
-            <div style={{ marginTop: '12px' }}>
+            <div style={{ marginTop: '14px' }}>
               <a href="/tram-sac" style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                Trạm sạc xe điện gần đây <ArrowRight style={{ width: '13px', height: '13px' }} />
+                Tìm trạm sạc xe điện gần nhất <ArrowRight style={{ width: '13px', height: '13px' }} />
               </a>
             </div>
           </motion.div>
